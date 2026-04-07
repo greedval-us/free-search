@@ -366,3 +366,81 @@ dashboard.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
         })
     
     dashboard.form = dashboardForm
+/**
+* @see \Inertia\Controller::__invoke
+ * @see vendor/inertiajs/inertia-laravel/src/Controller.php:13
+ * @route '/telegram'
+ */
+export const telegram = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+    url: telegram.url(options),
+    method: 'get',
+})
+
+telegram.definition = {
+    methods: ["get","head"],
+    url: '/telegram',
+} satisfies RouteDefinition<["get","head"]>
+
+/**
+* @see \Inertia\Controller::__invoke
+ * @see vendor/inertiajs/inertia-laravel/src/Controller.php:13
+ * @route '/telegram'
+ */
+telegram.url = (options?: RouteQueryOptions) => {
+    return telegram.definition.url + queryParams(options)
+}
+
+/**
+* @see \Inertia\Controller::__invoke
+ * @see vendor/inertiajs/inertia-laravel/src/Controller.php:13
+ * @route '/telegram'
+ */
+telegram.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+    url: telegram.url(options),
+    method: 'get',
+})
+/**
+* @see \Inertia\Controller::__invoke
+ * @see vendor/inertiajs/inertia-laravel/src/Controller.php:13
+ * @route '/telegram'
+ */
+telegram.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
+    url: telegram.url(options),
+    method: 'head',
+})
+
+    /**
+* @see \Inertia\Controller::__invoke
+ * @see vendor/inertiajs/inertia-laravel/src/Controller.php:13
+ * @route '/telegram'
+ */
+    const telegramForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+        action: telegram.url(options),
+        method: 'get',
+    })
+
+            /**
+* @see \Inertia\Controller::__invoke
+ * @see vendor/inertiajs/inertia-laravel/src/Controller.php:13
+ * @route '/telegram'
+ */
+        telegramForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+            action: telegram.url(options),
+            method: 'get',
+        })
+            /**
+* @see \Inertia\Controller::__invoke
+ * @see vendor/inertiajs/inertia-laravel/src/Controller.php:13
+ * @route '/telegram'
+ */
+        telegramForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+            action: telegram.url({
+                        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
+                            _method: 'HEAD',
+                            ...(options?.query ?? options?.mergeQuery ?? {}),
+                        }
+                    }),
+            method: 'get',
+        })
+    
+    telegram.form = telegramForm

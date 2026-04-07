@@ -158,6 +158,84 @@ Controller42a740574ecbfbac32f8cc353fc32db9.head = (options?: RouteQueryOptions):
     /**
 * @see \Inertia\Controller::__invoke
  * @see vendor/inertiajs/inertia-laravel/src/Controller.php:13
+ * @route '/telegram'
+ */
+const Controllerd5ecae56bdcfbb8acbee4b606463b6bd = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+    url: Controllerd5ecae56bdcfbb8acbee4b606463b6bd.url(options),
+    method: 'get',
+})
+
+Controllerd5ecae56bdcfbb8acbee4b606463b6bd.definition = {
+    methods: ["get","head"],
+    url: '/telegram',
+} satisfies RouteDefinition<["get","head"]>
+
+/**
+* @see \Inertia\Controller::__invoke
+ * @see vendor/inertiajs/inertia-laravel/src/Controller.php:13
+ * @route '/telegram'
+ */
+Controllerd5ecae56bdcfbb8acbee4b606463b6bd.url = (options?: RouteQueryOptions) => {
+    return Controllerd5ecae56bdcfbb8acbee4b606463b6bd.definition.url + queryParams(options)
+}
+
+/**
+* @see \Inertia\Controller::__invoke
+ * @see vendor/inertiajs/inertia-laravel/src/Controller.php:13
+ * @route '/telegram'
+ */
+Controllerd5ecae56bdcfbb8acbee4b606463b6bd.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+    url: Controllerd5ecae56bdcfbb8acbee4b606463b6bd.url(options),
+    method: 'get',
+})
+/**
+* @see \Inertia\Controller::__invoke
+ * @see vendor/inertiajs/inertia-laravel/src/Controller.php:13
+ * @route '/telegram'
+ */
+Controllerd5ecae56bdcfbb8acbee4b606463b6bd.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
+    url: Controllerd5ecae56bdcfbb8acbee4b606463b6bd.url(options),
+    method: 'head',
+})
+
+    /**
+* @see \Inertia\Controller::__invoke
+ * @see vendor/inertiajs/inertia-laravel/src/Controller.php:13
+ * @route '/telegram'
+ */
+    const Controllerd5ecae56bdcfbb8acbee4b606463b6bdForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+        action: Controllerd5ecae56bdcfbb8acbee4b606463b6bd.url(options),
+        method: 'get',
+    })
+
+            /**
+* @see \Inertia\Controller::__invoke
+ * @see vendor/inertiajs/inertia-laravel/src/Controller.php:13
+ * @route '/telegram'
+ */
+        Controllerd5ecae56bdcfbb8acbee4b606463b6bdForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+            action: Controllerd5ecae56bdcfbb8acbee4b606463b6bd.url(options),
+            method: 'get',
+        })
+            /**
+* @see \Inertia\Controller::__invoke
+ * @see vendor/inertiajs/inertia-laravel/src/Controller.php:13
+ * @route '/telegram'
+ */
+        Controllerd5ecae56bdcfbb8acbee4b606463b6bdForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+            action: Controllerd5ecae56bdcfbb8acbee4b606463b6bd.url({
+                        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
+                            _method: 'HEAD',
+                            ...(options?.query ?? options?.mergeQuery ?? {}),
+                        }
+                    }),
+            method: 'get',
+        })
+    
+    Controllerd5ecae56bdcfbb8acbee4b606463b6bd.form = Controllerd5ecae56bdcfbb8acbee4b606463b6bdForm
+    /**
+* @see \Inertia\Controller::__invoke
+ * @see vendor/inertiajs/inertia-laravel/src/Controller.php:13
  * @route '/settings/appearance'
  */
 const Controllere19ee86e9cf603ce1a59a1ec5d21dec5 = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -237,6 +315,7 @@ Controllere19ee86e9cf603ce1a59a1ec5d21dec5.head = (options?: RouteQueryOptions):
 const Controller = {
     '/': Controller980bb49ee7ae63891f1d891d2fbcf1c9,
     '/dashboard': Controller42a740574ecbfbac32f8cc353fc32db9,
+    '/telegram': Controllerd5ecae56bdcfbb8acbee4b606463b6bd,
     '/settings/appearance': Controllere19ee86e9cf603ce1a59a1ec5d21dec5,
 }
 

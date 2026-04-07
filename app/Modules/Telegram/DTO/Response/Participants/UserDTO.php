@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Services\Telegram\DTO\Response\Participants;
+namespace App\Modules\Telegram\DTO\Response\Participants;
 
 class UserDTO
 {

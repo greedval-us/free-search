@@ -2,15 +2,15 @@
 
 namespace App\Modules\Telegram;
 
-use App\Services\Telegram\Actions\Request\InfoAction;
-use App\Services\Telegram\Actions\Request\MessagesAction;
-use App\Services\Telegram\Actions\Request\ParticipantsAction;
+use App\Modules\Telegram\Actions\Request\InfoAction;
+use App\Modules\Telegram\Actions\Request\MessagesAction;
+use App\Modules\Telegram\Actions\Request\ParticipantsAction;
 
-use App\Services\Telegram\DTO\Request\SearchMessagesDTO;
-use App\Services\Telegram\DTO\Request\SearchParticipantsDTO;
-use App\Services\Telegram\DTO\Response\Messages\ChannelMessagesDTO;
-use App\Services\Telegram\DTO\Response\Participants\ChannelParticipantsDTO;
-use App\Services\Telegram\DTO\Response\Info\ChannelInfoDTO;
+use App\Modules\Telegram\DTO\Request\SearchMessagesDTO;
+use App\Modules\Telegram\DTO\Request\SearchParticipantsDTO;
+use App\Modules\Telegram\DTO\Response\Messages\ChannelMessagesDTO;
+use App\Modules\Telegram\DTO\Response\Participants\ChannelParticipantsDTO;
+use App\Modules\Telegram\DTO\Response\Info\ChannelInfoDTO;
 
 class TelegramService
 {

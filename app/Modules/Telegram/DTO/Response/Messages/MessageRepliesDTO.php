@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Services\Telegram\DTO\Response\Messages;
+namespace App\Modules\Telegram\DTO\Response\Messages;
 
 class MessageRepliesDTO
 {
