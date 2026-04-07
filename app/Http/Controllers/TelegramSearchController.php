@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Modules\Telegram\Presenters\TelegramMessagePresenter;
 use App\Modules\Telegram\TelegramService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -11,6 +12,7 @@ class TelegramSearchController extends Controller
 {
     public function __construct(
         private readonly TelegramService $telegramService,
+        private readonly TelegramMessagePresenter $presenter,
     ) {
     }
 
@@ -28,96 +30,33 @@ class TelegramSearchController extends Controller
 
         $limit = (int) ($validated['limit'] ?? 20);
         $offsetId = (int) ($validated['offsetId'] ?? 0);
+        $chatUsername = ltrim(trim((string) $validated['chatUsername']), '@');
 
-        $filter = [
-            'peer' => trim($validated['chatUsername']),
-            'q' => trim((string) ($validated['q'] ?? '')),
-            'limit' => $limit,
-            'offset_id' => $offsetId,
-        ];
-
-        $fromUsername = trim((string) ($validated['fromUsername'] ?? ''));
-        if ($fromUsername !== '') {
-            $filter['from_id'] = ltrim($fromUsername, '@');
+        if (
+            isset($validated['dateFrom'], $validated['dateTo'])
+            && $validated['dateFrom'] > $validated['dateTo']
+        ) {
+            return $this->errorResponse(
+                'Дата "с" должна быть меньше или равна дате "по".',
+                $limit,
+                $offsetId,
+                422
+            );
         }
 
-        $dateFrom = $validated['dateFrom'] ?? null;
-        $dateTo = $validated['dateTo'] ?? null;
-
-        if ($dateFrom !== null && $dateTo !== null && $dateFrom > $dateTo) {
-            return response()->json([
-                'ok' => false,
-                'message' => 'Дата "с" должна быть меньше или равна дате "по".',
-                'items' => [],
-                'pagination' => [
-                    'limit' => $limit,
-                    'offsetId' => $offsetId,
-                    'nextOffsetId' => null,
-                    'hasMore' => false,
-                    'total' => 0,
-                ],
-            ], 422);
-        }
-
-        if ($dateFrom !== null) {
-            $filter['min_date'] = Carbon::createFromFormat('Y-m-d', $dateFrom)->startOfDay()->timestamp;
-        }
-
-        if ($dateTo !== null) {
-            $filter['max_date'] = Carbon::createFromFormat('Y-m-d', $dateTo)->endOfDay()->timestamp;
-        }
-
+        $filter = $this->buildSearchFilter($validated, $limit, $offsetId);
         $dto = $this->telegramService->getMessages($filter);
 
         if ($dto === null) {
-            return response()->json([
-                'ok' => false,
-                'message' => 'Не удалось загрузить сообщения по текущему запросу.',
-                'items' => [],
-                'pagination' => [
-                    'limit' => $limit,
-                    'offsetId' => $offsetId,
-                    'nextOffsetId' => null,
-                    'hasMore' => false,
-                    'total' => 0,
-                ],
-            ]);
+            return $this->errorResponse(
+                'Не удалось загрузить сообщения по текущему запросу.',
+                $limit,
+                $offsetId
+            );
         }
 
-        $items = [];
-        $chatUsername = ltrim(trim($validated['chatUsername']), '@');
-
-        foreach ($dto->messages as $message) {
-            $media = $this->extractMediaSummary($message);
-            $reactions = $this->extractReactions($message);
-            $gifts = $this->extractGiftSummary($message);
-
-            $items[] = [
-                'id' => $message->id,
-                'date' => $message->date,
-                'message' => $message->message,
-                'fromId' => $message->from_id,
-                'authorId' => $this->extractAuthorId($message),
-                'peerId' => $message->peer_id,
-                'views' => $message->views,
-                'forwards' => $message->forwards,
-                'postAuthor' => $message->post_author,
-                'authorSignature' => $message->author_signature,
-                'repliesCount' => $message->replies?->replies,
-                'telegramUrl' => $this->buildTelegramUrl($chatUsername, $message->id),
-                'media' => $media,
-                'reactions' => $reactions,
-                'gifts' => $gifts,
-            ];
-        }
-
-        $items = $this->normalizeUtf8($items);
-
-        $nextOffsetId = null;
-        if (!empty($dto->messages)) {
-            $last = end($dto->messages);
-            $nextOffsetId = $last?->id ?: null;
-        }
+        $items = $this->presenter->presentMessages($dto->messages, $chatUsername);
+        $nextOffsetId = $this->presenter->resolveNextOffsetId($dto->messages);
 
         return response()->json([
             'ok' => true,
@@ -132,166 +71,48 @@ class TelegramSearchController extends Controller
         ]);
     }
 
-    private function buildTelegramUrl(string $chatUsername, int $messageId): ?string
+    private function buildSearchFilter(array $validated, int $limit, int $offsetId): array
     {
-        $chatUsername = trim($chatUsername);
-        if ($chatUsername === '' || $messageId <= 0) {
-            return null;
-        }
-
-        return sprintf('https://t.me/%s/%d', $chatUsername, $messageId);
-    }
-
-    private function extractMediaSummary(object $message): array
-    {
-        $raw = is_array($message->raw ?? null) ? $message->raw : [];
-        $mediaType = null;
-
-        if (is_object($message->media) && isset($message->media->media_type_name)) {
-            $mediaType = $message->media->media_type_name;
-        } elseif (is_array($message->media) && isset($message->media['_'])) {
-            $mediaType = (string) $message->media['_'];
-        } elseif (isset($raw['media']['_'])) {
-            $mediaType = (string) $raw['media']['_'];
-        }
-
-        $kind = 'none';
-        if ($mediaType !== null) {
-            $type = strtolower($mediaType);
-            $kind = match (true) {
-                str_contains($type, 'photo') => 'photo',
-                str_contains($type, 'video') => 'video',
-                str_contains($type, 'document') => 'document',
-                str_contains($type, 'audio') => 'audio',
-                str_contains($type, 'geo') => 'geo',
-                str_contains($type, 'poll') => 'poll',
-                str_contains($type, 'contact') => 'contact',
-                str_contains($type, 'webpage') => 'link_preview',
-                default => 'other',
-            };
-        }
-
-        $labels = [
-            'photo' => 'Фото',
-            'video' => 'Видео',
-            'document' => 'Документ',
-            'audio' => 'Аудио',
-            'geo' => 'Геопозиция',
-            'poll' => 'Опрос',
-            'contact' => 'Контакт',
-            'link_preview' => 'Ссылка',
-            'other' => 'Медиа',
-            'none' => 'Нет',
+        $filter = [
+            'peer' => trim((string) $validated['chatUsername']),
+            'q' => trim((string) ($validated['q'] ?? '')),
+            'limit' => $limit,
+            'offset_id' => $offsetId,
         ];
 
-        return [
-            'hasMedia' => $kind !== 'none',
-            'type' => $kind,
-            'label' => $labels[$kind] ?? 'Медиа',
-            'rawType' => $mediaType,
-        ];
+        $fromUsername = trim((string) ($validated['fromUsername'] ?? ''));
+        if ($fromUsername !== '') {
+            $filter['from_id'] = ltrim($fromUsername, '@');
+        }
+
+        if (!empty($validated['dateFrom'])) {
+            $filter['min_date'] = Carbon::createFromFormat('Y-m-d', $validated['dateFrom'])->startOfDay()->timestamp;
+        }
+
+        if (!empty($validated['dateTo'])) {
+            $filter['max_date'] = Carbon::createFromFormat('Y-m-d', $validated['dateTo'])->endOfDay()->timestamp;
+        }
+
+        return $filter;
     }
 
-    private function extractReactions(object $message): array
-    {
-        $result = [];
-
-        if (!is_array($message->reactions ?? null)) {
-            return $result;
-        }
-
-        foreach ($message->reactions as $reaction) {
-            $emoji = trim((string) ($reaction->display ?? $reaction->emoticon ?? ''));
-            $count = (int) ($reaction->count ?? 0);
-            $type = (string) ($reaction->reaction_type ?? '');
-            $isPaid = (bool) ($reaction->is_paid ?? false);
-
-            if (($isPaid || str_contains(strtolower($type), 'paid')) && $emoji === '') {
-                $emoji = '⭐';
-            }
-
-            if ($emoji === '' && str_contains(strtolower($type), 'custom')) {
-                $emoji = '✨';
-            }
-
-            if ($emoji === '' && $count <= 0) {
-                continue;
-            }
-
-            $result[] = [
-                'emoji' => $emoji !== '' ? $emoji : 'Реакция',
-                'count' => $count,
-            ];
-        }
-
-        return $result;
-    }
-
-    private function extractGiftSummary(object $message): array
-    {
-        $raw = is_array($message->raw ?? null) ? $message->raw : [];
-        $actionType = isset($raw['action']['_']) ? (string) $raw['action']['_'] : null;
-        $mediaType = isset($raw['media']['_']) ? (string) $raw['media']['_'] : null;
-
-        $hasGift = false;
-        $markers = [];
-
-        foreach ([$actionType, $mediaType] as $type) {
-            if (!$type) {
-                continue;
-            }
-
-            $t = strtolower($type);
-            if (str_contains($t, 'gift') || str_contains($t, 'star')) {
-                $hasGift = true;
-                $markers[] = $type;
-            }
-        }
-
-        return [
-            'hasGift' => $hasGift,
-            'types' => array_values(array_unique($markers)),
-        ];
-    }
-
-    private function extractAuthorId(object $message): ?int
-    {
-        $raw = is_array($message->raw ?? null) ? $message->raw : [];
-        $from = is_array($raw['from_id'] ?? null) ? $raw['from_id'] : null;
-
-        if (is_array($from)) {
-            foreach (['user_id', 'channel_id', 'chat_id'] as $key) {
-                if (isset($from[$key])) {
-                    return (int) $from[$key];
-                }
-            }
-        }
-
-        $fallback = (int) ($message->from_id ?? 0);
-
-        return $fallback > 0 ? $fallback : null;
-    }
-
-    private function normalizeUtf8(mixed $value): mixed
-    {
-        if (is_array($value)) {
-            foreach ($value as $key => $item) {
-                $value[$key] = $this->normalizeUtf8($item);
-            }
-
-            return $value;
-        }
-
-        if (!is_string($value)) {
-            return $value;
-        }
-
-        if (mb_check_encoding($value, 'UTF-8')) {
-            return $value;
-        }
-
-        $normalized = @iconv('UTF-8', 'UTF-8//IGNORE', $value);
-
-        return is_string($normalized) ? $normalized : '';
+    private function errorResponse(
+        string $message,
+        int $limit,
+        int $offsetId,
+        int $status = 200
+    ): JsonResponse {
+        return response()->json([
+            'ok' => false,
+            'message' => $message,
+            'items' => [],
+            'pagination' => [
+                'limit' => $limit,
+                'offsetId' => $offsetId,
+                'nextOffsetId' => null,
+                'hasMore' => false,
+                'total' => 0,
+            ],
+        ], $status);
     }
 }
