@@ -36,9 +36,11 @@ type SearchItem = {
         emoji: string;
         count: number;
     }>;
+    reactionSenderIds: number[];
     gifts: {
         hasGift: boolean;
         types: string[];
+        senderIds: number[];
     };
 };
 
@@ -92,6 +94,7 @@ const hasMore = ref(false);
 const showAdvanced = ref(false);
 const commentsByPost = ref<Record<number, CommentState>>({});
 const messagesContainerRef = ref<HTMLElement | null>(null);
+const reactionUsersOpenByPost = ref<Record<number, boolean>>({});
 
 const canSearch = computed(() => form.chatUsername.trim().length > 0);
 const loadedCount = computed(() => items.value.length);
@@ -145,6 +148,14 @@ const mediaLabel = (type: string) => {
     };
 
     return map[type] ?? 'Медиа';
+};
+
+const formatIdList = (ids: number[]) => {
+    if (ids.length <= 5) {
+        return ids.join(', ');
+    }
+
+    return `${ids.slice(0, 5).join(', ')} +${ids.length - 5}`;
 };
 
 const searchMessages = async (append = false) => {
@@ -233,6 +244,12 @@ const getCommentState = (postId: number): CommentState => {
     }
 
     return commentsByPost.value[postId];
+};
+
+const isReactionUsersOpen = (postId: number) => Boolean(reactionUsersOpenByPost.value[postId]);
+
+const toggleReactionUsers = (postId: number) => {
+    reactionUsersOpenByPost.value[postId] = !isReactionUsersOpen(postId);
 };
 
 const preservePostPosition = async (
@@ -456,7 +473,7 @@ const toggleComments = async (postId: number) => {
                         v-for="item in items"
                         :key="item.id"
                         :data-post-id="item.id"
-                        class="rounded-lg border border-border/80 bg-background/70 p-3"
+                        class="relative rounded-lg border border-border/80 bg-background/70 p-3"
                     >
                         <div class="mb-2 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-muted-foreground">
                             <span>Автор ID: {{ item.authorId ?? '-' }}</span>
@@ -498,12 +515,29 @@ const toggleComments = async (postId: number) => {
                                 {{ reaction.emoji }} {{ reaction.count }}
                             </span>
 
+                            <button
+                                v-if="item.reactionSenderIds.length > 0"
+                                type="button"
+                                class="rounded-full border border-input px-2 py-1 text-xs text-foreground hover:bg-accent"
+                                @click="toggleReactionUsers(item.id)"
+                            >
+                                ID пользователей
+                                <span class="ml-1 inline-block text-[10px]">{{ isReactionUsersOpen(item.id) ? '▲' : '▼' }}</span>
+                            </button>
+
                             <span
                                 v-for="giftType in item.gifts.types"
                                 :key="`${item.id}-${giftType}`"
                                 class="rounded-full border border-amber-400/40 bg-amber-400/10 px-2 py-1 text-xs text-amber-600 dark:text-amber-300"
                             >
                                 {{ giftType }}
+                            </span>
+
+                            <span
+                                v-if="item.gifts.senderIds.length > 0"
+                                class="rounded-full border border-amber-400/40 bg-amber-400/10 px-2 py-1 text-xs text-amber-700 dark:text-amber-300"
+                            >
+                                ID подарков: {{ formatIdList(item.gifts.senderIds) }}
                             </span>
 
                             <button
@@ -590,6 +624,32 @@ const toggleComments = async (postId: number) => {
                             >
                                 {{ getCommentState(item.id).error }}
                             </p>
+                        </div>
+
+                        <div
+                            v-if="isReactionUsersOpen(item.id)"
+                            class="absolute right-3 top-20 z-20 w-64 rounded-lg border border-border bg-card/95 p-3 shadow-2xl backdrop-blur"
+                        >
+                            <div class="mb-2 flex items-center justify-between">
+                                <p class="text-xs font-semibold">ID пользователя</p>
+                                <button
+                                    type="button"
+                                    class="text-xs text-muted-foreground hover:text-foreground"
+                                    @click="toggleReactionUsers(item.id)"
+                                >
+                                    Закрыть
+                                </button>
+                            </div>
+
+                            <div class="telegram-scroll max-h-52 space-y-1 overflow-y-auto pr-1">
+                                <p
+                                    v-for="senderId in item.reactionSenderIds"
+                                    :key="`${item.id}-reaction-user-${senderId}`"
+                                    class="rounded-md border border-input/70 bg-background/70 px-2 py-1 text-xs"
+                                >
+                                    id пользователя: {{ senderId }}
+                                </p>
+                            </div>
                         </div>
                     </article>
                 </div>

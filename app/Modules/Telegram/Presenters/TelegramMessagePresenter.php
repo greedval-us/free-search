@@ -24,6 +24,7 @@ class TelegramMessagePresenter
                 'telegramUrl' => $this->buildTelegramUrl($chatUsername, $message->id),
                 'media' => $this->extractMediaSummary($message),
                 'reactions' => $this->extractReactions($message),
+                'reactionSenderIds' => $this->extractReactionSenderIds($message),
                 'gifts' => $this->extractGiftSummary($message),
             ];
         }
@@ -137,6 +138,23 @@ class TelegramMessagePresenter
         return $result;
     }
 
+    private function extractReactionSenderIds(object $message): array
+    {
+        $raw = is_array($message->raw ?? null) ? $message->raw : [];
+        $reactions = is_array($raw['reactions'] ?? null) ? $raw['reactions'] : [];
+
+        $ids = [];
+        foreach (['recent_reactions', 'top_reactors', 'recent_reactors'] as $key) {
+            if (!isset($reactions[$key])) {
+                continue;
+            }
+
+            $ids = array_merge($ids, $this->collectSenderIds($reactions[$key]));
+        }
+
+        return array_values(array_unique(array_filter($ids, static fn (int $id): bool => $id > 0)));
+    }
+
     private function extractGiftSummary(object $message): array
     {
         $raw = is_array($message->raw ?? null) ? $message->raw : [];
@@ -158,9 +176,20 @@ class TelegramMessagePresenter
             }
         }
 
+        $senderIds = [];
+        if ($hasGift) {
+            $senderIds = array_merge(
+                $this->collectSenderIds($raw['action'] ?? []),
+                $this->collectSenderIds($raw['media'] ?? [])
+            );
+        }
+
+        $senderIds = array_values(array_unique(array_filter($senderIds, static fn (int $id): bool => $id > 0)));
+
         return [
             'hasGift' => $hasGift,
             'types' => array_values(array_unique($markers)),
+            'senderIds' => $senderIds,
         ];
     }
 
@@ -180,6 +209,55 @@ class TelegramMessagePresenter
         $fallback = (int) ($message->from_id ?? 0);
 
         return $fallback > 0 ? $fallback : null;
+    }
+
+    private function collectSenderIds(mixed $payload): array
+    {
+        $ids = [];
+
+        if (!is_array($payload)) {
+            return $ids;
+        }
+
+        foreach ($payload as $key => $value) {
+            if (in_array((string) $key, ['from_id', 'peer_id', 'sender_id', 'actor_id', 'user_id', 'channel_id', 'chat_id'], true)) {
+                $id = $this->extractPeerId($value);
+                if ($id !== null) {
+                    $ids[] = $id;
+                }
+            }
+
+            if (is_array($value)) {
+                $ids = array_merge($ids, $this->collectSenderIds($value));
+            }
+        }
+
+        return $ids;
+    }
+
+    private function extractPeerId(mixed $value): ?int
+    {
+        if (is_int($value)) {
+            return $value > 0 ? $value : null;
+        }
+
+        if (is_string($value) && ctype_digit($value)) {
+            $id = (int) $value;
+
+            return $id > 0 ? $id : null;
+        }
+
+        if (is_array($value)) {
+            foreach (['user_id', 'channel_id', 'chat_id'] as $key) {
+                if (isset($value[$key])) {
+                    $id = (int) $value[$key];
+
+                    return $id > 0 ? $id : null;
+                }
+            }
+        }
+
+        return null;
     }
 
     private function normalizeUtf8(mixed $value): mixed
