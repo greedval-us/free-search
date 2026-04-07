@@ -1,4 +1,4 @@
-<script setup lang="ts">
+﻿<script setup lang="ts">
 import { Head, Link } from '@inertiajs/vue3';
 import { dashboard, login, register } from '@/routes';
 
@@ -13,16 +13,16 @@ withDefaults(
 
 const features = [
     {
-        title: 'Мониторинг каналов и чатов',
-        text: 'Собирайте сигналы из Telegram в едином пространстве без ручной рутины.',
+        title: 'Channel and chat monitoring',
+        text: 'Collect Telegram signals in one workspace without manual routine.',
     },
     {
-        title: 'OSINT и аналитика связей',
-        text: 'Отслеживайте сущности, связи и динамику информационных кампаний.',
+        title: 'OSINT and link analysis',
+        text: 'Track entities, relationships, and campaign dynamics in context.',
     },
     {
-        title: 'Рабочие дашборды',
-        text: 'Фокусируйтесь на важных метриках и быстро переходите от гипотез к проверке.',
+        title: 'Actionable dashboards',
+        text: 'Focus on key metrics and quickly move from hypotheses to validation.',
     },
 ];
 </script>
@@ -59,14 +59,14 @@ const features = [
                             :href="login()"
                             class="rounded-lg border border-slate-700 bg-slate-900/70 px-4 py-2 text-sm font-medium text-slate-100 transition hover:border-cyan-300/40 hover:text-cyan-100"
                         >
-                            Вход
+                            Sign in
                         </Link>
                         <Link
                             v-if="canRegister"
                             :href="register()"
                             class="rounded-lg border border-cyan-300/40 bg-cyan-400/10 px-4 py-2 text-sm font-medium text-cyan-100 transition hover:bg-cyan-400/20"
                         >
-                            Регистрация
+                            Register
                         </Link>
                     </template>
                 </nav>
@@ -75,17 +75,16 @@ const features = [
             <main class="grid gap-6 lg:grid-cols-[1.15fr_0.85fr]">
                 <section class="rounded-3xl border border-slate-800/90 bg-slate-900/70 p-8 shadow-2xl backdrop-blur xl:p-10">
                     <p class="inline-flex rounded-full border border-cyan-300/35 bg-cyan-300/10 px-3 py-1 text-xs font-medium text-cyan-200">
-                        Поиск, мониторинг, OSINT
+                        Search, monitoring, OSINT
                     </p>
 
                     <h2 class="mt-5 max-w-3xl text-3xl font-semibold leading-tight sm:text-4xl xl:text-5xl">
-                        Стартовая точка для анализа информации в Telegram
+                        Starting point for Telegram intelligence workflows
                     </h2>
 
                     <p class="mt-5 max-w-2xl text-sm leading-relaxed text-slate-300 sm:text-base">
-                        Платформа помогает собирать данные, фильтровать шум и находить значимые сигналы.
-                        Базовый контур уже готов, дальше можно масштабировать систему под вашу аналитику,
-                        исследование источников и построение сценариев OSINT.
+                        The platform helps collect data, filter noise, and surface meaningful signals.
+                        You can scale this baseline into deep analytics pipelines and investigation scenarios.
                     </p>
 
                     <div class="mt-8 flex flex-wrap gap-3">
@@ -93,7 +92,7 @@ const features = [
                             :href="$page.props.auth.user ? dashboard() : login()"
                             class="rounded-xl bg-cyan-400 px-5 py-2.5 text-sm font-semibold text-slate-950 transition hover:bg-cyan-300"
                         >
-                            {{ $page.props.auth.user ? 'Открыть Dashboard' : 'Начать работу' }}
+                            {{ $page.props.auth.user ? 'Open Dashboard' : 'Get Started' }}
                         </Link>
 
                         <Link
@@ -101,7 +100,7 @@ const features = [
                             :href="register()"
                             class="rounded-xl border border-slate-700 bg-slate-900/80 px-5 py-2.5 text-sm font-semibold text-slate-100 transition hover:border-cyan-300/40 hover:text-cyan-100"
                         >
-                            Создать аккаунт
+                            Create account
                         </Link>
                     </div>
                 </section>

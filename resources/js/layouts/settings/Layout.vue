@@ -29,7 +29,7 @@ const { isCurrentOrParentUrl } = useCurrentUrl();
 </script>
 
 <template>
-    <div class="px-4 py-6">
+    <div class="rounded-2xl border border-sidebar-border/80 bg-card/70 px-4 py-6 shadow-xl backdrop-blur">
         <Heading
             title="Settings"
             description="Manage your profile and account settings"
@@ -46,8 +46,8 @@ const { isCurrentOrParentUrl } = useCurrentUrl();
                         :key="toUrl(item.href)"
                         variant="ghost"
                         :class="[
-                            'w-full justify-start',
-                            { 'bg-muted': isCurrentOrParentUrl(item.href) },
+                            'w-full justify-start text-muted-foreground hover:text-foreground',
+                            { 'bg-primary/15 text-primary': isCurrentOrParentUrl(item.href) },
                         ]"
                         as-child
                     >
