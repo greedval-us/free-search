@@ -99,6 +99,7 @@ const total = ref(0);
 const nextOffsetId = ref<number | null>(null);
 const hasMore = ref(false);
 const showAdvanced = ref(false);
+const searchPanelCollapsed = ref(false);
 const commentsByPost = ref<Record<number, CommentState>>({});
 const messagesContainerRef = ref<HTMLElement | null>(null);
 const senderPopoverOpenByKey = ref<Record<string, boolean>>({});
@@ -390,7 +391,24 @@ const toggleComments = async (postId: number) => {
 
     <div class="flex h-full min-h-0 flex-1 flex-col gap-4 overflow-hidden rounded-xl p-4">
         <section class="sticky top-0 z-10 shrink-0 rounded-xl border border-sidebar-border/80 bg-card/70 p-4 shadow-xl backdrop-blur">
-            <div class="flex flex-wrap items-end gap-3">
+            <div class="flex items-center justify-between gap-3">
+                <div>
+                    <h2 class="text-sm font-semibold">Поиск Telegram</h2>
+                    <p class="text-xs text-muted-foreground">
+                        {{ searchPanelCollapsed ? 'Панель поиска свернута' : 'Фильтры и параметры поиска сообщений' }}
+                    </p>
+                </div>
+
+                <button
+                    type="button"
+                    class="inline-flex h-9 w-9 cursor-pointer items-center justify-center rounded-full border border-input text-sm text-foreground transition hover:bg-accent"
+                    @click="searchPanelCollapsed = !searchPanelCollapsed"
+                >
+                    {{ searchPanelCollapsed ? '▼' : '▲' }}
+                </button>
+            </div>
+
+            <div v-if="!searchPanelCollapsed" class="mt-3 flex flex-wrap items-end gap-3">
                 <div class="grid min-w-0 flex-1 gap-3 md:grid-cols-2 xl:grid-cols-3">
                     <label class="block min-w-0">
                         <span class="mb-1 block truncate text-xs font-medium text-muted-foreground">Username канала</span>
@@ -426,7 +444,7 @@ const toggleComments = async (postId: number) => {
                 <div class="flex w-full flex-wrap gap-2 lg:w-auto">
                     <button
                         type="button"
-                        class="h-10 rounded-md border border-input px-4 text-sm font-medium text-foreground hover:bg-accent"
+                        class="h-10 cursor-pointer rounded-md border border-input px-4 text-sm font-medium text-foreground hover:bg-accent"
                         @click="showAdvanced = !showAdvanced"
                     >
                         {{ showAdvanced ? 'Скрыть фильтры' : 'Доп. фильтры' }}
@@ -434,7 +452,7 @@ const toggleComments = async (postId: number) => {
 
                     <button
                         :disabled="loading || !canSearch"
-                        class="h-10 rounded-md bg-primary px-5 text-sm font-semibold text-primary-foreground disabled:opacity-60"
+                        class="h-10 cursor-pointer rounded-md bg-primary px-5 text-sm font-semibold text-primary-foreground disabled:cursor-not-allowed disabled:opacity-60"
                         @click="searchMessages(false)"
                     >
                         {{ loading ? 'Поиск...' : 'Найти' }}
@@ -443,7 +461,7 @@ const toggleComments = async (postId: number) => {
             </div>
 
             <div
-                v-if="showAdvanced"
+                v-if="!searchPanelCollapsed && showAdvanced"
                 class="mt-3 grid gap-3 border-t border-border/60 pt-3 md:grid-cols-3"
             >
                 <label class="block min-w-0">
@@ -519,7 +537,7 @@ const toggleComments = async (postId: number) => {
                                 :href="item.telegramUrl"
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                class="rounded-full border border-input px-2 py-1 text-xs text-primary hover:bg-accent"
+                                class="cursor-pointer rounded-full border border-input px-2 py-1 text-xs text-primary hover:bg-accent"
                             >
                                 Открыть в Telegram
                             </a>
@@ -534,21 +552,11 @@ const toggleComments = async (postId: number) => {
                             <button
                                 v-if="item.media.hasMedia"
                                 type="button"
-                                class="rounded-full border border-input px-3 py-1 text-xs font-medium text-foreground hover:bg-accent"
+                                class="cursor-pointer rounded-full border border-input px-3 py-1 text-xs font-medium text-foreground hover:bg-accent"
                                 @click="toggleMedia(item.id)"
                             >
                                 {{ isMediaOpen(item.id) ? 'Скрыть медиа' : 'Медиа' }}
                             </button>
-
-                            <a
-                                v-if="item.media.hasMedia && !canPreviewInlineMedia(item.media.type)"
-                                :href="getMediaUrl(item.id)"
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                class="rounded-full border border-input px-3 py-1 text-xs text-primary hover:bg-accent"
-                            >
-                                Открыть файл
-                            </a>
 
                             <div
                                 v-for="reaction in item.reactions"
@@ -562,7 +570,7 @@ const toggleComments = async (postId: number) => {
                                 <button
                                     v-if="reaction.senderIds.length > 0"
                                     type="button"
-                                    class="inline-flex h-6 w-6 items-center justify-center rounded-full border border-input text-[11px] text-foreground hover:bg-accent"
+                                    class="inline-flex h-6 w-6 cursor-pointer items-center justify-center rounded-full border border-input text-[11px] text-foreground hover:bg-accent"
                                     @click="toggleSenderPopover(item.id, 'reaction', reaction.key)"
                                 >
                                     {{ isSenderPopoverOpen(item.id, 'reaction', reaction.key) ? '▲' : '▼' }}
@@ -598,7 +606,7 @@ const toggleComments = async (postId: number) => {
                                 <button
                                     v-if="gift.senderIds.length > 0"
                                     type="button"
-                                    class="inline-flex h-6 w-6 items-center justify-center rounded-full border border-amber-400/40 bg-amber-400/10 text-[11px] text-amber-700 hover:bg-amber-400/20 dark:text-amber-300"
+                                    class="inline-flex h-6 w-6 cursor-pointer items-center justify-center rounded-full border border-amber-400/40 bg-amber-400/10 text-[11px] text-amber-700 hover:bg-amber-400/20 dark:text-amber-300"
                                     @click="toggleSenderPopover(item.id, 'gift', gift.key)"
                                 >
                                     {{ isSenderPopoverOpen(item.id, 'gift', gift.key) ? '▲' : '▼' }}
@@ -625,7 +633,7 @@ const toggleComments = async (postId: number) => {
                             <button
                                 v-if="(item.repliesCount ?? 0) > 0"
                                 type="button"
-                                class="rounded-full border border-input px-3 py-1 text-xs font-medium text-foreground hover:bg-accent"
+                                class="cursor-pointer rounded-full border border-input px-3 py-1 text-xs font-medium text-foreground hover:bg-accent"
                                 @click="toggleComments(item.id)"
                             >
                                 {{ getCommentState(item.id).open ? 'Скрыть комментарии' : `Комментарии (${item.repliesCount})` }}
@@ -668,7 +676,7 @@ const toggleComments = async (postId: number) => {
                                     :href="getMediaUrl(item.id)"
                                     target="_blank"
                                     rel="noopener noreferrer"
-                                    class="rounded-md border border-input px-3 py-1 text-xs font-medium text-primary hover:bg-accent"
+                                    class="cursor-pointer rounded-md border border-input px-3 py-1 text-xs font-medium text-primary hover:bg-accent"
                                 >
                                     Открыть файл
                                 </a>
@@ -729,7 +737,7 @@ const toggleComments = async (postId: number) => {
                                 <button
                                     type="button"
                                     :disabled="getCommentState(item.id).loading"
-                                    class="rounded-md border border-input px-3 py-1 text-xs font-medium text-foreground hover:bg-accent disabled:opacity-60"
+                                    class="cursor-pointer rounded-md border border-input px-3 py-1 text-xs font-medium text-foreground hover:bg-accent disabled:cursor-not-allowed disabled:opacity-60"
                                     @click="loadComments(item.id, true)"
                                 >
                                     Показать еще комментарии
@@ -758,7 +766,7 @@ const toggleComments = async (postId: number) => {
             <div class="mt-4 flex justify-center" v-if="hasMore">
                 <button
                     :disabled="loadingMore"
-                    class="rounded-md border border-input bg-background px-4 py-2 text-sm font-medium hover:bg-accent disabled:opacity-60"
+                    class="cursor-pointer rounded-md border border-input bg-background px-4 py-2 text-sm font-medium hover:bg-accent disabled:cursor-not-allowed disabled:opacity-60"
                     @click="searchMessages(true)"
                 >
                     {{ loadingMore ? 'Загрузка...' : 'Показать еще' }}
