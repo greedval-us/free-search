@@ -6,17 +6,18 @@ use App\Modules\Telegram\Actions\Request\InfoAction;
 use App\Modules\Telegram\Actions\Request\MessagesAction;
 use App\Modules\Telegram\Actions\Request\ParticipantsAction;
 use App\Modules\Telegram\Actions\Request\CommentsAction;
-
 use App\Modules\Telegram\DTO\Request\SearchMessagesDTO;
 use App\Modules\Telegram\DTO\Request\SearchParticipantsDTO;
 use App\Modules\Telegram\DTO\Response\Messages\ChannelMessagesDTO;
 use App\Modules\Telegram\DTO\Response\Participants\ChannelParticipantsDTO;
 use App\Modules\Telegram\DTO\Response\Info\ChannelInfoDTO;
+use danog\MadelineProto\API;
 use Illuminate\Support\Facades\Log;
 
 class TelegramService
 {
     public function __construct(
+        private readonly API $madeline,
         private readonly InfoAction $infoAction,
         private readonly MessagesAction $messagesAction,
         private readonly ParticipantsAction $participantsAction,
@@ -125,6 +126,51 @@ class TelegramService
                 'total' => 0,
             ];
         }
+    }
+
+    public function getMessageMedia(string $channel, int $messageId): ?array
+    {
+        try {
+            $response = $this->madeline->channels->getMessages([
+                'channel' => $channel,
+                'id' => [$messageId],
+            ]);
+
+            $messages = is_array($response['messages'] ?? null) ? $response['messages'] : [];
+            $message = $messages[0] ?? null;
+
+            if (!is_array($message)) {
+                return null;
+            }
+
+            $media = $message['media'] ?? null;
+            if (!is_array($media)) {
+                return null;
+            }
+
+            $downloadInfo = $this->madeline->getDownloadInfo($media);
+            if (!is_array($downloadInfo) || empty($downloadInfo)) {
+                return null;
+            }
+
+            return [
+                'media' => $media,
+                'download' => $downloadInfo,
+            ];
+        } catch (\Throwable $e) {
+            Log::warning('[TelegramService::getMessageMedia] Failed to load media', [
+                'channel' => $channel,
+                'message_id' => $messageId,
+                'error' => $e->getMessage(),
+            ]);
+
+            return null;
+        }
+    }
+
+    public function downloadMediaToFile(array $media, string $path): string
+    {
+        return $this->madeline->downloadToFile($media, $path);
     }
 
     private function isValidInfoResponse(?array $data): bool

@@ -2,51 +2,36 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\Telegram\SearchCommentsRequest;
+use App\Http\Requests\Telegram\SearchMessagesRequest;
+use App\Http\Requests\Telegram\StreamTelegramMediaRequest;
+use App\Modules\Telegram\Presenters\TelegramCommentPresenter;
 use App\Modules\Telegram\Presenters\TelegramMessagePresenter;
+use App\Modules\Telegram\Support\TelegramMediaResponder;
 use App\Modules\Telegram\TelegramService;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
-use Illuminate\Support\Carbon;
+use Symfony\Component\HttpFoundation\BinaryFileResponse;
 
 class TelegramSearchController extends Controller
 {
     public function __construct(
         private readonly TelegramService $telegramService,
         private readonly TelegramMessagePresenter $presenter,
+        private readonly TelegramCommentPresenter $commentPresenter,
+        private readonly TelegramMediaResponder $mediaResponder,
     ) {
     }
 
-    public function messages(Request $request): JsonResponse
+    public function messages(SearchMessagesRequest $request): JsonResponse
     {
-        $validated = $request->validate([
-            'chatUsername' => ['required', 'string', 'max:255'],
-            'q' => ['nullable', 'string', 'max:255'],
-            'fromUsername' => ['nullable', 'string', 'max:255'],
-            'dateFrom' => ['nullable', 'date_format:Y-m-d'],
-            'dateTo' => ['nullable', 'date_format:Y-m-d'],
-            'limit' => ['nullable', 'integer', 'min:1', 'max:100'],
-            'offsetId' => ['nullable', 'integer', 'min:0'],
-        ]);
-
-        $limit = (int) ($validated['limit'] ?? 20);
-        $offsetId = (int) ($validated['offsetId'] ?? 0);
-        $chatUsername = ltrim(trim((string) $validated['chatUsername']), '@');
-
-        if (isset($validated['dateFrom'], $validated['dateTo']) && $validated['dateFrom'] > $validated['dateTo']) {
-            return $this->errorResponse(
-                'Дата "с" должна быть меньше или равна дате "по".',
-                $limit,
-                $offsetId,
-                422
-            );
-        }
-
-        $filter = $this->buildSearchFilter($validated, $limit, $offsetId);
-        $dto = $this->telegramService->getMessages($filter);
+        $limit = $request->limitValue();
+        $offsetId = $request->offsetId();
+        $chatUsername = $request->chatUsername();
+        $dto = $this->telegramService->getMessages($request->telegramFilter());
 
         if ($dto === null) {
             return $this->errorResponse(
-                'Не удалось загрузить сообщения по текущему запросу.',
+                'РќРµ СѓРґР°Р»РѕСЃСЊ Р·Р°РіСЂСѓР·РёС‚СЊ СЃРѕРѕР±С‰РµРЅРёСЏ РїРѕ С‚РµРєСѓС‰РµРјСѓ Р·Р°РїСЂРѕСЃСѓ.',
                 $limit,
                 $offsetId
             );
@@ -68,78 +53,36 @@ class TelegramSearchController extends Controller
         ]);
     }
 
-    public function comments(Request $request): JsonResponse
+    public function comments(SearchCommentsRequest $request): JsonResponse
     {
-        $validated = $request->validate([
-            'chatUsername' => ['required', 'string', 'max:255'],
-            'postId' => ['required', 'integer', 'min:1'],
-            'limit' => ['nullable', 'integer', 'min:1', 'max:50'],
-            'offsetId' => ['nullable', 'integer', 'min:0'],
-        ]);
+        $limit = $request->limitValue();
+        $offsetId = $request->offsetId();
+        $commentsPage = $this->telegramService->getComments(
+            $request->chatUsername(),
+            $request->postId(),
+            $limit,
+            $offsetId
+        );
 
-        $chatUsername = ltrim(trim((string) $validated['chatUsername']), '@');
-        $postId = (int) $validated['postId'];
-        $limit = (int) ($validated['limit'] ?? 20);
-        $offsetId = (int) ($validated['offsetId'] ?? 0);
-
-        $commentsPage = $this->telegramService->getComments($chatUsername, $postId, $limit, $offsetId);
-        $items = [];
-
-        foreach (($commentsPage['items'] ?? []) as $comment) {
-            if (!is_array($comment)) {
-                continue;
-            }
-
-            $id = (int) ($comment['id'] ?? 0);
-
-            if ($id <= 0) {
-                continue;
-            }
-
-            $items[] = [
-                'id' => $id,
-                'date' => (int) ($comment['date'] ?? 0),
-                'message' => (string) ($comment['message'] ?? ''),
-                'authorId' => $this->extractRawAuthorId($comment),
-            ];
-        }
-
-        return response()->json([
-            'ok' => true,
-            'items' => $items,
-            'pagination' => [
-                'limit' => $limit,
-                'offsetId' => $offsetId,
-                'nextOffsetId' => $commentsPage['nextOffsetId'] ?? null,
-                'hasMore' => (bool) ($commentsPage['hasMore'] ?? false),
-                'total' => (int) ($commentsPage['total'] ?? count($items)),
-            ],
-        ]);
+        return response()->json($this->commentPresenter->present($commentsPage, $limit, $offsetId));
     }
 
-    private function buildSearchFilter(array $validated, int $limit, int $offsetId): array
+    public function media(StreamTelegramMediaRequest $request): BinaryFileResponse
     {
-        $filter = [
-            'peer' => trim((string) $validated['chatUsername']),
-            'q' => trim((string) ($validated['q'] ?? '')),
-            'limit' => $limit,
-            'offset_id' => $offsetId,
-        ];
+        $chatUsername = $request->chatUsername();
+        $messageId = $request->messageId();
 
-        $fromUsername = trim((string) ($validated['fromUsername'] ?? ''));
-        if ($fromUsername !== '') {
-            $filter['from_id'] = ltrim($fromUsername, '@');
+        if ($chatUsername === '' || $messageId <= 0) {
+            abort(404);
         }
 
-        if (!empty($validated['dateFrom'])) {
-            $filter['min_date'] = Carbon::createFromFormat('Y-m-d', $validated['dateFrom'])->startOfDay()->timestamp;
+        $media = $this->telegramService->getMessageMedia($chatUsername, $messageId);
+
+        if ($media === null) {
+            abort(404);
         }
 
-        if (!empty($validated['dateTo'])) {
-            $filter['max_date'] = Carbon::createFromFormat('Y-m-d', $validated['dateTo'])->endOfDay()->timestamp;
-        }
-
-        return $filter;
+        return $this->mediaResponder->respond($media);
     }
 
     private function errorResponse(
@@ -160,26 +103,5 @@ class TelegramSearchController extends Controller
                 'total' => 0,
             ],
         ], $status);
-    }
-
-    private function extractRawAuthorId(array $message): ?int
-    {
-        $from = is_array($message['from_id'] ?? null) ? $message['from_id'] : null;
-
-        if (is_array($from)) {
-            foreach (['user_id', 'channel_id', 'chat_id'] as $key) {
-                if (isset($from[$key])) {
-                    return (int) $from[$key];
-                }
-            }
-        }
-
-        if (isset($message['from_id']) && is_numeric((string) $message['from_id'])) {
-            $fallback = (int) $message['from_id'];
-
-            return $fallback > 0 ? $fallback : null;
-        }
-
-        return null;
     }
 }

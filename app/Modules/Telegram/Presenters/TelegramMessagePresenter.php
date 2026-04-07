@@ -9,6 +9,9 @@ class TelegramMessagePresenter
         $items = [];
 
         foreach ($messages as $message) {
+            $reactions = $this->extractReactions($message);
+            $gifts = $this->extractGiftSummary($message);
+
             $items[] = [
                 'id' => $message->id,
                 'date' => $message->date,
@@ -23,9 +26,9 @@ class TelegramMessagePresenter
                 'repliesCount' => $message->replies?->replies,
                 'telegramUrl' => $this->buildTelegramUrl($chatUsername, $message->id),
                 'media' => $this->extractMediaSummary($message),
-                'reactions' => $this->extractReactions($message),
+                'reactions' => $reactions,
                 'reactionSenderIds' => $this->extractReactionSenderIds($message),
-                'gifts' => $this->extractGiftSummary($message),
+                'gifts' => $gifts,
             ];
         }
 
@@ -106,6 +109,7 @@ class TelegramMessagePresenter
     private function extractReactions(object $message): array
     {
         $result = [];
+        $senderIdsByReaction = $this->extractReactionSenderIdsByReaction($message);
 
         if (!is_array($message->reactions ?? null)) {
             return $result;
@@ -118,20 +122,33 @@ class TelegramMessagePresenter
             $isPaid = (bool) ($reaction->is_paid ?? false);
 
             if (($isPaid || str_contains(strtolower($type), 'paid')) && $emoji === '') {
-                $emoji = '⭐';
+                $emoji = 'Paid';
             }
 
             if ($emoji === '' && str_contains(strtolower($type), 'custom')) {
-                $emoji = '✨';
+                $emoji = 'Custom';
             }
 
             if ($emoji === '' && $count <= 0) {
                 continue;
             }
 
+            $identity = $this->describeReaction([
+                'display' => $emoji,
+                'reaction_type' => $type,
+                'document_id' => $reaction->document_id ?? null,
+                'is_paid' => $isPaid,
+                'emoticon' => $reaction->emoticon ?? null,
+                'reaction' => $reaction->raw['reaction'] ?? null,
+            ]);
+
+            $key = $identity['key'] ?? ('label:' . md5($emoji !== '' ? $emoji : 'reaction'));
+
             $result[] = [
-                'emoji' => $emoji !== '' ? $emoji : 'Реакция',
+                'key' => $key,
+                'emoji' => $identity['label'] ?? ($emoji !== '' ? $emoji : 'Reaction'),
                 'count' => $count,
+                'senderIds' => $senderIdsByReaction[$key] ?? [],
             ];
         }
 
@@ -140,56 +157,30 @@ class TelegramMessagePresenter
 
     private function extractReactionSenderIds(object $message): array
     {
-        $raw = is_array($message->raw ?? null) ? $message->raw : [];
-        $reactions = is_array($raw['reactions'] ?? null) ? $raw['reactions'] : [];
-
-        $ids = [];
-        foreach (['recent_reactions', 'top_reactors', 'recent_reactors'] as $key) {
-            if (!isset($reactions[$key])) {
-                continue;
-            }
-
-            $ids = array_merge($ids, $this->collectSenderIds($reactions[$key]));
-        }
-
-        return array_values(array_unique(array_filter($ids, static fn (int $id): bool => $id > 0)));
+        return $this->flattenSenderMap($this->extractReactionSenderIdsByReaction($message));
     }
 
     private function extractGiftSummary(object $message): array
     {
         $raw = is_array($message->raw ?? null) ? $message->raw : [];
-        $actionType = isset($raw['action']['_']) ? (string) $raw['action']['_'] : null;
-        $mediaType = isset($raw['media']['_']) ? (string) $raw['media']['_'] : null;
+        $entries = [];
 
-        $hasGift = false;
-        $markers = [];
-
-        foreach ([$actionType, $mediaType] as $type) {
-            if (!$type) {
-                continue;
-            }
-
-            $normalizedType = strtolower($type);
-            if (str_contains($normalizedType, 'gift') || str_contains($normalizedType, 'star')) {
-                $hasGift = true;
-                $markers[] = $type;
-            }
-        }
+        $this->collectGiftEntries($raw['action'] ?? null, $entries);
+        $this->collectGiftEntries($raw['media'] ?? null, $entries);
 
         $senderIds = [];
-        if ($hasGift) {
-            $senderIds = array_merge(
-                $this->collectSenderIds($raw['action'] ?? []),
-                $this->collectSenderIds($raw['media'] ?? [])
-            );
+        $types = [];
+
+        foreach ($entries as $entry) {
+            $senderIds = array_merge($senderIds, $entry['senderIds']);
+            $types[] = $entry['label'];
         }
 
-        $senderIds = array_values(array_unique(array_filter($senderIds, static fn (int $id): bool => $id > 0)));
-
         return [
-            'hasGift' => $hasGift,
-            'types' => array_values(array_unique($markers)),
-            'senderIds' => $senderIds,
+            'hasGift' => !empty($entries),
+            'types' => array_values(array_unique($types)),
+            'senderIds' => array_values(array_unique(array_filter($senderIds, static fn (int $id): bool => $id > 0))),
+            'entries' => array_values($entries),
         ];
     }
 
@@ -258,6 +249,141 @@ class TelegramMessagePresenter
         }
 
         return null;
+    }
+
+    private function extractReactionSenderIdsByReaction(object $message): array
+    {
+        $raw = is_array($message->raw ?? null) ? $message->raw : [];
+        $reactions = is_array($raw['reactions'] ?? null) ? $raw['reactions'] : [];
+        $map = [];
+
+        foreach (['recent_reactions', 'top_reactors', 'recent_reactors'] as $key) {
+            if (!isset($reactions[$key])) {
+                continue;
+            }
+
+            $this->collectReactionEntries($reactions[$key], $map);
+        }
+
+        foreach ($map as $reactionKey => $ids) {
+            $map[$reactionKey] = array_values(array_unique(array_filter($ids, static fn (int $id): bool => $id > 0)));
+        }
+
+        return $map;
+    }
+
+    private function collectReactionEntries(mixed $payload, array &$map): void
+    {
+        if (!is_array($payload)) {
+            return;
+        }
+
+        $identity = $this->describeReaction($payload);
+        if ($identity !== null) {
+            $map[$identity['key']] = array_merge(
+                $map[$identity['key']] ?? [],
+                $this->collectSenderIds($payload)
+            );
+        }
+
+        foreach ($payload as $value) {
+            if (is_array($value)) {
+                $this->collectReactionEntries($value, $map);
+            }
+        }
+    }
+
+    private function describeReaction(array $payload): ?array
+    {
+        $reaction = $payload['reaction'] ?? $payload;
+        if (!is_array($reaction) && !is_string($reaction)) {
+            return null;
+        }
+
+        $reactionType = '';
+        $emoticon = '';
+        $documentId = null;
+        $isPaid = false;
+
+        if (is_array($reaction)) {
+            $reactionType = (string) ($reaction['_'] ?? $payload['reaction_type'] ?? '');
+            $emoticon = trim((string) ($reaction['emoticon'] ?? $payload['emoticon'] ?? $payload['display'] ?? ''));
+            $documentId = isset($reaction['document_id']) ? (int) $reaction['document_id'] : null;
+            $isPaid = ($reaction['_'] ?? null) === 'reactionPaid' || (bool) ($payload['is_paid'] ?? false);
+        } else {
+            $reactionType = (string) ($payload['reaction_type'] ?? '');
+            $emoticon = trim($reaction);
+            $documentId = isset($payload['document_id']) ? (int) $payload['document_id'] : null;
+            $isPaid = (bool) ($payload['is_paid'] ?? false);
+        }
+
+        $normalizedType = strtolower($reactionType);
+        $label = $emoticon;
+
+        if ($label === '' && ($isPaid || str_contains($normalizedType, 'paid'))) {
+            $label = 'Paid';
+        } elseif ($label === '' && str_contains($normalizedType, 'custom')) {
+            $label = 'Custom';
+        } elseif ($label === '') {
+            $label = 'Reaction';
+        }
+
+        $key = match (true) {
+            $documentId !== null && $documentId > 0 => 'document:' . $documentId,
+            $emoticon !== '' => 'emoji:' . md5($emoticon),
+            $isPaid || str_contains($normalizedType, 'paid') => 'paid',
+            $reactionType !== '' => 'type:' . $reactionType,
+            default => 'label:' . md5($label),
+        };
+
+        return [
+            'key' => $key,
+            'label' => $label,
+        ];
+    }
+
+    private function collectGiftEntries(mixed $payload, array &$entries): void
+    {
+        if (!is_array($payload)) {
+            return;
+        }
+
+        $type = isset($payload['_']) ? (string) $payload['_'] : null;
+        if ($type !== null) {
+            $normalizedType = strtolower($type);
+            if (str_contains($normalizedType, 'gift') || str_contains($normalizedType, 'star')) {
+                $key = strtolower($type);
+                $entries[$key] = [
+                    'key' => $key,
+                    'label' => $type,
+                    'senderIds' => array_values(array_unique(array_filter(array_merge(
+                        $entries[$key]['senderIds'] ?? [],
+                        $this->collectSenderIds($payload)
+                    ), static fn (int $id): bool => $id > 0))),
+                ];
+            }
+        }
+
+        foreach ($payload as $value) {
+            if (is_array($value)) {
+                $this->collectGiftEntries($value, $entries);
+            }
+        }
+    }
+
+    private function flattenSenderMap(array $map): array
+    {
+        $ids = [];
+
+        foreach ($map as $senderIds) {
+            if (!is_array($senderIds)) {
+                continue;
+            }
+
+            $ids = array_merge($ids, $senderIds);
+        }
+
+        return array_values(array_unique(array_filter($ids, static fn (int $id): bool => $id > 0)));
     }
 
     private function normalizeUtf8(mixed $value): mixed
