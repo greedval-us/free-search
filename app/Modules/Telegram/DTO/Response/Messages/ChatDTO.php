@@ -5,9 +5,11 @@ namespace App\Modules\Telegram\DTO\Response\Messages;
 class ChatDTO
 {
     public string $_;
+    public int $flags = 0;
     public int $id;
     public string $title;
     public ?string $username = null;
+    public array $usernames = [];
     public ?ChatPhotoDTO $photo = null;
 
     public ?string $description = null;
@@ -27,15 +29,19 @@ class ChatDTO
     public bool $has_link = false;
     public bool $has_geo = false;
     public bool $slowmode_enabled = false;
+    public bool $forum = false;
+    public bool $gigagroup = false;
 
     public array $raw = [];
 
     public function __construct(array $data)
     {
         $this->_ = $data['_'] ?? '';
+        $this->flags = (int) ($data['flags'] ?? 0);
         $this->id = $data['id'] ?? 0;
         $this->title = $data['title'] ?? '';
         $this->username = $data['username'] ?? null;
+        $this->usernames = is_array($data['usernames'] ?? null) ? $data['usernames'] : [];
 
         $this->photo = isset($data['photo']) ? new ChatPhotoDTO($data['photo']) : null;
         $this->description = $data['description'] ?? null;
@@ -48,7 +54,8 @@ class ChatDTO
 
         foreach ([
             'creator','left','broadcast','verified','megagroup','restricted',
-            'signatures','min','scam','has_link','has_geo','slowmode_enabled'
+            'signatures','min','scam','has_link','has_geo','slowmode_enabled',
+            'forum','gigagroup'
         ] as $flag) {
             $this->$flag = $data[$flag] ?? false;
         }

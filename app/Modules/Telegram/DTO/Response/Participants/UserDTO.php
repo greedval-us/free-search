@@ -34,11 +34,16 @@ class UserDTO
 
     public int $id;
     public ?string $first_name;
+    public ?string $last_name = null;
     public ?string $username;
+    public ?string $phone = null;
+    public ?string $lang_code = null;
 
     public ?object $photo = null;
+    public ?array $status = null;
     public ?int $bot_info_version = null;
     public ?int $bot_active_users = null;
+    public array $raw = [];
 
     public function __construct(array $data)
     {
@@ -57,10 +62,15 @@ class UserDTO
 
         $this->id = $data['id'] ?? 0;
         $this->first_name = $data['first_name'] ?? null;
+        $this->last_name = $data['last_name'] ?? null;
         $this->username = $data['username'] ?? null;
+        $this->phone = $data['phone'] ?? null;
+        $this->lang_code = $data['lang_code'] ?? null;
 
         $this->photo = isset($data['photo']) ? (object)$data['photo'] : null;
+        $this->status = is_array($data['status'] ?? null) ? $data['status'] : null;
         $this->bot_info_version = $data['bot_info_version'] ?? null;
         $this->bot_active_users = $data['bot_active_users'] ?? null;
+        $this->raw = $data;
     }
 }

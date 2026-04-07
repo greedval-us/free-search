@@ -5,6 +5,7 @@ namespace App\Modules\Telegram\DTO\Response\Participants;
 class AdminRightsDTO
 {
     public string $_;
+    public int $flags = 0;
 
     public bool $change_info;
     public bool $post_messages;
@@ -22,10 +23,12 @@ class AdminRightsDTO
     public bool $edit_stories;
     public bool $delete_stories;
     public bool $manage_direct_messages;
+    public array $raw = [];
 
     public function __construct(array $data)
     {
         $this->_ = $data['_'] ?? '';
+        $this->flags = (int) ($data['flags'] ?? 0);
 
         $this->change_info = $data['change_info'] ?? false;
         $this->post_messages = $data['post_messages'] ?? false;
@@ -43,5 +46,6 @@ class AdminRightsDTO
         $this->edit_stories = $data['edit_stories'] ?? false;
         $this->delete_stories = $data['delete_stories'] ?? false;
         $this->manage_direct_messages = $data['manage_direct_messages'] ?? false;
+        $this->raw = $data;
     }
 }

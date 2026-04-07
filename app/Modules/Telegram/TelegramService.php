@@ -11,6 +11,7 @@ use App\Modules\Telegram\DTO\Request\SearchParticipantsDTO;
 use App\Modules\Telegram\DTO\Response\Messages\ChannelMessagesDTO;
 use App\Modules\Telegram\DTO\Response\Participants\ChannelParticipantsDTO;
 use App\Modules\Telegram\DTO\Response\Info\ChannelInfoDTO;
+use Illuminate\Support\Facades\Log;
 
 class TelegramService
 {
@@ -22,36 +23,86 @@ class TelegramService
 
     public function getInfo(string $id): ?ChannelInfoDTO
     {
-        $data = $this->infoAction->execute(id: $id);
+        try {
+            $data = $this->infoAction->execute(id: $id);
+            if (!$this->isValidInfoResponse($data)) {
+                return null;
+            }
 
-        if (!$data) {
+            return new ChannelInfoDTO($data);
+        } catch (\Throwable $e) {
+            Log::warning('[TelegramService::getInfo] Failed to load channel info', [
+                'id' => $id,
+                'error' => $e->getMessage(),
+            ]);
             return null;
         }
-
-        return new ChannelInfoDTO($data);
     }
 
     public function getMessages(array $filter): ChannelMessagesDTO|null
     {
-        $dto = SearchMessagesDTO::fromArray(params: $filter);
-        $data = $this->messagesAction->execute(filter: $dto->toArray());
+        try {
+            $dto = SearchMessagesDTO::fromArray(params: $filter);
+            $data = $this->messagesAction->execute(filter: $dto->toArray());
 
-        if (!$data) {
+            if (!$this->isValidMessagesResponse($data)) {
+                return null;
+            }
+
+            return new ChannelMessagesDTO($data);
+        } catch (\Throwable $e) {
+            Log::warning('[TelegramService::getMessages] Failed to load messages', [
+                'filter' => $this->sanitizeFilterForLogs($filter),
+                'error' => $e->getMessage(),
+            ]);
             return null;
         }
-
-        return new ChannelMessagesDTO($data);
     }
 
     public function getParticipants(array $filter): ChannelParticipantsDTO|null
     {
-        $dto = SearchParticipantsDTO::fromArray(params: $filter);
-        $data = $this->participantsAction->execute(filter: $dto->toArray());
+        try {
+            $dto = SearchParticipantsDTO::fromArray(params: $filter);
+            $data = $this->participantsAction->execute(filter: $dto->toArray());
 
-        if (!$data) {
+            if (!$this->isValidParticipantsResponse($data)) {
+                return null;
+            }
+
+            return new ChannelParticipantsDTO($data);
+        } catch (\Throwable $e) {
+            Log::warning('[TelegramService::getParticipants] Failed to load participants', [
+                'filter' => $this->sanitizeFilterForLogs($filter),
+                'error' => $e->getMessage(),
+            ]);
             return null;
         }
+    }
 
-        return new ChannelParticipantsDTO($data);
+    private function isValidInfoResponse(?array $data): bool
+    {
+        return is_array($data) && !empty($data);
+    }
+
+    private function isValidMessagesResponse(?array $data): bool
+    {
+        return is_array($data) && isset($data['_']) && isset($data['messages']);
+    }
+
+    private function isValidParticipantsResponse(?array $data): bool
+    {
+        return is_array($data) && isset($data['_']) && isset($data['participants']);
+    }
+
+    private function sanitizeFilterForLogs(array $filter): array
+    {
+        $sensitiveKeys = ['api_hash', 'api_id', 'token', 'password', 'session', 'phone'];
+        foreach ($sensitiveKeys as $key) {
+            if (array_key_exists($key, $filter)) {
+                $filter[$key] = '[redacted]';
+            }
+        }
+
+        return $filter;
     }
 }

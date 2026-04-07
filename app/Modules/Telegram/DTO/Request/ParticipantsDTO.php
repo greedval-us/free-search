@@ -2,25 +2,26 @@
 
 namespace App\Modules\Telegram\DTO\Request;
 
-class ParticipantsDTO
+/**
+ * Backward-compatible alias for SearchParticipantsDTO.
+ *
+ * @deprecated Use SearchParticipantsDTO instead.
+ */
+class ParticipantsDTO extends SearchParticipantsDTO
 {
     public function __construct(
-        public string $chatUsername,
-        public string $filter,
-        public int $limit = 200,
-        public int $offset = 0,
-        public array $hash = []
+        string $chatUsername,
+        string $filter = 'channelParticipantsRecent',
+        int $limit = 200,
+        int $offset = 0,
+        array $hash = []
     ) {
-    }
-
-    public function toArray(): array
-    {
-        return [
-            'channel' => $this->chatUsername,
-            'filter' => ['_' => $this->filter],
-            'limit' => $this->limit,
-            'offset' => $this->offset,
-            'hash' => $this->hash,
-        ];
+        parent::__construct(
+            chatUsername: $chatUsername,
+            filter: $filter,
+            limit: $limit,
+            offset: $offset,
+            hash: $hash
+        );
     }
 }

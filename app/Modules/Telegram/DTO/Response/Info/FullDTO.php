@@ -30,19 +30,27 @@ class FullDTO
     public bool $paid_messages_available;
     public int $id;
     public string $about;
-    public int $participants_count;
-    public int $online_count;
-    public int $read_inbox_max_id;
-    public int $read_outbox_max_id;
-    public int $unread_count;
-    public ChatPhotoDTO $chat_photo;
-    public int $pinned_msg_id;
-    public int $linked_chat_id;
-    public int $pts;
-    public AvailableReactionsDTO $available_reactions;
-    public int $reactions_limit;
-    public int $stargifts_count;
+    public ?int $participants_count;
+    public ?int $online_count;
+    public ?int $read_inbox_max_id;
+    public ?int $read_outbox_max_id;
+    public ?int $unread_count;
+    public ?ChatPhotoDTO $chat_photo;
+    public ?int $pinned_msg_id;
+    public ?int $linked_chat_id;
+    public ?int $pts;
+    public ?AvailableReactionsDTO $available_reactions;
+    public ?int $reactions_limit;
+    public ?int $stargifts_count;
     public array $bot_info;
+    public ?int $slowmode_seconds = null;
+    public ?int $ttl_period = null;
+    public ?int $migrated_from_chat_id = null;
+    public ?int $migrated_from_max_id = null;
+    public mixed $exported_invite = null;
+    public mixed $notify_settings = null;
+    public mixed $stats_dc = null;
+    public array $raw = [];
 
     public function __construct(array $data)
     {
@@ -72,18 +80,28 @@ class FullDTO
         $this->paid_messages_available = $data['paid_messages_available'] ?? false;
         $this->id = $data['id'] ?? 0;
         $this->about = $data['about'] ?? '';
-        $this->participants_count = $data['participants_count'] ?? 0;
-        $this->online_count = $data['online_count'] ?? 0;
-        $this->read_inbox_max_id = $data['read_inbox_max_id'] ?? 0;
-        $this->read_outbox_max_id = $data['read_outbox_max_id'] ?? 0;
-        $this->unread_count = $data['unread_count'] ?? 0;
-        $this->chat_photo = new ChatPhotoDTO($data['chat_photo'] ?? null);
-        $this->pinned_msg_id = $data['pinned_msg_id'] ?? 0;
-        $this->linked_chat_id = $data['linked_chat_id'] ?? 0;
-        $this->pts = $data['pts'] ?? 0;
-        $this->available_reactions = new AvailableReactionsDTO($data['available_reactions'] ?? []);
-        $this->reactions_limit = $data['reactions_limit'] ?? 0;
-        $this->stargifts_count = $data['stargifts_count'] ?? 0;
+        $this->participants_count = isset($data['participants_count']) ? (int) $data['participants_count'] : null;
+        $this->online_count = isset($data['online_count']) ? (int) $data['online_count'] : null;
+        $this->read_inbox_max_id = isset($data['read_inbox_max_id']) ? (int) $data['read_inbox_max_id'] : null;
+        $this->read_outbox_max_id = isset($data['read_outbox_max_id']) ? (int) $data['read_outbox_max_id'] : null;
+        $this->unread_count = isset($data['unread_count']) ? (int) $data['unread_count'] : null;
+        $this->chat_photo = is_array($data['chat_photo'] ?? null) ? new ChatPhotoDTO($data['chat_photo']) : null;
+        $this->pinned_msg_id = isset($data['pinned_msg_id']) ? (int) $data['pinned_msg_id'] : null;
+        $this->linked_chat_id = isset($data['linked_chat_id']) ? (int) $data['linked_chat_id'] : null;
+        $this->pts = isset($data['pts']) ? (int) $data['pts'] : null;
+        $this->available_reactions = is_array($data['available_reactions'] ?? null)
+            ? new AvailableReactionsDTO($data['available_reactions'])
+            : null;
+        $this->reactions_limit = isset($data['reactions_limit']) ? (int) $data['reactions_limit'] : null;
+        $this->stargifts_count = isset($data['stargifts_count']) ? (int) $data['stargifts_count'] : null;
         $this->bot_info = $data['bot_info'] ?? [];
+        $this->slowmode_seconds = isset($data['slowmode_seconds']) ? (int) $data['slowmode_seconds'] : null;
+        $this->ttl_period = isset($data['ttl_period']) ? (int) $data['ttl_period'] : null;
+        $this->migrated_from_chat_id = isset($data['migrated_from_chat_id']) ? (int) $data['migrated_from_chat_id'] : null;
+        $this->migrated_from_max_id = isset($data['migrated_from_max_id']) ? (int) $data['migrated_from_max_id'] : null;
+        $this->exported_invite = $data['exported_invite'] ?? null;
+        $this->notify_settings = $data['notify_settings'] ?? null;
+        $this->stats_dc = $data['stats_dc'] ?? null;
+        $this->raw = $data;
     }
 }

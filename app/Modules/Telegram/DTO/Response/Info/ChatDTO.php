@@ -18,11 +18,17 @@ class ChatDTO
     public bool $has_link;
     public bool $has_geo;
     public bool $slowmode_enabled;
+    public bool $forum;
+    public bool $gigagroup;
     public int $id;
     public string $title;
-    public string $username;
-    public PhotoDTO $photo;
+    public ?string $username;
+    public ?PhotoDTO $photo;
     public int $date;
+    public ?string $about = null;
+    public ?int $participants_count = null;
+    public array $usernames = [];
+    public array $raw = [];
 
     public function __construct(array $data)
     {
@@ -40,10 +46,16 @@ class ChatDTO
         $this->has_link = $data['has_link'] ?? false;
         $this->has_geo = $data['has_geo'] ?? false;
         $this->slowmode_enabled = $data['slowmode_enabled'] ?? false;
+        $this->forum = $data['forum'] ?? false;
+        $this->gigagroup = $data['gigagroup'] ?? false;
         $this->id = $data['id'] ?? 0;
         $this->title = $data['title'] ?? '';
-        $this->username = $data['username'] ?? '';
-        $this->photo = new PhotoDTO($data['photo'] ?? null);
+        $this->username = $data['username'] ?? null;
+        $this->photo = is_array($data['photo'] ?? null) ? new PhotoDTO($data['photo']) : null;
         $this->date = $data['date'] ?? 0;
+        $this->about = $data['about'] ?? null;
+        $this->participants_count = isset($data['participants_count']) ? (int) $data['participants_count'] : null;
+        $this->usernames = is_array($data['usernames'] ?? null) ? $data['usernames'] : [];
+        $this->raw = $data;
     }
 }

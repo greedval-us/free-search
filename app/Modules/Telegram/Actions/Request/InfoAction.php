@@ -11,11 +11,13 @@ class InfoAction extends AbstractTelegramAction
     public function execute(string $id): ?array
     {
         try {
-            $response = $this->madeline()->getFullInfo(id: $id);
-            return $response;
-        } catch (\Exception $e) {
-            $this->logError($e, [$id]);
-            return ['error' => $e->getMessage()];
+            return $this->executeWithRetry(
+                callback: fn () => $this->madeline()->getFullInfo(id: $id),
+                context: ['id' => $id]
+            );
+        } catch (\Throwable $e) {
+            $this->logError($e, ['id' => $id]);
+            return null;
         }
     }
 }

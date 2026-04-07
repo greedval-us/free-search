@@ -9,11 +9,13 @@ class MessagesAction extends AbstractTelegramAction
     public function execute(array $filter): ?array
     {
         try {
-            $response = $this->madeline()->messages->search($filter);
-            return $response;
-        } catch (\Exception $e) {
+            return $this->executeWithRetry(
+                callback: fn () => $this->madeline()->messages->search($filter),
+                context: $filter
+            );
+        } catch (\Throwable $e) {
             $this->logError($e, $filter);
-            return ['error' => $e->getMessage()];
+            return null;
         }
     }
 }
