@@ -11,7 +11,8 @@ class CommentsAction extends AbstractTelegramAction
         array $postIds,
         int $delayMs = 500,
         int $commentsPerRequest = 100,
-        int $maxPages = 10
+        int $maxPages = 10,
+        int $offsetId = 0
     ): array {
         $results = [];
         $postIds = array_values(
@@ -39,17 +40,22 @@ class CommentsAction extends AbstractTelegramAction
                     usleep($delayMs * 1000);
                 }
 
-                $comments = $this->loadComments(
+                $commentsPage = $this->loadComments(
                     channelId: $channelId,
                     postId: $postId,
                     limit: $commentsPerRequest,
-                    maxPages: $maxPages
+                    maxPages: $maxPages,
+                    offsetId: $offsetId,
+                    delayMs: $delayMs,
                 );
 
                 $results[] = [
                     'post_id' => $postId,
                     'post' => $post,
-                    'comments' => $comments,
+                    'comments' => $commentsPage['messages'],
+                    'next_offset_id' => $commentsPage['next_offset_id'],
+                    'has_more' => $commentsPage['has_more'],
+                    'total' => $commentsPage['total'],
                 ];
             } catch (\Throwable $e) {
                 $this->logError($e, ['channel' => $channelId, 'post_id' => $postId]);
@@ -58,6 +64,9 @@ class CommentsAction extends AbstractTelegramAction
                     'post_id' => $postId,
                     'error' => $e->getMessage(),
                     'comments' => [],
+                    'next_offset_id' => null,
+                    'has_more' => false,
+                    'total' => 0,
                 ];
             }
         }
@@ -65,17 +74,26 @@ class CommentsAction extends AbstractTelegramAction
         return $results;
     }
 
-    private function loadComments(string $channelId, int $postId, int $limit, int $maxPages): array
+    private function loadComments(
+        string $channelId,
+        int $postId,
+        int $limit,
+        int $maxPages,
+        int $offsetId,
+        int $delayMs
+    ): array
     {
         $messages = [];
-        $offsetId = 0;
+        $nextOffsetId = $offsetId;
+        $hasMore = false;
+        $total = 0;
 
         for ($page = 1; $page <= $maxPages; $page++) {
             $response = $this->executeWithRetry(
                 callback: fn () => $this->madeline()->messages->getReplies([
                     'peer' => $channelId,
                     'msg_id' => $postId,
-                    'offset_id' => $offsetId,
+                    'offset_id' => $nextOffsetId,
                     'offset_date' => 0,
                     'add_offset' => 0,
                     'limit' => $limit,
@@ -87,6 +105,8 @@ class CommentsAction extends AbstractTelegramAction
             );
 
             $batch = $response['messages'] ?? [];
+            $total = (int) ($response['count'] ?? $total);
+
             if (empty($batch)) {
                 break;
             }
@@ -96,17 +116,28 @@ class CommentsAction extends AbstractTelegramAction
             }
 
             $lastMessage = end($batch);
-            $offsetId = (int) (
+            $nextOffsetId = (int) (
                 is_array($lastMessage)
                     ? ($lastMessage['id'] ?? 0)
                     : ($lastMessage->id ?? 0)
             );
 
-            if (count($batch) < $limit || $offsetId <= 0) {
+            $hasMore = count($batch) >= $limit && $nextOffsetId > 0;
+
+            if (!$hasMore || $page >= $maxPages) {
                 break;
+            }
+
+            if ($delayMs > 0) {
+                usleep($delayMs * 1000);
             }
         }
 
-        return $messages;
+        return [
+            'messages' => $messages,
+            'next_offset_id' => $hasMore ? $nextOffsetId : null,
+            'has_more' => $hasMore,
+            'total' => $total,
+        ];
     }
 }

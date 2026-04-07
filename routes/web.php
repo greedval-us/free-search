@@ -12,6 +12,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::inertia('dashboard', 'Dashboard')->name('dashboard');
     Route::inertia('telegram', 'Telegram')->name('telegram');
     Route::get('telegram/search/messages', [TelegramSearchController::class, 'messages'])->name('telegram.search.messages');
+    Route::get('telegram/search/comments', [TelegramSearchController::class, 'comments'])->name('telegram.search.comments');
 });
 
 require __DIR__.'/settings.php';

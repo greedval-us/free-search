@@ -32,10 +32,7 @@ class TelegramSearchController extends Controller
         $offsetId = (int) ($validated['offsetId'] ?? 0);
         $chatUsername = ltrim(trim((string) $validated['chatUsername']), '@');
 
-        if (
-            isset($validated['dateFrom'], $validated['dateTo'])
-            && $validated['dateFrom'] > $validated['dateTo']
-        ) {
+        if (isset($validated['dateFrom'], $validated['dateTo']) && $validated['dateFrom'] > $validated['dateTo']) {
             return $this->errorResponse(
                 'Дата "с" должна быть меньше или равна дате "по".',
                 $limit,
@@ -67,6 +64,55 @@ class TelegramSearchController extends Controller
                 'nextOffsetId' => $nextOffsetId,
                 'hasMore' => $nextOffsetId !== null && count($items) >= $limit,
                 'total' => $dto->count,
+            ],
+        ]);
+    }
+
+    public function comments(Request $request): JsonResponse
+    {
+        $validated = $request->validate([
+            'chatUsername' => ['required', 'string', 'max:255'],
+            'postId' => ['required', 'integer', 'min:1'],
+            'limit' => ['nullable', 'integer', 'min:1', 'max:50'],
+            'offsetId' => ['nullable', 'integer', 'min:0'],
+        ]);
+
+        $chatUsername = ltrim(trim((string) $validated['chatUsername']), '@');
+        $postId = (int) $validated['postId'];
+        $limit = (int) ($validated['limit'] ?? 20);
+        $offsetId = (int) ($validated['offsetId'] ?? 0);
+
+        $commentsPage = $this->telegramService->getComments($chatUsername, $postId, $limit, $offsetId);
+        $items = [];
+
+        foreach (($commentsPage['items'] ?? []) as $comment) {
+            if (!is_array($comment)) {
+                continue;
+            }
+
+            $id = (int) ($comment['id'] ?? 0);
+
+            if ($id <= 0) {
+                continue;
+            }
+
+            $items[] = [
+                'id' => $id,
+                'date' => (int) ($comment['date'] ?? 0),
+                'message' => (string) ($comment['message'] ?? ''),
+                'authorId' => $this->extractRawAuthorId($comment),
+            ];
+        }
+
+        return response()->json([
+            'ok' => true,
+            'items' => $items,
+            'pagination' => [
+                'limit' => $limit,
+                'offsetId' => $offsetId,
+                'nextOffsetId' => $commentsPage['nextOffsetId'] ?? null,
+                'hasMore' => (bool) ($commentsPage['hasMore'] ?? false),
+                'total' => (int) ($commentsPage['total'] ?? count($items)),
             ],
         ]);
     }
@@ -114,5 +160,26 @@ class TelegramSearchController extends Controller
                 'total' => 0,
             ],
         ], $status);
+    }
+
+    private function extractRawAuthorId(array $message): ?int
+    {
+        $from = is_array($message['from_id'] ?? null) ? $message['from_id'] : null;
+
+        if (is_array($from)) {
+            foreach (['user_id', 'channel_id', 'chat_id'] as $key) {
+                if (isset($from[$key])) {
+                    return (int) $from[$key];
+                }
+            }
+        }
+
+        if (isset($message['from_id']) && is_numeric((string) $message['from_id'])) {
+            $fallback = (int) $message['from_id'];
+
+            return $fallback > 0 ? $fallback : null;
+        }
+
+        return null;
     }
 }

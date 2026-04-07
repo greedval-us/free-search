@@ -77,8 +77,87 @@ messages.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
         })
     
     messages.form = messagesForm
+/**
+* @see \App\Http\Controllers\TelegramSearchController::comments
+ * @see app/Http/Controllers/TelegramSearchController.php:71
+ * @route '/telegram/search/comments'
+ */
+export const comments = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+    url: comments.url(options),
+    method: 'get',
+})
+
+comments.definition = {
+    methods: ["get","head"],
+    url: '/telegram/search/comments',
+} satisfies RouteDefinition<["get","head"]>
+
+/**
+* @see \App\Http\Controllers\TelegramSearchController::comments
+ * @see app/Http/Controllers/TelegramSearchController.php:71
+ * @route '/telegram/search/comments'
+ */
+comments.url = (options?: RouteQueryOptions) => {
+    return comments.definition.url + queryParams(options)
+}
+
+/**
+* @see \App\Http\Controllers\TelegramSearchController::comments
+ * @see app/Http/Controllers/TelegramSearchController.php:71
+ * @route '/telegram/search/comments'
+ */
+comments.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+    url: comments.url(options),
+    method: 'get',
+})
+/**
+* @see \App\Http\Controllers\TelegramSearchController::comments
+ * @see app/Http/Controllers/TelegramSearchController.php:71
+ * @route '/telegram/search/comments'
+ */
+comments.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
+    url: comments.url(options),
+    method: 'head',
+})
+
+    /**
+* @see \App\Http\Controllers\TelegramSearchController::comments
+ * @see app/Http/Controllers/TelegramSearchController.php:71
+ * @route '/telegram/search/comments'
+ */
+    const commentsForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+        action: comments.url(options),
+        method: 'get',
+    })
+
+            /**
+* @see \App\Http\Controllers\TelegramSearchController::comments
+ * @see app/Http/Controllers/TelegramSearchController.php:71
+ * @route '/telegram/search/comments'
+ */
+        commentsForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+            action: comments.url(options),
+            method: 'get',
+        })
+            /**
+* @see \App\Http\Controllers\TelegramSearchController::comments
+ * @see app/Http/Controllers/TelegramSearchController.php:71
+ * @route '/telegram/search/comments'
+ */
+        commentsForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+            action: comments.url({
+                        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
+                            _method: 'HEAD',
+                            ...(options?.query ?? options?.mergeQuery ?? {}),
+                        }
+                    }),
+            method: 'get',
+        })
+    
+    comments.form = commentsForm
 const search = {
     messages: Object.assign(messages, messages),
+comments: Object.assign(comments, comments),
 }
 
 export default search
