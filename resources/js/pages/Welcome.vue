@@ -13,7 +13,7 @@ withDefaults(
     },
 );
 
-const { t } = useI18n();
+const { t, locale, setLocale } = useI18n();
 
 const pageTitle = computed(() => t('welcome.headTitle'));
 
@@ -31,6 +31,10 @@ const features = computed(() => [
         text: t('welcome.features.dashboardsText'),
     },
 ]);
+
+const toggleLocale = () => {
+    setLocale(locale.value === 'ru' ? 'en' : 'ru');
+};
 </script>
 
 <template>
@@ -52,6 +56,14 @@ const features = computed(() => [
                 </div>
 
                 <nav class="flex items-center gap-3">
+                    <button
+                        type="button"
+                        class="rounded-lg border border-slate-700 bg-slate-900/70 px-3 py-2 text-sm font-medium text-slate-100 transition hover:border-cyan-300/40 hover:text-cyan-100"
+                        @click="toggleLocale"
+                    >
+                        {{ locale.toUpperCase() }}
+                    </button>
+
                     <Link
                         v-if="$page.props.auth.user"
                         :href="dashboard()"

@@ -9,24 +9,25 @@ import {
     InputOTPGroup,
     InputOTPSlot,
 } from '@/components/ui/input-otp';
+import { useI18n } from '@/composables/useI18n';
 import { store } from '@/routes/two-factor/login';
 import type { TwoFactorConfigContent } from '@/types';
+
+const { t } = useI18n();
 
 const authConfigContent = computed<TwoFactorConfigContent>(() => {
     if (showRecoveryInput.value) {
         return {
-            title: 'Recovery code',
-            description:
-                'Please confirm access to your account by entering one of your emergency recovery codes.',
-            buttonText: 'login using an authentication code',
+            title: t('auth.twoFactor.recoveryCode.title'),
+            description: t('auth.twoFactor.recoveryCode.description'),
+            buttonText: t('auth.twoFactor.recoveryCode.buttonText'),
         };
     }
 
     return {
-        title: 'Authentication code',
-        description:
-            'Enter the authentication code provided by your authenticator application.',
-        buttonText: 'login using a recovery code',
+        title: t('auth.twoFactor.authCode.title'),
+        description: t('auth.twoFactor.authCode.description'),
+        buttonText: t('auth.twoFactor.authCode.buttonText'),
     };
 });
 
@@ -84,7 +85,7 @@ const code = ref<string>('');
                     <InputError :message="errors.code" />
                 </div>
                 <Button type="submit" class="w-full" :disabled="processing"
-                    >Continue</Button
+                    >{{ t('auth.twoFactor.authCode.submit') }}</Button
                 >
                 <div class="text-center text-sm text-muted-foreground">
                     <span>or you can </span>
@@ -109,13 +110,13 @@ const code = ref<string>('');
                 <Input
                     name="recovery_code"
                     type="text"
-                    placeholder="Enter recovery code"
+                    :placeholder="t('auth.twoFactor.recoveryCode.placeholder')"
                     :autofocus="showRecoveryInput"
                     required
                 />
                 <InputError :message="errors.recovery_code" />
                 <Button type="submit" class="w-full" :disabled="processing"
-                    >Continue</Button
+                    >{{ t('auth.twoFactor.recoveryCode.submit') }}</Button
                 >
 
                 <div class="text-center text-sm text-muted-foreground">

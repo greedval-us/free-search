@@ -167,5 +167,82 @@
       "dashboardsTitle": "Практичные дашборды",
       "dashboardsText": "Фокусируйтесь на ключевых метриках и быстро переходите от гипотез к проверке."
     }
+  },
+  "auth": {
+    "login": {
+      "title": "Вход",
+      "description": "Используйте аккаунт для доступа к панели аналитики Telegram",
+      "email": "Email",
+      "emailPlaceholder": "email@example.com",
+      "password": "Пароль",
+      "passwordPlaceholder": "Введите пароль",
+      "remember": "Запомнить меня",
+      "forgotPassword": "Забыли пароль?",
+      "submit": "Войти",
+      "noAccount": "Нет аккаунта?",
+      "createOne": "Создайте"
+    },
+    "register": {
+      "title": "Создать аккаунт",
+      "description": "Зарегистрируйтесь для начала мониторинга и аналитики",
+      "name": "Имя",
+      "namePlaceholder": "Полное имя",
+      "email": "Email",
+      "emailPlaceholder": "email@example.com",
+      "password": "Пароль",
+      "passwordPlaceholder": "Придумайте пароль",
+      "confirmPassword": "Подтвердите пароль",
+      "submit": "Создать аккаунт",
+      "hasAccount": "Уже есть аккаунт?",
+      "signIn": "Войти"
+    },
+    "forgotPassword": {
+      "title": "Восстановление пароля",
+      "description": "Введите email, и мы отправим ссылку для сброса",
+      "email": "Email",
+      "emailPlaceholder": "email@example.com",
+      "submit": "Отправить ссылку",
+      "backTo": "Или вернуться к",
+      "signIn": "входу"
+    },
+    "resetPassword": {
+      "title": "Сброс пароля",
+      "description": "Пожалуйста, введите новый пароль ниже",
+      "email": "Email",
+      "password": "Пароль",
+      "passwordPlaceholder": "Пароль",
+      "confirmPassword": "Подтвердите пароль",
+      "confirmPasswordPlaceholder": "Подтвердите пароль",
+      "submit": "Сбросить пароль"
+    },
+    "confirmPassword": {
+      "title": "Подтвердите пароль",
+      "description": "Это защищённая область приложения. Пожалуйста, подтвердите пароль перед продолжением.",
+      "password": "Пароль",
+      "submit": "Подтвердить пароль"
+    },
+    "verifyEmail": {
+      "title": "Подтверждение email",
+      "description": "Пожалуйста, подтвердите адрес электронной почты, перейдя по ссылке, которую мы вам отправили.",
+      "statusMessage": "Новая ссылка для подтверждения была отправлена на email, указанный при регистрации.",
+      "submit": "Повторно отправить письмо",
+      "logout": "Выйти"
+    },
+    "twoFactor": {
+      "title": "Двухфакторная аутентификация",
+      "authCode": {
+        "title": "Код аутентификации",
+        "description": "Введите код аутентификации из приложения-аутентификатора.",
+        "buttonText": "войти с помощью кода восстановления",
+        "submit": "Продолжить"
+      },
+      "recoveryCode": {
+        "title": "Код восстановления",
+        "description": "Подтвердите доступ к аккаунту, введя один из аварийных кодов восстановления.",
+        "buttonText": "войти с помощью кода аутентификации",
+        "submit": "Продолжить",
+        "placeholder": "Введите код восстановления"
+      }
+    }
   }
 }

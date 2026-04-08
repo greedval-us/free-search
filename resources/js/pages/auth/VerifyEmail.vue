@@ -3,8 +3,11 @@ import { Form, Head } from '@inertiajs/vue3';
 import TextLink from '@/components/TextLink.vue';
 import { Button } from '@/components/ui/button';
 import { Spinner } from '@/components/ui/spinner';
+import { useI18n } from '@/composables/useI18n';
 import { logout } from '@/routes';
 import { send } from '@/routes/verification';
+
+const { t } = useI18n();
 
 defineOptions({
     layout: {
@@ -20,14 +23,13 @@ defineProps<{
 </script>
 
 <template>
-    <Head title="Email verification" />
+    <Head :title="t('auth.verifyEmail.title')" />
 
     <div
         v-if="status === 'verification-link-sent'"
         class="mb-4 text-center text-sm font-medium text-green-600"
     >
-        A new verification link has been sent to the email address you provided
-        during registration.
+        {{ t('auth.verifyEmail.statusMessage') }}
     </div>
 
     <Form
@@ -37,11 +39,11 @@ defineProps<{
     >
         <Button :disabled="processing" variant="secondary">
             <Spinner v-if="processing" />
-            Resend verification email
+            {{ t('auth.verifyEmail.submit') }}
         </Button>
 
         <TextLink :href="logout()" as="button" class="mx-auto block text-sm">
-            Log out
+            {{ t('auth.verifyEmail.logout') }}
         </TextLink>
     </Form>
 </template>

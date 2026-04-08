@@ -1,7 +1,10 @@
 ﻿<script setup lang="ts">
 import { Link } from '@inertiajs/vue3';
+import { useI18n } from '@/composables/useI18n';
 import AppLogoIcon from '@/components/AppLogoIcon.vue';
 import { home } from '@/routes';
+
+const { locale, setLocale } = useI18n();
 
 defineProps<{
     title?: string;
@@ -32,7 +35,15 @@ defineProps<{
                     </p>
                 </section>
 
-                <section class="rounded-3xl border border-slate-800/90 bg-slate-900/75 p-6 shadow-2xl backdrop-blur sm:p-8">
+                <section class="relative rounded-3xl border border-slate-800/90 bg-slate-900/75 p-6 shadow-2xl backdrop-blur sm:p-8">
+                    <button
+                        type="button"
+                        class="absolute right-4 top-4 rounded-lg border border-slate-700 bg-slate-800/80 px-2.5 py-1.5 text-xs font-medium text-slate-200 transition hover:border-cyan-300/40 hover:text-cyan-100"
+                        @click="setLocale(locale === 'ru' ? 'en' : 'ru')"
+                    >
+                        {{ locale.toUpperCase() }}
+                    </button>
+
                     <div class="flex flex-col gap-7">
                         <div class="flex flex-col items-center gap-4 text-center">
                             <Link :href="home()" class="flex items-center gap-2 font-medium text-cyan-100">

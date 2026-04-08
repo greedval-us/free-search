@@ -5,7 +5,10 @@ import PasswordInput from '@/components/PasswordInput.vue';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { Spinner } from '@/components/ui/spinner';
+import { useI18n } from '@/composables/useI18n';
 import { store } from '@/routes/password/confirm';
+
+const { t } = useI18n();
 
 defineOptions({
     layout: {
@@ -17,7 +20,7 @@ defineOptions({
 </script>
 
 <template>
-    <Head title="Confirm password" />
+    <Head :title="t('auth.confirmPassword.title')" />
 
     <Form
         v-bind="store.form()"
@@ -26,7 +29,7 @@ defineOptions({
     >
         <div class="space-y-6">
             <div class="grid gap-2">
-                <Label htmlFor="password">Password</Label>
+                <Label htmlFor="password">{{ t('auth.confirmPassword.password') }}</Label>
                 <PasswordInput
                     id="password"
                     name="password"
@@ -46,7 +49,7 @@ defineOptions({
                     data-test="confirm-password-button"
                 >
                     <Spinner v-if="processing" />
-                    Confirm password
+                    {{ t('auth.confirmPassword.submit') }}
                 </Button>
             </div>
         </div>

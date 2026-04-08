@@ -7,8 +7,11 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Spinner } from '@/components/ui/spinner';
+import { useI18n } from '@/composables/useI18n';
 import { login } from '@/routes';
 import { store } from '@/routes/register';
+
+const { t } = useI18n();
 
 defineOptions({
     layout: {
@@ -19,7 +22,7 @@ defineOptions({
 </script>
 
 <template>
-    <Head title="Register" />
+    <Head :title="t('auth.register.title')" />
 
     <Form
         v-bind="store.form()"
@@ -29,7 +32,7 @@ defineOptions({
     >
         <div class="grid gap-6">
             <div class="grid gap-2">
-                <Label for="name" class="text-slate-200">Name</Label>
+                <Label for="name" class="text-slate-200">{{ t('auth.register.name') }}</Label>
                 <Input
                     id="name"
                     type="text"
@@ -38,14 +41,14 @@ defineOptions({
                     :tabindex="1"
                     autocomplete="name"
                     name="name"
-                    placeholder="Full name"
+                    :placeholder="t('auth.register.namePlaceholder')"
                     class="border-slate-700 bg-slate-900/80 text-slate-100 placeholder:text-slate-400"
                 />
                 <InputError :message="errors.name" />
             </div>
 
             <div class="grid gap-2">
-                <Label for="email" class="text-slate-200">Email</Label>
+                <Label for="email" class="text-slate-200">{{ t('auth.register.email') }}</Label>
                 <Input
                     id="email"
                     type="email"
@@ -53,35 +56,35 @@ defineOptions({
                     :tabindex="2"
                     autocomplete="email"
                     name="email"
-                    placeholder="email@example.com"
+                    :placeholder="t('auth.register.emailPlaceholder')"
                     class="border-slate-700 bg-slate-900/80 text-slate-100 placeholder:text-slate-400"
                 />
                 <InputError :message="errors.email" />
             </div>
 
             <div class="grid gap-2">
-                <Label for="password" class="text-slate-200">Password</Label>
+                <Label for="password" class="text-slate-200">{{ t('auth.register.password') }}</Label>
                 <PasswordInput
                     id="password"
                     required
                     :tabindex="3"
                     autocomplete="new-password"
                     name="password"
-                    placeholder="Create password"
+                    :placeholder="t('auth.register.passwordPlaceholder')"
                     class="border-slate-700 bg-slate-900/80 text-slate-100 placeholder:text-slate-400"
                 />
                 <InputError :message="errors.password" />
             </div>
 
             <div class="grid gap-2">
-                <Label for="password_confirmation" class="text-slate-200">Confirm password</Label>
+                <Label for="password_confirmation" class="text-slate-200">{{ t('auth.register.confirmPassword') }}</Label>
                 <PasswordInput
                     id="password_confirmation"
                     required
                     :tabindex="4"
                     autocomplete="new-password"
                     name="password_confirmation"
-                    placeholder="Confirm password"
+                    :placeholder="t('auth.register.confirmPassword')"
                     class="border-slate-700 bg-slate-900/80 text-slate-100 placeholder:text-slate-400"
                 />
                 <InputError :message="errors.password_confirmation" />
@@ -95,17 +98,17 @@ defineOptions({
                 data-test="register-user-button"
             >
                 <Spinner v-if="processing" />
-                Create account
+                {{ t('auth.register.submit') }}
             </Button>
         </div>
 
         <div class="text-center text-sm text-slate-300">
-            Already have an account?
+            {{ t('auth.register.hasAccount') }}
             <TextLink
                 :href="login()"
                 class="text-cyan-300 underline underline-offset-4 hover:text-cyan-200"
                 :tabindex="6"
-                >Sign in</TextLink
+                >{{ t('auth.register.signIn') }}</TextLink
             >
         </div>
     </Form>

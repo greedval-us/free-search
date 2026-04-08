@@ -167,5 +167,82 @@
       "dashboardsTitle": "Actionable dashboards",
       "dashboardsText": "Focus on key metrics and quickly move from hypotheses to validation."
     }
+  },
+  "auth": {
+    "login": {
+      "title": "Sign in",
+      "description": "Use your account to access Telegram analytics dashboard",
+      "email": "Email",
+      "emailPlaceholder": "email@example.com",
+      "password": "Password",
+      "passwordPlaceholder": "Enter password",
+      "remember": "Remember me",
+      "forgotPassword": "Forgot password?",
+      "submit": "Sign in",
+      "noAccount": "No account yet?",
+      "createOne": "Create one"
+    },
+    "register": {
+      "title": "Create account",
+      "description": "Register to start monitoring and analytics workflows",
+      "name": "Name",
+      "namePlaceholder": "Full name",
+      "email": "Email",
+      "emailPlaceholder": "email@example.com",
+      "password": "Password",
+      "passwordPlaceholder": "Create password",
+      "confirmPassword": "Confirm password",
+      "submit": "Create account",
+      "hasAccount": "Already have an account?",
+      "signIn": "Sign in"
+    },
+    "forgotPassword": {
+      "title": "Password recovery",
+      "description": "Enter your email and we will send a reset link",
+      "email": "Email",
+      "emailPlaceholder": "email@example.com",
+      "submit": "Send reset link",
+      "backTo": "Or return to",
+      "signIn": "sign in"
+    },
+    "resetPassword": {
+      "title": "Reset password",
+      "description": "Please enter your new password below",
+      "email": "Email",
+      "password": "Password",
+      "passwordPlaceholder": "Password",
+      "confirmPassword": "Confirm password",
+      "confirmPasswordPlaceholder": "Confirm password",
+      "submit": "Reset password"
+    },
+    "confirmPassword": {
+      "title": "Confirm your password",
+      "description": "This is a secure area of the application. Please confirm your password before continuing.",
+      "password": "Password",
+      "submit": "Confirm password"
+    },
+    "verifyEmail": {
+      "title": "Verify email",
+      "description": "Please verify your email address by clicking on the link we just emailed to you.",
+      "statusMessage": "A new verification link has been sent to the email address you provided during registration.",
+      "submit": "Resend verification email",
+      "logout": "Log out"
+    },
+    "twoFactor": {
+      "title": "Two-factor authentication",
+      "authCode": {
+        "title": "Authentication code",
+        "description": "Enter the authentication code provided by your authenticator application.",
+        "buttonText": "login using a recovery code",
+        "submit": "Continue"
+      },
+      "recoveryCode": {
+        "title": "Recovery code",
+        "description": "Please confirm access to your account by entering one of your emergency recovery codes.",
+        "buttonText": "login using an authentication code",
+        "submit": "Continue",
+        "placeholder": "Enter recovery code"
+      }
+    }
   }
 }

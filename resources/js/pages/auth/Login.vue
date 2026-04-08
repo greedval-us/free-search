@@ -8,9 +8,12 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Spinner } from '@/components/ui/spinner';
+import { useI18n } from '@/composables/useI18n';
 import { register } from '@/routes';
 import { store } from '@/routes/login';
 import { request } from '@/routes/password';
+
+const { t } = useI18n();
 
 defineOptions({
     layout: {
@@ -27,7 +30,7 @@ defineProps<{
 </script>
 
 <template>
-    <Head title="Sign in" />
+    <Head :title="t('auth.login.title')" />
 
     <div
         v-if="status"
@@ -44,7 +47,7 @@ defineProps<{
     >
         <div class="grid gap-6">
             <div class="grid gap-2">
-                <Label for="email" class="text-slate-200">Email</Label>
+                <Label for="email" class="text-slate-200">{{ t('auth.login.email') }}</Label>
                 <Input
                     id="email"
                     type="email"
@@ -53,7 +56,7 @@ defineProps<{
                     autofocus
                     :tabindex="1"
                     autocomplete="email"
-                    placeholder="email@example.com"
+                    :placeholder="t('auth.login.emailPlaceholder')"
                     class="border-slate-700 bg-slate-900/80 text-slate-100 placeholder:text-slate-400"
                 />
                 <InputError :message="errors.email" />
@@ -61,14 +64,14 @@ defineProps<{
 
             <div class="grid gap-2">
                 <div class="flex items-center justify-between">
-                    <Label for="password" class="text-slate-200">Password</Label>
+                    <Label for="password" class="text-slate-200">{{ t('auth.login.password') }}</Label>
                     <TextLink
                         v-if="canResetPassword"
                         :href="request()"
                         class="text-sm text-cyan-300 hover:text-cyan-200"
                         :tabindex="5"
                     >
-                        Forgot password?
+                        {{ t('auth.login.forgotPassword') }}
                     </TextLink>
                 </div>
                 <PasswordInput
@@ -77,7 +80,7 @@ defineProps<{
                     required
                     :tabindex="2"
                     autocomplete="current-password"
-                    placeholder="Enter password"
+                    :placeholder="t('auth.login.passwordPlaceholder')"
                     class="border-slate-700 bg-slate-900/80 text-slate-100 placeholder:text-slate-400"
                 />
                 <InputError :message="errors.password" />
@@ -86,7 +89,7 @@ defineProps<{
             <div class="flex items-center justify-between">
                 <Label for="remember" class="flex items-center space-x-3 text-slate-300">
                     <Checkbox id="remember" name="remember" :tabindex="3" />
-                    <span>Remember me</span>
+                    <span>{{ t('auth.login.remember') }}</span>
                 </Label>
             </div>
 
@@ -98,7 +101,7 @@ defineProps<{
                 data-test="login-button"
             >
                 <Spinner v-if="processing" />
-                Sign in
+                {{ t('auth.login.submit') }}
             </Button>
         </div>
 
@@ -106,8 +109,8 @@ defineProps<{
             class="text-center text-sm text-slate-300"
             v-if="canRegister"
         >
-            No account yet?
-            <TextLink :href="register()" :tabindex="5" class="text-cyan-300 hover:text-cyan-200">Create one</TextLink>
+            {{ t('auth.login.noAccount') }}
+            <TextLink :href="register()" :tabindex="5" class="text-cyan-300 hover:text-cyan-200">{{ t('auth.login.createOne') }}</TextLink>
         </div>
     </Form>
 </template>
