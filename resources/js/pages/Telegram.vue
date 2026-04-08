@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { Head } from '@inertiajs/vue3';
+import { Settings } from 'lucide-vue-next';
 import { computed, nextTick, reactive, ref } from 'vue';
 import { useI18n } from '@/composables/useI18n';
 
@@ -165,8 +166,6 @@ const mediaLabel = (type: string) => {
 
 const getMediaUrl = (postId: number) =>
     `/telegram/media/${encodeURIComponent(form.chatUsername.trim().replace(/^@+/, ''))}/${postId}`;
-
-const canPreviewInlineMedia = (type: string) => ['photo', 'video', 'audio'].includes(type);
 
 const isMediaOpen = (postId: number) => Boolean(mediaOpenByPost.value[postId]);
 
@@ -457,10 +456,11 @@ const commentsToggleLabel = (postId: number, repliesCount: number | null) => {
                     <button
                         type="button"
                         :aria-label="showAdvanced ? t('telegram.search.advancedAriaHide') : t('telegram.search.advancedAriaShow')"
-                        class="inline-flex h-10 w-10 cursor-pointer items-center justify-center rounded-md border border-input text-lg font-medium text-foreground hover:bg-accent"
+                        class="inline-flex h-10 w-10 cursor-pointer items-center justify-center rounded-md border border-slate-700 bg-slate-900/80 text-slate-200 transition hover:border-cyan-300/40 hover:text-cyan-100"
+                        :class="{ 'border-cyan-400/50 bg-cyan-400/20 text-cyan-300': showAdvanced }"
                         @click="showAdvanced = !showAdvanced"
                     >
-                        &#9881;
+                        <Settings class="h-4 w-4" />
                     </button>
 
                     <button
