@@ -84,6 +84,14 @@
       "searchFailed": "Search request failed.",
       "unknownSearchError": "Unknown search error.",
       "commentsFailed": "Failed to load comments."
+    },
+    "tabs": {
+      "search": "Search",
+      "analytics": "Analytics"
+    },
+    "analytics": {
+      "comingSoon": "Analytics Coming Soon",
+      "description": "This section will contain analytical dashboards and insights."
     }
   },
   "common": {

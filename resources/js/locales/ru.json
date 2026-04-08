@@ -84,6 +84,14 @@
       "searchFailed": "Ошибка запроса поиска.",
       "unknownSearchError": "Неизвестная ошибка поиска.",
       "commentsFailed": "Не удалось загрузить комментарии."
+    },
+    "tabs": {
+      "search": "Поиск",
+      "analytics": "Аналитика"
+    },
+    "analytics": {
+      "comingSoon": "Аналитика скоро появится",
+      "description": "Этот раздел будет содержать аналитические дашборды и insights."
     }
   },
   "common": {

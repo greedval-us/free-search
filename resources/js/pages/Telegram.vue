@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { Head } from '@inertiajs/vue3';
-import { Settings } from 'lucide-vue-next';
+import { BarChart3, Search, Settings } from 'lucide-vue-next';
 import { computed, nextTick, reactive, ref } from 'vue';
 import { useI18n } from '@/composables/useI18n';
 
@@ -114,6 +114,15 @@ const loadedCount = computed(() => items.value.length);
 const pageTitle = computed(() => t('telegram.headTitle'));
 const LIMIT_MIN = 1;
 const LIMIT_MAX = 50;
+
+type TabValue = 'search' | 'analytics';
+
+const activeTab = ref<TabValue>('search');
+
+const tabs = [
+    { value: 'search' as const, Icon: Search, label: t('telegram.tabs.search') },
+    { value: 'analytics' as const, Icon: BarChart3, label: t('telegram.tabs.analytics') },
+];
 
 const clampLimit = () => {
     const value = Number(form.limit);
@@ -401,7 +410,28 @@ const commentsToggleLabel = (postId: number, repliesCount: number | null) => {
     <Head :title="pageTitle" />
 
     <div class="flex h-full min-h-0 flex-1 flex-col gap-4 overflow-hidden rounded-xl p-4">
-        <section class="sticky top-0 z-10 shrink-0 rounded-xl border border-sidebar-border/80 bg-card/70 p-4 shadow-xl backdrop-blur">
+        <!-- Tabs -->
+        <div class="flex items-center justify-center gap-1 rounded-lg bg-slate-800/80 p-1">
+            <button
+                v-for="{ value, Icon, label } in tabs"
+                :key="value"
+                type="button"
+                @click="activeTab = value"
+                :class="[
+                    'flex items-center rounded-md px-3 py-1.5 text-xs font-medium transition-all',
+                    activeTab === value
+                        ? 'bg-slate-700/80 text-cyan-300 shadow-sm'
+                        : 'text-slate-400 hover:bg-slate-700/50 hover:text-slate-200',
+                ]"
+            >
+                <component :is="Icon" class="mr-1.5 h-3.5 w-3.5" />
+                {{ label }}
+            </button>
+        </div>
+
+        <!-- Search Tab Content -->
+        <template v-if="activeTab === 'search'">
+            <section class="sticky top-0 z-10 shrink-0 rounded-xl border border-sidebar-border/80 bg-card/70 p-4 shadow-xl backdrop-blur">
             <div class="flex items-center justify-between gap-3">
                 <div>
                     <h2 class="text-sm font-semibold">{{ t('telegram.search.title') }}</h2>
@@ -786,5 +816,17 @@ const commentsToggleLabel = (postId: number, repliesCount: number | null) => {
                 </button>
             </div>
         </section>
+        </template>
+
+        <!-- Analytics Tab Content -->
+        <template v-if="activeTab === 'analytics'">
+            <section class="flex min-h-0 flex-1 flex-col items-center justify-center rounded-xl border border-sidebar-border/80 bg-card/70 p-4 shadow-xl backdrop-blur">
+                <div class="text-center">
+                    <BarChart3 class="mx-auto mb-4 h-12 w-12 text-muted-foreground" />
+                    <h3 class="text-lg font-semibold">{{ t('telegram.analytics.comingSoon') }}</h3>
+                    <p class="mt-2 text-sm text-muted-foreground">{{ t('telegram.analytics.description') }}</p>
+                </div>
+            </section>
+        </template>
     </div>
 </template>
