@@ -444,10 +444,11 @@ const toggleComments = async (postId: number) => {
                 <div class="flex w-full flex-wrap gap-2 lg:w-auto">
                     <button
                         type="button"
-                        class="h-10 cursor-pointer rounded-md border border-input px-4 text-sm font-medium text-foreground hover:bg-accent"
+                        :aria-label="showAdvanced ? 'Скрыть дополнительные фильтры' : 'Показать дополнительные фильтры'"
+                        class="inline-flex h-10 w-10 cursor-pointer items-center justify-center rounded-md border border-input text-lg font-medium text-foreground hover:bg-accent"
                         @click="showAdvanced = !showAdvanced"
                     >
-                        {{ showAdvanced ? 'Скрыть фильтры' : 'Доп. фильтры' }}
+                        &#9881;
                     </button>
 
                     <button

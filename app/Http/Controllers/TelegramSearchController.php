@@ -29,13 +29,13 @@ class TelegramSearchController extends Controller
         $chatUsername = $request->chatUsername();
         $dto = $this->telegramService->getMessages($request->telegramFilter());
 
-        if ($dto === null) {
-            return $this->errorResponse(
-                'РќРµ СѓРґР°Р»РѕСЃСЊ Р·Р°РіСЂСѓР·РёС‚СЊ СЃРѕРѕР±С‰РµРЅРёСЏ РїРѕ С‚РµРєСѓС‰РµРјСѓ Р·Р°РїСЂРѕСЃСѓ.',
-                $limit,
-                $offsetId
-            );
-        }
+            if ($dto === null) {
+                return $this->errorResponse(
+                    'Не удалось загрузить сообщения по текущему запросу.',
+                    $limit,
+                    $offsetId
+                );
+            }
 
         $items = $this->presenter->presentMessages($dto->messages, $chatUsername);
         $nextOffsetId = $this->presenter->resolveNextOffsetId($dto->messages);
