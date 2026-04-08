@@ -1,0 +1,171 @@
+{
+  "telegram": {
+    "headTitle": "Telegram",
+    "search": {
+      "title": "Поиск Telegram",
+      "collapsed": "Панель поиска свернута",
+      "filters": "Фильтры и параметры поиска сообщений",
+      "channelUsername": "Username канала",
+      "keyword": "Ключевое слово",
+      "authorId": "ID автора",
+      "placeholderKeyword": "безопасность",
+      "placeholderAuthor": "@username или id",
+      "showAdvanced": "Показать фильтры",
+      "hideAdvanced": "Скрыть фильтры",
+      "find": "Найти",
+      "searching": "Поиск...",
+      "limit": "Лимит",
+      "dateFrom": "Дата с",
+      "dateTo": "Дата по",
+      "mediaType": "Тип медиа",
+      "mediaAny": "Любой",
+      "mediaNone": "Без медиа",
+      "mediaPhoto": "Фото",
+      "mediaVideo": "Видео",
+      "mediaDocument": "Документ",
+      "mediaAudio": "Аудио",
+      "mediaLink": "Ссылка",
+      "mediaOther": "Другое",
+      "minViews": "Мин. просмотров",
+      "minForwards": "Мин. репостов",
+      "advancedAriaShow": "Показать дополнительные фильтры",
+      "advancedAriaHide": "Скрыть дополнительные фильтры"
+    },
+    "messages": {
+      "title": "Сообщения",
+      "shown": "Показано",
+      "empty": "Выполните поиск, чтобы увидеть сообщения.",
+      "date": "Дата",
+      "authorId": "Автор ID",
+      "views": "Просмотры",
+      "forwards": "Репосты",
+      "replies": "Ответы",
+      "media": "Медиа",
+      "giftYes": "Подарок: да",
+      "noText": "[Без текста]",
+      "openInTelegram": "Открыть в Telegram",
+      "showMedia": "Медиа",
+      "hideMedia": "Скрыть медиа",
+      "unsupportedMedia": "Для этого типа медиа встроенный просмотр не поддерживается.",
+      "openFile": "Открыть файл",
+      "loadMore": "Показать еще",
+      "loadingMore": "Загрузка..."
+    },
+    "comments": {
+      "toggleHide": "Скрыть комментарии",
+      "toggleShow": "Комментарии",
+      "title": "Комментарии",
+      "loading": "Загружаем комментарии...",
+      "notFound": "Комментарии не найдены.",
+      "author": "Автор",
+      "date": "Дата",
+      "loadMore": "Показать еще комментарии",
+      "loadingMore": "Загружаем следующую порцию..."
+    },
+    "popover": {
+      "reactionIds": "ID для реакции",
+      "giftIds": "ID для подарка",
+      "id": "id"
+    },
+    "mediaTypes": {
+      "photo": "Фото",
+      "video": "Видео",
+      "document": "Документ",
+      "audio": "Аудио",
+      "geo": "Гео",
+      "poll": "Опрос",
+      "contact": "Контакт",
+      "link_preview": "Ссылка",
+      "other": "Медиа",
+      "none": "Нет"
+    },
+    "errors": {
+      "channelRequired": "Сначала укажите username канала.",
+      "searchFailed": "Ошибка запроса поиска.",
+      "unknownSearchError": "Неизвестная ошибка поиска.",
+      "commentsFailed": "Не удалось загрузить комментарии."
+    }
+  },
+  "common": {
+    "language": "Язык",
+    "saved": "Сохранено.",
+    "cancel": "Отмена"
+  },
+  "userMenu": {
+    "settings": "Настройки",
+    "logout": "Выйти"
+  },
+  "settings": {
+    "title": "Настройки",
+    "description": "Управляйте профилем и параметрами аккаунта",
+    "profile": "Профиль",
+    "security": "Безопасность",
+    "appearance": "Оформление",
+    "profilePage": {
+      "title": "Настройки профиля",
+      "heading": "Информация профиля",
+      "headingDescription": "Обновите имя и адрес электронной почты",
+      "name": "Имя",
+      "email": "Email",
+      "namePlaceholder": "Полное имя",
+      "emailPlaceholder": "Адрес электронной почты",
+      "emailUnverified": "Ваш адрес электронной почты не подтверждён.",
+      "resendVerification": "Нажмите здесь, чтобы повторно отправить письмо подтверждения.",
+      "verificationSent": "Новая ссылка для подтверждения была отправлена на ваш email.",
+      "save": "Сохранить"
+    },
+    "securityPage": {
+      "title": "Настройки безопасности",
+      "updatePassword": "Обновить пароль",
+      "updatePasswordDescription": "Используйте длинный и случайный пароль для повышения безопасности",
+      "currentPassword": "Текущий пароль",
+      "newPassword": "Новый пароль",
+      "confirmPassword": "Подтвердите пароль",
+      "savePassword": "Сохранить пароль",
+      "twoFactorTitle": "Двухфакторная аутентификация",
+      "twoFactorDescription": "Управляйте настройками двухфакторной аутентификации",
+      "twoFactorEnableHint": "После включения двухфакторной аутентификации при входе потребуется защитный PIN. Его можно получить в приложении с поддержкой TOTP на вашем телефоне.",
+      "twoFactorContinueSetup": "Продолжить настройку",
+      "twoFactorEnable": "Включить 2FA",
+      "twoFactorEnabledHint": "При входе будет запрашиваться защищённый случайный PIN, который можно получить в приложении с поддержкой TOTP на телефоне.",
+      "twoFactorDisable": "Отключить 2FA"
+    },
+    "appearancePage": {
+      "title": "Настройки оформления",
+      "heading": "Настройки оформления",
+      "headingDescription": "Обновите настройки внешнего вида аккаунта"
+    },
+    "deleteAccount": {
+      "title": "Удалить аккаунт",
+      "description": "Удалите аккаунт и все связанные с ним ресурсы",
+      "warning": "Внимание",
+      "warningDescription": "Пожалуйста, действуйте осторожно: это действие необратимо.",
+      "button": "Удалить аккаунт",
+      "confirmTitle": "Вы уверены, что хотите удалить аккаунт?",
+      "confirmDescription": "После удаления аккаунта все его ресурсы и данные будут удалены безвозвратно. Введите пароль, чтобы подтвердить удаление аккаунта.",
+      "password": "Пароль",
+      "confirmButton": "Удалить аккаунт"
+    }
+  },
+  "welcome": {
+    "headTitle": "Uraboros | Telegram Analytics",
+    "platformTitle": "Платформа Telegram Intelligence",
+    "dashboard": "Панель",
+    "signIn": "Войти",
+    "register": "Регистрация",
+    "pill": "Поиск, мониторинг, OSINT",
+    "heroTitle": "Стартовая точка для рабочих процессов Telegram-аналитики",
+    "heroDescription": "Платформа помогает собирать данные, отфильтровывать шум и выделять значимые сигналы. Этот базовый контур можно масштабировать до глубокой аналитики и сценариев расследований.",
+    "openDashboard": "Открыть панель",
+    "getStarted": "Начать",
+    "createAccount": "Создать аккаунт",
+    "features": {
+      "monitoringTitle": "Мониторинг каналов и чатов",
+      "monitoringText": "Собирайте Telegram-сигналы в одном рабочем пространстве без ручной рутины.",
+      "osintTitle": "OSINT и анализ связей",
+      "osintText": "Отслеживайте сущности, взаимосвязи и динамику кампаний в контексте.",
+      "dashboardsTitle": "Практичные дашборды",
+      "dashboardsText": "Фокусируйтесь на ключевых метриках и быстро переходите от гипотез к проверке."
+    }
+  }
+}

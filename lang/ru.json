@@ -1,0 +1,4 @@
+{
+  "Date \"from\" must be less than or equal to date \"to\".": "Дата \"с\" должна быть меньше или равна дате \"по\".",
+  "Failed to load messages for the current query.": "Не удалось загрузить сообщения по текущему запросу."
+}

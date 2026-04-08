@@ -1,6 +1,7 @@
-﻿<script setup lang="ts">
+<script setup lang="ts">
 import { Head } from '@inertiajs/vue3';
 import { computed, nextTick, reactive, ref } from 'vue';
+import { useI18n } from '@/composables/useI18n';
 
 defineOptions({
     layout: {
@@ -91,6 +92,8 @@ const form = reactive({
     limit: 20,
 });
 
+const { t } = useI18n();
+
 const loading = ref(false);
 const loadingMore = ref(false);
 const error = ref<string | null>(null);
@@ -107,6 +110,7 @@ const mediaOpenByPost = ref<Record<number, boolean>>({});
 
 const canSearch = computed(() => form.chatUsername.trim().length > 0);
 const loadedCount = computed(() => items.value.length);
+const pageTitle = computed(() => t('telegram.headTitle'));
 const LIMIT_MIN = 1;
 const LIMIT_MAX = 50;
 
@@ -144,19 +148,19 @@ const formatDate = (unix: number) => {
 
 const mediaLabel = (type: string) => {
     const map: Record<string, string> = {
-        photo: 'Фото',
-        video: 'Видео',
-        document: 'Документ',
-        audio: 'Аудио',
-        geo: 'Гео',
-        poll: 'Опрос',
-        contact: 'Контакт',
-        link_preview: 'Ссылка',
-        other: 'Медиа',
-        none: 'Нет',
+        photo: t('telegram.mediaTypes.photo'),
+        video: t('telegram.mediaTypes.video'),
+        document: t('telegram.mediaTypes.document'),
+        audio: t('telegram.mediaTypes.audio'),
+        geo: t('telegram.mediaTypes.geo'),
+        poll: t('telegram.mediaTypes.poll'),
+        contact: t('telegram.mediaTypes.contact'),
+        link_preview: t('telegram.mediaTypes.link_preview'),
+        other: t('telegram.mediaTypes.other'),
+        none: t('telegram.mediaTypes.none'),
     };
 
-    return map[type] ?? 'Медиа';
+    return map[type] ?? t('telegram.mediaTypes.other');
 };
 
 const getMediaUrl = (postId: number) =>
@@ -172,7 +176,7 @@ const toggleMedia = (postId: number) => {
 
 const searchMessages = async (append = false) => {
     if (!canSearch.value) {
-        error.value = 'Сначала укажите username канала.';
+        error.value = t('telegram.errors.channelRequired');
 
         return;
     }
@@ -213,7 +217,7 @@ const searchMessages = async (append = false) => {
         const payload: SearchResponse = await response.json();
 
         if (!response.ok || !payload.ok) {
-            error.value = payload.message ?? 'Ошибка запроса поиска.';
+            error.value = payload.message ?? t('telegram.errors.searchFailed');
 
             return;
         }
@@ -236,7 +240,7 @@ const searchMessages = async (append = false) => {
         nextOffsetId.value = payload.pagination.nextOffsetId;
         hasMore.value = payload.pagination.hasMore;
     } catch (e) {
-        error.value = e instanceof Error ? e.message : 'Неизвестная ошибка поиска.';
+        error.value = e instanceof Error ? e.message : t('telegram.errors.unknownSearchError');
     } finally {
         loading.value = false;
         loadingMore.value = false;
@@ -326,7 +330,7 @@ const loadComments = async (postId: number, append = false) => {
             const payload = await response.json();
 
             if (!response.ok || !payload?.ok) {
-                state.error = payload?.message ?? 'Не удалось загрузить комментарии.';
+                state.error = payload?.message ?? t('telegram.errors.commentsFailed');
 
                 if (!append) {
                     state.items = [];
@@ -358,7 +362,7 @@ const loadComments = async (postId: number, append = false) => {
             state.nextOffsetId = payload?.pagination?.nextOffsetId ?? null;
             state.loaded = true;
         } catch (e) {
-            state.error = e instanceof Error ? e.message : 'Не удалось загрузить комментарии.';
+            state.error = e instanceof Error ? e.message : t('telegram.errors.commentsFailed');
 
             if (!append) {
                 state.items = [];
@@ -384,18 +388,26 @@ const toggleComments = async (postId: number) => {
         await loadComments(postId, false);
     }
 };
+
+const commentsToggleLabel = (postId: number, repliesCount: number | null) => {
+    if (getCommentState(postId).open) {
+        return t('telegram.comments.toggleHide');
+    }
+
+    return `${t('telegram.comments.toggleShow')} (${repliesCount ?? 0})`;
+};
 </script>
 
 <template>
-    <Head title="Telegram" />
+    <Head :title="pageTitle" />
 
     <div class="flex h-full min-h-0 flex-1 flex-col gap-4 overflow-hidden rounded-xl p-4">
         <section class="sticky top-0 z-10 shrink-0 rounded-xl border border-sidebar-border/80 bg-card/70 p-4 shadow-xl backdrop-blur">
             <div class="flex items-center justify-between gap-3">
                 <div>
-                    <h2 class="text-sm font-semibold">Поиск Telegram</h2>
+                    <h2 class="text-sm font-semibold">{{ t('telegram.search.title') }}</h2>
                     <p class="text-xs text-muted-foreground">
-                        {{ searchPanelCollapsed ? 'Панель поиска свернута' : 'Фильтры и параметры поиска сообщений' }}
+                        {{ searchPanelCollapsed ? t('telegram.search.collapsed') : t('telegram.search.filters') }}
                     </p>
                 </div>
 
@@ -411,7 +423,7 @@ const toggleComments = async (postId: number) => {
             <div v-if="!searchPanelCollapsed" class="mt-3 flex flex-wrap items-end gap-3">
                 <div class="grid min-w-0 flex-1 gap-3 md:grid-cols-2 xl:grid-cols-3">
                     <label class="block min-w-0">
-                        <span class="mb-1 block truncate text-xs font-medium text-muted-foreground">Username канала</span>
+                        <span class="mb-1 block truncate text-xs font-medium text-muted-foreground">{{ t('telegram.search.channelUsername') }}</span>
                         <input
                             v-model="form.chatUsername"
                             type="text"
@@ -421,22 +433,22 @@ const toggleComments = async (postId: number) => {
                     </label>
 
                     <label class="block min-w-0">
-                        <span class="mb-1 block truncate text-xs font-medium text-muted-foreground">Ключевое слово</span>
+                        <span class="mb-1 block truncate text-xs font-medium text-muted-foreground">{{ t('telegram.search.keyword') }}</span>
                         <input
                             v-model="form.q"
                             type="text"
                             class="h-10 w-full rounded-md border border-input bg-background px-3 text-sm"
-                            placeholder="безопасность"
+                            :placeholder="t('telegram.search.placeholderKeyword')"
                         />
                     </label>
 
                     <label class="block min-w-0">
-                        <span class="mb-1 block truncate text-xs font-medium text-muted-foreground">ID автора</span>
+                        <span class="mb-1 block truncate text-xs font-medium text-muted-foreground">{{ t('telegram.search.authorId') }}</span>
                         <input
                             v-model="form.fromUsername"
                             type="text"
                             class="h-10 w-full rounded-md border border-input bg-background px-3 text-sm"
-                            placeholder="@username или id"
+                            :placeholder="t('telegram.search.placeholderAuthor')"
                         />
                     </label>
                 </div>
@@ -444,7 +456,7 @@ const toggleComments = async (postId: number) => {
                 <div class="flex w-full flex-wrap gap-2 lg:w-auto">
                     <button
                         type="button"
-                        :aria-label="showAdvanced ? 'Скрыть дополнительные фильтры' : 'Показать дополнительные фильтры'"
+                        :aria-label="showAdvanced ? t('telegram.search.advancedAriaHide') : t('telegram.search.advancedAriaShow')"
                         class="inline-flex h-10 w-10 cursor-pointer items-center justify-center rounded-md border border-input text-lg font-medium text-foreground hover:bg-accent"
                         @click="showAdvanced = !showAdvanced"
                     >
@@ -456,7 +468,7 @@ const toggleComments = async (postId: number) => {
                         class="h-10 cursor-pointer rounded-md bg-primary px-5 text-sm font-semibold text-primary-foreground disabled:cursor-not-allowed disabled:opacity-60"
                         @click="searchMessages(false)"
                     >
-                        {{ loading ? 'Поиск...' : 'Найти' }}
+                        {{ loading ? t('telegram.search.searching') : t('telegram.search.find') }}
                     </button>
                 </div>
             </div>
@@ -466,7 +478,7 @@ const toggleComments = async (postId: number) => {
                 class="mt-3 grid gap-3 border-t border-border/60 pt-3 md:grid-cols-3"
             >
                 <label class="block min-w-0">
-                    <span class="mb-1 block truncate text-xs font-medium text-muted-foreground">Лимит</span>
+                    <span class="mb-1 block truncate text-xs font-medium text-muted-foreground">{{ t('telegram.search.limit') }}</span>
                     <input
                         v-model.number="form.limit"
                         type="number"
@@ -479,7 +491,7 @@ const toggleComments = async (postId: number) => {
                 </label>
 
                 <label class="block min-w-0">
-                    <span class="mb-1 block truncate text-xs font-medium text-muted-foreground">Дата с</span>
+                    <span class="mb-1 block truncate text-xs font-medium text-muted-foreground">{{ t('telegram.search.dateFrom') }}</span>
                     <input
                         v-model="form.dateFrom"
                         type="date"
@@ -488,7 +500,7 @@ const toggleComments = async (postId: number) => {
                 </label>
 
                 <label class="block min-w-0">
-                    <span class="mb-1 block truncate text-xs font-medium text-muted-foreground">Дата по</span>
+                    <span class="mb-1 block truncate text-xs font-medium text-muted-foreground">{{ t('telegram.search.dateTo') }}</span>
                     <input
                         v-model="form.dateTo"
                         type="date"
@@ -502,13 +514,13 @@ const toggleComments = async (postId: number) => {
 
         <section class="flex min-h-0 flex-1 flex-col rounded-xl border border-sidebar-border/80 bg-card/70 p-4 shadow-xl backdrop-blur">
             <div class="mb-3 flex items-center justify-between">
-                <h2 class="text-sm font-semibold">Сообщения</h2>
-                <p class="text-xs text-muted-foreground">Показано: {{ loadedCount }} из {{ total }}</p>
+                <h2 class="text-sm font-semibold">{{ t('telegram.messages.title') }}</h2>
+                <p class="text-xs text-muted-foreground">{{ t('telegram.messages.shown') }}: {{ loadedCount }} / {{ total }}</p>
             </div>
 
             <div ref="messagesContainerRef" class="telegram-scroll min-h-0 flex-1 overflow-y-auto overscroll-contain pr-1">
                 <div v-if="!loading && items.length === 0" class="rounded-md border border-dashed border-border p-6 text-center text-sm text-muted-foreground">
-                    Выполните поиск, чтобы увидеть сообщения.
+                    {{ t('telegram.messages.empty') }}
                 </div>
 
                 <div v-else class="space-y-3">
@@ -519,17 +531,17 @@ const toggleComments = async (postId: number) => {
                         class="relative rounded-lg border border-border/80 bg-background/70 p-3"
                     >
                         <div class="mb-2 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-muted-foreground">
-                            <span>Автор ID: {{ item.authorId ?? '-' }}</span>
-                            <span>Date: {{ formatDate(item.date) }}</span>
-                            <span>Просмотры: {{ item.views ?? '-' }}</span>
-                            <span>Репосты: {{ item.forwards ?? '-' }}</span>
-                            <span>Ответы: {{ item.repliesCount ?? '-' }}</span>
-                            <span>Медиа: {{ mediaLabel(item.media.type) }}</span>
-                            <span v-if="item.gifts.hasGift" class="text-amber-500">Подарок: да</span>
+                            <span>{{ t('telegram.messages.authorId') }}: {{ item.authorId ?? '-' }}</span>
+                            <span>{{ t('telegram.messages.date') }}: {{ formatDate(item.date) }}</span>
+                            <span>{{ t('telegram.messages.views') }}: {{ item.views ?? '-' }}</span>
+                            <span>{{ t('telegram.messages.forwards') }}: {{ item.forwards ?? '-' }}</span>
+                            <span>{{ t('telegram.messages.replies') }}: {{ item.repliesCount ?? '-' }}</span>
+                            <span>{{ t('telegram.messages.media') }}: {{ mediaLabel(item.media.type) }}</span>
+                            <span v-if="item.gifts.hasGift" class="text-amber-500">{{ t('telegram.messages.giftYes') }}</span>
                         </div>
 
                         <p class="text-sm leading-relaxed text-foreground">
-                            {{ item.message || '[Без текста]' }}
+                            {{ item.message || t('telegram.messages.noText') }}
                         </p>
 
                         <div class="mt-2 flex flex-wrap items-center gap-2">
@@ -540,7 +552,7 @@ const toggleComments = async (postId: number) => {
                                 rel="noopener noreferrer"
                                 class="cursor-pointer rounded-full border border-input px-2 py-1 text-xs text-primary hover:bg-accent"
                             >
-                                Открыть в Telegram
+                                {{ t('telegram.messages.openInTelegram') }}
                             </a>
 
                             <span
@@ -556,7 +568,7 @@ const toggleComments = async (postId: number) => {
                                 class="cursor-pointer rounded-full border border-input px-3 py-1 text-xs font-medium text-foreground hover:bg-accent"
                                 @click="toggleMedia(item.id)"
                             >
-                                {{ isMediaOpen(item.id) ? 'Скрыть медиа' : 'Медиа' }}
+                                {{ isMediaOpen(item.id) ? t('telegram.messages.hideMedia') : t('telegram.messages.showMedia') }}
                             </button>
 
                             <div
@@ -581,7 +593,7 @@ const toggleComments = async (postId: number) => {
                                     v-if="isSenderPopoverOpen(item.id, 'reaction', reaction.key)"
                                     class="absolute right-0 top-full z-20 mt-2 w-64 rounded-lg border border-border bg-card/95 p-3 shadow-2xl backdrop-blur"
                                 >
-                                    <p class="mb-2 text-xs font-semibold">ID для реакции {{ reaction.emoji }}</p>
+                                    <p class="mb-2 text-xs font-semibold">{{ t('telegram.popover.reactionIds') }} {{ reaction.emoji }}</p>
 
                                     <div class="telegram-scroll max-h-52 space-y-1 overflow-y-auto pr-1">
                                         <p
@@ -589,7 +601,7 @@ const toggleComments = async (postId: number) => {
                                             :key="`${item.id}-${reaction.key}-sender-${senderId}`"
                                             class="rounded-md border border-input/70 bg-background/70 px-2 py-1 text-xs"
                                         >
-                                            id: {{ senderId }}
+                                            {{ t('telegram.popover.id') }}: {{ senderId }}
                                         </p>
                                     </div>
                                 </div>
@@ -617,7 +629,7 @@ const toggleComments = async (postId: number) => {
                                     v-if="isSenderPopoverOpen(item.id, 'gift', gift.key)"
                                     class="absolute right-0 top-full z-20 mt-2 w-64 rounded-lg border border-amber-400/40 bg-card/95 p-3 shadow-2xl backdrop-blur"
                                 >
-                                    <p class="mb-2 text-xs font-semibold">ID для подарка {{ gift.label }}</p>
+                                    <p class="mb-2 text-xs font-semibold">{{ t('telegram.popover.giftIds') }} {{ gift.label }}</p>
 
                                     <div class="telegram-scroll max-h-52 space-y-1 overflow-y-auto pr-1">
                                         <p
@@ -625,7 +637,7 @@ const toggleComments = async (postId: number) => {
                                             :key="`${item.id}-${gift.key}-sender-${senderId}`"
                                             class="rounded-md border border-amber-400/30 bg-background/70 px-2 py-1 text-xs"
                                         >
-                                            id: {{ senderId }}
+                                            {{ t('telegram.popover.id') }}: {{ senderId }}
                                         </p>
                                     </div>
                                 </div>
@@ -637,7 +649,7 @@ const toggleComments = async (postId: number) => {
                                 class="cursor-pointer rounded-full border border-input px-3 py-1 text-xs font-medium text-foreground hover:bg-accent"
                                 @click="toggleComments(item.id)"
                             >
-                                {{ getCommentState(item.id).open ? 'Скрыть комментарии' : `Комментарии (${item.repliesCount})` }}
+                                {{ commentsToggleLabel(item.id, item.repliesCount) }}
                             </button>
                         </div>
 
@@ -671,7 +683,7 @@ const toggleComments = async (postId: number) => {
 
                             <div v-else class="flex flex-wrap items-center gap-2">
                                 <span class="text-xs text-muted-foreground">
-                                    Для этого типа медиа встроенный просмотр не поддерживается.
+                                    {{ t('telegram.messages.unsupportedMedia') }}
                                 </span>
                                 <a
                                     :href="getMediaUrl(item.id)"
@@ -679,7 +691,7 @@ const toggleComments = async (postId: number) => {
                                     rel="noopener noreferrer"
                                     class="cursor-pointer rounded-md border border-input px-3 py-1 text-xs font-medium text-primary hover:bg-accent"
                                 >
-                                    Открыть файл
+                                    {{ t('telegram.messages.openFile') }}
                                 </a>
                             </div>
                         </div>
@@ -690,7 +702,7 @@ const toggleComments = async (postId: number) => {
                         >
                             <div class="mb-2 flex items-center justify-between">
                                 <p class="text-[11px] text-muted-foreground">
-                                    Комментарии: {{ getCommentState(item.id).items.length }} из {{ getCommentState(item.id).total || (item.repliesCount ?? 0) }}
+                                    {{ t('telegram.comments.title') }}: {{ getCommentState(item.id).items.length }} / {{ getCommentState(item.id).total || (item.repliesCount ?? 0) }}
                                 </p>
                             </div>
 
@@ -698,7 +710,7 @@ const toggleComments = async (postId: number) => {
                                 v-if="getCommentState(item.id).loading && getCommentState(item.id).items.length === 0"
                                 class="text-xs text-muted-foreground"
                             >
-                                Загружаем комментарии...
+                                {{ t('telegram.comments.loading') }}
                             </p>
 
                             <p
@@ -712,7 +724,7 @@ const toggleComments = async (postId: number) => {
                                 v-else-if="getCommentState(item.id).items.length === 0"
                                 class="text-xs text-muted-foreground"
                             >
-                                Комментарии не найдены.
+                                {{ t('telegram.comments.notFound') }}
                             </p>
 
                             <div v-else class="space-y-2">
@@ -722,11 +734,11 @@ const toggleComments = async (postId: number) => {
                                     class="rounded-md border border-border/70 bg-background/70 p-2"
                                 >
                                     <div class="mb-1 flex flex-wrap items-center gap-2 text-[11px] text-muted-foreground">
-                                        <span>Автор: {{ comment.authorId ?? '-' }}</span>
-                                        <span>Дата: {{ formatDate(comment.date) }}</span>
+                                        <span>{{ t('telegram.comments.author') }}: {{ comment.authorId ?? '-' }}</span>
+                                        <span>{{ t('telegram.comments.date') }}: {{ formatDate(comment.date) }}</span>
                                     </div>
                                     <p class="text-xs leading-relaxed text-foreground">
-                                        {{ comment.message || '[Без текста]' }}
+                                        {{ comment.message || t('telegram.messages.noText') }}
                                     </p>
                                 </article>
                             </div>
@@ -741,7 +753,7 @@ const toggleComments = async (postId: number) => {
                                     class="cursor-pointer rounded-md border border-input px-3 py-1 text-xs font-medium text-foreground hover:bg-accent disabled:cursor-not-allowed disabled:opacity-60"
                                     @click="loadComments(item.id, true)"
                                 >
-                                    Показать еще комментарии
+                                    {{ t('telegram.comments.loadMore') }}
                                 </button>
                             </div>
 
@@ -749,7 +761,7 @@ const toggleComments = async (postId: number) => {
                                 v-if="getCommentState(item.id).loading && getCommentState(item.id).items.length > 0"
                                 class="mt-2 text-xs text-muted-foreground"
                             >
-                                Загружаем следующую порцию...
+                                {{ t('telegram.comments.loadingMore') }}
                             </p>
 
                             <p
@@ -770,7 +782,7 @@ const toggleComments = async (postId: number) => {
                     class="cursor-pointer rounded-md border border-input bg-background px-4 py-2 text-sm font-medium hover:bg-accent disabled:cursor-not-allowed disabled:opacity-60"
                     @click="searchMessages(true)"
                 >
-                    {{ loadingMore ? 'Загрузка...' : 'Показать еще' }}
+                    {{ loadingMore ? t('telegram.messages.loadingMore') : t('telegram.messages.loadMore') }}
                 </button>
             </div>
         </section>

@@ -33,7 +33,7 @@ class SearchMessagesRequest extends FormRequest
             $dateTo = $this->input('dateTo');
 
             if ($dateFrom && $dateTo && $dateFrom > $dateTo) {
-                $validator->errors()->add('dateFrom', 'Дата "с" должна быть меньше или равна дате "по".');
+                $validator->errors()->add('dateFrom', __('Date "from" must be less than or equal to date "to".'));
             }
         });
     }
@@ -65,7 +65,7 @@ class SearchMessagesRequest extends FormRequest
         ];
 
         $fromUsername = trim((string) ($validated['fromUsername'] ?? ''));
-        if ($fromUsername !== '') {
+        if ($fromUsername !== '' && !$this->isNumericAuthorFilter($fromUsername)) {
             $filter['from_id'] = ltrim($fromUsername, '@');
         }
 
@@ -78,5 +78,24 @@ class SearchMessagesRequest extends FormRequest
         }
 
         return $filter;
+    }
+
+    public function fromAuthorIdFilter(): ?int
+    {
+        $fromUsername = trim((string) $this->validated('fromUsername', ''));
+        if (!$this->isNumericAuthorFilter($fromUsername)) {
+            return null;
+        }
+
+        $authorId = (int) ltrim($fromUsername, '@');
+
+        return $authorId > 0 ? $authorId : null;
+    }
+
+    private function isNumericAuthorFilter(string $value): bool
+    {
+        $normalized = ltrim(trim($value), '@');
+
+        return $normalized !== '' && ctype_digit($normalized);
     }
 }

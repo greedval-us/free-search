@@ -1,0 +1,171 @@
+{
+  "telegram": {
+    "headTitle": "Telegram",
+    "search": {
+      "title": "Telegram Search",
+      "collapsed": "Search panel is collapsed",
+      "filters": "Message search filters and parameters",
+      "channelUsername": "Channel username",
+      "keyword": "Keyword",
+      "authorId": "Author ID",
+      "placeholderKeyword": "security",
+      "placeholderAuthor": "@username or id",
+      "showAdvanced": "Show filters",
+      "hideAdvanced": "Hide filters",
+      "find": "Find",
+      "searching": "Searching...",
+      "limit": "Limit",
+      "dateFrom": "Date from",
+      "dateTo": "Date to",
+      "mediaType": "Media type",
+      "mediaAny": "Any",
+      "mediaNone": "No media",
+      "mediaPhoto": "Photo",
+      "mediaVideo": "Video",
+      "mediaDocument": "Document",
+      "mediaAudio": "Audio",
+      "mediaLink": "Link",
+      "mediaOther": "Other",
+      "minViews": "Min views",
+      "minForwards": "Min forwards",
+      "advancedAriaShow": "Show additional filters",
+      "advancedAriaHide": "Hide additional filters"
+    },
+    "messages": {
+      "title": "Messages",
+      "shown": "Shown",
+      "empty": "Run a search to view messages.",
+      "date": "Date",
+      "authorId": "Author ID",
+      "views": "Views",
+      "forwards": "Forwards",
+      "replies": "Replies",
+      "media": "Media",
+      "giftYes": "Gift: yes",
+      "noText": "[No text]",
+      "openInTelegram": "Open in Telegram",
+      "showMedia": "Media",
+      "hideMedia": "Hide media",
+      "unsupportedMedia": "Inline preview is not supported for this media type.",
+      "openFile": "Open file",
+      "loadMore": "Show more",
+      "loadingMore": "Loading..."
+    },
+    "comments": {
+      "toggleHide": "Hide comments",
+      "toggleShow": "Comments",
+      "title": "Comments",
+      "loading": "Loading comments...",
+      "notFound": "Comments not found.",
+      "author": "Author",
+      "date": "Date",
+      "loadMore": "Show more comments",
+      "loadingMore": "Loading next batch..."
+    },
+    "popover": {
+      "reactionIds": "IDs for reaction",
+      "giftIds": "IDs for gift",
+      "id": "id"
+    },
+    "mediaTypes": {
+      "photo": "Photo",
+      "video": "Video",
+      "document": "Document",
+      "audio": "Audio",
+      "geo": "Geo",
+      "poll": "Poll",
+      "contact": "Contact",
+      "link_preview": "Link",
+      "other": "Media",
+      "none": "None"
+    },
+    "errors": {
+      "channelRequired": "Please enter the channel username first.",
+      "searchFailed": "Search request failed.",
+      "unknownSearchError": "Unknown search error.",
+      "commentsFailed": "Failed to load comments."
+    }
+  },
+  "common": {
+    "language": "Language",
+    "saved": "Saved.",
+    "cancel": "Cancel"
+  },
+  "userMenu": {
+    "settings": "Settings",
+    "logout": "Log out"
+  },
+  "settings": {
+    "title": "Settings",
+    "description": "Manage your profile and account settings",
+    "profile": "Profile",
+    "security": "Security",
+    "appearance": "Appearance",
+    "profilePage": {
+      "title": "Profile settings",
+      "heading": "Profile information",
+      "headingDescription": "Update your name and email address",
+      "name": "Name",
+      "email": "Email address",
+      "namePlaceholder": "Full name",
+      "emailPlaceholder": "Email address",
+      "emailUnverified": "Your email address is unverified.",
+      "resendVerification": "Click here to resend the verification email.",
+      "verificationSent": "A new verification link has been sent to your email address.",
+      "save": "Save"
+    },
+    "securityPage": {
+      "title": "Security settings",
+      "updatePassword": "Update password",
+      "updatePasswordDescription": "Ensure your account is using a long, random password to stay secure",
+      "currentPassword": "Current password",
+      "newPassword": "New password",
+      "confirmPassword": "Confirm password",
+      "savePassword": "Save password",
+      "twoFactorTitle": "Two-factor authentication",
+      "twoFactorDescription": "Manage your two-factor authentication settings",
+      "twoFactorEnableHint": "When you enable two-factor authentication, you will be prompted for a secure pin during login. This pin can be retrieved from a TOTP-supported application on your phone.",
+      "twoFactorContinueSetup": "Continue setup",
+      "twoFactorEnable": "Enable 2FA",
+      "twoFactorEnabledHint": "You will be prompted for a secure, random pin during login, which you can retrieve from the TOTP-supported application on your phone.",
+      "twoFactorDisable": "Disable 2FA"
+    },
+    "appearancePage": {
+      "title": "Appearance settings",
+      "heading": "Appearance settings",
+      "headingDescription": "Update your account's appearance settings"
+    },
+    "deleteAccount": {
+      "title": "Delete account",
+      "description": "Delete your account and all of its resources",
+      "warning": "Warning",
+      "warningDescription": "Please proceed with caution, this cannot be undone.",
+      "button": "Delete account",
+      "confirmTitle": "Are you sure you want to delete your account?",
+      "confirmDescription": "Once your account is deleted, all of its resources and data will also be permanently deleted. Please enter your password to confirm you would like to permanently delete your account.",
+      "password": "Password",
+      "confirmButton": "Delete account"
+    }
+  },
+  "welcome": {
+    "headTitle": "Uraboros | Telegram Analytics",
+    "platformTitle": "Telegram Intelligence Platform",
+    "dashboard": "Dashboard",
+    "signIn": "Sign in",
+    "register": "Register",
+    "pill": "Search, monitoring, OSINT",
+    "heroTitle": "Starting point for Telegram intelligence workflows",
+    "heroDescription": "The platform helps collect data, filter noise, and surface meaningful signals. You can scale this baseline into deep analytics pipelines and investigation scenarios.",
+    "openDashboard": "Open Dashboard",
+    "getStarted": "Get Started",
+    "createAccount": "Create account",
+    "features": {
+      "monitoringTitle": "Channel and chat monitoring",
+      "monitoringText": "Collect Telegram signals in one workspace without manual routine.",
+      "osintTitle": "OSINT and link analysis",
+      "osintText": "Track entities, relationships, and campaign dynamics in context.",
+      "dashboardsTitle": "Actionable dashboards",
+      "dashboardsText": "Focus on key metrics and quickly move from hypotheses to validation."
+    }
+  }
+}

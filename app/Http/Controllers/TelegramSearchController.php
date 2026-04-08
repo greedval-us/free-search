@@ -27,17 +27,25 @@ class TelegramSearchController extends Controller
         $limit = $request->limitValue();
         $offsetId = $request->offsetId();
         $chatUsername = $request->chatUsername();
+        $authorIdFilter = $request->fromAuthorIdFilter();
         $dto = $this->telegramService->getMessages($request->telegramFilter());
 
-            if ($dto === null) {
-                return $this->errorResponse(
-                    'Не удалось загрузить сообщения по текущему запросу.',
-                    $limit,
-                    $offsetId
-                );
-            }
+        if ($dto === null) {
+            return $this->errorResponse(
+                __('Failed to load messages for the current query.'),
+                $limit,
+                $offsetId
+            );
+        }
 
         $items = $this->presenter->presentMessages($dto->messages, $chatUsername);
+
+        if ($authorIdFilter !== null) {
+            $items = array_values(array_filter($items, static function (array $item) use ($authorIdFilter): bool {
+                return (int) ($item['authorId'] ?? 0) === $authorIdFilter;
+            }));
+        }
+
         $nextOffsetId = $this->presenter->resolveNextOffsetId($dto->messages);
 
         return response()->json([

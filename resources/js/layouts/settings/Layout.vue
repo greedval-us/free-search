@@ -1,38 +1,49 @@
 <script setup lang="ts">
-import { Link } from '@inertiajs/vue3';
+import { Link, usePage } from '@inertiajs/vue3';
+import { computed } from 'vue';
 import Heading from '@/components/Heading.vue';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 import { useCurrentUrl } from '@/composables/useCurrentUrl';
+import { useI18n } from '@/composables/useI18n';
 import { toUrl } from '@/lib/utils';
 import { edit as editAppearance } from '@/routes/appearance';
 import { edit as editProfile } from '@/routes/profile';
 import { edit as editSecurity } from '@/routes/security';
 import type { NavItem } from '@/types';
 
-const sidebarNavItems: NavItem[] = [
+const { locale, setLocale, t } = useI18n();
+
+const sidebarNavItems = computed<NavItem[]>(() => [
     {
-        title: 'Profile',
+        title: t('settings.profile'),
         href: editProfile(),
     },
     {
-        title: 'Security',
+        title: t('settings.security'),
         href: editSecurity(),
     },
     {
-        title: 'Appearance',
+        title: t('settings.appearance'),
         href: editAppearance(),
     },
-];
+]);
 
 const { isCurrentOrParentUrl } = useCurrentUrl();
+const page = usePage();
+
+const isAuthenticated = computed(() => Boolean(page.props.auth?.user));
+
+const toggleLocale = () => {
+    setLocale(locale.value === 'ru' ? 'en' : 'ru');
+};
 </script>
 
 <template>
     <div class="rounded-2xl border border-sidebar-border/80 bg-card/70 px-4 py-6 shadow-xl backdrop-blur">
         <Heading
-            title="Settings"
-            description="Manage your profile and account settings"
+            :title="t('settings.title')"
+            :description="t('settings.description')"
         />
 
         <div class="flex flex-col lg:flex-row lg:space-x-12">
@@ -55,6 +66,16 @@ const { isCurrentOrParentUrl } = useCurrentUrl();
                             <component :is="item.icon" class="h-4 w-4" />
                             {{ item.title }}
                         </Link>
+                    </Button>
+
+                    <Button
+                        v-if="isAuthenticated"
+                        type="button"
+                        variant="outline"
+                        class="mt-2 w-full justify-start"
+                        @click="toggleLocale"
+                    >
+                        {{ t('common.language') }}: {{ locale.toUpperCase() }}
                     </Button>
                 </nav>
             </aside>
