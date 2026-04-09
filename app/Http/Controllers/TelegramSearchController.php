@@ -27,7 +27,6 @@ class TelegramSearchController extends Controller
         $limit = $request->limitValue();
         $offsetId = $request->offsetId();
         $chatUsername = $request->chatUsername();
-        $authorIdFilter = $request->fromAuthorIdFilter();
         $dto = $this->telegramService->getMessages($request->telegramFilter());
 
         if ($dto === null) {
@@ -39,12 +38,6 @@ class TelegramSearchController extends Controller
         }
 
         $items = $this->presenter->presentMessages($dto->messages, $chatUsername);
-
-        if ($authorIdFilter !== null) {
-            $items = array_values(array_filter($items, static function (array $item) use ($authorIdFilter): bool {
-                return (int) ($item['authorId'] ?? 0) === $authorIdFilter;
-            }));
-        }
 
         $nextOffsetId = $this->presenter->resolveNextOffsetId($dto->messages);
 

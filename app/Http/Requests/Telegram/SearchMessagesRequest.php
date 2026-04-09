@@ -65,7 +65,7 @@ class SearchMessagesRequest extends FormRequest
         ];
 
         $fromUsername = trim((string) ($validated['fromUsername'] ?? ''));
-        if ($fromUsername !== '' && !$this->isNumericAuthorFilter($fromUsername)) {
+        if ($fromUsername !== '') {
             $filter['from_id'] = ltrim($fromUsername, '@');
         }
 
@@ -78,18 +78,6 @@ class SearchMessagesRequest extends FormRequest
         }
 
         return $filter;
-    }
-
-    public function fromAuthorIdFilter(): ?int
-    {
-        $fromUsername = trim((string) $this->validated('fromUsername', ''));
-        if (!$this->isNumericAuthorFilter($fromUsername)) {
-            return null;
-        }
-
-        $authorId = (int) ltrim($fromUsername, '@');
-
-        return $authorId > 0 ? $authorId : null;
     }
 
     private function isNumericAuthorFilter(string $value): bool
