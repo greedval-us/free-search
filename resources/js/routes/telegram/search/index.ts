@@ -79,7 +79,7 @@ messages.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     messages.form = messagesForm
 /**
 * @see \App\Http\Controllers\TelegramSearchController::comments
- * @see app/Http/Controllers/TelegramSearchController.php:64
+ * @see app/Http/Controllers/TelegramSearchController.php:57
  * @route '/telegram/search/comments'
  */
 export const comments = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -94,7 +94,7 @@ comments.definition = {
 
 /**
 * @see \App\Http\Controllers\TelegramSearchController::comments
- * @see app/Http/Controllers/TelegramSearchController.php:64
+ * @see app/Http/Controllers/TelegramSearchController.php:57
  * @route '/telegram/search/comments'
  */
 comments.url = (options?: RouteQueryOptions) => {
@@ -103,7 +103,7 @@ comments.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\TelegramSearchController::comments
- * @see app/Http/Controllers/TelegramSearchController.php:64
+ * @see app/Http/Controllers/TelegramSearchController.php:57
  * @route '/telegram/search/comments'
  */
 comments.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -112,7 +112,7 @@ comments.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
 })
 /**
 * @see \App\Http\Controllers\TelegramSearchController::comments
- * @see app/Http/Controllers/TelegramSearchController.php:64
+ * @see app/Http/Controllers/TelegramSearchController.php:57
  * @route '/telegram/search/comments'
  */
 comments.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -122,7 +122,7 @@ comments.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 
     /**
 * @see \App\Http\Controllers\TelegramSearchController::comments
- * @see app/Http/Controllers/TelegramSearchController.php:64
+ * @see app/Http/Controllers/TelegramSearchController.php:57
  * @route '/telegram/search/comments'
  */
     const commentsForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -132,7 +132,7 @@ comments.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 
             /**
 * @see \App\Http\Controllers\TelegramSearchController::comments
- * @see app/Http/Controllers/TelegramSearchController.php:64
+ * @see app/Http/Controllers/TelegramSearchController.php:57
  * @route '/telegram/search/comments'
  */
         commentsForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -141,7 +141,7 @@ comments.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
         })
             /**
 * @see \App\Http\Controllers\TelegramSearchController::comments
- * @see app/Http/Controllers/TelegramSearchController.php:64
+ * @see app/Http/Controllers/TelegramSearchController.php:57
  * @route '/telegram/search/comments'
  */
         commentsForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
