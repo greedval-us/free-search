@@ -40,7 +40,7 @@ const toggleLocale = () => {
 </script>
 
 <template>
-    <div class="rounded-2xl border border-sidebar-border/80 bg-card/70 px-4 py-6 shadow-xl backdrop-blur">
+    <div class="mx-4 mt-4 rounded-2xl border border-sidebar-border/80 bg-card/70 px-4 py-6 shadow-xl backdrop-blur sm:mx-6 sm:mt-6">
         <Heading
             :title="t('settings.title')"
             :description="t('settings.description')"
