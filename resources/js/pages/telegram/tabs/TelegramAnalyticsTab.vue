@@ -68,6 +68,15 @@ const padding = {
 
 const chartInnerWidth = chartWidth - padding.left - padding.right;
 const chartInnerHeight = chartHeight - padding.top - padding.bottom;
+const hoveredIndex = ref<number | null>(null);
+
+type TrendSeriesKey = 'messages' | 'views' | 'interactions';
+
+const visibleSeries = ref<Record<TrendSeriesKey, boolean>>({
+    messages: true,
+    views: true,
+    interactions: true,
+});
 
 const trendSeries = computed(() => {
     const buckets = timeline.value;
@@ -94,10 +103,14 @@ const trendSeries = computed(() => {
     ];
 });
 
+const displayedTrendSeries = computed(() =>
+    trendSeries.value.filter((series) => visibleSeries.value[series.key as TrendSeriesKey])
+);
+
 const chartMax = computed(() =>
     Math.max(
         trendMax.value,
-        ...trendSeries.value.flatMap((series) => series.values),
+        ...displayedTrendSeries.value.flatMap((series) => series.values),
         1
     )
 );
@@ -191,6 +204,93 @@ const maxDistribution = computed(() => {
 
     return Math.max(mediaMax, reactionMax, 1);
 });
+
+const xForIndex = (index: number): number => {
+    const count = timeline.value.length;
+    const step = count > 1 ? chartInnerWidth / (count - 1) : 0;
+
+    return padding.left + step * index;
+};
+
+const hoverZone = (index: number) => {
+    const count = timeline.value.length;
+    if (count <= 1) {
+        return {
+            x: padding.left,
+            width: chartInnerWidth,
+        };
+    }
+
+    const step = chartInnerWidth / (count - 1);
+    const start = padding.left + step * (index - 0.5);
+
+    return {
+        x: Math.max(padding.left, start),
+        width: step,
+    };
+};
+
+const hoveredBucket = computed(() => {
+    if (hoveredIndex.value === null) {
+        return null;
+    }
+
+    return timeline.value[hoveredIndex.value] ?? null;
+});
+
+const hoverEntries = computed(() => {
+    if (hoveredIndex.value === null) {
+        return [];
+    }
+
+    return displayedTrendSeries.value.map((series) => ({
+        key: series.key,
+        label: series.label,
+        color: series.color,
+        value: series.values[hoveredIndex.value ?? 0] ?? 0,
+    }));
+});
+
+const hoverCardWidth = 206;
+
+const hoverCardHeight = computed(() => 38 + hoverEntries.value.length * 16);
+
+const hoverCardX = computed(() => {
+    if (hoveredIndex.value === null) {
+        return padding.left;
+    }
+
+    const x = xForIndex(hoveredIndex.value) - hoverCardWidth / 2;
+
+    return Math.max(padding.left, Math.min(x, chartWidth - padding.right - hoverCardWidth));
+});
+
+const hoverCardY = padding.top + 10;
+
+const yTicks = computed(() => {
+    const max = chartMax.value;
+    const marks = [1, 0.75, 0.5, 0.25, 0];
+
+    return marks.map((ratio) => ({
+        y: padding.top + chartInnerHeight * (1 - ratio),
+        value: Math.round(max * ratio),
+    }));
+});
+
+const toggleSeries = (key: TrendSeriesKey) => {
+    if (!visibleSeries.value[key]) {
+        visibleSeries.value[key] = true;
+
+        return;
+    }
+
+    const activeCount = Object.values(visibleSeries.value).filter(Boolean).length;
+    if (activeCount <= 1) {
+        return;
+    }
+
+    visibleSeries.value[key] = false;
+};
 
 onMounted(() => {
     loadAnalytics();
@@ -409,20 +509,27 @@ onMounted(() => {
                             </defs>
 
                             <g stroke="currentColor" stroke-opacity="0.08">
+                                <line
+                                    v-for="tick in yTicks"
+                                    :key="`grid-${tick.value}-${tick.y}`"
+                                    :x1="padding.left"
+                                    :y1="tick.y"
+                                    :x2="chartWidth - padding.right"
+                                    :y2="tick.y"
+                                />
                                 <line :x1="padding.left" :y1="padding.top" :x2="padding.left" :y2="chartHeight - padding.bottom" />
-                                <line :x1="padding.left" :y1="chartHeight - padding.bottom" :x2="chartWidth - padding.right" :y2="chartHeight - padding.bottom" />
                             </g>
 
                             <g v-if="timeline.length > 0" stroke-linecap="round" stroke-linejoin="round">
                                 <path
-                                    v-for="series in trendSeries"
+                                    v-for="series in displayedTrendSeries"
                                     :key="series.key"
                                     :d="points(series.values)"
                                     fill="none"
                                     :stroke="series.color"
                                     stroke-width="3"
                                 />
-                                <g v-for="series in trendSeries" :key="`${series.key}-dots`">
+                                <g v-for="series in displayedTrendSeries" :key="`${series.key}-dots`">
                                     <circle
                                         v-for="dot in pointDots(series.values)"
                                         :key="`${series.key}-${dot.value}-${dot.cx}`"
@@ -431,6 +538,58 @@ onMounted(() => {
                                         r="3.5"
                                         :fill="series.color"
                                     />
+                                </g>
+                            </g>
+
+                            <g v-if="timeline.length > 0">
+                                <rect
+                                    v-for="(bucket, index) in timeline"
+                                    :key="`hover-zone-${bucket.key}`"
+                                    :x="hoverZone(index).x"
+                                    :y="padding.top"
+                                    :width="hoverZone(index).width"
+                                    :height="chartInnerHeight"
+                                    fill="transparent"
+                                    @mouseenter="hoveredIndex = index"
+                                    @mouseleave="hoveredIndex = null"
+                                />
+                            </g>
+
+                            <g v-if="hoveredBucket && hoveredIndex !== null">
+                                <line
+                                    :x1="xForIndex(hoveredIndex)"
+                                    :y1="padding.top"
+                                    :x2="xForIndex(hoveredIndex)"
+                                    :y2="chartHeight - padding.bottom"
+                                    stroke="#38bdf8"
+                                    stroke-opacity="0.55"
+                                    stroke-dasharray="4 4"
+                                />
+
+                                <rect
+                                    :x="hoverCardX"
+                                    :y="hoverCardY"
+                                    :width="hoverCardWidth"
+                                    :height="hoverCardHeight"
+                                    rx="8"
+                                    fill="#0f172a"
+                                    fill-opacity="0.94"
+                                />
+
+                                <text
+                                    :x="hoverCardX + 10"
+                                    :y="hoverCardY + 16"
+                                    fill="#e2e8f0"
+                                    class="text-[11px] font-semibold"
+                                >
+                                    {{ hoveredBucket.label }}
+                                </text>
+
+                                <g v-for="(entry, row) in hoverEntries" :key="`tooltip-${entry.key}`">
+                                    <circle :cx="hoverCardX + 12" :cy="hoverCardY + 29 + row * 16" r="3" :fill="entry.color" />
+                                    <text :x="hoverCardX + 20" :y="hoverCardY + 32 + row * 16" fill="#cbd5e1" class="text-[10px]">
+                                        {{ entry.label }}: {{ formatNumber(entry.value) }}
+                                    </text>
                                 </g>
                             </g>
 
@@ -446,18 +605,37 @@ onMounted(() => {
                                     {{ bucket.label }}
                                 </text>
                             </g>
+
+                            <g>
+                                <text
+                                    v-for="tick in yTicks"
+                                    :key="`tick-${tick.value}-${tick.y}`"
+                                    :x="chartWidth - padding.right + 2"
+                                    :y="tick.y + 4"
+                                    class="fill-muted-foreground text-[10px]"
+                                >
+                                    {{ formatNumber(tick.value) }}
+                                </text>
+                            </g>
                         </svg>
                     </div>
 
                     <div class="mt-4 grid gap-2 md:grid-cols-3">
-                        <div
+                        <button
                             v-for="series in trendSeries"
                             :key="series.key"
-                            class="rounded-lg border border-border/70 bg-background/80 px-3 py-2"
+                            type="button"
+                            class="rounded-lg border px-3 py-2 text-left transition"
+                            :class="visibleSeries[series.key as TrendSeriesKey]
+                                ? 'cursor-pointer border-border/70 bg-background/80 hover:bg-accent/50'
+                                : 'cursor-pointer border-border/40 bg-background/40 opacity-55 hover:opacity-80'"
+                            @click="toggleSeries(series.key as TrendSeriesKey)"
                         >
-                            <p class="text-[11px] uppercase tracking-wide text-muted-foreground">{{ series.label }}</p>
+                            <p class="text-[11px] uppercase tracking-wide text-muted-foreground">
+                                {{ series.label }}
+                            </p>
                             <p class="mt-1 text-sm font-semibold">{{ formatNumber(series.values.reduce((acc, value) => acc + value, 0)) }}</p>
-                        </div>
+                        </button>
                     </div>
                 </article>
 
