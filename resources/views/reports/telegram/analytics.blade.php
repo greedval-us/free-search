@@ -150,11 +150,17 @@
                 'bucket' => 'Bucket',
                 'interactions' => 'Interactions',
                 'topPosts' => 'Top Posts',
+                'opinionLeaders' => 'Opinion Leaders',
+                'opinionLeadersByDay' => 'Opinion Leaders By Day',
                 'date' => 'Date',
+                'author' => 'Author',
                 'message' => 'Message',
                 'score' => 'Score',
+                'gifts' => 'Gifts',
                 'noTimeline' => 'No timeline data',
                 'noTopPosts' => 'No top posts for this range',
+                'noOpinionLeaders' => 'Not enough authors to build opinion leaders',
+                'noOpinionLeadersByDay' => 'No daily activity data for opinion leaders',
             ],
             'ru' => [
                 'title' => 'Отчет по аналитике Telegram',
@@ -177,11 +183,17 @@
                 'bucket' => 'Срез',
                 'interactions' => 'Взаимодействия',
                 'topPosts' => 'Топ постов',
+                'opinionLeaders' => 'Лидеры мнений',
+                'opinionLeadersByDay' => 'Лидеры мнений по дням',
                 'date' => 'Дата',
+                'author' => 'Автор',
                 'message' => 'Сообщение',
                 'score' => 'Оценка',
+                'gifts' => 'Подарки',
                 'noTimeline' => 'Нет данных по динамике',
                 'noTopPosts' => 'Нет топ-постов за выбранный период',
+                'noOpinionLeaders' => 'Недостаточно авторов для оценки лидеров мнений',
+                'noOpinionLeadersByDay' => 'Нет дневных данных активности по лидерам мнений',
             ],
         ];
 
@@ -324,6 +336,88 @@
                         @empty
                             <tr>
                                 <td colspan="8" class="muted">{{ $tr['noTopPosts'] }}</td>
+                            </tr>
+                        @endforelse
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <section class="card">
+            <div class="body">
+                <h2>{{ $tr['opinionLeaders'] }}</h2>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>{{ $tr['author'] }}</th>
+                            <th>{{ $tr['messages'] }}</th>
+                            <th>{{ $tr['forwards'] }}</th>
+                            <th>{{ $tr['replies'] }}</th>
+                            <th>{{ $tr['reactions'] }}</th>
+                            <th>{{ $tr['gifts'] }}</th>
+                            <th>{{ $tr['interactions'] }}</th>
+                            <th>{{ $tr['score'] }}</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if(count($report['summary']['opinionLeaders'] ?? []) > 1)
+                            @foreach(($report['summary']['opinionLeaders'] ?? []) as $index => $leader)
+                                <tr>
+                                    <td>{{ $index + 1 }}</td>
+                                    <td>{{ $leader['authorLabel'] ?? ('ID ' . ($leader['authorId'] ?? '-')) }}</td>
+                                    <td>{{ $leader['messages'] ?? 0 }}</td>
+                                    <td>{{ $leader['forwards'] ?? 0 }}</td>
+                                    <td>{{ $leader['replies'] ?? 0 }}</td>
+                                    <td>{{ $leader['reactions'] ?? 0 }}</td>
+                                    <td>{{ $leader['gifts'] ?? 0 }}</td>
+                                    <td>{{ $leader['interactions'] ?? 0 }}</td>
+                                    <td>{{ $leader['score'] ?? 0 }}</td>
+                                </tr>
+                            @endforeach
+                        @else
+                            <tr>
+                                <td colspan="9" class="muted">{{ $tr['noOpinionLeaders'] }}</td>
+                            </tr>
+                        @endif
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <section class="card">
+            <div class="body">
+                <h2>{{ $tr['opinionLeadersByDay'] }}</h2>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>{{ $tr['date'] }}</th>
+                            <th>{{ $tr['author'] }}</th>
+                            <th>{{ $tr['messages'] }}</th>
+                            <th>{{ $tr['forwards'] }}</th>
+                            <th>{{ $tr['replies'] }}</th>
+                            <th>{{ $tr['reactions'] }}</th>
+                            <th>{{ $tr['gifts'] }}</th>
+                            <th>{{ $tr['interactions'] }}</th>
+                            <th>{{ $tr['score'] }}</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @forelse(($report['summary']['opinionLeadersDaily'] ?? []) as $row)
+                            <tr>
+                                <td>{{ $row['dayLabel'] ?? '-' }}</td>
+                                <td>{{ $row['authorLabel'] ?? ('ID ' . ($row['authorId'] ?? '-')) }}</td>
+                                <td>{{ $row['messages'] ?? 0 }}</td>
+                                <td>{{ $row['forwards'] ?? 0 }}</td>
+                                <td>{{ $row['replies'] ?? 0 }}</td>
+                                <td>{{ $row['reactions'] ?? 0 }}</td>
+                                <td>{{ $row['gifts'] ?? 0 }}</td>
+                                <td>{{ $row['interactions'] ?? 0 }}</td>
+                                <td>{{ $row['score'] ?? 0 }}</td>
+                            </tr>
+                        @empty
+                            <tr>
+                                <td colspan="9" class="muted">{{ $tr['noOpinionLeadersByDay'] }}</td>
                             </tr>
                         @endforelse
                     </tbody>

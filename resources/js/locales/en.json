@@ -135,6 +135,7 @@
         "forwards": "Forwards",
         "replies": "Replies",
         "reactions": "Reactions",
+        "gifts": "Gifts",
         "mediaPosts": "Posts with media",
         "avgViewsPerPost": "Avg. views / post",
         "avgInteractionsPerPost": "Avg. interactions / post",
@@ -150,6 +151,12 @@
         "messages": "Messages",
         "views": "Views",
         "interactions": "Interactions",
+        "opinionLeaders": "Opinion leaders",
+        "opinionLeadersHint": "Top authors by impact, based on score and interactions.",
+        "opinionLeadersBreakdown": "Leaders breakdown",
+        "opinionLeadersByDay": "Leaders by day",
+        "opinionLeadersByDayHint": "Daily activity of opinion leaders within the selected range.",
+        "author": "Author",
         "topPosts": "Top posts",
         "topPostsHint": "Posts ranked by an engagement score."
       }

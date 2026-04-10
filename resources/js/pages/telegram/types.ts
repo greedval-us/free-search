@@ -137,6 +137,32 @@ export type TelegramAnalyticsSummary = {
             mediaLabel: string | null;
             score: number;
         }>;
+        opinionLeaders: Array<{
+            authorKey: string;
+            authorId: number | null;
+            authorLabel: string | null;
+            messages: number;
+            forwards: number;
+            replies: number;
+            reactions: number;
+            gifts: number;
+            interactions: number;
+            score: number;
+        }>;
+        opinionLeadersDaily: Array<{
+            authorKey: string;
+            authorId: number | null;
+            authorLabel: string | null;
+            dayKey: string;
+            dayLabel: string;
+            messages: number;
+            forwards: number;
+            replies: number;
+            reactions: number;
+            gifts: number;
+            interactions: number;
+            score: number;
+        }>;
         chatUsername: string;
     };
 };

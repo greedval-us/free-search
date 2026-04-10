@@ -45,7 +45,11 @@ const mediaLabel = (key: string) => {
     return map[key] ?? key;
 };
 
-const formatNumber = (value: number) => new Intl.NumberFormat().format(value);
+const formatNumber = (value: number | null | undefined) => {
+    const numeric = Number(value);
+
+    return new Intl.NumberFormat().format(Number.isFinite(numeric) ? numeric : 0);
+};
 
 const formatDate = (unix: number) => {
     if (!unix) {
@@ -204,6 +208,152 @@ const maxDistribution = computed(() => {
 
     return Math.max(mediaMax, reactionMax, 1);
 });
+
+const opinionLeaders = computed(() => payload.value?.summary.opinionLeaders ?? []);
+const opinionLeadersDaily = computed(() => payload.value?.summary.opinionLeadersDaily ?? []);
+const hasOpinionLeaders = computed(() => opinionLeaders.value.length > 1);
+const leaderMaxScore = computed(() => Math.max(1, ...opinionLeaders.value.map((item) => item.score)));
+const leaderMaxInteractions = computed(() => Math.max(1, ...opinionLeaders.value.map((item) => item.interactions)));
+const leaderScoreWidth = (score: number): string => `${Math.max(4, (score / leaderMaxScore.value) * 100)}%`;
+const leaderInteractionsWidth = (interactions: number): string =>
+    `${Math.max(4, (interactions / leaderMaxInteractions.value) * 100)}%`;
+const leaderChartWidth = 920;
+const leaderChartHeight = 280;
+const leaderChartPadding = {
+    top: 24,
+    right: 24,
+    bottom: 58,
+    left: 20,
+};
+const leaderChartInnerWidth = leaderChartWidth - leaderChartPadding.left - leaderChartPadding.right;
+const leaderChartInnerHeight = leaderChartHeight - leaderChartPadding.top - leaderChartPadding.bottom;
+const leaderHoveredIndex = ref<number | null>(null);
+const leaderColorPalette = ['#38bdf8', '#22c55e', '#f97316', '#eab308', '#ec4899', '#a78bfa', '#14b8a6', '#ef4444'];
+
+const leaderX = (index: number): number => {
+    const count = leaderDayAxis.value.length;
+    const step = count > 1 ? leaderChartInnerWidth / (count - 1) : 0;
+
+    return leaderChartPadding.left + step * index;
+};
+
+const opinionLeadersDailyByDay = computed(() => {
+    const groups: Array<{
+        dayKey: string;
+        dayLabel: string;
+        items: typeof opinionLeadersDaily.value;
+    }> = [];
+    const map = new Map<string, number>();
+
+    for (const item of opinionLeadersDaily.value) {
+        if (!map.has(item.dayKey)) {
+            map.set(item.dayKey, groups.length);
+            groups.push({
+                dayKey: item.dayKey,
+                dayLabel: item.dayLabel,
+                items: [],
+            });
+        }
+
+        const index = map.get(item.dayKey);
+        if (index === undefined) {
+            continue;
+        }
+
+        groups[index].items.push(item);
+    }
+
+    return groups;
+});
+
+const leaderDayAxis = computed(() => opinionLeadersDailyByDay.value.map((group) => ({
+    dayKey: group.dayKey,
+    dayLabel: group.dayLabel,
+})));
+
+const leaderSeries = computed(() =>
+    opinionLeaders.value.map((leader, index) => {
+        const valuesByDay = new Map<string, number>();
+        for (const row of opinionLeadersDaily.value) {
+            if (row.authorKey !== leader.authorKey) {
+                continue;
+            }
+
+            valuesByDay.set(row.dayKey, Number(row.score) || 0);
+        }
+
+        const label = (leader.authorLabel || `ID ${leader.authorId ?? '-'}`).trim();
+
+        return {
+            key: leader.authorKey,
+            label,
+            color: leaderColorPalette[index % leaderColorPalette.length],
+            values: leaderDayAxis.value.map((day) => valuesByDay.get(day.dayKey) ?? 0),
+        };
+    })
+);
+
+const leaderChartMax = computed(() => Math.max(1, ...leaderSeries.value.flatMap((series) => series.values)));
+const leaderHoverEntries = computed(() => {
+    if (leaderHoveredIndex.value === null) {
+        return [];
+    }
+
+    return leaderSeries.value
+        .map((series) => ({
+            key: series.key,
+            label: series.label,
+            color: series.color,
+            value: series.values[leaderHoveredIndex.value ?? 0] ?? 0,
+        }))
+        .sort((left, right) => right.value - left.value);
+});
+const leaderHoverCardWidth = 250;
+const leaderHoverCardHeight = computed(() => 36 + leaderHoverEntries.value.length * 16);
+const leaderHoverCardX = computed(() => {
+    if (leaderHoveredIndex.value === null) {
+        return leaderChartPadding.left;
+    }
+
+    const x = leaderX(leaderHoveredIndex.value) - leaderHoverCardWidth / 2;
+
+    return Math.max(leaderChartPadding.left, Math.min(x, leaderChartWidth - leaderChartPadding.right - leaderHoverCardWidth));
+});
+const leaderHoverDayLabel = computed(() => {
+    if (leaderHoveredIndex.value === null) {
+        return '';
+    }
+
+    return leaderDayAxis.value[leaderHoveredIndex.value]?.dayLabel ?? '';
+});
+const leaderHoverX = computed(() =>
+    leaderHoveredIndex.value === null ? leaderChartPadding.left : leaderX(leaderHoveredIndex.value)
+);
+
+const leaderPoints = (values: number[]): string => {
+    if (values.length === 0) {
+        return '';
+    }
+
+    return values
+        .map((value, index) => {
+            const x = leaderX(index);
+            const normalized = leaderChartMax.value > 0 ? value / leaderChartMax.value : 0;
+            const y = leaderChartPadding.top + leaderChartInnerHeight - normalized * leaderChartInnerHeight;
+
+            return `${index === 0 ? 'M' : 'L'} ${x.toFixed(2)} ${y.toFixed(2)}`;
+        })
+        .join(' ');
+};
+
+const leaderDots = (values: number[]) =>
+    values.map((value, index) => {
+        const x = leaderX(index);
+        const normalized = leaderChartMax.value > 0 ? value / leaderChartMax.value : 0;
+        const y = leaderChartPadding.top + leaderChartInnerHeight - normalized * leaderChartInnerHeight;
+
+        return { x, y, value };
+    });
 
 const xForIndex = (index: number): number => {
     const count = timeline.value.length;
@@ -688,6 +838,261 @@ onMounted(() => {
                     </div>
                 </article>
             </div>
+
+            <article
+                v-if="hasOpinionLeaders"
+                class="rounded-xl border border-sidebar-border/80 bg-card/75 p-4 shadow-xl backdrop-blur"
+            >
+                <div class="flex items-center justify-between gap-3">
+                    <div>
+                        <h3 class="text-sm font-semibold">{{ t('telegram.analytics.charts.opinionLeaders') }}</h3>
+                        <p class="text-xs text-muted-foreground">{{ t('telegram.analytics.charts.opinionLeadersHint') }}</p>
+                    </div>
+                    <span class="rounded-full border border-border px-2 py-1 text-xs text-muted-foreground">
+                        {{ opinionLeaders.length }}
+                    </span>
+                </div>
+
+                <div class="mt-4 overflow-hidden rounded-lg border border-border/70 bg-background/80 p-3">
+                    <svg
+                        viewBox="0 0 920 280"
+                        class="h-auto w-full"
+                        role="img"
+                        :aria-label="t('telegram.analytics.charts.opinionLeaders')"
+                    >
+                        <g stroke="currentColor" stroke-opacity="0.08">
+                            <line
+                                :x1="leaderChartPadding.left"
+                                :y1="leaderChartPadding.top"
+                                :x2="leaderChartPadding.left"
+                                :y2="leaderChartHeight - leaderChartPadding.bottom"
+                            />
+                            <line
+                                :x1="leaderChartPadding.left"
+                                :y1="leaderChartHeight - leaderChartPadding.bottom"
+                                :x2="leaderChartWidth - leaderChartPadding.right"
+                                :y2="leaderChartHeight - leaderChartPadding.bottom"
+                            />
+                        </g>
+
+                        <g stroke-linecap="round" stroke-linejoin="round">
+                            <path
+                                v-for="series in leaderSeries"
+                                :key="series.key"
+                                :d="leaderPoints(series.values)"
+                                fill="none"
+                                :stroke="series.color"
+                                stroke-width="3"
+                            />
+                            <g v-for="series in leaderSeries" :key="`${series.key}-dots`">
+                                <circle
+                                    v-for="(dot, index) in leaderDots(series.values)"
+                                    :key="`${series.key}-${index}`"
+                                    :cx="dot.x"
+                                    :cy="dot.y"
+                                    r="4"
+                                    :fill="series.color"
+                                />
+                            </g>
+                        </g>
+
+                        <g>
+                            <rect
+                                v-for="(day, index) in leaderDayAxis"
+                                :key="`leader-zone-${day.dayKey}`"
+                                :x="leaderX(index) - (leaderDayAxis.length > 1 ? leaderChartInnerWidth / (leaderDayAxis.length - 1) / 2 : leaderChartInnerWidth / 2)"
+                                :y="leaderChartPadding.top"
+                                :width="leaderDayAxis.length > 1 ? leaderChartInnerWidth / (leaderDayAxis.length - 1) : leaderChartInnerWidth"
+                                :height="leaderChartInnerHeight"
+                                fill="transparent"
+                                @mouseenter="leaderHoveredIndex = index"
+                                @mouseleave="leaderHoveredIndex = null"
+                            />
+                        </g>
+
+                        <g v-if="leaderHoveredIndex !== null">
+                            <line
+                                :x1="leaderHoverX"
+                                :y1="leaderChartPadding.top"
+                                :x2="leaderHoverX"
+                                :y2="leaderChartHeight - leaderChartPadding.bottom"
+                                stroke="#38bdf8"
+                                stroke-opacity="0.55"
+                                stroke-dasharray="4 4"
+                            />
+                            <rect
+                                :x="leaderHoverCardX"
+                                :y="leaderChartPadding.top + 10"
+                                :width="leaderHoverCardWidth"
+                                :height="leaderHoverCardHeight"
+                                rx="8"
+                                fill="#0f172a"
+                                fill-opacity="0.94"
+                            />
+                            <text
+                                :x="leaderHoverCardX + 10"
+                                :y="leaderChartPadding.top + 26"
+                                fill="#e2e8f0"
+                                class="text-[11px] font-semibold"
+                            >
+                                {{ leaderHoverDayLabel }}
+                            </text>
+                            <g v-for="(entry, row) in leaderHoverEntries" :key="`leader-tooltip-${entry.key}`">
+                                <circle :cx="leaderHoverCardX + 12" :cy="leaderChartPadding.top + 39 + row * 16" r="3" :fill="entry.color" />
+                                <text :x="leaderHoverCardX + 20" :y="leaderChartPadding.top + 42 + row * 16" fill="#cbd5e1" class="text-[10px]">
+                                    {{ entry.label }}: {{ formatNumber(entry.value) }}
+                                </text>
+                            </g>
+                        </g>
+
+                        <g>
+                            <text
+                                v-for="(day, index) in leaderDayAxis"
+                                :key="`leader-label-${day.dayKey}`"
+                                :x="leaderX(index)"
+                                :y="leaderChartHeight - 12"
+                                text-anchor="middle"
+                                class="fill-muted-foreground text-[11px]"
+                            >
+                                {{ day.dayLabel }}
+                            </text>
+                        </g>
+                    </svg>
+                </div>
+
+                <div class="mt-4 grid gap-2 md:grid-cols-2 xl:grid-cols-3">
+                    <div
+                        v-for="series in leaderSeries"
+                        :key="`leader-legend-${series.key}`"
+                        class="rounded-md border border-border/70 bg-background/70 px-3 py-2 text-xs"
+                    >
+                        <span class="inline-flex items-center gap-2 font-medium">
+                            <span class="inline-block h-2.5 w-2.5 rounded-full" :style="{ backgroundColor: series.color }" />
+                            {{ series.label }}
+                        </span>
+                    </div>
+                </div>
+
+                <div v-if="false" class="mt-4 grid gap-4 xl:grid-cols-[minmax(0,2fr)_minmax(0,1fr)]">
+                    <div class="space-y-3">
+                        <article
+                            v-for="leader in opinionLeaders"
+                            :key="leader.authorKey"
+                            class="rounded-lg border border-border/70 bg-background/70 p-3"
+                        >
+                            <div class="flex items-center justify-between gap-2">
+                                <p class="truncate text-sm font-semibold">
+                                    {{ leader.authorLabel || `ID ${leader.authorId ?? '-'}` }}
+                                </p>
+                                <span class="text-xs text-muted-foreground">
+                                    {{ t('telegram.analytics.stats.messages') }}: {{ formatNumber(leader.messages) }}
+                                </span>
+                            </div>
+
+                            <div class="mt-2 space-y-2">
+                                <div>
+                                    <div class="mb-1 flex items-center justify-between text-[11px]">
+                                        <span class="text-muted-foreground">{{ t('telegram.analytics.score') }}</span>
+                                        <span class="font-medium">{{ formatNumber(leader.score) }}</span>
+                                    </div>
+                                    <div class="h-2 rounded-full bg-muted">
+                                        <div
+                                            class="h-2 rounded-full bg-cyan-400"
+                                            :style="{ width: leaderScoreWidth(leader.score) }"
+                                        />
+                                    </div>
+                                </div>
+
+                                <div>
+                                    <div class="mb-1 flex items-center justify-between text-[11px]">
+                                        <span class="text-muted-foreground">{{ t('telegram.analytics.charts.interactions') }}</span>
+                                        <span class="font-medium">{{ formatNumber(leader.interactions) }}</span>
+                                    </div>
+                                    <div class="h-2 rounded-full bg-muted">
+                                        <div
+                                            class="h-2 rounded-full bg-emerald-400"
+                                            :style="{ width: leaderInteractionsWidth(leader.interactions) }"
+                                        />
+                                    </div>
+                                </div>
+                            </div>
+                        </article>
+                    </div>
+
+                    <div class="rounded-lg border border-border/70 bg-background/70 p-3">
+                        <h4 class="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+                            {{ t('telegram.analytics.charts.opinionLeadersBreakdown') }}
+                        </h4>
+                        <div class="mt-3 space-y-2">
+                            <article
+                                v-for="leader in opinionLeaders"
+                                :key="`${leader.authorKey}-breakdown`"
+                                class="rounded-md border border-border/70 bg-background/80 p-2 text-xs"
+                            >
+                                <p class="truncate font-medium">{{ leader.authorLabel || `ID ${leader.authorId ?? '-'}` }}</p>
+                                <p class="mt-1 text-muted-foreground">
+                                    {{ t('telegram.analytics.stats.forwards') }}: {{ formatNumber(leader.forwards) }}
+                                    · {{ t('telegram.analytics.stats.replies') }}: {{ formatNumber(leader.replies) }}
+                                    · {{ t('telegram.analytics.stats.reactions') }}: {{ formatNumber(leader.reactions) }}
+                                    · {{ t('telegram.analytics.stats.gifts') }}: {{ formatNumber(leader.gifts) }}
+                                </p>
+                            </article>
+                        </div>
+                    </div>
+                </div>
+            </article>
+
+            <article
+                v-if="false"
+                class="rounded-xl border border-sidebar-border/80 bg-card/75 p-4 shadow-xl backdrop-blur"
+            >
+                <h3 class="text-sm font-semibold">{{ t('telegram.analytics.charts.opinionLeadersByDay') }}</h3>
+                <p class="mt-1 text-xs text-muted-foreground">
+                    {{ t('telegram.analytics.charts.opinionLeadersByDayHint') }}
+                </p>
+
+                <div class="mt-3 space-y-3">
+                    <article
+                        v-for="dayGroup in opinionLeadersDailyByDay"
+                        :key="dayGroup.dayKey"
+                        class="rounded-md border border-border/70 bg-background/80 p-2"
+                    >
+                        <p class="text-xs font-semibold">{{ dayGroup.dayLabel }}</p>
+                        <div class="mt-2 overflow-x-auto">
+                            <table class="w-full min-w-[700px] text-xs">
+                                <thead>
+                                    <tr class="text-left text-muted-foreground">
+                                        <th class="py-1 pr-2">{{ t('telegram.analytics.charts.author') }}</th>
+                                        <th class="py-1 pr-2">{{ t('telegram.analytics.stats.messages') }}</th>
+                                        <th class="py-1 pr-2">{{ t('telegram.analytics.stats.forwards') }}</th>
+                                        <th class="py-1 pr-2">{{ t('telegram.analytics.stats.replies') }}</th>
+                                        <th class="py-1 pr-2">{{ t('telegram.analytics.stats.reactions') }}</th>
+                                        <th class="py-1 pr-2">{{ t('telegram.analytics.stats.gifts') }}</th>
+                                        <th class="py-1 pr-2">{{ t('telegram.analytics.charts.interactions') }}</th>
+                                        <th class="py-1">{{ t('telegram.analytics.score') }}</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr
+                                        v-for="item in dayGroup.items"
+                                        :key="`${dayGroup.dayKey}-${item.authorKey}`"
+                                        class="border-t border-border/60"
+                                    >
+                                        <td class="py-1 pr-2">{{ item.authorLabel || `ID ${item.authorId ?? '-'}` }}</td>
+                                        <td class="py-1 pr-2">{{ formatNumber(item.messages) }}</td>
+                                        <td class="py-1 pr-2">{{ formatNumber(item.forwards) }}</td>
+                                        <td class="py-1 pr-2">{{ formatNumber(item.replies) }}</td>
+                                        <td class="py-1 pr-2">{{ formatNumber(item.reactions) }}</td>
+                                        <td class="py-1 pr-2">{{ formatNumber(item.gifts) }}</td>
+                                        <td class="py-1 pr-2">{{ formatNumber(item.interactions) }}</td>
+                                        <td class="py-1">{{ formatNumber(item.score) }}</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </article>
+                </div>
+            </article>
 
             <article class="rounded-xl border border-sidebar-border/80 bg-card/75 p-4 shadow-xl backdrop-blur">
                 <div class="flex items-center justify-between gap-3">
