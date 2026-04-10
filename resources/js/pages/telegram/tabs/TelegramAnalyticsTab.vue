@@ -750,6 +750,17 @@ onMounted(() => {
                             <h3 class="text-sm font-semibold">{{ t('telegram.analytics.charts.funnel') }}</h3>
                             <p class="text-xs text-muted-foreground">{{ t('telegram.analytics.charts.funnelHint') }}</p>
                         </div>
+                        <div class="group relative">
+                            <span
+                                class="inline-flex h-5 w-5 cursor-help items-center justify-center rounded-full border border-border text-[11px] font-semibold text-muted-foreground"
+                                :aria-label="t('telegram.analytics.help.label')"
+                            >
+                                ?
+                            </span>
+                            <div class="pointer-events-none absolute right-0 top-6 z-20 hidden w-64 rounded-md border border-border/70 bg-popover p-2 text-[11px] leading-relaxed text-popover-foreground shadow-xl group-hover:block">
+                                {{ t('telegram.analytics.help.funnel') }}
+                            </div>
+                        </div>
                     </div>
 
                     <div class="mt-4 space-y-3">
@@ -790,6 +801,17 @@ onMounted(() => {
                             <h3 class="text-sm font-semibold">{{ t('telegram.analytics.charts.audience') }}</h3>
                             <p class="text-xs text-muted-foreground">{{ t('telegram.analytics.charts.audienceHint') }}</p>
                         </div>
+                        <div class="group relative">
+                            <span
+                                class="inline-flex h-5 w-5 cursor-help items-center justify-center rounded-full border border-border text-[11px] font-semibold text-muted-foreground"
+                                :aria-label="t('telegram.analytics.help.label')"
+                            >
+                                ?
+                            </span>
+                            <div class="pointer-events-none absolute right-0 top-6 z-20 hidden w-64 rounded-md border border-border/70 bg-popover p-2 text-[11px] leading-relaxed text-popover-foreground shadow-xl group-hover:block">
+                                {{ t('telegram.analytics.help.audience') }}
+                            </div>
+                        </div>
                     </div>
 
                     <div class="mt-4 grid gap-2 sm:grid-cols-2">
@@ -828,9 +850,22 @@ onMounted(() => {
                             <h3 class="text-sm font-semibold">{{ t('telegram.analytics.charts.activity') }}</h3>
                             <p class="text-xs text-muted-foreground">{{ t('telegram.analytics.charts.activityHint') }}</p>
                         </div>
-                        <span class="rounded-full border border-border px-2 py-1 text-xs text-muted-foreground">
-                            {{ totalMessages }} {{ t('telegram.analytics.stats.messagesShort') }}
-                        </span>
+                        <div class="flex items-center gap-2">
+                            <div class="group relative">
+                                <span
+                                    class="inline-flex h-5 w-5 cursor-help items-center justify-center rounded-full border border-border text-[11px] font-semibold text-muted-foreground"
+                                    :aria-label="t('telegram.analytics.help.label')"
+                                >
+                                    ?
+                                </span>
+                                <div class="pointer-events-none absolute right-0 top-6 z-20 hidden w-64 rounded-md border border-border/70 bg-popover p-2 text-[11px] leading-relaxed text-popover-foreground shadow-xl group-hover:block">
+                                    {{ t('telegram.analytics.help.activity') }}
+                                </div>
+                            </div>
+                            <span class="rounded-full border border-border px-2 py-1 text-xs text-muted-foreground">
+                                {{ totalMessages }} {{ t('telegram.analytics.stats.messagesShort') }}
+                            </span>
+                        </div>
                     </div>
 
                     <div class="mt-4 overflow-hidden rounded-lg border border-border/70 bg-background/80 p-3">
@@ -980,8 +1015,21 @@ onMounted(() => {
 
                 <article class="rounded-xl border border-sidebar-border/80 bg-card/75 p-4 shadow-xl backdrop-blur">
                     <div class="flex items-center justify-between">
-                        <h3 class="text-sm font-semibold">{{ t('telegram.analytics.charts.distribution') }}</h3>
-                        <span class="text-xs text-muted-foreground">{{ t('telegram.analytics.charts.distributionHint') }}</span>
+                        <div>
+                            <h3 class="text-sm font-semibold">{{ t('telegram.analytics.charts.distribution') }}</h3>
+                            <span class="text-xs text-muted-foreground">{{ t('telegram.analytics.charts.distributionHint') }}</span>
+                        </div>
+                        <div class="group relative">
+                            <span
+                                class="inline-flex h-5 w-5 cursor-help items-center justify-center rounded-full border border-border text-[11px] font-semibold text-muted-foreground"
+                                :aria-label="t('telegram.analytics.help.label')"
+                            >
+                                ?
+                            </span>
+                            <div class="pointer-events-none absolute right-0 top-6 z-20 hidden w-64 rounded-md border border-border/70 bg-popover p-2 text-[11px] leading-relaxed text-popover-foreground shadow-xl group-hover:block">
+                                {{ t('telegram.analytics.help.distribution') }}
+                            </div>
+                        </div>
                     </div>
 
                     <div class="mt-4 space-y-5">
@@ -1037,9 +1085,22 @@ onMounted(() => {
                         <h3 class="text-sm font-semibold">{{ t('telegram.analytics.charts.opinionLeaders') }}</h3>
                         <p class="text-xs text-muted-foreground">{{ t('telegram.analytics.charts.opinionLeadersHint') }}</p>
                     </div>
-                    <span class="rounded-full border border-border px-2 py-1 text-xs text-muted-foreground">
-                        {{ opinionLeaders.length }}
-                    </span>
+                    <div class="flex items-center gap-2">
+                        <div class="group relative">
+                            <span
+                                class="inline-flex h-5 w-5 cursor-help items-center justify-center rounded-full border border-border text-[11px] font-semibold text-muted-foreground"
+                                :aria-label="t('telegram.analytics.help.label')"
+                            >
+                                ?
+                            </span>
+                            <div class="pointer-events-none absolute right-0 top-6 z-20 hidden w-64 rounded-md border border-border/70 bg-popover p-2 text-[11px] leading-relaxed text-popover-foreground shadow-xl group-hover:block">
+                                {{ t('telegram.analytics.help.opinionLeaders') }}
+                            </div>
+                        </div>
+                        <span class="rounded-full border border-border px-2 py-1 text-xs text-muted-foreground">
+                            {{ opinionLeaders.length }}
+                        </span>
+                    </div>
                 </div>
 
                 <div class="mt-4 overflow-hidden rounded-lg border border-border/70 bg-background/80 p-3">
@@ -1289,9 +1350,22 @@ onMounted(() => {
                         <h3 class="text-sm font-semibold">{{ t('telegram.analytics.charts.topPosts') }}</h3>
                         <p class="text-xs text-muted-foreground">{{ t('telegram.analytics.charts.topPostsHint') }}</p>
                     </div>
-                    <span class="rounded-full border border-border px-2 py-1 text-xs text-muted-foreground">
-                        {{ payload.summary.topPosts.length }}
-                    </span>
+                    <div class="flex items-center gap-2">
+                        <div class="group relative">
+                            <span
+                                class="inline-flex h-5 w-5 cursor-help items-center justify-center rounded-full border border-border text-[11px] font-semibold text-muted-foreground"
+                                :aria-label="t('telegram.analytics.help.label')"
+                            >
+                                ?
+                            </span>
+                            <div class="pointer-events-none absolute right-0 top-6 z-20 hidden w-64 rounded-md border border-border/70 bg-popover p-2 text-[11px] leading-relaxed text-popover-foreground shadow-xl group-hover:block">
+                                {{ t('telegram.analytics.help.topPosts') }}
+                            </div>
+                        </div>
+                        <span class="rounded-full border border-border px-2 py-1 text-xs text-muted-foreground">
+                            {{ payload.summary.topPosts.length }}
+                        </span>
+                    </div>
                 </div>
 
                 <div class="mt-4 grid gap-3">

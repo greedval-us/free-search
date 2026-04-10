@@ -137,6 +137,15 @@
         "discussion": "Discussion",
         "virality": "Virality"
       },
+      "help": {
+        "label": "What is this data?",
+        "funnel": "Shows the step-by-step conversion from all posts to posts with meaningful engagement.",
+        "audience": "Shows author structure: concentration, recurring contributors, and peak activity hours.",
+        "activity": "Shows period dynamics by bucket: number of posts, views, and interactions.",
+        "distribution": "Shows which media formats and reactions dominate in the selected period.",
+        "opinionLeaders": "Shows top authors by impact score and engagement, with trends by day.",
+        "topPosts": "Shows the highest-impact posts ranked by weighted score."
+      },
       "empty": {
         "title": "Pick a channel and period",
         "description": "The analytics module aggregates live Telegram messages and renders charts, totals, and top posts for the selected period."
