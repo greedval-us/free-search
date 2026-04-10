@@ -3,6 +3,7 @@
 namespace App\Modules\Telegram\Analytics;
 
 use App\Modules\Telegram\Presenters\TelegramMessagePresenter;
+use App\Modules\Telegram\DTO\Response\Info\ChannelInfoDTO;
 use App\Modules\Telegram\TelegramService;
 use Carbon\Carbon;
 
@@ -72,6 +73,7 @@ class TelegramAnalyticsService
 
         $timeline = $this->buildTimeline($dateFrom, $dateTo, $groupBy);
         $summary = $this->summaryBuilder->build($items, $timeline, $chatUsername, $weights, $groupBy);
+        $groupInfo = $this->buildGroupInfo($chatUsername);
 
         return [
             'range' => [
@@ -83,6 +85,7 @@ class TelegramAnalyticsService
                 'groupBy' => $groupBy,
                 'keyword' => $keyword,
             ],
+            'groupInfo' => $groupInfo,
             'score' => $scoreProfile,
             'summary' => $summary,
         ];
@@ -216,5 +219,56 @@ class TelegramAnalyticsService
             'priority' => $priority,
             'weights' => self::SCORE_PROFILES[$priority],
         ];
+    }
+
+    /**
+     * @return array<string, mixed>|null
+     */
+    private function buildGroupInfo(string $chatUsername): ?array
+    {
+        $info = $this->telegramService->getInfo($chatUsername);
+        if (!$info instanceof ChannelInfoDTO || $info->chat === null) {
+            return null;
+        }
+
+        $chat = $info->chat;
+        $full = $info->full;
+
+        return [
+            'id' => $chat->id > 0 ? $chat->id : null,
+            'title' => trim((string) $chat->title) !== '' ? $chat->title : $chatUsername,
+            'username' => $chat->username,
+            'type' => $this->resolveGroupType($chat->broadcast, $chat->megagroup, $chat->forum, $chat->gigagroup),
+            'description' => $full?->about ?: $chat->about,
+            'participantsCount' => $full?->participants_count ?? $chat->participants_count,
+            'onlineCount' => $full?->online_count,
+            'verified' => (bool) $chat->verified,
+            'restricted' => (bool) $chat->restricted,
+            'scam' => (bool) $chat->scam,
+            'createdAt' => $chat->date > 0 ? $chat->date : null,
+            'linkedChatId' => $full?->linked_chat_id,
+            'canViewStats' => (bool) ($full?->can_view_stats ?? false),
+        ];
+    }
+
+    private function resolveGroupType(bool $broadcast, bool $megagroup, bool $forum, bool $gigagroup): string
+    {
+        if ($gigagroup) {
+            return 'gigagroup';
+        }
+
+        if ($forum) {
+            return 'forum';
+        }
+
+        if ($broadcast) {
+            return 'channel';
+        }
+
+        if ($megagroup) {
+            return 'group';
+        }
+
+        return 'chat';
     }
 }

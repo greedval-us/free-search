@@ -111,6 +111,24 @@
         "from": "From",
         "to": "To"
       },
+      "group": {
+        "type": "Type",
+        "participants": "Participants",
+        "online": "Online",
+        "verified": "Verified",
+        "createdAt": "Created",
+        "statsAvailable": "Statistics available",
+        "linkedChatId": "Linked chat ID",
+        "restricted": "Restricted",
+        "scam": "Scam",
+        "types": {
+          "channel": "Channel",
+          "group": "Group",
+          "forum": "Forum",
+          "gigagroup": "Gigagroup",
+          "chat": "Chat"
+        }
+      },
       "priority": {
         "title": "What's more important",
         "formula": "Applied formula",

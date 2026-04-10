@@ -137,6 +137,22 @@
                 'profile' => 'Scoring profile',
                 'keyword' => 'Keyword',
                 'formula' => 'Formula',
+                'groupInfo' => 'Group Info',
+                'groupType' => 'Type',
+                'groupParticipants' => 'Participants',
+                'groupOnline' => 'Online',
+                'groupCreated' => 'Created',
+                'groupLinkedChatId' => 'Linked Chat ID',
+                'groupStatsAvailable' => 'Statistics available',
+                'groupVerified' => 'Verified',
+                'groupRestricted' => 'Restricted',
+                'groupScam' => 'Scam',
+                'groupTypeChannel' => 'Channel',
+                'groupTypeGroup' => 'Group',
+                'groupTypeForum' => 'Forum',
+                'groupTypeGigagroup' => 'Gigagroup',
+                'groupTypeChat' => 'Chat',
+                'noGroupInfo' => 'Group info not available',
                 'totals' => 'Totals',
                 'messages' => 'Messages',
                 'views' => 'Views',
@@ -183,6 +199,22 @@
                 'profile' => 'Профиль оценки',
                 'keyword' => 'Ключевое слово',
                 'formula' => 'Формула',
+                'groupInfo' => 'Информация о группе',
+                'groupType' => 'Тип',
+                'groupParticipants' => 'Участники',
+                'groupOnline' => 'Онлайн',
+                'groupCreated' => 'Создан',
+                'groupLinkedChatId' => 'ID связанного чата',
+                'groupStatsAvailable' => 'Статистика доступна',
+                'groupVerified' => 'Верифицирован',
+                'groupRestricted' => 'Ограничен',
+                'groupScam' => 'Скам',
+                'groupTypeChannel' => 'Канал',
+                'groupTypeGroup' => 'Группа',
+                'groupTypeForum' => 'Форум',
+                'groupTypeGigagroup' => 'Гигагруппа',
+                'groupTypeChat' => 'Чат',
+                'noGroupInfo' => 'Информация о группе недоступна',
                 'totals' => 'Итоги',
                 'messages' => 'Сообщения',
                 'views' => 'Просмотры',
@@ -247,6 +279,88 @@
                     </span>
                 </div>
             </header>
+        </section>
+
+        <section class="card">
+            <div class="body">
+                <h2>{{ $tr['groupInfo'] }}</h2>
+                @php
+                    $groupInfo = $report['groupInfo'] ?? null;
+                    $groupTypeKey = $groupInfo['type'] ?? 'chat';
+                    $groupTypeLabel = match ($groupTypeKey) {
+                        'channel' => $tr['groupTypeChannel'],
+                        'group' => $tr['groupTypeGroup'],
+                        'forum' => $tr['groupTypeForum'],
+                        'gigagroup' => $tr['groupTypeGigagroup'],
+                        default => $tr['groupTypeChat'],
+                    };
+                @endphp
+
+                @if(is_array($groupInfo))
+                    <div class="grid">
+                        <article class="metric">
+                            <div class="label">{{ $tr['channel'] }}</div>
+                            <div class="value" style="font-size: 18px;">{{ $groupInfo['title'] ?? ($report['range']['chatUsername'] ?? '-') }}</div>
+                        </article>
+                        <article class="metric">
+                            <div class="label">Username</div>
+                            <div class="value" style="font-size: 18px;">
+                                @if(!empty($groupInfo['username']))
+                                    {{ '@' . $groupInfo['username'] }}
+                                @else
+                                    -
+                                @endif
+                            </div>
+                        </article>
+                        <article class="metric">
+                            <div class="label">{{ $tr['groupType'] }}</div>
+                            <div class="value" style="font-size: 18px;">{{ $groupTypeLabel }}</div>
+                        </article>
+                        <article class="metric">
+                            <div class="label">{{ $tr['groupParticipants'] }}</div>
+                            <div class="value">{{ isset($groupInfo['participantsCount']) ? $groupInfo['participantsCount'] : '-' }}</div>
+                        </article>
+                        <article class="metric">
+                            <div class="label">{{ $tr['groupOnline'] }}</div>
+                            <div class="value">{{ isset($groupInfo['onlineCount']) ? $groupInfo['onlineCount'] : '-' }}</div>
+                        </article>
+                        <article class="metric">
+                            <div class="label">{{ $tr['groupCreated'] }}</div>
+                            <div class="value" style="font-size: 18px;">
+                                @if(!empty($groupInfo['createdAt']))
+                                    {{ \Carbon\Carbon::createFromTimestamp((int) $groupInfo['createdAt'], config('app.timezone'))->format('d.m.Y H:i') }}
+                                @else
+                                    -
+                                @endif
+                            </div>
+                        </article>
+                    </div>
+
+                    @if(!empty($groupInfo['description']))
+                        <p class="muted" style="margin-top: 10px;">{{ $groupInfo['description'] }}</p>
+                    @endif
+
+                    <div class="meta" style="margin-top: 10px;">
+                        @if(!empty($groupInfo['verified']))
+                            <span class="chip">{{ $tr['groupVerified'] }}</span>
+                        @endif
+                        @if(!empty($groupInfo['restricted']))
+                            <span class="chip">{{ $tr['groupRestricted'] }}</span>
+                        @endif
+                        @if(!empty($groupInfo['scam']))
+                            <span class="chip">{{ $tr['groupScam'] }}</span>
+                        @endif
+                        @if(!empty($groupInfo['canViewStats']))
+                            <span class="chip">{{ $tr['groupStatsAvailable'] }}</span>
+                        @endif
+                        @if(!empty($groupInfo['linkedChatId']))
+                            <span class="chip">{{ $tr['groupLinkedChatId'] }}: {{ $groupInfo['linkedChatId'] }}</span>
+                        @endif
+                    </div>
+                @else
+                    <p class="muted">{{ $tr['noGroupInfo'] }}</p>
+                @endif
+            </div>
         </section>
 
         <section class="card">

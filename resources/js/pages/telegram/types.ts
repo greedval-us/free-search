@@ -79,6 +79,21 @@ export type TelegramAnalyticsSummary = {
         groupBy: 'hour' | 'day';
         keyword?: string | null;
     };
+    groupInfo: {
+        id: number | null;
+        title: string;
+        username: string | null;
+        type: 'channel' | 'group' | 'forum' | 'gigagroup' | 'chat';
+        description: string | null;
+        participantsCount: number | null;
+        onlineCount: number | null;
+        verified: boolean;
+        restricted: boolean;
+        scam: boolean;
+        createdAt: number | null;
+        linkedChatId: number | null;
+        canViewStats: boolean;
+    } | null;
     score: {
         priority: 'balanced' | 'reach' | 'discussion' | 'virality';
         weights: {

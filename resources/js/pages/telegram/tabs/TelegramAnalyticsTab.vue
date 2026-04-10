@@ -27,6 +27,18 @@ const {
 const priorityLabel = (priority: string) => t(`telegram.analytics.priority.${priority}`);
 const analyticsPanelCollapsed = ref(false);
 const canLoadAnalytics = computed(() => form.chatUsername.trim().length > 0);
+const groupInfo = computed(() => payload.value?.groupInfo ?? null);
+const groupTypeLabel = (type: string): string => {
+    const map: Record<string, string> = {
+        channel: t('telegram.analytics.group.types.channel'),
+        group: t('telegram.analytics.group.types.group'),
+        forum: t('telegram.analytics.group.types.forum'),
+        gigagroup: t('telegram.analytics.group.types.gigagroup'),
+        chat: t('telegram.analytics.group.types.chat'),
+    };
+
+    return map[type] ?? type;
+};
 
 const mediaLabel = (key: string) => {
     const map: Record<string, string> = {
@@ -667,6 +679,57 @@ onMounted(() => {
         </div>
 
         <template v-else-if="payload">
+            <article
+                v-if="groupInfo"
+                class="rounded-xl border border-sidebar-border/80 bg-card/75 p-4 shadow-xl backdrop-blur"
+            >
+                <div class="flex flex-wrap items-start justify-between gap-3">
+                    <div class="min-w-0">
+                        <h3 class="truncate text-sm font-semibold">{{ groupInfo.title || payload.range.chatUsername }}</h3>
+                        <p class="mt-1 text-xs text-muted-foreground">
+                            {{ t('telegram.analytics.group.type') }}: {{ groupTypeLabel(groupInfo.type) }}
+                        </p>
+                    </div>
+                    <div class="flex flex-wrap gap-2 text-xs">
+                        <span v-if="groupInfo.username" class="rounded-full border border-border px-2 py-1">
+                            @{{ groupInfo.username }}
+                        </span>
+                        <span class="rounded-full border border-border px-2 py-1">
+                            {{ t('telegram.analytics.group.participants') }}:
+                            {{ groupInfo.participantsCount === null ? '-' : formatNumber(groupInfo.participantsCount) }}
+                        </span>
+                        <span v-if="groupInfo.onlineCount !== null" class="rounded-full border border-border px-2 py-1">
+                            {{ t('telegram.analytics.group.online') }}: {{ formatNumber(groupInfo.onlineCount) }}
+                        </span>
+                        <span v-if="groupInfo.verified" class="rounded-full border border-emerald-500/40 bg-emerald-500/10 px-2 py-1 text-emerald-300">
+                            {{ t('telegram.analytics.group.verified') }}
+                        </span>
+                    </div>
+                </div>
+
+                <p v-if="groupInfo.description" class="mt-3 line-clamp-3 text-sm text-muted-foreground">
+                    {{ groupInfo.description }}
+                </p>
+
+                <div class="mt-3 flex flex-wrap gap-2 text-xs text-muted-foreground">
+                    <span v-if="groupInfo.createdAt" class="rounded-full border border-border px-2 py-1">
+                        {{ t('telegram.analytics.group.createdAt') }}: {{ formatDate(groupInfo.createdAt) }}
+                    </span>
+                    <span v-if="groupInfo.canViewStats" class="rounded-full border border-border px-2 py-1">
+                        {{ t('telegram.analytics.group.statsAvailable') }}
+                    </span>
+                    <span v-if="groupInfo.linkedChatId" class="rounded-full border border-border px-2 py-1">
+                        {{ t('telegram.analytics.group.linkedChatId') }}: {{ formatNumber(groupInfo.linkedChatId) }}
+                    </span>
+                    <span v-if="groupInfo.restricted" class="rounded-full border border-amber-500/40 bg-amber-500/10 px-2 py-1 text-amber-300">
+                        {{ t('telegram.analytics.group.restricted') }}
+                    </span>
+                    <span v-if="groupInfo.scam" class="rounded-full border border-red-500/40 bg-red-500/10 px-2 py-1 text-red-300">
+                        {{ t('telegram.analytics.group.scam') }}
+                    </span>
+                </div>
+            </article>
+
             <div class="grid gap-3 md:grid-cols-2 xl:grid-cols-3">
                 <article
                     v-for="card in statCards"
