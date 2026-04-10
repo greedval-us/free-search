@@ -90,8 +90,69 @@
       "analytics": "Analytics"
     },
     "analytics": {
-      "comingSoon": "Analytics Coming Soon",
-      "description": "This section will contain analytical dashboards and insights."
+      "title": "Telegram Analytics",
+      "subtitle": "Analyze channel activity for the last 1 to 7 days.",
+      "collapsed": "Settings panel is collapsed.",
+      "loading": "Loading analytics...",
+      "refresh": "Refresh",
+      "report": "Open report",
+      "hideSettings": "Hide settings",
+      "score": "Score",
+      "openTelegram": "Open in Telegram",
+      "emptyPost": "No post text",
+      "periods": {
+        "1": "Last 1 day",
+        "3": "Last 3 days",
+        "7": "Last 7 days"
+      },
+      "filters": {
+        "channel": "Channel username",
+        "period": "Period",
+        "from": "From",
+        "to": "To"
+      },
+      "priority": {
+        "title": "What's more important",
+        "formula": "Applied formula",
+        "balanced": "Balanced",
+        "reach": "Reach",
+        "discussion": "Discussion",
+        "virality": "Virality"
+      },
+      "empty": {
+        "title": "Pick a channel and period",
+        "description": "The analytics module aggregates live Telegram messages and renders charts, totals, and top posts for the selected period."
+      },
+      "errors": {
+        "channelRequired": "Please enter a channel username.",
+        "loadFailed": "Could not load analytics.",
+        "rangeTooLong": "The custom date range cannot exceed 7 days."
+      },
+      "stats": {
+        "messages": "Messages",
+        "messagesShort": "posts",
+        "views": "Views",
+        "forwards": "Forwards",
+        "replies": "Replies",
+        "reactions": "Reactions",
+        "mediaPosts": "Posts with media",
+        "avgViewsPerPost": "Avg. views / post",
+        "avgInteractionsPerPost": "Avg. interactions / post",
+        "uniqueAuthors": "Unique authors"
+      },
+      "charts": {
+        "activity": "Activity trend",
+        "activityHint": "Messages, views, and interactions across the chosen range.",
+        "distribution": "Content mix",
+        "distributionHint": "Top media types and reaction groups.",
+        "media": "Media types",
+        "reactions": "Reactions",
+        "messages": "Messages",
+        "views": "Views",
+        "interactions": "Interactions",
+        "topPosts": "Top posts",
+        "topPostsHint": "Posts ranked by an engagement score."
+      }
     }
   },
   "common": {

@@ -68,3 +68,75 @@ export type CommentState = {
     hasMore: boolean;
     nextOffsetId: number | null;
 };
+
+export type TelegramAnalyticsSummary = {
+    range: {
+        chatUsername: string;
+        dateFrom: string;
+        dateTo: string;
+        label: string;
+        periodDays: number;
+        groupBy: 'hour' | 'day';
+        keyword?: string | null;
+    };
+    score: {
+        priority: 'balanced' | 'reach' | 'discussion' | 'virality';
+        weights: {
+            views: number;
+            forwards: number;
+            replies: number;
+            reactions: number;
+            gifts: number;
+        };
+    };
+    summary: {
+        totals: {
+            messages: number;
+            views: number;
+            forwards: number;
+            replies: number;
+            reactions: number;
+            gifts: number;
+            mediaPosts: number;
+            uniqueAuthors: number;
+            avgViewsPerPost: number;
+            avgInteractionsPerPost: number;
+        };
+        timeline: Array<{
+            key: string;
+            label: string;
+            messages: number;
+            views: number;
+            forwards: number;
+            replies: number;
+            reactions: number;
+            gifts: number;
+            media: number;
+            interactions: number;
+        }>;
+        topMedia: Array<{
+            key: string;
+            label: string;
+            count: number;
+            share: number;
+        }>;
+        topReactions: Array<{
+            label: string;
+            count: number;
+            share: number;
+        }>;
+        topPosts: Array<{
+            id: number;
+            date: number;
+            message: string;
+            telegramUrl: string | null;
+            views: number;
+            forwards: number;
+            replies: number;
+            reactions: number;
+            mediaLabel: string | null;
+            score: number;
+        }>;
+        chatUsername: string;
+    };
+};
