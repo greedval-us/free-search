@@ -289,6 +289,7 @@ const leaderChartInnerWidth = leaderChartWidth - leaderChartPadding.left - leade
 const leaderChartInnerHeight = leaderChartHeight - leaderChartPadding.top - leaderChartPadding.bottom;
 const leaderHoveredIndex = ref<number | null>(null);
 const leaderColorPalette = ['#38bdf8', '#22c55e', '#f97316', '#eab308', '#ec4899', '#a78bfa', '#14b8a6', '#ef4444'];
+const visibleLeaderSeries = ref<Record<string, boolean>>({});
 
 const leaderX = (index: number): number => {
     const count = leaderDayAxis.value.length;
@@ -353,13 +354,17 @@ const leaderSeries = computed(() =>
     })
 );
 
-const leaderChartMax = computed(() => Math.max(1, ...leaderSeries.value.flatMap((series) => series.values)));
+const displayedLeaderSeries = computed(() =>
+    leaderSeries.value.filter((series) => visibleLeaderSeries.value[series.key] !== false)
+);
+
+const leaderChartMax = computed(() => Math.max(1, ...displayedLeaderSeries.value.flatMap((series) => series.values)));
 const leaderHoverEntries = computed(() => {
     if (leaderHoveredIndex.value === null) {
         return [];
     }
 
-    return leaderSeries.value
+    return displayedLeaderSeries.value
         .map((series) => ({
             key: series.key,
             label: series.label,
@@ -414,6 +419,21 @@ const leaderDots = (values: number[]) =>
 
         return { x, y, value };
     });
+
+const toggleLeaderSeries = (key: string): void => {
+    if (visibleLeaderSeries.value[key] === false) {
+        visibleLeaderSeries.value[key] = true;
+
+        return;
+    }
+
+    const activeCount = leaderSeries.value.filter((series) => visibleLeaderSeries.value[series.key] !== false).length;
+    if (activeCount <= 1) {
+        return;
+    }
+
+    visibleLeaderSeries.value[key] = false;
+};
 
 const xForIndex = (index: number): number => {
     const count = timeline.value.length;
@@ -1127,14 +1147,14 @@ onMounted(() => {
 
                         <g stroke-linecap="round" stroke-linejoin="round">
                             <path
-                                v-for="series in leaderSeries"
+                                v-for="series in displayedLeaderSeries"
                                 :key="series.key"
                                 :d="leaderPoints(series.values)"
                                 fill="none"
                                 :stroke="series.color"
                                 stroke-width="3"
                             />
-                            <g v-for="series in leaderSeries" :key="`${series.key}-dots`">
+                            <g v-for="series in displayedLeaderSeries" :key="`${series.key}-dots`">
                                 <circle
                                     v-for="(dot, index) in leaderDots(series.values)"
                                     :key="`${series.key}-${index}`"
@@ -1211,16 +1231,27 @@ onMounted(() => {
                 </div>
 
                 <div class="mt-4 grid gap-2 md:grid-cols-2 xl:grid-cols-3">
-                    <div
+                    <button
                         v-for="series in leaderSeries"
                         :key="`leader-legend-${series.key}`"
-                        class="rounded-md border border-border/70 bg-background/70 px-3 py-2 text-xs"
+                        type="button"
+                        class="cursor-pointer rounded-md border px-3 py-2 text-left text-xs transition"
+                        :class="visibleLeaderSeries[series.key] === false
+                            ? 'border-border/70 bg-background/40 text-muted-foreground'
+                            : 'border-border/70 bg-background/70 text-foreground hover:bg-accent/60'"
+                        @click="toggleLeaderSeries(series.key)"
                     >
                         <span class="inline-flex items-center gap-2 font-medium">
-                            <span class="inline-block h-2.5 w-2.5 rounded-full" :style="{ backgroundColor: series.color }" />
+                            <span
+                                class="inline-block h-2.5 w-2.5 rounded-full"
+                                :style="{
+                                    backgroundColor: series.color,
+                                    opacity: visibleLeaderSeries[series.key] === false ? 0.35 : 1
+                                }"
+                            />
                             {{ series.label }}
                         </span>
-                    </div>
+                    </button>
                 </div>
 
                 <div v-if="false" class="mt-4 grid gap-4 xl:grid-cols-[minmax(0,2fr)_minmax(0,1fr)]">
