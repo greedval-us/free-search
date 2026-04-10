@@ -706,9 +706,22 @@ onMounted(() => {
             <span v-if="payload" class="rounded-full border border-border px-2 py-1">
                 {{ t('telegram.analytics.priority.title') }}: {{ priorityLabel(activePriority) }}
             </span>
-            <span v-if="payload" class="rounded-full border border-border px-2 py-1">
-                {{ t('telegram.analytics.priority.formula') }}:
-                {{ payload.score.weights.views }}*V + {{ payload.score.weights.forwards }}*F + {{ payload.score.weights.replies }}*R + {{ payload.score.weights.reactions }}*Re + {{ payload.score.weights.gifts }}*G
+            <span v-if="payload" class="relative flex items-center gap-1 rounded-full border border-border px-2 py-1">
+                <span>
+                    {{ t('telegram.analytics.priority.formula') }}:
+                    {{ payload.score.weights.views }}*V + {{ payload.score.weights.forwards }}*F + {{ payload.score.weights.replies }}*R + {{ payload.score.weights.reactions }}*Re + {{ payload.score.weights.gifts }}*G
+                </span>
+                <span class="group relative inline-flex">
+                    <span
+                        class="inline-flex h-4 w-4 cursor-help items-center justify-center rounded-full border border-border text-[10px] font-semibold text-muted-foreground"
+                        :aria-label="t('telegram.analytics.help.label')"
+                    >
+                        ?
+                    </span>
+                    <span class="pointer-events-none absolute right-0 top-5 z-20 hidden w-80 rounded-md border border-border/70 bg-popover p-2 text-[11px] leading-relaxed text-popover-foreground shadow-xl group-hover:block">
+                        {{ t('telegram.analytics.help.formula') }}
+                    </span>
+                </span>
             </span>
         </div>
 
@@ -796,7 +809,20 @@ onMounted(() => {
             >
                 <div class="flex flex-wrap items-start justify-between gap-3">
                     <div>
-                        <h3 class="text-sm font-semibold">{{ t('telegram.analytics.fraud.title') }}</h3>
+                        <div class="flex items-center gap-2">
+                            <h3 class="text-sm font-semibold">{{ t('telegram.analytics.fraud.title') }}</h3>
+                            <div class="group relative">
+                                <span
+                                    class="inline-flex h-5 w-5 cursor-help items-center justify-center rounded-full border border-border text-[11px] font-semibold text-muted-foreground"
+                                    :aria-label="t('telegram.analytics.help.label')"
+                                >
+                                    ?
+                                </span>
+                                <div class="pointer-events-none absolute left-0 top-6 z-20 hidden w-80 rounded-md border border-border/70 bg-popover p-2 text-[11px] leading-relaxed text-popover-foreground shadow-xl group-hover:block">
+                                    {{ t('telegram.analytics.help.antiFraud') }}
+                                </div>
+                            </div>
+                        </div>
                         <p class="text-xs text-muted-foreground">{{ t('telegram.analytics.fraud.hint') }}</p>
                     </div>
                     <div class="flex items-center gap-2 text-xs">

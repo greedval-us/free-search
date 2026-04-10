@@ -1,6 +1,7 @@
-import { BarChart3, Search } from 'lucide-vue-next';
+import { BarChart3, Search, Wrench } from 'lucide-vue-next';
 import type { Component } from 'vue';
 import TelegramAnalyticsTab from './tabs/TelegramAnalyticsTab.vue';
+import TelegramParserTab from './tabs/TelegramParserTab.vue';
 import TelegramSearchTab from './tabs/TelegramSearchTab.vue';
 import type { TelegramTabValue } from './types';
 
@@ -23,5 +24,11 @@ export const TELEGRAM_TABS: readonly TelegramTabDefinition[] = [
         labelKey: 'telegram.tabs.analytics',
         icon: BarChart3,
         component: TelegramAnalyticsTab,
+    },
+    {
+        key: 'parser',
+        labelKey: 'telegram.tabs.parser',
+        icon: Wrench,
+        component: TelegramParserTab,
     },
 ] as const;

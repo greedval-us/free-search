@@ -1,4 +1,4 @@
-export type TelegramTabValue = 'search' | 'analytics';
+export type TelegramTabValue = 'search' | 'analytics' | 'parser';
 
 export type SearchItem = {
     id: number;

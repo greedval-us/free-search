@@ -87,7 +87,13 @@
     },
     "tabs": {
       "search": "Search",
-      "analytics": "Analytics"
+      "analytics": "Analytics",
+      "parser": "Parser"
+    },
+    "parser": {
+      "title": "Telegram Parser",
+      "description": "This section is prepared for parser workflows. We will add sources, rules, and scheduled collection here.",
+      "status": "Stub: in development"
     },
     "analytics": {
       "title": "Telegram Analytics",
@@ -168,6 +174,8 @@
       },
       "help": {
         "label": "What is this data?",
+        "formula": "Post score formula. Variables: V = views, F = forwards, R = replies, Re = reactions, G = gifts. Calculation: score = V*wV + F*wF + R*wR + Re*wRe + G*wG.",
+        "antiFraud": "Anti-Fraud risk score (0-100) is formed from trigger points. We detect suspicious patterns (for example interactions without views, time bursts, abnormal ratios), sum trigger scores, and map risk level: low < 30, medium 30-59, high >= 60.",
         "funnel": "Shows the step-by-step conversion from all posts to posts with meaningful engagement.",
         "audience": "Shows author structure: concentration, recurring contributors, and peak activity hours.",
         "activity": "Shows period dynamics by bucket: number of posts, views, and interactions.",
