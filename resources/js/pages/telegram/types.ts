@@ -102,6 +102,27 @@ export type TelegramAnalyticsSummary = {
             avgViewsPerPost: number;
             avgInteractionsPerPost: number;
         };
+        funnel: {
+            stages: Array<{
+                key: 'messages' | 'views' | 'interactions' | 'reactions';
+                value: number;
+                conversionFromPrevious: number;
+                conversionFromStart: number;
+            }>;
+        };
+        audience: {
+            activeAuthors: number;
+            singleMessageAuthors: number;
+            returningAuthors: number;
+            topAuthorShare: number;
+            top5AuthorsShare: number;
+            concentrationIndex: number;
+            mostActiveHours: Array<{
+                hour: number;
+                label: string;
+                messages: number;
+            }>;
+        };
         timeline: Array<{
             key: string;
             label: string;

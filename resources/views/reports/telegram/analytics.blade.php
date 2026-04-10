@@ -147,8 +147,19 @@
                 'avgViewsPerPost' => 'Avg Views/Post',
                 'avgInteractionsPerPost' => 'Avg Interactions/Post',
                 'timeline' => 'Timeline',
+                'funnel' => 'Engagement Funnel',
+                'audience' => 'Audience',
                 'bucket' => 'Bucket',
                 'interactions' => 'Interactions',
+                'conversionPrev' => 'Conversion vs Previous Stage, %',
+                'conversionStart' => 'Conversion vs First Stage, %',
+                'activeAuthors' => 'Active Authors',
+                'singleMessageAuthors' => 'Single-Message Authors',
+                'returningAuthors' => 'Returning Authors',
+                'topAuthorShare' => 'Top Author Share, %',
+                'top5AuthorsShare' => 'Top 5 Authors Share, %',
+                'concentrationIndex' => 'Concentration Index',
+                'mostActiveHours' => 'Most Active Hours',
                 'topPosts' => 'Top Posts',
                 'opinionLeaders' => 'Opinion Leaders',
                 'opinionLeadersByDay' => 'Opinion Leaders By Day',
@@ -158,6 +169,8 @@
                 'score' => 'Score',
                 'gifts' => 'Gifts',
                 'noTimeline' => 'No timeline data',
+                'noFunnel' => 'No funnel data',
+                'noAudience' => 'No audience data',
                 'noTopPosts' => 'No top posts for this range',
                 'noOpinionLeaders' => 'Not enough authors to build opinion leaders',
                 'noOpinionLeadersByDay' => 'No daily activity data for opinion leaders',
@@ -180,8 +193,19 @@
                 'avgViewsPerPost' => 'Сред. просмотров/пост',
                 'avgInteractionsPerPost' => 'Сред. взаимодействий/пост',
                 'timeline' => 'Динамика',
+                'funnel' => 'Воронка вовлечения',
+                'audience' => 'Аудитория',
                 'bucket' => 'Срез',
                 'interactions' => 'Взаимодействия',
+                'conversionPrev' => 'Конверсия к предыдущему этапу, %',
+                'conversionStart' => 'Конверсия к первому этапу, %',
+                'activeAuthors' => 'Активные авторы',
+                'singleMessageAuthors' => 'Авторы с 1 сообщением',
+                'returningAuthors' => 'Повторно активные',
+                'topAuthorShare' => 'Доля топ-автора, %',
+                'top5AuthorsShare' => 'Доля топ-5 авторов, %',
+                'concentrationIndex' => 'Индекс концентрации',
+                'mostActiveHours' => 'Самые активные часы',
                 'topPosts' => 'Топ постов',
                 'opinionLeaders' => 'Лидеры мнений',
                 'opinionLeadersByDay' => 'Лидеры мнений по дням',
@@ -191,6 +215,8 @@
                 'score' => 'Оценка',
                 'gifts' => 'Подарки',
                 'noTimeline' => 'Нет данных по динамике',
+                'noFunnel' => 'Нет данных по воронке',
+                'noAudience' => 'Нет данных по аудитории',
                 'noTopPosts' => 'Нет топ-постов за выбранный период',
                 'noOpinionLeaders' => 'Недостаточно авторов для оценки лидеров мнений',
                 'noOpinionLeadersByDay' => 'Нет дневных данных активности по лидерам мнений',
@@ -260,6 +286,112 @@
                         <div class="value">{{ $report['summary']['totals']['avgInteractionsPerPost'] ?? 0 }}</div>
                     </article>
                 </div>
+            </div>
+        </section>
+
+        <section class="card">
+            <div class="body">
+                <h2>{{ $tr['funnel'] }}</h2>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>{{ $tr['bucket'] }}</th>
+                            <th>{{ $tr['messages'] }}</th>
+                            <th>{{ $tr['conversionPrev'] }}</th>
+                            <th>{{ $tr['conversionStart'] }}</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @php
+                            $funnelLabels = [
+                                'messages' => $tr['messages'],
+                                'views' => $tr['views'],
+                                'interactions' => $tr['interactions'],
+                                'reactions' => $tr['reactions'],
+                            ];
+                        @endphp
+                        @forelse(($report['summary']['funnel']['stages'] ?? []) as $index => $stage)
+                            @php
+                                $currentValue = (int) ($stage['value'] ?? 0);
+                                $previousValue = $index === 0
+                                    ? $currentValue
+                                    : (int) (($report['summary']['funnel']['stages'][$index - 1]['value'] ?? 0));
+                                $startValue = (int) (($report['summary']['funnel']['stages'][0]['value'] ?? 0));
+                            @endphp
+                            <tr>
+                                <td>{{ $funnelLabels[$stage['key'] ?? ''] ?? ($stage['key'] ?? '-') }}</td>
+                                <td>{{ $stage['value'] ?? 0 }}</td>
+                                <td>{{ $stage['conversionFromPrevious'] ?? 0 }}% ({{ $currentValue }} / {{ $previousValue }})</td>
+                                <td>{{ $stage['conversionFromStart'] ?? 0 }}% ({{ $currentValue }} / {{ $startValue }})</td>
+                            </tr>
+                        @empty
+                            <tr>
+                                <td colspan="4" class="muted">{{ $tr['noFunnel'] }}</td>
+                            </tr>
+                        @endforelse
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <section class="card">
+            <div class="body">
+                <h2>{{ $tr['audience'] }}</h2>
+                @php
+                    $audience = $report['summary']['audience'] ?? null;
+                @endphp
+                @if(is_array($audience))
+                    <div class="grid">
+                        <article class="metric">
+                            <div class="label">{{ $tr['activeAuthors'] }}</div>
+                            <div class="value">{{ $audience['activeAuthors'] ?? 0 }}</div>
+                        </article>
+                        <article class="metric">
+                            <div class="label">{{ $tr['singleMessageAuthors'] }}</div>
+                            <div class="value">{{ $audience['singleMessageAuthors'] ?? 0 }}</div>
+                        </article>
+                        <article class="metric">
+                            <div class="label">{{ $tr['returningAuthors'] }}</div>
+                            <div class="value">{{ $audience['returningAuthors'] ?? 0 }}</div>
+                        </article>
+                        <article class="metric">
+                            <div class="label">{{ $tr['topAuthorShare'] }}</div>
+                            <div class="value">{{ $audience['topAuthorShare'] ?? 0 }}%</div>
+                        </article>
+                        <article class="metric">
+                            <div class="label">{{ $tr['top5AuthorsShare'] }}</div>
+                            <div class="value">{{ $audience['top5AuthorsShare'] ?? 0 }}%</div>
+                        </article>
+                        <article class="metric">
+                            <div class="label">{{ $tr['concentrationIndex'] }}</div>
+                            <div class="value">{{ $audience['concentrationIndex'] ?? 0 }}</div>
+                        </article>
+                    </div>
+
+                    <h2 style="margin-top: 14px;">{{ $tr['mostActiveHours'] }}</h2>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>{{ $tr['bucket'] }}</th>
+                                <th>{{ $tr['messages'] }}</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @forelse(($audience['mostActiveHours'] ?? []) as $hour)
+                                <tr>
+                                    <td>{{ $hour['label'] ?? '-' }}</td>
+                                    <td>{{ $hour['messages'] ?? 0 }}</td>
+                                </tr>
+                            @empty
+                                <tr>
+                                    <td colspan="2" class="muted">{{ $tr['noAudience'] }}</td>
+                                </tr>
+                            @endforelse
+                        </tbody>
+                    </table>
+                @else
+                    <p class="muted">{{ $tr['noAudience'] }}</p>
+                @endif
             </div>
         </section>
 
