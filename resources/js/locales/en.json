@@ -130,6 +130,34 @@
           "chat": "Chat"
         }
       },
+      "fraud": {
+        "title": "Anti-Fraud",
+        "hint": "Risk signals based on suspicious engagement patterns.",
+        "riskScore": "Risk score",
+        "riskLevel": "Risk level",
+        "suspiciousPosts": "Suspicious posts",
+        "triggers": "Triggers",
+        "noTriggers": "No strong fraud signals detected.",
+        "level": {
+          "low": "Low",
+          "medium": "Medium",
+          "high": "High"
+        },
+        "trigger": {
+          "zero_view_interactions": "Interactions without views",
+          "author_concentration": "High author concentration",
+          "time_burst": "Time burst concentration",
+          "reaction_ratio_cluster": "Cluster with high reaction ratio",
+          "suspicious_posts_cluster": "Cluster of suspicious posts"
+        },
+        "reason": {
+          "interactions_without_views": "Interactions without views",
+          "high_reaction_ratio": "Abnormally high reaction ratio",
+          "high_forward_ratio": "Abnormally high forward ratio",
+          "gifts_with_low_views": "Gifts with low views",
+          "high_interactions_low_views": "High interactions with low views"
+        }
+      },
       "priority": {
         "title": "What's more important",
         "formula": "Applied formula",

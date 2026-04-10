@@ -138,6 +138,25 @@ export type TelegramAnalyticsSummary = {
                 messages: number;
             }>;
         };
+        fraudSignals: {
+            riskLevel: 'low' | 'medium' | 'high';
+            riskScore: number;
+            suspiciousPostsCount: number;
+            triggers: Array<{
+                key: string;
+                score: number;
+                value: number;
+                threshold: number;
+            }>;
+            suspiciousPosts: Array<{
+                id: number;
+                date: number;
+                message: string;
+                telegramUrl: string | null;
+                riskScore: number;
+                reasons: string[];
+            }>;
+        };
         timeline: Array<{
             key: string;
             label: string;

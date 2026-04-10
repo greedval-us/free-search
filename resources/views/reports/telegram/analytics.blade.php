@@ -176,6 +176,16 @@
                 'top5AuthorsShare' => 'Top 5 Authors Share, %',
                 'concentrationIndex' => 'Concentration Index',
                 'mostActiveHours' => 'Most Active Hours',
+                'antiFraud' => 'Anti-Fraud',
+                'riskScore' => 'Risk Score',
+                'riskLevel' => 'Risk Level',
+                'fraudTriggers' => 'Triggers',
+                'fraudSuspiciousPosts' => 'Suspicious Posts',
+                'fraudNoTriggers' => 'No strong fraud signals detected',
+                'fraudReason' => 'Reasons',
+                'fraudRiskLow' => 'Low',
+                'fraudRiskMedium' => 'Medium',
+                'fraudRiskHigh' => 'High',
                 'topPosts' => 'Top Posts',
                 'opinionLeaders' => 'Opinion Leaders',
                 'opinionLeadersByDay' => 'Opinion Leaders By Day',
@@ -238,6 +248,16 @@
                 'top5AuthorsShare' => 'Доля топ-5 авторов, %',
                 'concentrationIndex' => 'Индекс концентрации',
                 'mostActiveHours' => 'Самые активные часы',
+                'antiFraud' => 'Anti-Fraud',
+                'riskScore' => 'Риск-скор',
+                'riskLevel' => 'Уровень риска',
+                'fraudTriggers' => 'Триггеры',
+                'fraudSuspiciousPosts' => 'Подозрительные посты',
+                'fraudNoTriggers' => 'Сильные сигналы фрода не обнаружены',
+                'fraudReason' => 'Причины',
+                'fraudRiskLow' => 'Низкий',
+                'fraudRiskMedium' => 'Средний',
+                'fraudRiskHigh' => 'Высокий',
                 'topPosts' => 'Топ постов',
                 'opinionLeaders' => 'Лидеры мнений',
                 'opinionLeadersByDay' => 'Лидеры мнений по дням',
@@ -505,6 +525,120 @@
                     </table>
                 @else
                     <p class="muted">{{ $tr['noAudience'] }}</p>
+                @endif
+            </div>
+        </section>
+
+        <section class="card">
+            <div class="body">
+                <h2>{{ $tr['antiFraud'] }}</h2>
+                @php
+                    $fraud = $report['summary']['fraudSignals'] ?? null;
+                    $fraudTriggerLabels = [
+                        'zero_view_interactions' => $reportLocale === 'ru' ? 'Взаимодействия без просмотров' : 'Interactions without views',
+                        'author_concentration' => $reportLocale === 'ru' ? 'Высокая концентрация на одном авторе' : 'High author concentration',
+                        'time_burst' => $reportLocale === 'ru' ? 'Всплеск активности в одном временном слоте' : 'Time burst concentration',
+                        'reaction_ratio_cluster' => $reportLocale === 'ru' ? 'Кластер с высоким отношением реакций' : 'Cluster with high reaction ratio',
+                        'suspicious_posts_cluster' => $reportLocale === 'ru' ? 'Кластер подозрительных постов' : 'Cluster of suspicious posts',
+                    ];
+                    $fraudReasonLabels = [
+                        'interactions_without_views' => $reportLocale === 'ru' ? 'Взаимодействия без просмотров' : 'Interactions without views',
+                        'high_reaction_ratio' => $reportLocale === 'ru' ? 'Аномально высокий уровень реакций' : 'Abnormally high reaction ratio',
+                        'high_forward_ratio' => $reportLocale === 'ru' ? 'Аномально высокий уровень репостов' : 'Abnormally high forward ratio',
+                        'gifts_with_low_views' => $reportLocale === 'ru' ? 'Подарки при низких просмотрах' : 'Gifts with low views',
+                        'high_interactions_low_views' => $reportLocale === 'ru' ? 'Высокие взаимодействия при низких просмотрах' : 'High interactions with low views',
+                    ];
+                    $riskLevelLabel = match (($fraud['riskLevel'] ?? 'low')) {
+                        'high' => $tr['fraudRiskHigh'],
+                        'medium' => $tr['fraudRiskMedium'],
+                        default => $tr['fraudRiskLow'],
+                    };
+                @endphp
+
+                @if(is_array($fraud))
+                    <div class="grid">
+                        <article class="metric">
+                            <div class="label">{{ $tr['riskScore'] }}</div>
+                            <div class="value">{{ $fraud['riskScore'] ?? 0 }}</div>
+                        </article>
+                        <article class="metric">
+                            <div class="label">{{ $tr['riskLevel'] }}</div>
+                            <div class="value">{{ $riskLevelLabel }}</div>
+                        </article>
+                        <article class="metric">
+                            <div class="label">{{ $tr['fraudSuspiciousPosts'] }}</div>
+                            <div class="value">{{ $fraud['suspiciousPostsCount'] ?? 0 }}</div>
+                        </article>
+                    </div>
+
+                    <h2 style="margin-top: 14px;">{{ $tr['fraudTriggers'] }}</h2>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>{{ $tr['bucket'] }}</th>
+                                <th>{{ $tr['score'] }}</th>
+                                <th>{{ $tr['messages'] }}</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @forelse(($fraud['triggers'] ?? []) as $trigger)
+                                <tr>
+                                    <td>{{ $fraudTriggerLabels[$trigger['key'] ?? ''] ?? ($trigger['key'] ?? '-') }}</td>
+                                    <td>+{{ $trigger['score'] ?? 0 }}</td>
+                                    <td>{{ $trigger['value'] ?? 0 }} / {{ $trigger['threshold'] ?? 0 }}</td>
+                                </tr>
+                            @empty
+                                <tr>
+                                    <td colspan="3" class="muted">{{ $tr['fraudNoTriggers'] }}</td>
+                                </tr>
+                            @endforelse
+                        </tbody>
+                    </table>
+
+                    <h2 style="margin-top: 14px;">{{ $tr['fraudSuspiciousPosts'] }}</h2>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>{{ $tr['date'] }}</th>
+                                <th>{{ $tr['message'] }}</th>
+                                <th>{{ $tr['riskScore'] }}</th>
+                                <th>{{ $tr['fraudReason'] }}</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @forelse(($fraud['suspiciousPosts'] ?? []) as $index => $post)
+                                <tr>
+                                    <td>{{ $index + 1 }}</td>
+                                    <td>
+                                        @if(isset($post['date']))
+                                            {{ \Carbon\Carbon::createFromTimestamp((int) $post['date'], config('app.timezone'))->format('d.m.Y H:i') }}
+                                        @else
+                                            -
+                                        @endif
+                                    </td>
+                                    <td>{{ $post['message'] ?? '-' }}</td>
+                                    <td>{{ $post['riskScore'] ?? 0 }}</td>
+                                    <td>
+                                        @php
+                                            $reasons = is_array($post['reasons'] ?? null) ? $post['reasons'] : [];
+                                            $reasonLabels = array_map(
+                                                static fn ($key) => $fraudReasonLabels[$key] ?? (string) $key,
+                                                $reasons
+                                            );
+                                        @endphp
+                                        {{ implode(' · ', $reasonLabels) }}
+                                    </td>
+                                </tr>
+                            @empty
+                                <tr>
+                                    <td colspan="5" class="muted">{{ $tr['fraudNoTriggers'] }}</td>
+                                </tr>
+                            @endforelse
+                        </tbody>
+                    </table>
+                @else
+                    <p class="muted">{{ $tr['fraudNoTriggers'] }}</p>
                 @endif
             </div>
         </section>

@@ -11,6 +11,7 @@ class TelegramAnalyticsSummaryBuilder
         private readonly TelegramAnalyticsFunnelCalculator $funnelCalculator,
         private readonly TelegramAnalyticsAudienceCalculator $audienceCalculator,
         private readonly TelegramAnalyticsOpinionLeadersBuilder $opinionLeadersBuilder,
+        private readonly TelegramAnalyticsFraudCalculator $fraudCalculator,
     ) {
     }
 
@@ -36,6 +37,7 @@ class TelegramAnalyticsSummaryBuilder
         $authorDailyStats = [];
         $hourlyActivity = array_fill(0, 24, 0);
         $funnelCandidates = [];
+        $fraudPosts = [];
 
         foreach ($items as $item) {
             $messageMetrics = $this->extractMessageMetrics($item);
@@ -91,6 +93,18 @@ class TelegramAnalyticsSummaryBuilder
             );
 
             $topPosts[] = $this->buildTopPostRow($item, $messageMetrics, $score);
+            $fraudPosts[] = [
+                'id' => (int) ($item['id'] ?? 0),
+                'date' => $messageMetrics['date'],
+                'message' => trim((string) ($item['message'] ?? '')),
+                'telegramUrl' => $item['telegramUrl'] ?? null,
+                'views' => $messageMetrics['views'],
+                'forwards' => $messageMetrics['forwards'],
+                'replies' => $messageMetrics['replies'],
+                'reactions' => $messageMetrics['reactions'],
+                'gifts' => $messageMetrics['gifts'],
+                'interactions' => $messageMetrics['interactions'],
+            ];
         }
 
         ksort($timeline);
@@ -105,11 +119,17 @@ class TelegramAnalyticsSummaryBuilder
             $opinionLeaders
         );
 
+        $timelineValues = array_values($timeline);
+        $funnel = $this->funnelCalculator->build($funnelCandidates);
+        $audience = $this->audienceCalculator->build($authorStats, (int) $totals['messages'], $hourlyActivity);
+        $fraudSignals = $this->fraudCalculator->build($fraudPosts, $timelineValues, $totals, $audience);
+
         return [
             'totals' => $totals,
-            'funnel' => $this->funnelCalculator->build($funnelCandidates),
-            'audience' => $this->audienceCalculator->build($authorStats, (int) $totals['messages'], $hourlyActivity),
-            'timeline' => array_values($timeline),
+            'funnel' => $funnel,
+            'audience' => $audience,
+            'fraudSignals' => $fraudSignals,
+            'timeline' => $timelineValues,
             'topMedia' => $this->buildDistribution($mediaCounts),
             'topReactions' => $this->buildDistribution($reactionCounts),
             'topPosts' => array_slice($topPosts, 0, 5),

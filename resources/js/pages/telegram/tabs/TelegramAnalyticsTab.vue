@@ -269,6 +269,22 @@ const audienceCards = computed(() => {
         },
     ];
 });
+const fraudSignals = computed(() => payload.value?.summary.fraudSignals ?? null);
+const fraudRiskLevelLabel = computed(() => t(`telegram.analytics.fraud.level.${fraudSignals.value?.riskLevel ?? 'low'}`));
+const fraudRiskBadgeClass = computed(() => {
+    const level = fraudSignals.value?.riskLevel;
+    if (level === 'high') {
+        return 'border-red-500/40 bg-red-500/10 text-red-300';
+    }
+
+    if (level === 'medium') {
+        return 'border-amber-500/40 bg-amber-500/10 text-amber-300';
+    }
+
+    return 'border-emerald-500/40 bg-emerald-500/10 text-emerald-300';
+});
+const fraudTriggerLabel = (key: string): string => t(`telegram.analytics.fraud.trigger.${key}`);
+const fraudReasonLabel = (key: string): string => t(`telegram.analytics.fraud.reason.${key}`);
 
 const opinionLeaders = computed(() => payload.value?.summary.opinionLeaders ?? []);
 const opinionLeadersDaily = computed(() => payload.value?.summary.opinionLeadersDaily ?? []);
@@ -773,6 +789,71 @@ onMounted(() => {
                     </p>
                 </article>
             </div>
+
+            <article
+                v-if="fraudSignals"
+                class="rounded-xl border border-sidebar-border/80 bg-card/75 p-4 shadow-xl backdrop-blur"
+            >
+                <div class="flex flex-wrap items-start justify-between gap-3">
+                    <div>
+                        <h3 class="text-sm font-semibold">{{ t('telegram.analytics.fraud.title') }}</h3>
+                        <p class="text-xs text-muted-foreground">{{ t('telegram.analytics.fraud.hint') }}</p>
+                    </div>
+                    <div class="flex items-center gap-2 text-xs">
+                        <span class="rounded-full border border-border px-2 py-1">
+                            {{ t('telegram.analytics.fraud.riskScore') }}: {{ formatNumber(fraudSignals.riskScore) }}
+                        </span>
+                        <span class="rounded-full border px-2 py-1" :class="fraudRiskBadgeClass">
+                            {{ t('telegram.analytics.fraud.riskLevel') }}: {{ fraudRiskLevelLabel }}
+                        </span>
+                    </div>
+                </div>
+
+                <div class="mt-4 grid gap-4 xl:grid-cols-[minmax(0,1fr)_minmax(0,1fr)]">
+                    <div class="rounded-lg border border-border/70 bg-background/70 p-3">
+                        <p class="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+                            {{ t('telegram.analytics.fraud.triggers') }}
+                        </p>
+                        <div class="mt-2 space-y-2">
+                            <article
+                                v-for="trigger in fraudSignals.triggers"
+                                :key="`fraud-trigger-${trigger.key}`"
+                                class="rounded-md border border-border/70 bg-background/80 p-2 text-xs"
+                            >
+                                <p class="font-semibold">{{ fraudTriggerLabel(trigger.key) }}</p>
+                                <p class="mt-1 text-muted-foreground">
+                                    +{{ trigger.score }} · {{ formatNumber(trigger.value) }} / {{ formatNumber(trigger.threshold) }}
+                                </p>
+                            </article>
+                            <p v-if="fraudSignals.triggers.length === 0" class="text-xs text-muted-foreground">
+                                {{ t('telegram.analytics.fraud.noTriggers') }}
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="rounded-lg border border-border/70 bg-background/70 p-3">
+                        <p class="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+                            {{ t('telegram.analytics.fraud.suspiciousPosts') }}: {{ formatNumber(fraudSignals.suspiciousPostsCount) }}
+                        </p>
+                        <div class="mt-2 space-y-2">
+                            <article
+                                v-for="post in fraudSignals.suspiciousPosts"
+                                :key="`fraud-post-${post.id}`"
+                                class="rounded-md border border-border/70 bg-background/80 p-2 text-xs"
+                            >
+                                <p class="font-semibold">#{{ post.id }} · {{ formatDate(post.date) }}</p>
+                                <p class="mt-1 line-clamp-2 text-muted-foreground">{{ post.message || t('telegram.analytics.emptyPost') }}</p>
+                                <p class="mt-1 text-muted-foreground">
+                                    {{ t('telegram.analytics.fraud.riskScore') }}: {{ formatNumber(post.riskScore) }}
+                                </p>
+                                <p class="mt-1 text-muted-foreground">
+                                    {{ post.reasons.map((reason) => fraudReasonLabel(reason)).join(' · ') }}
+                                </p>
+                            </article>
+                        </div>
+                    </div>
+                </div>
+            </article>
 
             <div class="grid gap-4 xl:grid-cols-2">
                 <article class="rounded-xl border border-sidebar-border/80 bg-card/75 p-4 shadow-xl backdrop-blur">
