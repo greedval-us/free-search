@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { BarChart3, ChevronDown, ChevronUp, FileText, RefreshCw, Settings } from 'lucide-vue-next';
+import { BarChart3, ChevronDown, ChevronUp, Download, FileText, RefreshCw, Settings } from 'lucide-vue-next';
 import { computed, onMounted, ref } from 'vue';
 import { useI18n } from '@/composables/useI18n';
 import { useTelegramAnalytics } from '../composables/useTelegramAnalytics';
@@ -22,6 +22,7 @@ const {
     setPriority,
     loadAnalytics,
     openReport,
+    downloadReport,
 } = useTelegramAnalytics(t);
 
 const priorityLabel = (priority: string) => t(`telegram.analytics.priority.${priority}`);
@@ -663,6 +664,16 @@ onMounted(() => {
                     >
                         <FileText class="h-4 w-4" />
                         {{ t('telegram.analytics.report') }}
+                    </button>
+
+                    <button
+                        type="button"
+                        :disabled="!canLoadAnalytics"
+                        class="inline-flex h-10 cursor-pointer items-center gap-2 rounded-md border border-input bg-background px-4 text-sm font-medium hover:bg-accent disabled:cursor-not-allowed disabled:opacity-60"
+                        @click="downloadReport"
+                    >
+                        <Download class="h-4 w-4" />
+                        {{ t('telegram.analytics.downloadReport') }}
                     </button>
                 </div>
             </div>

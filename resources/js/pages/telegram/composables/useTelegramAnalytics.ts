@@ -107,7 +107,15 @@ export const useTelegramAnalytics = (t: TranslateFn) => {
     };
 
     const summaryUrl = () => `/telegram/analytics/summary?${buildQuery().toString()}`;
-    const reportUrl = () => `/telegram/analytics/report?${buildQuery().toString()}`;
+    const reportUrl = (download = false) => {
+        const query = buildQuery();
+
+        if (download) {
+            query.set('download', '1');
+        }
+
+        return `/telegram/analytics/report?${query.toString()}`;
+    };
 
     const applyPreset = (days: AnalyticsPeriod) => {
         form.periodDays = days;
@@ -181,6 +189,14 @@ export const useTelegramAnalytics = (t: TranslateFn) => {
         window.open(reportUrl(), '_blank', 'noopener,noreferrer');
     };
 
+    const downloadReport = () => {
+        if (typeof window === 'undefined') {
+            return;
+        }
+
+        window.open(reportUrl(true), '_blank', 'noopener,noreferrer');
+    };
+
     const trendMax = computed(() => {
         const buckets = payload.value?.summary.timeline ?? [];
 
@@ -211,5 +227,6 @@ export const useTelegramAnalytics = (t: TranslateFn) => {
         setPriority,
         loadAnalytics,
         openReport,
+        downloadReport,
     };
 };
