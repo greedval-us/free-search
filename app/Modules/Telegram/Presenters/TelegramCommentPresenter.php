@@ -23,6 +23,7 @@ class TelegramCommentPresenter
                 'date' => (int) ($comment['date'] ?? 0),
                 'message' => (string) ($comment['message'] ?? ''),
                 'authorId' => $this->extractRawAuthorId($comment),
+                'reactions' => $this->extractReactions($comment),
             ];
         }
 
@@ -58,5 +59,44 @@ class TelegramCommentPresenter
         }
 
         return null;
+    }
+
+    /**
+     * @param array<string, mixed> $comment
+     * @return array<int, array<string, mixed>>
+     */
+    private function extractReactions(array $comment): array
+    {
+        $reactions = is_array($comment['reactions'] ?? null) ? $comment['reactions'] : [];
+        $results = is_array($reactions['results'] ?? null) ? $reactions['results'] : [];
+        $items = [];
+
+        foreach ($results as $result) {
+            if (!is_array($result)) {
+                continue;
+            }
+
+            $reaction = is_array($result['reaction'] ?? null) ? $result['reaction'] : [];
+            $emoji = trim((string) ($reaction['emoticon'] ?? ''));
+            $count = (int) ($result['count'] ?? 0);
+            $documentId = isset($reaction['document_id']) ? (int) $reaction['document_id'] : null;
+
+            if ($emoji === '' && $documentId !== null && $documentId > 0) {
+                $emoji = 'Custom';
+            }
+
+            if ($emoji === '' && $count <= 0) {
+                continue;
+            }
+
+            $items[] = [
+                'key' => $documentId !== null && $documentId > 0 ? 'document:' . $documentId : 'emoji:' . md5($emoji),
+                'emoji' => $emoji !== '' ? $emoji : 'Reaction',
+                'count' => $count,
+                'senderIds' => [],
+            ];
+        }
+
+        return $items;
     }
 }

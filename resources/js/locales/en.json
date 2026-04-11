@@ -93,7 +93,47 @@
     "parser": {
       "title": "Telegram Parser",
       "description": "This section is prepared for parser workflows. We will add sources, rules, and scheduled collection here.",
-      "status": "Stub: in development"
+      "status": "Stub: in development",
+      "subtitle": "Collect by pages like search and export to Excel",
+      "collapsed": "Settings collapsed",
+      "start": "Start collect",
+      "stop": "Stop",
+      "collecting": "Collecting...",
+      "download": "Download Excel",
+      "keywordHint": "Keyword is set, date range is ignored and all matching messages are collected.",
+      "periods": {
+        "day": "Last day",
+        "week": "Last week",
+        "month": "Last month",
+        "custom": "Custom"
+      },
+      "filters": {
+        "channel": "Channel username",
+        "keyword": "Keyword (optional)",
+        "period": "Period",
+        "from": "Date from",
+        "to": "Date to"
+      },
+      "progress": {
+        "title": "Collection progress",
+        "messages": "Messages processed",
+        "comments": "Comments processed",
+        "stage": {
+          "idle": "Idle",
+          "messages": "Collecting messages",
+          "comments": "Collecting comments",
+          "finishing": "Preparing export",
+          "completed": "Completed",
+          "failed": "Failed",
+          "stopped": "Stopped"
+        }
+      },
+      "errors": {
+        "customBothDates": "Please specify both custom period dates.",
+        "customInvalid": "Custom period is invalid.",
+        "customTooLong": "Custom period cannot exceed one month.",
+        "failed": "Parser failed."
+      }
     },
     "analytics": {
       "title": "Telegram Analytics",

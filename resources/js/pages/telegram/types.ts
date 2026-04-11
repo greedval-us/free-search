@@ -56,6 +56,12 @@ export type CommentItem = {
     date: number;
     message: string;
     authorId: number | null;
+    reactions?: Array<{
+        key: string;
+        emoji: string;
+        count: number;
+        senderIds: number[];
+    }>;
 };
 
 export type CommentState = {

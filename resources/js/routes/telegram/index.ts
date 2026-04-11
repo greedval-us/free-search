@@ -1,6 +1,7 @@
 import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFormDefinition, applyUrlDefaults } from './../../wayfinder'
 import search from './search'
 import analytics from './analytics'
+import parser from './parser'
 /**
 * @see \App\Http\Controllers\TelegramSearchController::media
  * @see app/Http/Controllers/TelegramSearchController.php:71
@@ -100,6 +101,7 @@ const telegram = {
     search: Object.assign(search, search),
 media: Object.assign(media, media),
 analytics: Object.assign(analytics, analytics),
+parser: Object.assign(parser, parser),
 }
 
 export default telegram
