@@ -7,6 +7,8 @@ use Illuminate\Support\Str;
 
 class TelegramParserRunStore
 {
+    private const DISK = 'private';
+
     /**
      * @param array<string, mixed> $context
      * @return array<string, mixed>
@@ -61,11 +63,11 @@ class TelegramParserRunStore
     public function get(int $userId, string $runId): ?array
     {
         $path = $this->path($userId, $runId);
-        if (!Storage::disk('local')->exists($path)) {
+        if (!Storage::disk(self::DISK)->exists($path)) {
             return null;
         }
 
-        $raw = Storage::disk('local')->get($path);
+        $raw = Storage::disk(self::DISK)->get($path);
         $decoded = json_decode($raw, true);
 
         return is_array($decoded) ? $decoded : null;
@@ -77,7 +79,7 @@ class TelegramParserRunStore
      */
     public function mutate(int $userId, string $runId, callable $callback): ?array
     {
-        $path = Storage::disk('local')->path($this->path($userId, $runId));
+        $path = Storage::disk(self::DISK)->path($this->path($userId, $runId));
         if (!is_file($path)) {
             return null;
         }
@@ -121,12 +123,11 @@ class TelegramParserRunStore
     public function write(int $userId, string $runId, array $run): void
     {
         $path = $this->path($userId, $runId);
-        Storage::disk('local')->put($path, json_encode($run, JSON_UNESCAPED_UNICODE));
+        Storage::disk(self::DISK)->put($path, json_encode($run, JSON_UNESCAPED_UNICODE));
     }
 
     private function path(int $userId, string $runId): string
     {
-        return sprintf('private/telegram-parser-runs/%d/%s.json', $userId, $runId);
+        return sprintf('telegram-parser-runs/%d/%s.json', $userId, $runId);
     }
 }
-
