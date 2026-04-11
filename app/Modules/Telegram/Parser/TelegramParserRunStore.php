@@ -91,8 +91,6 @@ class TelegramParserRunStore
 
         try {
             if (!flock($handle, LOCK_EX)) {
-                fclose($handle);
-
                 return null;
             }
 
