@@ -16,12 +16,14 @@ const {
     processedMessages,
     processedComments,
     downloadUrl,
+    downloadJsonUrl,
     keywordActive,
     customPeriod,
     canStart,
     start,
     stop,
     download,
+    downloadJson,
 } = useTelegramParser(t);
 
 const stageLabel = computed(() => {
@@ -156,6 +158,16 @@ const stageLabel = computed(() => {
                 >
                     <Download class="h-4 w-4" />
                     {{ t('telegram.parser.download') }}
+                </button>
+
+                <button
+                    type="button"
+                    class="inline-flex h-10 cursor-pointer items-center gap-2 rounded-md border border-emerald-400/50 bg-emerald-400/10 px-4 text-sm font-semibold text-emerald-200 hover:bg-emerald-400/15 disabled:cursor-not-allowed disabled:opacity-60"
+                    :disabled="!downloadJsonUrl || loading"
+                    @click="downloadJson"
+                >
+                    <Download class="h-4 w-4" />
+                    {{ t('telegram.parser.downloadJson') }}
                 </button>
             </div>
 

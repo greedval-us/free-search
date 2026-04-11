@@ -1,7 +1,9 @@
+import TelegramSearchController from './TelegramSearchController'
 import TelegramAnalyticsController from './TelegramAnalyticsController'
 import TelegramParserController from './TelegramParserController'
 const Telegram = {
-    TelegramAnalyticsController: Object.assign(TelegramAnalyticsController, TelegramAnalyticsController),
+    TelegramSearchController: Object.assign(TelegramSearchController, TelegramSearchController),
+TelegramAnalyticsController: Object.assign(TelegramAnalyticsController, TelegramAnalyticsController),
 TelegramParserController: Object.assign(TelegramParserController, TelegramParserController),
 }
 

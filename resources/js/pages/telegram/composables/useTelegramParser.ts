@@ -14,6 +14,7 @@ type ParserStatusResponse = {
     processedComments: number;
     error: string | null;
     downloadUrl: string | null;
+    downloadJsonUrl: string | null;
 };
 
 const DAY_IN_MS = 24 * 60 * 60 * 1000;
@@ -56,6 +57,7 @@ export const useTelegramParser = (t: TranslateFn) => {
     const processedMessages = ref(0);
     const processedComments = ref(0);
     const downloadUrl = ref<string | null>(null);
+    const downloadJsonUrl = ref<string | null>(null);
     const pollTimer = ref<number | null>(null);
 
     const keywordActive = computed(() => form.keyword.trim().length > 0);
@@ -69,6 +71,7 @@ export const useTelegramParser = (t: TranslateFn) => {
         processedMessages.value = 0;
         processedComments.value = 0;
         downloadUrl.value = null;
+        downloadJsonUrl.value = null;
     };
 
     const stop = () => {
@@ -104,6 +107,7 @@ export const useTelegramParser = (t: TranslateFn) => {
                     processedComments.value = payload.processedComments;
                     error.value = payload.error;
                     downloadUrl.value = payload.downloadUrl;
+                    downloadJsonUrl.value = payload.downloadJsonUrl;
                 })
                 .catch(() => undefined);
         }
@@ -184,6 +188,8 @@ export const useTelegramParser = (t: TranslateFn) => {
             progress.value = payload.progress;
             processedMessages.value = payload.processedMessages;
             processedComments.value = payload.processedComments;
+            downloadUrl.value = payload.downloadUrl;
+            downloadJsonUrl.value = payload.downloadJsonUrl;
 
             pollTimer.value = window.setInterval(async () => {
                 if (!runId.value) {
@@ -211,6 +217,7 @@ export const useTelegramParser = (t: TranslateFn) => {
 
                     if (statusPayload.status === 'completed') {
                         downloadUrl.value = statusPayload.downloadUrl;
+                        downloadJsonUrl.value = statusPayload.downloadJsonUrl;
                         loading.value = false;
                         if (pollTimer.value !== null) {
                             window.clearInterval(pollTimer.value);
@@ -221,6 +228,7 @@ export const useTelegramParser = (t: TranslateFn) => {
 
                     if (statusPayload.status === 'failed' || statusPayload.status === 'stopped') {
                         downloadUrl.value = statusPayload.downloadUrl;
+                        downloadJsonUrl.value = statusPayload.downloadJsonUrl;
                         loading.value = false;
                         if (pollTimer.value !== null) {
                             window.clearInterval(pollTimer.value);
@@ -249,6 +257,11 @@ export const useTelegramParser = (t: TranslateFn) => {
     const download = () => {
         if (!downloadUrl.value) return;
         window.location.href = downloadUrl.value;
+    };
+
+    const downloadJson = () => {
+        if (!downloadJsonUrl.value) return;
+        window.location.href = downloadJsonUrl.value;
     };
 
     const handleBeforeUnload = () => {
@@ -287,11 +300,13 @@ export const useTelegramParser = (t: TranslateFn) => {
         processedMessages,
         processedComments,
         downloadUrl,
+        downloadJsonUrl,
         keywordActive,
         customPeriod,
         canStart,
         start,
         stop,
         download,
+        downloadJson,
     };
 };

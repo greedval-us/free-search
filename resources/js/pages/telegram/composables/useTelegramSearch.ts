@@ -1,5 +1,5 @@
 import { nextTick, reactive, ref } from 'vue';
-import TelegramSearchController from '@/actions/App/Http/Controllers/TelegramSearchController';
+import TelegramSearchController from '@/actions/App/Http/Controllers/Telegram/TelegramSearchController';
 import type { CommentState, SearchItem, SearchResponse } from '../types';
 
 type TranslateFn = (key: string) => string;

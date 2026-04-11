@@ -1,7 +1,8 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Telegram;
 
+use App\Http\Controllers\Controller;
 use App\Http\Requests\Telegram\SearchCommentsRequest;
 use App\Http\Requests\Telegram\SearchMessagesRequest;
 use App\Http\Requests\Telegram\StreamTelegramMediaRequest;

@@ -12,6 +12,7 @@ use Carbon\Carbon;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class TelegramParserController extends Controller
 {
@@ -67,7 +68,7 @@ class TelegramParserController extends Controller
         return response()->json($this->presentRun($run));
     }
 
-    public function download(Request $request, string $runId): BinaryFileResponse
+    public function downloadExcel(Request $request, string $runId): BinaryFileResponse
     {
         $run = $this->runStore->get((int) $request->user()->id, $runId);
         abort_unless($run !== null, 404);
@@ -84,6 +85,34 @@ class TelegramParserController extends Controller
         );
 
         return $this->excelWorkbookService->download($filename, $this->exportBuilder->buildSheets($payload));
+    }
+
+    public function downloadJson(Request $request, string $runId): StreamedResponse
+    {
+        $run = $this->runStore->get((int) $request->user()->id, $runId);
+        abort_unless($run !== null, 404);
+        abort_unless(in_array(($run['status'] ?? null), ['completed', 'stopped'], true), 409);
+
+        $payload = is_array($run['result'] ?? null) ? $run['result'] : null;
+        abort_unless($payload !== null, 404);
+        $chatUsername = (string) ($payload['chatUsername'] ?? 'chat');
+
+        $filename = sprintf(
+            'telegram-parser-%s-%s.json',
+            preg_replace('/[^a-z0-9_-]+/i', '-', $chatUsername) ?: 'chat',
+            Carbon::now(config('app.timezone'))->format('Ymd-His')
+        );
+
+        return response()->streamDownload(
+            static function () use ($payload): void {
+                echo json_encode(
+                    $payload,
+                    JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES
+                );
+            },
+            $filename,
+            ['Content-Type' => 'application/json; charset=UTF-8']
+        );
     }
 
     /**
@@ -107,7 +136,10 @@ class TelegramParserController extends Controller
             'processedComments' => (int) ($stats['processedComments'] ?? 0),
             'error' => $run['error'] ?? null,
             'downloadUrl' => in_array($status, ['completed', 'stopped'], true) && $hasResult && $runId !== ''
-                ? route('telegram.parser.download', ['runId' => $runId])
+                ? route('telegram.parser.download-excel', ['runId' => $runId])
+                : null,
+            'downloadJsonUrl' => in_array($status, ['completed', 'stopped'], true) && $hasResult && $runId !== ''
+                ? route('telegram.parser.download-json', ['runId' => $runId])
                 : null,
         ];
     }
