@@ -91,7 +91,7 @@ const stageLabel = computed(() => {
                         v-model="form.keyword"
                         type="text"
                         class="h-10 w-full rounded-md border border-input bg-background px-3 text-sm"
-                        placeholder="security"
+                        :placeholder="t('telegram.search.placeholderKeyword')"
                     />
                 </label>
 
