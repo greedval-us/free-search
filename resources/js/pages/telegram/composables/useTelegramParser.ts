@@ -71,7 +71,45 @@ export const useTelegramParser = (t: TranslateFn) => {
         downloadUrl.value = null;
     };
 
-    const stop = async () => {
+    const stop = () => {
+        if (pollTimer.value !== null) {
+            window.clearInterval(pollTimer.value);
+            pollTimer.value = null;
+        }
+
+        loading.value = false;
+        if (stage.value !== 'completed' && stage.value !== 'failed') {
+            stage.value = 'stopped';
+        }
+
+        const activeRunId = runId.value;
+        if (activeRunId) {
+            fetch(`/telegram/parser/stop/${activeRunId}`, {
+                method: 'POST',
+                headers: {
+                    Accept: 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector<HTMLMetaElement>('meta[name="csrf-token"]')?.content ?? '',
+                },
+            })
+                .then(async (response) => {
+                    const payload = (await response.json()) as ParserStatusResponse;
+
+                    if (!response.ok || !payload.ok || payload.runId !== runId.value) {
+                        return;
+                    }
+
+                    stage.value = payload.stage;
+                    progress.value = payload.progress;
+                    processedMessages.value = payload.processedMessages;
+                    processedComments.value = payload.processedComments;
+                    error.value = payload.error;
+                    downloadUrl.value = payload.downloadUrl;
+                })
+                .catch(() => undefined);
+        }
+    };
+
+    const stopSilently = () => {
         if (pollTimer.value !== null) {
             window.clearInterval(pollTimer.value);
             pollTimer.value = null;
@@ -79,30 +117,14 @@ export const useTelegramParser = (t: TranslateFn) => {
 
         const activeRunId = runId.value;
         if (activeRunId) {
-            try {
-                const response = await fetch(`/telegram/parser/stop/${activeRunId}`, {
-                    method: 'POST',
-                    headers: {
-                        Accept: 'application/json',
-                        'X-CSRF-TOKEN': document.querySelector<HTMLMetaElement>('meta[name="csrf-token"]')?.content ?? '',
-                    },
-                });
-                const payload = (await response.json()) as ParserStatusResponse;
-
-                if (response.ok && payload.ok) {
-                    stage.value = payload.stage;
-                    progress.value = payload.progress;
-                    processedMessages.value = payload.processedMessages;
-                    processedComments.value = payload.processedComments;
-                    error.value = payload.error;
-                    downloadUrl.value = payload.downloadUrl;
-                }
-            } catch {
-                // ignore stop transport errors: run will be cleaned on next user action
-            }
+            fetch(`/telegram/parser/stop/${activeRunId}`, {
+                method: 'POST',
+                headers: {
+                    Accept: 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector<HTMLMetaElement>('meta[name="csrf-token"]')?.content ?? '',
+                },
+            }).catch(() => undefined);
         }
-
-        loading.value = false;
     };
 
     const start = async () => {
@@ -128,7 +150,7 @@ export const useTelegramParser = (t: TranslateFn) => {
             }
         }
 
-        await stop();
+        stopSilently();
         resetState();
         error.value = null;
         loading.value = true;
@@ -251,7 +273,7 @@ export const useTelegramParser = (t: TranslateFn) => {
 
     onBeforeUnmount(() => {
         window.removeEventListener('beforeunload', handleBeforeUnload);
-        void stop();
+        stopSilently();
     });
 
     return {
