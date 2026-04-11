@@ -11,7 +11,6 @@ const {
     settingsCollapsed,
     loading,
     error,
-    runId,
     progress,
     stage,
     processedMessages,
@@ -62,9 +61,6 @@ const stageLabel = computed(() => {
                     <Wrench class="h-4 w-4 text-cyan-400" />
                     <span>{{ t('telegram.parser.title') }}</span>
                 </div>
-                <p class="text-xs text-muted-foreground">
-                    {{ settingsCollapsed ? t('telegram.parser.collapsed') : t('telegram.parser.subtitle') }}
-                </p>
             </div>
 
             <button
@@ -193,8 +189,5 @@ const stageLabel = computed(() => {
             </article>
         </div>
 
-        <div class="mt-3 rounded-lg border border-border/70 bg-background/70 p-3 text-xs text-muted-foreground">
-            Run ID: {{ runId || '-' }}
-        </div>
     </section>
 </template>
