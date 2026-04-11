@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { BarChart3, ChevronDown, ChevronUp, Download, FileText, RefreshCw, Settings } from 'lucide-vue-next';
-import { computed, onMounted, ref } from 'vue';
+import { computed, ref } from 'vue';
 import { useI18n } from '@/composables/useI18n';
 import { useTelegramAnalytics } from '../composables/useTelegramAnalytics';
 
@@ -539,9 +539,6 @@ const toggleSeries = (key: TrendSeriesKey) => {
     visibleSeries.value[key] = false;
 };
 
-onMounted(() => {
-    loadAnalytics();
-});
 </script>
 
 <template>
