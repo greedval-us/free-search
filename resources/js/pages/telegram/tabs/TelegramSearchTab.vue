@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ChevronDown, ChevronUp, Settings } from 'lucide-vue-next';
+import { ChevronDown, ChevronUp, Search, Settings } from 'lucide-vue-next';
 import { computed } from 'vue';
 import { useI18n } from '@/composables/useI18n';
 import { useTelegramSearch } from '../composables/useTelegramSearch';
@@ -63,8 +63,11 @@ const mediaLabel = (type: string) => {
 <template>
     <section class="sticky top-0 z-10 shrink-0 rounded-xl border border-sidebar-border/80 bg-card/70 p-4 shadow-xl backdrop-blur">
         <div class="flex items-center justify-between gap-3">
-            <div>
-                <h2 class="text-sm font-semibold">{{ t('telegram.search.title') }}</h2>
+            <div class="space-y-1">
+                <div class="flex items-center gap-2 text-sm font-semibold">
+                    <Search class="h-4 w-4 text-cyan-400" />
+                    <span>{{ t('telegram.search.title') }}</span>
+                </div>
                 <p class="text-xs text-muted-foreground">
                     {{ searchPanelCollapsed ? t('telegram.search.collapsed') : t('telegram.search.filters') }}
                 </p>

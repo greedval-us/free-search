@@ -94,7 +94,7 @@
       "title": "Telegram Parser",
       "description": "This section is prepared for parser workflows. We will add sources, rules, and scheduled collection here.",
       "status": "Stub: in development",
-      "subtitle": "Collect by pages like search and export to Excel",
+      "subtitle": "Online Telegram data collection and export",
       "collapsed": "Settings collapsed",
       "start": "Start collect",
       "stop": "Stop",

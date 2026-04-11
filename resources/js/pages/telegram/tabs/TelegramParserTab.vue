@@ -63,6 +63,9 @@ const stageLabel = computed(() => {
                     <Wrench class="h-4 w-4 text-cyan-400" />
                     <span>{{ t('telegram.parser.title') }}</span>
                 </div>
+                <p class="text-xs text-muted-foreground">
+                    {{ settingsCollapsed ? t('telegram.parser.collapsed') : t('telegram.parser.subtitle') }}
+                </p>
             </div>
 
             <button
