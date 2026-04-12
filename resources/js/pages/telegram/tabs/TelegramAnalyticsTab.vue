@@ -1,12 +1,12 @@
-<script setup lang="ts">
+﻿<script setup lang="ts">
 import { BarChart3, ChevronDown, ChevronUp, Download, FileText, RefreshCw, Settings } from 'lucide-vue-next';
-import { computed, ref } from 'vue';
-import { useI18n } from '@/composables/useI18n';
-import { useTelegramAnalytics } from '../composables/useTelegramAnalytics';
-
-const { t } = useI18n();
+import TelegramAnalyticsEmptyState from './analytics/components/TelegramAnalyticsEmptyState.vue';
+import TelegramAnalyticsStatCards from './analytics/components/TelegramAnalyticsStatCards.vue';
+import TelegramAnalyticsTopPosts from './analytics/components/TelegramAnalyticsTopPosts.vue';
+import { useTelegramAnalyticsTab } from '../composables/useTelegramAnalyticsTab';
 
 const {
+    t,
     PERIODS,
     PRIORITIES,
     form,
@@ -17,7 +17,6 @@ const {
     previousPayload,
     periodLabel,
     dateLimits,
-    trendMax,
     totalMessages,
     activePriority,
     applyPreset,
@@ -25,552 +24,75 @@ const {
     loadAnalytics,
     openReport,
     downloadReport,
-} = useTelegramAnalytics(t);
-
-const priorityLabel = (priority: string) => t(`telegram.analytics.priority.${priority}`);
-const analyticsPanelCollapsed = ref(false);
-const canLoadAnalytics = computed(() => form.chatUsername.trim().length > 0);
-const canUseReportActions = computed(() => !loading.value && !comparisonLoading.value && !!payload.value);
-const groupInfo = computed(() => payload.value?.groupInfo ?? null);
-const groupTypeLabel = (type: string): string => {
-    const map: Record<string, string> = {
-        channel: t('telegram.analytics.group.types.channel'),
-        group: t('telegram.analytics.group.types.group'),
-        forum: t('telegram.analytics.group.types.forum'),
-        gigagroup: t('telegram.analytics.group.types.gigagroup'),
-        chat: t('telegram.analytics.group.types.chat'),
-    };
-
-    return map[type] ?? type;
-};
-
-const mediaLabel = (key: string) => {
-    const map: Record<string, string> = {
-        photo: t('telegram.mediaTypes.photo'),
-        video: t('telegram.mediaTypes.video'),
-        document: t('telegram.mediaTypes.document'),
-        audio: t('telegram.mediaTypes.audio'),
-        geo: t('telegram.mediaTypes.geo'),
-        poll: t('telegram.mediaTypes.poll'),
-        contact: t('telegram.mediaTypes.contact'),
-        link_preview: t('telegram.mediaTypes.link_preview'),
-        other: t('telegram.mediaTypes.other'),
-        none: t('telegram.mediaTypes.none'),
-    };
-
-    return map[key] ?? key;
-};
-
-const formatNumber = (value: number | null | undefined) => {
-    const numeric = Number(value);
-
-    return new Intl.NumberFormat().format(Number.isFinite(numeric) ? numeric : 0);
-};
-
-const formatDelta = (current: number, previous: number | null): string | null => {
-    if (previous === null || previous === undefined) {
-        return null;
-    }
-
-    if (previous === 0) {
-        if (current === 0) {
-            return '0%';
-        }
-
-        return 'n/a';
-    }
-
-    const delta = ((current - previous) / previous) * 100;
-    const sign = delta > 0 ? '+' : '';
-
-    return `${sign}${delta.toFixed(1)}%`;
-};
-
-const formatDate = (unix: number) => {
-    if (!unix) {
-        return '-';
-    }
-
-    return new Date(unix * 1000).toLocaleString();
-};
-
-const timeline = computed(() => payload.value?.summary.timeline ?? []);
-
-const chartWidth = 920;
-const chartHeight = 280;
-const padding = {
-    top: 24,
-    right: 20,
-    bottom: 42,
-    left: 20,
-};
-
-const chartInnerWidth = chartWidth - padding.left - padding.right;
-const chartInnerHeight = chartHeight - padding.top - padding.bottom;
-const hoveredIndex = ref<number | null>(null);
-
-type TrendSeriesKey = 'messages' | 'views' | 'interactions';
-
-const visibleSeries = ref<Record<TrendSeriesKey, boolean>>({
-    messages: true,
-    views: true,
-    interactions: true,
-});
-
-const trendSeries = computed(() => {
-    const buckets = timeline.value;
-
-    return [
-        {
-            key: 'messages',
-            label: t('telegram.analytics.charts.messages'),
-            color: '#38bdf8',
-            values: buckets.map((bucket) => bucket.messages),
-        },
-        {
-            key: 'views',
-            label: t('telegram.analytics.charts.views'),
-            color: '#f97316',
-            values: buckets.map((bucket) => bucket.views),
-        },
-        {
-            key: 'interactions',
-            label: t('telegram.analytics.charts.interactions'),
-            color: '#22c55e',
-            values: buckets.map((bucket) => bucket.interactions),
-        },
-    ];
-});
-
-const displayedTrendSeries = computed(() =>
-    trendSeries.value.filter((series) => visibleSeries.value[series.key as TrendSeriesKey])
-);
-
-const chartMax = computed(() =>
-    Math.max(
-        trendMax.value,
-        ...displayedTrendSeries.value.flatMap((series) => series.values),
-        1
-    )
-);
-
-const points = (values: number[]) => {
-    if (values.length === 0) {
-        return '';
-    }
-
-    const max = chartMax.value;
-    const step = values.length > 1 ? chartInnerWidth / (values.length - 1) : 0;
-
-    return values
-        .map((value, index) => {
-            const x = padding.left + step * index;
-            const normalized = max > 0 ? value / max : 0;
-            const y = padding.top + chartInnerHeight - normalized * chartInnerHeight;
-
-            return `${index === 0 ? 'M' : 'L'} ${x.toFixed(2)} ${y.toFixed(2)}`;
-        })
-        .join(' ');
-};
-
-const pointDots = (values: number[]) => {
-    const max = chartMax.value;
-    const step = values.length > 1 ? chartInnerWidth / (values.length - 1) : 0;
-
-    return values.map((value, index) => {
-        const x = padding.left + step * index;
-        const normalized = max > 0 ? value / max : 0;
-        const y = padding.top + chartInnerHeight - normalized * chartInnerHeight;
-
-        return {
-            cx: x,
-            cy: y,
-            value,
-        };
-    });
-};
-
-const statCards = computed(() => {
-    const summary = payload.value?.summary.totals;
-    const previous = previousPayload.value?.summary.totals ?? null;
-
-    if (!summary) {
-        return [];
-    }
-
-    return [
-        {
-            label: t('telegram.analytics.stats.messages'),
-            value: summary.messages,
-            delta: formatDelta(summary.messages, previous?.messages ?? null),
-        },
-        {
-            label: t('telegram.analytics.stats.views'),
-            value: summary.views,
-            delta: formatDelta(summary.views, previous?.views ?? null),
-        },
-        {
-            label: t('telegram.analytics.stats.forwards'),
-            value: summary.forwards,
-            delta: formatDelta(summary.forwards, previous?.forwards ?? null),
-        },
-        {
-            label: t('telegram.analytics.stats.replies'),
-            value: summary.replies,
-            delta: formatDelta(summary.replies, previous?.replies ?? null),
-        },
-        {
-            label: t('telegram.analytics.stats.reactions'),
-            value: summary.reactions,
-            delta: formatDelta(summary.reactions, previous?.reactions ?? null),
-        },
-        {
-            label: t('telegram.analytics.stats.mediaPosts'),
-            value: summary.mediaPosts,
-            delta: formatDelta(summary.mediaPosts, previous?.mediaPosts ?? null),
-        },
-        {
-            label: t('telegram.analytics.stats.avgViewsPerPost'),
-            value: summary.avgViewsPerPost,
-            delta: formatDelta(summary.avgViewsPerPost, previous?.avgViewsPerPost ?? null),
-        },
-        {
-            label: t('telegram.analytics.stats.avgInteractionsPerPost'),
-            value: summary.avgInteractionsPerPost,
-            delta: formatDelta(summary.avgInteractionsPerPost, previous?.avgInteractionsPerPost ?? null),
-        },
-        {
-            label: t('telegram.analytics.stats.uniqueAuthors'),
-            value: summary.uniqueAuthors,
-            delta: formatDelta(summary.uniqueAuthors, previous?.uniqueAuthors ?? null),
-        },
-    ];
-});
-
-const maxDistribution = computed(() => {
-    const mediaMax = Math.max(...(payload.value?.summary.topMedia ?? []).map((item) => item.count), 1);
-    const reactionMax = Math.max(...(payload.value?.summary.topReactions ?? []).map((item) => item.count), 1);
-
-    return Math.max(mediaMax, reactionMax, 1);
-});
-
-const funnelStages = computed(() => payload.value?.summary.funnel?.stages ?? []);
-const funnelMax = computed(() => Math.max(1, ...funnelStages.value.map((stage) => stage.value)));
-const funnelWidth = (value: number): string => `${Math.max(4, (value / funnelMax.value) * 100)}%`;
-const funnelStageLabel = (key: string): string => {
-    const map: Record<string, string> = {
-        messages: t('telegram.analytics.charts.funnelMessages'),
-        views: t('telegram.analytics.charts.funnelViewed'),
-        interactions: t('telegram.analytics.charts.funnelInteracted'),
-        reactions: t('telegram.analytics.charts.funnelReacted'),
-    };
-
-    return map[key] ?? key;
-};
-
-const audience = computed(() => payload.value?.summary.audience ?? null);
-const audienceCards = computed(() => {
-    if (!audience.value) {
-        return [];
-    }
-
-    return [
-        {
-            label: t('telegram.analytics.stats.activeAuthors'),
-            value: audience.value.activeAuthors,
-        },
-        {
-            label: t('telegram.analytics.stats.singleMessageAuthors'),
-            value: audience.value.singleMessageAuthors,
-        },
-        {
-            label: t('telegram.analytics.stats.returningAuthors'),
-            value: audience.value.returningAuthors,
-        },
-        {
-            label: t('telegram.analytics.stats.topAuthorShare'),
-            value: `${audience.value.topAuthorShare}%`,
-        },
-        {
-            label: t('telegram.analytics.stats.top5AuthorsShare'),
-            value: `${audience.value.top5AuthorsShare}%`,
-        },
-        {
-            label: t('telegram.analytics.stats.concentrationIndex'),
-            value: audience.value.concentrationIndex,
-        },
-    ];
-});
-const fraudSignals = computed(() => payload.value?.summary.fraudSignals ?? null);
-const fraudRiskLevelLabel = computed(() => t(`telegram.analytics.fraud.level.${fraudSignals.value?.riskLevel ?? 'low'}`));
-const fraudRiskBadgeClass = computed(() => {
-    const level = fraudSignals.value?.riskLevel;
-    if (level === 'high') {
-        return 'border-red-500/40 bg-red-500/10 text-red-300';
-    }
-
-    if (level === 'medium') {
-        return 'border-amber-500/40 bg-amber-500/10 text-amber-300';
-    }
-
-    return 'border-emerald-500/40 bg-emerald-500/10 text-emerald-300';
-});
-const fraudTriggerLabel = (key: string): string => t(`telegram.analytics.fraud.trigger.${key}`);
-const fraudReasonLabel = (key: string): string => t(`telegram.analytics.fraud.reason.${key}`);
-
-const opinionLeaders = computed(() => payload.value?.summary.opinionLeaders ?? []);
-const opinionLeadersDaily = computed(() => payload.value?.summary.opinionLeadersDaily ?? []);
-const hasOpinionLeaders = computed(() => opinionLeaders.value.length > 1);
-const leaderMaxScore = computed(() => Math.max(1, ...opinionLeaders.value.map((item) => item.score)));
-const leaderMaxInteractions = computed(() => Math.max(1, ...opinionLeaders.value.map((item) => item.interactions)));
-const leaderScoreWidth = (score: number): string => `${Math.max(4, (score / leaderMaxScore.value) * 100)}%`;
-const leaderInteractionsWidth = (interactions: number): string =>
-    `${Math.max(4, (interactions / leaderMaxInteractions.value) * 100)}%`;
-const leaderChartWidth = 920;
-const leaderChartHeight = 280;
-const leaderChartPadding = {
-    top: 24,
-    right: 24,
-    bottom: 58,
-    left: 20,
-};
-const leaderChartInnerWidth = leaderChartWidth - leaderChartPadding.left - leaderChartPadding.right;
-const leaderChartInnerHeight = leaderChartHeight - leaderChartPadding.top - leaderChartPadding.bottom;
-const leaderHoveredIndex = ref<number | null>(null);
-const leaderColorPalette = ['#38bdf8', '#22c55e', '#f97316', '#eab308', '#ec4899', '#a78bfa', '#14b8a6', '#ef4444'];
-const visibleLeaderSeries = ref<Record<string, boolean>>({});
-
-const leaderX = (index: number): number => {
-    const count = leaderDayAxis.value.length;
-    const step = count > 1 ? leaderChartInnerWidth / (count - 1) : 0;
-
-    return leaderChartPadding.left + step * index;
-};
-
-const opinionLeadersDailyByDay = computed(() => {
-    const groups: Array<{
-        dayKey: string;
-        dayLabel: string;
-        items: typeof opinionLeadersDaily.value;
-    }> = [];
-    const map = new Map<string, number>();
-
-    for (const item of opinionLeadersDaily.value) {
-        if (!map.has(item.dayKey)) {
-            map.set(item.dayKey, groups.length);
-            groups.push({
-                dayKey: item.dayKey,
-                dayLabel: item.dayLabel,
-                items: [],
-            });
-        }
-
-        const index = map.get(item.dayKey);
-        if (index === undefined) {
-            continue;
-        }
-
-        groups[index].items.push(item);
-    }
-
-    return groups;
-});
-
-const leaderDayAxis = computed(() => opinionLeadersDailyByDay.value.map((group) => ({
-    dayKey: group.dayKey,
-    dayLabel: group.dayLabel,
-})));
-
-const leaderSeries = computed(() =>
-    opinionLeaders.value.map((leader, index) => {
-        const valuesByDay = new Map<string, number>();
-        for (const row of opinionLeadersDaily.value) {
-            if (row.authorKey !== leader.authorKey) {
-                continue;
-            }
-
-            valuesByDay.set(row.dayKey, Number(row.score) || 0);
-        }
-
-        const label = (leader.authorLabel || `ID ${leader.authorId ?? '-'}`).trim();
-
-        return {
-            key: leader.authorKey,
-            label,
-            color: leaderColorPalette[index % leaderColorPalette.length],
-            values: leaderDayAxis.value.map((day) => valuesByDay.get(day.dayKey) ?? 0),
-        };
-    })
-);
-
-const displayedLeaderSeries = computed(() =>
-    leaderSeries.value.filter((series) => visibleLeaderSeries.value[series.key] !== false)
-);
-
-const leaderChartMax = computed(() => Math.max(1, ...displayedLeaderSeries.value.flatMap((series) => series.values)));
-const leaderHoverEntries = computed(() => {
-    if (leaderHoveredIndex.value === null) {
-        return [];
-    }
-
-    return displayedLeaderSeries.value
-        .map((series) => ({
-            key: series.key,
-            label: series.label,
-            color: series.color,
-            value: series.values[leaderHoveredIndex.value ?? 0] ?? 0,
-        }))
-        .sort((left, right) => right.value - left.value);
-});
-const leaderHoverCardWidth = 250;
-const leaderHoverCardHeight = computed(() => 36 + leaderHoverEntries.value.length * 16);
-const leaderHoverCardX = computed(() => {
-    if (leaderHoveredIndex.value === null) {
-        return leaderChartPadding.left;
-    }
-
-    const x = leaderX(leaderHoveredIndex.value) - leaderHoverCardWidth / 2;
-
-    return Math.max(leaderChartPadding.left, Math.min(x, leaderChartWidth - leaderChartPadding.right - leaderHoverCardWidth));
-});
-const leaderHoverDayLabel = computed(() => {
-    if (leaderHoveredIndex.value === null) {
-        return '';
-    }
-
-    return leaderDayAxis.value[leaderHoveredIndex.value]?.dayLabel ?? '';
-});
-const leaderHoverX = computed(() =>
-    leaderHoveredIndex.value === null ? leaderChartPadding.left : leaderX(leaderHoveredIndex.value)
-);
-
-const leaderPoints = (values: number[]): string => {
-    if (values.length === 0) {
-        return '';
-    }
-
-    return values
-        .map((value, index) => {
-            const x = leaderX(index);
-            const normalized = leaderChartMax.value > 0 ? value / leaderChartMax.value : 0;
-            const y = leaderChartPadding.top + leaderChartInnerHeight - normalized * leaderChartInnerHeight;
-
-            return `${index === 0 ? 'M' : 'L'} ${x.toFixed(2)} ${y.toFixed(2)}`;
-        })
-        .join(' ');
-};
-
-const leaderDots = (values: number[]) =>
-    values.map((value, index) => {
-        const x = leaderX(index);
-        const normalized = leaderChartMax.value > 0 ? value / leaderChartMax.value : 0;
-        const y = leaderChartPadding.top + leaderChartInnerHeight - normalized * leaderChartInnerHeight;
-
-        return { x, y, value };
-    });
-
-const toggleLeaderSeries = (key: string): void => {
-    if (visibleLeaderSeries.value[key] === false) {
-        visibleLeaderSeries.value[key] = true;
-
-        return;
-    }
-
-    const activeCount = leaderSeries.value.filter((series) => visibleLeaderSeries.value[series.key] !== false).length;
-    if (activeCount <= 1) {
-        return;
-    }
-
-    visibleLeaderSeries.value[key] = false;
-};
-
-const xForIndex = (index: number): number => {
-    const count = timeline.value.length;
-    const step = count > 1 ? chartInnerWidth / (count - 1) : 0;
-
-    return padding.left + step * index;
-};
-
-const hoverZone = (index: number) => {
-    const count = timeline.value.length;
-    if (count <= 1) {
-        return {
-            x: padding.left,
-            width: chartInnerWidth,
-        };
-    }
-
-    const step = chartInnerWidth / (count - 1);
-    const start = padding.left + step * (index - 0.5);
-
-    return {
-        x: Math.max(padding.left, start),
-        width: step,
-    };
-};
-
-const hoveredBucket = computed(() => {
-    if (hoveredIndex.value === null) {
-        return null;
-    }
-
-    return timeline.value[hoveredIndex.value] ?? null;
-});
-
-const hoverEntries = computed(() => {
-    if (hoveredIndex.value === null) {
-        return [];
-    }
-
-    return displayedTrendSeries.value.map((series) => ({
-        key: series.key,
-        label: series.label,
-        color: series.color,
-        value: series.values[hoveredIndex.value ?? 0] ?? 0,
-    }));
-});
-
-const hoverCardWidth = 206;
-
-const hoverCardHeight = computed(() => 38 + hoverEntries.value.length * 16);
-
-const hoverCardX = computed(() => {
-    if (hoveredIndex.value === null) {
-        return padding.left;
-    }
-
-    const x = xForIndex(hoveredIndex.value) - hoverCardWidth / 2;
-
-    return Math.max(padding.left, Math.min(x, chartWidth - padding.right - hoverCardWidth));
-});
-
-const hoverCardY = padding.top + 10;
-
-const yTicks = computed(() => {
-    const max = chartMax.value;
-    const marks = [1, 0.75, 0.5, 0.25, 0];
-
-    return marks.map((ratio) => ({
-        y: padding.top + chartInnerHeight * (1 - ratio),
-        value: Math.round(max * ratio),
-    }));
-});
-
-const toggleSeries = (key: TrendSeriesKey) => {
-    if (!visibleSeries.value[key]) {
-        visibleSeries.value[key] = true;
-
-        return;
-    }
-
-    const activeCount = Object.values(visibleSeries.value).filter(Boolean).length;
-    if (activeCount <= 1) {
-        return;
-    }
-
-    visibleSeries.value[key] = false;
-};
-
+    priorityLabel,
+    analyticsPanelCollapsed,
+    canLoadAnalytics,
+    canUseReportActions,
+    groupInfo,
+    groupTypeLabel,
+    mediaLabel,
+    formatNumber,
+    formatDate,
+    timeline,
+    chartWidth,
+    chartHeight,
+    padding,
+    chartInnerWidth,
+    chartInnerHeight,
+    hoveredIndex,
+    visibleSeries,
+    trendSeries,
+    displayedTrendSeries,
+    points,
+    pointDots,
+    statCards,
+    maxDistribution,
+    funnelStages,
+    funnelWidth,
+    funnelStageLabel,
+    audience,
+    audienceCards,
+    fraudSignals,
+    fraudRiskLevelLabel,
+    fraudRiskBadgeClass,
+    fraudTriggerLabel,
+    fraudReasonLabel,
+    opinionLeaders,
+    hasOpinionLeaders,
+    leaderScoreWidth,
+    leaderInteractionsWidth,
+    leaderChartWidth,
+    leaderChartHeight,
+    leaderChartPadding,
+    leaderChartInnerWidth,
+    leaderChartInnerHeight,
+    leaderHoveredIndex,
+    visibleLeaderSeries,
+    leaderX,
+    opinionLeadersDailyByDay,
+    leaderDayAxis,
+    leaderSeries,
+    displayedLeaderSeries,
+    leaderHoverEntries,
+    leaderHoverCardWidth,
+    leaderHoverCardHeight,
+    leaderHoverCardX,
+    leaderHoverDayLabel,
+    leaderHoverX,
+    leaderPoints,
+    leaderDots,
+    toggleLeaderSeries,
+    xForIndex,
+    hoverZone,
+    hoveredBucket,
+    hoverEntries,
+    hoverCardWidth,
+    hoverCardHeight,
+    hoverCardX,
+    hoverCardY,
+    yTicks,
+    toggleSeries,
+} = useTelegramAnalyticsTab();
 </script>
 
 <template>
@@ -819,21 +341,7 @@ const toggleSeries = (key: TrendSeriesKey) => {
                 </div>
             </article>
 
-            <div class="grid gap-3 md:grid-cols-2 xl:grid-cols-3">
-                <article
-                    v-for="card in statCards"
-                    :key="card.label"
-                    class="rounded-xl border border-sidebar-border/80 bg-card/75 p-4 shadow-xl backdrop-blur"
-                >
-                    <p class="text-xs uppercase tracking-wide text-muted-foreground">{{ card.label }}</p>
-                    <p class="mt-2 text-2xl font-semibold">
-                        {{ typeof card.value === 'number' ? formatNumber(card.value) : card.value }}
-                    </p>
-                    <p v-if="card.delta !== null" class="mt-1 text-xs text-muted-foreground">
-                        {{ t('telegram.analytics.vsPrevious') }}: {{ card.delta }}
-                    </p>
-                </article>
-            </div>
+            <TelegramAnalyticsStatCards :cards="statCards" />
 
             <article
                 v-if="fraudSignals"
@@ -880,7 +388,7 @@ const toggleSeries = (key: TrendSeriesKey) => {
                             >
                                 <p class="font-semibold">{{ fraudTriggerLabel(trigger.key) }}</p>
                                 <p class="mt-1 text-muted-foreground">
-                                    +{{ trigger.score }} · {{ formatNumber(trigger.value) }} / {{ formatNumber(trigger.threshold) }}
+                                    +{{ trigger.score }} В· {{ formatNumber(trigger.value) }} / {{ formatNumber(trigger.threshold) }}
                                 </p>
                             </article>
                             <p v-if="fraudSignals.triggers.length === 0" class="text-xs text-muted-foreground">
@@ -899,13 +407,13 @@ const toggleSeries = (key: TrendSeriesKey) => {
                                 :key="`fraud-post-${post.id}`"
                                 class="rounded-md border border-border/70 bg-background/80 p-2 text-xs"
                             >
-                                <p class="font-semibold">#{{ post.id }} · {{ formatDate(post.date) }}</p>
+                                <p class="font-semibold">#{{ post.id }} В· {{ formatDate(post.date) }}</p>
                                 <p class="mt-1 line-clamp-2 text-muted-foreground">{{ post.message || t('telegram.analytics.emptyPost') }}</p>
                                 <p class="mt-1 text-muted-foreground">
                                     {{ t('telegram.analytics.fraud.riskScore') }}: {{ formatNumber(post.riskScore) }}
                                 </p>
                                 <p class="mt-1 text-muted-foreground">
-                                    {{ post.reasons.map((reason) => fraudReasonLabel(reason)).join(' · ') }}
+                                    {{ post.reasons.map((reason) => fraudReasonLabel(reason)).join(' В· ') }}
                                 </p>
                             </article>
                         </div>
@@ -1170,10 +678,10 @@ const toggleSeries = (key: TrendSeriesKey) => {
                             :key="series.key"
                             type="button"
                             class="rounded-lg border px-3 py-2 text-left transition"
-                            :class="visibleSeries[series.key as TrendSeriesKey]
+                            :class="visibleSeries[series.key]
                                 ? 'cursor-pointer border-border/70 bg-background/80 hover:bg-accent/50'
                                 : 'cursor-pointer border-border/40 bg-background/40 opacity-55 hover:opacity-80'"
-                            @click="toggleSeries(series.key as TrendSeriesKey)"
+                            @click="toggleSeries(series.key)"
                         >
                             <p class="text-[11px] uppercase tracking-wide text-muted-foreground">
                                 {{ series.label }}
@@ -1463,9 +971,9 @@ const toggleSeries = (key: TrendSeriesKey) => {
                                 <p class="truncate font-medium">{{ leader.authorLabel || `ID ${leader.authorId ?? '-'}` }}</p>
                                 <p class="mt-1 text-muted-foreground">
                                     {{ t('telegram.analytics.stats.forwards') }}: {{ formatNumber(leader.forwards) }}
-                                    · {{ t('telegram.analytics.stats.replies') }}: {{ formatNumber(leader.replies) }}
-                                    · {{ t('telegram.analytics.stats.reactions') }}: {{ formatNumber(leader.reactions) }}
-                                    · {{ t('telegram.analytics.stats.gifts') }}: {{ formatNumber(leader.gifts) }}
+                                    В· {{ t('telegram.analytics.stats.replies') }}: {{ formatNumber(leader.replies) }}
+                                    В· {{ t('telegram.analytics.stats.reactions') }}: {{ formatNumber(leader.reactions) }}
+                                    В· {{ t('telegram.analytics.stats.gifts') }}: {{ formatNumber(leader.gifts) }}
                                 </p>
                             </article>
                         </div>
@@ -1525,89 +1033,14 @@ const toggleSeries = (key: TrendSeriesKey) => {
                 </div>
             </article>
 
-            <article class="rounded-xl border border-sidebar-border/80 bg-card/75 p-4 shadow-xl backdrop-blur">
-                <div class="flex items-center justify-between gap-3">
-                    <div>
-                        <h3 class="text-sm font-semibold">{{ t('telegram.analytics.charts.topPosts') }}</h3>
-                        <p class="text-xs text-muted-foreground">{{ t('telegram.analytics.charts.topPostsHint') }}</p>
-                    </div>
-                    <div class="flex items-center gap-2">
-                        <div class="group relative">
-                            <span
-                                class="inline-flex h-5 w-5 cursor-help items-center justify-center rounded-full border border-border text-[11px] font-semibold text-muted-foreground"
-                                :aria-label="t('telegram.analytics.help.label')"
-                            >
-                                ?
-                            </span>
-                            <div class="pointer-events-none absolute right-0 top-6 z-20 hidden w-64 rounded-md border border-border/70 bg-popover p-2 text-[11px] leading-relaxed text-popover-foreground shadow-xl group-hover:block">
-                                {{ t('telegram.analytics.help.topPosts') }}
-                            </div>
-                        </div>
-                        <span class="rounded-full border border-border px-2 py-1 text-xs text-muted-foreground">
-                            {{ payload.summary.topPosts.length }}
-                        </span>
-                    </div>
-                </div>
-
-                <div class="mt-4 grid gap-3">
-                    <article
-                        v-for="(post, index) in payload.summary.topPosts"
-                        :key="post.id"
-                        class="rounded-xl border border-border/70 bg-background/75 p-4"
-                    >
-                        <div class="flex flex-wrap items-start justify-between gap-3">
-                            <div class="min-w-0 flex-1 space-y-2">
-                                <div class="flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
-                                    <span>#{{ index + 1 }}</span>
-                                    <span>{{ formatDate(post.date) }}</span>
-                                    <span v-if="post.mediaLabel">{{ post.mediaLabel }}</span>
-                                </div>
-                                <p class="line-clamp-3 text-sm leading-relaxed">
-                                    {{ post.message || t('telegram.analytics.emptyPost') }}
-                                </p>
-                            </div>
-
-                            <div class="flex flex-wrap items-center gap-2 text-xs">
-                                <span class="rounded-full border border-border px-2 py-1">{{ t('telegram.analytics.stats.views') }}: {{ formatNumber(post.views) }}</span>
-                                <span class="rounded-full border border-border px-2 py-1">{{ t('telegram.analytics.stats.forwards') }}: {{ formatNumber(post.forwards) }}</span>
-                                <span class="rounded-full border border-border px-2 py-1">{{ t('telegram.analytics.stats.replies') }}: {{ formatNumber(post.replies) }}</span>
-                                <span class="rounded-full border border-border px-2 py-1">{{ t('telegram.analytics.stats.reactions') }}: {{ formatNumber(post.reactions) }}</span>
-                                <span class="rounded-full border border-cyan-400/40 bg-cyan-400/10 px-2 py-1 text-cyan-200">
-                                    {{ t('telegram.analytics.score') }}: {{ formatNumber(post.score) }}
-                                </span>
-                                <a
-                                    v-if="post.telegramUrl"
-                                    :href="post.telegramUrl"
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    class="cursor-pointer rounded-full border border-input px-2 py-1 text-foreground hover:bg-accent"
-                                >
-                                    {{ t('telegram.analytics.openTelegram') }}
-                                </a>
-                            </div>
-                        </div>
-                    </article>
-                </div>
-            </article>
+            <TelegramAnalyticsTopPosts :posts="payload.summary.topPosts" />
         </template>
 
-        <div
+        <TelegramAnalyticsEmptyState
             v-else
-            class="flex min-h-[50vh] flex-col items-center justify-center rounded-xl border border-dashed border-sidebar-border/80 bg-card/70 p-8 text-center shadow-xl backdrop-blur"
-        >
-            <BarChart3 class="mb-4 h-14 w-14 text-muted-foreground" />
-            <h3 class="text-lg font-semibold">{{ t('telegram.analytics.empty.title') }}</h3>
-            <p class="mt-2 max-w-2xl text-sm text-muted-foreground">
-                {{ t('telegram.analytics.empty.description') }}
-            </p>
-            <button
-                type="button"
-                class="mt-5 inline-flex h-10 cursor-pointer items-center gap-2 rounded-md bg-primary px-4 text-sm font-semibold text-primary-foreground hover:opacity-90"
-                @click="loadAnalytics"
-            >
-                <RefreshCw class="h-4 w-4" />
-                {{ t('telegram.analytics.refresh') }}
-            </button>
-        </div>
+            :loading="loading"
+            @refresh="loadAnalytics"
+        />
     </section>
 </template>
+
