@@ -327,7 +327,34 @@
       "twoFactorContinueSetup": "Continue setup",
       "twoFactorEnable": "Enable 2FA",
       "twoFactorEnabledHint": "You will be prompted for a secure, random pin during login, which you can retrieve from the TOTP-supported application on your phone.",
-      "twoFactorDisable": "Disable 2FA"
+      "twoFactorDisable": "Disable 2FA",
+      "twoFactorSetup": {
+        "enabledTitle": "Two-factor authentication enabled",
+        "enabledDescription": "Your account is protected with two-factor authentication.",
+        "verifyTitle": "Verify authentication code",
+        "verifyDescription": "Enter the 6-digit code from your authenticator app to finish setup.",
+        "enableTitle": "Enable two-factor authentication",
+        "enableDescription": "Scan the QR code with your authenticator app, then continue.",
+        "close": "Close",
+        "continue": "Continue",
+        "orManual": "or, enter the code manually",
+        "back": "Back",
+        "confirm": "Confirm"
+      },
+      "twoFactorRecovery": {
+        "title": "2FA recovery codes",
+        "description": "Recovery codes let you regain access if you lose your 2FA device. Store them in a secure password manager.",
+        "hide": "Hide recovery codes",
+        "view": "View recovery codes",
+        "regenerate": "Regenerate codes",
+        "footerPrefix": "Each recovery code can be used once to access your account and will be removed after use. If you need more, click ",
+        "footerSuffix": " above."
+      },
+      "twoFactorErrors": {
+        "fetchQrCode": "Failed to fetch QR code.",
+        "fetchSetupKey": "Failed to fetch a setup key.",
+        "fetchRecoveryCodes": "Failed to fetch recovery codes."
+      }
     },
     "appearancePage": {
       "title": "Appearance settings",
@@ -429,6 +456,7 @@
     },
     "twoFactor": {
       "title": "Two-factor authentication",
+      "orYouCan": "or you can",
       "authCode": {
         "title": "Authentication code",
         "description": "Enter the authentication code provided by your authenticator application.",
