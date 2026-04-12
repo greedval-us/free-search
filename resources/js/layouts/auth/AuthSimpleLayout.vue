@@ -4,7 +4,7 @@ import { useI18n } from '@/composables/useI18n';
 import AppLogoIcon from '@/components/AppLogoIcon.vue';
 import { home } from '@/routes';
 
-const { locale, setLocale } = useI18n();
+const { locale, setLocale, t } = useI18n();
 
 defineProps<{
     title?: string;
@@ -53,8 +53,8 @@ defineProps<{
                                 <span class="text-sm uppercase tracking-[0.18em] text-cyan-200">Uraboros</span>
                             </Link>
                             <div class="space-y-2">
-                                <h1 class="text-2xl font-semibold text-slate-100">{{ title }}</h1>
-                                <p class="text-sm leading-relaxed text-slate-300">{{ description }}</p>
+                                <h1 class="text-2xl font-semibold text-slate-100">{{ title ? t(title) : '' }}</h1>
+                                <p class="text-sm leading-relaxed text-slate-300">{{ description ? t(description) : '' }}</p>
                             </div>
                         </div>
 

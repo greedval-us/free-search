@@ -303,7 +303,7 @@
     "profilePage": {
       "title": "Настройки профиля",
       "heading": "Информация профиля",
-      "headingDescription": "Обновите имя и адрес электронной почты",
+      "headingDescription": "Обновите имя",
       "name": "Имя",
       "email": "Email",
       "namePlaceholder": "Полное имя",

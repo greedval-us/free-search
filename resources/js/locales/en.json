@@ -303,7 +303,7 @@
     "profilePage": {
       "title": "Profile settings",
       "heading": "Profile information",
-      "headingDescription": "Update your name and email address",
+      "headingDescription": "Update your name",
       "name": "Name",
       "email": "Email address",
       "namePlaceholder": "Full name",

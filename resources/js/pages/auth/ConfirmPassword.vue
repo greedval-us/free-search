@@ -12,9 +12,8 @@ const { t } = useI18n();
 
 defineOptions({
     layout: {
-        title: 'Confirm your password',
-        description:
-            'This is a secure area of the application. Please confirm your password before continuing.',
+        title: 'auth.confirmPassword.title',
+        description: 'auth.confirmPassword.description',
     },
 });
 </script>
