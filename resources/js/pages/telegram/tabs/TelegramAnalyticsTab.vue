@@ -11,8 +11,10 @@ const {
     PRIORITIES,
     form,
     loading,
+    comparisonLoading,
     error,
     payload,
+    previousPayload,
     periodLabel,
     dateLimits,
     trendMax,
@@ -28,6 +30,7 @@ const {
 const priorityLabel = (priority: string) => t(`telegram.analytics.priority.${priority}`);
 const analyticsPanelCollapsed = ref(false);
 const canLoadAnalytics = computed(() => form.chatUsername.trim().length > 0);
+const canUseReportActions = computed(() => !loading.value && !comparisonLoading.value && !!payload.value);
 const groupInfo = computed(() => payload.value?.groupInfo ?? null);
 const groupTypeLabel = (type: string): string => {
     const map: Record<string, string> = {
@@ -62,6 +65,25 @@ const formatNumber = (value: number | null | undefined) => {
     const numeric = Number(value);
 
     return new Intl.NumberFormat().format(Number.isFinite(numeric) ? numeric : 0);
+};
+
+const formatDelta = (current: number, previous: number | null): string | null => {
+    if (previous === null || previous === undefined) {
+        return null;
+    }
+
+    if (previous === 0) {
+        if (current === 0) {
+            return '0%';
+        }
+
+        return 'n/a';
+    }
+
+    const delta = ((current - previous) / previous) * 100;
+    const sign = delta > 0 ? '+' : '';
+
+    return `${sign}${delta.toFixed(1)}%`;
 };
 
 const formatDate = (unix: number) => {
@@ -170,6 +192,7 @@ const pointDots = (values: number[]) => {
 
 const statCards = computed(() => {
     const summary = payload.value?.summary.totals;
+    const previous = previousPayload.value?.summary.totals ?? null;
 
     if (!summary) {
         return [];
@@ -179,38 +202,47 @@ const statCards = computed(() => {
         {
             label: t('telegram.analytics.stats.messages'),
             value: summary.messages,
+            delta: formatDelta(summary.messages, previous?.messages ?? null),
         },
         {
             label: t('telegram.analytics.stats.views'),
             value: summary.views,
+            delta: formatDelta(summary.views, previous?.views ?? null),
         },
         {
             label: t('telegram.analytics.stats.forwards'),
             value: summary.forwards,
+            delta: formatDelta(summary.forwards, previous?.forwards ?? null),
         },
         {
             label: t('telegram.analytics.stats.replies'),
             value: summary.replies,
+            delta: formatDelta(summary.replies, previous?.replies ?? null),
         },
         {
             label: t('telegram.analytics.stats.reactions'),
             value: summary.reactions,
+            delta: formatDelta(summary.reactions, previous?.reactions ?? null),
         },
         {
             label: t('telegram.analytics.stats.mediaPosts'),
             value: summary.mediaPosts,
+            delta: formatDelta(summary.mediaPosts, previous?.mediaPosts ?? null),
         },
         {
             label: t('telegram.analytics.stats.avgViewsPerPost'),
             value: summary.avgViewsPerPost,
+            delta: formatDelta(summary.avgViewsPerPost, previous?.avgViewsPerPost ?? null),
         },
         {
             label: t('telegram.analytics.stats.avgInteractionsPerPost'),
             value: summary.avgInteractionsPerPost,
+            delta: formatDelta(summary.avgInteractionsPerPost, previous?.avgInteractionsPerPost ?? null),
         },
         {
             label: t('telegram.analytics.stats.uniqueAuthors'),
             value: summary.uniqueAuthors,
+            delta: formatDelta(summary.uniqueAuthors, previous?.uniqueAuthors ?? null),
         },
     ];
 });
@@ -671,7 +703,7 @@ const toggleSeries = (key: TrendSeriesKey) => {
 
                     <button
                         type="button"
-                        :disabled="!canLoadAnalytics"
+                        :disabled="!canUseReportActions"
                         class="inline-flex h-10 cursor-pointer items-center gap-2 rounded-md bg-primary px-4 text-sm font-semibold text-primary-foreground hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-60"
                         @click="openReport"
                     >
@@ -681,7 +713,7 @@ const toggleSeries = (key: TrendSeriesKey) => {
 
                     <button
                         type="button"
-                        :disabled="!canLoadAnalytics"
+                        :disabled="!canUseReportActions"
                         class="inline-flex h-10 cursor-pointer items-center gap-2 rounded-md border border-input bg-background px-4 text-sm font-medium hover:bg-accent disabled:cursor-not-allowed disabled:opacity-60"
                         @click="downloadReport"
                     >
@@ -796,6 +828,9 @@ const toggleSeries = (key: TrendSeriesKey) => {
                     <p class="text-xs uppercase tracking-wide text-muted-foreground">{{ card.label }}</p>
                     <p class="mt-2 text-2xl font-semibold">
                         {{ typeof card.value === 'number' ? formatNumber(card.value) : card.value }}
+                    </p>
+                    <p v-if="card.delta !== null" class="mt-1 text-xs text-muted-foreground">
+                        {{ t('telegram.analytics.vsPrevious') }}: {{ card.delta }}
                     </p>
                 </article>
             </div>

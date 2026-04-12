@@ -30,6 +30,16 @@ const formatDate = (value: Date): string => {
     return `${year}-${month}-${day}`;
 };
 
+const extractYmdFromIso = (value: string | null | undefined): string | null => {
+    if (!value) {
+        return null;
+    }
+
+    const match = /^(\d{4}-\d{2}-\d{2})/.exec(value);
+
+    return match ? match[1] : null;
+};
+
 const shiftDate = (value: string, days: number): string | null => {
     const parsed = parseDate(value);
     if (!parsed) {
@@ -61,8 +71,10 @@ export const useTelegramAnalytics = (t: TranslateFn) => {
     });
 
     const loading = ref(false);
+    const comparisonLoading = ref(false);
     const error = ref<string | null>(null);
     const payload = ref<TelegramAnalyticsSummary | null>(null);
+    const previousPayload = ref<TelegramAnalyticsSummary | null>(null);
 
     const periodLabel = computed(() => {
         if (form.dateFrom && form.dateTo) {
@@ -106,9 +118,64 @@ export const useTelegramAnalytics = (t: TranslateFn) => {
         return query;
     };
 
-    const summaryUrl = () => `/telegram/analytics/summary?${buildQuery().toString()}`;
-    const reportUrl = (download = false) => {
+    const buildQueryForRange = (dateFrom: string, dateTo: string) => {
+        const locale =
+            typeof document !== 'undefined' && document.documentElement.lang.toLowerCase().startsWith('ru')
+                ? 'ru'
+                : 'en';
+        const query = new URLSearchParams({
+            chatUsername: normalizedChatUsername(),
+            scorePriority: form.scorePriority,
+            locale,
+            dateFrom,
+            dateTo,
+        });
+
+        if (normalizedKeyword()) {
+            query.set('keyword', normalizedKeyword());
+        }
+
+        return query;
+    };
+
+    const summaryUrl = () => {
         const query = buildQuery();
+        query.set('snapshotRole', 'current');
+
+        return `/telegram/analytics/summary?${query.toString()}`;
+    };
+    const reportUrl = (download = false) => {
+        const locale =
+            typeof document !== 'undefined' && document.documentElement.lang.toLowerCase().startsWith('ru')
+                ? 'ru'
+                : 'en';
+        const snapshot = payload.value;
+        const query = new URLSearchParams({
+            chatUsername: snapshot?.range.chatUsername ?? normalizedChatUsername(),
+            scorePriority: snapshot?.score.priority ?? form.scorePriority,
+            locale,
+        });
+
+        const snapshotKeyword = snapshot?.range.keyword?.trim();
+        const formKeyword = normalizedKeyword();
+        const keyword = snapshotKeyword && snapshotKeyword.length > 0 ? snapshotKeyword : formKeyword;
+
+        if (keyword) {
+            query.set('keyword', keyword);
+        }
+
+        const snapshotDateFrom = extractYmdFromIso(snapshot?.range.dateFrom);
+        const snapshotDateTo = extractYmdFromIso(snapshot?.range.dateTo);
+
+        if (snapshotDateFrom && snapshotDateTo) {
+            query.set('dateFrom', snapshotDateFrom);
+            query.set('dateTo', snapshotDateTo);
+        } else if (form.dateFrom || form.dateTo) {
+            query.set('dateFrom', form.dateFrom);
+            query.set('dateTo', form.dateTo);
+        } else {
+            query.set('periodDays', String(form.periodDays));
+        }
 
         if (download) {
             query.set('download', '1');
@@ -145,7 +212,9 @@ export const useTelegramAnalytics = (t: TranslateFn) => {
         }
 
         loading.value = true;
+        comparisonLoading.value = false;
         error.value = null;
+        previousPayload.value = null;
 
         try {
             const response = await fetch(summaryUrl(), {
@@ -173,6 +242,37 @@ export const useTelegramAnalytics = (t: TranslateFn) => {
             }
 
             payload.value = data.data as TelegramAnalyticsSummary;
+
+            const currentFrom = new Date(payload.value.range.dateFrom);
+            const currentTo = new Date(payload.value.range.dateTo);
+            if (!Number.isNaN(currentFrom.getTime()) && !Number.isNaN(currentTo.getTime())) {
+                comparisonLoading.value = true;
+                const spanMs = Math.max(0, currentTo.getTime() - currentFrom.getTime());
+                const previousTo = new Date(currentFrom.getTime() - 1000);
+                const previousFrom = new Date(previousTo.getTime() - spanMs);
+                const previousQuery = buildQueryForRange(
+                    formatDate(previousFrom),
+                    formatDate(previousTo)
+                );
+
+                try {
+                    previousQuery.set('snapshotRole', 'previous');
+                    const previousResponse = await fetch(`/telegram/analytics/summary?${previousQuery.toString()}`, {
+                        method: 'GET',
+                        headers: {
+                            Accept: 'application/json',
+                        },
+                    });
+                    const previousData = await previousResponse.json();
+                    if (previousResponse.ok && previousData?.ok) {
+                        previousPayload.value = previousData.data as TelegramAnalyticsSummary;
+                    }
+                } catch {
+                    previousPayload.value = null;
+                } finally {
+                    comparisonLoading.value = false;
+                }
+            }
         } catch (exception) {
             error.value = exception instanceof Error ? exception.message : t('telegram.analytics.errors.loadFailed');
             payload.value = null;
@@ -216,8 +316,10 @@ export const useTelegramAnalytics = (t: TranslateFn) => {
         PRIORITIES,
         form,
         loading,
+        comparisonLoading,
         error,
         payload,
+        previousPayload,
         periodLabel,
         dateLimits,
         trendMax,

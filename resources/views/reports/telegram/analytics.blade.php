@@ -98,6 +98,12 @@
             color: #0f172a;
         }
 
+        .metric .delta {
+            margin-top: 4px;
+            font-size: 11px;
+            color: #64748b;
+        }
+
         table {
             width: 100%;
             border-collapse: collapse;
@@ -276,6 +282,7 @@
         ];
 
         $tr = $dictionary[$reportLocale];
+        $vsPreviousLabel = $reportLocale === 'ru' ? 'к прошлому периоду' : 'vs previous period';
     @endphp
     <main class="container">
         <section class="card">
@@ -386,38 +393,67 @@
         <section class="card">
             <div class="body">
                 <h2>{{ $tr['totals'] }}</h2>
+                @php
+                    $totals = $report['summary']['totals'] ?? [];
+                    $previousTotals = $previousReport['summary']['totals'] ?? [];
+                    $formatDelta = static function ($current, $previous): string {
+                        $currentValue = (float) $current;
+                        $previousValue = (float) $previous;
+
+                        if ($previousValue === 0.0) {
+                            if ($currentValue === 0.0) {
+                                return '0%';
+                            }
+
+                            return 'n/a';
+                        }
+
+                        $delta = (($currentValue - $previousValue) / $previousValue) * 100;
+                        $prefix = $delta > 0 ? '+' : '';
+
+                        return $prefix . number_format($delta, 1, '.', '') . '%';
+                    };
+                @endphp
                 <div class="grid">
                     <article class="metric">
                         <div class="label">{{ $tr['messages'] }}</div>
-                        <div class="value">{{ $report['summary']['totals']['messages'] ?? 0 }}</div>
+                        <div class="value">{{ $totals['messages'] ?? 0 }}</div>
+                        <div class="delta">{{ $vsPreviousLabel }}: {{ $formatDelta($totals['messages'] ?? 0, $previousTotals['messages'] ?? 0) }}</div>
                     </article>
                     <article class="metric">
                         <div class="label">{{ $tr['views'] }}</div>
-                        <div class="value">{{ $report['summary']['totals']['views'] ?? 0 }}</div>
+                        <div class="value">{{ $totals['views'] ?? 0 }}</div>
+                        <div class="delta">{{ $vsPreviousLabel }}: {{ $formatDelta($totals['views'] ?? 0, $previousTotals['views'] ?? 0) }}</div>
                     </article>
                     <article class="metric">
                         <div class="label">{{ $tr['forwards'] }}</div>
-                        <div class="value">{{ $report['summary']['totals']['forwards'] ?? 0 }}</div>
+                        <div class="value">{{ $totals['forwards'] ?? 0 }}</div>
+                        <div class="delta">{{ $vsPreviousLabel }}: {{ $formatDelta($totals['forwards'] ?? 0, $previousTotals['forwards'] ?? 0) }}</div>
                     </article>
                     <article class="metric">
                         <div class="label">{{ $tr['replies'] }}</div>
-                        <div class="value">{{ $report['summary']['totals']['replies'] ?? 0 }}</div>
+                        <div class="value">{{ $totals['replies'] ?? 0 }}</div>
+                        <div class="delta">{{ $vsPreviousLabel }}: {{ $formatDelta($totals['replies'] ?? 0, $previousTotals['replies'] ?? 0) }}</div>
                     </article>
                     <article class="metric">
                         <div class="label">{{ $tr['reactions'] }}</div>
-                        <div class="value">{{ $report['summary']['totals']['reactions'] ?? 0 }}</div>
+                        <div class="value">{{ $totals['reactions'] ?? 0 }}</div>
+                        <div class="delta">{{ $vsPreviousLabel }}: {{ $formatDelta($totals['reactions'] ?? 0, $previousTotals['reactions'] ?? 0) }}</div>
                     </article>
                     <article class="metric">
                         <div class="label">{{ $tr['mediaPosts'] }}</div>
-                        <div class="value">{{ $report['summary']['totals']['mediaPosts'] ?? 0 }}</div>
+                        <div class="value">{{ $totals['mediaPosts'] ?? 0 }}</div>
+                        <div class="delta">{{ $vsPreviousLabel }}: {{ $formatDelta($totals['mediaPosts'] ?? 0, $previousTotals['mediaPosts'] ?? 0) }}</div>
                     </article>
                     <article class="metric">
                         <div class="label">{{ $tr['avgViewsPerPost'] }}</div>
-                        <div class="value">{{ $report['summary']['totals']['avgViewsPerPost'] ?? 0 }}</div>
+                        <div class="value">{{ $totals['avgViewsPerPost'] ?? 0 }}</div>
+                        <div class="delta">{{ $vsPreviousLabel }}: {{ $formatDelta($totals['avgViewsPerPost'] ?? 0, $previousTotals['avgViewsPerPost'] ?? 0) }}</div>
                     </article>
                     <article class="metric">
                         <div class="label">{{ $tr['avgInteractionsPerPost'] }}</div>
-                        <div class="value">{{ $report['summary']['totals']['avgInteractionsPerPost'] ?? 0 }}</div>
+                        <div class="value">{{ $totals['avgInteractionsPerPost'] ?? 0 }}</div>
+                        <div class="delta">{{ $vsPreviousLabel }}: {{ $formatDelta($totals['avgInteractionsPerPost'] ?? 0, $previousTotals['avgInteractionsPerPost'] ?? 0) }}</div>
                     </article>
                 </div>
             </div>
