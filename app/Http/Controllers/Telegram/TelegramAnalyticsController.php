@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Telegram;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Telegram\TelegramAnalyticsRequest;
+use App\Modules\Telegram\Analytics\TelegramAnalyticsRangeResolver;
 use App\Modules\Telegram\Analytics\TelegramAnalyticsService;
 use App\Modules\Telegram\Analytics\TelegramAnalyticsSnapshotStore;
 use Carbon\Carbon;
@@ -15,6 +16,7 @@ class TelegramAnalyticsController extends Controller
 {
     public function __construct(
         private readonly TelegramAnalyticsService $analyticsService,
+        private readonly TelegramAnalyticsRangeResolver $rangeResolver,
         private readonly TelegramAnalyticsSnapshotStore $snapshotStore,
     ) {
     }
@@ -22,7 +24,7 @@ class TelegramAnalyticsController extends Controller
     public function summary(TelegramAnalyticsRequest $request): JsonResponse
     {
         $params = $this->requestParams($request);
-        $range = $this->resolveRange($request);
+        $range = $this->rangeResolver->resolveRange($request);
         $data = $this->buildAnalytics($params, $range['from'], $range['to']);
 
         $this->snapshotStore->storeSummarySnapshot(
@@ -50,7 +52,7 @@ class TelegramAnalyticsController extends Controller
         app()->setLocale($request->locale());
 
         $params = $this->requestParams($request);
-        $range = $this->resolveRange($request);
+        $range = $this->rangeResolver->resolveRange($request);
         $namedCurrent = $this->snapshotStore->getNamedSnapshot('current');
         $namedPrevious = $this->snapshotStore->getNamedSnapshot('previous');
 
@@ -93,7 +95,7 @@ class TelegramAnalyticsController extends Controller
         );
 
         if (!is_array($previousData)) {
-            $previousRange = $this->resolvePreviousRangeForReport($data, $range['from'], $range['to']);
+            $previousRange = $this->rangeResolver->resolvePreviousRangeForReport($data, $range['from'], $range['to']);
             $previousData = $this->snapshotStore->getSummarySnapshot(
                 $params['chatUsername'],
                 $previousRange['from'],
@@ -159,79 +161,5 @@ class TelegramAnalyticsController extends Controller
             $params['scorePriority'],
             $params['keyword']
         );
-    }
-
-    /**
-     * @return array{from: Carbon, to: Carbon}
-     */
-    private function resolveRange(TelegramAnalyticsRequest $request): array
-    {
-        if ($request->customRange()) {
-            return [
-                'from' => $request->dateFrom()->copy(),
-                'to' => $request->dateTo()->copy(),
-            ];
-        }
-
-        $to = Carbon::now(config('app.timezone'))->endOfDay();
-        $from = $to->copy()->subDays($request->periodDays() - 1)->startOfDay();
-
-        return [
-            'from' => $from,
-            'to' => $to,
-        ];
-    }
-
-    /**
-     * @return array{from: Carbon, to: Carbon}
-     */
-    private function resolvePreviousRange(Carbon $from, Carbon $to): array
-    {
-        $normalizedFrom = $from->copy()->startOfSecond();
-        $normalizedTo = $to->copy()->startOfSecond();
-        $spanSeconds = max(0, $normalizedTo->diffInSeconds($normalizedFrom));
-
-        $previousTo = $normalizedFrom->copy()->subSecond();
-        $previousFrom = $previousTo->copy()->subSeconds($spanSeconds);
-
-        return [
-            'from' => $previousFrom,
-            'to' => $previousTo,
-        ];
-    }
-
-    /**
-     * @param array<string, mixed> $report
-     * @return array{from: Carbon, to: Carbon}
-     */
-    private function resolvePreviousRangeForReport(array $report, Carbon $fallbackFrom, Carbon $fallbackTo): array
-    {
-        $currentFromIso = data_get($report, 'range.dateFrom');
-        $currentToIso = data_get($report, 'range.dateTo');
-
-        if (!is_string($currentFromIso) || !is_string($currentToIso)) {
-            return $this->resolvePreviousRange($fallbackFrom, $fallbackTo);
-        }
-
-        try {
-            $currentFromUtc = Carbon::parse($currentFromIso)->utc();
-            $currentToUtc = Carbon::parse($currentToIso)->utc();
-            $spanSeconds = max(0, $currentToUtc->diffInSeconds($currentFromUtc));
-
-            $previousToUtc = $currentFromUtc->copy()->subSecond();
-            $previousFromUtc = $previousToUtc->copy()->subSeconds($spanSeconds);
-
-            // Keep report previous period aligned with frontend date-only summary query.
-            $previousDateFrom = $previousFromUtc->format('Y-m-d');
-            $previousDateTo = $previousToUtc->format('Y-m-d');
-            $timezone = config('app.timezone');
-
-            return [
-                'from' => Carbon::createFromFormat('Y-m-d', $previousDateFrom, $timezone)->startOfDay(),
-                'to' => Carbon::createFromFormat('Y-m-d', $previousDateTo, $timezone)->endOfDay(),
-            ];
-        } catch (\Throwable) {
-            return $this->resolvePreviousRange($fallbackFrom, $fallbackTo);
-        }
     }
 }
