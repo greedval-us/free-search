@@ -9,7 +9,7 @@ use App\Modules\Telegram\DTO\Request\SearchMediaQueryDTO;
 use App\Modules\Telegram\DTO\Request\SearchMessagesQueryDTO;
 use App\Modules\Telegram\TelegramService;
 
-class TelegramSearchQueryService
+class TelegramSearchApplicationService
 {
     public function __construct(
         private readonly TelegramService $telegramService,
@@ -80,4 +80,5 @@ class TelegramSearchQueryService
         return $this->telegramService->getMessageMedia($query->chatUsername, $query->messageId);
     }
 }
+
 

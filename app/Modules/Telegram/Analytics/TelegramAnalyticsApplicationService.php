@@ -6,7 +6,7 @@ use App\Modules\Telegram\DTO\Request\TelegramAnalyticsParamsDTO;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Cache;
 
-class TelegramAnalyticsQueryService
+class TelegramAnalyticsApplicationService
 {
     private const SUMMARY_CACHE_TTL_SECONDS = 60;
 
@@ -136,4 +136,5 @@ class TelegramAnalyticsQueryService
         ]);
     }
 }
+
 

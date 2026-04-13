@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Telegram;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Telegram\TelegramAnalyticsRequest;
-use App\Modules\Telegram\Analytics\TelegramAnalyticsQueryService;
+use App\Modules\Telegram\Analytics\TelegramAnalyticsApplicationService;
 use App\Modules\Telegram\Analytics\TelegramAnalyticsRangeResolver;
 use Carbon\Carbon;
 use Illuminate\Http\JsonResponse;
@@ -14,7 +14,7 @@ use Illuminate\View\View;
 class TelegramAnalyticsController extends Controller
 {
     public function __construct(
-        private readonly TelegramAnalyticsQueryService $analyticsQueryService,
+        private readonly TelegramAnalyticsApplicationService $analyticsApplicationService,
         private readonly TelegramAnalyticsRangeResolver $rangeResolver,
     ) {
     }
@@ -23,7 +23,7 @@ class TelegramAnalyticsController extends Controller
     {
         $params = $request->toParamsDTO();
         $range = $this->rangeResolver->resolveRange($request);
-        $data = $this->analyticsQueryService->buildSummary(
+        $data = $this->analyticsApplicationService->buildSummary(
             $params,
             $range['from'],
             $range['to'],
@@ -42,7 +42,7 @@ class TelegramAnalyticsController extends Controller
 
         $params = $request->toParamsDTO();
         $range = $this->rangeResolver->resolveRange($request);
-        $reportData = $this->analyticsQueryService->buildReport($params, $range['from'], $range['to']);
+        $reportData = $this->analyticsApplicationService->buildReport($params, $range['from'], $range['to']);
         $data = $reportData['report'];
         $previousData = $reportData['previousReport'];
 
@@ -69,3 +69,4 @@ class TelegramAnalyticsController extends Controller
         return view('reports.telegram.analytics', $viewData);
     }
 }
+

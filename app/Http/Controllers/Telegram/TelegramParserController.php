@@ -6,7 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Telegram\TelegramParserStartRequest;
 use App\Modules\Export\Excel\ExcelWorkbookService;
 use App\Modules\Telegram\Parser\TelegramParserExportBuilder;
-use App\Modules\Telegram\Parser\TelegramParserQueryService;
+use App\Modules\Telegram\Parser\TelegramParserApplicationService;
 use Carbon\Carbon;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -16,7 +16,7 @@ use Symfony\Component\HttpFoundation\StreamedResponse;
 class TelegramParserController extends Controller
 {
     public function __construct(
-        private readonly TelegramParserQueryService $parserQueryService,
+        private readonly TelegramParserApplicationService $parserApplicationService,
         private readonly TelegramParserExportBuilder $exportBuilder,
         private readonly ExcelWorkbookService $excelWorkbookService,
     ) {
@@ -24,12 +24,12 @@ class TelegramParserController extends Controller
 
     public function start(TelegramParserStartRequest $request): JsonResponse
     {
-        return response()->json($this->parserQueryService->start($request->toStartDTO()));
+        return response()->json($this->parserApplicationService->start($request->toStartDTO()));
     }
 
     public function status(Request $request, string $runId): JsonResponse
     {
-        $run = $this->parserQueryService->status((int) $request->user()->id, $runId);
+        $run = $this->parserApplicationService->status((int) $request->user()->id, $runId);
         abort_unless($run !== null, 404);
 
         return response()->json($run);
@@ -37,7 +37,7 @@ class TelegramParserController extends Controller
 
     public function stop(Request $request, string $runId): JsonResponse
     {
-        $run = $this->parserQueryService->stop((int) $request->user()->id, $runId);
+        $run = $this->parserApplicationService->stop((int) $request->user()->id, $runId);
         abort_unless($run !== null, 404);
 
         return response()->json($run);
@@ -45,7 +45,7 @@ class TelegramParserController extends Controller
 
     public function downloadExcel(Request $request, string $runId): BinaryFileResponse
     {
-        $run = $this->parserQueryService->getRun((int) $request->user()->id, $runId);
+        $run = $this->parserApplicationService->getRun((int) $request->user()->id, $runId);
         abort_unless($run !== null, 404);
         abort_unless(in_array(($run['status'] ?? null), ['completed', 'stopped'], true), 409);
 
@@ -64,7 +64,7 @@ class TelegramParserController extends Controller
 
     public function downloadJson(Request $request, string $runId): StreamedResponse
     {
-        $run = $this->parserQueryService->getRun((int) $request->user()->id, $runId);
+        $run = $this->parserApplicationService->getRun((int) $request->user()->id, $runId);
         abort_unless($run !== null, 404);
         abort_unless(in_array(($run['status'] ?? null), ['completed', 'stopped'], true), 409);
 
@@ -90,3 +90,4 @@ class TelegramParserController extends Controller
         );
     }
 }
+

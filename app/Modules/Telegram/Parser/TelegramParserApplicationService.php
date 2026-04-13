@@ -4,7 +4,7 @@ namespace App\Modules\Telegram\Parser;
 
 use App\Modules\Telegram\DTO\Request\TelegramParserStartDTO;
 
-class TelegramParserQueryService
+class TelegramParserApplicationService
 {
     public function __construct(
         private readonly TelegramParserRunStore $runStore,
@@ -115,4 +115,5 @@ class TelegramParserQueryService
         ];
     }
 }
+
 
