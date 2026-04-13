@@ -2,7 +2,7 @@
 
 namespace App\Modules\Telegram\Analytics;
 
-use App\Modules\Telegram\Analytics\DTO\TelegramAnalyticsParamsDTO;
+use App\Modules\Telegram\DTO\Request\TelegramAnalyticsParamsDTO;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Cache;
 
@@ -136,3 +136,4 @@ class TelegramAnalyticsQueryService
         ]);
     }
 }
+

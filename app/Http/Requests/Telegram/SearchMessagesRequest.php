@@ -2,7 +2,7 @@
 
 namespace App\Http\Requests\Telegram;
 
-use App\Modules\Telegram\Search\DTO\SearchMessagesQueryDTO;
+use App\Modules\Telegram\DTO\Request\SearchMessagesQueryDTO;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Carbon;
 use Illuminate\Validation\Validator;
@@ -98,3 +98,4 @@ class SearchMessagesRequest extends FormRequest
         return $normalized !== '' && ctype_digit($normalized);
     }
 }
+

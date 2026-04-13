@@ -4,9 +4,9 @@ namespace App\Modules\Telegram\Search;
 
 use App\Modules\Telegram\Presenters\TelegramCommentPresenter;
 use App\Modules\Telegram\Presenters\TelegramMessagePresenter;
-use App\Modules\Telegram\Search\DTO\SearchCommentsQueryDTO;
-use App\Modules\Telegram\Search\DTO\SearchMediaQueryDTO;
-use App\Modules\Telegram\Search\DTO\SearchMessagesQueryDTO;
+use App\Modules\Telegram\DTO\Request\SearchCommentsQueryDTO;
+use App\Modules\Telegram\DTO\Request\SearchMediaQueryDTO;
+use App\Modules\Telegram\DTO\Request\SearchMessagesQueryDTO;
 use App\Modules\Telegram\TelegramService;
 
 class TelegramSearchQueryService
@@ -80,3 +80,4 @@ class TelegramSearchQueryService
         return $this->telegramService->getMessageMedia($query->chatUsername, $query->messageId);
     }
 }
+

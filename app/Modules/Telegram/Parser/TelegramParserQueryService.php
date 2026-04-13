@@ -2,7 +2,7 @@
 
 namespace App\Modules\Telegram\Parser;
 
-use App\Modules\Telegram\Parser\DTO\TelegramParserStartDTO;
+use App\Modules\Telegram\DTO\Request\TelegramParserStartDTO;
 
 class TelegramParserQueryService
 {
@@ -115,3 +115,4 @@ class TelegramParserQueryService
         ];
     }
 }
+

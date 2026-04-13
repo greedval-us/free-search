@@ -2,7 +2,7 @@
 
 namespace App\Http\Requests\Telegram;
 
-use App\Modules\Telegram\Search\DTO\SearchCommentsQueryDTO;
+use App\Modules\Telegram\DTO\Request\SearchCommentsQueryDTO;
 use Illuminate\Foundation\Http\FormRequest;
 
 class SearchCommentsRequest extends FormRequest
@@ -52,3 +52,4 @@ class SearchCommentsRequest extends FormRequest
         );
     }
 }
+

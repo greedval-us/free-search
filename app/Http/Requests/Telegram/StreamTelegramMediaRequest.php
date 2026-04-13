@@ -2,7 +2,7 @@
 
 namespace App\Http\Requests\Telegram;
 
-use App\Modules\Telegram\Search\DTO\SearchMediaQueryDTO;
+use App\Modules\Telegram\DTO\Request\SearchMediaQueryDTO;
 use Illuminate\Foundation\Http\FormRequest;
 
 class StreamTelegramMediaRequest extends FormRequest
@@ -35,3 +35,4 @@ class StreamTelegramMediaRequest extends FormRequest
         );
     }
 }
+

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Modules\Telegram\Analytics\DTO;
+namespace App\Modules\Telegram\DTO\Request;
 
 class TelegramAnalyticsParamsDTO
 {
@@ -11,3 +11,4 @@ class TelegramAnalyticsParamsDTO
     ) {
     }
 }
+

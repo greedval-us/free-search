@@ -2,7 +2,7 @@
 
 namespace App\Http\Requests\Telegram;
 
-use App\Modules\Telegram\Parser\DTO\TelegramParserStartDTO;
+use App\Modules\Telegram\DTO\Request\TelegramParserStartDTO;
 use Carbon\Carbon;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Validator;
@@ -138,3 +138,4 @@ class TelegramParserStartRequest extends FormRequest
         );
     }
 }
+

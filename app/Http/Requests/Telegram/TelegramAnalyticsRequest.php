@@ -2,7 +2,7 @@
 
 namespace App\Http\Requests\Telegram;
 
-use App\Modules\Telegram\Analytics\DTO\TelegramAnalyticsParamsDTO;
+use App\Modules\Telegram\DTO\Request\TelegramAnalyticsParamsDTO;
 use Carbon\Carbon;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Validator;
@@ -126,3 +126,4 @@ class TelegramAnalyticsRequest extends FormRequest
         );
     }
 }
+

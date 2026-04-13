@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Modules\Telegram\Search\DTO;
+namespace App\Modules\Telegram\DTO\Request;
 
 class SearchMessagesQueryDTO
 {
@@ -15,3 +15,4 @@ class SearchMessagesQueryDTO
     ) {
     }
 }
+

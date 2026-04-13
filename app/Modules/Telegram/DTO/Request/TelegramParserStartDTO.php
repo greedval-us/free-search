@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Modules\Telegram\Parser\DTO;
+namespace App\Modules\Telegram\DTO\Request;
 
 class TelegramParserStartDTO
 {
@@ -29,3 +29,4 @@ class TelegramParserStartDTO
         ];
     }
 }
+
