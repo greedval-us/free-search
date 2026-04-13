@@ -18,11 +18,13 @@ class GdeltHttpGateway implements GdeltGatewayInterface
 
         $response = Http::acceptJson()
             ->timeout(max(3, $timeout))
-            ->retry(2, 300, throw: false)
             ->get($url, $query->toApiParams());
 
         if (!$response->ok()) {
-            throw new \RuntimeException('GDELT API request failed with status ' . $response->status());
+            throw new \RuntimeException(
+                'GDELT API request failed with status ' . $response->status(),
+                $response->status(),
+            );
         }
 
         $payload = $response->json();

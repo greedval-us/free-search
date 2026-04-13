@@ -1,7 +1,7 @@
 import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFormDefinition, applyUrlDefaults } from './../../../../../wayfinder'
 /**
 * @see \App\Http\Controllers\Telegram\TelegramSearchController::messages
- * @see app/Http/Controllers/Telegram/TelegramSearchController.php:26
+ * @see app/Http/Controllers/Telegram/TelegramSearchController.php:21
  * @route '/telegram/search/messages'
  */
 export const messages = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -16,7 +16,7 @@ messages.definition = {
 
 /**
 * @see \App\Http\Controllers\Telegram\TelegramSearchController::messages
- * @see app/Http/Controllers/Telegram/TelegramSearchController.php:26
+ * @see app/Http/Controllers/Telegram/TelegramSearchController.php:21
  * @route '/telegram/search/messages'
  */
 messages.url = (options?: RouteQueryOptions) => {
@@ -25,7 +25,7 @@ messages.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\Telegram\TelegramSearchController::messages
- * @see app/Http/Controllers/Telegram/TelegramSearchController.php:26
+ * @see app/Http/Controllers/Telegram/TelegramSearchController.php:21
  * @route '/telegram/search/messages'
  */
 messages.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -34,7 +34,7 @@ messages.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
 })
 /**
 * @see \App\Http\Controllers\Telegram\TelegramSearchController::messages
- * @see app/Http/Controllers/Telegram/TelegramSearchController.php:26
+ * @see app/Http/Controllers/Telegram/TelegramSearchController.php:21
  * @route '/telegram/search/messages'
  */
 messages.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -44,7 +44,7 @@ messages.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 
     /**
 * @see \App\Http\Controllers\Telegram\TelegramSearchController::messages
- * @see app/Http/Controllers/Telegram/TelegramSearchController.php:26
+ * @see app/Http/Controllers/Telegram/TelegramSearchController.php:21
  * @route '/telegram/search/messages'
  */
     const messagesForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -54,7 +54,7 @@ messages.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 
             /**
 * @see \App\Http\Controllers\Telegram\TelegramSearchController::messages
- * @see app/Http/Controllers/Telegram/TelegramSearchController.php:26
+ * @see app/Http/Controllers/Telegram/TelegramSearchController.php:21
  * @route '/telegram/search/messages'
  */
         messagesForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -63,7 +63,7 @@ messages.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
         })
             /**
 * @see \App\Http\Controllers\Telegram\TelegramSearchController::messages
- * @see app/Http/Controllers/Telegram/TelegramSearchController.php:26
+ * @see app/Http/Controllers/Telegram/TelegramSearchController.php:21
  * @route '/telegram/search/messages'
  */
         messagesForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -79,7 +79,7 @@ messages.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     messages.form = messagesForm
 /**
 * @see \App\Http\Controllers\Telegram\TelegramSearchController::comments
- * @see app/Http/Controllers/Telegram/TelegramSearchController.php:58
+ * @see app/Http/Controllers/Telegram/TelegramSearchController.php:26
  * @route '/telegram/search/comments'
  */
 export const comments = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -94,7 +94,7 @@ comments.definition = {
 
 /**
 * @see \App\Http\Controllers\Telegram\TelegramSearchController::comments
- * @see app/Http/Controllers/Telegram/TelegramSearchController.php:58
+ * @see app/Http/Controllers/Telegram/TelegramSearchController.php:26
  * @route '/telegram/search/comments'
  */
 comments.url = (options?: RouteQueryOptions) => {
@@ -103,7 +103,7 @@ comments.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\Telegram\TelegramSearchController::comments
- * @see app/Http/Controllers/Telegram/TelegramSearchController.php:58
+ * @see app/Http/Controllers/Telegram/TelegramSearchController.php:26
  * @route '/telegram/search/comments'
  */
 comments.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -112,7 +112,7 @@ comments.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
 })
 /**
 * @see \App\Http\Controllers\Telegram\TelegramSearchController::comments
- * @see app/Http/Controllers/Telegram/TelegramSearchController.php:58
+ * @see app/Http/Controllers/Telegram/TelegramSearchController.php:26
  * @route '/telegram/search/comments'
  */
 comments.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -122,7 +122,7 @@ comments.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 
     /**
 * @see \App\Http\Controllers\Telegram\TelegramSearchController::comments
- * @see app/Http/Controllers/Telegram/TelegramSearchController.php:58
+ * @see app/Http/Controllers/Telegram/TelegramSearchController.php:26
  * @route '/telegram/search/comments'
  */
     const commentsForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -132,7 +132,7 @@ comments.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 
             /**
 * @see \App\Http\Controllers\Telegram\TelegramSearchController::comments
- * @see app/Http/Controllers/Telegram/TelegramSearchController.php:58
+ * @see app/Http/Controllers/Telegram/TelegramSearchController.php:26
  * @route '/telegram/search/comments'
  */
         commentsForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -141,7 +141,7 @@ comments.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
         })
             /**
 * @see \App\Http\Controllers\Telegram\TelegramSearchController::comments
- * @see app/Http/Controllers/Telegram/TelegramSearchController.php:58
+ * @see app/Http/Controllers/Telegram/TelegramSearchController.php:26
  * @route '/telegram/search/comments'
  */
         commentsForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -157,7 +157,7 @@ comments.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     comments.form = commentsForm
 /**
 * @see \App\Http\Controllers\Telegram\TelegramSearchController::media
- * @see app/Http/Controllers/Telegram/TelegramSearchController.php:72
+ * @see app/Http/Controllers/Telegram/TelegramSearchController.php:31
  * @route '/telegram/media/{chatUsername}/{messageId}'
  */
 export const media = (args: { chatUsername: string | number, messageId: string | number } | [chatUsername: string | number, messageId: string | number ], options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -172,7 +172,7 @@ media.definition = {
 
 /**
 * @see \App\Http\Controllers\Telegram\TelegramSearchController::media
- * @see app/Http/Controllers/Telegram/TelegramSearchController.php:72
+ * @see app/Http/Controllers/Telegram/TelegramSearchController.php:31
  * @route '/telegram/media/{chatUsername}/{messageId}'
  */
 media.url = (args: { chatUsername: string | number, messageId: string | number } | [chatUsername: string | number, messageId: string | number ], options?: RouteQueryOptions) => {
@@ -198,7 +198,7 @@ media.url = (args: { chatUsername: string | number, messageId: string | number }
 
 /**
 * @see \App\Http\Controllers\Telegram\TelegramSearchController::media
- * @see app/Http/Controllers/Telegram/TelegramSearchController.php:72
+ * @see app/Http/Controllers/Telegram/TelegramSearchController.php:31
  * @route '/telegram/media/{chatUsername}/{messageId}'
  */
 media.get = (args: { chatUsername: string | number, messageId: string | number } | [chatUsername: string | number, messageId: string | number ], options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -207,7 +207,7 @@ media.get = (args: { chatUsername: string | number, messageId: string | number }
 })
 /**
 * @see \App\Http\Controllers\Telegram\TelegramSearchController::media
- * @see app/Http/Controllers/Telegram/TelegramSearchController.php:72
+ * @see app/Http/Controllers/Telegram/TelegramSearchController.php:31
  * @route '/telegram/media/{chatUsername}/{messageId}'
  */
 media.head = (args: { chatUsername: string | number, messageId: string | number } | [chatUsername: string | number, messageId: string | number ], options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -217,7 +217,7 @@ media.head = (args: { chatUsername: string | number, messageId: string | number 
 
     /**
 * @see \App\Http\Controllers\Telegram\TelegramSearchController::media
- * @see app/Http/Controllers/Telegram/TelegramSearchController.php:72
+ * @see app/Http/Controllers/Telegram/TelegramSearchController.php:31
  * @route '/telegram/media/{chatUsername}/{messageId}'
  */
     const mediaForm = (args: { chatUsername: string | number, messageId: string | number } | [chatUsername: string | number, messageId: string | number ], options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -227,7 +227,7 @@ media.head = (args: { chatUsername: string | number, messageId: string | number 
 
             /**
 * @see \App\Http\Controllers\Telegram\TelegramSearchController::media
- * @see app/Http/Controllers/Telegram/TelegramSearchController.php:72
+ * @see app/Http/Controllers/Telegram/TelegramSearchController.php:31
  * @route '/telegram/media/{chatUsername}/{messageId}'
  */
         mediaForm.get = (args: { chatUsername: string | number, messageId: string | number } | [chatUsername: string | number, messageId: string | number ], options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -236,7 +236,7 @@ media.head = (args: { chatUsername: string | number, messageId: string | number 
         })
             /**
 * @see \App\Http\Controllers\Telegram\TelegramSearchController::media
- * @see app/Http/Controllers/Telegram/TelegramSearchController.php:72
+ * @see app/Http/Controllers/Telegram/TelegramSearchController.php:31
  * @route '/telegram/media/{chatUsername}/{messageId}'
  */
         mediaForm.head = (args: { chatUsername: string | number, messageId: string | number } | [chatUsername: string | number, messageId: string | number ], options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({

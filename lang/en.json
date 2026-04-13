@@ -1,4 +1,10 @@
 {
   "Date \"from\" must be less than or equal to date \"to\".": "Date \"from\" must be less than or equal to date \"to\".",
-  "Failed to load messages for the current query.": "Failed to load messages for the current query."
+  "Please provide a date range.": "Please provide a date range.",
+  "Date range cannot exceed 7 days.": "Date range cannot exceed 7 days.",
+  "Failed to load messages for the current query.": "Failed to load messages for the current query.",
+  "Failed to load data from GDELT API.": "Failed to load data from GDELT API.",
+  "GDELT API rate limit reached. Please wait 30-60 seconds and try again.": "GDELT API rate limit reached. Please wait 30-60 seconds and try again.",
+  "GDELT API timeout. Please try again in a moment.": "GDELT API timeout. Please try again in a moment.",
+  "Network error while contacting GDELT API. Please check your internet connection.": "Network error while contacting GDELT API. Please check your internet connection."
 }

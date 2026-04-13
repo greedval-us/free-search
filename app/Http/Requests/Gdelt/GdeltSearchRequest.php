@@ -31,8 +31,8 @@ class GdeltSearchRequest extends FormRequest
             'query' => ['required', 'string', 'max:500'],
             'maxRecords' => ['nullable', 'integer', 'min:1', 'max:250'],
             'sort' => ['nullable', 'string', 'in:' . implode(',', self::SORT_VALUES)],
-            'dateFrom' => ['nullable', 'date_format:Y-m-d'],
-            'dateTo' => ['nullable', 'date_format:Y-m-d'],
+            'dateFrom' => ['required', 'date_format:Y-m-d'],
+            'dateTo' => ['required', 'date_format:Y-m-d'],
             'sourceCountry' => ['nullable', 'string', 'size:2', 'alpha'],
         ];
     }
@@ -43,13 +43,25 @@ class GdeltSearchRequest extends FormRequest
             $dateFrom = $this->input('dateFrom');
             $dateTo = $this->input('dateTo');
 
-            if (($dateFrom && !$dateTo) || (!$dateFrom && $dateTo)) {
-                $validator->errors()->add('dateTo', __('Please provide both dates for a custom range.'));
+            if (!is_string($dateFrom) || !is_string($dateTo) || $dateFrom === '' || $dateTo === '') {
+                $validator->errors()->add('dateFrom', __('Please provide a date range.'));
                 return;
             }
 
             if ($dateFrom && $dateTo && $dateFrom > $dateTo) {
                 $validator->errors()->add('dateFrom', __('Date "from" must be less than or equal to date "to".'));
+                return;
+            }
+
+            try {
+                $from = Carbon::createFromFormat('Y-m-d', $dateFrom, 'UTC')->startOfDay();
+                $to = Carbon::createFromFormat('Y-m-d', $dateTo, 'UTC')->endOfDay();
+            } catch (\Throwable) {
+                return;
+            }
+
+            if ($from->diffInDays($to) > 6) {
+                $validator->errors()->add('dateTo', __('Date range cannot exceed 7 days.'));
             }
         });
     }

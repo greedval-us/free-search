@@ -236,6 +236,84 @@ Controllerd5ecae56bdcfbb8acbee4b606463b6bd.head = (options?: RouteQueryOptions):
     /**
 * @see \Inertia\Controller::__invoke
  * @see vendor/inertiajs/inertia-laravel/src/Controller.php:13
+ * @route '/gdelt'
+ */
+const Controller36d41e32a8094ca85cc6ea1739ea54ed = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+    url: Controller36d41e32a8094ca85cc6ea1739ea54ed.url(options),
+    method: 'get',
+})
+
+Controller36d41e32a8094ca85cc6ea1739ea54ed.definition = {
+    methods: ["get","head"],
+    url: '/gdelt',
+} satisfies RouteDefinition<["get","head"]>
+
+/**
+* @see \Inertia\Controller::__invoke
+ * @see vendor/inertiajs/inertia-laravel/src/Controller.php:13
+ * @route '/gdelt'
+ */
+Controller36d41e32a8094ca85cc6ea1739ea54ed.url = (options?: RouteQueryOptions) => {
+    return Controller36d41e32a8094ca85cc6ea1739ea54ed.definition.url + queryParams(options)
+}
+
+/**
+* @see \Inertia\Controller::__invoke
+ * @see vendor/inertiajs/inertia-laravel/src/Controller.php:13
+ * @route '/gdelt'
+ */
+Controller36d41e32a8094ca85cc6ea1739ea54ed.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+    url: Controller36d41e32a8094ca85cc6ea1739ea54ed.url(options),
+    method: 'get',
+})
+/**
+* @see \Inertia\Controller::__invoke
+ * @see vendor/inertiajs/inertia-laravel/src/Controller.php:13
+ * @route '/gdelt'
+ */
+Controller36d41e32a8094ca85cc6ea1739ea54ed.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
+    url: Controller36d41e32a8094ca85cc6ea1739ea54ed.url(options),
+    method: 'head',
+})
+
+    /**
+* @see \Inertia\Controller::__invoke
+ * @see vendor/inertiajs/inertia-laravel/src/Controller.php:13
+ * @route '/gdelt'
+ */
+    const Controller36d41e32a8094ca85cc6ea1739ea54edForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+        action: Controller36d41e32a8094ca85cc6ea1739ea54ed.url(options),
+        method: 'get',
+    })
+
+            /**
+* @see \Inertia\Controller::__invoke
+ * @see vendor/inertiajs/inertia-laravel/src/Controller.php:13
+ * @route '/gdelt'
+ */
+        Controller36d41e32a8094ca85cc6ea1739ea54edForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+            action: Controller36d41e32a8094ca85cc6ea1739ea54ed.url(options),
+            method: 'get',
+        })
+            /**
+* @see \Inertia\Controller::__invoke
+ * @see vendor/inertiajs/inertia-laravel/src/Controller.php:13
+ * @route '/gdelt'
+ */
+        Controller36d41e32a8094ca85cc6ea1739ea54edForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+            action: Controller36d41e32a8094ca85cc6ea1739ea54ed.url({
+                        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
+                            _method: 'HEAD',
+                            ...(options?.query ?? options?.mergeQuery ?? {}),
+                        }
+                    }),
+            method: 'get',
+        })
+    
+    Controller36d41e32a8094ca85cc6ea1739ea54ed.form = Controller36d41e32a8094ca85cc6ea1739ea54edForm
+    /**
+* @see \Inertia\Controller::__invoke
+ * @see vendor/inertiajs/inertia-laravel/src/Controller.php:13
  * @route '/settings/appearance'
  */
 const Controllere19ee86e9cf603ce1a59a1ec5d21dec5 = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -316,6 +394,7 @@ const Controller = {
     '/': Controller980bb49ee7ae63891f1d891d2fbcf1c9,
     '/dashboard': Controller42a740574ecbfbac32f8cc353fc32db9,
     '/telegram': Controllerd5ecae56bdcfbb8acbee4b606463b6bd,
+    '/gdelt': Controller36d41e32a8094ca85cc6ea1739ea54ed,
     '/settings/appearance': Controllere19ee86e9cf603ce1a59a1ec5d21dec5,
 }
 

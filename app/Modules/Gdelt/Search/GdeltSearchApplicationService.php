@@ -32,11 +32,21 @@ class GdeltSearchApplicationService implements GdeltSearchApplicationServiceInte
                 'error' => $e->getMessage(),
             ]);
 
+            $message = __('Failed to load data from GDELT API.');
+
+            if ((int) $e->getCode() === 429 || str_contains($e->getMessage(), 'status 429')) {
+                $message = __('GDELT API rate limit reached. Please wait 30-60 seconds and try again.');
+            } elseif (str_contains(strtolower($e->getMessage()), 'timed out')) {
+                $message = __('GDELT API timeout. Please try again in a moment.');
+            } elseif (str_contains(strtolower($e->getMessage()), 'could not resolve host')) {
+                $message = __('Network error while contacting GDELT API. Please check your internet connection.');
+            }
+
             return new GdeltSearchResultDTO(
                 ok: false,
                 items: [],
                 total: 0,
-                message: __('Failed to load data from GDELT API.'),
+                message: $message,
             );
         }
     }

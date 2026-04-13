@@ -285,6 +285,130 @@
       }
     }
   },
+  "gdelt": {
+    "headTitle": "Поиск GDELT",
+    "title": "Поиск статей GDELT",
+    "collapsed": "Панель поиска свернута",
+    "subtitle": "Поиск в стиле Telegram с расширенными фильтрами GDELT",
+    "find": "Найти статьи",
+    "searching": "Ищем...",
+    "filters": {
+      "keywords": "Ключевые слова",
+      "keywordsRequired": "Ключевые слова *",
+      "exactPhrase": "Точная фраза",
+      "anyWords": "Любые слова (OR)",
+      "excludeWords": "Исключить слова",
+      "domain": "Домен содержит",
+      "domainExact": "Домен точно",
+      "sort": "Сортировка",
+      "country": "Страна",
+      "sourceLanguage": "Язык источника",
+      "maxRecords": "Макс. записей",
+      "toneMin": "Тон мин.",
+      "toneMax": "Тон макс.",
+      "theme": "Тема",
+      "person": "Персона",
+      "organization": "Организация",
+      "location": "Локация",
+      "dateFrom": "Дата с",
+      "dateTo": "Дата по",
+      "dateFromRequired": "Дата с *",
+      "dateToRequired": "Дата по *",
+      "onlyWithImage": "Только с изображением",
+      "rawQuery": "Дополнение raw query (расширенные операторы)",
+      "sortOptions": {
+        "datedesc": "Дата: новые сверху",
+        "dateasc": "Дата: старые сверху",
+        "hybridrel": "Релевантность (hybrid)",
+        "toneasc": "Тон: от негативного к позитивному",
+        "tonedesc": "Тон: от позитивного к негативному"
+      },
+      "countryOptions": {
+        "any": "Любая страна",
+        "us": "США",
+        "gb": "Великобритания",
+        "ru": "Россия",
+        "ua": "Украина",
+        "de": "Германия",
+        "fr": "Франция",
+        "cn": "Китай",
+        "in": "Индия",
+        "br": "Бразилия",
+        "tr": "Турция",
+        "ir": "Иран",
+        "il": "Израиль",
+        "sy": "Сирия"
+      },
+      "sourceLangOptions": {
+        "any": "Любой язык источника",
+        "english": "Английский",
+        "russian": "Русский",
+        "ukrainian": "Украинский",
+        "german": "Немецкий",
+        "french": "Французский",
+        "spanish": "Испанский",
+        "arabic": "Арабский",
+        "chinese": "Китайский",
+        "turkish": "Турецкий"
+      }
+    },
+    "placeholders": {
+      "keywords": "энергетический кризис Европа",
+      "exactPhrase": "критическая инфраструктура",
+      "anyWords": "газ, нефть, СПГ",
+      "excludeWords": "футбол слухи",
+      "domain": "reuters.com",
+      "domainExact": "bbc.com",
+      "toneMin": "-10",
+      "toneMax": "10",
+      "theme": "TAX_FNCACT_WEAPONS",
+      "person": "Владимир Путин",
+      "organization": "НАТО",
+      "location": "Москва",
+      "rawQuery": "near5:\"energy blackout\" lang:en"
+    },
+    "presets": {
+      "day1": "24ч",
+      "day7": "7д"
+    },
+    "actions": {
+      "clearDates": "Очистить даты",
+      "resetWeek": "Сбросить на последние 7 дней"
+    },
+    "required": {
+      "title": "Обязательные поля",
+      "fields": "Ключевые слова и период дат (максимум 7 дней)."
+    },
+    "optional": {
+      "title": "Необязательные поля",
+      "fields": "Все расширенные фильтры необязательны и только уточняют выдачу."
+    },
+    "query": {
+      "built": "Собранный запрос:",
+      "last": "Последний запрос"
+    },
+    "results": {
+      "title": "Статьи",
+      "shown": "показано",
+      "empty": "Выполните поиск, чтобы получить статьи.",
+      "country": "Страна",
+      "language": "Язык",
+      "tone": "Тон",
+      "seen": "Обнаружено",
+      "noTitle": "[Без заголовка]",
+      "openSource": "Открыть источник",
+      "visitDomain": "Открыть домен"
+    },
+    "errors": {
+      "keywordsRequired": "Поле «Ключевые слова» обязательно.",
+      "emptyQuery": "Укажите хотя бы одно поле запроса.",
+      "periodRequired": "Укажите обе даты периода.",
+      "rangeTooLong": "Период не может превышать 7 дней.",
+      "validationFailed": "Ошибка валидации запроса.",
+      "requestFailed": "Ошибка запроса к GDELT.",
+      "unknownError": "Неизвестная ошибка запроса."
+    }
+  },
   "common": {
     "language": "Язык",
     "saved": "Сохранено.",
