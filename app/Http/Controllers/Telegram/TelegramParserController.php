@@ -29,7 +29,7 @@ class TelegramParserController extends Controller
 
     public function status(Request $request, string $runId): JsonResponse
     {
-        $run = $this->parserApplicationService->status((int) $request->user()->id, $runId);
+        $run = $this->parserApplicationService->status($this->userId($request), $runId);
         abort_unless($run !== null, 404);
 
         return response()->json($run);
@@ -37,7 +37,7 @@ class TelegramParserController extends Controller
 
     public function stop(Request $request, string $runId): JsonResponse
     {
-        $run = $this->parserApplicationService->stop((int) $request->user()->id, $runId);
+        $run = $this->parserApplicationService->stop($this->userId($request), $runId);
         abort_unless($run !== null, 404);
 
         return response()->json($run);
@@ -45,38 +45,16 @@ class TelegramParserController extends Controller
 
     public function downloadExcel(Request $request, string $runId): BinaryFileResponse
     {
-        $run = $this->parserApplicationService->getRun((int) $request->user()->id, $runId);
-        abort_unless($run !== null, 404);
-        abort_unless(in_array(($run['status'] ?? null), ['completed', 'stopped'], true), 409);
-
-        $payload = is_array($run['result'] ?? null) ? $run['result'] : null;
-        abort_unless($payload !== null, 404);
-        $chatUsername = (string) ($payload['chatUsername'] ?? 'chat');
-
-        $filename = sprintf(
-            'telegram-parser-%s-%s.xlsx',
-            preg_replace('/[^a-z0-9_-]+/i', '-', $chatUsername) ?: 'chat',
-            Carbon::now(config('app.timezone'))->format('Ymd-His')
-        );
+        $payload = $this->resolveDownloadPayload($request, $runId);
+        $filename = $this->buildExportFilename('telegram-parser', (string) ($payload['chatUsername'] ?? 'chat'), 'xlsx');
 
         return $this->excelWorkbookService->download($filename, $this->exportBuilder->buildSheets($payload));
     }
 
     public function downloadJson(Request $request, string $runId): StreamedResponse
     {
-        $run = $this->parserApplicationService->getRun((int) $request->user()->id, $runId);
-        abort_unless($run !== null, 404);
-        abort_unless(in_array(($run['status'] ?? null), ['completed', 'stopped'], true), 409);
-
-        $payload = is_array($run['result'] ?? null) ? $run['result'] : null;
-        abort_unless($payload !== null, 404);
-        $chatUsername = (string) ($payload['chatUsername'] ?? 'chat');
-
-        $filename = sprintf(
-            'telegram-parser-%s-%s.json',
-            preg_replace('/[^a-z0-9_-]+/i', '-', $chatUsername) ?: 'chat',
-            Carbon::now(config('app.timezone'))->format('Ymd-His')
-        );
+        $payload = $this->resolveDownloadPayload($request, $runId);
+        $filename = $this->buildExportFilename('telegram-parser', (string) ($payload['chatUsername'] ?? 'chat'), 'json');
 
         return response()->streamDownload(
             static function () use ($payload): void {
@@ -88,6 +66,37 @@ class TelegramParserController extends Controller
             $filename,
             ['Content-Type' => 'application/json; charset=UTF-8']
         );
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    private function resolveDownloadPayload(Request $request, string $runId): array
+    {
+        $run = $this->parserApplicationService->getRun($this->userId($request), $runId);
+        abort_unless($run !== null, 404);
+        abort_unless(in_array(($run['status'] ?? null), ['completed', 'stopped'], true), 409);
+
+        $payload = is_array($run['result'] ?? null) ? $run['result'] : null;
+        abort_unless($payload !== null, 404);
+
+        return $payload;
+    }
+
+    private function buildExportFilename(string $prefix, string $chatUsername, string $extension): string
+    {
+        return sprintf(
+            '%s-%s-%s.%s',
+            $prefix,
+            preg_replace('/[^a-z0-9_-]+/i', '-', $chatUsername) ?: 'chat',
+            Carbon::now(config('app.timezone'))->format('Ymd-His'),
+            ltrim($extension, '.')
+        );
+    }
+
+    private function userId(Request $request): int
+    {
+        return (int) $request->user()->id;
     }
 }
 
