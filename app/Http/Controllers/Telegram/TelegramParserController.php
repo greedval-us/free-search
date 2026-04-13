@@ -24,12 +24,7 @@ class TelegramParserController extends Controller
 
     public function start(TelegramParserStartRequest $request): JsonResponse
     {
-        return response()->json($this->parserQueryService->start((int) $request->user()->id, [
-            'chatUsername' => $request->chatUsername(),
-            'period' => $request->period(),
-            'keyword' => $request->keyword(),
-            'range' => $request->range(),
-        ]));
+        return response()->json($this->parserQueryService->start($request->toStartDTO()));
     }
 
     public function status(Request $request, string $runId): JsonResponse

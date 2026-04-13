@@ -4,6 +4,9 @@ namespace App\Modules\Telegram\Search;
 
 use App\Modules\Telegram\Presenters\TelegramCommentPresenter;
 use App\Modules\Telegram\Presenters\TelegramMessagePresenter;
+use App\Modules\Telegram\Search\DTO\SearchCommentsQueryDTO;
+use App\Modules\Telegram\Search\DTO\SearchMediaQueryDTO;
+use App\Modules\Telegram\Search\DTO\SearchMessagesQueryDTO;
 use App\Modules\Telegram\TelegramService;
 
 class TelegramSearchQueryService
@@ -16,12 +19,11 @@ class TelegramSearchQueryService
     }
 
     /**
-     * @param array<string, mixed> $filter
      * @return array<string, mixed>
      */
-    public function messages(array $filter, int $limit, int $offsetId, string $chatUsername): array
+    public function messages(SearchMessagesQueryDTO $query): array
     {
-        $dto = $this->telegramService->getMessages($filter);
+        $dto = $this->telegramService->getMessages($query->filter);
 
         if ($dto === null) {
             return [
@@ -29,8 +31,8 @@ class TelegramSearchQueryService
                 'message' => __('Failed to load messages for the current query.'),
                 'items' => [],
                 'pagination' => [
-                    'limit' => $limit,
-                    'offsetId' => $offsetId,
+                    'limit' => $query->limit,
+                    'offsetId' => $query->offsetId,
                     'nextOffsetId' => null,
                     'hasMore' => false,
                     'total' => 0,
@@ -38,17 +40,17 @@ class TelegramSearchQueryService
             ];
         }
 
-        $items = $this->messagePresenter->presentMessages($dto->messages, $chatUsername);
+        $items = $this->messagePresenter->presentMessages($dto->messages, $query->chatUsername);
         $nextOffsetId = $this->messagePresenter->resolveNextOffsetId($dto->messages);
 
         return [
             'ok' => true,
             'items' => $items,
             'pagination' => [
-                'limit' => $limit,
-                'offsetId' => $offsetId,
+                'limit' => $query->limit,
+                'offsetId' => $query->offsetId,
                 'nextOffsetId' => $nextOffsetId,
-                'hasMore' => $nextOffsetId !== null && count($items) >= $limit,
+                'hasMore' => $nextOffsetId !== null && count($items) >= $query->limit,
                 'total' => $dto->count,
             ],
         ];
@@ -57,24 +59,24 @@ class TelegramSearchQueryService
     /**
      * @return array<string, mixed>
      */
-    public function comments(string $chatUsername, int $postId, int $limit, int $offsetId): array
+    public function comments(SearchCommentsQueryDTO $query): array
     {
         $commentsPage = $this->telegramService->getComments(
-            $chatUsername,
-            $postId,
-            $limit,
-            $offsetId
+            $query->chatUsername,
+            $query->postId,
+            $query->limit,
+            $query->offsetId
         );
 
-        return $this->commentPresenter->present($commentsPage, $limit, $offsetId);
+        return $this->commentPresenter->present($commentsPage, $query->limit, $query->offsetId);
     }
 
-    public function media(string $chatUsername, int $messageId): ?array
+    public function media(SearchMediaQueryDTO $query): ?array
     {
-        if ($chatUsername === '' || $messageId <= 0) {
+        if ($query->chatUsername === '' || $query->messageId <= 0) {
             return null;
         }
 
-        return $this->telegramService->getMessageMedia($chatUsername, $messageId);
+        return $this->telegramService->getMessageMedia($query->chatUsername, $query->messageId);
     }
 }

@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\Telegram;
 
+use App\Modules\Telegram\Search\DTO\SearchMessagesQueryDTO;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Carbon;
 use Illuminate\Validation\Validator;
@@ -78,6 +79,16 @@ class SearchMessagesRequest extends FormRequest
         }
 
         return $filter;
+    }
+
+    public function toQueryDTO(): SearchMessagesQueryDTO
+    {
+        return new SearchMessagesQueryDTO(
+            filter: $this->telegramFilter(),
+            limit: $this->limitValue(),
+            offsetId: $this->offsetId(),
+            chatUsername: $this->chatUsername(),
+        );
     }
 
     private function isNumericAuthorFilter(string $value): bool

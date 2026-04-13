@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\Telegram;
 
+use App\Modules\Telegram\Analytics\DTO\TelegramAnalyticsParamsDTO;
 use Carbon\Carbon;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Validator;
@@ -114,5 +115,14 @@ class TelegramAnalyticsRequest extends FormRequest
         $locale = strtolower(trim((string) ($this->validated('locale') ?? app()->getLocale())));
 
         return in_array($locale, ['ru', 'en'], true) ? $locale : 'en';
+    }
+
+    public function toParamsDTO(): TelegramAnalyticsParamsDTO
+    {
+        return new TelegramAnalyticsParamsDTO(
+            chatUsername: $this->chatUsername(),
+            scorePriority: $this->scorePriority(),
+            keyword: $this->keyword(),
+        );
     }
 }

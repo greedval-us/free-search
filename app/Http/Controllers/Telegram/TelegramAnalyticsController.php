@@ -21,11 +21,7 @@ class TelegramAnalyticsController extends Controller
 
     public function summary(TelegramAnalyticsRequest $request): JsonResponse
     {
-        $params = [
-            'chatUsername' => $request->chatUsername(),
-            'scorePriority' => $request->scorePriority(),
-            'keyword' => $request->keyword(),
-        ];
+        $params = $request->toParamsDTO();
         $range = $this->rangeResolver->resolveRange($request);
         $data = $this->analyticsQueryService->buildSummary(
             $params,
@@ -44,11 +40,7 @@ class TelegramAnalyticsController extends Controller
     {
         app()->setLocale($request->locale());
 
-        $params = [
-            'chatUsername' => $request->chatUsername(),
-            'scorePriority' => $request->scorePriority(),
-            'keyword' => $request->keyword(),
-        ];
+        $params = $request->toParamsDTO();
         $range = $this->rangeResolver->resolveRange($request);
         $reportData = $this->analyticsQueryService->buildReport($params, $range['from'], $range['to']);
         $data = $reportData['report'];

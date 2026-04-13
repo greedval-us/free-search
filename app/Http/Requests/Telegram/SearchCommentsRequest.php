@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\Telegram;
 
+use App\Modules\Telegram\Search\DTO\SearchCommentsQueryDTO;
 use Illuminate\Foundation\Http\FormRequest;
 
 class SearchCommentsRequest extends FormRequest
@@ -39,5 +40,15 @@ class SearchCommentsRequest extends FormRequest
     public function offsetId(): int
     {
         return (int) ($this->validated('offsetId') ?? 0);
+    }
+
+    public function toQueryDTO(): SearchCommentsQueryDTO
+    {
+        return new SearchCommentsQueryDTO(
+            chatUsername: $this->chatUsername(),
+            postId: $this->postId(),
+            limit: $this->limitValue(),
+            offsetId: $this->offsetId(),
+        );
     }
 }

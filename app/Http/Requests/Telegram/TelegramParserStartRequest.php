@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\Telegram;
 
+use App\Modules\Telegram\Parser\DTO\TelegramParserStartDTO;
 use Carbon\Carbon;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Validator;
@@ -125,5 +126,15 @@ class TelegramParserStartRequest extends FormRequest
             'maxTimestamp' => $to->timestamp,
         ];
     }
-}
 
+    public function toStartDTO(): TelegramParserStartDTO
+    {
+        return new TelegramParserStartDTO(
+            userId: (int) $this->user()->id,
+            chatUsername: $this->chatUsername(),
+            period: $this->period(),
+            keyword: $this->keyword(),
+            range: $this->range(),
+        );
+    }
+}

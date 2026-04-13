@@ -21,27 +21,17 @@ class TelegramSearchController extends Controller
 
     public function messages(SearchMessagesRequest $request): JsonResponse
     {
-        return response()->json($this->searchQueryService->messages(
-            $request->telegramFilter(),
-            $request->limitValue(),
-            $request->offsetId(),
-            $request->chatUsername()
-        ));
+        return response()->json($this->searchQueryService->messages($request->toQueryDTO()));
     }
 
     public function comments(SearchCommentsRequest $request): JsonResponse
     {
-        return response()->json($this->searchQueryService->comments(
-            $request->chatUsername(),
-            $request->postId(),
-            $request->limitValue(),
-            $request->offsetId()
-        ));
+        return response()->json($this->searchQueryService->comments($request->toQueryDTO()));
     }
 
     public function media(StreamTelegramMediaRequest $request): BinaryFileResponse
     {
-        $media = $this->searchQueryService->media($request->chatUsername(), $request->messageId());
+        $media = $this->searchQueryService->media($request->toQueryDTO());
 
         if ($media === null) {
             abort(404);

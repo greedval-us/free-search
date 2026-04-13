@@ -2,6 +2,8 @@
 
 namespace App\Modules\Telegram\Parser;
 
+use App\Modules\Telegram\Parser\DTO\TelegramParserStartDTO;
+
 class TelegramParserQueryService
 {
     public function __construct(
@@ -11,12 +13,11 @@ class TelegramParserQueryService
     }
 
     /**
-     * @param array<string, mixed> $context
      * @return array<string, mixed>
      */
-    public function start(int $userId, array $context): array
+    public function start(TelegramParserStartDTO $input): array
     {
-        $run = $this->runStore->create($userId, $context);
+        $run = $this->runStore->create($input->userId, $input->toContext());
 
         return $this->presentRun($run);
     }
