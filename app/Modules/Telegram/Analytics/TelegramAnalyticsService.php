@@ -2,9 +2,9 @@
 
 namespace App\Modules\Telegram\Analytics;
 
+use App\Modules\Telegram\Core\Contracts\TelegramGatewayInterface;
 use App\Modules\Telegram\Presenters\TelegramMessagePresenter;
 use App\Modules\Telegram\DTO\Response\Info\ChannelInfoDTO;
-use App\Modules\Telegram\TelegramService;
 use Carbon\Carbon;
 
 class TelegramAnalyticsService
@@ -43,7 +43,7 @@ class TelegramAnalyticsService
     ];
 
     public function __construct(
-        private readonly TelegramService $telegramService,
+        private readonly TelegramGatewayInterface $telegramService,
         private readonly TelegramMessagePresenter $messagePresenter,
         private readonly TelegramAnalyticsSummaryBuilder $summaryBuilder,
     ) {

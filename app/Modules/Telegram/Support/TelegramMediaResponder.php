@@ -2,14 +2,14 @@
 
 namespace App\Modules\Telegram\Support;
 
-use App\Modules\Telegram\TelegramService;
+use App\Modules\Telegram\Core\Contracts\TelegramGatewayInterface;
 use Illuminate\Support\Facades\File;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 
 class TelegramMediaResponder
 {
     public function __construct(
-        private readonly TelegramService $telegramService,
+        private readonly TelegramGatewayInterface $telegramService,
     ) {
     }
 

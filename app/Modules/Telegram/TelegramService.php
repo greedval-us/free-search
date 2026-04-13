@@ -6,6 +6,7 @@ use App\Modules\Telegram\Actions\Request\InfoAction;
 use App\Modules\Telegram\Actions\Request\MessagesAction;
 use App\Modules\Telegram\Actions\Request\ParticipantsAction;
 use App\Modules\Telegram\Actions\Request\CommentsAction;
+use App\Modules\Telegram\Core\Contracts\TelegramGatewayInterface;
 use App\Modules\Telegram\DTO\Request\SearchMessagesDTO;
 use App\Modules\Telegram\DTO\Request\SearchParticipantsDTO;
 use App\Modules\Telegram\DTO\Response\Messages\ChannelMessagesDTO;
@@ -14,7 +15,7 @@ use App\Modules\Telegram\DTO\Response\Info\ChannelInfoDTO;
 use danog\MadelineProto\API;
 use Illuminate\Support\Facades\Log;
 
-class TelegramService
+class TelegramService implements TelegramGatewayInterface
 {
     public function __construct(
         private readonly API $madeline,

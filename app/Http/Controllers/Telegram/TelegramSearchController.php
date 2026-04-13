@@ -2,31 +2,30 @@
 
 namespace App\Http\Controllers\Telegram;
 
-use App\Http\Controllers\Controller;
 use App\Http\Requests\Telegram\SearchCommentsRequest;
 use App\Http\Requests\Telegram\SearchMessagesRequest;
 use App\Http\Requests\Telegram\StreamTelegramMediaRequest;
-use App\Modules\Telegram\Search\TelegramSearchApplicationService;
+use App\Modules\Telegram\Search\Contracts\TelegramSearchApplicationServiceInterface;
 use App\Modules\Telegram\Support\TelegramMediaResponder;
 use Illuminate\Http\JsonResponse;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 
-class TelegramSearchController extends Controller
+class TelegramSearchController extends BaseTelegramController
 {
     public function __construct(
-        private readonly TelegramSearchApplicationService $searchApplicationService,
+        private readonly TelegramSearchApplicationServiceInterface $searchApplicationService,
         private readonly TelegramMediaResponder $mediaResponder,
     ) {
     }
 
     public function messages(SearchMessagesRequest $request): JsonResponse
     {
-        return response()->json($this->searchApplicationService->messages($request->toQueryDTO()));
+        return $this->jsonPayload($this->searchApplicationService->messages($request->toQueryDTO())->toArray());
     }
 
     public function comments(SearchCommentsRequest $request): JsonResponse
     {
-        return response()->json($this->searchApplicationService->comments($request->toQueryDTO()));
+        return $this->jsonPayload($this->searchApplicationService->comments($request->toQueryDTO())->toArray());
     }
 
     public function media(StreamTelegramMediaRequest $request): BinaryFileResponse

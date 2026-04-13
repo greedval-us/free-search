@@ -2,21 +2,20 @@
 
 namespace App\Http\Controllers\Telegram;
 
-use App\Http\Controllers\Controller;
 use App\Http\Requests\Telegram\TelegramParserStartRequest;
 use App\Modules\Export\Excel\ExcelWorkbookService;
 use App\Modules\Telegram\Parser\TelegramParserExportBuilder;
-use App\Modules\Telegram\Parser\TelegramParserApplicationService;
+use App\Modules\Telegram\Parser\Contracts\TelegramParserApplicationServiceInterface;
 use Carbon\Carbon;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
-class TelegramParserController extends Controller
+class TelegramParserController extends BaseTelegramController
 {
     public function __construct(
-        private readonly TelegramParserApplicationService $parserApplicationService,
+        private readonly TelegramParserApplicationServiceInterface $parserApplicationService,
         private readonly TelegramParserExportBuilder $exportBuilder,
         private readonly ExcelWorkbookService $excelWorkbookService,
     ) {
@@ -24,7 +23,7 @@ class TelegramParserController extends Controller
 
     public function start(TelegramParserStartRequest $request): JsonResponse
     {
-        return response()->json($this->parserApplicationService->start($request->toStartDTO()));
+        return $this->jsonPayload($this->parserApplicationService->start($request->toStartDTO())->toArray());
     }
 
     public function status(Request $request, string $runId): JsonResponse
@@ -32,7 +31,7 @@ class TelegramParserController extends Controller
         $run = $this->parserApplicationService->status($this->userId($request), $runId);
         abort_unless($run !== null, 404);
 
-        return response()->json($run);
+        return $this->jsonPayload($run->toArray());
     }
 
     public function stop(Request $request, string $runId): JsonResponse
@@ -40,12 +39,12 @@ class TelegramParserController extends Controller
         $run = $this->parserApplicationService->stop($this->userId($request), $runId);
         abort_unless($run !== null, 404);
 
-        return response()->json($run);
+        return $this->jsonPayload($run->toArray());
     }
 
     public function downloadExcel(Request $request, string $runId): BinaryFileResponse
     {
-        $payload = $this->resolveDownloadPayload($request, $runId);
+        $payload = $this->parserApplicationService->getDownloadPayload($this->userId($request), $runId);
         $filename = $this->buildExportFilename('telegram-parser', (string) ($payload['chatUsername'] ?? 'chat'), 'xlsx');
 
         return $this->excelWorkbookService->download($filename, $this->exportBuilder->buildSheets($payload));
@@ -53,7 +52,7 @@ class TelegramParserController extends Controller
 
     public function downloadJson(Request $request, string $runId): StreamedResponse
     {
-        $payload = $this->resolveDownloadPayload($request, $runId);
+        $payload = $this->parserApplicationService->getDownloadPayload($this->userId($request), $runId);
         $filename = $this->buildExportFilename('telegram-parser', (string) ($payload['chatUsername'] ?? 'chat'), 'json');
 
         return response()->streamDownload(
@@ -68,21 +67,6 @@ class TelegramParserController extends Controller
         );
     }
 
-    /**
-     * @return array<string, mixed>
-     */
-    private function resolveDownloadPayload(Request $request, string $runId): array
-    {
-        $run = $this->parserApplicationService->getRun($this->userId($request), $runId);
-        abort_unless($run !== null, 404);
-        abort_unless(in_array(($run['status'] ?? null), ['completed', 'stopped'], true), 409);
-
-        $payload = is_array($run['result'] ?? null) ? $run['result'] : null;
-        abort_unless($payload !== null, 404);
-
-        return $payload;
-    }
-
     private function buildExportFilename(string $prefix, string $chatUsername, string $extension): string
     {
         return sprintf(
@@ -92,11 +76,6 @@ class TelegramParserController extends Controller
             Carbon::now(config('app.timezone'))->format('Ymd-His'),
             ltrim($extension, '.')
         );
-    }
-
-    private function userId(Request $request): int
-    {
-        return (int) $request->user()->id;
     }
 }
 

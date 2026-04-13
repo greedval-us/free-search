@@ -2,64 +2,61 @@
 
 namespace App\Modules\Telegram\Search;
 
+use App\Modules\Telegram\Core\Contracts\TelegramGatewayInterface;
 use App\Modules\Telegram\Presenters\TelegramCommentPresenter;
 use App\Modules\Telegram\Presenters\TelegramMessagePresenter;
 use App\Modules\Telegram\DTO\Request\SearchCommentsQueryDTO;
 use App\Modules\Telegram\DTO\Request\SearchMediaQueryDTO;
 use App\Modules\Telegram\DTO\Request\SearchMessagesQueryDTO;
-use App\Modules\Telegram\TelegramService;
+use App\Modules\Telegram\DTO\Result\SearchCommentsResultDTO;
+use App\Modules\Telegram\DTO\Result\SearchMessagesResultDTO;
+use App\Modules\Telegram\Search\Contracts\TelegramSearchApplicationServiceInterface;
 
-class TelegramSearchApplicationService
+class TelegramSearchApplicationService implements TelegramSearchApplicationServiceInterface
 {
     public function __construct(
-        private readonly TelegramService $telegramService,
+        private readonly TelegramGatewayInterface $telegramService,
         private readonly TelegramMessagePresenter $messagePresenter,
         private readonly TelegramCommentPresenter $commentPresenter,
     ) {
     }
 
-    /**
-     * @return array<string, mixed>
-     */
-    public function messages(SearchMessagesQueryDTO $query): array
+    public function messages(SearchMessagesQueryDTO $query): SearchMessagesResultDTO
     {
         $dto = $this->telegramService->getMessages($query->filter);
 
         if ($dto === null) {
-            return [
-                'ok' => false,
-                'message' => __('Failed to load messages for the current query.'),
-                'items' => [],
-                'pagination' => [
+            return new SearchMessagesResultDTO(
+                ok: false,
+                message: __('Failed to load messages for the current query.'),
+                items: [],
+                pagination: [
                     'limit' => $query->limit,
                     'offsetId' => $query->offsetId,
                     'nextOffsetId' => null,
                     'hasMore' => false,
                     'total' => 0,
                 ],
-            ];
+            );
         }
 
         $items = $this->messagePresenter->presentMessages($dto->messages, $query->chatUsername);
         $nextOffsetId = $this->messagePresenter->resolveNextOffsetId($dto->messages);
 
-        return [
-            'ok' => true,
-            'items' => $items,
-            'pagination' => [
+        return new SearchMessagesResultDTO(
+            ok: true,
+            items: $items,
+            pagination: [
                 'limit' => $query->limit,
                 'offsetId' => $query->offsetId,
                 'nextOffsetId' => $nextOffsetId,
                 'hasMore' => $nextOffsetId !== null && count($items) >= $query->limit,
                 'total' => $dto->count,
             ],
-        ];
+        );
     }
 
-    /**
-     * @return array<string, mixed>
-     */
-    public function comments(SearchCommentsQueryDTO $query): array
+    public function comments(SearchCommentsQueryDTO $query): SearchCommentsResultDTO
     {
         $commentsPage = $this->telegramService->getComments(
             $query->chatUsername,
@@ -68,7 +65,9 @@ class TelegramSearchApplicationService
             $query->offsetId
         );
 
-        return $this->commentPresenter->present($commentsPage, $query->limit, $query->offsetId);
+        return new SearchCommentsResultDTO(
+            $this->commentPresenter->present($commentsPage, $query->limit, $query->offsetId)
+        );
     }
 
     public function media(SearchMediaQueryDTO $query): ?array

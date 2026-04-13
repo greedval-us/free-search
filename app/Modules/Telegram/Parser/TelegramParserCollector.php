@@ -2,9 +2,9 @@
 
 namespace App\Modules\Telegram\Parser;
 
+use App\Modules\Telegram\Core\Contracts\TelegramGatewayInterface;
 use App\Modules\Telegram\Presenters\TelegramCommentPresenter;
 use App\Modules\Telegram\Presenters\TelegramMessagePresenter;
-use App\Modules\Telegram\TelegramService;
 
 class TelegramParserCollector
 {
@@ -12,7 +12,7 @@ class TelegramParserCollector
     private const COMMENT_LIMIT = 20;
 
     public function __construct(
-        private readonly TelegramService $telegramService,
+        private readonly TelegramGatewayInterface $telegramService,
         private readonly TelegramMessagePresenter $messagePresenter,
         private readonly TelegramCommentPresenter $commentPresenter,
     ) {

@@ -3,29 +3,26 @@
 namespace App\Modules\Telegram\Parser;
 
 use App\Modules\Telegram\DTO\Request\TelegramParserStartDTO;
+use App\Modules\Telegram\DTO\Result\ParserRunStatusDTO;
+use App\Modules\Telegram\Parser\Contracts\TelegramParserApplicationServiceInterface;
 
-class TelegramParserApplicationService
+class TelegramParserApplicationService implements TelegramParserApplicationServiceInterface
 {
     public function __construct(
         private readonly TelegramParserRunStore $runStore,
         private readonly TelegramParserCollector $collector,
+        private readonly ParserRunGuard $runGuard,
     ) {
     }
 
-    /**
-     * @return array<string, mixed>
-     */
-    public function start(TelegramParserStartDTO $input): array
+    public function start(TelegramParserStartDTO $input): ParserRunStatusDTO
     {
         $run = $this->runStore->create($input->userId, $input->toContext());
 
         return $this->presentRun($run);
     }
 
-    /**
-     * @return array<string, mixed>|null
-     */
-    public function status(int $userId, string $runId): ?array
+    public function status(int $userId, string $runId): ?ParserRunStatusDTO
     {
         $run = $this->runStore->mutate($userId, $runId, function (array $state): array {
             if (($state['status'] ?? null) !== 'running') {
@@ -54,10 +51,7 @@ class TelegramParserApplicationService
         return is_array($run) ? $this->presentRun($run) : null;
     }
 
-    /**
-     * @return array<string, mixed>|null
-     */
-    public function stop(int $userId, string $runId): ?array
+    public function stop(int $userId, string $runId): ?ParserRunStatusDTO
     {
         $run = $this->runStore->mutate($userId, $runId, function (array $state): array {
             if (($state['status'] ?? null) === 'completed') {
@@ -79,25 +73,26 @@ class TelegramParserApplicationService
     }
 
     /**
-     * @return array<string, mixed>|null
+     * @return array<string, mixed>
      */
-    public function getRun(int $userId, string $runId): ?array
+    public function getDownloadPayload(int $userId, string $runId): array
     {
-        return $this->runStore->get($userId, $runId);
+        $run = $this->runGuard->requireExistingRun($this->runStore->get($userId, $runId));
+
+        return $this->runGuard->requireDownloadablePayload($run);
     }
 
     /**
      * @param array<string, mixed> $run
-     * @return array<string, mixed>
      */
-    private function presentRun(array $run): array
+    private function presentRun(array $run): ParserRunStatusDTO
     {
         $stats = is_array($run['stats'] ?? null) ? $run['stats'] : [];
         $status = (string) ($run['status'] ?? 'running');
         $runId = (string) ($run['runId'] ?? '');
         $hasResult = is_array($run['result'] ?? null);
 
-        return [
+        return new ParserRunStatusDTO([
             'ok' => true,
             'runId' => $runId,
             'status' => $status,
@@ -112,8 +107,7 @@ class TelegramParserApplicationService
             'downloadJsonUrl' => in_array($status, ['completed', 'stopped'], true) && $hasResult && $runId !== ''
                 ? route('telegram.parser.download-json', ['runId' => $runId])
                 : null,
-        ];
+        ]);
     }
 }
-
 

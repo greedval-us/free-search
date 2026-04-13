@@ -3,10 +3,13 @@
 namespace App\Modules\Telegram\Analytics;
 
 use App\Modules\Telegram\DTO\Request\TelegramAnalyticsParamsDTO;
+use App\Modules\Telegram\DTO\Result\AnalyticsReportResultDTO;
+use App\Modules\Telegram\DTO\Result\AnalyticsSummaryResultDTO;
+use App\Modules\Telegram\Analytics\Contracts\TelegramAnalyticsApplicationServiceInterface;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Cache;
 
-class TelegramAnalyticsApplicationService
+class TelegramAnalyticsApplicationService implements TelegramAnalyticsApplicationServiceInterface
 {
     private const SUMMARY_CACHE_TTL_SECONDS = 60;
 
@@ -17,10 +20,12 @@ class TelegramAnalyticsApplicationService
     ) {
     }
 
-    /**
-     * @return array<string, mixed>
-     */
-    public function buildSummary(TelegramAnalyticsParamsDTO $params, Carbon $from, Carbon $to, ?string $snapshotRole = null): array
+    public function buildSummary(
+        TelegramAnalyticsParamsDTO $params,
+        Carbon $from,
+        Carbon $to,
+        ?string $snapshotRole = null
+    ): AnalyticsSummaryResultDTO
     {
         $data = $this->loadCachedAnalytics($params, $from, $to);
         $this->storeSummarySnapshot($params, $from, $to, $data);
@@ -30,13 +35,10 @@ class TelegramAnalyticsApplicationService
             $this->snapshotStore->storeNamedSnapshot($snapshotRole, $data);
         }
 
-        return $data;
+        return new AnalyticsSummaryResultDTO($data);
     }
 
-    /**
-     * @return array{report: array<string, mixed>, previousReport: array<string, mixed>}
-     */
-    public function buildReport(TelegramAnalyticsParamsDTO $params, Carbon $from, Carbon $to): array
+    public function buildReport(TelegramAnalyticsParamsDTO $params, Carbon $from, Carbon $to): AnalyticsReportResultDTO
     {
         $namedCurrent = $this->snapshotStore->getNamedSnapshot('current');
         $namedPrevious = $this->snapshotStore->getNamedSnapshot('previous');
@@ -81,10 +83,7 @@ class TelegramAnalyticsApplicationService
             $this->storeSummarySnapshot($params, $previousRange['from'], $previousRange['to'], $previousData);
         }
 
-        return [
-            'report' => $data,
-            'previousReport' => $previousData,
-        ];
+        return new AnalyticsReportResultDTO($data, $previousData);
     }
 
     /**
