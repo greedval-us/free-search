@@ -18,6 +18,7 @@ type ParserStatusResponse = {
 };
 
 const DAY_IN_MS = 24 * 60 * 60 * 1000;
+const POLL_INTERVAL_MS = 3000;
 
 const parseDate = (value: string): Date | null => {
     const match = /^(\d{4})-(\d{2})-(\d{2})$/.exec(value);
@@ -59,6 +60,7 @@ export const useTelegramParser = (t: TranslateFn) => {
     const downloadUrl = ref<string | null>(null);
     const downloadJsonUrl = ref<string | null>(null);
     const pollTimer = ref<number | null>(null);
+    const pollRequestInFlight = ref(false);
 
     const keywordActive = computed(() => form.keyword.trim().length > 0);
     const customPeriod = computed(() => form.period === 'custom');
@@ -76,9 +78,10 @@ export const useTelegramParser = (t: TranslateFn) => {
 
     const stop = () => {
         if (pollTimer.value !== null) {
-            window.clearInterval(pollTimer.value);
+            window.clearTimeout(pollTimer.value);
             pollTimer.value = null;
         }
+        pollRequestInFlight.value = false;
 
         loading.value = false;
         if (stage.value !== 'completed' && stage.value !== 'failed') {
@@ -115,9 +118,10 @@ export const useTelegramParser = (t: TranslateFn) => {
 
     const stopSilently = () => {
         if (pollTimer.value !== null) {
-            window.clearInterval(pollTimer.value);
+            window.clearTimeout(pollTimer.value);
             pollTimer.value = null;
         }
+        pollRequestInFlight.value = false;
 
         const activeRunId = runId.value;
         if (activeRunId) {
@@ -191,10 +195,12 @@ export const useTelegramParser = (t: TranslateFn) => {
             downloadUrl.value = payload.downloadUrl;
             downloadJsonUrl.value = payload.downloadJsonUrl;
 
-            pollTimer.value = window.setInterval(async () => {
-                if (!runId.value) {
+            const pollStatus = async () => {
+                if (!runId.value || pollRequestInFlight.value) {
                     return;
                 }
+
+                pollRequestInFlight.value = true;
 
                 try {
                     const statusResponse = await fetch(`/telegram/parser/status/${runId.value}`, {
@@ -219,10 +225,7 @@ export const useTelegramParser = (t: TranslateFn) => {
                         downloadUrl.value = statusPayload.downloadUrl;
                         downloadJsonUrl.value = statusPayload.downloadJsonUrl;
                         loading.value = false;
-                        if (pollTimer.value !== null) {
-                            window.clearInterval(pollTimer.value);
-                            pollTimer.value = null;
-                        }
+                        stopSilently();
                         return;
                     }
 
@@ -230,20 +233,26 @@ export const useTelegramParser = (t: TranslateFn) => {
                         downloadUrl.value = statusPayload.downloadUrl;
                         downloadJsonUrl.value = statusPayload.downloadJsonUrl;
                         loading.value = false;
-                        if (pollTimer.value !== null) {
-                            window.clearInterval(pollTimer.value);
-                            pollTimer.value = null;
-                        }
+                        stopSilently();
+                        return;
                     }
                 } catch (pollError) {
                     loading.value = false;
                     error.value = pollError instanceof Error ? pollError.message : t('telegram.parser.errors.failed');
-                    if (pollTimer.value !== null) {
-                        window.clearInterval(pollTimer.value);
-                        pollTimer.value = null;
-                    }
+                    stopSilently();
+                    return;
+                } finally {
+                    pollRequestInFlight.value = false;
                 }
-            }, 1500);
+
+                pollTimer.value = window.setTimeout(() => {
+                    void pollStatus();
+                }, POLL_INTERVAL_MS);
+            };
+
+            pollTimer.value = window.setTimeout(() => {
+                void pollStatus();
+            }, POLL_INTERVAL_MS);
         } catch (exception) {
             stage.value = 'failed';
             error.value = exception instanceof Error ? exception.message : t('telegram.parser.errors.failed');

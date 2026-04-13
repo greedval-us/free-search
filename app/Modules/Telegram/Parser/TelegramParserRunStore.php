@@ -36,6 +36,7 @@ class TelegramParserRunStore
                 'commentPostIds' => [],
                 'commentPostIndex' => 0,
                 'commentOffsetId' => 0,
+                'nextAdvanceAt' => 0,
             ],
             'stats' => [
                 'processedMessages' => 0,

@@ -39,7 +39,29 @@ class TelegramParserController extends Controller
     public function status(Request $request, string $runId): JsonResponse
     {
         $userId = (int) $request->user()->id;
-        $run = $this->runStore->mutate($userId, $runId, fn (array $state): array => $this->collector->advance($state));
+        $run = $this->runStore->mutate($userId, $runId, function (array $state): array {
+            if (($state['status'] ?? null) !== 'running') {
+                return $state;
+            }
+
+            $cursor = is_array($state['cursor'] ?? null) ? $state['cursor'] : [];
+            $nowTs = now()->timestamp;
+            $nextAdvanceAt = (int) ($cursor['nextAdvanceAt'] ?? 0);
+
+            if ($nextAdvanceAt > $nowTs) {
+                return $state;
+            }
+
+            $state = $this->collector->advance($state);
+
+            if (($state['status'] ?? null) === 'running') {
+                $cursor = is_array($state['cursor'] ?? null) ? $state['cursor'] : [];
+                $cursor['nextAdvanceAt'] = $nowTs + 2;
+                $state['cursor'] = $cursor;
+            }
+
+            return $state;
+        });
         abort_unless($run !== null, 404);
 
         return response()->json($this->presentRun($run));
