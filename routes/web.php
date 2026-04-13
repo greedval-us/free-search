@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Gdelt\GdeltSearchController;
 use App\Http\Controllers\Telegram\TelegramAnalyticsController;
 use App\Http\Controllers\Telegram\TelegramParserController;
 use App\Http\Controllers\Telegram\TelegramSearchController;
@@ -13,6 +14,9 @@ Route::inertia('/', 'Welcome', [
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::inertia('dashboard', 'Dashboard')->name('dashboard');
     Route::inertia('telegram', 'Telegram')->name('telegram');
+    Route::get('gdelt/search/articles', [GdeltSearchController::class, 'articles'])
+        ->middleware('throttle:30,1')
+        ->name('gdelt.search.articles');
     Route::get('telegram/search/messages', [TelegramSearchController::class, 'messages'])
         ->middleware('throttle:90,1')
         ->name('telegram.search.messages');

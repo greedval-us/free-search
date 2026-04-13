@@ -2,6 +2,10 @@
 
 namespace App\Providers;
 
+use App\Modules\Gdelt\Core\Contracts\GdeltGatewayInterface;
+use App\Modules\Gdelt\Infrastructure\GdeltHttpGateway;
+use App\Modules\Gdelt\Search\Contracts\GdeltSearchApplicationServiceInterface;
+use App\Modules\Gdelt\Search\GdeltSearchApplicationService;
 use App\Modules\Telegram\Analytics\Contracts\TelegramAnalyticsApplicationServiceInterface;
 use App\Modules\Telegram\Analytics\TelegramAnalyticsApplicationService;
 use App\Modules\Telegram\Core\Contracts\TelegramGatewayInterface;
@@ -23,6 +27,9 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
+        $this->app->bind(GdeltGatewayInterface::class, GdeltHttpGateway::class);
+        $this->app->bind(GdeltSearchApplicationServiceInterface::class, GdeltSearchApplicationService::class);
+
         $this->app->bind(TelegramGatewayInterface::class, TelegramService::class);
         $this->app->bind(TelegramSearchApplicationServiceInterface::class, TelegramSearchApplicationService::class);
         $this->app->bind(TelegramParserApplicationServiceInterface::class, TelegramParserApplicationService::class);

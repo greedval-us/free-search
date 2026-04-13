@@ -35,4 +35,9 @@ return [
         ],
     ],
 
+    'gdelt' => [
+        'base_url' => env('GDELT_API_BASE_URL', 'https://api.gdeltproject.org/api/v2/doc/doc'),
+        'timeout' => (int) env('GDELT_API_TIMEOUT', 15),
+    ],
+
 ];
