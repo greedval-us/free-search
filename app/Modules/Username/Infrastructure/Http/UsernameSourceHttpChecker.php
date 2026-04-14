@@ -63,6 +63,8 @@ final class UsernameSourceHttpChecker implements UsernameSourceCheckerInterface
                 key: $source->key,
                 name: $source->name,
                 profileUrl: $profileUrl,
+                profileDomain: $this->extractDomain($profileUrl),
+                category: $source->category,
                 regionGroup: $source->regionGroup,
                 primaryUsersRegion: $source->primaryUsersRegion,
                 status: UsernameSearchStatus::Unknown,
@@ -79,6 +81,8 @@ final class UsernameSourceHttpChecker implements UsernameSourceCheckerInterface
                 key: $source->key,
                 name: $source->name,
                 profileUrl: $profileUrl,
+                profileDomain: $this->extractDomain($profileUrl),
+                category: $source->category,
                 regionGroup: $source->regionGroup,
                 primaryUsersRegion: $source->primaryUsersRegion,
                 status: UsernameSearchStatus::NotFound,
@@ -93,6 +97,8 @@ final class UsernameSourceHttpChecker implements UsernameSourceCheckerInterface
                     key: $source->key,
                     name: $source->name,
                     profileUrl: $profileUrl,
+                    profileDomain: $this->extractDomain($profileUrl),
+                    category: $source->category,
                     regionGroup: $source->regionGroup,
                     primaryUsersRegion: $source->primaryUsersRegion,
                     status: UsernameSearchStatus::NotFound,
@@ -105,6 +111,8 @@ final class UsernameSourceHttpChecker implements UsernameSourceCheckerInterface
                 key: $source->key,
                 name: $source->name,
                 profileUrl: $profileUrl,
+                profileDomain: $this->extractDomain($profileUrl),
+                category: $source->category,
                 regionGroup: $source->regionGroup,
                 primaryUsersRegion: $source->primaryUsersRegion,
                 status: UsernameSearchStatus::Found,
@@ -118,6 +126,8 @@ final class UsernameSourceHttpChecker implements UsernameSourceCheckerInterface
                 key: $source->key,
                 name: $source->name,
                 profileUrl: $profileUrl,
+                profileDomain: $this->extractDomain($profileUrl),
+                category: $source->category,
                 regionGroup: $source->regionGroup,
                 primaryUsersRegion: $source->primaryUsersRegion,
                 status: UsernameSearchStatus::Unknown,
@@ -131,6 +141,8 @@ final class UsernameSourceHttpChecker implements UsernameSourceCheckerInterface
             key: $source->key,
             name: $source->name,
             profileUrl: $profileUrl,
+            profileDomain: $this->extractDomain($profileUrl),
+            category: $source->category,
             regionGroup: $source->regionGroup,
             primaryUsersRegion: $source->primaryUsersRegion,
             status: UsernameSearchStatus::Unknown,
@@ -221,5 +233,16 @@ final class UsernameSourceHttpChecker implements UsernameSourceCheckerInterface
         }
 
         return max(0, min(100, $score));
+    }
+
+    private function extractDomain(string $profileUrl): string
+    {
+        $host = parse_url($profileUrl, PHP_URL_HOST);
+
+        if (!is_string($host) || trim($host) === '') {
+            return '';
+        }
+
+        return preg_replace('/^www\./i', '', mb_strtolower(trim($host))) ?? '';
     }
 }

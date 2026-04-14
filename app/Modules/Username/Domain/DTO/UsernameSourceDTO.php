@@ -11,6 +11,7 @@ final class UsernameSourceDTO
         public readonly string $key,
         public readonly string $name,
         public readonly string $profileTemplate,
+        public readonly string $category = 'general',
         public readonly string $regionGroup = 'global',
         public readonly string $primaryUsersRegion = 'global',
         public readonly array $notFoundMarkers = [],

@@ -308,6 +308,8 @@
       "unknown": "Unknown",
       "region": "Region",
       "primaryUsers": "Primary users",
+      "category": "Category",
+      "domain": "Domain",
       "confidence": "Confidence",
       "openProfile": "Open profile",
       "empty": "Run a username check to view platform matches."
@@ -318,7 +320,23 @@
       "unknown": "Unknown"
     },
     "filters": {
-      "status": "Show statuses"
+      "status": "Show statuses",
+      "categories": "Show categories"
+    },
+    "categories": {
+      "general": "General",
+      "social": "Social",
+      "messenger": "Messenger",
+      "forums": "Forums",
+      "video": "Video",
+      "creator": "Creator economy",
+      "developer": "Developer",
+      "music": "Music",
+      "professional": "Professional",
+      "blogs": "Blogs",
+      "security": "Security",
+      "startup": "Startup",
+      "streaming": "Streaming"
     },
     "analytics": {
       "tabTitle": "Username Analytics",
@@ -338,9 +356,25 @@
       "graphCanvasTitle": "Relationship graph",
       "graphNodes": "Nodes",
       "graphEdges": "Edges",
+      "graphDomains": "Domains",
+      "graphCategories": "Categories",
+      "similarityReason": {
+        "separator": "separator variation",
+        "normalized": "separator removed",
+        "prefix": "prefix variation",
+        "suffix": "suffix variation",
+        "numeric_suffix": "numeric suffix",
+        "leet": "leet substitution",
+        "typo_transpose": "transposed letters",
+        "typo_omit": "missing letter",
+        "typo_double": "double letter",
+        "typo_keyboard": "keyboard-near typo",
+        "transliteration": "transliteration",
+        "romanization": "romanization variation"
+      },
       "help": {
         "similarity": "Generated username variants are checked on priority platforms to estimate collision and impersonation risk.",
-        "graph": "Payload summary of entities and links built from live results. Use node/edge count to gauge graph density.",
+        "graph": "Graph summary from live results, including platform regions, categories and profile domains.",
         "graphCanvas": "Interactive graph: click a node to highlight connected entities, drag to rearrange, and use wheel to zoom."
       }
     },

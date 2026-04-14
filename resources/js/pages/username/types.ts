@@ -6,6 +6,8 @@ export type UsernameSearchItem = {
     key: string;
     name: string;
     profileUrl: string;
+    profileDomain: string;
+    category: string;
     regionGroup: string;
     primaryUsersRegion: string;
     status: UsernameSearchStatus;

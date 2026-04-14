@@ -49,6 +49,7 @@ final class UsernameSourceCatalog
                 key: $key,
                 name: $name,
                 profileTemplate: $profileTemplate,
+                category: $this->resolveCategory($rawSource, $key),
                 regionGroup: trim((string) ($rawSource['region_group'] ?? 'global')) ?: 'global',
                 primaryUsersRegion: trim((string) ($rawSource['primary_users_region'] ?? 'global')) ?: 'global',
                 notFoundMarkers: $notFoundMarkers,
@@ -57,5 +58,29 @@ final class UsernameSourceCatalog
         }
 
         return $sources;
+    }
+
+    /**
+     * @param array<string, mixed> $rawSource
+     */
+    private function resolveCategory(array $rawSource, string $key): string
+    {
+        $explicitCategory = mb_strtolower(trim((string) ($rawSource['category'] ?? '')));
+
+        if ($explicitCategory !== '') {
+            return $explicitCategory;
+        }
+
+        $mappedCategories = config('username.taxonomy.categories_by_source_key', []);
+
+        if (is_array($mappedCategories)) {
+            $mapped = mb_strtolower(trim((string) ($mappedCategories[$key] ?? '')));
+
+            if ($mapped !== '') {
+                return $mapped;
+            }
+        }
+
+        return 'general';
     }
 }

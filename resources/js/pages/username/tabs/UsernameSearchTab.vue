@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { LoaderCircle, Search } from 'lucide-vue-next';
-import { computed, reactive } from 'vue';
+import { computed, reactive, watch } from 'vue';
 import { useI18n } from '@/composables/useI18n';
 import { useUsernameSearch } from '../composables/useUsernameSearch';
 import type { UsernameSearchStatus } from '../types';
@@ -42,9 +42,32 @@ const statusFilters = reactive<Record<UsernameSearchStatus, boolean>>({
     not_found: true,
     unknown: true,
 });
+const categoryFilters = reactive<Record<string, boolean>>({});
+
+const availableCategories = computed(() =>
+    [...new Set(items.value.map((item) => item.category || 'general'))].sort((a, b) => a.localeCompare(b))
+);
+
+watch(
+    availableCategories,
+    (categories) => {
+        for (const category of categories) {
+            if (!(category in categoryFilters)) {
+                categoryFilters[category] = true;
+            }
+        }
+
+        for (const existingCategory of Object.keys(categoryFilters)) {
+            if (!categories.includes(existingCategory)) {
+                delete categoryFilters[existingCategory];
+            }
+        }
+    },
+    { immediate: true }
+);
 
 const filteredItems = computed(() =>
-    items.value.filter((item) => statusFilters[item.status])
+    items.value.filter((item) => statusFilters[item.status] && Boolean(categoryFilters[item.category || 'general']))
 );
 
 const groupedItems = computed(() => {
@@ -61,7 +84,15 @@ const groupedItems = computed(() => {
     }
 
     return [...groups.entries()]
-        .sort((a, b) => regionOrder.indexOf(a[0]) - regionOrder.indexOf(b[0]))
+        .sort((a, b) => {
+            const aIndex = regionOrder.indexOf(a[0]);
+            const bIndex = regionOrder.indexOf(b[0]);
+
+            const safeA = aIndex === -1 ? Number.MAX_SAFE_INTEGER : aIndex;
+            const safeB = bIndex === -1 ? Number.MAX_SAFE_INTEGER : bIndex;
+
+            return safeA - safeB;
+        })
         .map(([regionKey, groupItems]) => ({
             regionKey,
             title: t(`username.regions.${regionKey}`),
@@ -70,6 +101,16 @@ const groupedItems = computed(() => {
 });
 
 const primaryUsersLabel = (region: string) => t(`username.regions.${region}`);
+const categoryLabel = (category: string) => {
+    const key = `username.categories.${category}`;
+    const translated = t(key);
+
+    if (translated === key) {
+        return category;
+    }
+
+    return translated;
+};
 </script>
 
 <template>
@@ -156,6 +197,19 @@ const primaryUsersLabel = (region: string) => t(`username.regions.${region}`);
             </label>
         </div>
 
+        <div class="mb-3 flex flex-wrap items-center gap-2">
+            <span class="text-xs text-muted-foreground">{{ t('username.filters.categories') }}:</span>
+
+            <label
+                v-for="category in availableCategories"
+                :key="category"
+                class="inline-flex cursor-pointer items-center gap-2 rounded-full border border-cyan-500/30 bg-cyan-500/10 px-3 py-1 text-xs"
+            >
+                <input v-model="categoryFilters[category]" type="checkbox" class="h-3.5 w-3.5" />
+                <span>{{ categoryLabel(category) }}</span>
+            </label>
+        </div>
+
         <div class="telegram-scroll min-h-0 flex-1 overflow-y-auto pr-1">
             <div v-if="!loading && filteredItems.length === 0" class="rounded-md border border-dashed border-border p-6 text-center text-sm text-muted-foreground">
                 {{ t('username.results.empty') }}
@@ -196,6 +250,8 @@ const primaryUsersLabel = (region: string) => t(`username.regions.${region}`);
                         <div class="mt-2 flex flex-wrap items-center gap-3 text-xs text-muted-foreground">
                             <span>{{ t('username.results.region') }}: {{ t(`username.regions.${item.regionGroup}`) }}</span>
                             <span>{{ t('username.results.primaryUsers') }}: {{ primaryUsersLabel(item.primaryUsersRegion) }}</span>
+                            <span>{{ t('username.results.category') }}: {{ categoryLabel(item.category) }}</span>
+                            <span v-if="item.profileDomain">{{ t('username.results.domain') }}: {{ item.profileDomain }}</span>
                             <span>HTTP: {{ item.httpStatus ?? '-' }}</span>
                             <span>{{ t('username.results.confidence') }}: {{ item.confidence }}%</span>
                             <span v-if="item.error">{{ item.error }}</span>

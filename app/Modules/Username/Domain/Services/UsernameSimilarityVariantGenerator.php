@@ -58,6 +58,9 @@ final class UsernameSimilarityVariantGenerator
             }
         }
 
+        $this->addTypoVariants($variants, $normalized, $base, $rules);
+        $this->addTransliterationVariants($variants, $base, $normalized, $rules);
+
         return array_slice(array_values($variants), 0, max(1, $max));
     }
 
@@ -67,7 +70,9 @@ final class UsernameSimilarityVariantGenerator
      *   prefixes: array<int, string>,
      *   suffixes: array<int, string>,
      *   numeric_suffixes: array<int, string>,
-     *   leet_substitutions: array<string, string>
+     *   leet_substitutions: array<string, string>,
+     *   typo_substitutions: array<string, array<int, string>>,
+     *   transliteration_map: array<string, string>
      * }
      */
     private function rules(): array
@@ -93,13 +98,140 @@ final class UsernameSimilarityVariantGenerator
             }
         }
 
+        $typoSubstitutions = [];
+        $rawTypos = $rules['typo_substitutions'] ?? [];
+
+        if (is_array($rawTypos)) {
+            foreach ($rawTypos as $source => $targets) {
+                $sourceKey = mb_strtolower(trim((string) $source));
+
+                if ($sourceKey === '') {
+                    continue;
+                }
+
+                if (!is_array($targets)) {
+                    continue;
+                }
+
+                $typoTargets = [];
+
+                foreach ($targets as $target) {
+                    $targetValue = mb_strtolower(trim((string) $target));
+
+                    if ($targetValue !== '') {
+                        $typoTargets[] = $targetValue;
+                    }
+                }
+
+                if ($typoTargets !== []) {
+                    $typoSubstitutions[$sourceKey] = array_values(array_unique($typoTargets));
+                }
+            }
+        }
+
+        $transliterationMap = [];
+        $rawTransliteration = $rules['transliteration_map'] ?? [];
+
+        if (is_array($rawTransliteration)) {
+            foreach ($rawTransliteration as $source => $target) {
+                $sourceKey = mb_strtolower(trim((string) $source));
+                $targetValue = mb_strtolower(trim((string) $target));
+
+                if ($sourceKey !== '' && $targetValue !== '') {
+                    $transliterationMap[$sourceKey] = $targetValue;
+                }
+            }
+        }
+
         return [
             'separators' => $separators,
             'prefixes' => $prefixes,
             'suffixes' => $suffixes,
             'numeric_suffixes' => $numericSuffixes,
             'leet_substitutions' => $leetSubstitutions,
+            'typo_substitutions' => $typoSubstitutions,
+            'transliteration_map' => $transliterationMap,
         ];
+    }
+
+    /**
+     * @param array<string, array{username: string, reason: string}> $variants
+     * @param array{
+     *   typo_substitutions: array<string, array<int, string>>
+     * } $rules
+     */
+    private function addTypoVariants(array &$variants, string $normalized, string $base, array $rules): void
+    {
+        $length = mb_strlen($normalized);
+
+        if ($length < 3) {
+            return;
+        }
+
+        // Adjacent transposition: "greed" -> "gered"
+        for ($index = 0; $index < $length - 1; $index++) {
+            $left = mb_substr($normalized, $index, 1);
+            $right = mb_substr($normalized, $index + 1, 1);
+
+            $candidate = mb_substr($normalized, 0, $index)
+                .$right
+                .$left
+                .mb_substr($normalized, $index + 2);
+
+            $this->addVariant($variants, $candidate, 'typo_transpose', $base);
+        }
+
+        // Omission: "greed" -> "gred"
+        for ($index = 0; $index < $length; $index++) {
+            $candidate = mb_substr($normalized, 0, $index).mb_substr($normalized, $index + 1);
+            $this->addVariant($variants, $candidate, 'typo_omit', $base);
+        }
+
+        // Double character: "greed" -> "greeed"
+        for ($index = 0; $index < $length; $index++) {
+            $char = mb_substr($normalized, $index, 1);
+            $candidate = mb_substr($normalized, 0, $index + 1).$char.mb_substr($normalized, $index + 1);
+            $this->addVariant($variants, $candidate, 'typo_double', $base);
+        }
+
+        // Keyboard-near substitutions from config.
+        foreach ($rules['typo_substitutions'] as $sourceChar => $targets) {
+            if (!str_contains($normalized, $sourceChar)) {
+                continue;
+            }
+
+            foreach ($targets as $targetChar) {
+                $candidate = str_replace($sourceChar, $targetChar, $normalized);
+                $this->addVariant($variants, $candidate, 'typo_keyboard', $base);
+            }
+        }
+    }
+
+    /**
+     * @param array<string, array{username: string, reason: string}> $variants
+     * @param array{
+     *   transliteration_map: array<string, string>
+     * } $rules
+     */
+    private function addTransliterationVariants(array &$variants, string $base, string $normalized, array $rules): void
+    {
+        $map = $rules['transliteration_map'];
+
+        if ($map === []) {
+            return;
+        }
+
+        if (preg_match('/[\x{0401}\x{0410}-\x{044F}]/u', $base) === 1) {
+            $transliterated = strtr($base, $map);
+            $transliterated = preg_replace('/[^a-z0-9._-]/u', '', $transliterated) ?? '';
+            $this->addVariant($variants, $transliterated, 'transliteration', $base);
+        }
+
+        if (preg_match('/^(sh|zh|kh|ch|yu|ya|yo|ts)/', $normalized) === 1) {
+            $this->addVariant($variants, preg_replace('/^ya/', 'ia', $normalized) ?? $normalized, 'romanization', $base);
+            $this->addVariant($variants, preg_replace('/^yu/', 'iu', $normalized) ?? $normalized, 'romanization', $base);
+            $this->addVariant($variants, preg_replace('/^yo/', 'io', $normalized) ?? $normalized, 'romanization', $base);
+        }
     }
 
     /**

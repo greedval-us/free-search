@@ -16,6 +16,8 @@ let cy: cytoscape.Core | null = null;
 const nodeColor = (node: UsernameGraphNode): string => {
     if (node.type === 'username') return '#06b6d4';
     if (node.type === 'region') return '#8b5cf6';
+    if (node.type === 'category') return '#14b8a6';
+    if (node.type === 'domain') return '#f97316';
     if (node.status === 'found') return '#10b981';
     if (node.status === 'not_found') return '#64748b';
     return '#f59e0b';
@@ -23,6 +25,8 @@ const nodeColor = (node: UsernameGraphNode): string => {
 
 const edgeColor = (edge: UsernameGraphEdge): string => {
     if (edge.kind === 'region') return '#475569';
+    if (edge.kind === 'category') return '#0f766e';
+    if (edge.kind === 'domain') return '#9a3412';
     if (edge.status === 'found') return '#10b981';
     if (edge.status === 'not_found') return '#64748b';
     return '#f59e0b';
@@ -132,6 +136,22 @@ const renderGraph = () => {
                 },
             },
             {
+                selector: 'node.category',
+                style: {
+                    width: 34,
+                    height: 34,
+                    'font-size': 10,
+                },
+            },
+            {
+                selector: 'node.domain',
+                style: {
+                    width: 30,
+                    height: 30,
+                    'font-size': 9,
+                },
+            },
+            {
                 selector: 'edge',
                 style: {
                     width: 1.7,
@@ -212,6 +232,8 @@ onBeforeUnmount(() => {
             <span class="inline-flex items-center gap-1 rounded-full border border-input px-2 py-1"><span class="h-2 w-2 rounded-full bg-slate-500" /> not found</span>
             <span class="inline-flex items-center gap-1 rounded-full border border-input px-2 py-1"><span class="h-2 w-2 rounded-full bg-amber-500" /> unknown</span>
             <span class="inline-flex items-center gap-1 rounded-full border border-input px-2 py-1"><span class="h-2 w-2 rounded-full bg-violet-500" /> region</span>
+            <span class="inline-flex items-center gap-1 rounded-full border border-input px-2 py-1"><span class="h-2 w-2 rounded-full bg-teal-500" /> category</span>
+            <span class="inline-flex items-center gap-1 rounded-full border border-input px-2 py-1"><span class="h-2 w-2 rounded-full bg-orange-500" /> domain</span>
         </div>
     </div>
 </template>

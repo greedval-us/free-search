@@ -20,7 +20,20 @@ const checkedCount = computed(() => items.value.length);
 const graphStats = computed(() => ({
     nodes: analytics.value?.graph.nodes.length ?? 0,
     edges: analytics.value?.graph.edges.length ?? 0,
+    domains: analytics.value?.graph.nodes.filter((node) => node.type === 'domain').length ?? 0,
+    categories: analytics.value?.graph.nodes.filter((node) => node.type === 'category').length ?? 0,
 }));
+
+const reasonLabel = (reason: string) => {
+    const key = `username.analytics.similarityReason.${reason}`;
+    const translated = t(key);
+
+    if (translated === key) {
+        return reason;
+    }
+
+    return translated;
+};
 </script>
 
 <template>
@@ -117,6 +130,7 @@ const graphStats = computed(() => ({
                             <p v-if="analytics.similarity.variants.length === 0">{{ t('username.analytics.noSimilarity') }}</p>
                             <p v-for="variant in analytics.similarity.variants" :key="variant.username">
                                 {{ variant.username }}
+                                <span class="opacity-80"> - {{ reasonLabel(variant.reason) }}</span>
                                 <span v-if="variant.foundInPrioritySources !== null && variant.checkedPrioritySources !== null">
                                     ({{ variant.foundInPrioritySources }}/{{ variant.checkedPrioritySources }})
                                 </span>
@@ -139,7 +153,9 @@ const graphStats = computed(() => ({
                     </div>
                     <p class="mt-2 text-xs text-muted-foreground">
                         {{ t('username.analytics.graphNodes') }}: {{ graphStats.nodes }},
-                        {{ t('username.analytics.graphEdges') }}: {{ graphStats.edges }}
+                        {{ t('username.analytics.graphEdges') }}: {{ graphStats.edges }},
+                        {{ t('username.analytics.graphDomains') }}: {{ graphStats.domains }},
+                        {{ t('username.analytics.graphCategories') }}: {{ graphStats.categories }}
                     </p>
                 </div>
             </div>
