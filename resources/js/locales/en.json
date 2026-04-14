@@ -305,6 +305,8 @@
       "found": "Found",
       "notFound": "Not found",
       "unknown": "Unknown",
+      "region": "Region",
+      "primaryUsers": "Primary users",
       "openProfile": "Open profile",
       "empty": "Run a username check to view platform matches."
     },
@@ -316,6 +318,12 @@
     "errors": {
       "usernameRequired": "Enter a username with at least 2 characters.",
       "searchFailed": "Could not complete username search."
+    },
+    "regions": {
+      "cis": "CIS",
+      "europe": "Europe",
+      "americas": "Americas",
+      "global": "Global"
     }
   },
   "navigation": {

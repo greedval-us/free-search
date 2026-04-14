@@ -305,6 +305,8 @@
       "found": "Найдено",
       "notFound": "Не найдено",
       "unknown": "Неизвестно",
+      "region": "Регион",
+      "primaryUsers": "Основной объём пользователей",
       "openProfile": "Открыть профиль",
       "empty": "Выполните проверку username, чтобы увидеть совпадения."
     },
@@ -316,6 +318,12 @@
     "errors": {
       "usernameRequired": "Введите username минимум из 2 символов.",
       "searchFailed": "Не удалось выполнить поиск username."
+    },
+    "regions": {
+      "cis": "СНГ",
+      "europe": "Европа",
+      "americas": "Америка",
+      "global": "Глобально"
     }
   },
   "navigation": {

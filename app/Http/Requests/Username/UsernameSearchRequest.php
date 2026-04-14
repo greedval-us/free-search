@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\Username;
 
+use App\Modules\Username\DTO\UsernameSearchQueryDTO;
 use Illuminate\Foundation\Http\FormRequest;
 
 class UsernameSearchRequest extends FormRequest
@@ -21,5 +22,12 @@ class UsernameSearchRequest extends FormRequest
     public function username(): string
     {
         return ltrim(trim((string) $this->validated('username')), '@');
+    }
+
+    public function toQueryDTO(): UsernameSearchQueryDTO
+    {
+        return new UsernameSearchQueryDTO(
+            username: $this->username(),
+        );
     }
 }

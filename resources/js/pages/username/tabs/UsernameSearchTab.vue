@@ -34,6 +34,32 @@ const checkedAtText = computed(() => {
 
     return new Date(checkedAt.value).toLocaleString();
 });
+
+const regionOrder = ['cis', 'europe', 'americas', 'global'];
+
+const groupedItems = computed(() => {
+    const groups = new Map<string, typeof items.value>();
+
+    for (const item of items.value) {
+        const key = item.regionGroup || 'global';
+
+        if (!groups.has(key)) {
+            groups.set(key, []);
+        }
+
+        groups.get(key)?.push(item);
+    }
+
+    return [...groups.entries()]
+        .sort((a, b) => regionOrder.indexOf(a[0]) - regionOrder.indexOf(b[0]))
+        .map(([regionKey, groupItems]) => ({
+            regionKey,
+            title: t(`username.regions.${regionKey}`),
+            items: groupItems,
+        }));
+});
+
+const primaryUsersLabel = (region: string) => t(`username.regions.${region}`);
 </script>
 
 <template>
@@ -105,39 +131,54 @@ const checkedAtText = computed(() => {
                 {{ t('username.results.empty') }}
             </div>
 
-            <div v-else class="space-y-2">
-                <article
-                    v-for="item in items"
-                    :key="item.key"
-                    class="rounded-lg border border-border/80 bg-background/70 p-3"
+            <div v-else class="space-y-4">
+                <section
+                    v-for="group in groupedItems"
+                    :key="group.regionKey"
+                    class="space-y-2"
                 >
-                    <div class="flex flex-wrap items-start justify-between gap-3">
-                        <div>
-                            <p class="text-sm font-semibold">{{ item.name }}</p>
-                            <p class="mt-1 text-xs text-muted-foreground">{{ item.profileUrl }}</p>
+                    <div class="flex items-center justify-between">
+                        <h3 class="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+                            {{ group.title }}
+                        </h3>
+                        <span class="text-xs text-muted-foreground">{{ group.items.length }}</span>
+                    </div>
+
+                    <article
+                        v-for="item in group.items"
+                        :key="item.key"
+                        class="rounded-lg border border-border/80 bg-background/70 p-3"
+                    >
+                        <div class="flex flex-wrap items-start justify-between gap-3">
+                            <div>
+                                <p class="text-sm font-semibold">{{ item.name }}</p>
+                                <p class="mt-1 text-xs text-muted-foreground">{{ item.profileUrl }}</p>
+                            </div>
+
+                            <span
+                                class="rounded-full border px-2.5 py-1 text-xs font-semibold"
+                                :class="statusClassMap[item.status]"
+                            >
+                                {{ statusLabel(item.status) }}
+                            </span>
                         </div>
 
-                        <span
-                            class="rounded-full border px-2.5 py-1 text-xs font-semibold"
-                            :class="statusClassMap[item.status]"
-                        >
-                            {{ statusLabel(item.status) }}
-                        </span>
-                    </div>
-
-                    <div class="mt-2 flex flex-wrap items-center gap-3 text-xs text-muted-foreground">
-                        <span>HTTP: {{ item.httpStatus ?? '-' }}</span>
-                        <span v-if="item.error">{{ item.error }}</span>
-                        <a
-                            :href="item.profileUrl"
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            class="cursor-pointer rounded-full border border-input px-2 py-1 text-primary hover:bg-accent"
-                        >
-                            {{ t('username.results.openProfile') }}
-                        </a>
-                    </div>
-                </article>
+                        <div class="mt-2 flex flex-wrap items-center gap-3 text-xs text-muted-foreground">
+                            <span>{{ t('username.results.region') }}: {{ t(`username.regions.${item.regionGroup}`) }}</span>
+                            <span>{{ t('username.results.primaryUsers') }}: {{ primaryUsersLabel(item.primaryUsersRegion) }}</span>
+                            <span>HTTP: {{ item.httpStatus ?? '-' }}</span>
+                            <span v-if="item.error">{{ item.error }}</span>
+                            <a
+                                :href="item.profileUrl"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                class="cursor-pointer rounded-full border border-input px-2 py-1 text-primary hover:bg-accent"
+                            >
+                                {{ t('username.results.openProfile') }}
+                            </a>
+                        </div>
+                    </article>
+                </section>
             </div>
         </div>
     </section>

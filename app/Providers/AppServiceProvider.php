@@ -10,6 +10,8 @@ use App\Modules\Telegram\Parser\TelegramParserApplicationService;
 use App\Modules\Telegram\Search\Contracts\TelegramSearchApplicationServiceInterface;
 use App\Modules\Telegram\Search\TelegramSearchApplicationService;
 use App\Modules\Telegram\TelegramService;
+use App\Modules\Username\Contracts\UsernameSourceCheckerInterface;
+use App\Modules\Username\UsernameSourceHttpChecker;
 use Carbon\CarbonImmutable;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\DB;
@@ -27,6 +29,7 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(TelegramSearchApplicationServiceInterface::class, TelegramSearchApplicationService::class);
         $this->app->bind(TelegramParserApplicationServiceInterface::class, TelegramParserApplicationService::class);
         $this->app->bind(TelegramAnalyticsApplicationServiceInterface::class, TelegramAnalyticsApplicationService::class);
+        $this->app->bind(UsernameSourceCheckerInterface::class, UsernameSourceHttpChecker::class);
     }
 
     /**
@@ -59,4 +62,3 @@ class AppServiceProvider extends ServiceProvider
         );
     }
 }
-

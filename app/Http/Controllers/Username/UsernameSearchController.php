@@ -16,9 +16,11 @@ class UsernameSearchController extends Controller
 
     public function search(UsernameSearchRequest $request): JsonResponse
     {
+        $result = $this->searchService->search($request->toQueryDTO());
+
         return response()->json([
             'ok' => true,
-            ...$this->searchService->search($request->username()),
+            ...$result->toArray(),
         ]);
     }
 }
