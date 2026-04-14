@@ -1,0 +1,24 @@
+<?php
+
+namespace App\Http\Controllers\Username;
+
+use App\Http\Controllers\Controller;
+use App\Http\Requests\Username\UsernameSearchRequest;
+use App\Modules\Username\UsernameSearchService;
+use Illuminate\Http\JsonResponse;
+
+class UsernameSearchController extends Controller
+{
+    public function __construct(
+        private readonly UsernameSearchService $searchService,
+    ) {
+    }
+
+    public function search(UsernameSearchRequest $request): JsonResponse
+    {
+        return response()->json([
+            'ok' => true,
+            ...$this->searchService->search($request->username()),
+        ]);
+    }
+}

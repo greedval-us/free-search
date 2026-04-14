@@ -3,6 +3,7 @@
 use App\Http\Controllers\Telegram\TelegramAnalyticsController;
 use App\Http\Controllers\Telegram\TelegramParserController;
 use App\Http\Controllers\Telegram\TelegramSearchController;
+use App\Http\Controllers\Username\UsernameSearchController;
 use Illuminate\Support\Facades\Route;
 use Laravel\Fortify\Features;
 
@@ -13,6 +14,10 @@ Route::inertia('/', 'Welcome', [
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::inertia('dashboard', 'Dashboard')->name('dashboard');
     Route::inertia('telegram', 'Telegram')->name('telegram');
+    Route::inertia('username', 'Username')->name('username');
+    Route::get('username/search', [UsernameSearchController::class, 'search'])
+        ->middleware('throttle:90,1')
+        ->name('username.search');
     Route::get('telegram/search/messages', [TelegramSearchController::class, 'messages'])
         ->middleware('throttle:90,1')
         ->name('telegram.search.messages');

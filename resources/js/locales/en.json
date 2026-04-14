@@ -285,6 +285,39 @@
       }
     }
   },
+  "username": {
+    "headTitle": "Username",
+    "tabs": {
+      "search": "Search"
+    },
+    "search": {
+      "title": "Username OSINT Search",
+      "description": "Check username availability and traces across open platforms.",
+      "label": "Username",
+      "placeholder": "e.g. john_doe",
+      "find": "Check",
+      "searching": "Checking..."
+    },
+    "results": {
+      "title": "Results",
+      "checkedAt": "Checked at",
+      "checked": "Platforms checked",
+      "found": "Found",
+      "notFound": "Not found",
+      "unknown": "Unknown",
+      "openProfile": "Open profile",
+      "empty": "Run a username check to view platform matches."
+    },
+    "status": {
+      "found": "Found",
+      "notFound": "Not found",
+      "unknown": "Unknown"
+    },
+    "errors": {
+      "usernameRequired": "Enter a username with at least 2 characters.",
+      "searchFailed": "Could not complete username search."
+    }
+  },
   "common": {
     "language": "Language",
     "saved": "Saved.",

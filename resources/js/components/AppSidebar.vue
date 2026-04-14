@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { Link } from '@inertiajs/vue3';
-import { LayoutGrid, Send } from 'lucide-vue-next';
+import { AtSign, LayoutGrid, Send } from 'lucide-vue-next';
 import AppLogo from '@/components/AppLogo.vue';
 import NavFooter from '@/components/NavFooter.vue';
 import NavMain from '@/components/NavMain.vue';
@@ -27,6 +27,11 @@ const mainNavItems: NavItem[] = [
         title: 'Telegram',
         href: '/telegram',
         icon: Send,
+    },
+    {
+        title: 'Username',
+        href: '/username',
+        icon: AtSign,
     },
 ];
 
