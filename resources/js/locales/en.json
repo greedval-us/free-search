@@ -285,6 +285,118 @@
       }
     }
   },
+  "username": {
+    "headTitle": "Username",
+    "tabs": {
+      "search": "Search",
+      "analytics": "Analytics"
+    },
+    "search": {
+      "title": "Username OSINT Search",
+      "description": "Check username availability and traces across open platforms.",
+      "label": "Username",
+      "placeholder": "e.g. john_doe",
+      "find": "Check",
+      "searching": "Checking..."
+    },
+    "results": {
+      "title": "Results",
+      "checkedAt": "Checked at",
+      "checked": "Platforms checked",
+      "found": "Found",
+      "notFound": "Not found",
+      "unknown": "Unknown",
+      "region": "Region",
+      "primaryUsers": "Primary users",
+      "category": "Category",
+      "domain": "Domain",
+      "confidence": "Confidence",
+      "openProfile": "Open profile",
+      "empty": "Run a username check to view platform matches."
+    },
+    "status": {
+      "found": "Found",
+      "notFound": "Not found",
+      "unknown": "Unknown"
+    },
+    "filters": {
+      "status": "Show statuses",
+      "categories": "Show categories"
+    },
+    "categories": {
+      "general": "General",
+      "social": "Social",
+      "messenger": "Messenger",
+      "forums": "Forums",
+      "video": "Video",
+      "creator": "Creator economy",
+      "developer": "Developer",
+      "music": "Music",
+      "professional": "Professional",
+      "blogs": "Blogs",
+      "security": "Security",
+      "startup": "Startup",
+      "streaming": "Streaming"
+    },
+    "analytics": {
+      "tabTitle": "Username Analytics",
+      "tabDescription": "Confidence, similarity variants and graph payload in live mode.",
+      "empty": "Run a username check to build analytics.",
+      "confidenceAverage": "Avg confidence",
+      "confidenceHigh": "High confidence",
+      "confidenceMedium": "Medium confidence",
+      "confidenceLow": "Low confidence",
+      "localDiffTitle": "Local diff vs previous check",
+      "newlyFound": "Newly found",
+      "becameNotFound": "Became not found",
+      "becameUnknown": "Became unknown",
+      "similarityTitle": "Similarity variants",
+      "noSimilarity": "No variants available.",
+      "graphTitle": "Entity graph payload",
+      "graphCanvasTitle": "Relationship graph",
+      "graphNodes": "Nodes",
+      "graphEdges": "Edges",
+      "graphDomains": "Domains",
+      "graphCategories": "Categories",
+      "similarityReason": {
+        "separator": "separator variation",
+        "normalized": "separator removed",
+        "prefix": "prefix variation",
+        "suffix": "suffix variation",
+        "numeric_suffix": "numeric suffix",
+        "leet": "leet substitution",
+        "typo_transpose": "transposed letters",
+        "typo_omit": "missing letter",
+        "typo_double": "double letter",
+        "typo_keyboard": "keyboard-near typo",
+        "transliteration": "transliteration",
+        "romanization": "romanization variation"
+      },
+      "help": {
+        "similarity": "Generated username variants are checked on priority platforms to estimate collision and impersonation risk.",
+        "graph": "Graph summary from live results, including platform regions, categories and profile domains.",
+        "graphCanvas": "Interactive graph: click a node to highlight connected entities, drag to rearrange, and use wheel to zoom."
+      }
+    },
+    "errors": {
+      "usernameRequired": "Enter a username with at least 2 characters.",
+      "searchFailed": "Could not complete username search."
+    },
+    "regions": {
+      "cis": "CIS",
+      "europe": "Europe",
+      "americas": "Americas",
+      "global": "Global"
+    }
+  },
+  "navigation": {
+    "platform": "Platform",
+    "dashboard": "Dashboard",
+    "telegram": "Telegram",
+    "username": "Username",
+    "repository": "Repository",
+    "documentation": "Documentation"
+  },
   "common": {
     "language": "Language",
     "saved": "Saved.",

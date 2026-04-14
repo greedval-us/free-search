@@ -1,10 +1,12 @@
 <script setup lang="ts">
 import { Link } from '@inertiajs/vue3';
-import { LayoutGrid, Send } from 'lucide-vue-next';
+import { AtSign, LayoutGrid, Send } from 'lucide-vue-next';
+import { computed } from 'vue';
 import AppLogo from '@/components/AppLogo.vue';
 import NavFooter from '@/components/NavFooter.vue';
 import NavMain from '@/components/NavMain.vue';
 import NavUser from '@/components/NavUser.vue';
+import { useI18n } from '@/composables/useI18n';
 import {
     Sidebar,
     SidebarContent,
@@ -17,18 +19,25 @@ import {
 import { dashboard } from '@/routes';
 import type { NavItem } from '@/types';
 
-const mainNavItems: NavItem[] = [
+const { t } = useI18n();
+
+const mainNavItems = computed<NavItem[]>(() => [
     {
-        title: 'Dashboard',
+        title: t('navigation.dashboard'),
         href: dashboard(),
         icon: LayoutGrid,
     },
     {
-        title: 'Telegram',
+        title: t('navigation.telegram'),
         href: '/telegram',
         icon: Send,
     },
-];
+    {
+        title: t('navigation.username'),
+        href: '/username',
+        icon: AtSign,
+    },
+]);
 
 const footerNavItems: NavItem[] = [
 

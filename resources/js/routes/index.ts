@@ -444,3 +444,81 @@ telegram.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
         })
     
     telegram.form = telegramForm
+/**
+* @see \Inertia\Controller::__invoke
+ * @see vendor/inertiajs/inertia-laravel/src/Controller.php:13
+ * @route '/username'
+ */
+export const username = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+    url: username.url(options),
+    method: 'get',
+})
+
+username.definition = {
+    methods: ["get","head"],
+    url: '/username',
+} satisfies RouteDefinition<["get","head"]>
+
+/**
+* @see \Inertia\Controller::__invoke
+ * @see vendor/inertiajs/inertia-laravel/src/Controller.php:13
+ * @route '/username'
+ */
+username.url = (options?: RouteQueryOptions) => {
+    return username.definition.url + queryParams(options)
+}
+
+/**
+* @see \Inertia\Controller::__invoke
+ * @see vendor/inertiajs/inertia-laravel/src/Controller.php:13
+ * @route '/username'
+ */
+username.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+    url: username.url(options),
+    method: 'get',
+})
+/**
+* @see \Inertia\Controller::__invoke
+ * @see vendor/inertiajs/inertia-laravel/src/Controller.php:13
+ * @route '/username'
+ */
+username.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
+    url: username.url(options),
+    method: 'head',
+})
+
+    /**
+* @see \Inertia\Controller::__invoke
+ * @see vendor/inertiajs/inertia-laravel/src/Controller.php:13
+ * @route '/username'
+ */
+    const usernameForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+        action: username.url(options),
+        method: 'get',
+    })
+
+            /**
+* @see \Inertia\Controller::__invoke
+ * @see vendor/inertiajs/inertia-laravel/src/Controller.php:13
+ * @route '/username'
+ */
+        usernameForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+            action: username.url(options),
+            method: 'get',
+        })
+            /**
+* @see \Inertia\Controller::__invoke
+ * @see vendor/inertiajs/inertia-laravel/src/Controller.php:13
+ * @route '/username'
+ */
+        usernameForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+            action: username.url({
+                        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
+                            _method: 'HEAD',
+                            ...(options?.query ?? options?.mergeQuery ?? {}),
+                        }
+                    }),
+            method: 'get',
+        })
+    
+    username.form = usernameForm

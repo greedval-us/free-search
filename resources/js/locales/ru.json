@@ -285,6 +285,118 @@
       }
     }
   },
+  "username": {
+    "headTitle": "Username",
+    "tabs": {
+      "search": "Поиск",
+      "analytics": "Аналитика"
+    },
+    "search": {
+      "title": "OSINT-поиск Username",
+      "description": "Проверка username по открытым платформам.",
+      "label": "Username",
+      "placeholder": "например, john_doe",
+      "find": "Проверить",
+      "searching": "Проверяем..."
+    },
+    "results": {
+      "title": "Результаты",
+      "checkedAt": "Проверено в",
+      "checked": "Платформ проверено",
+      "found": "Найдено",
+      "notFound": "Не найдено",
+      "unknown": "Неизвестно",
+      "region": "Регион",
+      "primaryUsers": "Основной объём пользователей",
+      "category": "Категория",
+      "domain": "Домен",
+      "confidence": "Достоверность",
+      "openProfile": "Открыть профиль",
+      "empty": "Выполните проверку username, чтобы увидеть совпадения."
+    },
+    "status": {
+      "found": "Найдено",
+      "notFound": "Не найдено",
+      "unknown": "Неизвестно"
+    },
+    "filters": {
+      "status": "Показывать статусы",
+      "categories": "Показывать категории"
+    },
+    "categories": {
+      "general": "Общее",
+      "social": "Соцсети",
+      "messenger": "Мессенджеры",
+      "forums": "Форумы",
+      "video": "Видео",
+      "creator": "Креаторы",
+      "developer": "Разработка",
+      "music": "Музыка",
+      "professional": "Профсети",
+      "blogs": "Блоги",
+      "security": "Безопасность",
+      "startup": "Стартапы",
+      "streaming": "Стриминг"
+    },
+    "analytics": {
+      "tabTitle": "Аналитика Username",
+      "tabDescription": "Онлайн-показатели достоверности, похожих ников и payload графа.",
+      "empty": "Выполните поиск username, чтобы построить аналитику.",
+      "confidenceAverage": "Средняя достоверность",
+      "confidenceHigh": "Высокая достоверность",
+      "confidenceMedium": "Средняя достоверность",
+      "confidenceLow": "Низкая достоверность",
+      "localDiffTitle": "Локальный diff с прошлой проверкой",
+      "newlyFound": "Новообнаружено",
+      "becameNotFound": "Стало не найдено",
+      "becameUnknown": "Стало неизвестно",
+      "similarityTitle": "Похожие username",
+      "noSimilarity": "Варианты отсутствуют.",
+      "graphTitle": "Payload графа связей",
+      "graphCanvasTitle": "Граф взаимосвязей",
+      "graphNodes": "Узлы",
+      "graphEdges": "Связи",
+      "graphDomains": "Домены",
+      "graphCategories": "Категории",
+      "similarityReason": {
+        "separator": "вариация разделителя",
+        "normalized": "убраны разделители",
+        "prefix": "вариация с префиксом",
+        "suffix": "вариация с суффиксом",
+        "numeric_suffix": "числовой суффикс",
+        "leet": "leet-замена",
+        "typo_transpose": "перестановка букв",
+        "typo_omit": "пропуск буквы",
+        "typo_double": "дублирование буквы",
+        "typo_keyboard": "опечатка соседней клавиши",
+        "transliteration": "транслитерация",
+        "romanization": "вариант романизации"
+      },
+      "help": {
+        "similarity": "Сгенерированные варианты username проверяются на приоритетных платформах для оценки пересечений и риска подмены.",
+        "graph": "Сводка сущностей и связей по живым результатам, включая регионы, категории и домены профилей.",
+        "graphCanvas": "Интерактивный граф: нажмите на узел для подсветки связей, перетаскивайте элементы, используйте колесо мыши для масштабирования."
+      }
+    },
+    "errors": {
+      "usernameRequired": "Введите username минимум из 2 символов.",
+      "searchFailed": "Не удалось выполнить поиск username."
+    },
+    "regions": {
+      "cis": "СНГ",
+      "europe": "Европа",
+      "americas": "Америка",
+      "global": "Глобально"
+    }
+  },
+  "navigation": {
+    "platform": "Платформа",
+    "dashboard": "Панель",
+    "telegram": "Telegram",
+    "username": "Username",
+    "repository": "Репозиторий",
+    "documentation": "Документация"
+  },
   "common": {
     "language": "Язык",
     "saved": "Сохранено.",

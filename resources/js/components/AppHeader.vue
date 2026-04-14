@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { Link, usePage } from '@inertiajs/vue3';
-import { BookOpen, Folder, LayoutGrid, Menu, Search, Send } from 'lucide-vue-next';
+import { AtSign, BookOpen, Folder, LayoutGrid, Menu, Search, Send } from 'lucide-vue-next';
 import { computed } from 'vue';
 import AppLogo from '@/components/AppLogo.vue';
 import AppLogoIcon from '@/components/AppLogoIcon.vue';
@@ -34,6 +34,7 @@ import {
 import UserMenuContent from '@/components/UserMenuContent.vue';
 import { useCurrentUrl } from '@/composables/useCurrentUrl';
 import { getInitials } from '@/composables/useInitials';
+import { useI18n } from '@/composables/useI18n';
 import { toUrl } from '@/lib/utils';
 import { dashboard } from '@/routes';
 import type { BreadcrumbItem, NavItem } from '@/types';
@@ -49,34 +50,40 @@ const props = withDefaults(defineProps<Props>(), {
 const page = usePage();
 const auth = computed(() => page.props.auth);
 const { isCurrentUrl, whenCurrentUrl } = useCurrentUrl();
+const { t } = useI18n();
 
 const activeItemStyles = 'bg-cyan-500/15 text-cyan-700 dark:text-cyan-100';
 
-const mainNavItems: NavItem[] = [
+const mainNavItems = computed<NavItem[]>(() => [
     {
-        title: 'Dashboard',
+        title: t('navigation.dashboard'),
         href: dashboard(),
         icon: LayoutGrid,
     },
     {
-        title: 'Telegram',
+        title: t('navigation.telegram'),
         href: '/telegram',
         icon: Send,
     },
-];
-
-const rightNavItems: NavItem[] = [
     {
-        title: 'Repository',
+        title: t('navigation.username'),
+        href: '/username',
+        icon: AtSign,
+    },
+]);
+
+const rightNavItems = computed<NavItem[]>(() => [
+    {
+        title: t('navigation.repository'),
         href: 'https://github.com/laravel/vue-starter-kit',
         icon: Folder,
     },
     {
-        title: 'Documentation',
+        title: t('navigation.documentation'),
         href: 'https://laravel.com/docs/starter-kits#vue',
         icon: BookOpen,
     },
-];
+]);
 </script>
 
 <template>
