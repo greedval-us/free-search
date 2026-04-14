@@ -3,6 +3,7 @@
 namespace App\Providers;
 
 use danog\MadelineProto\API;
+use danog\MadelineProto\Logger;
 use danog\MadelineProto\Settings;
 use danog\MadelineProto\Settings\AppInfo;
 use Illuminate\Support\Facades\Config;
@@ -27,12 +28,17 @@ class MadelineProtoServiceProvider extends ServiceProvider
             $sessionPath = Config::get('madelineproto.session_path', 'app/madelineproto/');
             $sessionPath = storage_path("{$sessionPath}session.madeline");
 
-            $settings = (new Settings)
-                ->setAppInfo(
-                    (new AppInfo)
-                        ->setApiId($apiId)
-                        ->setApiHash($apiHash)
-                );
+        $settings = (new Settings)
+            ->setAppInfo(
+                (new AppInfo)
+                    ->setApiId($apiId)
+                    ->setApiHash($apiHash)
+            )
+            ->setLogger(
+                (new \danog\MadelineProto\Settings\Logger)
+                    ->setType(Logger::FILE_LOGGER)
+                    ->setExtra(storage_path('logs/madeline.log'))
+            );
 
             return new API($sessionPath, $settings);
         });
