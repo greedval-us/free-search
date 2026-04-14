@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import cytoscape from 'cytoscape';
-import { onBeforeUnmount, onMounted, ref, watch } from 'vue';
+import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue';
+import { useI18n } from '@/composables/useI18n';
 import type { UsernameGraphEdge, UsernameGraphNode } from '@/pages/username/types';
 
 type Props = {
@@ -9,6 +10,7 @@ type Props = {
 };
 
 const props = defineProps<Props>();
+const { t } = useI18n();
 
 const root = ref<HTMLDivElement | null>(null);
 let cy: cytoscape.Core | null = null;
@@ -42,22 +44,62 @@ const shortLabel = (label: string): string => {
     return `${clean.slice(0, 15)}...`;
 };
 
+const normalizeCategoryKey = (value: string): string => value.trim().toLowerCase().replace(/[\s-]+/g, '_');
+
+const translatedNodeLabel = (node: UsernameGraphNode): string => {
+    const clean = node.label.trim();
+    const normalized = clean.toLowerCase();
+
+    if (normalized === 'username' || normalized === 'user') return t('username.search.label');
+    if (normalized === 'found') return t('username.status.found');
+    if (normalized === 'not_found' || normalized === 'not found') return t('username.status.notFound');
+    if (normalized === 'unknown') return t('username.status.unknown');
+    if (normalized === 'region') return t('username.results.region');
+    if (normalized === 'category') return t('username.results.category');
+    if (normalized === 'domain') return t('username.results.domain');
+
+    if (node.type === 'category') {
+        const categoryKey = `username.categories.${normalizeCategoryKey(clean)}`;
+        const translatedCategory = t(categoryKey);
+
+        if (translatedCategory !== categoryKey) {
+            return translatedCategory;
+        }
+    }
+
+    return clean;
+};
+
+const legendItems = computed(() => [
+    { colorClass: 'bg-cyan-500', label: t('username.search.label') },
+    { colorClass: 'bg-emerald-500', label: t('username.status.found') },
+    { colorClass: 'bg-slate-500', label: t('username.status.notFound') },
+    { colorClass: 'bg-amber-500', label: t('username.status.unknown') },
+    { colorClass: 'bg-violet-500', label: t('username.results.region') },
+    { colorClass: 'bg-teal-500', label: t('username.results.category') },
+    { colorClass: 'bg-orange-500', label: t('username.results.domain') },
+]);
+
 const buildElements = () => {
-    const nodeElements = props.nodes.map((node) => ({
-        data: {
-            id: node.id,
-            label: node.label,
-            shortLabel: shortLabel(node.label),
-            type: node.type,
-            status: node.status ?? '',
-            confidence: node.confidence ?? null,
-        },
-        style: {
-            'background-color': nodeColor(node),
-            label: shortLabel(node.label),
-        },
-        classes: node.type,
-    }));
+    const nodeElements = props.nodes.map((node) => {
+        const label = translatedNodeLabel(node);
+
+        return {
+            data: {
+                id: node.id,
+                label,
+                shortLabel: shortLabel(label),
+                type: node.type,
+                status: node.status ?? '',
+                confidence: node.confidence ?? null,
+            },
+            style: {
+                'background-color': nodeColor(node),
+                label: shortLabel(label),
+            },
+            classes: node.type,
+        };
+    });
 
     const edgeElements = props.edges.map((edge, index) => ({
         data: {
@@ -227,13 +269,14 @@ onBeforeUnmount(() => {
         />
 
         <div class="mt-3 flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
-            <span class="inline-flex items-center gap-1 rounded-full border border-input px-2 py-1"><span class="h-2 w-2 rounded-full bg-cyan-500" /> username</span>
-            <span class="inline-flex items-center gap-1 rounded-full border border-input px-2 py-1"><span class="h-2 w-2 rounded-full bg-emerald-500" /> found</span>
-            <span class="inline-flex items-center gap-1 rounded-full border border-input px-2 py-1"><span class="h-2 w-2 rounded-full bg-slate-500" /> not found</span>
-            <span class="inline-flex items-center gap-1 rounded-full border border-input px-2 py-1"><span class="h-2 w-2 rounded-full bg-amber-500" /> unknown</span>
-            <span class="inline-flex items-center gap-1 rounded-full border border-input px-2 py-1"><span class="h-2 w-2 rounded-full bg-violet-500" /> region</span>
-            <span class="inline-flex items-center gap-1 rounded-full border border-input px-2 py-1"><span class="h-2 w-2 rounded-full bg-teal-500" /> category</span>
-            <span class="inline-flex items-center gap-1 rounded-full border border-input px-2 py-1"><span class="h-2 w-2 rounded-full bg-orange-500" /> domain</span>
+            <span
+                v-for="item in legendItems"
+                :key="item.label"
+                class="inline-flex items-center gap-1 rounded-full border border-input px-2 py-1"
+            >
+                <span class="h-2 w-2 rounded-full" :class="item.colorClass" />
+                {{ item.label }}
+            </span>
         </div>
     </div>
 </template>

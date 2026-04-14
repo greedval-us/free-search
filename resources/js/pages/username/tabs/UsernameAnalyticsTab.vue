@@ -1,12 +1,6 @@
 <script setup lang="ts">
 import { BarChart3, LoaderCircle, Search } from 'lucide-vue-next';
 import { computed } from 'vue';
-import {
-    Tooltip,
-    TooltipContent,
-    TooltipProvider,
-    TooltipTrigger,
-} from '@/components/ui/tooltip';
 import { useI18n } from '@/composables/useI18n';
 import { useUsernameSearch } from '../composables/useUsernameSearch';
 import UsernameEntityGraph from './analytics/components/UsernameEntityGraph.vue';
@@ -115,16 +109,17 @@ const reasonLabel = (reason: string) => {
                 <div class="rounded-lg border border-border/70 bg-background/60 p-3">
                     <div class="flex items-center gap-2">
                         <p class="text-xs font-semibold">{{ t('username.analytics.similarityTitle') }}</p>
-                        <TooltipProvider :delay-duration="120">
-                            <Tooltip>
-                                <TooltipTrigger>
-                                    <span class="inline-flex h-5 w-5 items-center justify-center rounded-full border border-input text-[11px] text-muted-foreground">?</span>
-                                </TooltipTrigger>
-                                <TooltipContent>
-                                    <p class="max-w-80 text-xs">{{ t('username.analytics.help.similarity') }}</p>
-                                </TooltipContent>
-                            </Tooltip>
-                        </TooltipProvider>
+                        <span class="group relative inline-flex">
+                            <span
+                                class="inline-flex h-5 w-5 cursor-help items-center justify-center rounded-full border border-border text-[11px] font-semibold text-muted-foreground"
+                                :aria-label="t('telegram.analytics.help.label')"
+                            >
+                                ?
+                            </span>
+                            <span class="pointer-events-none absolute left-0 top-6 z-20 hidden w-80 rounded-md border border-border/70 bg-popover p-2 text-[11px] leading-relaxed text-popover-foreground shadow-xl group-hover:block">
+                                {{ t('username.analytics.help.similarity') }}
+                            </span>
+                        </span>
                     </div>
                     <div class="mt-2 space-y-1 text-xs text-muted-foreground">
                             <p v-if="analytics.similarity.variants.length === 0">{{ t('username.analytics.noSimilarity') }}</p>
@@ -140,16 +135,17 @@ const reasonLabel = (reason: string) => {
                 <div class="rounded-lg border border-border/70 bg-background/60 p-3">
                     <div class="flex items-center gap-2">
                         <p class="text-xs font-semibold">{{ t('username.analytics.graphTitle') }}</p>
-                        <TooltipProvider :delay-duration="120">
-                            <Tooltip>
-                                <TooltipTrigger>
-                                    <span class="inline-flex h-5 w-5 items-center justify-center rounded-full border border-input text-[11px] text-muted-foreground">?</span>
-                                </TooltipTrigger>
-                                <TooltipContent>
-                                    <p class="max-w-80 text-xs">{{ t('username.analytics.help.graph') }}</p>
-                                </TooltipContent>
-                            </Tooltip>
-                        </TooltipProvider>
+                        <span class="group relative inline-flex">
+                            <span
+                                class="inline-flex h-5 w-5 cursor-help items-center justify-center rounded-full border border-border text-[11px] font-semibold text-muted-foreground"
+                                :aria-label="t('telegram.analytics.help.label')"
+                            >
+                                ?
+                            </span>
+                            <span class="pointer-events-none absolute left-0 top-6 z-20 hidden w-80 rounded-md border border-border/70 bg-popover p-2 text-[11px] leading-relaxed text-popover-foreground shadow-xl group-hover:block">
+                                {{ t('username.analytics.help.graph') }}
+                            </span>
+                        </span>
                     </div>
                     <p class="mt-2 text-xs text-muted-foreground">
                         {{ t('username.analytics.graphNodes') }}: {{ graphStats.nodes }},
@@ -163,16 +159,17 @@ const reasonLabel = (reason: string) => {
             <div class="mt-2 overflow-x-auto">
                 <div class="mb-2 flex items-center gap-2">
                     <p class="text-xs font-semibold">{{ t('username.analytics.graphCanvasTitle') }}</p>
-                    <TooltipProvider :delay-duration="120">
-                        <Tooltip>
-                            <TooltipTrigger>
-                                <span class="inline-flex h-5 w-5 items-center justify-center rounded-full border border-input text-[11px] text-muted-foreground">?</span>
-                            </TooltipTrigger>
-                            <TooltipContent>
-                                <p class="max-w-80 text-xs">{{ t('username.analytics.help.graphCanvas') }}</p>
-                            </TooltipContent>
-                        </Tooltip>
-                    </TooltipProvider>
+                    <span class="group relative inline-flex">
+                        <span
+                            class="inline-flex h-5 w-5 cursor-help items-center justify-center rounded-full border border-border text-[11px] font-semibold text-muted-foreground"
+                            :aria-label="t('telegram.analytics.help.label')"
+                        >
+                            ?
+                        </span>
+                        <span class="pointer-events-none absolute left-0 top-6 z-20 hidden w-80 rounded-md border border-border/70 bg-popover p-2 text-[11px] leading-relaxed text-popover-foreground shadow-xl group-hover:block">
+                            {{ t('username.analytics.help.graphCanvas') }}
+                        </span>
+                    </span>
                 </div>
                 <UsernameEntityGraph
                     :nodes="analytics.graph.nodes"
