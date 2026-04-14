@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { LoaderCircle, Search } from 'lucide-vue-next';
-import { computed } from 'vue';
+import { computed, reactive } from 'vue';
 import { useI18n } from '@/composables/useI18n';
 import { useUsernameSearch } from '../composables/useUsernameSearch';
 import type { UsernameSearchStatus } from '../types';
@@ -37,10 +37,20 @@ const checkedAtText = computed(() => {
 
 const regionOrder = ['cis', 'europe', 'americas', 'global'];
 
-const groupedItems = computed(() => {
-    const groups = new Map<string, typeof items.value>();
+const statusFilters = reactive<Record<UsernameSearchStatus, boolean>>({
+    found: true,
+    not_found: true,
+    unknown: true,
+});
 
-    for (const item of items.value) {
+const filteredItems = computed(() =>
+    items.value.filter((item) => statusFilters[item.status])
+);
+
+const groupedItems = computed(() => {
+    const groups = new Map<string, typeof filteredItems.value>();
+
+    for (const item of filteredItems.value) {
         const key = item.regionGroup || 'global';
 
         if (!groups.has(key)) {
@@ -126,8 +136,27 @@ const primaryUsersLabel = (region: string) => t(`username.regions.${region}`);
             </div>
         </div>
 
+        <div class="mb-3 flex flex-wrap items-center gap-2">
+            <span class="text-xs text-muted-foreground">{{ t('username.filters.status') }}:</span>
+
+            <label class="inline-flex cursor-pointer items-center gap-2 rounded-full border border-emerald-500/30 bg-emerald-500/10 px-3 py-1 text-xs">
+                <input v-model="statusFilters.found" type="checkbox" class="h-3.5 w-3.5" />
+                <span>{{ t('username.status.found') }}</span>
+            </label>
+
+            <label class="inline-flex cursor-pointer items-center gap-2 rounded-full border border-slate-500/30 bg-slate-500/10 px-3 py-1 text-xs">
+                <input v-model="statusFilters.not_found" type="checkbox" class="h-3.5 w-3.5" />
+                <span>{{ t('username.status.notFound') }}</span>
+            </label>
+
+            <label class="inline-flex cursor-pointer items-center gap-2 rounded-full border border-amber-500/30 bg-amber-500/10 px-3 py-1 text-xs">
+                <input v-model="statusFilters.unknown" type="checkbox" class="h-3.5 w-3.5" />
+                <span>{{ t('username.status.unknown') }}</span>
+            </label>
+        </div>
+
         <div class="telegram-scroll min-h-0 flex-1 overflow-y-auto pr-1">
-            <div v-if="!loading && items.length === 0" class="rounded-md border border-dashed border-border p-6 text-center text-sm text-muted-foreground">
+            <div v-if="!loading && filteredItems.length === 0" class="rounded-md border border-dashed border-border p-6 text-center text-sm text-muted-foreground">
                 {{ t('username.results.empty') }}
             </div>
 

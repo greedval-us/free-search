@@ -315,6 +315,9 @@
       "notFound": "Не найдено",
       "unknown": "Неизвестно"
     },
+    "filters": {
+      "status": "Показывать статусы"
+    },
     "errors": {
       "usernameRequired": "Введите username минимум из 2 символов.",
       "searchFailed": "Не удалось выполнить поиск username."

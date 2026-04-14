@@ -315,6 +315,9 @@
       "notFound": "Not found",
       "unknown": "Unknown"
     },
+    "filters": {
+      "status": "Show statuses"
+    },
     "errors": {
       "usernameRequired": "Enter a username with at least 2 characters.",
       "searchFailed": "Could not complete username search."
