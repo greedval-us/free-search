@@ -1,6 +1,39 @@
 <?php
 
 return [
+    'cache' => [
+        'search_ttl_seconds' => 300,
+        'similarity_ttl_seconds' => 300,
+    ],
+
+    'analytics' => [
+        'similarity' => [
+            'max_variants' => 8,
+            'deep_check_variants' => 3,
+            'priority_source_keys' => [
+                'telegram',
+                'github',
+                'instagram',
+                'x',
+                'vk',
+                'reddit',
+            ],
+            'rules' => [
+                'separators' => ['_', '.', '-'],
+                'prefixes' => ['real', 'official', 'the'],
+                'suffixes' => ['official', 'dev', 'team', 'hq'],
+                'numeric_suffixes' => ['1', '01', '24', '2026'],
+                'leet_substitutions' => [
+                    'a' => '4',
+                    'e' => '3',
+                    'i' => '1',
+                    'o' => '0',
+                    's' => '5',
+                ],
+            ],
+        ],
+    ],
+
     'request' => [
         'connect_timeout' => 6,
         'timeout' => 8,

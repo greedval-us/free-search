@@ -67,6 +67,7 @@ final class UsernameSourceHttpChecker implements UsernameSourceCheckerInterface
                 primaryUsersRegion: $source->primaryUsersRegion,
                 status: UsernameSearchStatus::Unknown,
                 httpStatus: null,
+                confidence: 20,
                 error: 'No response',
             );
         }
@@ -82,6 +83,7 @@ final class UsernameSourceHttpChecker implements UsernameSourceCheckerInterface
                 primaryUsersRegion: $source->primaryUsersRegion,
                 status: UsernameSearchStatus::NotFound,
                 httpStatus: $statusCode,
+                confidence: $this->calculateConfidence(UsernameSearchStatus::NotFound, $statusCode, null),
             );
         }
 
@@ -95,6 +97,7 @@ final class UsernameSourceHttpChecker implements UsernameSourceCheckerInterface
                     primaryUsersRegion: $source->primaryUsersRegion,
                     status: UsernameSearchStatus::NotFound,
                     httpStatus: $statusCode,
+                    confidence: $this->calculateConfidence(UsernameSearchStatus::NotFound, $statusCode, null),
                 );
             }
 
@@ -106,6 +109,7 @@ final class UsernameSourceHttpChecker implements UsernameSourceCheckerInterface
                 primaryUsersRegion: $source->primaryUsersRegion,
                 status: UsernameSearchStatus::Found,
                 httpStatus: $statusCode,
+                confidence: $this->calculateConfidence(UsernameSearchStatus::Found, $statusCode, null),
             );
         }
 
@@ -118,6 +122,7 @@ final class UsernameSourceHttpChecker implements UsernameSourceCheckerInterface
                 primaryUsersRegion: $source->primaryUsersRegion,
                 status: UsernameSearchStatus::Unknown,
                 httpStatus: $statusCode,
+                confidence: $this->calculateConfidence(UsernameSearchStatus::Unknown, $statusCode, 'Access limited'),
                 error: 'Access limited',
             );
         }
@@ -130,6 +135,7 @@ final class UsernameSourceHttpChecker implements UsernameSourceCheckerInterface
             primaryUsersRegion: $source->primaryUsersRegion,
             status: UsernameSearchStatus::Unknown,
             httpStatus: $statusCode,
+            confidence: $this->calculateConfidence(UsernameSearchStatus::Unknown, $statusCode, $response->reason()),
             error: $response->reason(),
         );
     }
@@ -185,5 +191,35 @@ final class UsernameSourceHttpChecker implements UsernameSourceCheckerInterface
                 'Mozilla/5.0 (compatible; UraborosOSINT/1.0; +https://localhost)'
             ),
         ];
+    }
+
+    private function calculateConfidence(
+        UsernameSearchStatus $status,
+        ?int $httpStatus,
+        ?string $error
+    ): int {
+        $score = match ($status) {
+            UsernameSearchStatus::Found => 75,
+            UsernameSearchStatus::NotFound => 65,
+            UsernameSearchStatus::Unknown => 35,
+        };
+
+        if ($httpStatus === 200 && $status === UsernameSearchStatus::Found) {
+            $score += 15;
+        }
+
+        if (in_array($httpStatus, [404, 410], true) && $status === UsernameSearchStatus::NotFound) {
+            $score += 15;
+        }
+
+        if (in_array($httpStatus, [401, 403, 429], true) && $status === UsernameSearchStatus::Unknown) {
+            $score -= 10;
+        }
+
+        if ($error !== null && trim($error) !== '') {
+            $score -= 10;
+        }
+
+        return max(0, min(100, $score));
     }
 }

@@ -288,7 +288,8 @@
   "username": {
     "headTitle": "Username",
     "tabs": {
-      "search": "Search"
+      "search": "Search",
+      "analytics": "Analytics"
     },
     "search": {
       "title": "Username OSINT Search",
@@ -307,6 +308,7 @@
       "unknown": "Unknown",
       "region": "Region",
       "primaryUsers": "Primary users",
+      "confidence": "Confidence",
       "openProfile": "Open profile",
       "empty": "Run a username check to view platform matches."
     },
@@ -317,6 +319,30 @@
     },
     "filters": {
       "status": "Show statuses"
+    },
+    "analytics": {
+      "tabTitle": "Username Analytics",
+      "tabDescription": "Confidence, similarity variants and graph payload in live mode.",
+      "empty": "Run a username check to build analytics.",
+      "confidenceAverage": "Avg confidence",
+      "confidenceHigh": "High confidence",
+      "confidenceMedium": "Medium confidence",
+      "confidenceLow": "Low confidence",
+      "localDiffTitle": "Local diff vs previous check",
+      "newlyFound": "Newly found",
+      "becameNotFound": "Became not found",
+      "becameUnknown": "Became unknown",
+      "similarityTitle": "Similarity variants",
+      "noSimilarity": "No variants available.",
+      "graphTitle": "Entity graph payload",
+      "graphCanvasTitle": "Relationship graph",
+      "graphNodes": "Nodes",
+      "graphEdges": "Edges",
+      "help": {
+        "similarity": "Generated username variants are checked on priority platforms to estimate collision and impersonation risk.",
+        "graph": "Payload summary of entities and links built from live results. Use node/edge count to gauge graph density.",
+        "graphCanvas": "Interactive graph: click a node to highlight connected entities, drag to rearrange, and use wheel to zoom."
+      }
     },
     "errors": {
       "usernameRequired": "Enter a username with at least 2 characters.",

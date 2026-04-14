@@ -288,7 +288,8 @@
   "username": {
     "headTitle": "Username",
     "tabs": {
-      "search": "Поиск"
+      "search": "Поиск",
+      "analytics": "Аналитика"
     },
     "search": {
       "title": "OSINT-поиск Username",
@@ -307,6 +308,7 @@
       "unknown": "Неизвестно",
       "region": "Регион",
       "primaryUsers": "Основной объём пользователей",
+      "confidence": "Достоверность",
       "openProfile": "Открыть профиль",
       "empty": "Выполните проверку username, чтобы увидеть совпадения."
     },
@@ -317,6 +319,30 @@
     },
     "filters": {
       "status": "Показывать статусы"
+    },
+    "analytics": {
+      "tabTitle": "Аналитика Username",
+      "tabDescription": "Онлайн-показатели достоверности, похожих ников и payload графа.",
+      "empty": "Выполните поиск username, чтобы построить аналитику.",
+      "confidenceAverage": "Средняя достоверность",
+      "confidenceHigh": "Высокая достоверность",
+      "confidenceMedium": "Средняя достоверность",
+      "confidenceLow": "Низкая достоверность",
+      "localDiffTitle": "Локальный diff с прошлой проверкой",
+      "newlyFound": "Новообнаружено",
+      "becameNotFound": "Стало не найдено",
+      "becameUnknown": "Стало неизвестно",
+      "similarityTitle": "Похожие username",
+      "noSimilarity": "Варианты отсутствуют.",
+      "graphTitle": "Payload графа связей",
+      "graphCanvasTitle": "Граф взаимосвязей",
+      "graphNodes": "Узлы",
+      "graphEdges": "Связи",
+      "help": {
+        "similarity": "Сгенерированные варианты username проверяются на приоритетных платформах для оценки пересечений и риска подмены.",
+        "graph": "Сводка сущностей и связей, построенная по живым результатам. Количество узлов и связей показывает плотность графа.",
+        "graphCanvas": "Интерактивный граф: нажмите на узел для подсветки связей, перетаскивайте элементы, используйте колесо мыши для масштабирования."
+      }
     },
     "errors": {
       "usernameRequired": "Введите username минимум из 2 символов.",

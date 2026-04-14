@@ -12,6 +12,7 @@ final class UsernameSearchResultDTO
         public readonly string $checkedAt,
         public readonly UsernameSearchSummaryDTO $summary,
         public readonly array $items,
+        public readonly array $analytics = [],
     ) {
     }
 
@@ -28,6 +29,7 @@ final class UsernameSearchResultDTO
                 static fn (UsernameSourceCheckResultDTO $item): array => $item->toArray(),
                 $this->items
             ),
+            'analytics' => $this->analytics,
         ];
     }
 }

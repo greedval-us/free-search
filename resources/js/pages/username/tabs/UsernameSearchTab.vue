@@ -136,6 +136,7 @@ const primaryUsersLabel = (region: string) => t(`username.regions.${region}`);
             </div>
         </div>
 
+
         <div class="mb-3 flex flex-wrap items-center gap-2">
             <span class="text-xs text-muted-foreground">{{ t('username.filters.status') }}:</span>
 
@@ -196,6 +197,7 @@ const primaryUsersLabel = (region: string) => t(`username.regions.${region}`);
                             <span>{{ t('username.results.region') }}: {{ t(`username.regions.${item.regionGroup}`) }}</span>
                             <span>{{ t('username.results.primaryUsers') }}: {{ primaryUsersLabel(item.primaryUsersRegion) }}</span>
                             <span>HTTP: {{ item.httpStatus ?? '-' }}</span>
+                            <span>{{ t('username.results.confidence') }}: {{ item.confidence }}%</span>
                             <span v-if="item.error">{{ item.error }}</span>
                             <a
                                 :href="item.profileUrl"
