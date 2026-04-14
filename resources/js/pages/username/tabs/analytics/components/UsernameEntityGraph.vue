@@ -28,18 +28,29 @@ const edgeColor = (edge: UsernameGraphEdge): string => {
     return '#f59e0b';
 };
 
+const shortLabel = (label: string): string => {
+    const clean = label.trim();
+
+    if (clean.length <= 16) {
+        return clean;
+    }
+
+    return `${clean.slice(0, 15)}...`;
+};
+
 const buildElements = () => {
     const nodeElements = props.nodes.map((node) => ({
         data: {
             id: node.id,
             label: node.label,
+            shortLabel: shortLabel(node.label),
             type: node.type,
             status: node.status ?? '',
             confidence: node.confidence ?? null,
         },
         style: {
             'background-color': nodeColor(node),
-            label: node.label,
+            label: shortLabel(node.label),
         },
         classes: node.type,
     }));
@@ -73,23 +84,33 @@ const renderGraph = () => {
     cy = cytoscape({
         container: root.value,
         elements: buildElements(),
-        wheelSensitivity: 0.2,
+        wheelSensitivity: 0.55,
         minZoom: 0.4,
         maxZoom: 2.5,
         style: [
             {
                 selector: 'node',
                 style: {
-                    'font-size': 10,
-                    color: '#e2e8f0',
+                    'font-size': 11,
+                    color: '#f8fafc',
                     'text-valign': 'bottom',
                     'text-halign': 'center',
-                    'text-margin-y': 8,
+                    'text-margin-y': 10,
+                    'text-wrap': 'wrap',
+                    'text-max-width': '130px',
+                    'text-background-color': '#0b1220',
+                    'text-background-opacity': 0.92,
+                    'text-background-shape': 'roundrectangle',
+                    'text-border-color': '#334155',
+                    'text-border-width': 1,
+                    'text-border-opacity': 0.9,
+                    'text-background-padding': '3px',
+                    'min-zoomed-font-size': 8,
                     width: 28,
                     height: 28,
                     'border-width': 2,
                     'border-color': '#0f172a',
-                    'text-outline-width': 2,
+                    'text-outline-width': 1,
                     'text-outline-color': '#020617',
                 },
             },
@@ -98,7 +119,7 @@ const renderGraph = () => {
                 style: {
                     width: 44,
                     height: 44,
-                    'font-size': 11,
+                    'font-size': 12,
                     'font-weight': 700,
                 },
             },

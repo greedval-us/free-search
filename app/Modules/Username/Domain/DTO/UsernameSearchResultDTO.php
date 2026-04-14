@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Modules\Username\DTO;
+namespace App\Modules\Username\Domain\DTO;
 
 final class UsernameSearchResultDTO
 {

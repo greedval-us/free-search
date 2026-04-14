@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Modules\Username;
+namespace App\Modules\Username\Domain\Services;
 
 final class UsernameSimilarityVariantGenerator
 {

@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Modules\Username;
+namespace App\Modules\Username\Domain\Services;
 
-use App\Modules\Username\DTO\UsernameSourceCheckResultDTO;
+use App\Modules\Username\Domain\DTO\UsernameSourceCheckResultDTO;
 
 final class UsernameEntityGraphBuilder
 {

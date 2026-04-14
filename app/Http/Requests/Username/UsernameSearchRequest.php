@@ -2,7 +2,7 @@
 
 namespace App\Http\Requests\Username;
 
-use App\Modules\Username\DTO\UsernameSearchQueryDTO;
+use App\Modules\Username\Domain\DTO\UsernameSearchQueryDTO;
 use Illuminate\Foundation\Http\FormRequest;
 
 class UsernameSearchRequest extends FormRequest

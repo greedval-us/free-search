@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Modules\Username;
+namespace App\Modules\Username\Infrastructure\Catalog;
 
-use App\Modules\Username\DTO\UsernameSourceDTO;
+use App\Modules\Username\Domain\DTO\UsernameSourceDTO;
 
 final class UsernameSourceCatalog
 {

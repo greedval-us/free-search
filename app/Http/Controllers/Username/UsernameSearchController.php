@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Username;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Username\UsernameSearchRequest;
-use App\Modules\Username\UsernameSearchService;
+use App\Modules\Username\Application\Services\UsernameSearchService;
 use Illuminate\Http\JsonResponse;
 
 class UsernameSearchController extends Controller

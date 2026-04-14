@@ -1,9 +1,11 @@
 <?php
 
-namespace App\Modules\Username;
+namespace App\Modules\Username\Application\Services;
 
-use App\Modules\Username\Contracts\UsernameSourceCheckerInterface;
-use App\Modules\Username\DTO\UsernameSourceDTO;
+use App\Modules\Username\Domain\Contracts\UsernameSourceCheckerInterface;
+use App\Modules\Username\Domain\DTO\UsernameSourceDTO;
+use App\Modules\Username\Domain\Services\UsernameSimilarityVariantGenerator;
+use App\Modules\Username\Infrastructure\Cache\UsernameResultCache;
 
 final class UsernameSimilarityAnalyzer
 {

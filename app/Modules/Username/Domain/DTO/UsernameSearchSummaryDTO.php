@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Modules\Username\DTO;
+namespace App\Modules\Username\Domain\DTO;
 
-use App\Modules\Username\Enums\UsernameSearchStatus;
+use App\Modules\Username\Domain\Enums\UsernameSearchStatus;
 
 final class UsernameSearchSummaryDTO
 {

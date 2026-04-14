@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Modules\Username\Enums;
+namespace App\Modules\Username\Domain\Enums;
 
 enum UsernameSearchStatus: string
 {

@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Modules\Username;
+namespace App\Modules\Username\Infrastructure\Cache;
 
-use App\Modules\Username\DTO\UsernameSourceCheckResultDTO;
+use App\Modules\Username\Domain\DTO\UsernameSourceCheckResultDTO;
 use DateTimeInterface;
 use Illuminate\Contracts\Cache\Repository as CacheRepository;
 

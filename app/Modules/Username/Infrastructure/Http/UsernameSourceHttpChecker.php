@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Modules\Username;
+namespace App\Modules\Username\Infrastructure\Http;
 
-use App\Modules\Username\Contracts\UsernameSourceCheckerInterface;
-use App\Modules\Username\DTO\UsernameSourceCheckResultDTO;
-use App\Modules\Username\DTO\UsernameSourceDTO;
-use App\Modules\Username\Enums\UsernameSearchStatus;
+use App\Modules\Username\Domain\Contracts\UsernameSourceCheckerInterface;
+use App\Modules\Username\Domain\DTO\UsernameSourceCheckResultDTO;
+use App\Modules\Username\Domain\DTO\UsernameSourceDTO;
+use App\Modules\Username\Domain\Enums\UsernameSearchStatus;
 use Illuminate\Http\Client\Pool;
 use Illuminate\Http\Client\Response;
 use Illuminate\Support\Facades\Http;

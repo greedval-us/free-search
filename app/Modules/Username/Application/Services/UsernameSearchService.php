@@ -1,11 +1,15 @@
 <?php
 
-namespace App\Modules\Username;
+namespace App\Modules\Username\Application\Services;
 
-use App\Modules\Username\Contracts\UsernameSourceCheckerInterface;
-use App\Modules\Username\DTO\UsernameSearchQueryDTO;
-use App\Modules\Username\DTO\UsernameSearchResultDTO;
-use App\Modules\Username\DTO\UsernameSearchSummaryDTO;
+use App\Modules\Username\Domain\Contracts\UsernameSourceCheckerInterface;
+use App\Modules\Username\Domain\DTO\UsernameSearchQueryDTO;
+use App\Modules\Username\Domain\DTO\UsernameSearchResultDTO;
+use App\Modules\Username\Domain\DTO\UsernameSearchSummaryDTO;
+use App\Modules\Username\Domain\Services\UsernameConfidenceSummaryBuilder;
+use App\Modules\Username\Domain\Services\UsernameEntityGraphBuilder;
+use App\Modules\Username\Infrastructure\Cache\UsernameResultCache;
+use App\Modules\Username\Infrastructure\Catalog\UsernameSourceCatalog;
 
 final class UsernameSearchService
 {

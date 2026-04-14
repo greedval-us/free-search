@@ -1,9 +1,9 @@
 <?php
 
-namespace App\Modules\Username\Contracts;
+namespace App\Modules\Username\Domain\Contracts;
 
-use App\Modules\Username\DTO\UsernameSourceCheckResultDTO;
-use App\Modules\Username\DTO\UsernameSourceDTO;
+use App\Modules\Username\Domain\DTO\UsernameSourceCheckResultDTO;
+use App\Modules\Username\Domain\DTO\UsernameSourceDTO;
 
 interface UsernameSourceCheckerInterface
 {
