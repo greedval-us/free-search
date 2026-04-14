@@ -34,6 +34,7 @@ import {
 import UserMenuContent from '@/components/UserMenuContent.vue';
 import { useCurrentUrl } from '@/composables/useCurrentUrl';
 import { getInitials } from '@/composables/useInitials';
+import { useI18n } from '@/composables/useI18n';
 import { toUrl } from '@/lib/utils';
 import { dashboard } from '@/routes';
 import type { BreadcrumbItem, NavItem } from '@/types';
@@ -49,39 +50,40 @@ const props = withDefaults(defineProps<Props>(), {
 const page = usePage();
 const auth = computed(() => page.props.auth);
 const { isCurrentUrl, whenCurrentUrl } = useCurrentUrl();
+const { t } = useI18n();
 
 const activeItemStyles = 'bg-cyan-500/15 text-cyan-700 dark:text-cyan-100';
 
-const mainNavItems: NavItem[] = [
+const mainNavItems = computed<NavItem[]>(() => [
     {
-        title: 'Dashboard',
+        title: t('navigation.dashboard'),
         href: dashboard(),
         icon: LayoutGrid,
     },
     {
-        title: 'Telegram',
+        title: t('navigation.telegram'),
         href: '/telegram',
         icon: Send,
     },
     {
-        title: 'Username',
+        title: t('navigation.username'),
         href: '/username',
         icon: AtSign,
     },
-];
+]);
 
-const rightNavItems: NavItem[] = [
+const rightNavItems = computed<NavItem[]>(() => [
     {
-        title: 'Repository',
+        title: t('navigation.repository'),
         href: 'https://github.com/laravel/vue-starter-kit',
         icon: Folder,
     },
     {
-        title: 'Documentation',
+        title: t('navigation.documentation'),
         href: 'https://laravel.com/docs/starter-kits#vue',
         icon: BookOpen,
     },
-];
+]);
 </script>
 
 <template>

@@ -318,6 +318,14 @@
       "searchFailed": "Could not complete username search."
     }
   },
+  "navigation": {
+    "platform": "Platform",
+    "dashboard": "Dashboard",
+    "telegram": "Telegram",
+    "username": "Username",
+    "repository": "Repository",
+    "documentation": "Documentation"
+  },
   "common": {
     "language": "Language",
     "saved": "Saved.",

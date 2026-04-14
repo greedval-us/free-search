@@ -285,6 +285,47 @@
       }
     }
   },
+  "username": {
+    "headTitle": "Username",
+    "tabs": {
+      "search": "Поиск"
+    },
+    "search": {
+      "title": "OSINT-поиск Username",
+      "description": "Проверка username по открытым платформам.",
+      "label": "Username",
+      "placeholder": "например, john_doe",
+      "find": "Проверить",
+      "searching": "Проверяем..."
+    },
+    "results": {
+      "title": "Результаты",
+      "checkedAt": "Проверено в",
+      "checked": "Платформ проверено",
+      "found": "Найдено",
+      "notFound": "Не найдено",
+      "unknown": "Неизвестно",
+      "openProfile": "Открыть профиль",
+      "empty": "Выполните проверку username, чтобы увидеть совпадения."
+    },
+    "status": {
+      "found": "Найдено",
+      "notFound": "Не найдено",
+      "unknown": "Неизвестно"
+    },
+    "errors": {
+      "usernameRequired": "Введите username минимум из 2 символов.",
+      "searchFailed": "Не удалось выполнить поиск username."
+    }
+  },
+  "navigation": {
+    "platform": "Платформа",
+    "dashboard": "Панель",
+    "telegram": "Telegram",
+    "username": "Username",
+    "repository": "Репозиторий",
+    "documentation": "Документация"
+  },
   "common": {
     "language": "Язык",
     "saved": "Сохранено.",
