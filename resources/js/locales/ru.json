@@ -354,6 +354,8 @@
       "noSimilarity": "Варианты отсутствуют.",
       "graphTitle": "Payload графа связей",
       "graphCanvasTitle": "Граф взаимосвязей",
+      "report": "Открыть отчёт",
+      "downloadReport": "Скачать отчёт",
       "graphNodes": "Узлы",
       "graphEdges": "Связи",
       "graphDomains": "Домены",

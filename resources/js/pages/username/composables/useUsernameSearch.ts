@@ -26,6 +26,23 @@ export const useUsernameSearch = (t: TranslateFn) => {
 
     const normalizedUsername = computed(() => form.username.trim().replace(/^@+/, ''));
 
+    const reportUrl = (download = false) => {
+        const locale =
+            typeof document !== 'undefined' && document.documentElement.lang.toLowerCase().startsWith('ru')
+                ? 'ru'
+                : 'en';
+        const query = new URLSearchParams({
+            username: normalizedUsername.value,
+            locale,
+        });
+
+        if (download) {
+            query.set('download', '1');
+        }
+
+        return `/username/report?${query.toString()}`;
+    };
+
     const search = async () => {
         if (!canSearch.value) {
             error.value = t('username.errors.usernameRequired');
@@ -76,6 +93,26 @@ export const useUsernameSearch = (t: TranslateFn) => {
         }
     };
 
+    const openReport = () => {
+        if (typeof window === 'undefined' || !normalizedUsername.value) {
+            return;
+        }
+
+        window.open(reportUrl(), '_blank', 'noopener,noreferrer');
+    };
+
+    const downloadReport = () => {
+        if (typeof window === 'undefined' || !normalizedUsername.value) {
+            return;
+        }
+
+        window.open(reportUrl(true), '_blank', 'noopener,noreferrer');
+    };
+
+    const canUseReportActions = computed(
+        () => !loading.value && normalizedUsername.value.length >= 2 && analytics.value !== null
+    );
+
     return {
         form,
         loading,
@@ -88,6 +125,9 @@ export const useUsernameSearch = (t: TranslateFn) => {
         canSearch,
         normalizedUsername,
         search,
+        openReport,
+        downloadReport,
+        canUseReportActions,
     };
 };
 

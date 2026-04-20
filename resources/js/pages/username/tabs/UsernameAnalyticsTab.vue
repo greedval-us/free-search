@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { BarChart3, LoaderCircle, Search } from 'lucide-vue-next';
+import { BarChart3, Download, FileText, LoaderCircle, Search } from 'lucide-vue-next';
 import { computed } from 'vue';
 import { useI18n } from '@/composables/useI18n';
 import { useUsernameSearch } from '../composables/useUsernameSearch';
@@ -7,7 +7,19 @@ import UsernameEntityGraph from './analytics/components/UsernameEntityGraph.vue'
 
 const { t } = useI18n();
 
-const { form, loading, error, items, analytics, localDiff, canSearch, search } = useUsernameSearch(t);
+const {
+    form,
+    loading,
+    error,
+    items,
+    analytics,
+    localDiff,
+    canSearch,
+    canUseReportActions,
+    search,
+    openReport,
+    downloadReport,
+} = useUsernameSearch(t);
 
 const checkedCount = computed(() => items.value.length);
 
@@ -64,6 +76,26 @@ const reasonLabel = (reason: string) => {
                 <LoaderCircle v-if="loading" class="h-4 w-4 animate-spin" />
                 <Search v-else class="h-4 w-4" />
                 <span>{{ loading ? t('username.search.searching') : t('username.search.find') }}</span>
+            </button>
+
+            <button
+                type="button"
+                :disabled="!canUseReportActions"
+                class="inline-flex h-10 cursor-pointer items-center gap-2 rounded-md bg-primary px-4 text-sm font-semibold text-primary-foreground hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-60"
+                @click="openReport"
+            >
+                <FileText class="h-4 w-4" />
+                {{ t('username.analytics.report') }}
+            </button>
+
+            <button
+                type="button"
+                :disabled="!canUseReportActions"
+                class="inline-flex h-10 cursor-pointer items-center gap-2 rounded-md border border-input bg-background px-4 text-sm font-medium hover:bg-accent disabled:cursor-not-allowed disabled:opacity-60"
+                @click="downloadReport"
+            >
+                <Download class="h-4 w-4" />
+                {{ t('username.analytics.downloadReport') }}
             </button>
         </div>
 
