@@ -354,6 +354,8 @@
       "noSimilarity": "No variants available.",
       "graphTitle": "Entity graph payload",
       "graphCanvasTitle": "Relationship graph",
+      "report": "Open report",
+      "downloadReport": "Download report",
       "graphNodes": "Nodes",
       "graphEdges": "Edges",
       "graphDomains": "Domains",

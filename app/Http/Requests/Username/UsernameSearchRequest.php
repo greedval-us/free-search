@@ -16,6 +16,7 @@ class UsernameSearchRequest extends FormRequest
     {
         return [
             'username' => ['required', 'string', 'min:2', 'max:39', 'regex:/^[A-Za-z0-9._-]+$/'],
+            'locale' => ['nullable', 'string', 'in:ru,en'],
         ];
     }
 
@@ -29,5 +30,12 @@ class UsernameSearchRequest extends FormRequest
         return new UsernameSearchQueryDTO(
             username: $this->username(),
         );
+    }
+
+    public function locale(): string
+    {
+        $locale = strtolower(trim((string) ($this->validated('locale') ?? app()->getLocale())));
+
+        return in_array($locale, ['ru', 'en'], true) ? $locale : 'en';
     }
 }

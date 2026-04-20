@@ -2,7 +2,7 @@ import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFo
 /**
 * @see \App\Http\Controllers\Telegram\TelegramAnalyticsController::summary
  * @see app/Http/Controllers/Telegram/TelegramAnalyticsController.php:21
- * @route '/telegram/analytics/summary'
+ * @route '/localhost/telegram/analytics/summary'
  */
 export const summary = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: summary.url(options),
@@ -11,13 +11,13 @@ export const summary = (options?: RouteQueryOptions): RouteDefinition<'get'> => 
 
 summary.definition = {
     methods: ["get","head"],
-    url: '/telegram/analytics/summary',
+    url: '/localhost/telegram/analytics/summary',
 } satisfies RouteDefinition<["get","head"]>
 
 /**
 * @see \App\Http\Controllers\Telegram\TelegramAnalyticsController::summary
  * @see app/Http/Controllers/Telegram/TelegramAnalyticsController.php:21
- * @route '/telegram/analytics/summary'
+ * @route '/localhost/telegram/analytics/summary'
  */
 summary.url = (options?: RouteQueryOptions) => {
     return summary.definition.url + queryParams(options)
@@ -26,7 +26,7 @@ summary.url = (options?: RouteQueryOptions) => {
 /**
 * @see \App\Http\Controllers\Telegram\TelegramAnalyticsController::summary
  * @see app/Http/Controllers/Telegram/TelegramAnalyticsController.php:21
- * @route '/telegram/analytics/summary'
+ * @route '/localhost/telegram/analytics/summary'
  */
 summary.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: summary.url(options),
@@ -35,7 +35,7 @@ summary.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
 /**
 * @see \App\Http\Controllers\Telegram\TelegramAnalyticsController::summary
  * @see app/Http/Controllers/Telegram/TelegramAnalyticsController.php:21
- * @route '/telegram/analytics/summary'
+ * @route '/localhost/telegram/analytics/summary'
  */
 summary.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     url: summary.url(options),
@@ -45,7 +45,7 @@ summary.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     /**
 * @see \App\Http\Controllers\Telegram\TelegramAnalyticsController::summary
  * @see app/Http/Controllers/Telegram/TelegramAnalyticsController.php:21
- * @route '/telegram/analytics/summary'
+ * @route '/localhost/telegram/analytics/summary'
  */
     const summaryForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
         action: summary.url(options),
@@ -55,7 +55,7 @@ summary.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
             /**
 * @see \App\Http\Controllers\Telegram\TelegramAnalyticsController::summary
  * @see app/Http/Controllers/Telegram/TelegramAnalyticsController.php:21
- * @route '/telegram/analytics/summary'
+ * @route '/localhost/telegram/analytics/summary'
  */
         summaryForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
             action: summary.url(options),
@@ -64,7 +64,7 @@ summary.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
             /**
 * @see \App\Http\Controllers\Telegram\TelegramAnalyticsController::summary
  * @see app/Http/Controllers/Telegram/TelegramAnalyticsController.php:21
- * @route '/telegram/analytics/summary'
+ * @route '/localhost/telegram/analytics/summary'
  */
         summaryForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
             action: summary.url({
@@ -80,7 +80,7 @@ summary.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 /**
 * @see \App\Http\Controllers\Telegram\TelegramAnalyticsController::report
  * @see app/Http/Controllers/Telegram/TelegramAnalyticsController.php:35
- * @route '/telegram/analytics/report'
+ * @route '/localhost/telegram/analytics/report'
  */
 export const report = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: report.url(options),
@@ -89,13 +89,13 @@ export const report = (options?: RouteQueryOptions): RouteDefinition<'get'> => (
 
 report.definition = {
     methods: ["get","head"],
-    url: '/telegram/analytics/report',
+    url: '/localhost/telegram/analytics/report',
 } satisfies RouteDefinition<["get","head"]>
 
 /**
 * @see \App\Http\Controllers\Telegram\TelegramAnalyticsController::report
  * @see app/Http/Controllers/Telegram/TelegramAnalyticsController.php:35
- * @route '/telegram/analytics/report'
+ * @route '/localhost/telegram/analytics/report'
  */
 report.url = (options?: RouteQueryOptions) => {
     return report.definition.url + queryParams(options)
@@ -104,7 +104,7 @@ report.url = (options?: RouteQueryOptions) => {
 /**
 * @see \App\Http\Controllers\Telegram\TelegramAnalyticsController::report
  * @see app/Http/Controllers/Telegram/TelegramAnalyticsController.php:35
- * @route '/telegram/analytics/report'
+ * @route '/localhost/telegram/analytics/report'
  */
 report.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: report.url(options),
@@ -113,7 +113,7 @@ report.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
 /**
 * @see \App\Http\Controllers\Telegram\TelegramAnalyticsController::report
  * @see app/Http/Controllers/Telegram/TelegramAnalyticsController.php:35
- * @route '/telegram/analytics/report'
+ * @route '/localhost/telegram/analytics/report'
  */
 report.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     url: report.url(options),
@@ -123,7 +123,7 @@ report.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     /**
 * @see \App\Http\Controllers\Telegram\TelegramAnalyticsController::report
  * @see app/Http/Controllers/Telegram/TelegramAnalyticsController.php:35
- * @route '/telegram/analytics/report'
+ * @route '/localhost/telegram/analytics/report'
  */
     const reportForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
         action: report.url(options),
@@ -133,7 +133,7 @@ report.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
             /**
 * @see \App\Http\Controllers\Telegram\TelegramAnalyticsController::report
  * @see app/Http/Controllers/Telegram/TelegramAnalyticsController.php:35
- * @route '/telegram/analytics/report'
+ * @route '/localhost/telegram/analytics/report'
  */
         reportForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
             action: report.url(options),
@@ -142,7 +142,7 @@ report.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
             /**
 * @see \App\Http\Controllers\Telegram\TelegramAnalyticsController::report
  * @see app/Http/Controllers/Telegram/TelegramAnalyticsController.php:35
- * @route '/telegram/analytics/report'
+ * @route '/localhost/telegram/analytics/report'
  */
         reportForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
             action: report.url({
