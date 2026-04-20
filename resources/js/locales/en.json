@@ -1,6 +1,9 @@
 {
   "telegram": {
     "headTitle": "Telegram",
+    "help": {
+      "label": "What is this data?"
+    },
     "search": {
       "title": "Telegram Search",
       "collapsed": "Search panel is collapsed",
@@ -29,7 +32,10 @@
       "minViews": "Min views",
       "minForwards": "Min forwards",
       "advancedAriaShow": "Show additional filters",
-      "advancedAriaHide": "Hide additional filters"
+      "advancedAriaHide": "Hide additional filters",
+      "help": {
+        "overview": "Live search across Telegram messages with filters by channel, keyword, author and date range."
+      }
     },
     "messages": {
       "title": "Messages",
@@ -129,6 +135,9 @@
           "stopped": "Stopped"
         }
       },
+      "help": {
+        "overview": "Collects Telegram messages/comments online and prepares export files without long-term storage."
+      },
       "errors": {
         "customBothDates": "Please specify both custom period dates.",
         "customInvalid": "Custom period is invalid.",
@@ -216,6 +225,7 @@
       },
       "help": {
         "label": "What is this data?",
+        "overview": "Live analytics snapshot for selected channel and period with scoring, charts and anti-fraud signals.",
         "formula": "Post score formula. Variables: V = views, F = forwards, R = replies, Re = reactions, G = gifts. Calculation: score = V*wV + F*wF + R*wR + Re*wRe + G*wG.",
         "antiFraud": "Anti-Fraud risk score (0-100) is formed from trigger points. We detect suspicious patterns (for example interactions without views, time bursts, abnormal ratios), sum trigger scores, and map risk level: low < 30, medium 30-59, high >= 60.",
         "funnel": "Shows the step-by-step conversion from all posts to posts with meaningful engagement.",
@@ -287,6 +297,9 @@
   },
   "username": {
     "headTitle": "Username",
+    "help": {
+      "label": "What is this data?"
+    },
     "tabs": {
       "search": "Search",
       "analytics": "Analytics"
@@ -297,7 +310,10 @@
       "label": "Username",
       "placeholder": "e.g. john_doe",
       "find": "Check",
-      "searching": "Checking..."
+      "searching": "Checking...",
+      "help": {
+        "overview": "Checks public platforms in real time for username presence and returns grouped OSINT results."
+      }
     },
     "results": {
       "title": "Results",
@@ -375,6 +391,7 @@
         "romanization": "romanization variation"
       },
       "help": {
+        "overview": "Real-time analytics for username checks: confidence, similarity variants and relationship graph.",
         "similarity": "Generated username variants are checked on priority platforms to estimate collision and impersonation risk.",
         "graph": "Graph summary from live results, including platform regions, categories and profile domains.",
         "graphCanvas": "Interactive graph: click a node to highlight connected entities, drag to rearrange, and use wheel to zoom."
