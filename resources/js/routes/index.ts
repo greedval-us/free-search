@@ -522,3 +522,81 @@ username.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
         })
     
     username.form = usernameForm
+/**
+* @see \Inertia\Controller::__invoke
+ * @see vendor/inertiajs/inertia-laravel/src/Controller.php:13
+ * @route '/localhost/site-intel'
+ */
+export const siteIntel = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+    url: siteIntel.url(options),
+    method: 'get',
+})
+
+siteIntel.definition = {
+    methods: ["get","head"],
+    url: '/localhost/site-intel',
+} satisfies RouteDefinition<["get","head"]>
+
+/**
+* @see \Inertia\Controller::__invoke
+ * @see vendor/inertiajs/inertia-laravel/src/Controller.php:13
+ * @route '/localhost/site-intel'
+ */
+siteIntel.url = (options?: RouteQueryOptions) => {
+    return siteIntel.definition.url + queryParams(options)
+}
+
+/**
+* @see \Inertia\Controller::__invoke
+ * @see vendor/inertiajs/inertia-laravel/src/Controller.php:13
+ * @route '/localhost/site-intel'
+ */
+siteIntel.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+    url: siteIntel.url(options),
+    method: 'get',
+})
+/**
+* @see \Inertia\Controller::__invoke
+ * @see vendor/inertiajs/inertia-laravel/src/Controller.php:13
+ * @route '/localhost/site-intel'
+ */
+siteIntel.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
+    url: siteIntel.url(options),
+    method: 'head',
+})
+
+    /**
+* @see \Inertia\Controller::__invoke
+ * @see vendor/inertiajs/inertia-laravel/src/Controller.php:13
+ * @route '/localhost/site-intel'
+ */
+    const siteIntelForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+        action: siteIntel.url(options),
+        method: 'get',
+    })
+
+            /**
+* @see \Inertia\Controller::__invoke
+ * @see vendor/inertiajs/inertia-laravel/src/Controller.php:13
+ * @route '/localhost/site-intel'
+ */
+        siteIntelForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+            action: siteIntel.url(options),
+            method: 'get',
+        })
+            /**
+* @see \Inertia\Controller::__invoke
+ * @see vendor/inertiajs/inertia-laravel/src/Controller.php:13
+ * @route '/localhost/site-intel'
+ */
+        siteIntelForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+            action: siteIntel.url({
+                        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
+                            _method: 'HEAD',
+                            ...(options?.query ?? options?.mergeQuery ?? {}),
+                        }
+                    }),
+            method: 'get',
+        })
+    
+    siteIntel.form = siteIntelForm

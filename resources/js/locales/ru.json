@@ -391,11 +391,142 @@
       "global": "Глобально"
     }
   },
+  "siteIntel": {
+    "headTitle": "Site Intel",
+    "tabs": {
+      "siteHealth": "Здоровье сайта",
+      "domainLite": "Домен Lite"
+    },
+    "common": {
+      "checkedAt": "Проверено",
+      "yes": "Да",
+      "no": "Нет",
+      "present": "есть",
+      "missing": "нет",
+      "available": "Доступно",
+      "unavailable": "Недоступно"
+    },
+    "help": {
+      "label": "Что это значит?"
+    },
+    "siteHealth": {
+      "title": "Проверка сайта",
+      "description": "Онлайн-проверка SSL, DNS, редиректов, HTTP-кодов и security-заголовков.",
+      "target": "URL или домен",
+      "placeholder": "example.com или https://example.com",
+      "check": "Проверить",
+      "checking": "Проверяем...",
+      "empty": "Запустите проверку, чтобы увидеть состояние сайта.",
+      "finalStatus": "Финальный статус",
+      "redirects": "Редиректы",
+      "score": "Оценка состояния",
+      "finalUrl": "Финальный URL",
+      "dns": "DNS-записи",
+      "aRecords": "A-записи",
+      "aaaaRecords": "AAAA-записи",
+      "ssl": "SSL-сертификат",
+      "sslAvailable": "SSL доступен",
+      "sslIssuer": "Издатель",
+      "sslSubject": "Субъект",
+      "sslValidTo": "Действует до",
+      "securityHeaders": "Security-заголовки",
+      "httpChain": "HTTP-цепочка",
+      "responseTime": "Время ответа",
+      "location": "Location",
+      "healthSignals": "Сигналы состояния",
+      "noHealthSignals": "Сильные проблемы состояния не обнаружены.",
+      "header": {
+        "strict_transport_security": "HSTS",
+        "content_security_policy": "CSP",
+        "x_frame_options": "X-Frame-Options",
+        "x_content_type_options": "X-Content-Type-Options",
+        "referrer_policy": "Referrer-Policy",
+        "permissions_policy": "Permissions-Policy"
+      },
+      "help": {
+        "overview": "Общая оценка строится из DNS, HTTP-цепочки, SSL и security-заголовков.",
+        "dns": "A/AAAA-записи показывают, резолвится ли домен по IPv4 и IPv6.",
+        "ssl": "Показывает данные сертификата и срок его действия для HTTPS.",
+        "securityHeaders": "Проверка базовых защитных заголовков браузерной безопасности.",
+        "httpChain": "Все шаги запроса до финального URL, включая редиректы и время ответа."
+      },
+      "signal": {
+        "no_dns_records": "Нет DNS A/AAAA записей",
+        "unreachable": "Цель недоступна",
+        "http_error_status": "Финальный HTTP-статус с ошибкой",
+        "final_url_not_https": "Финальный URL без HTTPS",
+        "too_many_redirects": "Слишком много редиректов",
+        "ssl_unavailable": "SSL недоступен",
+        "ssl_expired": "SSL-сертификат истёк",
+        "ssl_expiring_soon": "SSL-сертификат скоро истечёт",
+        "missing_strict_transport_security": "Отсутствует HSTS",
+        "missing_content_security_policy": "Отсутствует CSP",
+        "missing_x_frame_options": "Отсутствует X-Frame-Options",
+        "missing_x_content_type_options": "Отсутствует X-Content-Type-Options",
+        "missing_referrer_policy": "Отсутствует Referrer-Policy",
+        "missing_permissions_policy": "Отсутствует Permissions-Policy"
+      },
+      "errors": {
+        "targetRequired": "Введите URL или домен.",
+        "checkFailed": "Не удалось выполнить проверку сайта."
+      }
+    },
+    "domainLite": {
+      "title": "Домен Lite",
+      "description": "Онлайн WHOIS и DNS-проверка с кратким risk score.",
+      "whois": "WHOIS",
+      "domain": "Домен",
+      "placeholder": "example.com",
+      "check": "Проверить",
+      "checking": "Проверяем...",
+      "empty": "Запустите проверку, чтобы увидеть сводку по домену.",
+      "mxCount": "MX-записей",
+      "riskScore": "Оценка риска",
+      "dnsSummary": "DNS-сводка",
+      "aRecords": "A-записи",
+      "aaaaRecords": "AAAA-записи",
+      "nsRecords": "NS-записи",
+      "mxRecords": "MX-записи",
+      "spf": "SPF",
+      "dmarc": "DMARC",
+      "whoisServer": "WHOIS-сервер",
+      "createdAt": "Создан",
+      "updatedAt": "Обновлён",
+      "expiresAt": "Истекает",
+      "registrar": "Регистратор",
+      "country": "Страна",
+      "riskSignals": "Сигналы риска",
+      "noRiskSignals": "Сильные сигналы риска не обнаружены.",
+      "whoisSample": "Фрагмент WHOIS",
+      "help": {
+        "overview": "Собирает лёгкую DNS/WHOIS-сводку в реальном времени без хранения истории.",
+        "dns": "DNS-блок содержит инфраструктурные и почтовые записи (A/AAAA/NS/MX/SPF/DMARC).",
+        "whois": "WHOIS показывает регистрационные данные: регистратор и даты жизненного цикла домена.",
+        "risk": "Risk score растёт при слабых или отсутствующих DNS/WHOIS-сигналах."
+      },
+      "signal": {
+        "no_a_or_aaaa_records": "Нет A/AAAA записей",
+        "no_ns_records": "Нет NS записей",
+        "no_mx_records": "Нет MX записей",
+        "missing_spf": "Отсутствует SPF-запись",
+        "missing_dmarc": "Отсутствует DMARC-запись",
+        "whois_unavailable": "WHOIS недоступен",
+        "domain_expired": "Домен истёк",
+        "domain_expires_soon": "Домен истекает в течение 30 дней",
+        "domain_expires_in_90_days": "Домен истекает в течение 90 дней"
+      },
+      "errors": {
+        "domainRequired": "Введите домен.",
+        "lookupFailed": "Не удалось выполнить проверку домена."
+      }
+    }
+  },
   "navigation": {
     "platform": "Платформа",
     "dashboard": "Панель",
     "telegram": "Telegram",
     "username": "Username",
+    "siteIntel": "Site Intel",
     "repository": "Репозиторий",
     "documentation": "Документация"
   },

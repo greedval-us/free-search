@@ -391,11 +391,142 @@
       "global": "Global"
     }
   },
+  "siteIntel": {
+    "headTitle": "Site Intel",
+    "tabs": {
+      "siteHealth": "Site Health",
+      "domainLite": "Domain Lite"
+    },
+    "common": {
+      "checkedAt": "Checked at",
+      "yes": "Yes",
+      "no": "No",
+      "present": "present",
+      "missing": "missing",
+      "available": "Available",
+      "unavailable": "Unavailable"
+    },
+    "help": {
+      "label": "What is this data?"
+    },
+    "siteHealth": {
+      "title": "Site Health",
+      "description": "Online checks for SSL, DNS, redirects, status and security headers.",
+      "target": "URL or domain",
+      "placeholder": "example.com or https://example.com",
+      "check": "Check",
+      "checking": "Checking...",
+      "empty": "Run a check to view site health details.",
+      "finalStatus": "Final status",
+      "redirects": "Redirects",
+      "score": "Health score",
+      "finalUrl": "Final URL",
+      "dns": "DNS records",
+      "aRecords": "A records",
+      "aaaaRecords": "AAAA records",
+      "ssl": "SSL certificate",
+      "sslAvailable": "SSL available",
+      "sslIssuer": "Issuer",
+      "sslSubject": "Subject",
+      "sslValidTo": "Valid to",
+      "securityHeaders": "Security headers",
+      "httpChain": "HTTP chain",
+      "responseTime": "Response time",
+      "location": "Location",
+      "healthSignals": "Health signals",
+      "noHealthSignals": "No strong health issues detected.",
+      "header": {
+        "strict_transport_security": "HSTS",
+        "content_security_policy": "CSP",
+        "x_frame_options": "X-Frame-Options",
+        "x_content_type_options": "X-Content-Type-Options",
+        "referrer_policy": "Referrer-Policy",
+        "permissions_policy": "Permissions-Policy"
+      },
+      "help": {
+        "overview": "Combines DNS, HTTP chain, SSL and security headers into a quick health score for the target.",
+        "dns": "A/AAAA records show whether the domain resolves for IPv4 and IPv6.",
+        "ssl": "Certificate details and validity period for HTTPS endpoint.",
+        "securityHeaders": "Checks baseline hardening headers that reduce browser-side attack surface.",
+        "httpChain": "Every request step before reaching final URL, including redirects and response time."
+      },
+      "signal": {
+        "no_dns_records": "No DNS A/AAAA records",
+        "unreachable": "Target is unreachable",
+        "http_error_status": "Final HTTP status is an error",
+        "final_url_not_https": "Final URL is not HTTPS",
+        "too_many_redirects": "Too many redirects",
+        "ssl_unavailable": "SSL is unavailable",
+        "ssl_expired": "SSL certificate is expired",
+        "ssl_expiring_soon": "SSL certificate expires soon",
+        "missing_strict_transport_security": "Missing HSTS",
+        "missing_content_security_policy": "Missing CSP",
+        "missing_x_frame_options": "Missing X-Frame-Options",
+        "missing_x_content_type_options": "Missing X-Content-Type-Options",
+        "missing_referrer_policy": "Missing Referrer-Policy",
+        "missing_permissions_policy": "Missing Permissions-Policy"
+      },
+      "errors": {
+        "targetRequired": "Enter URL or domain.",
+        "checkFailed": "Could not complete site health check."
+      }
+    },
+    "domainLite": {
+      "title": "Domain Lite",
+      "description": "Online WHOIS and DNS lookup with a lightweight risk score.",
+      "whois": "WHOIS",
+      "domain": "Domain",
+      "placeholder": "example.com",
+      "check": "Lookup",
+      "checking": "Looking up...",
+      "empty": "Run lookup to view domain summary.",
+      "mxCount": "MX records",
+      "riskScore": "Risk score",
+      "dnsSummary": "DNS summary",
+      "aRecords": "A records",
+      "aaaaRecords": "AAAA records",
+      "nsRecords": "NS records",
+      "mxRecords": "MX records",
+      "spf": "SPF",
+      "dmarc": "DMARC",
+      "whoisServer": "WHOIS server",
+      "createdAt": "Created at",
+      "updatedAt": "Updated at",
+      "expiresAt": "Expires at",
+      "registrar": "Registrar",
+      "country": "Country",
+      "riskSignals": "Risk signals",
+      "noRiskSignals": "No strong risk signals.",
+      "whoisSample": "WHOIS sample",
+      "help": {
+        "overview": "Collects lightweight DNS and WHOIS data in real time without storing historical snapshots.",
+        "dns": "DNS block includes infrastructure and email records (A/AAAA/NS/MX/SPF/DMARC).",
+        "whois": "WHOIS provides registration metadata: registrar and domain lifecycle dates.",
+        "risk": "Risk score increases when DNS/WHOIS has weak or missing data."
+      },
+      "signal": {
+        "no_a_or_aaaa_records": "No A/AAAA records",
+        "no_ns_records": "No NS records",
+        "no_mx_records": "No MX records",
+        "missing_spf": "SPF record is missing",
+        "missing_dmarc": "DMARC record is missing",
+        "whois_unavailable": "WHOIS is unavailable",
+        "domain_expired": "Domain is expired",
+        "domain_expires_soon": "Domain expires in 30 days",
+        "domain_expires_in_90_days": "Domain expires in 90 days"
+      },
+      "errors": {
+        "domainRequired": "Enter domain.",
+        "lookupFailed": "Could not complete domain lookup."
+      }
+    }
+  },
   "navigation": {
     "platform": "Platform",
     "dashboard": "Dashboard",
     "telegram": "Telegram",
     "username": "Username",
+    "siteIntel": "Site Intel",
     "repository": "Repository",
     "documentation": "Documentation"
   },
