@@ -314,6 +314,84 @@ Controller541af7f31b9b62128fd44029476293af.head = (options?: RouteQueryOptions):
     /**
 * @see \Inertia\Controller::__invoke
  * @see vendor/inertiajs/inertia-laravel/src/Controller.php:13
+ * @route '/localhost/site-intel'
+ */
+const Controller7872357bfddfbe438fc29833a0d9fc6c = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+    url: Controller7872357bfddfbe438fc29833a0d9fc6c.url(options),
+    method: 'get',
+})
+
+Controller7872357bfddfbe438fc29833a0d9fc6c.definition = {
+    methods: ["get","head"],
+    url: '/localhost/site-intel',
+} satisfies RouteDefinition<["get","head"]>
+
+/**
+* @see \Inertia\Controller::__invoke
+ * @see vendor/inertiajs/inertia-laravel/src/Controller.php:13
+ * @route '/localhost/site-intel'
+ */
+Controller7872357bfddfbe438fc29833a0d9fc6c.url = (options?: RouteQueryOptions) => {
+    return Controller7872357bfddfbe438fc29833a0d9fc6c.definition.url + queryParams(options)
+}
+
+/**
+* @see \Inertia\Controller::__invoke
+ * @see vendor/inertiajs/inertia-laravel/src/Controller.php:13
+ * @route '/localhost/site-intel'
+ */
+Controller7872357bfddfbe438fc29833a0d9fc6c.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+    url: Controller7872357bfddfbe438fc29833a0d9fc6c.url(options),
+    method: 'get',
+})
+/**
+* @see \Inertia\Controller::__invoke
+ * @see vendor/inertiajs/inertia-laravel/src/Controller.php:13
+ * @route '/localhost/site-intel'
+ */
+Controller7872357bfddfbe438fc29833a0d9fc6c.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
+    url: Controller7872357bfddfbe438fc29833a0d9fc6c.url(options),
+    method: 'head',
+})
+
+    /**
+* @see \Inertia\Controller::__invoke
+ * @see vendor/inertiajs/inertia-laravel/src/Controller.php:13
+ * @route '/localhost/site-intel'
+ */
+    const Controller7872357bfddfbe438fc29833a0d9fc6cForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+        action: Controller7872357bfddfbe438fc29833a0d9fc6c.url(options),
+        method: 'get',
+    })
+
+            /**
+* @see \Inertia\Controller::__invoke
+ * @see vendor/inertiajs/inertia-laravel/src/Controller.php:13
+ * @route '/localhost/site-intel'
+ */
+        Controller7872357bfddfbe438fc29833a0d9fc6cForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+            action: Controller7872357bfddfbe438fc29833a0d9fc6c.url(options),
+            method: 'get',
+        })
+            /**
+* @see \Inertia\Controller::__invoke
+ * @see vendor/inertiajs/inertia-laravel/src/Controller.php:13
+ * @route '/localhost/site-intel'
+ */
+        Controller7872357bfddfbe438fc29833a0d9fc6cForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+            action: Controller7872357bfddfbe438fc29833a0d9fc6c.url({
+                        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
+                            _method: 'HEAD',
+                            ...(options?.query ?? options?.mergeQuery ?? {}),
+                        }
+                    }),
+            method: 'get',
+        })
+    
+    Controller7872357bfddfbe438fc29833a0d9fc6c.form = Controller7872357bfddfbe438fc29833a0d9fc6cForm
+    /**
+* @see \Inertia\Controller::__invoke
+ * @see vendor/inertiajs/inertia-laravel/src/Controller.php:13
  * @route '/localhost/settings/appearance'
  */
 const Controller6f1e3af33d53afdd9ff1fd9ba9c53e8f = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -395,6 +473,7 @@ const Controller = {
     '/localhost/dashboard': Controller82954eec63fa1747224414bbb8556e36,
     '/localhost/telegram': Controllerbaac2b5c001554e3856e15bf4bc42ab0,
     '/localhost/username': Controller541af7f31b9b62128fd44029476293af,
+    '/localhost/site-intel': Controller7872357bfddfbe438fc29833a0d9fc6c,
     '/localhost/settings/appearance': Controller6f1e3af33d53afdd9ff1fd9ba9c53e8f,
 }
 

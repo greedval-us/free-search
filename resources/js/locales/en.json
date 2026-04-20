@@ -1,6 +1,9 @@
 {
   "telegram": {
     "headTitle": "Telegram",
+    "help": {
+      "label": "What is this data?"
+    },
     "search": {
       "title": "Telegram Search",
       "collapsed": "Search panel is collapsed",
@@ -29,7 +32,10 @@
       "minViews": "Min views",
       "minForwards": "Min forwards",
       "advancedAriaShow": "Show additional filters",
-      "advancedAriaHide": "Hide additional filters"
+      "advancedAriaHide": "Hide additional filters",
+      "help": {
+        "overview": "Live search across Telegram messages with filters by channel, keyword, author and date range."
+      }
     },
     "messages": {
       "title": "Messages",
@@ -129,6 +135,9 @@
           "stopped": "Stopped"
         }
       },
+      "help": {
+        "overview": "Collects Telegram messages/comments online and prepares export files without long-term storage."
+      },
       "errors": {
         "customBothDates": "Please specify both custom period dates.",
         "customInvalid": "Custom period is invalid.",
@@ -216,6 +225,7 @@
       },
       "help": {
         "label": "What is this data?",
+        "overview": "Live analytics snapshot for selected channel and period with scoring, charts and anti-fraud signals.",
         "formula": "Post score formula. Variables: V = views, F = forwards, R = replies, Re = reactions, G = gifts. Calculation: score = V*wV + F*wF + R*wR + Re*wRe + G*wG.",
         "antiFraud": "Anti-Fraud risk score (0-100) is formed from trigger points. We detect suspicious patterns (for example interactions without views, time bursts, abnormal ratios), sum trigger scores, and map risk level: low < 30, medium 30-59, high >= 60.",
         "funnel": "Shows the step-by-step conversion from all posts to posts with meaningful engagement.",
@@ -287,6 +297,9 @@
   },
   "username": {
     "headTitle": "Username",
+    "help": {
+      "label": "What is this data?"
+    },
     "tabs": {
       "search": "Search",
       "analytics": "Analytics"
@@ -297,7 +310,10 @@
       "label": "Username",
       "placeholder": "e.g. john_doe",
       "find": "Check",
-      "searching": "Checking..."
+      "searching": "Checking...",
+      "help": {
+        "overview": "Checks public platforms in real time for username presence and returns grouped OSINT results."
+      }
     },
     "results": {
       "title": "Results",
@@ -375,6 +391,7 @@
         "romanization": "romanization variation"
       },
       "help": {
+        "overview": "Real-time analytics for username checks: confidence, similarity variants and relationship graph.",
         "similarity": "Generated username variants are checked on priority platforms to estimate collision and impersonation risk.",
         "graph": "Graph summary from live results, including platform regions, categories and profile domains.",
         "graphCanvas": "Interactive graph: click a node to highlight connected entities, drag to rearrange, and use wheel to zoom."
@@ -391,11 +408,224 @@
       "global": "Global"
     }
   },
+  "siteIntel": {
+    "headTitle": "Site Intel",
+    "tabs": {
+      "siteHealth": "Site Health",
+      "domainLite": "Domain Lite",
+      "analytics": "Analytics"
+    },
+    "common": {
+      "checkedAt": "Checked at",
+      "yes": "Yes",
+      "no": "No",
+      "present": "present",
+      "missing": "missing",
+      "available": "Available",
+      "unavailable": "Unavailable"
+    },
+    "help": {
+      "label": "What is this data?"
+    },
+    "siteHealth": {
+      "title": "Site Health",
+      "description": "Online checks for SSL, DNS, redirects, status and security headers.",
+      "target": "URL or domain",
+      "placeholder": "example.com or https://example.com",
+      "check": "Check",
+      "checking": "Checking...",
+      "empty": "Run a check to view site health details.",
+      "finalStatus": "Final status",
+      "redirects": "Redirects",
+      "score": "Health score",
+      "finalUrl": "Final URL",
+      "dns": "DNS records",
+      "aRecords": "A records",
+      "aaaaRecords": "AAAA records",
+      "ssl": "SSL certificate",
+      "sslAvailable": "SSL available",
+      "sslIssuer": "Issuer",
+      "sslSubject": "Subject",
+      "sslValidTo": "Valid to",
+      "securityHeaders": "Security headers",
+      "httpChain": "HTTP chain",
+      "responseTime": "Response time",
+      "location": "Location",
+      "healthSignals": "Health signals",
+      "noHealthSignals": "No strong health issues detected.",
+      "header": {
+        "strict_transport_security": "HSTS",
+        "content_security_policy": "CSP",
+        "x_frame_options": "X-Frame-Options",
+        "x_content_type_options": "X-Content-Type-Options",
+        "referrer_policy": "Referrer-Policy",
+        "permissions_policy": "Permissions-Policy"
+      },
+      "help": {
+        "overview": "Combines DNS, HTTP chain, SSL and security headers into a quick health score for the target.",
+        "dns": "A/AAAA records show whether the domain resolves for IPv4 and IPv6.",
+        "ssl": "Certificate details and validity period for HTTPS endpoint.",
+        "securityHeaders": "Checks baseline hardening headers that reduce browser-side attack surface.",
+        "httpChain": "Every request step before reaching final URL, including redirects and response time."
+      },
+      "signal": {
+        "no_dns_records": "No DNS A/AAAA records",
+        "unreachable": "Target is unreachable",
+        "http_error_status": "Final HTTP status is an error",
+        "final_url_not_https": "Final URL is not HTTPS",
+        "too_many_redirects": "Too many redirects",
+        "ssl_unavailable": "SSL is unavailable",
+        "ssl_expired": "SSL certificate is expired",
+        "ssl_expiring_soon": "SSL certificate expires soon",
+        "missing_strict_transport_security": "Missing HSTS",
+        "missing_content_security_policy": "Missing CSP",
+        "missing_x_frame_options": "Missing X-Frame-Options",
+        "missing_x_content_type_options": "Missing X-Content-Type-Options",
+        "missing_referrer_policy": "Missing Referrer-Policy",
+        "missing_permissions_policy": "Missing Permissions-Policy"
+      },
+      "errors": {
+        "targetRequired": "Enter URL or domain.",
+        "checkFailed": "Could not complete site health check."
+      }
+    },
+    "domainLite": {
+      "title": "Domain Lite",
+      "description": "Online WHOIS and DNS lookup with a lightweight risk score.",
+      "whois": "WHOIS",
+      "domain": "Domain",
+      "placeholder": "example.com",
+      "check": "Lookup",
+      "checking": "Looking up...",
+      "empty": "Run lookup to view domain summary.",
+      "mxCount": "MX records",
+      "riskScore": "Risk score",
+      "dnsSummary": "DNS summary",
+      "aRecords": "A records",
+      "aaaaRecords": "AAAA records",
+      "nsRecords": "NS records",
+      "mxRecords": "MX records",
+      "spf": "SPF",
+      "dmarc": "DMARC",
+      "whoisServer": "WHOIS server",
+      "createdAt": "Created at",
+      "updatedAt": "Updated at",
+      "expiresAt": "Expires at",
+      "registrar": "Registrar",
+      "country": "Country",
+      "riskSignals": "Risk signals",
+      "noRiskSignals": "No strong risk signals.",
+      "whoisSample": "WHOIS sample",
+      "help": {
+        "overview": "Collects lightweight DNS and WHOIS data in real time without storing historical snapshots.",
+        "dns": "DNS block includes infrastructure and email records (A/AAAA/NS/MX/SPF/DMARC).",
+        "whois": "WHOIS provides registration metadata: registrar and domain lifecycle dates.",
+        "risk": "Risk score increases when DNS/WHOIS has weak or missing data."
+      },
+      "signal": {
+        "no_a_or_aaaa_records": "No A/AAAA records",
+        "no_ns_records": "No NS records",
+        "no_mx_records": "No MX records",
+        "missing_spf": "SPF record is missing",
+        "missing_dmarc": "DMARC record is missing",
+        "whois_unavailable": "WHOIS is unavailable",
+        "domain_expired": "Domain is expired",
+        "domain_expires_soon": "Domain expires in 30 days",
+        "domain_expires_in_90_days": "Domain expires in 90 days"
+      },
+      "errors": {
+        "domainRequired": "Enter domain.",
+        "lookupFailed": "Could not complete domain lookup."
+      }
+    },
+    "analytics": {
+      "title": "Site Intel Analytics",
+      "description": "Combined analytics for site health and domain risk in one snapshot.",
+      "target": "URL or domain",
+      "placeholder": "example.com or https://example.com",
+      "analyze": "Analyze",
+      "analyzing": "Analyzing...",
+      "empty": "Run analytics to view combined summary.",
+      "overallScore": "Overall score",
+      "healthScore": "Site Health score",
+      "domainRiskScore": "Domain risk score",
+      "domainSafetyScore": "Domain safety score (higher is better)",
+      "targetSummary": "Analysis target",
+      "url": "URL",
+      "domain": "Domain",
+      "headersCoverage": "Security headers coverage",
+      "redirects": "Redirects",
+      "daysToDomainExpiry": "Days to domain expiry",
+      "dnsStats": "DNS stats",
+      "riskSignals": "Risk signals",
+      "noRiskSignals": "No strong risk signals detected.",
+      "strengthSignals": "Strength signals",
+      "noStrengthSignals": "No strong positive signals detected.",
+      "recommendations": "Recommendations",
+      "report": "Open report",
+      "downloadReport": "Download report",
+      "help": {
+        "overview": "Combines Site Health and Domain Lite into one score, risk signals, and recommendations.",
+        "scoreBreakdown": "Shows how the snapshot looks across core dimensions: overall, health, domain safety, and security header coverage.",
+        "signalBalance": "Compares the count of risk and strength signals detected in this snapshot.",
+        "dnsProfile": "Displays relative DNS record availability (A/AAAA/NS/MX/TXT/CAA) for quick infrastructure sanity checks.",
+        "httpLatency": "Visualizes response time per HTTP chain step. Spikes may indicate redirect overhead or unstable endpoints.",
+        "snapshotMetrics": "Compact operational metadata from this run: SSL horizon, WHOIS availability, domain age, and email-security readiness.",
+        "riskSignals": "Potentially harmful conditions aggregated from Site Health and Domain Lite.",
+        "strengthSignals": "Positive indicators that improve confidence in target stability and security posture.",
+        "recommendations": "Prioritized actions derived from detected signals. Impact is an approximate score uplift estimate."
+      },
+      "errors": {
+        "targetRequired": "Enter URL or domain.",
+        "analyzeFailed": "Could not complete analytics."
+      },
+      "recommendation": {
+        "improve_security_headers": "Improve security headers (CSP, HSTS, X-Frame-Options, etc.).",
+        "enforce_https": "Enforce HTTPS and proper redirects.",
+        "renew_ssl_certificate": "Renew or reissue SSL certificate.",
+        "configure_email_security": "Configure SPF and DMARC for domain email security.",
+        "review_dns_configuration": "Review DNS configuration (A/AAAA/NS/MX records).",
+        "renew_domain_early": "Renew domain early to avoid expiration risks.",
+        "check_whois_visibility": "Check WHOIS visibility and correctness.",
+        "maintain_current_posture": "Current posture looks healthy; keep it maintained."
+      },
+      "signal": {
+        "risk": {
+          "no_dns_records": "No DNS A/AAAA records",
+          "unreachable": "Target is unreachable",
+          "http_error_status": "Final HTTP status is an error",
+          "final_url_not_https": "Final URL is not HTTPS",
+          "too_many_redirects": "Too many redirects",
+          "ssl_unavailable": "SSL unavailable",
+          "ssl_expired": "SSL certificate expired",
+          "ssl_expiring_soon": "SSL certificate expires soon",
+          "no_a_or_aaaa_records": "No A/AAAA records",
+          "no_ns_records": "No NS records",
+          "no_mx_records": "No MX records",
+          "missing_spf": "SPF record missing",
+          "missing_dmarc": "DMARC record missing",
+          "whois_unavailable": "WHOIS unavailable",
+          "domain_expired": "Domain expired",
+          "domain_expires_soon": "Domain expires within 30 days",
+          "domain_expires_in_90_days": "Domain expires within 90 days"
+        },
+        "strength": {
+          "https_enforced": "HTTPS is enforced on final URL",
+          "ssl_valid": "SSL certificate is valid and not expiring soon",
+          "spf_present": "SPF record is configured",
+          "dmarc_present": "DMARC record is configured",
+          "whois_available": "WHOIS data is available",
+          "headers_coverage_good": "Good security header coverage"
+        }
+      }
+    }
+  },
   "navigation": {
     "platform": "Platform",
     "dashboard": "Dashboard",
     "telegram": "Telegram",
     "username": "Username",
+    "siteIntel": "Site Intel",
     "repository": "Repository",
     "documentation": "Documentation"
   },

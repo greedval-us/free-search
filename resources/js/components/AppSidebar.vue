@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { Link } from '@inertiajs/vue3';
-import { AtSign, LayoutGrid, Send } from 'lucide-vue-next';
+import { AtSign, LayoutGrid, Radar, Send } from 'lucide-vue-next';
 import { computed } from 'vue';
 import AppLogo from '@/components/AppLogo.vue';
 import NavFooter from '@/components/NavFooter.vue';
@@ -37,6 +37,11 @@ const mainNavItems = computed<NavItem[]>(() => [
         href: '/username',
         icon: AtSign,
     },
+    {
+        title: t('navigation.siteIntel'),
+        href: '/site-intel',
+        icon: Radar,
+    },
 ]);
 
 const footerNavItems: NavItem[] = [
@@ -69,4 +74,3 @@ const footerNavItems: NavItem[] = [
     </Sidebar>
     <slot />
 </template>
-

@@ -120,6 +120,17 @@ const categoryLabel = (category: string) => {
                 <div class="flex items-center gap-2 text-sm font-semibold">
                     <Search class="h-4 w-4 text-cyan-400" />
                     <span>{{ t('username.search.title') }}</span>
+                    <span class="group relative inline-flex">
+                        <span
+                            class="inline-flex h-5 w-5 cursor-help items-center justify-center rounded-full border border-border text-[11px] font-semibold text-muted-foreground"
+                            :aria-label="t('username.help.label')"
+                        >
+                            ?
+                        </span>
+                        <span class="pointer-events-none absolute left-0 top-6 z-20 hidden w-80 rounded-md border border-border/70 bg-popover p-2 text-[11px] leading-relaxed text-popover-foreground shadow-xl group-hover:block">
+                            {{ t('username.search.help.overview') }}
+                        </span>
+                    </span>
                 </div>
                 <p class="text-xs text-muted-foreground">
                     {{ t('username.search.description') }}
