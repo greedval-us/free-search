@@ -85,7 +85,7 @@ export const useSiteIntelAnalyticsViewModel = (
                 tone: 'emerald',
             },
             {
-                label: t('siteIntel.analytics.domainSafetyScore'),
+                label: 'Domain safety (100 - risk)',
                 value: domainSafety,
                 percent: clampPercent(domainSafety),
                 tone: 'amber',
