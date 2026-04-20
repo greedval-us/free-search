@@ -615,7 +615,9 @@
           "headers_coverage_good": "Хорошее покрытие security-заголовков"
         }
       },
-      "domainSafetyScore": "Оценка безопасности домена (чем выше, тем лучше)"
+      "domainSafetyScore": "Оценка безопасности домена (чем выше, тем лучше)",
+      "report": "Открыть отчёт",
+      "downloadReport": "Скачать отчёт"
     }
   },
   "navigation": {

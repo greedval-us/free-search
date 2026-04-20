@@ -1,12 +1,12 @@
 <script setup lang="ts">
-import { BarChart3, LoaderCircle } from 'lucide-vue-next';
+import { BarChart3, Download, FileText, LoaderCircle } from 'lucide-vue-next';
 import { useI18n } from '@/composables/useI18n';
 import { useSiteIntelAnalytics } from '../composables/useSiteIntelAnalytics';
 import { useSiteIntelAnalyticsViewModel } from '../composables/useSiteIntelAnalyticsViewModel';
 import SiteIntelMetricBars from './components/SiteIntelMetricBars.vue';
 
 const { t } = useI18n();
-const { form, loading, error, result, canAnalyze, analyze } = useSiteIntelAnalytics(t);
+const { form, loading, error, result, canAnalyze, canUseReportActions, analyze, openReport, downloadReport } = useSiteIntelAnalytics(t);
 const {
     scoreBadgeClass,
     formatDateTime,
@@ -65,6 +65,26 @@ const {
             >
                 <LoaderCircle v-if="loading" class="h-4 w-4 animate-spin" />
                 <span>{{ loading ? t('siteIntel.analytics.analyzing') : t('siteIntel.analytics.analyze') }}</span>
+            </button>
+
+            <button
+                type="button"
+                :disabled="!canUseReportActions"
+                class="inline-flex h-10 cursor-pointer items-center gap-2 rounded-md bg-primary px-4 text-sm font-semibold text-primary-foreground hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-60"
+                @click="openReport"
+            >
+                <FileText class="h-4 w-4" />
+                {{ t('siteIntel.analytics.report') }}
+            </button>
+
+            <button
+                type="button"
+                :disabled="!canUseReportActions"
+                class="inline-flex h-10 cursor-pointer items-center gap-2 rounded-md border border-input bg-background px-4 text-sm font-medium hover:bg-accent disabled:cursor-not-allowed disabled:opacity-60"
+                @click="downloadReport"
+            >
+                <Download class="h-4 w-4" />
+                {{ t('siteIntel.analytics.downloadReport') }}
             </button>
         </div>
 

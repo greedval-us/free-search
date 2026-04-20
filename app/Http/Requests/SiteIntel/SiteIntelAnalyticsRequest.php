@@ -16,6 +16,7 @@ class SiteIntelAnalyticsRequest extends FormRequest
     {
         return [
             'target' => ['required', 'string', 'max:512'],
+            'locale' => ['nullable', 'string', 'in:ru,en'],
         ];
     }
 
@@ -45,5 +46,11 @@ class SiteIntelAnalyticsRequest extends FormRequest
 
         return DomainNormalizer::normalizeDomain($host);
     }
-}
 
+    public function locale(): string
+    {
+        $locale = strtolower(trim((string) ($this->validated('locale') ?? app()->getLocale())));
+
+        return in_array($locale, ['ru', 'en'], true) ? $locale : 'en';
+    }
+}

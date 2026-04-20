@@ -562,6 +562,8 @@
       "strengthSignals": "Strength signals",
       "noStrengthSignals": "No strong positive signals detected.",
       "recommendations": "Recommendations",
+      "report": "Open report",
+      "downloadReport": "Download report",
       "help": {
         "overview": "Combines Site Health and Domain Lite into one score, risk signals, and recommendations.",
         "scoreBreakdown": "Shows how the snapshot looks across core dimensions: overall, health, domain safety, and security header coverage.",
