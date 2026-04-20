@@ -412,7 +412,8 @@
     "headTitle": "Site Intel",
     "tabs": {
       "siteHealth": "Здоровье сайта",
-      "domainLite": "Домен Lite"
+      "domainLite": "Домен Lite",
+      "analytics": "Аналитика"
     },
     "common": {
       "checkedAt": "Проверено",
@@ -536,6 +537,85 @@
         "domainRequired": "Введите домен.",
         "lookupFailed": "Не удалось выполнить проверку домена."
       }
+    },
+    "analytics": {
+      "title": "Аналитика Site Intel",
+      "description": "Сводная аналитика по здоровью сайта и доменным рискам в одном снимке.",
+      "target": "URL или домен",
+      "placeholder": "example.com or https://example.com",
+      "analyze": "Анализировать",
+      "analyzing": "Анализ...",
+      "empty": "Запустите анализ, чтобы увидеть сводный итог.",
+      "overallScore": "Общий балл",
+      "healthScore": "Балл Site Health",
+      "domainRiskScore": "Балл доменного риска",
+      "targetSummary": "Цель анализа",
+      "url": "URL",
+      "domain": "Домен",
+      "headersCoverage": "Покрытие security-заголовков",
+      "redirects": "Редиректы",
+      "daysToDomainExpiry": "Дней до истечения домена",
+      "dnsStats": "DNS-статистика",
+      "riskSignals": "Сигналы риска",
+      "noRiskSignals": "Сильные сигналы риска не обнаружены.",
+      "strengthSignals": "Позитивные сигналы",
+      "noStrengthSignals": "Сильные позитивные сигналы не обнаружены.",
+      "recommendations": "Рекомендации",
+      "help": {
+        "overview": "Объединяет Site Health и Domain Lite: общий score, сигналы риска и рекомендации.",
+        "scoreBreakdown": "Показывает срез по ключевым измерениям: общий балл, состояние сайта, безопасность домена и покрытие security-заголовков.",
+        "signalBalance": "Сравнивает количество риск-сигналов и позитивных сигналов в текущем снимке.",
+        "dnsProfile": "Показывает относительную наполненность DNS-записей (A/AAAA/NS/MX/TXT/CAA) для быстрой оценки инфраструктуры.",
+        "httpLatency": "Визуализирует время ответа на каждом шаге HTTP-цепочки. Пики могут указывать на лишние редиректы или нестабильные узлы.",
+        "snapshotMetrics": "Короткая операционная сводка запуска: SSL-горизонт, доступность WHOIS, возраст домена и готовность почтовой защиты.",
+        "riskSignals": "Потенциально опасные условия, агрегированные из Site Health и Domain Lite.",
+        "strengthSignals": "Позитивные признаки, повышающие уверенность в стабильности и защищенности цели.",
+        "recommendations": "Приоритизированные действия на основе обнаруженных сигналов. Impact — ориентировочная прибавка к score."
+      },
+      "errors": {
+        "targetRequired": "Введите URL или домен.",
+        "analyzeFailed": "Не удалось выполнить аналитику."
+      },
+      "recommendation": {
+        "improve_security_headers": "Улучшите security-заголовки (CSP, HSTS, X-Frame-Options и т.д.).",
+        "enforce_https": "Включите обязательный HTTPS и корректные редиректы.",
+        "renew_ssl_certificate": "Продлите или перевыпустите SSL-сертификат.",
+        "configure_email_security": "Настройте SPF и DMARC для почтовой безопасности домена.",
+        "review_dns_configuration": "Проверьте DNS-конфигурацию (записи A/AAAA/NS/MX).",
+        "renew_domain_early": "Продлите домен заранее, чтобы избежать рисков истечения.",
+        "check_whois_visibility": "Проверьте доступность и корректность WHOIS-данных.",
+        "maintain_current_posture": "Текущее состояние выглядит стабильно, продолжайте поддерживать его."
+      },
+      "signal": {
+        "risk": {
+          "no_dns_records": "Нет DNS A/AAAA записей",
+          "unreachable": "Цель недоступна",
+          "http_error_status": "Финальный HTTP-статус содержит ошибку",
+          "final_url_not_https": "Финальный URL не использует HTTPS",
+          "too_many_redirects": "Слишком много редиректов",
+          "ssl_unavailable": "SSL недоступен",
+          "ssl_expired": "SSL-сертификат истёк",
+          "ssl_expiring_soon": "SSL-сертификат скоро истечёт",
+          "no_a_or_aaaa_records": "Нет A/AAAA записей",
+          "no_ns_records": "Нет NS записей",
+          "no_mx_records": "Нет MX записей",
+          "missing_spf": "Отсутствует SPF-запись",
+          "missing_dmarc": "Отсутствует DMARC-запись",
+          "whois_unavailable": "WHOIS недоступен",
+          "domain_expired": "Домен истёк",
+          "domain_expires_soon": "Домен истекает в течение 30 дней",
+          "domain_expires_in_90_days": "Домен истекает в течение 90 дней"
+        },
+        "strength": {
+          "https_enforced": "HTTPS включён на финальном URL",
+          "ssl_valid": "SSL-сертификат валиден и не скоро истечёт",
+          "spf_present": "SPF-запись настроена",
+          "dmarc_present": "DMARC-запись настроена",
+          "whois_available": "WHOIS-данные доступны",
+          "headers_coverage_good": "Хорошее покрытие security-заголовков"
+        }
+      },
+      "domainSafetyScore": "Оценка безопасности домена (чем выше, тем лучше)"
     }
   },
   "navigation": {

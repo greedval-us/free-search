@@ -1,4 +1,4 @@
-export type SiteIntelTabValue = 'siteHealth' | 'domainLite';
+export type SiteIntelTabValue = 'siteHealth' | 'domainLite' | 'analytics';
 
 export type SiteHealthResult = {
     target: {
@@ -71,3 +71,38 @@ export type DomainLiteResult = {
     };
 };
 
+export type SiteIntelAnalyticsResult = {
+    target: {
+        url: string;
+        domain: string;
+    };
+    checkedAt: string;
+    overview: {
+        score: {
+            value: number;
+            level: 'low' | 'medium' | 'high';
+        };
+        healthScore: number;
+        domainRiskScore: number;
+        headersCoverage: {
+            present: number;
+            total: number;
+            percent: number;
+        };
+        dnsStats: {
+            a: number;
+            aaaa: number;
+            ns: number;
+            mx: number;
+        };
+        daysToDomainExpiry: number | null;
+        redirects: number;
+        recommendations: string[];
+        signals: {
+            risks: string[];
+            strengths: string[];
+        };
+    };
+    siteHealth: SiteHealthResult;
+    domainLite: DomainLiteResult;
+};

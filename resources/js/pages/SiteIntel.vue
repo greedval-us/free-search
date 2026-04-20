@@ -18,7 +18,7 @@ defineOptions({
 
 const { t } = useI18n();
 
-const activeTab = ref<SiteIntelTabValue>('siteHealth');
+const activeTab = ref<SiteIntelTabValue>('analytics');
 
 const pageTitle = computed(() => t('siteIntel.headTitle'));
 
@@ -52,4 +52,3 @@ const activeTabDefinition = computed(
         <component :is="activeTabDefinition.component" />
     </div>
 </template>
-

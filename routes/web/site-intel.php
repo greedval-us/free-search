@@ -13,5 +13,8 @@ Route::prefix('site-intel')->name('site-intel.')->group(function (): void {
     Route::get('domain-lite', [SiteIntelController::class, 'domainLite'])
         ->middleware('throttle:90,1')
         ->name('domain-lite');
-});
 
+    Route::get('analytics', [SiteIntelController::class, 'analytics'])
+        ->middleware('throttle:60,1')
+        ->name('analytics');
+});

@@ -1,6 +1,7 @@
-import { Activity, Globe } from 'lucide-vue-next';
+import { Activity, BarChart3, Globe } from 'lucide-vue-next';
 import type { Component } from 'vue';
 import DomainLiteTab from './tabs/DomainLiteTab.vue';
+import SiteIntelAnalyticsTab from './tabs/SiteIntelAnalyticsTab.vue';
 import SiteHealthTab from './tabs/SiteHealthTab.vue';
 import type { SiteIntelTabValue } from './types';
 
@@ -24,5 +25,10 @@ export const SITE_INTEL_TABS: readonly SiteIntelTabDefinition[] = [
         icon: Globe,
         component: DomainLiteTab,
     },
+    {
+        key: 'analytics',
+        labelKey: 'siteIntel.tabs.analytics',
+        icon: BarChart3,
+        component: SiteIntelAnalyticsTab,
+    },
 ] as const;
-
