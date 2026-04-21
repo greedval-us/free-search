@@ -2,7 +2,7 @@ import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFo
 /**
 * @see \App\Http\Controllers\Telegram\TelegramParserController::start
  * @see app/Http/Controllers/Telegram/TelegramParserController.php:24
- * @route '/localhost/telegram/parser/start'
+ * @route '/telegram/parser/start'
  */
 export const start = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
     url: start.url(options),
@@ -11,13 +11,13 @@ export const start = (options?: RouteQueryOptions): RouteDefinition<'post'> => (
 
 start.definition = {
     methods: ["post"],
-    url: '/localhost/telegram/parser/start',
+    url: '/telegram/parser/start',
 } satisfies RouteDefinition<["post"]>
 
 /**
 * @see \App\Http\Controllers\Telegram\TelegramParserController::start
  * @see app/Http/Controllers/Telegram/TelegramParserController.php:24
- * @route '/localhost/telegram/parser/start'
+ * @route '/telegram/parser/start'
  */
 start.url = (options?: RouteQueryOptions) => {
     return start.definition.url + queryParams(options)
@@ -26,7 +26,7 @@ start.url = (options?: RouteQueryOptions) => {
 /**
 * @see \App\Http\Controllers\Telegram\TelegramParserController::start
  * @see app/Http/Controllers/Telegram/TelegramParserController.php:24
- * @route '/localhost/telegram/parser/start'
+ * @route '/telegram/parser/start'
  */
 start.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
     url: start.url(options),
@@ -36,7 +36,7 @@ start.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
     /**
 * @see \App\Http\Controllers\Telegram\TelegramParserController::start
  * @see app/Http/Controllers/Telegram/TelegramParserController.php:24
- * @route '/localhost/telegram/parser/start'
+ * @route '/telegram/parser/start'
  */
     const startForm = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
         action: start.url(options),
@@ -46,7 +46,7 @@ start.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
             /**
 * @see \App\Http\Controllers\Telegram\TelegramParserController::start
  * @see app/Http/Controllers/Telegram/TelegramParserController.php:24
- * @route '/localhost/telegram/parser/start'
+ * @route '/telegram/parser/start'
  */
         startForm.post = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
             action: start.url(options),
@@ -57,7 +57,7 @@ start.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
 /**
 * @see \App\Http\Controllers\Telegram\TelegramParserController::status
  * @see app/Http/Controllers/Telegram/TelegramParserController.php:29
- * @route '/localhost/telegram/parser/status/{runId}'
+ * @route '/telegram/parser/status/{runId}'
  */
 export const status = (args: { runId: string | number } | [runId: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: status.url(args, options),
@@ -66,13 +66,13 @@ export const status = (args: { runId: string | number } | [runId: string | numbe
 
 status.definition = {
     methods: ["get","head"],
-    url: '/localhost/telegram/parser/status/{runId}',
+    url: '/telegram/parser/status/{runId}',
 } satisfies RouteDefinition<["get","head"]>
 
 /**
 * @see \App\Http\Controllers\Telegram\TelegramParserController::status
  * @see app/Http/Controllers/Telegram/TelegramParserController.php:29
- * @route '/localhost/telegram/parser/status/{runId}'
+ * @route '/telegram/parser/status/{runId}'
  */
 status.url = (args: { runId: string | number } | [runId: string | number ] | string | number, options?: RouteQueryOptions) => {
     if (typeof args === 'string' || typeof args === 'number') {
@@ -100,7 +100,7 @@ status.url = (args: { runId: string | number } | [runId: string | number ] | str
 /**
 * @see \App\Http\Controllers\Telegram\TelegramParserController::status
  * @see app/Http/Controllers/Telegram/TelegramParserController.php:29
- * @route '/localhost/telegram/parser/status/{runId}'
+ * @route '/telegram/parser/status/{runId}'
  */
 status.get = (args: { runId: string | number } | [runId: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: status.url(args, options),
@@ -109,7 +109,7 @@ status.get = (args: { runId: string | number } | [runId: string | number ] | str
 /**
 * @see \App\Http\Controllers\Telegram\TelegramParserController::status
  * @see app/Http/Controllers/Telegram/TelegramParserController.php:29
- * @route '/localhost/telegram/parser/status/{runId}'
+ * @route '/telegram/parser/status/{runId}'
  */
 status.head = (args: { runId: string | number } | [runId: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     url: status.url(args, options),
@@ -119,7 +119,7 @@ status.head = (args: { runId: string | number } | [runId: string | number ] | st
     /**
 * @see \App\Http\Controllers\Telegram\TelegramParserController::status
  * @see app/Http/Controllers/Telegram/TelegramParserController.php:29
- * @route '/localhost/telegram/parser/status/{runId}'
+ * @route '/telegram/parser/status/{runId}'
  */
     const statusForm = (args: { runId: string | number } | [runId: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
         action: status.url(args, options),
@@ -129,7 +129,7 @@ status.head = (args: { runId: string | number } | [runId: string | number ] | st
             /**
 * @see \App\Http\Controllers\Telegram\TelegramParserController::status
  * @see app/Http/Controllers/Telegram/TelegramParserController.php:29
- * @route '/localhost/telegram/parser/status/{runId}'
+ * @route '/telegram/parser/status/{runId}'
  */
         statusForm.get = (args: { runId: string | number } | [runId: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
             action: status.url(args, options),
@@ -138,7 +138,7 @@ status.head = (args: { runId: string | number } | [runId: string | number ] | st
             /**
 * @see \App\Http\Controllers\Telegram\TelegramParserController::status
  * @see app/Http/Controllers/Telegram/TelegramParserController.php:29
- * @route '/localhost/telegram/parser/status/{runId}'
+ * @route '/telegram/parser/status/{runId}'
  */
         statusForm.head = (args: { runId: string | number } | [runId: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
             action: status.url(args, {
@@ -154,7 +154,7 @@ status.head = (args: { runId: string | number } | [runId: string | number ] | st
 /**
 * @see \App\Http\Controllers\Telegram\TelegramParserController::stop
  * @see app/Http/Controllers/Telegram/TelegramParserController.php:37
- * @route '/localhost/telegram/parser/stop/{runId}'
+ * @route '/telegram/parser/stop/{runId}'
  */
 export const stop = (args: { runId: string | number } | [runId: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
     url: stop.url(args, options),
@@ -163,13 +163,13 @@ export const stop = (args: { runId: string | number } | [runId: string | number 
 
 stop.definition = {
     methods: ["post"],
-    url: '/localhost/telegram/parser/stop/{runId}',
+    url: '/telegram/parser/stop/{runId}',
 } satisfies RouteDefinition<["post"]>
 
 /**
 * @see \App\Http\Controllers\Telegram\TelegramParserController::stop
  * @see app/Http/Controllers/Telegram/TelegramParserController.php:37
- * @route '/localhost/telegram/parser/stop/{runId}'
+ * @route '/telegram/parser/stop/{runId}'
  */
 stop.url = (args: { runId: string | number } | [runId: string | number ] | string | number, options?: RouteQueryOptions) => {
     if (typeof args === 'string' || typeof args === 'number') {
@@ -197,7 +197,7 @@ stop.url = (args: { runId: string | number } | [runId: string | number ] | strin
 /**
 * @see \App\Http\Controllers\Telegram\TelegramParserController::stop
  * @see app/Http/Controllers/Telegram/TelegramParserController.php:37
- * @route '/localhost/telegram/parser/stop/{runId}'
+ * @route '/telegram/parser/stop/{runId}'
  */
 stop.post = (args: { runId: string | number } | [runId: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
     url: stop.url(args, options),
@@ -207,7 +207,7 @@ stop.post = (args: { runId: string | number } | [runId: string | number ] | stri
     /**
 * @see \App\Http\Controllers\Telegram\TelegramParserController::stop
  * @see app/Http/Controllers/Telegram/TelegramParserController.php:37
- * @route '/localhost/telegram/parser/stop/{runId}'
+ * @route '/telegram/parser/stop/{runId}'
  */
     const stopForm = (args: { runId: string | number } | [runId: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
         action: stop.url(args, options),
@@ -217,7 +217,7 @@ stop.post = (args: { runId: string | number } | [runId: string | number ] | stri
             /**
 * @see \App\Http\Controllers\Telegram\TelegramParserController::stop
  * @see app/Http/Controllers/Telegram/TelegramParserController.php:37
- * @route '/localhost/telegram/parser/stop/{runId}'
+ * @route '/telegram/parser/stop/{runId}'
  */
         stopForm.post = (args: { runId: string | number } | [runId: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
             action: stop.url(args, options),
@@ -228,7 +228,7 @@ stop.post = (args: { runId: string | number } | [runId: string | number ] | stri
 /**
 * @see \App\Http\Controllers\Telegram\TelegramParserController::downloadExcel
  * @see app/Http/Controllers/Telegram/TelegramParserController.php:45
- * @route '/localhost/telegram/parser/download-excel/{runId}'
+ * @route '/telegram/parser/download-excel/{runId}'
  */
 export const downloadExcel = (args: { runId: string | number } | [runId: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: downloadExcel.url(args, options),
@@ -237,13 +237,13 @@ export const downloadExcel = (args: { runId: string | number } | [runId: string 
 
 downloadExcel.definition = {
     methods: ["get","head"],
-    url: '/localhost/telegram/parser/download-excel/{runId}',
+    url: '/telegram/parser/download-excel/{runId}',
 } satisfies RouteDefinition<["get","head"]>
 
 /**
 * @see \App\Http\Controllers\Telegram\TelegramParserController::downloadExcel
  * @see app/Http/Controllers/Telegram/TelegramParserController.php:45
- * @route '/localhost/telegram/parser/download-excel/{runId}'
+ * @route '/telegram/parser/download-excel/{runId}'
  */
 downloadExcel.url = (args: { runId: string | number } | [runId: string | number ] | string | number, options?: RouteQueryOptions) => {
     if (typeof args === 'string' || typeof args === 'number') {
@@ -271,7 +271,7 @@ downloadExcel.url = (args: { runId: string | number } | [runId: string | number 
 /**
 * @see \App\Http\Controllers\Telegram\TelegramParserController::downloadExcel
  * @see app/Http/Controllers/Telegram/TelegramParserController.php:45
- * @route '/localhost/telegram/parser/download-excel/{runId}'
+ * @route '/telegram/parser/download-excel/{runId}'
  */
 downloadExcel.get = (args: { runId: string | number } | [runId: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: downloadExcel.url(args, options),
@@ -280,7 +280,7 @@ downloadExcel.get = (args: { runId: string | number } | [runId: string | number 
 /**
 * @see \App\Http\Controllers\Telegram\TelegramParserController::downloadExcel
  * @see app/Http/Controllers/Telegram/TelegramParserController.php:45
- * @route '/localhost/telegram/parser/download-excel/{runId}'
+ * @route '/telegram/parser/download-excel/{runId}'
  */
 downloadExcel.head = (args: { runId: string | number } | [runId: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     url: downloadExcel.url(args, options),
@@ -290,7 +290,7 @@ downloadExcel.head = (args: { runId: string | number } | [runId: string | number
     /**
 * @see \App\Http\Controllers\Telegram\TelegramParserController::downloadExcel
  * @see app/Http/Controllers/Telegram/TelegramParserController.php:45
- * @route '/localhost/telegram/parser/download-excel/{runId}'
+ * @route '/telegram/parser/download-excel/{runId}'
  */
     const downloadExcelForm = (args: { runId: string | number } | [runId: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
         action: downloadExcel.url(args, options),
@@ -300,7 +300,7 @@ downloadExcel.head = (args: { runId: string | number } | [runId: string | number
             /**
 * @see \App\Http\Controllers\Telegram\TelegramParserController::downloadExcel
  * @see app/Http/Controllers/Telegram/TelegramParserController.php:45
- * @route '/localhost/telegram/parser/download-excel/{runId}'
+ * @route '/telegram/parser/download-excel/{runId}'
  */
         downloadExcelForm.get = (args: { runId: string | number } | [runId: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
             action: downloadExcel.url(args, options),
@@ -309,7 +309,7 @@ downloadExcel.head = (args: { runId: string | number } | [runId: string | number
             /**
 * @see \App\Http\Controllers\Telegram\TelegramParserController::downloadExcel
  * @see app/Http/Controllers/Telegram/TelegramParserController.php:45
- * @route '/localhost/telegram/parser/download-excel/{runId}'
+ * @route '/telegram/parser/download-excel/{runId}'
  */
         downloadExcelForm.head = (args: { runId: string | number } | [runId: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
             action: downloadExcel.url(args, {
@@ -325,7 +325,7 @@ downloadExcel.head = (args: { runId: string | number } | [runId: string | number
 /**
 * @see \App\Http\Controllers\Telegram\TelegramParserController::downloadJson
  * @see app/Http/Controllers/Telegram/TelegramParserController.php:53
- * @route '/localhost/telegram/parser/download-json/{runId}'
+ * @route '/telegram/parser/download-json/{runId}'
  */
 export const downloadJson = (args: { runId: string | number } | [runId: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: downloadJson.url(args, options),
@@ -334,13 +334,13 @@ export const downloadJson = (args: { runId: string | number } | [runId: string |
 
 downloadJson.definition = {
     methods: ["get","head"],
-    url: '/localhost/telegram/parser/download-json/{runId}',
+    url: '/telegram/parser/download-json/{runId}',
 } satisfies RouteDefinition<["get","head"]>
 
 /**
 * @see \App\Http\Controllers\Telegram\TelegramParserController::downloadJson
  * @see app/Http/Controllers/Telegram/TelegramParserController.php:53
- * @route '/localhost/telegram/parser/download-json/{runId}'
+ * @route '/telegram/parser/download-json/{runId}'
  */
 downloadJson.url = (args: { runId: string | number } | [runId: string | number ] | string | number, options?: RouteQueryOptions) => {
     if (typeof args === 'string' || typeof args === 'number') {
@@ -368,7 +368,7 @@ downloadJson.url = (args: { runId: string | number } | [runId: string | number ]
 /**
 * @see \App\Http\Controllers\Telegram\TelegramParserController::downloadJson
  * @see app/Http/Controllers/Telegram/TelegramParserController.php:53
- * @route '/localhost/telegram/parser/download-json/{runId}'
+ * @route '/telegram/parser/download-json/{runId}'
  */
 downloadJson.get = (args: { runId: string | number } | [runId: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: downloadJson.url(args, options),
@@ -377,7 +377,7 @@ downloadJson.get = (args: { runId: string | number } | [runId: string | number ]
 /**
 * @see \App\Http\Controllers\Telegram\TelegramParserController::downloadJson
  * @see app/Http/Controllers/Telegram/TelegramParserController.php:53
- * @route '/localhost/telegram/parser/download-json/{runId}'
+ * @route '/telegram/parser/download-json/{runId}'
  */
 downloadJson.head = (args: { runId: string | number } | [runId: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     url: downloadJson.url(args, options),
@@ -387,7 +387,7 @@ downloadJson.head = (args: { runId: string | number } | [runId: string | number 
     /**
 * @see \App\Http\Controllers\Telegram\TelegramParserController::downloadJson
  * @see app/Http/Controllers/Telegram/TelegramParserController.php:53
- * @route '/localhost/telegram/parser/download-json/{runId}'
+ * @route '/telegram/parser/download-json/{runId}'
  */
     const downloadJsonForm = (args: { runId: string | number } | [runId: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
         action: downloadJson.url(args, options),
@@ -397,7 +397,7 @@ downloadJson.head = (args: { runId: string | number } | [runId: string | number 
             /**
 * @see \App\Http\Controllers\Telegram\TelegramParserController::downloadJson
  * @see app/Http/Controllers/Telegram/TelegramParserController.php:53
- * @route '/localhost/telegram/parser/download-json/{runId}'
+ * @route '/telegram/parser/download-json/{runId}'
  */
         downloadJsonForm.get = (args: { runId: string | number } | [runId: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
             action: downloadJson.url(args, options),
@@ -406,7 +406,7 @@ downloadJson.head = (args: { runId: string | number } | [runId: string | number 
             /**
 * @see \App\Http\Controllers\Telegram\TelegramParserController::downloadJson
  * @see app/Http/Controllers/Telegram/TelegramParserController.php:53
- * @route '/localhost/telegram/parser/download-json/{runId}'
+ * @route '/telegram/parser/download-json/{runId}'
  */
         downloadJsonForm.head = (args: { runId: string | number } | [runId: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
             action: downloadJson.url(args, {

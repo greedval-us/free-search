@@ -2,7 +2,7 @@ import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFo
 /**
 * @see \App\Http\Controllers\SiteIntel\SiteIntelController::siteHealth
  * @see app/Http/Controllers/SiteIntel/SiteIntelController.php:26
- * @route '/localhost/site-intel/site-health'
+ * @route '/site-intel/site-health'
  */
 export const siteHealth = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: siteHealth.url(options),
@@ -11,13 +11,13 @@ export const siteHealth = (options?: RouteQueryOptions): RouteDefinition<'get'> 
 
 siteHealth.definition = {
     methods: ["get","head"],
-    url: '/localhost/site-intel/site-health',
+    url: '/site-intel/site-health',
 } satisfies RouteDefinition<["get","head"]>
 
 /**
 * @see \App\Http\Controllers\SiteIntel\SiteIntelController::siteHealth
  * @see app/Http/Controllers/SiteIntel/SiteIntelController.php:26
- * @route '/localhost/site-intel/site-health'
+ * @route '/site-intel/site-health'
  */
 siteHealth.url = (options?: RouteQueryOptions) => {
     return siteHealth.definition.url + queryParams(options)
@@ -26,7 +26,7 @@ siteHealth.url = (options?: RouteQueryOptions) => {
 /**
 * @see \App\Http\Controllers\SiteIntel\SiteIntelController::siteHealth
  * @see app/Http/Controllers/SiteIntel/SiteIntelController.php:26
- * @route '/localhost/site-intel/site-health'
+ * @route '/site-intel/site-health'
  */
 siteHealth.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: siteHealth.url(options),
@@ -35,7 +35,7 @@ siteHealth.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
 /**
 * @see \App\Http\Controllers\SiteIntel\SiteIntelController::siteHealth
  * @see app/Http/Controllers/SiteIntel/SiteIntelController.php:26
- * @route '/localhost/site-intel/site-health'
+ * @route '/site-intel/site-health'
  */
 siteHealth.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     url: siteHealth.url(options),
@@ -45,7 +45,7 @@ siteHealth.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     /**
 * @see \App\Http\Controllers\SiteIntel\SiteIntelController::siteHealth
  * @see app/Http/Controllers/SiteIntel/SiteIntelController.php:26
- * @route '/localhost/site-intel/site-health'
+ * @route '/site-intel/site-health'
  */
     const siteHealthForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
         action: siteHealth.url(options),
@@ -55,7 +55,7 @@ siteHealth.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
             /**
 * @see \App\Http\Controllers\SiteIntel\SiteIntelController::siteHealth
  * @see app/Http/Controllers/SiteIntel/SiteIntelController.php:26
- * @route '/localhost/site-intel/site-health'
+ * @route '/site-intel/site-health'
  */
         siteHealthForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
             action: siteHealth.url(options),
@@ -64,7 +64,7 @@ siteHealth.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
             /**
 * @see \App\Http\Controllers\SiteIntel\SiteIntelController::siteHealth
  * @see app/Http/Controllers/SiteIntel/SiteIntelController.php:26
- * @route '/localhost/site-intel/site-health'
+ * @route '/site-intel/site-health'
  */
         siteHealthForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
             action: siteHealth.url({
@@ -80,7 +80,7 @@ siteHealth.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 /**
 * @see \App\Http\Controllers\SiteIntel\SiteIntelController::domainLite
  * @see app/Http/Controllers/SiteIntel/SiteIntelController.php:44
- * @route '/localhost/site-intel/domain-lite'
+ * @route '/site-intel/domain-lite'
  */
 export const domainLite = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: domainLite.url(options),
@@ -89,13 +89,13 @@ export const domainLite = (options?: RouteQueryOptions): RouteDefinition<'get'> 
 
 domainLite.definition = {
     methods: ["get","head"],
-    url: '/localhost/site-intel/domain-lite',
+    url: '/site-intel/domain-lite',
 } satisfies RouteDefinition<["get","head"]>
 
 /**
 * @see \App\Http\Controllers\SiteIntel\SiteIntelController::domainLite
  * @see app/Http/Controllers/SiteIntel/SiteIntelController.php:44
- * @route '/localhost/site-intel/domain-lite'
+ * @route '/site-intel/domain-lite'
  */
 domainLite.url = (options?: RouteQueryOptions) => {
     return domainLite.definition.url + queryParams(options)
@@ -104,7 +104,7 @@ domainLite.url = (options?: RouteQueryOptions) => {
 /**
 * @see \App\Http\Controllers\SiteIntel\SiteIntelController::domainLite
  * @see app/Http/Controllers/SiteIntel/SiteIntelController.php:44
- * @route '/localhost/site-intel/domain-lite'
+ * @route '/site-intel/domain-lite'
  */
 domainLite.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: domainLite.url(options),
@@ -113,7 +113,7 @@ domainLite.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
 /**
 * @see \App\Http\Controllers\SiteIntel\SiteIntelController::domainLite
  * @see app/Http/Controllers/SiteIntel/SiteIntelController.php:44
- * @route '/localhost/site-intel/domain-lite'
+ * @route '/site-intel/domain-lite'
  */
 domainLite.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     url: domainLite.url(options),
@@ -123,7 +123,7 @@ domainLite.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     /**
 * @see \App\Http\Controllers\SiteIntel\SiteIntelController::domainLite
  * @see app/Http/Controllers/SiteIntel/SiteIntelController.php:44
- * @route '/localhost/site-intel/domain-lite'
+ * @route '/site-intel/domain-lite'
  */
     const domainLiteForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
         action: domainLite.url(options),
@@ -133,7 +133,7 @@ domainLite.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
             /**
 * @see \App\Http\Controllers\SiteIntel\SiteIntelController::domainLite
  * @see app/Http/Controllers/SiteIntel/SiteIntelController.php:44
- * @route '/localhost/site-intel/domain-lite'
+ * @route '/site-intel/domain-lite'
  */
         domainLiteForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
             action: domainLite.url(options),
@@ -142,7 +142,7 @@ domainLite.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
             /**
 * @see \App\Http\Controllers\SiteIntel\SiteIntelController::domainLite
  * @see app/Http/Controllers/SiteIntel/SiteIntelController.php:44
- * @route '/localhost/site-intel/domain-lite'
+ * @route '/site-intel/domain-lite'
  */
         domainLiteForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
             action: domainLite.url({
@@ -158,7 +158,7 @@ domainLite.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 /**
 * @see \App\Http\Controllers\SiteIntel\SiteIntelController::analytics
  * @see app/Http/Controllers/SiteIntel/SiteIntelController.php:62
- * @route '/localhost/site-intel/analytics'
+ * @route '/site-intel/analytics'
  */
 export const analytics = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: analytics.url(options),
@@ -167,13 +167,13 @@ export const analytics = (options?: RouteQueryOptions): RouteDefinition<'get'> =
 
 analytics.definition = {
     methods: ["get","head"],
-    url: '/localhost/site-intel/analytics',
+    url: '/site-intel/analytics',
 } satisfies RouteDefinition<["get","head"]>
 
 /**
 * @see \App\Http\Controllers\SiteIntel\SiteIntelController::analytics
  * @see app/Http/Controllers/SiteIntel/SiteIntelController.php:62
- * @route '/localhost/site-intel/analytics'
+ * @route '/site-intel/analytics'
  */
 analytics.url = (options?: RouteQueryOptions) => {
     return analytics.definition.url + queryParams(options)
@@ -182,7 +182,7 @@ analytics.url = (options?: RouteQueryOptions) => {
 /**
 * @see \App\Http\Controllers\SiteIntel\SiteIntelController::analytics
  * @see app/Http/Controllers/SiteIntel/SiteIntelController.php:62
- * @route '/localhost/site-intel/analytics'
+ * @route '/site-intel/analytics'
  */
 analytics.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: analytics.url(options),
@@ -191,7 +191,7 @@ analytics.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
 /**
 * @see \App\Http\Controllers\SiteIntel\SiteIntelController::analytics
  * @see app/Http/Controllers/SiteIntel/SiteIntelController.php:62
- * @route '/localhost/site-intel/analytics'
+ * @route '/site-intel/analytics'
  */
 analytics.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     url: analytics.url(options),
@@ -201,7 +201,7 @@ analytics.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     /**
 * @see \App\Http\Controllers\SiteIntel\SiteIntelController::analytics
  * @see app/Http/Controllers/SiteIntel/SiteIntelController.php:62
- * @route '/localhost/site-intel/analytics'
+ * @route '/site-intel/analytics'
  */
     const analyticsForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
         action: analytics.url(options),
@@ -211,7 +211,7 @@ analytics.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
             /**
 * @see \App\Http\Controllers\SiteIntel\SiteIntelController::analytics
  * @see app/Http/Controllers/SiteIntel/SiteIntelController.php:62
- * @route '/localhost/site-intel/analytics'
+ * @route '/site-intel/analytics'
  */
         analyticsForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
             action: analytics.url(options),
@@ -220,7 +220,7 @@ analytics.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
             /**
 * @see \App\Http\Controllers\SiteIntel\SiteIntelController::analytics
  * @see app/Http/Controllers/SiteIntel/SiteIntelController.php:62
- * @route '/localhost/site-intel/analytics'
+ * @route '/site-intel/analytics'
  */
         analyticsForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
             action: analytics.url({
@@ -236,7 +236,7 @@ analytics.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 /**
 * @see \App\Http\Controllers\SiteIntel\SiteIntelController::report
  * @see app/Http/Controllers/SiteIntel/SiteIntelController.php:82
- * @route '/localhost/site-intel/report'
+ * @route '/site-intel/report'
  */
 export const report = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: report.url(options),
@@ -245,13 +245,13 @@ export const report = (options?: RouteQueryOptions): RouteDefinition<'get'> => (
 
 report.definition = {
     methods: ["get","head"],
-    url: '/localhost/site-intel/report',
+    url: '/site-intel/report',
 } satisfies RouteDefinition<["get","head"]>
 
 /**
 * @see \App\Http\Controllers\SiteIntel\SiteIntelController::report
  * @see app/Http/Controllers/SiteIntel/SiteIntelController.php:82
- * @route '/localhost/site-intel/report'
+ * @route '/site-intel/report'
  */
 report.url = (options?: RouteQueryOptions) => {
     return report.definition.url + queryParams(options)
@@ -260,7 +260,7 @@ report.url = (options?: RouteQueryOptions) => {
 /**
 * @see \App\Http\Controllers\SiteIntel\SiteIntelController::report
  * @see app/Http/Controllers/SiteIntel/SiteIntelController.php:82
- * @route '/localhost/site-intel/report'
+ * @route '/site-intel/report'
  */
 report.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: report.url(options),
@@ -269,7 +269,7 @@ report.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
 /**
 * @see \App\Http\Controllers\SiteIntel\SiteIntelController::report
  * @see app/Http/Controllers/SiteIntel/SiteIntelController.php:82
- * @route '/localhost/site-intel/report'
+ * @route '/site-intel/report'
  */
 report.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     url: report.url(options),
@@ -279,7 +279,7 @@ report.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     /**
 * @see \App\Http\Controllers\SiteIntel\SiteIntelController::report
  * @see app/Http/Controllers/SiteIntel/SiteIntelController.php:82
- * @route '/localhost/site-intel/report'
+ * @route '/site-intel/report'
  */
     const reportForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
         action: report.url(options),
@@ -289,7 +289,7 @@ report.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
             /**
 * @see \App\Http\Controllers\SiteIntel\SiteIntelController::report
  * @see app/Http/Controllers/SiteIntel/SiteIntelController.php:82
- * @route '/localhost/site-intel/report'
+ * @route '/site-intel/report'
  */
         reportForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
             action: report.url(options),
@@ -298,7 +298,7 @@ report.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
             /**
 * @see \App\Http\Controllers\SiteIntel\SiteIntelController::report
  * @see app/Http/Controllers/SiteIntel/SiteIntelController.php:82
- * @route '/localhost/site-intel/report'
+ * @route '/site-intel/report'
  */
         reportForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
             action: report.url({

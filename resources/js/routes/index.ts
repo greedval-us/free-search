@@ -2,7 +2,7 @@ import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFo
 /**
 * @see \Laravel\Fortify\Http\Controllers\AuthenticatedSessionController::login
  * @see vendor/laravel/fortify/src/Http/Controllers/AuthenticatedSessionController.php:47
- * @route '/localhost/login'
+ * @route '/login'
  */
 export const login = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: login.url(options),
@@ -11,13 +11,13 @@ export const login = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
 
 login.definition = {
     methods: ["get","head"],
-    url: '/localhost/login',
+    url: '/login',
 } satisfies RouteDefinition<["get","head"]>
 
 /**
 * @see \Laravel\Fortify\Http\Controllers\AuthenticatedSessionController::login
  * @see vendor/laravel/fortify/src/Http/Controllers/AuthenticatedSessionController.php:47
- * @route '/localhost/login'
+ * @route '/login'
  */
 login.url = (options?: RouteQueryOptions) => {
     return login.definition.url + queryParams(options)
@@ -26,7 +26,7 @@ login.url = (options?: RouteQueryOptions) => {
 /**
 * @see \Laravel\Fortify\Http\Controllers\AuthenticatedSessionController::login
  * @see vendor/laravel/fortify/src/Http/Controllers/AuthenticatedSessionController.php:47
- * @route '/localhost/login'
+ * @route '/login'
  */
 login.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: login.url(options),
@@ -35,7 +35,7 @@ login.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
 /**
 * @see \Laravel\Fortify\Http\Controllers\AuthenticatedSessionController::login
  * @see vendor/laravel/fortify/src/Http/Controllers/AuthenticatedSessionController.php:47
- * @route '/localhost/login'
+ * @route '/login'
  */
 login.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     url: login.url(options),
@@ -45,7 +45,7 @@ login.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     /**
 * @see \Laravel\Fortify\Http\Controllers\AuthenticatedSessionController::login
  * @see vendor/laravel/fortify/src/Http/Controllers/AuthenticatedSessionController.php:47
- * @route '/localhost/login'
+ * @route '/login'
  */
     const loginForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
         action: login.url(options),
@@ -55,7 +55,7 @@ login.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
             /**
 * @see \Laravel\Fortify\Http\Controllers\AuthenticatedSessionController::login
  * @see vendor/laravel/fortify/src/Http/Controllers/AuthenticatedSessionController.php:47
- * @route '/localhost/login'
+ * @route '/login'
  */
         loginForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
             action: login.url(options),
@@ -64,7 +64,7 @@ login.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
             /**
 * @see \Laravel\Fortify\Http\Controllers\AuthenticatedSessionController::login
  * @see vendor/laravel/fortify/src/Http/Controllers/AuthenticatedSessionController.php:47
- * @route '/localhost/login'
+ * @route '/login'
  */
         loginForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
             action: login.url({
@@ -80,7 +80,7 @@ login.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 /**
 * @see \Laravel\Fortify\Http\Controllers\AuthenticatedSessionController::logout
  * @see vendor/laravel/fortify/src/Http/Controllers/AuthenticatedSessionController.php:100
- * @route '/localhost/logout'
+ * @route '/logout'
  */
 export const logout = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
     url: logout.url(options),
@@ -89,13 +89,13 @@ export const logout = (options?: RouteQueryOptions): RouteDefinition<'post'> => 
 
 logout.definition = {
     methods: ["post"],
-    url: '/localhost/logout',
+    url: '/logout',
 } satisfies RouteDefinition<["post"]>
 
 /**
 * @see \Laravel\Fortify\Http\Controllers\AuthenticatedSessionController::logout
  * @see vendor/laravel/fortify/src/Http/Controllers/AuthenticatedSessionController.php:100
- * @route '/localhost/logout'
+ * @route '/logout'
  */
 logout.url = (options?: RouteQueryOptions) => {
     return logout.definition.url + queryParams(options)
@@ -104,7 +104,7 @@ logout.url = (options?: RouteQueryOptions) => {
 /**
 * @see \Laravel\Fortify\Http\Controllers\AuthenticatedSessionController::logout
  * @see vendor/laravel/fortify/src/Http/Controllers/AuthenticatedSessionController.php:100
- * @route '/localhost/logout'
+ * @route '/logout'
  */
 logout.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
     url: logout.url(options),
@@ -114,7 +114,7 @@ logout.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
     /**
 * @see \Laravel\Fortify\Http\Controllers\AuthenticatedSessionController::logout
  * @see vendor/laravel/fortify/src/Http/Controllers/AuthenticatedSessionController.php:100
- * @route '/localhost/logout'
+ * @route '/logout'
  */
     const logoutForm = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
         action: logout.url(options),
@@ -124,7 +124,7 @@ logout.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
             /**
 * @see \Laravel\Fortify\Http\Controllers\AuthenticatedSessionController::logout
  * @see vendor/laravel/fortify/src/Http/Controllers/AuthenticatedSessionController.php:100
- * @route '/localhost/logout'
+ * @route '/logout'
  */
         logoutForm.post = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
             action: logout.url(options),
@@ -135,7 +135,7 @@ logout.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
 /**
 * @see \Laravel\Fortify\Http\Controllers\RegisteredUserController::register
  * @see vendor/laravel/fortify/src/Http/Controllers/RegisteredUserController.php:41
- * @route '/localhost/register'
+ * @route '/register'
  */
 export const register = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: register.url(options),
@@ -144,13 +144,13 @@ export const register = (options?: RouteQueryOptions): RouteDefinition<'get'> =>
 
 register.definition = {
     methods: ["get","head"],
-    url: '/localhost/register',
+    url: '/register',
 } satisfies RouteDefinition<["get","head"]>
 
 /**
 * @see \Laravel\Fortify\Http\Controllers\RegisteredUserController::register
  * @see vendor/laravel/fortify/src/Http/Controllers/RegisteredUserController.php:41
- * @route '/localhost/register'
+ * @route '/register'
  */
 register.url = (options?: RouteQueryOptions) => {
     return register.definition.url + queryParams(options)
@@ -159,7 +159,7 @@ register.url = (options?: RouteQueryOptions) => {
 /**
 * @see \Laravel\Fortify\Http\Controllers\RegisteredUserController::register
  * @see vendor/laravel/fortify/src/Http/Controllers/RegisteredUserController.php:41
- * @route '/localhost/register'
+ * @route '/register'
  */
 register.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: register.url(options),
@@ -168,7 +168,7 @@ register.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
 /**
 * @see \Laravel\Fortify\Http\Controllers\RegisteredUserController::register
  * @see vendor/laravel/fortify/src/Http/Controllers/RegisteredUserController.php:41
- * @route '/localhost/register'
+ * @route '/register'
  */
 register.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     url: register.url(options),
@@ -178,7 +178,7 @@ register.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     /**
 * @see \Laravel\Fortify\Http\Controllers\RegisteredUserController::register
  * @see vendor/laravel/fortify/src/Http/Controllers/RegisteredUserController.php:41
- * @route '/localhost/register'
+ * @route '/register'
  */
     const registerForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
         action: register.url(options),
@@ -188,7 +188,7 @@ register.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
             /**
 * @see \Laravel\Fortify\Http\Controllers\RegisteredUserController::register
  * @see vendor/laravel/fortify/src/Http/Controllers/RegisteredUserController.php:41
- * @route '/localhost/register'
+ * @route '/register'
  */
         registerForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
             action: register.url(options),
@@ -197,7 +197,7 @@ register.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
             /**
 * @see \Laravel\Fortify\Http\Controllers\RegisteredUserController::register
  * @see vendor/laravel/fortify/src/Http/Controllers/RegisteredUserController.php:41
- * @route '/localhost/register'
+ * @route '/register'
  */
         registerForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
             action: register.url({
@@ -213,7 +213,7 @@ register.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 /**
 * @see \Inertia\Controller::__invoke
  * @see vendor/inertiajs/inertia-laravel/src/Controller.php:13
- * @route '/localhost'
+ * @route '/'
  */
 export const home = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: home.url(options),
@@ -222,13 +222,13 @@ export const home = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
 
 home.definition = {
     methods: ["get","head"],
-    url: '/localhost',
+    url: '/',
 } satisfies RouteDefinition<["get","head"]>
 
 /**
 * @see \Inertia\Controller::__invoke
  * @see vendor/inertiajs/inertia-laravel/src/Controller.php:13
- * @route '/localhost'
+ * @route '/'
  */
 home.url = (options?: RouteQueryOptions) => {
     return home.definition.url + queryParams(options)
@@ -237,7 +237,7 @@ home.url = (options?: RouteQueryOptions) => {
 /**
 * @see \Inertia\Controller::__invoke
  * @see vendor/inertiajs/inertia-laravel/src/Controller.php:13
- * @route '/localhost'
+ * @route '/'
  */
 home.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: home.url(options),
@@ -246,7 +246,7 @@ home.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
 /**
 * @see \Inertia\Controller::__invoke
  * @see vendor/inertiajs/inertia-laravel/src/Controller.php:13
- * @route '/localhost'
+ * @route '/'
  */
 home.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     url: home.url(options),
@@ -256,7 +256,7 @@ home.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     /**
 * @see \Inertia\Controller::__invoke
  * @see vendor/inertiajs/inertia-laravel/src/Controller.php:13
- * @route '/localhost'
+ * @route '/'
  */
     const homeForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
         action: home.url(options),
@@ -266,7 +266,7 @@ home.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
             /**
 * @see \Inertia\Controller::__invoke
  * @see vendor/inertiajs/inertia-laravel/src/Controller.php:13
- * @route '/localhost'
+ * @route '/'
  */
         homeForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
             action: home.url(options),
@@ -275,7 +275,7 @@ home.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
             /**
 * @see \Inertia\Controller::__invoke
  * @see vendor/inertiajs/inertia-laravel/src/Controller.php:13
- * @route '/localhost'
+ * @route '/'
  */
         homeForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
             action: home.url({
@@ -291,7 +291,7 @@ home.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 /**
 * @see \Inertia\Controller::__invoke
  * @see vendor/inertiajs/inertia-laravel/src/Controller.php:13
- * @route '/localhost/dashboard'
+ * @route '/dashboard'
  */
 export const dashboard = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: dashboard.url(options),
@@ -300,13 +300,13 @@ export const dashboard = (options?: RouteQueryOptions): RouteDefinition<'get'> =
 
 dashboard.definition = {
     methods: ["get","head"],
-    url: '/localhost/dashboard',
+    url: '/dashboard',
 } satisfies RouteDefinition<["get","head"]>
 
 /**
 * @see \Inertia\Controller::__invoke
  * @see vendor/inertiajs/inertia-laravel/src/Controller.php:13
- * @route '/localhost/dashboard'
+ * @route '/dashboard'
  */
 dashboard.url = (options?: RouteQueryOptions) => {
     return dashboard.definition.url + queryParams(options)
@@ -315,7 +315,7 @@ dashboard.url = (options?: RouteQueryOptions) => {
 /**
 * @see \Inertia\Controller::__invoke
  * @see vendor/inertiajs/inertia-laravel/src/Controller.php:13
- * @route '/localhost/dashboard'
+ * @route '/dashboard'
  */
 dashboard.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: dashboard.url(options),
@@ -324,7 +324,7 @@ dashboard.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
 /**
 * @see \Inertia\Controller::__invoke
  * @see vendor/inertiajs/inertia-laravel/src/Controller.php:13
- * @route '/localhost/dashboard'
+ * @route '/dashboard'
  */
 dashboard.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     url: dashboard.url(options),
@@ -334,7 +334,7 @@ dashboard.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     /**
 * @see \Inertia\Controller::__invoke
  * @see vendor/inertiajs/inertia-laravel/src/Controller.php:13
- * @route '/localhost/dashboard'
+ * @route '/dashboard'
  */
     const dashboardForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
         action: dashboard.url(options),
@@ -344,7 +344,7 @@ dashboard.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
             /**
 * @see \Inertia\Controller::__invoke
  * @see vendor/inertiajs/inertia-laravel/src/Controller.php:13
- * @route '/localhost/dashboard'
+ * @route '/dashboard'
  */
         dashboardForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
             action: dashboard.url(options),
@@ -353,7 +353,7 @@ dashboard.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
             /**
 * @see \Inertia\Controller::__invoke
  * @see vendor/inertiajs/inertia-laravel/src/Controller.php:13
- * @route '/localhost/dashboard'
+ * @route '/dashboard'
  */
         dashboardForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
             action: dashboard.url({
@@ -369,7 +369,7 @@ dashboard.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 /**
 * @see \Inertia\Controller::__invoke
  * @see vendor/inertiajs/inertia-laravel/src/Controller.php:13
- * @route '/localhost/telegram'
+ * @route '/telegram'
  */
 export const telegram = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: telegram.url(options),
@@ -378,13 +378,13 @@ export const telegram = (options?: RouteQueryOptions): RouteDefinition<'get'> =>
 
 telegram.definition = {
     methods: ["get","head"],
-    url: '/localhost/telegram',
+    url: '/telegram',
 } satisfies RouteDefinition<["get","head"]>
 
 /**
 * @see \Inertia\Controller::__invoke
  * @see vendor/inertiajs/inertia-laravel/src/Controller.php:13
- * @route '/localhost/telegram'
+ * @route '/telegram'
  */
 telegram.url = (options?: RouteQueryOptions) => {
     return telegram.definition.url + queryParams(options)
@@ -393,7 +393,7 @@ telegram.url = (options?: RouteQueryOptions) => {
 /**
 * @see \Inertia\Controller::__invoke
  * @see vendor/inertiajs/inertia-laravel/src/Controller.php:13
- * @route '/localhost/telegram'
+ * @route '/telegram'
  */
 telegram.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: telegram.url(options),
@@ -402,7 +402,7 @@ telegram.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
 /**
 * @see \Inertia\Controller::__invoke
  * @see vendor/inertiajs/inertia-laravel/src/Controller.php:13
- * @route '/localhost/telegram'
+ * @route '/telegram'
  */
 telegram.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     url: telegram.url(options),
@@ -412,7 +412,7 @@ telegram.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     /**
 * @see \Inertia\Controller::__invoke
  * @see vendor/inertiajs/inertia-laravel/src/Controller.php:13
- * @route '/localhost/telegram'
+ * @route '/telegram'
  */
     const telegramForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
         action: telegram.url(options),
@@ -422,7 +422,7 @@ telegram.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
             /**
 * @see \Inertia\Controller::__invoke
  * @see vendor/inertiajs/inertia-laravel/src/Controller.php:13
- * @route '/localhost/telegram'
+ * @route '/telegram'
  */
         telegramForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
             action: telegram.url(options),
@@ -431,7 +431,7 @@ telegram.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
             /**
 * @see \Inertia\Controller::__invoke
  * @see vendor/inertiajs/inertia-laravel/src/Controller.php:13
- * @route '/localhost/telegram'
+ * @route '/telegram'
  */
         telegramForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
             action: telegram.url({
@@ -447,7 +447,7 @@ telegram.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 /**
 * @see \Inertia\Controller::__invoke
  * @see vendor/inertiajs/inertia-laravel/src/Controller.php:13
- * @route '/localhost/username'
+ * @route '/username'
  */
 export const username = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: username.url(options),
@@ -456,13 +456,13 @@ export const username = (options?: RouteQueryOptions): RouteDefinition<'get'> =>
 
 username.definition = {
     methods: ["get","head"],
-    url: '/localhost/username',
+    url: '/username',
 } satisfies RouteDefinition<["get","head"]>
 
 /**
 * @see \Inertia\Controller::__invoke
  * @see vendor/inertiajs/inertia-laravel/src/Controller.php:13
- * @route '/localhost/username'
+ * @route '/username'
  */
 username.url = (options?: RouteQueryOptions) => {
     return username.definition.url + queryParams(options)
@@ -471,7 +471,7 @@ username.url = (options?: RouteQueryOptions) => {
 /**
 * @see \Inertia\Controller::__invoke
  * @see vendor/inertiajs/inertia-laravel/src/Controller.php:13
- * @route '/localhost/username'
+ * @route '/username'
  */
 username.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: username.url(options),
@@ -480,7 +480,7 @@ username.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
 /**
 * @see \Inertia\Controller::__invoke
  * @see vendor/inertiajs/inertia-laravel/src/Controller.php:13
- * @route '/localhost/username'
+ * @route '/username'
  */
 username.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     url: username.url(options),
@@ -490,7 +490,7 @@ username.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     /**
 * @see \Inertia\Controller::__invoke
  * @see vendor/inertiajs/inertia-laravel/src/Controller.php:13
- * @route '/localhost/username'
+ * @route '/username'
  */
     const usernameForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
         action: username.url(options),
@@ -500,7 +500,7 @@ username.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
             /**
 * @see \Inertia\Controller::__invoke
  * @see vendor/inertiajs/inertia-laravel/src/Controller.php:13
- * @route '/localhost/username'
+ * @route '/username'
  */
         usernameForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
             action: username.url(options),
@@ -509,7 +509,7 @@ username.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
             /**
 * @see \Inertia\Controller::__invoke
  * @see vendor/inertiajs/inertia-laravel/src/Controller.php:13
- * @route '/localhost/username'
+ * @route '/username'
  */
         usernameForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
             action: username.url({
@@ -525,7 +525,7 @@ username.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 /**
 * @see \Inertia\Controller::__invoke
  * @see vendor/inertiajs/inertia-laravel/src/Controller.php:13
- * @route '/localhost/site-intel'
+ * @route '/site-intel'
  */
 export const siteIntel = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: siteIntel.url(options),
@@ -534,13 +534,13 @@ export const siteIntel = (options?: RouteQueryOptions): RouteDefinition<'get'> =
 
 siteIntel.definition = {
     methods: ["get","head"],
-    url: '/localhost/site-intel',
+    url: '/site-intel',
 } satisfies RouteDefinition<["get","head"]>
 
 /**
 * @see \Inertia\Controller::__invoke
  * @see vendor/inertiajs/inertia-laravel/src/Controller.php:13
- * @route '/localhost/site-intel'
+ * @route '/site-intel'
  */
 siteIntel.url = (options?: RouteQueryOptions) => {
     return siteIntel.definition.url + queryParams(options)
@@ -549,7 +549,7 @@ siteIntel.url = (options?: RouteQueryOptions) => {
 /**
 * @see \Inertia\Controller::__invoke
  * @see vendor/inertiajs/inertia-laravel/src/Controller.php:13
- * @route '/localhost/site-intel'
+ * @route '/site-intel'
  */
 siteIntel.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: siteIntel.url(options),
@@ -558,7 +558,7 @@ siteIntel.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
 /**
 * @see \Inertia\Controller::__invoke
  * @see vendor/inertiajs/inertia-laravel/src/Controller.php:13
- * @route '/localhost/site-intel'
+ * @route '/site-intel'
  */
 siteIntel.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     url: siteIntel.url(options),
@@ -568,7 +568,7 @@ siteIntel.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     /**
 * @see \Inertia\Controller::__invoke
  * @see vendor/inertiajs/inertia-laravel/src/Controller.php:13
- * @route '/localhost/site-intel'
+ * @route '/site-intel'
  */
     const siteIntelForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
         action: siteIntel.url(options),
@@ -578,7 +578,7 @@ siteIntel.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
             /**
 * @see \Inertia\Controller::__invoke
  * @see vendor/inertiajs/inertia-laravel/src/Controller.php:13
- * @route '/localhost/site-intel'
+ * @route '/site-intel'
  */
         siteIntelForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
             action: siteIntel.url(options),
@@ -587,7 +587,7 @@ siteIntel.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
             /**
 * @see \Inertia\Controller::__invoke
  * @see vendor/inertiajs/inertia-laravel/src/Controller.php:13
- * @route '/localhost/site-intel'
+ * @route '/site-intel'
  */
         siteIntelForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
             action: siteIntel.url({

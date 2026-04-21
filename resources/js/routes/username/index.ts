@@ -2,7 +2,7 @@ import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFo
 /**
 * @see \App\Http\Controllers\Username\UsernameSearchController::search
  * @see app/Http/Controllers/Username/UsernameSearchController.php:20
- * @route '/localhost/username/search'
+ * @route '/username/search'
  */
 export const search = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: search.url(options),
@@ -11,13 +11,13 @@ export const search = (options?: RouteQueryOptions): RouteDefinition<'get'> => (
 
 search.definition = {
     methods: ["get","head"],
-    url: '/localhost/username/search',
+    url: '/username/search',
 } satisfies RouteDefinition<["get","head"]>
 
 /**
 * @see \App\Http\Controllers\Username\UsernameSearchController::search
  * @see app/Http/Controllers/Username/UsernameSearchController.php:20
- * @route '/localhost/username/search'
+ * @route '/username/search'
  */
 search.url = (options?: RouteQueryOptions) => {
     return search.definition.url + queryParams(options)
@@ -26,7 +26,7 @@ search.url = (options?: RouteQueryOptions) => {
 /**
 * @see \App\Http\Controllers\Username\UsernameSearchController::search
  * @see app/Http/Controllers/Username/UsernameSearchController.php:20
- * @route '/localhost/username/search'
+ * @route '/username/search'
  */
 search.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: search.url(options),
@@ -35,7 +35,7 @@ search.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
 /**
 * @see \App\Http\Controllers\Username\UsernameSearchController::search
  * @see app/Http/Controllers/Username/UsernameSearchController.php:20
- * @route '/localhost/username/search'
+ * @route '/username/search'
  */
 search.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     url: search.url(options),
@@ -45,7 +45,7 @@ search.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     /**
 * @see \App\Http\Controllers\Username\UsernameSearchController::search
  * @see app/Http/Controllers/Username/UsernameSearchController.php:20
- * @route '/localhost/username/search'
+ * @route '/username/search'
  */
     const searchForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
         action: search.url(options),
@@ -55,7 +55,7 @@ search.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
             /**
 * @see \App\Http\Controllers\Username\UsernameSearchController::search
  * @see app/Http/Controllers/Username/UsernameSearchController.php:20
- * @route '/localhost/username/search'
+ * @route '/username/search'
  */
         searchForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
             action: search.url(options),
@@ -64,7 +64,7 @@ search.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
             /**
 * @see \App\Http\Controllers\Username\UsernameSearchController::search
  * @see app/Http/Controllers/Username/UsernameSearchController.php:20
- * @route '/localhost/username/search'
+ * @route '/username/search'
  */
         searchForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
             action: search.url({
@@ -80,7 +80,7 @@ search.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 /**
 * @see \App\Http\Controllers\Username\UsernameSearchController::report
  * @see app/Http/Controllers/Username/UsernameSearchController.php:30
- * @route '/localhost/username/report'
+ * @route '/username/report'
  */
 export const report = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: report.url(options),
@@ -89,13 +89,13 @@ export const report = (options?: RouteQueryOptions): RouteDefinition<'get'> => (
 
 report.definition = {
     methods: ["get","head"],
-    url: '/localhost/username/report',
+    url: '/username/report',
 } satisfies RouteDefinition<["get","head"]>
 
 /**
 * @see \App\Http\Controllers\Username\UsernameSearchController::report
  * @see app/Http/Controllers/Username/UsernameSearchController.php:30
- * @route '/localhost/username/report'
+ * @route '/username/report'
  */
 report.url = (options?: RouteQueryOptions) => {
     return report.definition.url + queryParams(options)
@@ -104,7 +104,7 @@ report.url = (options?: RouteQueryOptions) => {
 /**
 * @see \App\Http\Controllers\Username\UsernameSearchController::report
  * @see app/Http/Controllers/Username/UsernameSearchController.php:30
- * @route '/localhost/username/report'
+ * @route '/username/report'
  */
 report.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: report.url(options),
@@ -113,7 +113,7 @@ report.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
 /**
 * @see \App\Http\Controllers\Username\UsernameSearchController::report
  * @see app/Http/Controllers/Username/UsernameSearchController.php:30
- * @route '/localhost/username/report'
+ * @route '/username/report'
  */
 report.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     url: report.url(options),
@@ -123,7 +123,7 @@ report.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     /**
 * @see \App\Http\Controllers\Username\UsernameSearchController::report
  * @see app/Http/Controllers/Username/UsernameSearchController.php:30
- * @route '/localhost/username/report'
+ * @route '/username/report'
  */
     const reportForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
         action: report.url(options),
@@ -133,7 +133,7 @@ report.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
             /**
 * @see \App\Http\Controllers\Username\UsernameSearchController::report
  * @see app/Http/Controllers/Username/UsernameSearchController.php:30
- * @route '/localhost/username/report'
+ * @route '/username/report'
  */
         reportForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
             action: report.url(options),
@@ -142,7 +142,7 @@ report.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
             /**
 * @see \App\Http\Controllers\Username\UsernameSearchController::report
  * @see app/Http/Controllers/Username/UsernameSearchController.php:30
- * @route '/localhost/username/report'
+ * @route '/username/report'
  */
         reportForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
             action: report.url({
