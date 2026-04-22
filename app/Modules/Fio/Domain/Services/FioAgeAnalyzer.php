@@ -1,34 +1,34 @@
 <?php
 
-namespace App\Modules\Fio\Application\Services;
+namespace App\Modules\Fio\Domain\Services;
 
 use Carbon\Carbon;
 
-class FioAgeExtractor
+final class FioAgeAnalyzer
 {
-    public function extract(?string $text): ?int
+    public function extractAge(?string $text): ?int
     {
         if (!is_string($text) || $text === '') {
             return null;
         }
 
-        if (preg_match('/\b([1-9][0-9])\s*(?:years old|years|year old|year|лет|года|г\.)\b/ui', $text, $matches) === 1) {
+        if (preg_match('/\b([1-9][0-9])\s*(?:years?\s*old|years?|лет|года|г\.)\b/ui', $text, $matches) === 1) {
             $age = (int) ($matches[1] ?? 0);
 
-            return $age >= 0 && $age <= 100 ? $age : null;
+            return $this->sanitizeAge($age);
         }
 
         if (preg_match('/\b(?:born|рожд[её]н(?:а)?|birth\s*year)\s*(?:in\s*)?(19[5-9][0-9]|20[0-1][0-9])\b/ui', $text, $matches) === 1) {
             $year = (int) ($matches[1] ?? 0);
             $age = Carbon::now()->year - $year;
 
-            return $age >= 0 && $age <= 100 ? $age : null;
+            return $this->sanitizeAge($age);
         }
 
         return null;
     }
 
-    public function bucket(?int $age): string
+    public function resolveBucket(?int $age): string
     {
         if (!is_int($age)) {
             return 'unknown';
@@ -42,5 +42,10 @@ class FioAgeExtractor
             $age <= 54 => '45_54',
             default => '55_plus',
         };
+    }
+
+    private function sanitizeAge(int $age): ?int
+    {
+        return $age >= 0 && $age <= 100 ? $age : null;
     }
 }

@@ -1,18 +1,18 @@
 <?php
 
-namespace App\Modules\Fio\Application\Services;
+namespace App\Modules\Fio\Domain\Services;
 
-class FioRegionClassifier
+final class FioRegionResolver
 {
     /**
      * @var array<string, array<int, string>>
      */
-    private array $map = [
+    private array $regionKeywords = [
         'cis' => ['russia', 'moscow', 'saint petersburg', 'ukraine', 'belarus', 'kazakhstan', 'россия', 'москва', 'санкт-петербург', 'украина', 'беларусь', 'казахстан'],
         'europe' => ['germany', 'france', 'italy', 'spain', 'poland', 'europe', 'berlin', 'paris', 'london', 'европа', 'германия', 'франция', 'испания', 'италия'],
-        'americas' => ['usa', 'united states', 'canada', 'mexico', 'brazil', 'new york', 'california', 'america'],
-        'asia' => ['china', 'india', 'japan', 'korea', 'singapore', 'indonesia', 'thailand', 'азия', 'китай', 'индия', 'япония'],
-        'mena' => ['uae', 'dubai', 'saudi', 'qatar', 'egypt', 'turkey', 'mena', 'middle east', 'дубай', 'оаэ', 'турция'],
+        'americas' => ['usa', 'united states', 'canada', 'mexico', 'brazil', 'new york', 'california', 'america', 'сша', 'канада', 'мексика', 'бразилия'],
+        'asia' => ['china', 'india', 'japan', 'korea', 'singapore', 'indonesia', 'thailand', 'asia', 'китай', 'индия', 'япония', 'корея', 'сингапур', 'азия'],
+        'mena' => ['uae', 'dubai', 'saudi', 'qatar', 'egypt', 'turkey', 'mena', 'middle east', 'дубай', 'оаэ', 'саудовская аравия', 'катар', 'египет', 'турция'],
     ];
 
     public function resolve(?string $text): string
@@ -23,7 +23,7 @@ class FioRegionClassifier
 
         $haystack = mb_strtolower($text);
 
-        foreach ($this->map as $region => $keywords) {
+        foreach ($this->regionKeywords as $region => $keywords) {
             foreach ($keywords as $keyword) {
                 if (str_contains($haystack, mb_strtolower($keyword))) {
                     return $region;

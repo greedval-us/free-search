@@ -20,7 +20,7 @@ class FioLookupController extends Controller
         app()->setLocale($request->locale());
 
         try {
-            $data = $this->fioPublicSearchService->search($request->fullName());
+            $result = $this->fioPublicSearchService->search($request->fullName());
         } catch (RuntimeException $exception) {
             return response()->json([
                 'ok' => false,
@@ -30,7 +30,7 @@ class FioLookupController extends Controller
 
         return response()->json([
             'ok' => true,
-            'data' => $data,
+            'data' => $result->toArray(),
         ]);
     }
 }
