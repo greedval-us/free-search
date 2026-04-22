@@ -1,6 +1,8 @@
 {
   "Date \"from\" must be less than or equal to date \"to\".": "Дата \"с\" должна быть меньше или равна дате \"по\".",
+  "Please provide a date range.": "Пожалуйста, укажите диапазон дат.",
+  "Date range cannot exceed 7 days.": "Диапазон дат не может превышать 7 дней.",
   "Failed to load messages for the current query.": "Не удалось загрузить сообщения по текущему запросу.",
-  "Please provide a date range.": "Please provide a date range.",
-  "Date range cannot exceed 7 days.": "Date range cannot exceed 7 days."
+  "Public search provider is temporarily unavailable. Try again.": "Публичный поисковый источник временно недоступен. Попробуйте снова.",
+  "Unable to fetch public matches now. Try again later.": "Не удалось получить публичные совпадения. Попробуйте позже."
 }

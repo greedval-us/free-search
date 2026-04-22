@@ -600,3 +600,81 @@ siteIntel.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
         })
     
     siteIntel.form = siteIntelForm
+/**
+* @see \Inertia\Controller::__invoke
+ * @see vendor/inertiajs/inertia-laravel/src/Controller.php:13
+ * @route '/fio'
+ */
+export const fio = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+    url: fio.url(options),
+    method: 'get',
+})
+
+fio.definition = {
+    methods: ["get","head"],
+    url: '/fio',
+} satisfies RouteDefinition<["get","head"]>
+
+/**
+* @see \Inertia\Controller::__invoke
+ * @see vendor/inertiajs/inertia-laravel/src/Controller.php:13
+ * @route '/fio'
+ */
+fio.url = (options?: RouteQueryOptions) => {
+    return fio.definition.url + queryParams(options)
+}
+
+/**
+* @see \Inertia\Controller::__invoke
+ * @see vendor/inertiajs/inertia-laravel/src/Controller.php:13
+ * @route '/fio'
+ */
+fio.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+    url: fio.url(options),
+    method: 'get',
+})
+/**
+* @see \Inertia\Controller::__invoke
+ * @see vendor/inertiajs/inertia-laravel/src/Controller.php:13
+ * @route '/fio'
+ */
+fio.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
+    url: fio.url(options),
+    method: 'head',
+})
+
+    /**
+* @see \Inertia\Controller::__invoke
+ * @see vendor/inertiajs/inertia-laravel/src/Controller.php:13
+ * @route '/fio'
+ */
+    const fioForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+        action: fio.url(options),
+        method: 'get',
+    })
+
+            /**
+* @see \Inertia\Controller::__invoke
+ * @see vendor/inertiajs/inertia-laravel/src/Controller.php:13
+ * @route '/fio'
+ */
+        fioForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+            action: fio.url(options),
+            method: 'get',
+        })
+            /**
+* @see \Inertia\Controller::__invoke
+ * @see vendor/inertiajs/inertia-laravel/src/Controller.php:13
+ * @route '/fio'
+ */
+        fioForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+            action: fio.url({
+                        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
+                            _method: 'HEAD',
+                            ...(options?.query ?? options?.mergeQuery ?? {}),
+                        }
+                    }),
+            method: 'get',
+        })
+    
+    fio.form = fioForm

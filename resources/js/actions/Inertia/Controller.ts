@@ -392,6 +392,84 @@ Controller8afb288f411615c9a5737c884d0340a0.head = (options?: RouteQueryOptions):
     /**
 * @see \Inertia\Controller::__invoke
  * @see vendor/inertiajs/inertia-laravel/src/Controller.php:13
+ * @route '/fio'
+ */
+const Controller8508b634f2b8fb9774a98f0006915705 = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+    url: Controller8508b634f2b8fb9774a98f0006915705.url(options),
+    method: 'get',
+})
+
+Controller8508b634f2b8fb9774a98f0006915705.definition = {
+    methods: ["get","head"],
+    url: '/fio',
+} satisfies RouteDefinition<["get","head"]>
+
+/**
+* @see \Inertia\Controller::__invoke
+ * @see vendor/inertiajs/inertia-laravel/src/Controller.php:13
+ * @route '/fio'
+ */
+Controller8508b634f2b8fb9774a98f0006915705.url = (options?: RouteQueryOptions) => {
+    return Controller8508b634f2b8fb9774a98f0006915705.definition.url + queryParams(options)
+}
+
+/**
+* @see \Inertia\Controller::__invoke
+ * @see vendor/inertiajs/inertia-laravel/src/Controller.php:13
+ * @route '/fio'
+ */
+Controller8508b634f2b8fb9774a98f0006915705.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+    url: Controller8508b634f2b8fb9774a98f0006915705.url(options),
+    method: 'get',
+})
+/**
+* @see \Inertia\Controller::__invoke
+ * @see vendor/inertiajs/inertia-laravel/src/Controller.php:13
+ * @route '/fio'
+ */
+Controller8508b634f2b8fb9774a98f0006915705.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
+    url: Controller8508b634f2b8fb9774a98f0006915705.url(options),
+    method: 'head',
+})
+
+    /**
+* @see \Inertia\Controller::__invoke
+ * @see vendor/inertiajs/inertia-laravel/src/Controller.php:13
+ * @route '/fio'
+ */
+    const Controller8508b634f2b8fb9774a98f0006915705Form = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+        action: Controller8508b634f2b8fb9774a98f0006915705.url(options),
+        method: 'get',
+    })
+
+            /**
+* @see \Inertia\Controller::__invoke
+ * @see vendor/inertiajs/inertia-laravel/src/Controller.php:13
+ * @route '/fio'
+ */
+        Controller8508b634f2b8fb9774a98f0006915705Form.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+            action: Controller8508b634f2b8fb9774a98f0006915705.url(options),
+            method: 'get',
+        })
+            /**
+* @see \Inertia\Controller::__invoke
+ * @see vendor/inertiajs/inertia-laravel/src/Controller.php:13
+ * @route '/fio'
+ */
+        Controller8508b634f2b8fb9774a98f0006915705Form.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+            action: Controller8508b634f2b8fb9774a98f0006915705.url({
+                        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
+                            _method: 'HEAD',
+                            ...(options?.query ?? options?.mergeQuery ?? {}),
+                        }
+                    }),
+            method: 'get',
+        })
+    
+    Controller8508b634f2b8fb9774a98f0006915705.form = Controller8508b634f2b8fb9774a98f0006915705Form
+    /**
+* @see \Inertia\Controller::__invoke
+ * @see vendor/inertiajs/inertia-laravel/src/Controller.php:13
  * @route '/settings/appearance'
  */
 const Controllere19ee86e9cf603ce1a59a1ec5d21dec5 = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -474,6 +552,7 @@ const Controller = {
     '/telegram': Controllerd5ecae56bdcfbb8acbee4b606463b6bd,
     '/username': Controller2454f4b0ad7800af5a3fd1b9ef9f0b2e,
     '/site-intel': Controller8afb288f411615c9a5737c884d0340a0,
+    '/fio': Controller8508b634f2b8fb9774a98f0006915705,
     '/settings/appearance': Controllere19ee86e9cf603ce1a59a1ec5d21dec5,
 }
 

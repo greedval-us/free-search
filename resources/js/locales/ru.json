@@ -620,12 +620,61 @@
       "downloadReport": "Скачать отчёт"
     }
   },
+  "fio": {
+    "headTitle": "FIO",
+    "lookup": {
+      "title": "Поиск по ФИО",
+      "description": "Онлайн-поиск публичных упоминаний ФИО с кластеризацией по региону и возрасту.",
+      "fullName": "Полное имя / ФИО",
+      "placeholder": "например, Иван Иванов",
+      "search": "Искать",
+      "searching": "Поиск...",
+      "empty": "Введите ФИО, чтобы начать поиск.",
+      "checkedAt": "Проверено",
+      "matches": "Публичные совпадения",
+      "domains": "Уникальные домены",
+      "topRegion": "Основной регион",
+      "medianAge": "Медианный возраст",
+      "regionClusters": "Кластеры по региону",
+      "ageClusters": "Кластеры по возрасту",
+      "noClusters": "Кластеры пока отсутствуют.",
+      "publicMatches": "Список публичных совпадений",
+      "noMatches": "Публичные совпадения не найдены.",
+      "confidence": "Уверенность",
+      "region": "Регион",
+      "age": "Возраст",
+      "ageBucket": "Возрастная группа",
+      "domain": "Домен",
+      "errors": {
+        "fullNameRequired": "Введите ФИО.",
+        "lookupFailed": "Не удалось выполнить поиск по ФИО."
+      }
+    },
+    "region": {
+      "cis": "СНГ",
+      "europe": "Европа",
+      "americas": "Америка",
+      "asia": "Азия",
+      "mena": "MENA",
+      "unknown": "Неизвестно"
+    },
+    "age": {
+      "under_18": "До 18",
+      "18_24": "18-24",
+      "25_34": "25-34",
+      "35_44": "35-44",
+      "45_54": "45-54",
+      "55_plus": "55+",
+      "unknown": "Неизвестно"
+    }
+  },
   "navigation": {
     "platform": "Платформа",
     "dashboard": "Панель",
     "telegram": "Telegram",
     "username": "Username",
     "siteIntel": "Site Intel",
+    "fio": "FIO",
     "repository": "Репозиторий",
     "documentation": "Документация"
   },
