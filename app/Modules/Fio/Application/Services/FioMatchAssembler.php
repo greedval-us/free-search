@@ -34,6 +34,7 @@ final class FioMatchAssembler
                 snippet: $entry->snippet,
                 url: $entry->url,
                 domain: $entry->domain,
+                source: $entry->source,
                 region: $this->regionResolver->resolve($searchText),
                 age: $age,
                 ageBucket: $this->ageAnalyzer->resolveBucket($age),

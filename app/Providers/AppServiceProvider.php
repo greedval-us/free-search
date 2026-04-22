@@ -11,7 +11,7 @@ use App\Modules\Telegram\Search\Contracts\TelegramSearchApplicationServiceInterf
 use App\Modules\Telegram\Search\TelegramSearchApplicationService;
 use App\Modules\Telegram\TelegramService;
 use App\Modules\Fio\Domain\Contracts\FioPublicSearchProviderInterface;
-use App\Modules\Fio\Infrastructure\Providers\FioDuckDuckGoSearchProvider;
+use App\Modules\Fio\Infrastructure\Providers\FioMultiSourceSearchProvider;
 use App\Modules\Username\Domain\Contracts\UsernameSourceCheckerInterface;
 use App\Modules\Username\Infrastructure\Http\UsernameSourceHttpChecker;
 use Carbon\CarbonImmutable;
@@ -32,7 +32,7 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(TelegramParserApplicationServiceInterface::class, TelegramParserApplicationService::class);
         $this->app->bind(TelegramAnalyticsApplicationServiceInterface::class, TelegramAnalyticsApplicationService::class);
         $this->app->bind(UsernameSourceCheckerInterface::class, UsernameSourceHttpChecker::class);
-        $this->app->bind(FioPublicSearchProviderInterface::class, FioDuckDuckGoSearchProvider::class);
+        $this->app->bind(FioPublicSearchProviderInterface::class, FioMultiSourceSearchProvider::class);
     }
 
     /**

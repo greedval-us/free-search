@@ -645,6 +645,8 @@
       "age": "Age",
       "ageBucket": "Age bucket",
       "domain": "Domain",
+      "source": "Source",
+      "providers": "Providers used",
       "errors": {
         "fullNameRequired": "Enter full name.",
         "lookupFailed": "Could not complete full-name lookup."

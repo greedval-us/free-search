@@ -53,6 +53,7 @@ final class FioDuckDuckGoResultParser
                 snippet: html_entity_decode($snippet, ENT_QUOTES | ENT_HTML5),
                 url: $url,
                 domain: $this->extractDomain($url),
+                source: 'duckduckgo',
             );
 
             if (count($results) >= 30) {

@@ -9,6 +9,7 @@ final class PublicSearchEntryDTO
         public readonly string $snippet,
         public readonly string $url,
         public readonly ?string $domain,
+        public readonly string $source,
     ) {
     }
 }

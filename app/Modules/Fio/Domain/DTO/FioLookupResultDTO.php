@@ -24,6 +24,12 @@ final class FioLookupResultDTO
      */
     public function toArray(): array
     {
+        $providers = [];
+
+        foreach ($this->matches as $match) {
+            $providers[$match->source] = true;
+        }
+
         return [
             'target' => [
                 'fullName' => $this->fullName,
@@ -45,8 +51,9 @@ final class FioLookupResultDTO
                 $this->matches
             ),
             'source' => [
-                'provider' => 'DuckDuckGo HTML',
+                'provider' => 'multi-source',
                 'mode' => 'online-public',
+                'providers' => array_values(array_keys($providers)),
             ],
         ];
     }

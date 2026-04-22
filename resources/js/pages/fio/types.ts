@@ -3,6 +3,7 @@ export type FioMatch = {
     snippet: string;
     url: string;
     domain: string | null;
+    source: string;
     region: string;
     age: number | null;
     ageBucket: string;
@@ -35,5 +36,6 @@ export type FioLookupResult = {
     source: {
         provider: string;
         mode: string;
+        providers?: string[];
     };
 };

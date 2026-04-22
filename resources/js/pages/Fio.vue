@@ -113,6 +113,13 @@ const ageBucketLabel = (key: string): string => {
                     </div>
                 </div>
 
+                <div class="rounded-lg border border-border/70 bg-background/60 p-3 text-xs">
+                    <p>
+                        {{ t('fio.lookup.providers') }}:
+                        <span class="text-muted-foreground">{{ (result.source.providers ?? []).join(', ') || '-' }}</span>
+                    </p>
+                </div>
+
                 <div class="grid gap-3 xl:grid-cols-2">
                     <div class="rounded-lg border border-border/70 bg-background/60 p-3 text-xs">
                         <p class="mb-2 font-semibold">{{ t('fio.lookup.regionClusters') }}</p>
@@ -178,6 +185,7 @@ const ageBucketLabel = (key: string): string => {
                                 <span>{{ t('fio.lookup.age') }}: {{ item.age ?? '-' }}</span>
                                 <span>{{ t('fio.lookup.ageBucket') }}: {{ ageBucketLabel(item.ageBucket) }}</span>
                                 <span>{{ t('fio.lookup.domain') }}: {{ item.domain ?? '-' }}</span>
+                                <span>{{ t('fio.lookup.source') }}: {{ item.source }}</span>
                             </div>
                         </article>
                     </div>
