@@ -21,13 +21,14 @@ final class FioMatchAssembler
      * @param array<int, PublicSearchEntryDTO> $entries
      * @return array<int, FioMatchDTO>
      */
-    public function assembleMany(string $fullName, array $entries): array
+    public function assembleMany(string $fullName, array $entries, ?string $qualifier = null): array
     {
         $matches = [];
 
         foreach ($entries as $entry) {
             $searchText = trim($entry->title . ' ' . $entry->snippet . ' ' . $entry->url);
             $age = $this->ageAnalyzer->extractAge($searchText);
+            $qualifierMatched = $this->confidenceScorer->qualifierMatched($searchText, $qualifier);
 
             $matches[] = new FioMatchDTO(
                 title: $entry->title,
@@ -35,10 +36,13 @@ final class FioMatchAssembler
                 url: $entry->url,
                 domain: $entry->domain,
                 source: $entry->source,
+                sourceReliability: $this->confidenceScorer->sourceReliability($entry->source),
                 region: $this->regionResolver->resolve($searchText),
                 age: $age,
                 ageBucket: $this->ageAnalyzer->resolveBucket($age),
-                confidence: $this->confidenceScorer->score($fullName, $searchText),
+                qualifier: $qualifier,
+                qualifierMatched: $qualifierMatched,
+                confidence: $this->confidenceScorer->score($fullName, $searchText, $entry->source, $qualifier),
             );
         }
 

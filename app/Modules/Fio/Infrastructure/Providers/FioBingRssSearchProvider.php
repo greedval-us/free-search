@@ -4,6 +4,7 @@ namespace App\Modules\Fio\Infrastructure\Providers;
 
 use App\Modules\Fio\Domain\Contracts\FioPublicSearchProviderInterface;
 use App\Modules\Fio\Domain\DTO\PublicSearchEntryDTO;
+use App\Modules\Fio\Domain\Services\FioQualifierLexicon;
 use App\Modules\Fio\Infrastructure\Parsers\FioBingRssResultParser;
 use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Support\Facades\Http;
@@ -13,15 +14,16 @@ final class FioBingRssSearchProvider implements FioPublicSearchProviderInterface
 {
     public function __construct(
         private readonly FioBingRssResultParser $resultParser,
+        private readonly FioQualifierLexicon $qualifierLexicon,
     ) {
     }
 
     /**
      * @return array<int, PublicSearchEntryDTO>
      */
-    public function search(string $fullName): array
+    public function search(string $fullName, ?string $qualifier = null): array
     {
-        $query = '"' . $fullName . '"';
+        $query = $this->buildQuery($fullName, $qualifier);
         $url = 'https://www.bing.com/search?format=rss&q=' . urlencode($query);
 
         try {
@@ -40,5 +42,18 @@ final class FioBingRssSearchProvider implements FioPublicSearchProviderInterface
         }
 
         return $this->resultParser->parse((string) $response->body());
+    }
+
+    private function buildQuery(string $fullName, ?string $qualifier): string
+    {
+        $parts = ['"' . $fullName . '"'];
+
+        $terms = $this->qualifierLexicon->queryTerms($qualifier, 3);
+        if (count($terms) > 0) {
+            $quoted = array_map(static fn (string $term): string => '"' . $term . '"', $terms);
+            $parts[] = '(' . implode(' OR ', $quoted) . ')';
+        }
+
+        return implode(' ', $parts);
     }
 }

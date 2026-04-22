@@ -20,7 +20,10 @@ class FioLookupController extends Controller
         app()->setLocale($request->locale());
 
         try {
-            $result = $this->fioPublicSearchService->search($request->fullName());
+            $result = $this->fioPublicSearchService->search(
+                $request->fullName(),
+                $request->qualifier(),
+            );
         } catch (RuntimeException $exception) {
             return response()->json([
                 'ok' => false,

@@ -15,6 +15,7 @@ class FioLookupRequest extends FormRequest
     {
         return [
             'full_name' => ['required', 'string', 'min:3', 'max:120', 'regex:/^[\p{L}\p{M}\s\'\-.]+$/u'],
+            'qualifier' => ['nullable', 'string', 'min:2', 'max:64', 'regex:/^[\p{L}\p{M}\s\'\-.]+$/u'],
             'locale' => ['nullable', 'string', 'in:ru,en'],
         ];
     }
@@ -32,5 +33,22 @@ class FioLookupRequest extends FormRequest
         $locale = strtolower(trim((string) ($this->validated('locale') ?? app()->getLocale())));
 
         return in_array($locale, ['ru', 'en'], true) ? $locale : 'en';
+    }
+
+    public function qualifier(): ?string
+    {
+        $value = $this->validated('qualifier');
+        if (!is_string($value)) {
+            return null;
+        }
+
+        $normalized = trim($value);
+        $normalized = preg_replace('/\s+/u', ' ', $normalized);
+
+        if (!is_string($normalized) || $normalized === '') {
+            return null;
+        }
+
+        return $normalized;
     }
 }

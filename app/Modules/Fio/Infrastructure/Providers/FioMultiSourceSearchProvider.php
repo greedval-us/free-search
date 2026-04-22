@@ -20,7 +20,7 @@ final class FioMultiSourceSearchProvider implements FioPublicSearchProviderInter
     /**
      * @return array<int, PublicSearchEntryDTO>
      */
-    public function search(string $fullName): array
+    public function search(string $fullName, ?string $qualifier = null): array
     {
         $providers = [
             $this->duckDuckGoProvider,
@@ -32,7 +32,7 @@ final class FioMultiSourceSearchProvider implements FioPublicSearchProviderInter
 
         foreach ($providers as $provider) {
             try {
-                $collected = [...$collected, ...$provider->search($fullName)];
+                $collected = [...$collected, ...$provider->search($fullName, $qualifier)];
             } catch (Throwable $exception) {
                 $lastError = $exception;
             }

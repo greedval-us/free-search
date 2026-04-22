@@ -17,6 +17,8 @@ final class FioSummaryBuilder
     {
         $domains = [];
         $ages = [];
+        $confidenceTotal = 0;
+        $qualifierMatches = 0;
 
         foreach ($matches as $match) {
             if (is_string($match->domain) && $match->domain !== '') {
@@ -26,14 +28,24 @@ final class FioSummaryBuilder
             if (is_int($match->age)) {
                 $ages[] = $match->age;
             }
+
+            $confidenceTotal += $match->confidence;
+            if ($match->qualifierMatched) {
+                $qualifierMatches++;
+            }
         }
 
+        $matchesCount = count($matches);
+        $averageConfidence = $matchesCount > 0 ? round($confidenceTotal / $matchesCount, 1) : 0.0;
+
         return new FioSummaryDTO(
-            matches: count($matches),
+            matches: $matchesCount,
             domains: count($domains),
             topRegion: $regionClusters[0]->key ?? 'unknown',
             topAgeBucket: $this->resolveTopAgeBucket($ageClusters),
             medianAge: $this->resolveMedianAge($ages),
+            averageConfidence: $averageConfidence,
+            qualifierMatches: $qualifierMatches,
         );
     }
 

@@ -9,5 +9,5 @@ interface FioPublicSearchProviderInterface
     /**
      * @return array<int, PublicSearchEntryDTO>
      */
-    public function search(string $fullName): array;
+    public function search(string $fullName, ?string $qualifier = null): array;
 }

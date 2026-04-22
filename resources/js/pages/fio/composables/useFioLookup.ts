@@ -7,6 +7,7 @@ type TranslateFn = (key: string) => string;
 export const useFioLookup = (t: TranslateFn, locale: Ref<'en' | 'ru'>) => {
     const form = reactive({
         fullName: '',
+        qualifier: '',
     });
 
     const loading = ref(false);
@@ -30,6 +31,9 @@ export const useFioLookup = (t: TranslateFn, locale: Ref<'en' | 'ru'>) => {
                 full_name: form.fullName.trim(),
                 locale: locale.value,
             });
+            if (form.qualifier.trim().length > 0) {
+                query.set('qualifier', form.qualifier.trim());
+            }
             const response = await fetch(`/fio/lookup?${query.toString()}`, {
                 method: 'GET',
                 headers: {

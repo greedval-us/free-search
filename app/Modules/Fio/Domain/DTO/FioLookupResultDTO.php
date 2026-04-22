@@ -8,14 +8,19 @@ final class FioLookupResultDTO
      * @param array<int, FioClusterDTO> $regionClusters
      * @param array<int, FioClusterDTO> $ageClusters
      * @param array<int, FioMatchDTO> $matches
+     * @param array<int, array<string, mixed>> $sourceStats
+     * @param array<int, string> $qualifierTerms
      */
     public function __construct(
         public readonly string $fullName,
+        public readonly ?string $qualifier,
+        public readonly array $qualifierTerms,
         public readonly string $checkedAt,
         public readonly FioSummaryDTO $summary,
         public readonly array $regionClusters,
         public readonly array $ageClusters,
         public readonly array $matches,
+        public readonly array $sourceStats,
     ) {
     }
 
@@ -33,6 +38,8 @@ final class FioLookupResultDTO
         return [
             'target' => [
                 'fullName' => $this->fullName,
+                'qualifier' => $this->qualifier,
+                'qualifierTerms' => $this->qualifierTerms,
             ],
             'checkedAt' => $this->checkedAt,
             'summary' => $this->summary->toArray(),
@@ -54,6 +61,7 @@ final class FioLookupResultDTO
                 'provider' => 'multi-source',
                 'mode' => 'online-public',
                 'providers' => array_values(array_keys($providers)),
+                'stats' => $this->sourceStats,
             ],
         ];
     }

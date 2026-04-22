@@ -4,9 +4,12 @@ export type FioMatch = {
     url: string;
     domain: string | null;
     source: string;
+    sourceReliability: number;
     region: string;
     age: number | null;
     ageBucket: string;
+    qualifier: string | null;
+    qualifierMatched: boolean;
     confidence: number;
 };
 
@@ -19,6 +22,8 @@ export type FioCluster = {
 export type FioLookupResult = {
     target: {
         fullName: string;
+        qualifier: string | null;
+        qualifierTerms?: string[];
     };
     checkedAt: string;
     summary: {
@@ -27,6 +32,8 @@ export type FioLookupResult = {
         topRegion: string;
         topAgeBucket: string;
         medianAge: number | null;
+        averageConfidence: number;
+        qualifierMatches: number;
     };
     clusters: {
         regions: FioCluster[];
@@ -37,5 +44,12 @@ export type FioLookupResult = {
         provider: string;
         mode: string;
         providers?: string[];
+        stats?: Array<{
+            source: string;
+            reliability: number;
+            matches: number;
+            qualifierMatches: number;
+            averageConfidence: number;
+        }>;
     };
 };

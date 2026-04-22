@@ -10,6 +10,8 @@ final class FioSummaryDTO
         public readonly string $topRegion,
         public readonly string $topAgeBucket,
         public readonly ?int $medianAge,
+        public readonly float $averageConfidence,
+        public readonly int $qualifierMatches,
     ) {
     }
 
@@ -24,6 +26,8 @@ final class FioSummaryDTO
             'topRegion' => $this->topRegion,
             'topAgeBucket' => $this->topAgeBucket,
             'medianAge' => $this->medianAge,
+            'averageConfidence' => $this->averageConfidence,
+            'qualifierMatches' => $this->qualifierMatches,
         ];
     }
 }

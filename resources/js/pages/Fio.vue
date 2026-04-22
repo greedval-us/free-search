@@ -70,6 +70,16 @@ const ageBucketLabel = (key: string): string => {
                         @keydown.enter.prevent="lookup"
                     />
                 </label>
+                <label class="block min-w-0 flex-1">
+                    <span class="mb-1 block truncate text-xs font-medium text-muted-foreground">{{ t('fio.lookup.qualifier') }}</span>
+                    <input
+                        v-model="form.qualifier"
+                        type="text"
+                        class="h-10 w-full rounded-md border border-input bg-background px-3 text-sm"
+                        :placeholder="t('fio.lookup.qualifierPlaceholder')"
+                        @keydown.enter.prevent="lookup"
+                    />
+                </label>
 
                 <button
                     :disabled="loading || !canLookup"
@@ -111,6 +121,10 @@ const ageBucketLabel = (key: string): string => {
                         <p class="text-xs text-muted-foreground">{{ t('fio.lookup.medianAge') }}</p>
                         <p class="mt-1 text-sm font-semibold">{{ result.summary.medianAge ?? '-' }}</p>
                     </div>
+                    <div class="rounded-lg border border-border/70 bg-background/60 p-3">
+                        <p class="text-xs text-muted-foreground">{{ t('fio.lookup.averageConfidence') }}</p>
+                        <p class="mt-1 text-sm font-semibold">{{ result.summary.averageConfidence }}%</p>
+                    </div>
                 </div>
 
                 <div class="rounded-lg border border-border/70 bg-background/60 p-3 text-xs">
@@ -118,6 +132,38 @@ const ageBucketLabel = (key: string): string => {
                         {{ t('fio.lookup.providers') }}:
                         <span class="text-muted-foreground">{{ (result.source.providers ?? []).join(', ') || '-' }}</span>
                     </p>
+                    <p class="mt-1">
+                        {{ t('fio.lookup.qualifier') }}:
+                        <span class="text-muted-foreground">{{ result.target.qualifier || '-' }}</span>
+                    </p>
+                    <p class="mt-1">
+                        {{ t('fio.lookup.qualifierTerms') }}:
+                        <span class="text-muted-foreground">{{ (result.target.qualifierTerms ?? []).join(', ') || '-' }}</span>
+                    </p>
+                    <p class="mt-1">
+                        {{ t('fio.lookup.qualifierMatches') }}:
+                        <span class="text-muted-foreground">{{ result.summary.qualifierMatches }}</span>
+                    </p>
+                </div>
+
+                <div class="rounded-lg border border-border/70 bg-background/60 p-3 text-xs">
+                    <p class="mb-2 font-semibold">{{ t('fio.lookup.sourceReliability') }}</p>
+                    <div v-if="(result.source.stats ?? []).length === 0" class="text-muted-foreground">-</div>
+                    <div v-else class="space-y-2">
+                        <div v-for="stat in result.source.stats" :key="stat.source">
+                            <div class="mb-1 flex items-center justify-between">
+                                <span>{{ stat.source }}</span>
+                                <span class="text-muted-foreground">
+                                    {{ t('fio.lookup.reliability') }}: {{ Math.round(stat.reliability * 100) }}%,
+                                    {{ t('fio.lookup.matches') }}: {{ stat.matches }},
+                                    Avg: {{ stat.averageConfidence }}%
+                                </span>
+                            </div>
+                            <div class="h-2 rounded bg-slate-700/70">
+                                <div class="h-2 rounded bg-violet-400" :style="{ width: `${Math.round(stat.reliability * 100)}%` }" />
+                            </div>
+                        </div>
+                    </div>
                 </div>
 
                 <div class="grid gap-3 xl:grid-cols-2">
@@ -186,6 +232,8 @@ const ageBucketLabel = (key: string): string => {
                                 <span>{{ t('fio.lookup.ageBucket') }}: {{ ageBucketLabel(item.ageBucket) }}</span>
                                 <span>{{ t('fio.lookup.domain') }}: {{ item.domain ?? '-' }}</span>
                                 <span>{{ t('fio.lookup.source') }}: {{ item.source }}</span>
+                                <span>{{ t('fio.lookup.reliability') }}: {{ Math.round(item.sourceReliability * 100) }}%</span>
+                                <span>{{ t('fio.lookup.qualifierMatched') }}: {{ item.qualifierMatched ? t('fio.lookup.yes') : t('fio.lookup.no') }}</span>
                             </div>
                         </article>
                     </div>
