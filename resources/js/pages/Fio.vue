@@ -166,6 +166,36 @@ const ageBucketLabel = (key: string): string => {
                     </div>
                 </div>
 
+                <div class="rounded-lg border border-border/70 bg-background/60 p-3 text-xs">
+                    <p class="mb-2 font-semibold">{{ t('fio.lookup.attemptedSources') }}</p>
+                    <div v-if="(result.source.attemptedSources ?? []).length === 0" class="text-muted-foreground">-</div>
+                    <div v-else class="space-y-1">
+                        <p
+                            v-for="attempt in result.source.attemptedSources"
+                            :key="`attempt-${attempt.source}`"
+                            class="text-muted-foreground"
+                        >
+                            {{ attempt.source }}: {{ attempt.ok ? t('fio.lookup.ok') : t('fio.lookup.failed') }},
+                            {{ t('fio.lookup.matches') }} {{ attempt.count }},
+                            {{ t('fio.lookup.durationMs') }} {{ attempt.durationMs }}
+                        </p>
+                    </div>
+                </div>
+
+                <div class="rounded-lg border border-border/70 bg-background/60 p-3 text-xs">
+                    <p class="mb-2 font-semibold">{{ t('fio.lookup.sourceErrors') }}</p>
+                    <div v-if="(result.source.sourceErrors ?? []).length === 0" class="text-emerald-300">{{ t('fio.lookup.noErrors') }}</div>
+                    <div v-else class="space-y-1">
+                        <p
+                            v-for="(sourceError, idx) in result.source.sourceErrors"
+                            :key="`src-error-${sourceError.source}-${idx}`"
+                            class="text-rose-300"
+                        >
+                            {{ sourceError.source }}: {{ sourceError.message }} ({{ t('fio.lookup.durationMs') }} {{ sourceError.durationMs }})
+                        </p>
+                    </div>
+                </div>
+
                 <div class="grid gap-3 xl:grid-cols-2">
                     <div class="rounded-lg border border-border/70 bg-background/60 p-3 text-xs">
                         <p class="mb-2 font-semibold">{{ t('fio.lookup.regionClusters') }}</p>

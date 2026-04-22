@@ -51,5 +51,16 @@ export type FioLookupResult = {
             qualifierMatches: number;
             averageConfidence: number;
         }>;
+        attemptedSources?: Array<{
+            source: string;
+            ok: boolean;
+            count: number;
+            durationMs: number;
+        }>;
+        sourceErrors?: Array<{
+            source: string;
+            message: string;
+            durationMs: number;
+        }>;
     };
 };

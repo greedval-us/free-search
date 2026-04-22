@@ -56,7 +56,7 @@ final class FioDuckDuckGoResultParser
                 source: 'duckduckgo',
             );
 
-            if (count($results) >= 30) {
+            if (count($results) >= 60) {
                 break;
             }
         }

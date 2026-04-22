@@ -3,17 +3,32 @@
 namespace App\Modules\Fio\Infrastructure\Providers;
 
 use App\Modules\Fio\Domain\Contracts\FioPublicSearchProviderInterface;
+use App\Modules\Fio\Domain\Contracts\FioSearchDiagnosticsAwareInterface;
 use App\Modules\Fio\Domain\DTO\PublicSearchEntryDTO;
 use RuntimeException;
 use Throwable;
 
-final class FioMultiSourceSearchProvider implements FioPublicSearchProviderInterface
+final class FioMultiSourceSearchProvider implements FioPublicSearchProviderInterface, FioSearchDiagnosticsAwareInterface
 {
-    private const MAX_RESULTS = 80;
+    private const MAX_RESULTS = 260;
+
+    /**
+     * @var array{
+     *     attemptedSources: array<int, array<string, mixed>>,
+     *     sourceErrors: array<int, array<string, mixed>>
+     * }
+     */
+    private array $lastDiagnostics = [
+        'attemptedSources' => [],
+        'sourceErrors' => [],
+    ];
 
     public function __construct(
         private readonly FioDuckDuckGoSearchProvider $duckDuckGoProvider,
         private readonly FioBingRssSearchProvider $bingRssProvider,
+        private readonly FioGoogleNewsRssSearchProvider $googleNewsProvider,
+        private readonly FioRedditRssSearchProvider $redditProvider,
+        private readonly FioYahooRssSearchProvider $yahooProvider,
     ) {
     }
 
@@ -22,19 +37,50 @@ final class FioMultiSourceSearchProvider implements FioPublicSearchProviderInter
      */
     public function search(string $fullName, ?string $qualifier = null): array
     {
+        $this->lastDiagnostics = [
+            'attemptedSources' => [],
+            'sourceErrors' => [],
+        ];
+
         $providers = [
-            $this->duckDuckGoProvider,
-            $this->bingRssProvider,
+            'duckduckgo' => $this->duckDuckGoProvider,
+            'bing' => $this->bingRssProvider,
+            'googlenews' => $this->googleNewsProvider,
+            'reddit' => $this->redditProvider,
+            'yahoo' => $this->yahooProvider,
         ];
 
         $collected = [];
         $lastError = null;
 
-        foreach ($providers as $provider) {
+        foreach ($providers as $sourceKey => $provider) {
+            $startedAt = microtime(true);
+
             try {
-                $collected = [...$collected, ...$provider->search($fullName, $qualifier)];
+                $entries = $provider->search($fullName, $qualifier);
+                $collected = [...$collected, ...$entries];
+
+                $this->lastDiagnostics['attemptedSources'][] = [
+                    'source' => $sourceKey,
+                    'ok' => true,
+                    'count' => count($entries),
+                    'durationMs' => (int) round((microtime(true) - $startedAt) * 1000),
+                ];
             } catch (Throwable $exception) {
                 $lastError = $exception;
+
+                $duration = (int) round((microtime(true) - $startedAt) * 1000);
+                $this->lastDiagnostics['attemptedSources'][] = [
+                    'source' => $sourceKey,
+                    'ok' => false,
+                    'count' => 0,
+                    'durationMs' => $duration,
+                ];
+                $this->lastDiagnostics['sourceErrors'][] = [
+                    'source' => $sourceKey,
+                    'message' => $exception->getMessage(),
+                    'durationMs' => $duration,
+                ];
             }
         }
 
@@ -48,6 +94,11 @@ final class FioMultiSourceSearchProvider implements FioPublicSearchProviderInter
         }
 
         return [];
+    }
+
+    public function diagnostics(): array
+    {
+        return $this->lastDiagnostics;
     }
 
     /**

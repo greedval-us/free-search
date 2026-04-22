@@ -50,5 +50,8 @@ return [
     'source_reliability' => [
         'duckduckgo' => 0.95,
         'bing' => 0.90,
+        'googlenews' => 0.85,
+        'reddit' => 0.75,
+        'yahoo' => 0.80,
     ],
 ];

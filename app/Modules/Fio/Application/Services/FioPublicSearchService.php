@@ -3,6 +3,7 @@
 namespace App\Modules\Fio\Application\Services;
 
 use App\Modules\Fio\Domain\Contracts\FioPublicSearchProviderInterface;
+use App\Modules\Fio\Domain\Contracts\FioSearchDiagnosticsAwareInterface;
 use App\Modules\Fio\Domain\DTO\FioLookupResultDTO;
 use App\Modules\Fio\Domain\Services\FioClusterBuilder;
 use App\Modules\Fio\Domain\Services\FioNameNormalizer;
@@ -33,6 +34,9 @@ final class FioPublicSearchService
         $ageClusters = $this->clusterBuilder->buildAgeClusters($matches);
         $summary = $this->summaryBuilder->build($matches, $regionClusters, $ageClusters);
         $sourceStats = $this->buildSourceStats($matches);
+        $diagnostics = $this->searchProvider instanceof FioSearchDiagnosticsAwareInterface
+            ? $this->searchProvider->diagnostics()
+            : ['attemptedSources' => [], 'sourceErrors' => []];
 
         return new FioLookupResultDTO(
             fullName: $normalizedName,
@@ -44,6 +48,8 @@ final class FioPublicSearchService
             ageClusters: $ageClusters,
             matches: $matches,
             sourceStats: $sourceStats,
+            attemptedSources: is_array($diagnostics['attemptedSources'] ?? null) ? $diagnostics['attemptedSources'] : [],
+            sourceErrors: is_array($diagnostics['sourceErrors'] ?? null) ? $diagnostics['sourceErrors'] : [],
         );
     }
 

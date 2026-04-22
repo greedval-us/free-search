@@ -10,6 +10,8 @@ final class FioLookupResultDTO
      * @param array<int, FioMatchDTO> $matches
      * @param array<int, array<string, mixed>> $sourceStats
      * @param array<int, string> $qualifierTerms
+     * @param array<int, array<string, mixed>> $attemptedSources
+     * @param array<int, array<string, mixed>> $sourceErrors
      */
     public function __construct(
         public readonly string $fullName,
@@ -21,6 +23,8 @@ final class FioLookupResultDTO
         public readonly array $ageClusters,
         public readonly array $matches,
         public readonly array $sourceStats,
+        public readonly array $attemptedSources,
+        public readonly array $sourceErrors,
     ) {
     }
 
@@ -62,6 +66,8 @@ final class FioLookupResultDTO
                 'mode' => 'online-public',
                 'providers' => array_values(array_keys($providers)),
                 'stats' => $this->sourceStats,
+                'attemptedSources' => $this->attemptedSources,
+                'sourceErrors' => $this->sourceErrors,
             ],
         ];
     }

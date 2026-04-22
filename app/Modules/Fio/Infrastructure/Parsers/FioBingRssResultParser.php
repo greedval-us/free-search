@@ -42,7 +42,7 @@ final class FioBingRssResultParser
                 source: 'bing',
             );
 
-            if (count($results) >= 40) {
+            if (count($results) >= 60) {
                 break;
             }
         }
