@@ -28,7 +28,7 @@ final class FioBingRssResultParser
         foreach ($feed->channel->item as $item) {
             $title = trim((string) ($item->title ?? ''));
             $url = trim((string) ($item->link ?? ''));
-            $snippet = trim((string) ($item->description ?? ''));
+            $snippet = $this->normalizeSnippet((string) ($item->description ?? ''));
 
             if ($title === '' || $url === '') {
                 continue;
@@ -36,7 +36,7 @@ final class FioBingRssResultParser
 
             $results[] = new PublicSearchEntryDTO(
                 title: html_entity_decode($title, ENT_QUOTES | ENT_HTML5),
-                snippet: html_entity_decode($snippet, ENT_QUOTES | ENT_HTML5),
+                snippet: $snippet,
                 url: $url,
                 domain: $this->extractDomain($url),
                 source: 'bing',
@@ -55,5 +55,14 @@ final class FioBingRssResultParser
         $host = parse_url($url, PHP_URL_HOST);
 
         return is_string($host) && $host !== '' ? strtolower($host) : null;
+    }
+
+    private function normalizeSnippet(string $value): string
+    {
+        $decoded = html_entity_decode($value, ENT_QUOTES | ENT_HTML5);
+        $stripped = strip_tags($decoded);
+        $normalized = preg_replace('/\s+/u', ' ', trim($stripped));
+
+        return is_string($normalized) ? $normalized : '';
     }
 }
