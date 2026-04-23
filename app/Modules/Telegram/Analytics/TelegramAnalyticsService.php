@@ -9,39 +9,6 @@ use Carbon\Carbon;
 
 class TelegramAnalyticsService
 {
-    private const MAX_PAGES = 20;
-    private const PAGE_LIMIT = 100;
-    private const SCORE_PROFILES = [
-        'balanced' => [
-            'views' => 1.0,
-            'forwards' => 5.0,
-            'replies' => 8.0,
-            'reactions' => 2.0,
-            'gifts' => 10.0,
-        ],
-        'reach' => [
-            'views' => 3.0,
-            'forwards' => 4.0,
-            'replies' => 2.0,
-            'reactions' => 1.0,
-            'gifts' => 2.0,
-        ],
-        'discussion' => [
-            'views' => 1.0,
-            'forwards' => 3.0,
-            'replies' => 12.0,
-            'reactions' => 2.0,
-            'gifts' => 3.0,
-        ],
-        'virality' => [
-            'views' => 1.0,
-            'forwards' => 10.0,
-            'replies' => 6.0,
-            'reactions' => 3.0,
-            'gifts' => 5.0,
-        ],
-    ];
-
     public function __construct(
         private readonly TelegramGatewayInterface $telegramService,
         private readonly TelegramMessagePresenter $messagePresenter,
@@ -81,7 +48,7 @@ class TelegramAnalyticsService
                 'dateFrom' => $dateFrom->toIso8601String(),
                 'dateTo' => $dateTo->toIso8601String(),
                 'label' => $dateFrom->format('d.m.Y') . ' - ' . $dateTo->format('d.m.Y'),
-                'periodDays' => max(1, min(7, $dateFrom->diffInDays($dateTo) + 1)),
+                'periodDays' => max(1, min($this->periodMaxDays(), $dateFrom->diffInDays($dateTo) + 1)),
                 'groupBy' => $groupBy,
                 'keyword' => $keyword,
             ],
@@ -103,12 +70,14 @@ class TelegramAnalyticsService
         $minDate = $dateFrom->timestamp;
         $maxDate = $dateTo->timestamp;
         $keyword = trim((string) $keyword);
+        $maxPages = $this->fetchMaxPages();
+        $pageLimit = $this->fetchPageLimit();
 
-        for ($page = 0; $page < self::MAX_PAGES; $page++) {
+        for ($page = 0; $page < $maxPages; $page++) {
             $dto = $this->telegramService->getMessages([
                 'peer' => $chatUsername,
                 'q' => $keyword,
-                'limit' => self::PAGE_LIMIT,
+                'limit' => $pageLimit,
                 'offset_id' => $offsetId,
                 'min_date' => $minDate,
                 'max_date' => $maxDate,
@@ -151,7 +120,7 @@ class TelegramAnalyticsService
 
             $nextOffsetId = $this->messagePresenter->resolveNextOffsetId($dto->messages);
 
-            if ($nextOffsetId === null || count($dto->messages) < self::PAGE_LIMIT) {
+            if ($nextOffsetId === null || count($dto->messages) < $pageLimit) {
                 break;
             }
 
@@ -168,7 +137,7 @@ class TelegramAnalyticsService
 
     private function resolveGroupBy(Carbon $dateFrom, Carbon $dateTo): string
     {
-        return $dateFrom->diffInHours($dateTo) <= 36 ? 'hour' : 'day';
+        return $dateFrom->diffInHours($dateTo) <= $this->groupByHourThresholdHours() ? 'hour' : 'day';
     }
 
     /**
@@ -209,15 +178,16 @@ class TelegramAnalyticsService
      */
     private function resolveScoreProfile(?string $priority): array
     {
+        $profiles = $this->scoreProfiles();
         $priority = strtolower(trim((string) $priority));
 
-        if (!array_key_exists($priority, self::SCORE_PROFILES)) {
+        if (!array_key_exists($priority, $profiles)) {
             $priority = 'balanced';
         }
 
         return [
             'priority' => $priority,
-            'weights' => self::SCORE_PROFILES[$priority],
+            'weights' => $profiles[$priority],
         ];
     }
 
@@ -270,5 +240,94 @@ class TelegramAnalyticsService
         }
 
         return 'chat';
+    }
+
+    private function fetchMaxPages(): int
+    {
+        return max(1, (int) config('osint.telegram.analytics.fetch.max_pages', 20));
+    }
+
+    private function fetchPageLimit(): int
+    {
+        return max(1, (int) config('osint.telegram.analytics.fetch.page_limit', 100));
+    }
+
+    private function groupByHourThresholdHours(): int
+    {
+        return max(1, (int) config('osint.telegram.analytics.group_by_hour_threshold_hours', 36));
+    }
+
+    private function periodMaxDays(): int
+    {
+        return max(1, (int) config('osint.telegram.analytics.period_max_days', 7));
+    }
+
+    /**
+     * @return array<string, array{views: float, forwards: float, replies: float, reactions: float, gifts: float}>
+     */
+    private function scoreProfiles(): array
+    {
+        $configured = config('osint.telegram.analytics.score_profiles', []);
+        if (!is_array($configured)) {
+            return $this->defaultScoreProfiles();
+        }
+
+        $defaults = $this->defaultScoreProfiles();
+        $normalized = [];
+
+        foreach ($defaults as $profile => $weights) {
+            $candidate = $configured[$profile] ?? null;
+            if (!is_array($candidate)) {
+                $normalized[$profile] = $weights;
+                continue;
+            }
+
+            $normalized[$profile] = [
+                'views' => (float) ($candidate['views'] ?? $weights['views']),
+                'forwards' => (float) ($candidate['forwards'] ?? $weights['forwards']),
+                'replies' => (float) ($candidate['replies'] ?? $weights['replies']),
+                'reactions' => (float) ($candidate['reactions'] ?? $weights['reactions']),
+                'gifts' => (float) ($candidate['gifts'] ?? $weights['gifts']),
+            ];
+        }
+
+        return $normalized;
+    }
+
+    /**
+     * @return array<string, array{views: float, forwards: float, replies: float, reactions: float, gifts: float}>
+     */
+    private function defaultScoreProfiles(): array
+    {
+        return [
+            'balanced' => [
+                'views' => 1.0,
+                'forwards' => 5.0,
+                'replies' => 8.0,
+                'reactions' => 2.0,
+                'gifts' => 10.0,
+            ],
+            'reach' => [
+                'views' => 3.0,
+                'forwards' => 4.0,
+                'replies' => 2.0,
+                'reactions' => 1.0,
+                'gifts' => 2.0,
+            ],
+            'discussion' => [
+                'views' => 1.0,
+                'forwards' => 3.0,
+                'replies' => 12.0,
+                'reactions' => 2.0,
+                'gifts' => 3.0,
+            ],
+            'virality' => [
+                'views' => 1.0,
+                'forwards' => 10.0,
+                'replies' => 6.0,
+                'reactions' => 3.0,
+                'gifts' => 5.0,
+            ],
+        ];
     }
 }

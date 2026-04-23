@@ -22,7 +22,7 @@ class SearchMessagesRequest extends FormRequest
             'fromUsername' => ['nullable', 'string', 'max:255'],
             'dateFrom' => ['nullable', 'date_format:Y-m-d'],
             'dateTo' => ['nullable', 'date_format:Y-m-d'],
-            'limit' => ['nullable', 'integer', 'min:1', 'max:100'],
+            'limit' => ['nullable', 'integer', 'min:1', 'max:' . $this->messagesLimitMax()],
             'offsetId' => ['nullable', 'integer', 'min:0'],
         ];
     }
@@ -46,7 +46,7 @@ class SearchMessagesRequest extends FormRequest
 
     public function limitValue(): int
     {
-        return (int) ($this->validated('limit') ?? 20);
+        return (int) ($this->validated('limit') ?? $this->messagesLimitDefault());
     }
 
     public function offsetId(): int
@@ -97,5 +97,14 @@ class SearchMessagesRequest extends FormRequest
 
         return $normalized !== '' && ctype_digit($normalized);
     }
-}
 
+    private function messagesLimitDefault(): int
+    {
+        return max(1, (int) config('osint.telegram.search.messages_limit_default', 20));
+    }
+
+    private function messagesLimitMax(): int
+    {
+        return max($this->messagesLimitDefault(), (int) config('osint.telegram.search.messages_limit_max', 100));
+    }
+}

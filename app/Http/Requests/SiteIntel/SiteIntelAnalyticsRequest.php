@@ -2,10 +2,10 @@
 
 namespace App\Http\Requests\SiteIntel;
 
+use App\Http\Requests\LocalizedFormRequest;
 use App\Modules\SiteIntel\Support\DomainNormalizer;
-use Illuminate\Foundation\Http\FormRequest;
 
-class SiteIntelAnalyticsRequest extends FormRequest
+class SiteIntelAnalyticsRequest extends LocalizedFormRequest
 {
     public function authorize(): bool
     {
@@ -16,7 +16,7 @@ class SiteIntelAnalyticsRequest extends FormRequest
     {
         return [
             'target' => ['required', 'string', 'max:512'],
-            'locale' => ['nullable', 'string', 'in:ru,en'],
+            'locale' => $this->localeRule(),
         ];
     }
 
@@ -49,8 +49,6 @@ class SiteIntelAnalyticsRequest extends FormRequest
 
     public function locale(): string
     {
-        $locale = strtolower(trim((string) ($this->validated('locale') ?? app()->getLocale())));
-
-        return in_array($locale, ['ru', 'en'], true) ? $locale : 'en';
+        return $this->resolveLocale();
     }
 }
