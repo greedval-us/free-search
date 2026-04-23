@@ -2,7 +2,7 @@ import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFo
 /**
 * @see \Laravel\Fortify\Http\Controllers\VerifyEmailController::__invoke
  * @see vendor/laravel/fortify/src/Http/Controllers/VerifyEmailController.php:18
- * @route '/localhost/email/verify/{id}/{hash}'
+ * @route '/email/verify/{id}/{hash}'
  */
 export const __invoke = (args: { id: string | number, hash: string | number } | [id: string | number, hash: string | number ], options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: __invoke.url(args, options),
@@ -11,13 +11,13 @@ export const __invoke = (args: { id: string | number, hash: string | number } | 
 
 __invoke.definition = {
     methods: ["get","head"],
-    url: '/localhost/email/verify/{id}/{hash}',
+    url: '/email/verify/{id}/{hash}',
 } satisfies RouteDefinition<["get","head"]>
 
 /**
 * @see \Laravel\Fortify\Http\Controllers\VerifyEmailController::__invoke
  * @see vendor/laravel/fortify/src/Http/Controllers/VerifyEmailController.php:18
- * @route '/localhost/email/verify/{id}/{hash}'
+ * @route '/email/verify/{id}/{hash}'
  */
 __invoke.url = (args: { id: string | number, hash: string | number } | [id: string | number, hash: string | number ], options?: RouteQueryOptions) => {
     if (Array.isArray(args)) {
@@ -43,7 +43,7 @@ __invoke.url = (args: { id: string | number, hash: string | number } | [id: stri
 /**
 * @see \Laravel\Fortify\Http\Controllers\VerifyEmailController::__invoke
  * @see vendor/laravel/fortify/src/Http/Controllers/VerifyEmailController.php:18
- * @route '/localhost/email/verify/{id}/{hash}'
+ * @route '/email/verify/{id}/{hash}'
  */
 __invoke.get = (args: { id: string | number, hash: string | number } | [id: string | number, hash: string | number ], options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: __invoke.url(args, options),
@@ -52,7 +52,7 @@ __invoke.get = (args: { id: string | number, hash: string | number } | [id: stri
 /**
 * @see \Laravel\Fortify\Http\Controllers\VerifyEmailController::__invoke
  * @see vendor/laravel/fortify/src/Http/Controllers/VerifyEmailController.php:18
- * @route '/localhost/email/verify/{id}/{hash}'
+ * @route '/email/verify/{id}/{hash}'
  */
 __invoke.head = (args: { id: string | number, hash: string | number } | [id: string | number, hash: string | number ], options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     url: __invoke.url(args, options),
@@ -62,7 +62,7 @@ __invoke.head = (args: { id: string | number, hash: string | number } | [id: str
     /**
 * @see \Laravel\Fortify\Http\Controllers\VerifyEmailController::__invoke
  * @see vendor/laravel/fortify/src/Http/Controllers/VerifyEmailController.php:18
- * @route '/localhost/email/verify/{id}/{hash}'
+ * @route '/email/verify/{id}/{hash}'
  */
     const __invokeForm = (args: { id: string | number, hash: string | number } | [id: string | number, hash: string | number ], options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
         action: __invoke.url(args, options),
@@ -72,7 +72,7 @@ __invoke.head = (args: { id: string | number, hash: string | number } | [id: str
             /**
 * @see \Laravel\Fortify\Http\Controllers\VerifyEmailController::__invoke
  * @see vendor/laravel/fortify/src/Http/Controllers/VerifyEmailController.php:18
- * @route '/localhost/email/verify/{id}/{hash}'
+ * @route '/email/verify/{id}/{hash}'
  */
         __invokeForm.get = (args: { id: string | number, hash: string | number } | [id: string | number, hash: string | number ], options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
             action: __invoke.url(args, options),
@@ -81,7 +81,7 @@ __invoke.head = (args: { id: string | number, hash: string | number } | [id: str
             /**
 * @see \Laravel\Fortify\Http\Controllers\VerifyEmailController::__invoke
  * @see vendor/laravel/fortify/src/Http/Controllers/VerifyEmailController.php:18
- * @route '/localhost/email/verify/{id}/{hash}'
+ * @route '/email/verify/{id}/{hash}'
  */
         __invokeForm.head = (args: { id: string | number, hash: string | number } | [id: string | number, hash: string | number ], options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
             action: __invoke.url(args, {

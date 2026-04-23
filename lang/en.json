@@ -2,5 +2,7 @@
   "Date \"from\" must be less than or equal to date \"to\".": "Date \"from\" must be less than or equal to date \"to\".",
   "Please provide a date range.": "Please provide a date range.",
   "Date range cannot exceed 7 days.": "Date range cannot exceed 7 days.",
-  "Failed to load messages for the current query.": "Failed to load messages for the current query."
+  "Failed to load messages for the current query.": "Failed to load messages for the current query.",
+  "Public search provider is temporarily unavailable. Try again.": "Public search provider is temporarily unavailable. Try again.",
+  "Unable to fetch public matches now. Try again later.": "Unable to fetch public matches now. Try again later."
 }

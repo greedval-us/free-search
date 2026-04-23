@@ -1,7 +1,7 @@
 import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFormDefinition, applyUrlDefaults } from './../../../wayfinder'
 /**
  * @see vendor/laravel/framework/src/Illuminate/Filesystem/FilesystemServiceProvider.php:119
- * @route '/localhost/storage/{path}'
+ * @route '/storage/{path}'
  */
 export const upload = (args: { path: string | number } | [path: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'put'> => ({
     url: upload.url(args, options),
@@ -10,12 +10,12 @@ export const upload = (args: { path: string | number } | [path: string | number 
 
 upload.definition = {
     methods: ["put"],
-    url: '/localhost/storage/{path}',
+    url: '/storage/{path}',
 } satisfies RouteDefinition<["put"]>
 
 /**
  * @see vendor/laravel/framework/src/Illuminate/Filesystem/FilesystemServiceProvider.php:119
- * @route '/localhost/storage/{path}'
+ * @route '/storage/{path}'
  */
 upload.url = (args: { path: string | number } | [path: string | number ] | string | number, options?: RouteQueryOptions) => {
     if (typeof args === 'string' || typeof args === 'number') {
@@ -42,7 +42,7 @@ upload.url = (args: { path: string | number } | [path: string | number ] | strin
 
 /**
  * @see vendor/laravel/framework/src/Illuminate/Filesystem/FilesystemServiceProvider.php:119
- * @route '/localhost/storage/{path}'
+ * @route '/storage/{path}'
  */
 upload.put = (args: { path: string | number } | [path: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'put'> => ({
     url: upload.url(args, options),
@@ -51,7 +51,7 @@ upload.put = (args: { path: string | number } | [path: string | number ] | strin
 
     /**
  * @see vendor/laravel/framework/src/Illuminate/Filesystem/FilesystemServiceProvider.php:119
- * @route '/localhost/storage/{path}'
+ * @route '/storage/{path}'
  */
     const uploadForm = (args: { path: string | number } | [path: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
         action: upload.url(args, {
@@ -65,7 +65,7 @@ upload.put = (args: { path: string | number } | [path: string | number ] | strin
 
             /**
  * @see vendor/laravel/framework/src/Illuminate/Filesystem/FilesystemServiceProvider.php:119
- * @route '/localhost/storage/{path}'
+ * @route '/storage/{path}'
  */
         uploadForm.put = (args: { path: string | number } | [path: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
             action: upload.url(args, {

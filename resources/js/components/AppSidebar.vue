@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { Link } from '@inertiajs/vue3';
-import { AtSign, LayoutGrid, Radar, Send } from 'lucide-vue-next';
+import { AtSign, LayoutGrid, Radar, Send, User } from 'lucide-vue-next';
 import { computed } from 'vue';
 import AppLogo from '@/components/AppLogo.vue';
 import NavFooter from '@/components/NavFooter.vue';
@@ -41,6 +41,11 @@ const mainNavItems = computed<NavItem[]>(() => [
         title: t('navigation.siteIntel'),
         href: '/site-intel',
         icon: Radar,
+    },
+    {
+        title: t('navigation.fio'),
+        href: '/fio',
+        icon: User,
     },
 ]);
 
