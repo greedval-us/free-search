@@ -678,3 +678,81 @@ fio.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
         })
     
     fio.form = fioForm
+/**
+* @see \Inertia\Controller::__invoke
+ * @see vendor/inertiajs/inertia-laravel/src/Controller.php:13
+ * @route '/dorks'
+ */
+export const dorks = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+    url: dorks.url(options),
+    method: 'get',
+})
+
+dorks.definition = {
+    methods: ["get","head"],
+    url: '/dorks',
+} satisfies RouteDefinition<["get","head"]>
+
+/**
+* @see \Inertia\Controller::__invoke
+ * @see vendor/inertiajs/inertia-laravel/src/Controller.php:13
+ * @route '/dorks'
+ */
+dorks.url = (options?: RouteQueryOptions) => {
+    return dorks.definition.url + queryParams(options)
+}
+
+/**
+* @see \Inertia\Controller::__invoke
+ * @see vendor/inertiajs/inertia-laravel/src/Controller.php:13
+ * @route '/dorks'
+ */
+dorks.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+    url: dorks.url(options),
+    method: 'get',
+})
+/**
+* @see \Inertia\Controller::__invoke
+ * @see vendor/inertiajs/inertia-laravel/src/Controller.php:13
+ * @route '/dorks'
+ */
+dorks.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
+    url: dorks.url(options),
+    method: 'head',
+})
+
+    /**
+* @see \Inertia\Controller::__invoke
+ * @see vendor/inertiajs/inertia-laravel/src/Controller.php:13
+ * @route '/dorks'
+ */
+    const dorksForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+        action: dorks.url(options),
+        method: 'get',
+    })
+
+            /**
+* @see \Inertia\Controller::__invoke
+ * @see vendor/inertiajs/inertia-laravel/src/Controller.php:13
+ * @route '/dorks'
+ */
+        dorksForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+            action: dorks.url(options),
+            method: 'get',
+        })
+            /**
+* @see \Inertia\Controller::__invoke
+ * @see vendor/inertiajs/inertia-laravel/src/Controller.php:13
+ * @route '/dorks'
+ */
+        dorksForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+            action: dorks.url({
+                        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
+                            _method: 'HEAD',
+                            ...(options?.query ?? options?.mergeQuery ?? {}),
+                        }
+                    }),
+            method: 'get',
+        })
+    
+    dorks.form = dorksForm

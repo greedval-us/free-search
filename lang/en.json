@@ -4,5 +4,16 @@
   "Date range cannot exceed 7 days.": "Date range cannot exceed 7 days.",
   "Failed to load messages for the current query.": "Failed to load messages for the current query.",
   "Public search provider is temporarily unavailable. Try again.": "Public search provider is temporarily unavailable. Try again.",
-  "Unable to fetch public matches now. Try again later.": "Unable to fetch public matches now. Try again later."
+  "Unable to fetch public matches now. Try again later.": "Unable to fetch public matches now. Try again later.",
+  "Selected goal is not supported.": "Selected goal is not supported.",
+  "All goals": "All goals",
+  "Documents and Data": "Documents and Data",
+  "Brand Mentions": "Brand Mentions",
+  "Competitor Intel": "Competitor Intel",
+  "Community Discussions": "Community Discussions",
+  "News and Trends": "News and Trends",
+  "Jobs and Hiring": "Jobs and Hiring",
+  "API and Tech": "API and Tech",
+  "Datasets": "Datasets",
+  "Security Exposure": "Security Exposure"
 }

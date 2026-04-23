@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { Link, usePage } from '@inertiajs/vue3';
-import { AtSign, BookOpen, Folder, LayoutGrid, Menu, Search, Send } from 'lucide-vue-next';
+import { AtSign, BookOpen, Folder, LayoutGrid, Menu, Search, SearchCode, Send } from 'lucide-vue-next';
 import { computed } from 'vue';
 import AppLogo from '@/components/AppLogo.vue';
 import AppLogoIcon from '@/components/AppLogoIcon.vue';
@@ -69,6 +69,11 @@ const mainNavItems = computed<NavItem[]>(() => [
         title: t('navigation.username'),
         href: '/username',
         icon: AtSign,
+    },
+    {
+        title: t('navigation.dorks'),
+        href: '/dorks',
+        icon: SearchCode,
     },
 ]);
 

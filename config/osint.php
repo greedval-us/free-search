@@ -43,6 +43,101 @@ return [
         ],
     ],
 
+    'dorks' => [
+        'http' => [
+            'connect_timeout_seconds' => (int) env('OSINT_DORKS_HTTP_CONNECT_TIMEOUT', 8),
+            'timeout_seconds' => (int) env('OSINT_DORKS_HTTP_TIMEOUT', 12),
+            'user_agent' => env('OSINT_DORKS_HTTP_USER_AGENT', 'FreeSearch-Dorks/1.0'),
+            'accept' => env('OSINT_DORKS_HTTP_ACCEPT', 'text/html,application/xhtml+xml,application/xml'),
+        ],
+        'search' => [
+            'max_results' => (int) env('OSINT_DORKS_MAX_RESULTS', 120),
+            'per_provider_limit' => (int) env('OSINT_DORKS_PER_PROVIDER_LIMIT', 20),
+            'dorks_per_goal' => (int) env('OSINT_DORKS_DORKS_PER_GOAL', 3),
+            'default_goal' => env('OSINT_DORKS_DEFAULT_GOAL', 'all'),
+            'max_target_length' => (int) env('OSINT_DORKS_MAX_TARGET_LENGTH', 120),
+        ],
+        'sources' => [
+            'bing' => ['enabled' => (bool) env('OSINT_DORKS_SOURCE_BING', true)],
+            'duckduckgo' => ['enabled' => (bool) env('OSINT_DORKS_SOURCE_DUCKDUCKGO', true)],
+            'reddit' => ['enabled' => (bool) env('OSINT_DORKS_SOURCE_REDDIT', true)],
+        ],
+        'goals' => [
+            'documents' => [
+                'label' => 'Documents',
+                'templates' => [
+                    'site:{target} (filetype:pdf OR filetype:doc OR filetype:docx OR filetype:xls OR filetype:xlsx OR filetype:csv)',
+                    '"{target}" "report" filetype:pdf',
+                    '"{target}" "statistics" filetype:pdf',
+                ],
+            ],
+            'brand_mentions' => [
+                'label' => 'Brand Mentions',
+                'templates' => [
+                    '"{target}"',
+                    '"{target}" review OR opinion',
+                    '"{target}" "case study"',
+                ],
+            ],
+            'competitor_intel' => [
+                'label' => 'Competitor Intel',
+                'templates' => [
+                    '"{target}" "our clients"',
+                    '"{target}" "customers include"',
+                    '"{target}" "portfolio"',
+                ],
+            ],
+            'discussions' => [
+                'label' => 'Discussions',
+                'templates' => [
+                    'site:reddit.com "{target}"',
+                    'site:stackoverflow.com "{target}"',
+                    'site:quora.com "{target}"',
+                ],
+            ],
+            'news_trends' => [
+                'label' => 'News and Trends',
+                'templates' => [
+                    '"{target}" "trend"',
+                    '"{target}" "market"',
+                    '"{target}" "2025" OR "2026"',
+                ],
+            ],
+            'jobs_market' => [
+                'label' => 'Jobs and Hiring',
+                'templates' => [
+                    '"{target}" "requirements"',
+                    '"{target}" "job description"',
+                    'site:linkedin.com/jobs "{target}"',
+                ],
+            ],
+            'api_tech' => [
+                'label' => 'API and Tech',
+                'templates' => [
+                    '"{target}" api documentation',
+                    'site:github.com "{target}"',
+                    'site:github.com "parser" "{target}"',
+                ],
+            ],
+            'datasets' => [
+                'label' => 'Datasets',
+                'templates' => [
+                    '"{target}" "dataset"',
+                    'filetype:csv "{target}"',
+                    'filetype:xlsx "{target}"',
+                ],
+            ],
+            'security_exposure' => [
+                'label' => 'Security Exposure',
+                'templates' => [
+                    'site:{target} intitle:"index of" "backup"',
+                    'site:{target} filetype:log "error"',
+                    'site:{target} ("swagger-ui" OR "openapi.json" OR "/actuator")',
+                ],
+            ],
+        ],
+    ],
+
     'telegram' => [
         'analytics' => [
             'period_min_days' => (int) env('OSINT_TELEGRAM_ANALYTICS_PERIOD_MIN_DAYS', 1),

@@ -2,6 +2,11 @@
 
 namespace App\Providers;
 
+use App\Modules\Dorks\Application\Services\DorkAnalyticsBuilder;
+use App\Modules\Dorks\Application\Services\DorkSearchService;
+use App\Modules\Dorks\Infrastructure\Providers\DorkBingRssProvider;
+use App\Modules\Dorks\Infrastructure\Providers\DorkDuckDuckGoProvider;
+use App\Modules\Dorks\Infrastructure\Providers\DorkRedditRssProvider;
 use App\Modules\Telegram\Analytics\Contracts\TelegramAnalyticsApplicationServiceInterface;
 use App\Modules\Telegram\Analytics\TelegramAnalyticsApplicationService;
 use App\Modules\Telegram\Core\Contracts\TelegramGatewayInterface;
@@ -27,6 +32,17 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
+        $this->app->bind(DorkSearchService::class, function ($app): DorkSearchService {
+            return new DorkSearchService(
+                providers: [
+                    'bing' => $app->make(DorkBingRssProvider::class),
+                    'duckduckgo' => $app->make(DorkDuckDuckGoProvider::class),
+                    'reddit' => $app->make(DorkRedditRssProvider::class),
+                ],
+                analyticsBuilder: $app->make(DorkAnalyticsBuilder::class),
+            );
+        });
+
         $this->app->bind(TelegramGatewayInterface::class, TelegramService::class);
         $this->app->bind(TelegramSearchApplicationServiceInterface::class, TelegramSearchApplicationService::class);
         $this->app->bind(TelegramParserApplicationServiceInterface::class, TelegramParserApplicationService::class);

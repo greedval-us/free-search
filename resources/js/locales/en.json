@@ -686,6 +686,58 @@
       "unknown": "Unknown"
     }
   },
+  "dorks": {
+    "headTitle": "Dorks",
+    "tabs": {
+      "search": "Search",
+      "analytics": "Analytics"
+    },
+    "search": {
+      "title": "Dorks Multi-Source Search",
+      "description": "Search by dork templates across multiple online sources with different investigation goals.",
+      "target": "Target",
+      "targetPlaceholder": "example.com or keyword",
+      "goal": "Goal",
+      "find": "Search",
+      "searching": "Searching..."
+    },
+    "results": {
+      "title": "Results",
+      "checkedAt": "Checked at",
+      "empty": "Run a search to view dork results.",
+      "total": "Total",
+      "uniqueDomains": "Unique domains",
+      "sources": "Sources",
+      "goals": "Goals",
+      "open": "Open"
+    },
+    "analytics": {
+      "title": "Dorks Analytics",
+      "description": "Distribution by goals, sources and domains plus relationship graph.",
+      "empty": "Run a search to build analytics.",
+      "goalDistribution": "Goal distribution",
+      "sourceDistribution": "Source distribution",
+      "topDomains": "Top domains",
+      "report": "Open report",
+      "downloadReport": "Download report"
+    },
+    "errors": {
+      "targetRequired": "Enter target for dork search.",
+      "searchFailed": "Could not complete dork search."
+    },
+    "goals": {
+      "all": "All goals",
+      "documents": "Documents and Data",
+      "brand_mentions": "Brand Mentions",
+      "competitor_intel": "Competitor Intel",
+      "discussions": "Community Discussions",
+      "news_trends": "News and Trends",
+      "jobs_market": "Jobs and Hiring",
+      "api_tech": "API and Tech",
+      "datasets": "Datasets",
+      "security_exposure": "Security Exposure"
+    }
+  },
   "navigation": {
     "platform": "Platform",
     "dashboard": "Dashboard",
@@ -693,6 +745,7 @@
     "username": "Username",
     "siteIntel": "Site Intel",
     "fio": "FIO",
+    "dorks": "Dorks",
     "repository": "Repository",
     "documentation": "Documentation"
   },

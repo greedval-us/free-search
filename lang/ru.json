@@ -4,5 +4,16 @@
   "Date range cannot exceed 7 days.": "Диапазон дат не может превышать 7 дней.",
   "Failed to load messages for the current query.": "Не удалось загрузить сообщения по текущему запросу.",
   "Public search provider is temporarily unavailable. Try again.": "Публичный поисковый источник временно недоступен. Попробуйте снова.",
-  "Unable to fetch public matches now. Try again later.": "Не удалось получить публичные совпадения. Попробуйте позже."
+  "Unable to fetch public matches now. Try again later.": "Не удалось получить публичные совпадения. Попробуйте позже.",
+  "All goals": "Все цели",
+  "Selected goal is not supported.": "Выбранная цель не поддерживается.",
+  "Documents and Data": "Документы и данные",
+  "Brand Mentions": "Упоминания бренда",
+  "Competitor Intel": "Анализ конкурентов",
+  "Community Discussions": "Обсуждения",
+  "News and Trends": "Новости и тренды",
+  "Jobs and Hiring": "Вакансии и рынок",
+  "API and Tech": "API и технологии",
+  "Datasets": "Датасеты",
+  "Security Exposure": "Безопасность и экспозиция"
 }

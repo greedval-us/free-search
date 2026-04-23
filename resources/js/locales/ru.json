@@ -694,7 +694,8 @@
     "siteIntel": "Site Intel",
     "fio": "FIO",
     "repository": "Репозиторий",
-    "documentation": "Документация"
+    "documentation": "Документация",
+    "dorks": "Дорки"
   },
   "common": {
     "language": "Язык",
@@ -881,6 +882,58 @@
         "submit": "Продолжить",
         "placeholder": "Введите код восстановления"
       }
+    }
+  },
+  "dorks": {
+    "headTitle": "Дорки",
+    "tabs": {
+      "search": "Поиск",
+      "analytics": "Аналитика"
+    },
+    "goals": {
+      "all": "Все цели",
+      "documents": "Документы и данные",
+      "brand_mentions": "Упоминания бренда",
+      "competitor_intel": "Анализ конкурентов",
+      "discussions": "Обсуждения",
+      "news_trends": "Новости и тренды",
+      "jobs_market": "Вакансии и рынок",
+      "api_tech": "API и технологии",
+      "datasets": "Датасеты",
+      "security_exposure": "Безопасность и экспозиция"
+    },
+    "search": {
+      "title": "Мульти-источниковый поиск дорков",
+      "description": "Поиск по шаблонам дорков в разных онлайн-источниках с разными целями расследования.",
+      "target": "Цель",
+      "targetPlaceholder": "example.com или ключевое слово",
+      "goal": "Цель",
+      "find": "Искать",
+      "searching": "Поиск..."
+    },
+    "results": {
+      "title": "Результаты",
+      "checkedAt": "Проверено",
+      "empty": "Выполните поиск, чтобы увидеть результаты дорков.",
+      "total": "Всего",
+      "uniqueDomains": "Уникальные домены",
+      "sources": "Источники",
+      "goals": "Цели",
+      "open": "Открыть"
+    },
+    "analytics": {
+      "title": "Аналитика дорков",
+      "description": "Распределение по целям, источникам и доменам плюс граф связей.",
+      "empty": "Выполните поиск для построения аналитики.",
+      "goalDistribution": "Распределение по целям",
+      "sourceDistribution": "Распределение по источникам",
+      "topDomains": "Топ доменов",
+      "report": "Открыть отчет",
+      "downloadReport": "Скачать отчет"
+    },
+    "errors": {
+      "targetRequired": "Введите цель для поиска дорков.",
+      "searchFailed": "Не удалось выполнить поиск дорков."
     }
   }
 }
