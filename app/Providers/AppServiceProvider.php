@@ -3,10 +3,14 @@
 namespace App\Providers;
 
 use App\Modules\Dorks\Application\Services\DorkAnalyticsBuilder;
+use App\Modules\Dorks\Application\Services\DorkResultQualityFilter;
 use App\Modules\Dorks\Application\Services\DorkSearchService;
 use App\Modules\Dorks\Infrastructure\Providers\DorkBingRssProvider;
+use App\Modules\Dorks\Infrastructure\Providers\DorkBraveSearchProvider;
 use App\Modules\Dorks\Infrastructure\Providers\DorkDuckDuckGoProvider;
 use App\Modules\Dorks\Infrastructure\Providers\DorkRedditRssProvider;
+use App\Modules\Dorks\Infrastructure\Providers\DorkYahooSearchProvider;
+use App\Modules\Dorks\Infrastructure\Providers\DorkYandexSearchProvider;
 use App\Modules\Telegram\Analytics\Contracts\TelegramAnalyticsApplicationServiceInterface;
 use App\Modules\Telegram\Analytics\TelegramAnalyticsApplicationService;
 use App\Modules\Telegram\Core\Contracts\TelegramGatewayInterface;
@@ -37,9 +41,13 @@ class AppServiceProvider extends ServiceProvider
                 providers: [
                     'bing' => $app->make(DorkBingRssProvider::class),
                     'duckduckgo' => $app->make(DorkDuckDuckGoProvider::class),
+                    'yahoo' => $app->make(DorkYahooSearchProvider::class),
+                    'brave' => $app->make(DorkBraveSearchProvider::class),
+                    'yandex' => $app->make(DorkYandexSearchProvider::class),
                     'reddit' => $app->make(DorkRedditRssProvider::class),
                 ],
                 analyticsBuilder: $app->make(DorkAnalyticsBuilder::class),
+                qualityFilter: $app->make(DorkResultQualityFilter::class),
             );
         });
 

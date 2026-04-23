@@ -57,9 +57,39 @@ return [
             'default_goal' => env('OSINT_DORKS_DEFAULT_GOAL', 'all'),
             'max_target_length' => (int) env('OSINT_DORKS_MAX_TARGET_LENGTH', 120),
         ],
+        'quality' => [
+            'snippet_max_length' => (int) env('OSINT_DORKS_QUALITY_SNIPPET_MAX_LENGTH', 320),
+            'min_target_token_matches' => (int) env('OSINT_DORKS_QUALITY_MIN_TARGET_TOKEN_MATCHES', 1),
+            'min_unique_token_ratio' => (float) env('OSINT_DORKS_QUALITY_MIN_UNIQUE_TOKEN_RATIO', 0.35),
+            'blocked_domains' => [
+                'bing.com',
+                'www.bing.com',
+                'search.yahoo.com',
+                'chfr.search.yahoo.com',
+                'search.brave.com',
+                'yandex.com',
+                'yandex.ru',
+            ],
+            'blocked_phrases' => [
+                'selected for purchase once your purchase is complete',
+                'your tracking history will be available',
+                'usps tracking plus',
+                'revolutionizing urban mobility with style',
+                'eggiecar',
+            ],
+            'goal_keywords' => [
+                'jobs_market' => ['job', 'vacancy', 'hiring', 'requirements', 'position', 'career', 'работа', 'вакансия', 'должность', 'требования'],
+                'api_tech' => ['api', 'documentation', 'github', 'sdk', 'reference', 'swagger', 'openapi'],
+                'datasets' => ['dataset', 'statistics', 'csv', 'xlsx', 'data'],
+                'documents' => ['report', 'pdf', 'document', 'analysis', 'исследование', 'отчет'],
+            ],
+        ],
         'sources' => [
             'bing' => ['enabled' => (bool) env('OSINT_DORKS_SOURCE_BING', true)],
             'duckduckgo' => ['enabled' => (bool) env('OSINT_DORKS_SOURCE_DUCKDUCKGO', true)],
+            'yahoo' => ['enabled' => (bool) env('OSINT_DORKS_SOURCE_YAHOO', true)],
+            'brave' => ['enabled' => (bool) env('OSINT_DORKS_SOURCE_BRAVE', true)],
+            'yandex' => ['enabled' => (bool) env('OSINT_DORKS_SOURCE_YANDEX', true)],
             'reddit' => ['enabled' => (bool) env('OSINT_DORKS_SOURCE_REDDIT', true)],
         ],
         'goals' => [
@@ -106,9 +136,9 @@ return [
             'jobs_market' => [
                 'label' => 'Jobs and Hiring',
                 'templates' => [
-                    '"{target}" "requirements"',
-                    '"{target}" "job description"',
-                    'site:linkedin.com/jobs "{target}"',
+                    '"{target}" ("job description" OR requirements) (vacancy OR hiring OR position)',
+                    'site:linkedin.com/jobs "{target}" (vacancy OR position OR hiring)',
+                    'site:indeed.com "{target}" ("job description" OR requirements)',
                 ],
             ],
             'api_tech' => [

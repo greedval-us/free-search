@@ -17,6 +17,7 @@ final class DorkSearchService
     public function __construct(
         private readonly array $providers,
         private readonly DorkAnalyticsBuilder $analyticsBuilder,
+        private readonly DorkResultQualityFilter $qualityFilter,
     ) {
     }
 
@@ -75,7 +76,8 @@ final class DorkSearchService
             }
         }
 
-        $items = array_slice($this->deduplicate($collected), 0, $this->maxResults());
+        $qualityFiltered = $this->qualityFilter->filter($collected, $query);
+        $items = array_slice($this->deduplicate($qualityFiltered), 0, $this->maxResults());
         $analytics = $this->analyticsBuilder->build($items, $query->target);
         $summary = $this->buildSummary($items, $analytics);
 

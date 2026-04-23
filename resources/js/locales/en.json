@@ -699,7 +699,10 @@
       "targetPlaceholder": "example.com or keyword",
       "goal": "Goal",
       "find": "Search",
-      "searching": "Searching..."
+      "searching": "Searching...",
+      "help": {
+        "overview": "Runs dork templates across multiple search engines and returns cleaned, deduplicated results relevant to your target."
+      }
     },
     "results": {
       "title": "Results",
@@ -719,7 +722,10 @@
       "sourceDistribution": "Source distribution",
       "topDomains": "Top domains",
       "report": "Open report",
-      "downloadReport": "Download report"
+      "downloadReport": "Download report",
+      "help": {
+        "overview": "Builds distribution metrics by goals, sources, and domains, plus a relationship graph from current search results."
+      }
     },
     "errors": {
       "targetRequired": "Enter target for dork search.",
@@ -736,6 +742,9 @@
       "api_tech": "API and Tech",
       "datasets": "Datasets",
       "security_exposure": "Security Exposure"
+    },
+    "help": {
+      "label": "What is this data?"
     }
   },
   "navigation": {
