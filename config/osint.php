@@ -92,6 +92,35 @@ return [
             'yandex' => ['enabled' => (bool) env('OSINT_DORKS_SOURCE_YANDEX', true)],
             'reddit' => ['enabled' => (bool) env('OSINT_DORKS_SOURCE_REDDIT', true)],
         ],
+        'scope' => [
+            'enabled' => (bool) env('OSINT_DORKS_SCOPE_MODE_ENABLED', true),
+            'types' => [
+                'files' => [
+                    'label' => 'Files',
+                    'templates' => [
+                        'site:{site} (filetype:pdf OR filetype:doc OR filetype:docx OR filetype:xls OR filetype:xlsx OR filetype:csv OR filetype:ppt OR filetype:txt) "{target}"',
+                        'site:{site} intitle:"index of" (pdf OR doc OR xls OR csv OR backup) "{target}"',
+                        'site:{site} ("download" OR "document" OR "report") "{target}"',
+                    ],
+                ],
+                'emails' => [
+                    'label' => 'Emails',
+                    'templates' => [
+                        'site:{site} ("@{site}" OR "mailto:" OR "email") "{target}"',
+                        'site:{site} ("contact@" OR "support@" OR "info@") "{target}"',
+                        'site:{site} ("email us" OR "contact us") "{target}"',
+                    ],
+                ],
+                'products' => [
+                    'label' => 'Products',
+                    'templates' => [
+                        'site:{site} ("product" OR "catalog" OR "sku" OR "price") "{target}"',
+                        'site:{site} inurl:(product OR catalog OR shop OR store) "{target}"',
+                        'site:{site} ("buy" OR "in stock" OR "cart") "{target}"',
+                    ],
+                ],
+            ],
+        ],
         'goals' => [
             'documents' => [
                 'label' => 'Documents',

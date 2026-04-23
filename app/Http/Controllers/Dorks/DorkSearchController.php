@@ -40,6 +40,7 @@ class DorkSearchController extends Controller
 
         return $this->jsonOk([
             'goals' => $this->searchService->availableGoals(),
+            'scopes' => $this->searchService->availableScopes(),
         ]);
     }
 

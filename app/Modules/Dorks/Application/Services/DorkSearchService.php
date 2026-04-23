@@ -26,7 +26,7 @@ final class DorkSearchService
      */
     public function search(DorkSearchQueryDTO $query): array
     {
-        $goals = $this->resolveGoals($query->goal);
+        $goals = $this->resolveGoalSet($query);
         if ($goals === []) {
             throw new RuntimeException(__('Selected goal is not supported.'));
         }
@@ -39,7 +39,7 @@ final class DorkSearchService
         $providers = $this->providers();
 
         foreach ($goals as $goalKey => $goalConfig) {
-            $dorks = $this->goalDorks($goalConfig, $query->target);
+            $dorks = $this->goalDorks($goalConfig, $query->target, $query->site);
 
             foreach ($dorks as $dorkQuery) {
                 foreach ($providers as $sourceKey => $provider) {
@@ -84,6 +84,8 @@ final class DorkSearchService
         return [
             'target' => $query->target,
             'goal' => $query->goal,
+            'site' => $query->site,
+            'scope' => $query->scope,
             'checkedAt' => Carbon::now(config('app.timezone'))->toIso8601String(),
             'summary' => $summary,
             'items' => array_map(
@@ -93,6 +95,7 @@ final class DorkSearchService
             'analytics' => $analytics,
             'diagnostics' => $diagnostics,
             'availableGoals' => $this->availableGoals(),
+            'availableScopes' => $this->availableScopes(),
         ];
     }
 
@@ -125,6 +128,50 @@ final class DorkSearchService
     }
 
     /**
+     * @return array<int, array{key: string, label: string}>
+     */
+    public function availableScopes(): array
+    {
+        if (!$this->isScopeModeEnabled()) {
+            return [];
+        }
+
+        $types = config('osint.dorks.scope.types', []);
+        if (!is_array($types)) {
+            return [];
+        }
+
+        $result = [
+            ['key' => 'all', 'label' => __('All scopes')],
+        ];
+
+        foreach ($types as $key => $scopeConfig) {
+            if (!is_array($scopeConfig)) {
+                continue;
+            }
+
+            $result[] = [
+                'key' => (string) $key,
+                'label' => (string) __((string) ($scopeConfig['label'] ?? $key)),
+            ];
+        }
+
+        return $result;
+    }
+
+    /**
+     * @return array<string, array<string, mixed>>
+     */
+    private function resolveGoalSet(DorkSearchQueryDTO $query): array
+    {
+        if ($this->isScopeModeEnabled() && $query->site !== null && $query->site !== '') {
+            return $this->resolveScopedGoals($query->scope);
+        }
+
+        return $this->resolveGoals($query->goal);
+    }
+
+    /**
      * @return array<string, array<string, mixed>>
      */
     private function resolveGoals(string $goal): array
@@ -144,10 +191,47 @@ final class DorkSearchService
     }
 
     /**
+     * @return array<string, array<string, mixed>>
+     */
+    private function resolveScopedGoals(string $scope): array
+    {
+        $all = config('osint.dorks.scope.types', []);
+        if (!is_array($all)) {
+            return [];
+        }
+
+        if ($scope === 'all') {
+            return array_reduce(
+                array_keys($all),
+                function (array $carry, string $typeKey) use ($all): array {
+                    $typeConfig = $all[$typeKey] ?? null;
+                    if (!is_array($typeConfig)) {
+                        return $carry;
+                    }
+
+                    $carry['scope_' . $typeKey] = $typeConfig;
+
+                    return $carry;
+                },
+                []
+            );
+        }
+
+        $selected = $all[$scope] ?? null;
+
+        return is_array($selected) ? ['scope_' . $scope => $selected] : [];
+    }
+
+    private function isScopeModeEnabled(): bool
+    {
+        return (bool) config('osint.dorks.scope.enabled', true);
+    }
+
+    /**
      * @param array<string, mixed> $goalConfig
      * @return array<int, string>
      */
-    private function goalDorks(array $goalConfig, string $target): array
+    private function goalDorks(array $goalConfig, string $target, ?string $site = null): array
     {
         $templates = $goalConfig['templates'] ?? [];
         if (!is_array($templates)) {
@@ -161,7 +245,16 @@ final class DorkSearchService
                 continue;
             }
 
-            $queries[] = str_replace('{target}', $target, $template);
+            $query = str_replace('{target}', $target, $template);
+            $query = str_replace('{site}', (string) $site, $query);
+            $query = str_replace('""', '', $query);
+            $query = trim(preg_replace('/\s+/u', ' ', $query) ?? $query);
+
+            if ($query === '') {
+                continue;
+            }
+
+            $queries[] = $query;
             if (count($queries) >= $this->dorksPerGoal()) {
                 break;
             }

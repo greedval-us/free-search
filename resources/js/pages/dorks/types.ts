@@ -5,6 +5,11 @@ export type DorkGoal = {
     label: string;
 };
 
+export type DorkScope = {
+    key: string;
+    label: string;
+};
+
 export type DorkResultItem = {
     source: string;
     goal: string;
@@ -38,6 +43,8 @@ export type DorksGraphEdge = {
 export type DorksSearchPayload = {
     target: string;
     goal: string;
+    site?: string | null;
+    scope?: string;
     checkedAt: string;
     summary: {
         total: number;
@@ -71,6 +78,7 @@ export type DorksSearchPayload = {
         }>;
     };
     availableGoals: DorkGoal[];
+    availableScopes?: DorkScope[];
 };
 
 export type DorksApiResponse = {
@@ -78,5 +86,5 @@ export type DorksApiResponse = {
     message?: string;
     errors?: Record<string, string[]>;
     goals?: DorkGoal[];
+    scopes?: DorkScope[];
 } & Partial<DorksSearchPayload>;
-

@@ -12,6 +12,7 @@ const {
     error,
     payload,
     goals,
+    scopes,
     canSearch,
     canUseReportActions,
     loadGoals,
@@ -51,7 +52,7 @@ const maxSourceCount = computed(() => Math.max(1, ...(payload.value?.analytics.s
             </p>
         </div>
 
-        <div class="mt-3 grid gap-3 md:grid-cols-[1fr_220px_auto_auto_auto]">
+        <div class="mt-3 grid gap-3 md:grid-cols-2 xl:grid-cols-[1fr_1fr_220px_220px_auto_auto_auto]">
             <label class="block min-w-0">
                 <span class="mb-1 block truncate text-xs font-medium text-muted-foreground">{{ t('dorks.search.target') }}</span>
                 <input
@@ -64,6 +65,17 @@ const maxSourceCount = computed(() => Math.max(1, ...(payload.value?.analytics.s
             </label>
 
             <label class="block min-w-0">
+                <span class="mb-1 block truncate text-xs font-medium text-muted-foreground">{{ t('dorks.search.site') }}</span>
+                <input
+                    v-model="form.site"
+                    type="text"
+                    class="h-10 w-full rounded-md border border-input bg-background px-3 text-sm"
+                    :placeholder="t('dorks.search.sitePlaceholder')"
+                    @keydown.enter.prevent="search"
+                />
+            </label>
+
+            <label class="block min-w-0">
                 <span class="mb-1 block truncate text-xs font-medium text-muted-foreground">{{ t('dorks.search.goal') }}</span>
                 <select
                     v-model="form.goal"
@@ -71,6 +83,18 @@ const maxSourceCount = computed(() => Math.max(1, ...(payload.value?.analytics.s
                 >
                     <option v-for="goal in goals" :key="goal.key" :value="goal.key">
                         {{ goal.label }}
+                    </option>
+                </select>
+            </label>
+
+            <label class="block min-w-0">
+                <span class="mb-1 block truncate text-xs font-medium text-muted-foreground">{{ t('dorks.search.scope') }}</span>
+                <select
+                    v-model="form.scope"
+                    class="h-10 w-full rounded-md border border-input bg-background px-3 text-sm"
+                >
+                    <option v-for="scope in scopes" :key="scope.key" :value="scope.key">
+                        {{ scope.label }}
                     </option>
                 </select>
             </label>

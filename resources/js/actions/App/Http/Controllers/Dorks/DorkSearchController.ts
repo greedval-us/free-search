@@ -157,7 +157,7 @@ goals.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     goals.form = goalsForm
 /**
 * @see \App\Http\Controllers\Dorks\DorkSearchController::report
- * @see app/Http/Controllers/Dorks/DorkSearchController.php:46
+ * @see app/Http/Controllers/Dorks/DorkSearchController.php:47
  * @route '/dorks/report'
  */
 export const report = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -172,7 +172,7 @@ report.definition = {
 
 /**
 * @see \App\Http\Controllers\Dorks\DorkSearchController::report
- * @see app/Http/Controllers/Dorks/DorkSearchController.php:46
+ * @see app/Http/Controllers/Dorks/DorkSearchController.php:47
  * @route '/dorks/report'
  */
 report.url = (options?: RouteQueryOptions) => {
@@ -181,7 +181,7 @@ report.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\Dorks\DorkSearchController::report
- * @see app/Http/Controllers/Dorks/DorkSearchController.php:46
+ * @see app/Http/Controllers/Dorks/DorkSearchController.php:47
  * @route '/dorks/report'
  */
 report.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -190,7 +190,7 @@ report.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
 })
 /**
 * @see \App\Http\Controllers\Dorks\DorkSearchController::report
- * @see app/Http/Controllers/Dorks/DorkSearchController.php:46
+ * @see app/Http/Controllers/Dorks/DorkSearchController.php:47
  * @route '/dorks/report'
  */
 report.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -200,7 +200,7 @@ report.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 
     /**
 * @see \App\Http\Controllers\Dorks\DorkSearchController::report
- * @see app/Http/Controllers/Dorks/DorkSearchController.php:46
+ * @see app/Http/Controllers/Dorks/DorkSearchController.php:47
  * @route '/dorks/report'
  */
     const reportForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -210,7 +210,7 @@ report.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 
             /**
 * @see \App\Http\Controllers\Dorks\DorkSearchController::report
- * @see app/Http/Controllers/Dorks/DorkSearchController.php:46
+ * @see app/Http/Controllers/Dorks/DorkSearchController.php:47
  * @route '/dorks/report'
  */
         reportForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -219,7 +219,7 @@ report.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
         })
             /**
 * @see \App\Http\Controllers\Dorks\DorkSearchController::report
- * @see app/Http/Controllers/Dorks/DorkSearchController.php:46
+ * @see app/Http/Controllers/Dorks/DorkSearchController.php:47
  * @route '/dorks/report'
  */
         reportForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({

@@ -702,7 +702,10 @@
       "searching": "Searching...",
       "help": {
         "overview": "Runs dork templates across multiple search engines and returns cleaned, deduplicated results relevant to your target."
-      }
+      },
+      "site": "Site (Domain)",
+      "sitePlaceholder": "example.com",
+      "scope": "Scope"
     },
     "results": {
       "title": "Results",
@@ -728,7 +731,7 @@
       }
     },
     "errors": {
-      "targetRequired": "Enter target for dork search.",
+      "targetRequired": "Enter target keyword or site domain.",
       "searchFailed": "Could not complete dork search."
     },
     "goals": {
@@ -745,6 +748,12 @@
     },
     "help": {
       "label": "What is this data?"
+    },
+    "scopes": {
+      "all": "All scopes",
+      "files": "Files",
+      "emails": "Emails",
+      "products": "Products"
     }
   },
   "navigation": {

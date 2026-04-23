@@ -1,5 +1,5 @@
 import { computed, reactive, ref } from 'vue';
-import type { DorkGoal, DorksApiResponse, DorksSearchPayload } from '../types';
+import type { DorkGoal, DorkScope, DorksApiResponse, DorksSearchPayload } from '../types';
 
 type TranslateFn = (key: string) => string;
 
@@ -14,8 +14,20 @@ export const useDorksSearch = (t: TranslateFn) => {
         };
     };
 
+    const translateScope = (scope: DorkScope): DorkScope => {
+        const key = `dorks.scopes.${scope.key}`;
+        const translated = t(key);
+
+        return {
+            ...scope,
+            label: translated !== key ? translated : scope.label,
+        };
+    };
+
     const form = reactive({
         target: '',
+        site: '',
+        scope: 'all',
         goal: 'all',
     });
 
@@ -25,12 +37,17 @@ export const useDorksSearch = (t: TranslateFn) => {
     const goals = ref<DorkGoal[]>([
         translateGoal({ key: 'all', label: 'All goals' }),
     ]);
+    const scopes = ref<DorkScope[]>([
+        translateScope({ key: 'all', label: 'All scopes' }),
+    ]);
 
-    const canSearch = computed(() => form.target.trim().length >= 2);
+    const canSearch = computed(() => form.target.trim().length >= 2 || form.site.trim().length >= 3);
     const canUseReportActions = computed(() => payload.value !== null && !loading.value);
 
     const normalizeTarget = () => form.target.trim();
     const normalizeGoal = () => (form.goal.trim() !== '' ? form.goal.trim() : 'all');
+    const normalizeSite = () => form.site.trim();
+    const normalizeScope = () => (form.scope.trim() !== '' ? form.scope.trim() : 'all');
 
     const locale = () =>
         typeof document !== 'undefined' && document.documentElement.lang.toLowerCase().startsWith('ru')
@@ -40,6 +57,8 @@ export const useDorksSearch = (t: TranslateFn) => {
     const reportUrl = (download = false): string => {
         const params = new URLSearchParams({
             target: normalizeTarget(),
+            site: normalizeSite(),
+            scope: normalizeScope(),
             goal: normalizeGoal(),
             locale: locale(),
         });
@@ -61,6 +80,9 @@ export const useDorksSearch = (t: TranslateFn) => {
             if (response.ok && data.ok && Array.isArray(data.goals) && data.goals.length > 0) {
                 goals.value = data.goals.map(translateGoal);
             }
+            if (response.ok && data.ok && Array.isArray(data.scopes) && data.scopes.length > 0) {
+                scopes.value = data.scopes.map(translateScope);
+            }
         } catch {
             // ignore and keep defaults
         }
@@ -79,6 +101,8 @@ export const useDorksSearch = (t: TranslateFn) => {
         try {
             const params = new URLSearchParams({
                 target: normalizeTarget(),
+                site: normalizeSite(),
+                scope: normalizeScope(),
                 goal: normalizeGoal(),
                 locale: locale(),
             });
@@ -97,6 +121,9 @@ export const useDorksSearch = (t: TranslateFn) => {
             payload.value = data as unknown as DorksSearchPayload;
             if (Array.isArray(data.availableGoals) && data.availableGoals.length > 0) {
                 goals.value = data.availableGoals.map(translateGoal);
+            }
+            if (Array.isArray(data.availableScopes) && data.availableScopes.length > 0) {
+                scopes.value = data.availableScopes.map(translateScope);
             }
         } catch (exception) {
             error.value = exception instanceof Error ? exception.message : t('dorks.errors.searchFailed');
@@ -127,6 +154,7 @@ export const useDorksSearch = (t: TranslateFn) => {
         error,
         payload,
         goals,
+        scopes,
         canSearch,
         canUseReportActions,
         loadGoals,

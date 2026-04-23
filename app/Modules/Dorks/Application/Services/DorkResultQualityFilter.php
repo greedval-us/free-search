@@ -30,6 +30,10 @@ final class DorkResultQualityFilter
                 continue;
             }
 
+            if (!$this->matchesSite($normalized, $query->site)) {
+                continue;
+            }
+
             if (!$this->matchesGoalContext($normalized, $query->goal)) {
                 continue;
             }
@@ -118,7 +122,7 @@ final class DorkResultQualityFilter
     {
         $target = mb_strtolower(trim($target));
         if ($target === '') {
-            return false;
+            return true;
         }
 
         $text = mb_strtolower($item->title . ' ' . $item->snippet . ' ' . $item->url);
@@ -161,6 +165,21 @@ final class DorkResultQualityFilter
         }
 
         return false;
+    }
+
+    private function matchesSite(DorkResultItemDTO $item, ?string $site): bool
+    {
+        $site = mb_strtolower(trim((string) $site));
+        if ($site === '') {
+            return true;
+        }
+
+        $domain = mb_strtolower(trim((string) $item->domain));
+        if ($domain === '') {
+            return false;
+        }
+
+        return $domain === $site || str_ends_with($domain, '.' . $site);
     }
 
     /**
@@ -221,4 +240,3 @@ final class DorkResultQualityFilter
         return max(0.1, min(1.0, (float) config('osint.dorks.quality.min_unique_token_ratio', 0.35)));
     }
 }
-
