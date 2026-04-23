@@ -2,12 +2,12 @@
 
 namespace App\Http\Requests\Telegram;
 
+use App\Http\Requests\LocalizedFormRequest;
 use App\Modules\Telegram\DTO\Request\TelegramAnalyticsParamsDTO;
 use Carbon\Carbon;
-use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Validator;
 
-class TelegramAnalyticsRequest extends FormRequest
+class TelegramAnalyticsRequest extends LocalizedFormRequest
 {
     private const SCORE_PRIORITIES = [
         'balanced',
@@ -26,8 +26,8 @@ class TelegramAnalyticsRequest extends FormRequest
         return [
             'chatUsername' => ['required', 'string', 'max:255'],
             'keyword' => ['nullable', 'string', 'max:255'],
-            'locale' => ['nullable', 'string', 'in:ru,en'],
-            'periodDays' => ['nullable', 'integer', 'min:1', 'max:7'],
+            'locale' => $this->localeRule(),
+            'periodDays' => ['nullable', 'integer', 'min:' . $this->periodMinDays(), 'max:' . $this->periodMaxDays()],
             'dateFrom' => ['nullable', 'date_format:Y-m-d'],
             'dateTo' => ['nullable', 'date_format:Y-m-d'],
             'scorePriority' => ['nullable', 'string', 'in:' . implode(',', self::SCORE_PRIORITIES)],
@@ -52,8 +52,13 @@ class TelegramAnalyticsRequest extends FormRequest
                 $rangeStart = Carbon::createFromFormat('Y-m-d', $dateFrom, config('app.timezone'))->startOfDay();
                 $rangeEnd = Carbon::createFromFormat('Y-m-d', $dateTo, config('app.timezone'))->endOfDay();
 
-                if ($rangeEnd->diffInDays($rangeStart) > 6) {
-                    $validator->errors()->add('dateTo', __('The custom analytics range cannot exceed 7 days.'));
+                if ($rangeEnd->diffInDays($rangeStart) > ($this->customRangeMaxDays() - 1)) {
+                    $validator->errors()->add(
+                        'dateTo',
+                        __('The custom analytics range cannot exceed :days days.', [
+                            'days' => $this->customRangeMaxDays(),
+                        ])
+                    );
                 }
             }
         });
@@ -66,7 +71,10 @@ class TelegramAnalyticsRequest extends FormRequest
 
     public function periodDays(): int
     {
-        return max(1, min(7, (int) ($this->validated('periodDays') ?? 7)));
+        return max(
+            $this->periodMinDays(),
+            min($this->periodMaxDays(), (int) ($this->validated('periodDays') ?? $this->periodMaxDays()))
+        );
     }
 
     public function customRange(): bool
@@ -112,9 +120,7 @@ class TelegramAnalyticsRequest extends FormRequest
 
     public function locale(): string
     {
-        $locale = strtolower(trim((string) ($this->validated('locale') ?? app()->getLocale())));
-
-        return in_array($locale, ['ru', 'en'], true) ? $locale : 'en';
+        return $this->resolveLocale();
     }
 
     public function toParamsDTO(): TelegramAnalyticsParamsDTO
@@ -125,5 +131,19 @@ class TelegramAnalyticsRequest extends FormRequest
             keyword: $this->keyword(),
         );
     }
-}
 
+    private function periodMinDays(): int
+    {
+        return max(1, (int) config('osint.telegram.analytics.period_min_days', 1));
+    }
+
+    private function periodMaxDays(): int
+    {
+        return max($this->periodMinDays(), (int) config('osint.telegram.analytics.period_max_days', 7));
+    }
+
+    private function customRangeMaxDays(): int
+    {
+        return max(1, (int) config('osint.telegram.analytics.custom_range_max_days', 7));
+    }
+}

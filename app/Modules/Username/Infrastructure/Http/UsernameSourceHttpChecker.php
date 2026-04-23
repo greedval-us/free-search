@@ -185,9 +185,18 @@ final class UsernameSourceHttpChecker implements UsernameSourceCheckerInterface
     private function requestConfig(): array
     {
         return [
-            'connect_timeout' => (int) config('username.request.connect_timeout', 6),
-            'timeout' => (int) config('username.request.timeout', 8),
-            'max_redirects' => (int) config('username.request.max_redirects', 5),
+            'connect_timeout' => (int) config(
+                'osint.username.http.connect_timeout_seconds',
+                config('username.request.connect_timeout', 6)
+            ),
+            'timeout' => (int) config(
+                'osint.username.http.timeout_seconds',
+                config('username.request.timeout', 8)
+            ),
+            'max_redirects' => (int) config(
+                'osint.username.http.max_redirects',
+                config('username.request.max_redirects', 5)
+            ),
         ];
     }
 
@@ -197,10 +206,13 @@ final class UsernameSourceHttpChecker implements UsernameSourceCheckerInterface
     private function requestHeaders(): array
     {
         return [
-            'Accept' => 'text/html,application/xhtml+xml',
+            'Accept' => (string) config('osint.username.http.accept', 'text/html,application/xhtml+xml'),
             'User-Agent' => (string) config(
-                'username.request.user_agent',
-                'Mozilla/5.0 (compatible; UraborosOSINT/1.0; +https://localhost)'
+                'osint.username.http.user_agent',
+                (string) config(
+                    'username.request.user_agent',
+                    'Mozilla/5.0 (compatible; UraborosOSINT/1.0; +https://localhost)'
+                )
             ),
         ];
     }

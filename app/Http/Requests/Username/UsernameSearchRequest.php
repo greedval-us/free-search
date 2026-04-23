@@ -2,10 +2,10 @@
 
 namespace App\Http\Requests\Username;
 
+use App\Http\Requests\LocalizedFormRequest;
 use App\Modules\Username\Domain\DTO\UsernameSearchQueryDTO;
-use Illuminate\Foundation\Http\FormRequest;
 
-class UsernameSearchRequest extends FormRequest
+class UsernameSearchRequest extends LocalizedFormRequest
 {
     public function authorize(): bool
     {
@@ -16,7 +16,7 @@ class UsernameSearchRequest extends FormRequest
     {
         return [
             'username' => ['required', 'string', 'min:2', 'max:39', 'regex:/^[A-Za-z0-9._-]+$/'],
-            'locale' => ['nullable', 'string', 'in:ru,en'],
+            'locale' => $this->localeRule(),
         ];
     }
 
@@ -34,8 +34,6 @@ class UsernameSearchRequest extends FormRequest
 
     public function locale(): string
     {
-        $locale = strtolower(trim((string) ($this->validated('locale') ?? app()->getLocale())));
-
-        return in_array($locale, ['ru', 'en'], true) ? $locale : 'en';
+        return $this->resolveLocale();
     }
 }

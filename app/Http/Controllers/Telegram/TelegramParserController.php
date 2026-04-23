@@ -6,7 +6,7 @@ use App\Http\Requests\Telegram\TelegramParserStartRequest;
 use App\Modules\Export\Excel\ExcelWorkbookService;
 use App\Modules\Telegram\Parser\TelegramParserExportBuilder;
 use App\Modules\Telegram\Parser\Contracts\TelegramParserApplicationServiceInterface;
-use Carbon\Carbon;
+use App\Support\Reports\ReportFilenamePolicy;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
@@ -18,6 +18,7 @@ class TelegramParserController extends BaseTelegramController
         private readonly TelegramParserApplicationServiceInterface $parserApplicationService,
         private readonly TelegramParserExportBuilder $exportBuilder,
         private readonly ExcelWorkbookService $excelWorkbookService,
+        private readonly ReportFilenamePolicy $reportFilenamePolicy,
     ) {
     }
 
@@ -69,13 +70,10 @@ class TelegramParserController extends BaseTelegramController
 
     private function buildExportFilename(string $prefix, string $chatUsername, string $extension): string
     {
-        return sprintf(
-            '%s-%s-%s.%s',
-            $prefix,
-            preg_replace('/[^a-z0-9_-]+/i', '-', $chatUsername) ?: 'chat',
-            Carbon::now(config('app.timezone'))->format('Ymd-His'),
-            ltrim($extension, '.')
+        return $this->reportFilenamePolicy->buildWithExtension(
+            prefix: $prefix,
+            target: $chatUsername,
+            extension: $extension,
         );
     }
 }
-

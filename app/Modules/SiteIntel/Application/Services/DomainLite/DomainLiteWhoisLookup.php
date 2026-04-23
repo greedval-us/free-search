@@ -30,7 +30,7 @@ final class DomainLiteWhoisLookup
 
     private function resolveWhoisServer(string $domain): ?string
     {
-        $ianaResponse = $this->whoisClient->query('whois.iana.org', $domain);
+        $ianaResponse = $this->whoisClient->query($this->ianaServer(), $domain);
         if ($ianaResponse === null) {
             return null;
         }
@@ -40,6 +40,11 @@ final class DomainLiteWhoisLookup
         }
 
         return null;
+    }
+
+    private function ianaServer(): string
+    {
+        return (string) config('osint.site_intel.whois.iana_server', 'whois.iana.org');
     }
 
     /**
@@ -59,4 +64,3 @@ final class DomainLiteWhoisLookup
         ];
     }
 }
-

@@ -7,8 +7,6 @@ use Illuminate\Support\Facades\Http;
 
 final class SiteHealthHttpInspector
 {
-    private const MAX_REDIRECTS = 5;
-
     /**
      * @return array<string, mixed>
      */
@@ -19,19 +17,19 @@ final class SiteHealthHttpInspector
         $finalHeaders = [];
         $finalStatus = 0;
 
-        for ($step = 0; $step <= self::MAX_REDIRECTS; $step++) {
+        for ($step = 0; $step <= $this->maxRedirects(); $step++) {
             $startedAt = microtime(true);
 
             try {
                 $response = Http::withHeaders([
-                    'User-Agent' => 'FreeSearch-SiteHealth/1.0',
-                    'Accept' => '*/*',
+                    'User-Agent' => $this->userAgent(),
+                    'Accept' => $this->acceptHeader(),
                 ])
                     ->withOptions([
                         'allow_redirects' => false,
-                        'verify' => false,
+                        'verify' => $this->verifySsl(),
                     ])
-                    ->timeout(10)
+                    ->timeout($this->timeoutSeconds())
                     ->get($currentUrl);
             } catch (ConnectionException $exception) {
                 $chain[] = [
@@ -124,5 +122,29 @@ final class SiteHealthHttpInspector
 
         return sprintf('%s://%s%s%s%s', $scheme, $host, $port, $basePath, $location);
     }
-}
 
+    private function userAgent(): string
+    {
+        return (string) config('osint.site_intel.http.user_agent', 'FreeSearch-SiteHealth/1.0');
+    }
+
+    private function acceptHeader(): string
+    {
+        return (string) config('osint.site_intel.http.accept', '*/*');
+    }
+
+    private function timeoutSeconds(): int
+    {
+        return max(1, (int) config('osint.site_intel.http.timeout_seconds', 10));
+    }
+
+    private function maxRedirects(): int
+    {
+        return max(0, (int) config('osint.site_intel.http.max_redirects', 5));
+    }
+
+    private function verifySsl(): bool
+    {
+        return (bool) config('osint.site_intel.http.verify_ssl', false);
+    }
+}

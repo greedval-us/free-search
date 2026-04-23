@@ -56,8 +56,13 @@ class TelegramParserStartRequest extends FormRequest
             $from = Carbon::createFromFormat('Y-m-d', $dateFrom, config('app.timezone'))->startOfDay();
             $to = Carbon::createFromFormat('Y-m-d', $dateTo, config('app.timezone'))->endOfDay();
 
-            if ($to->diffInDays($from) > 30) {
-                $validator->errors()->add('dateTo', __('The custom parser range cannot exceed one month.'));
+            if ($to->diffInDays($from) > ($this->customRangeMaxDays() - 1)) {
+                $validator->errors()->add(
+                    'dateTo',
+                    __('The custom parser range cannot exceed :days days.', [
+                        'days' => $this->customRangeMaxDays(),
+                    ])
+                );
             }
         });
     }
@@ -137,5 +142,9 @@ class TelegramParserStartRequest extends FormRequest
             range: $this->range(),
         );
     }
-}
 
+    private function customRangeMaxDays(): int
+    {
+        return max(1, (int) config('osint.telegram.parser.custom_range_max_days', 31));
+    }
+}

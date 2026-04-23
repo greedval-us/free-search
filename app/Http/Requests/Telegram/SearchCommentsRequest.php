@@ -17,7 +17,7 @@ class SearchCommentsRequest extends FormRequest
         return [
             'chatUsername' => ['required', 'string', 'max:255'],
             'postId' => ['required', 'integer', 'min:1'],
-            'limit' => ['nullable', 'integer', 'min:1', 'max:50'],
+            'limit' => ['nullable', 'integer', 'min:1', 'max:' . $this->commentsLimitMax()],
             'offsetId' => ['nullable', 'integer', 'min:0'],
         ];
     }
@@ -34,7 +34,7 @@ class SearchCommentsRequest extends FormRequest
 
     public function limitValue(): int
     {
-        return (int) ($this->validated('limit') ?? 20);
+        return (int) ($this->validated('limit') ?? $this->commentsLimitDefault());
     }
 
     public function offsetId(): int
@@ -51,5 +51,14 @@ class SearchCommentsRequest extends FormRequest
             offsetId: $this->offsetId(),
         );
     }
-}
 
+    private function commentsLimitDefault(): int
+    {
+        return max(1, (int) config('osint.telegram.search.comments_limit_default', 20));
+    }
+
+    private function commentsLimitMax(): int
+    {
+        return max($this->commentsLimitDefault(), (int) config('osint.telegram.search.comments_limit_max', 50));
+    }
+}

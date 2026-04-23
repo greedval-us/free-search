@@ -17,7 +17,7 @@ class FioLookupController extends Controller
 
     public function lookup(FioLookupRequest $request): JsonResponse
     {
-        app()->setLocale($request->locale());
+        $this->applyRequestLocale($request->locale());
 
         try {
             $result = $this->fioPublicSearchService->search(
@@ -25,14 +25,10 @@ class FioLookupController extends Controller
                 $request->qualifier(),
             );
         } catch (RuntimeException $exception) {
-            return response()->json([
-                'ok' => false,
-                'message' => $exception->getMessage(),
-            ], 502);
+            return $this->jsonError($exception->getMessage(), 502);
         }
 
-        return response()->json([
-            'ok' => true,
+        return $this->jsonOk([
             'data' => $result->toArray(),
         ]);
     }

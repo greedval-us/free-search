@@ -2,9 +2,9 @@
 
 namespace App\Http\Requests\Fio;
 
-use Illuminate\Foundation\Http\FormRequest;
+use App\Http\Requests\LocalizedFormRequest;
 
-class FioLookupRequest extends FormRequest
+class FioLookupRequest extends LocalizedFormRequest
 {
     public function authorize(): bool
     {
@@ -16,7 +16,7 @@ class FioLookupRequest extends FormRequest
         return [
             'full_name' => ['required', 'string', 'min:3', 'max:120', 'regex:/^[\p{L}\p{M}\s\'\-.]+$/u'],
             'qualifier' => ['nullable', 'string', 'min:2', 'max:64', 'regex:/^[\p{L}\p{M}\s\'\-.]+$/u'],
-            'locale' => ['nullable', 'string', 'in:ru,en'],
+            'locale' => $this->localeRule(),
         ];
     }
 
@@ -30,9 +30,7 @@ class FioLookupRequest extends FormRequest
 
     public function locale(): string
     {
-        $locale = strtolower(trim((string) ($this->validated('locale') ?? app()->getLocale())));
-
-        return in_array($locale, ['ru', 'en'], true) ? $locale : 'en';
+        return $this->resolveLocale();
     }
 
     public function qualifier(): ?string

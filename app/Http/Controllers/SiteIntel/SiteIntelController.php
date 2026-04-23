@@ -9,7 +9,6 @@ use App\Http\Requests\SiteIntel\SiteHealthCheckRequest;
 use App\Modules\SiteIntel\Application\Services\DomainLiteService;
 use App\Modules\SiteIntel\Application\Services\SiteHealthService;
 use App\Modules\SiteIntel\Application\Services\SiteIntelAnalyticsService;
-use Carbon\Carbon;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Response;
 use Illuminate\View\View;
@@ -27,16 +26,12 @@ class SiteIntelController extends Controller
     {
         $url = $request->normalizedUrl();
         if ($url === null) {
-            return response()->json([
-                'ok' => false,
-                'message' => __('Invalid target URL or domain.'),
-            ], 422);
+            return $this->jsonError(__('Invalid target URL or domain.'), 422);
         }
 
         $data = $this->siteHealthService->check($url);
 
-        return response()->json([
-            'ok' => true,
+        return $this->jsonOk([
             'data' => $data,
         ]);
     }
@@ -45,16 +40,12 @@ class SiteIntelController extends Controller
     {
         $domain = $request->normalizedDomain();
         if ($domain === null) {
-            return response()->json([
-                'ok' => false,
-                'message' => __('Invalid domain.'),
-            ], 422);
+            return $this->jsonError(__('Invalid domain.'), 422);
         }
 
         $data = $this->domainLiteService->lookup($domain);
 
-        return response()->json([
-            'ok' => true,
+        return $this->jsonOk([
             'data' => $data,
         ]);
     }
@@ -65,23 +56,19 @@ class SiteIntelController extends Controller
         $domain = $request->normalizedDomain();
 
         if ($url === null || $domain === null) {
-            return response()->json([
-                'ok' => false,
-                'message' => __('Invalid target URL or domain.'),
-            ], 422);
+            return $this->jsonError(__('Invalid target URL or domain.'), 422);
         }
 
         $data = $this->siteIntelAnalyticsService->analyze($url, $domain);
 
-        return response()->json([
-            'ok' => true,
+        return $this->jsonOk([
             'data' => $data,
         ]);
     }
 
     public function report(SiteIntelAnalyticsRequest $request): View|Response
     {
-        app()->setLocale($request->locale());
+        $this->applyRequestLocale($request->locale());
 
         $url = $request->normalizedUrl();
         $domain = $request->normalizedDomain();
@@ -90,26 +77,12 @@ class SiteIntelController extends Controller
             abort(422, __('Invalid target URL or domain.'));
         }
 
-        $data = $this->siteIntelAnalyticsService->analyze($url, $domain);
-        $viewData = [
-            'report' => $data,
-            'locale' => app()->getLocale(),
-            'generatedAt' => Carbon::now(config('app.timezone'))->format('d.m.Y H:i'),
-        ];
-
-        if ($request->boolean('download')) {
-            $filename = sprintf(
-                'site-intel-analytics-%s-%s.html',
-                preg_replace('/[^a-z0-9._-]+/i', '-', $domain) ?: 'report',
-                Carbon::now(config('app.timezone'))->format('Ymd-His')
-            );
-
-            return response()
-                ->view('reports.site-intel.analytics', $viewData)
-                ->header('Content-Type', 'text/html; charset=UTF-8')
-                ->header('Content-Disposition', 'attachment; filename="' . $filename . '"');
-        }
-
-        return view('reports.site-intel.analytics', $viewData);
+        return $this->htmlReportResponse(
+            view: 'reports.site-intel.analytics',
+            viewData: $this->reportViewData($this->siteIntelAnalyticsService->analyze($url, $domain)),
+            download: $request->boolean('download'),
+            filenamePrefix: 'site-intel-analytics',
+            filenameTarget: $domain,
+        );
     }
 }
