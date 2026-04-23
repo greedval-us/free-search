@@ -132,7 +132,7 @@ class TelegramAnalyticsSummaryBuilder
             'timeline' => $timelineValues,
             'topMedia' => $this->buildDistribution($mediaCounts),
             'topReactions' => $this->buildDistribution($reactionCounts),
-            'topPosts' => array_slice($topPosts, 0, 5),
+            'topPosts' => array_slice($topPosts, 0, $this->topPostsLimit()),
             'opinionLeaders' => $opinionLeaders,
             'opinionLeadersDaily' => $this->opinionLeadersBuilder->buildLeadersDaily($authorDailyStats, $opinionLeaderKeys),
             'chatUsername' => $chatUsername,
@@ -357,7 +357,7 @@ class TelegramAnalyticsSummaryBuilder
         $total = array_sum($counts);
         $distribution = [];
 
-        foreach (array_slice($counts, 0, 5, true) as $label => $count) {
+        foreach (array_slice($counts, 0, $this->topDistributionLimit(), true) as $label => $count) {
             $distribution[] = [
                 'key' => $label,
                 'label' => $label,
@@ -378,5 +378,15 @@ class TelegramAnalyticsSummaryBuilder
         return $groupBy === 'hour'
             ? Carbon::createFromTimestamp($timestamp, config('app.timezone'))->format('Y-m-d H:00')
             : Carbon::createFromTimestamp($timestamp, config('app.timezone'))->format('Y-m-d');
+    }
+
+    private function topPostsLimit(): int
+    {
+        return max(1, (int) config('osint.telegram.analytics.top_posts_limit', 5));
+    }
+
+    private function topDistributionLimit(): int
+    {
+        return max(1, (int) config('osint.telegram.analytics.top_distribution_limit', 5));
     }
 }

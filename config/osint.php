@@ -48,6 +48,110 @@ return [
             'period_min_days' => (int) env('OSINT_TELEGRAM_ANALYTICS_PERIOD_MIN_DAYS', 1),
             'period_max_days' => (int) env('OSINT_TELEGRAM_ANALYTICS_PERIOD_MAX_DAYS', 7),
             'custom_range_max_days' => (int) env('OSINT_TELEGRAM_ANALYTICS_CUSTOM_RANGE_MAX_DAYS', 7),
+            'summary_cache_ttl_seconds' => (int) env('OSINT_TELEGRAM_ANALYTICS_SUMMARY_CACHE_TTL', 60),
+            'group_by_hour_threshold_hours' => (int) env('OSINT_TELEGRAM_ANALYTICS_GROUP_BY_HOUR_THRESHOLD_HOURS', 36),
+            'top_posts_limit' => (int) env('OSINT_TELEGRAM_ANALYTICS_TOP_POSTS_LIMIT', 5),
+            'top_distribution_limit' => (int) env('OSINT_TELEGRAM_ANALYTICS_TOP_DISTRIBUTION_LIMIT', 5),
+            'fetch' => [
+                'max_pages' => (int) env('OSINT_TELEGRAM_ANALYTICS_FETCH_MAX_PAGES', 20),
+                'page_limit' => (int) env('OSINT_TELEGRAM_ANALYTICS_FETCH_PAGE_LIMIT', 100),
+            ],
+            'audience' => [
+                'top_authors_share_limit' => (int) env('OSINT_TELEGRAM_ANALYTICS_AUDIENCE_TOP_AUTHORS_SHARE_LIMIT', 5),
+                'most_active_hours_limit' => (int) env('OSINT_TELEGRAM_ANALYTICS_AUDIENCE_MOST_ACTIVE_HOURS_LIMIT', 3),
+                'hour_min' => (int) env('OSINT_TELEGRAM_ANALYTICS_AUDIENCE_HOUR_MIN', 0),
+                'hour_max' => (int) env('OSINT_TELEGRAM_ANALYTICS_AUDIENCE_HOUR_MAX', 23),
+            ],
+            'fraud' => [
+                'suspicious_post_excerpt_length' => (int) env('OSINT_TELEGRAM_ANALYTICS_FRAUD_SUSPICIOUS_POST_EXCERPT_LENGTH', 160),
+                'suspicious_posts_limit' => (int) env('OSINT_TELEGRAM_ANALYTICS_FRAUD_SUSPICIOUS_POSTS_LIMIT', 5),
+                'risk_max_score' => (int) env('OSINT_TELEGRAM_ANALYTICS_FRAUD_RISK_MAX_SCORE', 100),
+                'risk_medium_threshold' => (int) env('OSINT_TELEGRAM_ANALYTICS_FRAUD_RISK_MEDIUM_THRESHOLD', 30),
+                'risk_high_threshold' => (int) env('OSINT_TELEGRAM_ANALYTICS_FRAUD_RISK_HIGH_THRESHOLD', 60),
+                'post_rules' => [
+                    'interactions_without_views' => [
+                        'interactions_min' => (int) env('OSINT_TELEGRAM_ANALYTICS_FRAUD_RULE_INTERACTIONS_WITHOUT_VIEWS_INTERACTIONS_MIN', 5),
+                        'score' => (int) env('OSINT_TELEGRAM_ANALYTICS_FRAUD_RULE_INTERACTIONS_WITHOUT_VIEWS_SCORE', 35),
+                    ],
+                    'high_reaction_ratio' => [
+                        'reactions_min' => (int) env('OSINT_TELEGRAM_ANALYTICS_FRAUD_RULE_HIGH_REACTION_RATIO_REACTIONS_MIN', 20),
+                        'ratio_min' => (float) env('OSINT_TELEGRAM_ANALYTICS_FRAUD_RULE_HIGH_REACTION_RATIO_RATIO_MIN', 0.7),
+                        'score' => (int) env('OSINT_TELEGRAM_ANALYTICS_FRAUD_RULE_HIGH_REACTION_RATIO_SCORE', 30),
+                    ],
+                    'high_forward_ratio' => [
+                        'forwards_min' => (int) env('OSINT_TELEGRAM_ANALYTICS_FRAUD_RULE_HIGH_FORWARD_RATIO_FORWARDS_MIN', 15),
+                        'ratio_min' => (float) env('OSINT_TELEGRAM_ANALYTICS_FRAUD_RULE_HIGH_FORWARD_RATIO_RATIO_MIN', 0.5),
+                        'score' => (int) env('OSINT_TELEGRAM_ANALYTICS_FRAUD_RULE_HIGH_FORWARD_RATIO_SCORE', 25),
+                    ],
+                    'gifts_with_low_views' => [
+                        'views_max_exclusive' => (int) env('OSINT_TELEGRAM_ANALYTICS_FRAUD_RULE_GIFTS_WITH_LOW_VIEWS_VIEWS_MAX', 10),
+                        'score' => (int) env('OSINT_TELEGRAM_ANALYTICS_FRAUD_RULE_GIFTS_WITH_LOW_VIEWS_SCORE', 20),
+                    ],
+                    'high_interactions_low_views' => [
+                        'interactions_min' => (int) env('OSINT_TELEGRAM_ANALYTICS_FRAUD_RULE_HIGH_INTERACTIONS_LOW_VIEWS_INTERACTIONS_MIN', 50),
+                        'views_max_exclusive' => (int) env('OSINT_TELEGRAM_ANALYTICS_FRAUD_RULE_HIGH_INTERACTIONS_LOW_VIEWS_VIEWS_MAX', 30),
+                        'score' => (int) env('OSINT_TELEGRAM_ANALYTICS_FRAUD_RULE_HIGH_INTERACTIONS_LOW_VIEWS_SCORE', 10),
+                    ],
+                    'suspicious_post_min_risk_score' => (int) env('OSINT_TELEGRAM_ANALYTICS_FRAUD_RULE_SUSPICIOUS_POST_MIN_RISK_SCORE', 30),
+                ],
+                'triggers' => [
+                    'zero_view_interactions' => [
+                        'threshold' => (int) env('OSINT_TELEGRAM_ANALYTICS_FRAUD_TRIGGER_ZERO_VIEW_INTERACTIONS_THRESHOLD', 3),
+                        'score' => (int) env('OSINT_TELEGRAM_ANALYTICS_FRAUD_TRIGGER_ZERO_VIEW_INTERACTIONS_SCORE', 30),
+                    ],
+                    'author_concentration' => [
+                        'messages_min' => (int) env('OSINT_TELEGRAM_ANALYTICS_FRAUD_TRIGGER_AUTHOR_CONCENTRATION_MESSAGES_MIN', 20),
+                        'top_author_share_min' => (float) env('OSINT_TELEGRAM_ANALYTICS_FRAUD_TRIGGER_AUTHOR_CONCENTRATION_SHARE_MIN', 60.0),
+                        'score' => (int) env('OSINT_TELEGRAM_ANALYTICS_FRAUD_TRIGGER_AUTHOR_CONCENTRATION_SCORE', 20),
+                    ],
+                    'time_burst' => [
+                        'messages_min' => (int) env('OSINT_TELEGRAM_ANALYTICS_FRAUD_TRIGGER_TIME_BURST_MESSAGES_MIN', 20),
+                        'burst_share_min' => (float) env('OSINT_TELEGRAM_ANALYTICS_FRAUD_TRIGGER_TIME_BURST_SHARE_MIN', 45.0),
+                        'score' => (int) env('OSINT_TELEGRAM_ANALYTICS_FRAUD_TRIGGER_TIME_BURST_SCORE', 20),
+                    ],
+                    'reaction_ratio_cluster' => [
+                        'views_min' => (int) env('OSINT_TELEGRAM_ANALYTICS_FRAUD_TRIGGER_REACTION_RATIO_CLUSTER_VIEWS_MIN', 20),
+                        'reactions_min' => (int) env('OSINT_TELEGRAM_ANALYTICS_FRAUD_TRIGGER_REACTION_RATIO_CLUSTER_REACTIONS_MIN', 10),
+                        'ratio_min' => (float) env('OSINT_TELEGRAM_ANALYTICS_FRAUD_TRIGGER_REACTION_RATIO_CLUSTER_RATIO_MIN', 0.5),
+                        'threshold' => (int) env('OSINT_TELEGRAM_ANALYTICS_FRAUD_TRIGGER_REACTION_RATIO_CLUSTER_THRESHOLD', 3),
+                        'score' => (int) env('OSINT_TELEGRAM_ANALYTICS_FRAUD_TRIGGER_REACTION_RATIO_CLUSTER_SCORE', 15),
+                    ],
+                    'suspicious_posts_cluster' => [
+                        'threshold' => (int) env('OSINT_TELEGRAM_ANALYTICS_FRAUD_TRIGGER_SUSPICIOUS_POSTS_CLUSTER_THRESHOLD', 3),
+                        'score' => (int) env('OSINT_TELEGRAM_ANALYTICS_FRAUD_TRIGGER_SUSPICIOUS_POSTS_CLUSTER_SCORE', 15),
+                    ],
+                ],
+            ],
+            'score_profiles' => [
+                'balanced' => [
+                    'views' => (float) env('OSINT_TELEGRAM_ANALYTICS_SCORE_BALANCED_VIEWS', 1.0),
+                    'forwards' => (float) env('OSINT_TELEGRAM_ANALYTICS_SCORE_BALANCED_FORWARDS', 5.0),
+                    'replies' => (float) env('OSINT_TELEGRAM_ANALYTICS_SCORE_BALANCED_REPLIES', 8.0),
+                    'reactions' => (float) env('OSINT_TELEGRAM_ANALYTICS_SCORE_BALANCED_REACTIONS', 2.0),
+                    'gifts' => (float) env('OSINT_TELEGRAM_ANALYTICS_SCORE_BALANCED_GIFTS', 10.0),
+                ],
+                'reach' => [
+                    'views' => (float) env('OSINT_TELEGRAM_ANALYTICS_SCORE_REACH_VIEWS', 3.0),
+                    'forwards' => (float) env('OSINT_TELEGRAM_ANALYTICS_SCORE_REACH_FORWARDS', 4.0),
+                    'replies' => (float) env('OSINT_TELEGRAM_ANALYTICS_SCORE_REACH_REPLIES', 2.0),
+                    'reactions' => (float) env('OSINT_TELEGRAM_ANALYTICS_SCORE_REACH_REACTIONS', 1.0),
+                    'gifts' => (float) env('OSINT_TELEGRAM_ANALYTICS_SCORE_REACH_GIFTS', 2.0),
+                ],
+                'discussion' => [
+                    'views' => (float) env('OSINT_TELEGRAM_ANALYTICS_SCORE_DISCUSSION_VIEWS', 1.0),
+                    'forwards' => (float) env('OSINT_TELEGRAM_ANALYTICS_SCORE_DISCUSSION_FORWARDS', 3.0),
+                    'replies' => (float) env('OSINT_TELEGRAM_ANALYTICS_SCORE_DISCUSSION_REPLIES', 12.0),
+                    'reactions' => (float) env('OSINT_TELEGRAM_ANALYTICS_SCORE_DISCUSSION_REACTIONS', 2.0),
+                    'gifts' => (float) env('OSINT_TELEGRAM_ANALYTICS_SCORE_DISCUSSION_GIFTS', 3.0),
+                ],
+                'virality' => [
+                    'views' => (float) env('OSINT_TELEGRAM_ANALYTICS_SCORE_VIRALITY_VIEWS', 1.0),
+                    'forwards' => (float) env('OSINT_TELEGRAM_ANALYTICS_SCORE_VIRALITY_FORWARDS', 10.0),
+                    'replies' => (float) env('OSINT_TELEGRAM_ANALYTICS_SCORE_VIRALITY_REPLIES', 6.0),
+                    'reactions' => (float) env('OSINT_TELEGRAM_ANALYTICS_SCORE_VIRALITY_REACTIONS', 3.0),
+                    'gifts' => (float) env('OSINT_TELEGRAM_ANALYTICS_SCORE_VIRALITY_GIFTS', 5.0),
+                ],
+            ],
         ],
         'search' => [
             'messages_limit_default' => (int) env('OSINT_TELEGRAM_MESSAGES_LIMIT_DEFAULT', 20),

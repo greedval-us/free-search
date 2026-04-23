@@ -11,8 +11,6 @@ use Illuminate\Support\Facades\Cache;
 
 class TelegramAnalyticsApplicationService implements TelegramAnalyticsApplicationServiceInterface
 {
-    private const SUMMARY_CACHE_TTL_SECONDS = 60;
-
     public function __construct(
         private readonly TelegramAnalyticsService $analyticsService,
         private readonly TelegramAnalyticsRangeResolver $rangeResolver,
@@ -93,7 +91,7 @@ class TelegramAnalyticsApplicationService implements TelegramAnalyticsApplicatio
     {
         return Cache::remember(
             $this->analyticsCacheKey($params, $from, $to),
-            now()->addSeconds(self::SUMMARY_CACHE_TTL_SECONDS),
+            now()->addSeconds($this->summaryCacheTtlSeconds()),
             fn (): array => $this->analyticsService->build(
                 $params->chatUsername,
                 $from,
@@ -134,6 +132,10 @@ class TelegramAnalyticsApplicationService implements TelegramAnalyticsApplicatio
             $to->copy()->utc()->toIso8601String(),
         ]);
     }
-}
 
+    private function summaryCacheTtlSeconds(): int
+    {
+        return max(1, (int) config('osint.telegram.analytics.summary_cache_ttl_seconds', 60));
+    }
+}
 

@@ -40,7 +40,8 @@ class TelegramAnalyticsAudienceCalculator
         rsort($messagesByAuthors);
 
         $topAuthorMessages = $messagesByAuthors[0] ?? 0;
-        $top5AuthorsMessages = array_sum(array_slice($messagesByAuthors, 0, 5));
+        $topAuthorsShareLimit = $this->topAuthorsShareLimit();
+        $top5AuthorsMessages = array_sum(array_slice($messagesByAuthors, 0, $topAuthorsShareLimit));
         $safeTotalMessages = max(1, $totalMessages);
         $concentration = 0.0;
 
@@ -70,7 +71,7 @@ class TelegramAnalyticsAudienceCalculator
             'topAuthorShare' => round(($topAuthorMessages / $safeTotalMessages) * 100, 1),
             'top5AuthorsShare' => round(($top5AuthorsMessages / $safeTotalMessages) * 100, 1),
             'concentrationIndex' => round($concentration, 4),
-            'mostActiveHours' => array_slice($mostActiveHours, 0, 3),
+            'mostActiveHours' => array_slice($mostActiveHours, 0, $this->mostActiveHoursLimit()),
         ];
     }
 
@@ -84,10 +85,30 @@ class TelegramAnalyticsAudienceCalculator
         }
 
         $hour = (int) Carbon::createFromTimestamp($timestamp, config('app.timezone'))->format('G');
-        if ($hour < 0 || $hour > 23) {
+        if ($hour < $this->hourMin() || $hour > $this->hourMax()) {
             return;
         }
 
         $hourlyActivity[$hour]++;
+    }
+
+    private function topAuthorsShareLimit(): int
+    {
+        return max(1, (int) config('osint.telegram.analytics.audience.top_authors_share_limit', 5));
+    }
+
+    private function mostActiveHoursLimit(): int
+    {
+        return max(1, (int) config('osint.telegram.analytics.audience.most_active_hours_limit', 3));
+    }
+
+    private function hourMin(): int
+    {
+        return (int) config('osint.telegram.analytics.audience.hour_min', 0);
+    }
+
+    private function hourMax(): int
+    {
+        return (int) config('osint.telegram.analytics.audience.hour_max', 23);
     }
 }
