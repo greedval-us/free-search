@@ -34,6 +34,10 @@ final class EmailRecommendationBuilder
             $recommendations[] = ['key' => 'verify_role_account', 'priority' => 'low', 'impact' => 8];
         }
 
+        if (in_array('external_dmarc_reporting', $keys, true)) {
+            $recommendations[] = ['key' => 'review_dmarc_reporting', 'priority' => 'low', 'impact' => 6];
+        }
+
         if (($analytics['scores']['overall'] ?? 0) >= 80 && $recommendations === []) {
             $recommendations[] = ['key' => 'maintain_posture', 'priority' => 'low', 'impact' => 0];
         }

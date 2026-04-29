@@ -700,13 +700,16 @@
       "localPart": "Local-part analysis looks at the mailbox name before @: role accounts, plus addressing, year patterns, separators and random-looking strings.",
       "spf": "SPF parsing extracts mechanisms, includes and the final all policy. Strict -all is strongest; +all is risky.",
       "dmarc": "DMARC parsing extracts policy, reporting addresses and alignment hints. reject is strongest, quarantine is moderate, none is monitoring-only.",
-      "searchLinks": "Pivot links open public search pages in a new tab. The platform does not fetch or store those external results."
-      ,"graph": "Entity graph connects the email to its domain, local part, provider, MX hosts, SPF includes, DMARC report destinations, Gravatar hash and triggered signals.",
-      "recommendations": "Recommendations are generated from the current technical signals and estimate which fixes would improve the posture most."
+      "searchLinks": "Pivot links open public search pages in a new tab. The platform does not fetch or store those external results.",
+      "graph": "Entity graph connects the email to its domain, local part, provider, MX hosts, SPF includes, DMARC report destinations, Gravatar hash and triggered signals.",
+      "recommendations": "Recommendations are generated from the current technical signals and estimate which fixes would improve the posture most.",
+      "riskBreakdown": "Shows which signals added points to the risk score. Informational and positive signals do not increase risk."
     },
     "tabs": {
       "search": "Search",
-      "analytics": "Analytics"
+      "analytics": "Analytics",
+      "bulk": "Bulk",
+      "domain": "Domain"
     },
     "lookup": {
       "title": "Email Intelligence",
@@ -752,8 +755,8 @@
       "strictness": "Strictness",
       "policy": "Policy",
       "strength": "Strength",
-      "searchLinks": "OSINT pivot links"
-      ,"graph": "Entity graph",
+      "searchLinks": "OSINT pivot links",
+      "graph": "Entity graph",
       "recommendations": "Recommendations",
       "priority": "Priority",
       "impact": "Impact",
@@ -761,7 +764,14 @@
       "durationMs": "Duration (ms)",
       "similarDomains": "Similar domains",
       "report": "Open report",
-      "downloadReport": "Download report"
+      "downloadReport": "Download report",
+      "riskBreakdown": "Risk breakdown",
+      "dmarcReports": "DMARC reports",
+      "spfIncludes": "First-level SPF includes",
+      "resolved": "Resolved",
+      "external": "External domain",
+      "deliverability": "Deliverability",
+      "deliverabilityHints": "Deliverability hints"
     },
     "riskLevel": {
       "clean": "Clean",
@@ -781,7 +791,8 @@
       "role_account": "Local part looks like a role/shared inbox.",
       "random_local_part": "Local part looks random or machine-generated.",
       "free_provider": "Domain is a common free mailbox provider.",
-      "baseline_ok": "No strong technical risk signals detected."
+      "baseline_ok": "No strong technical risk signals detected.",
+      "external_dmarc_reporting": "DMARC reports are sent to an external domain."
     },
     "recommendation": {
       "configure_mx": "Configure MX records for the domain.",
@@ -789,7 +800,8 @@
       "enforce_dmarc": "Move DMARC toward quarantine or reject after monitoring.",
       "review_disposable": "Review disposable mailbox usage manually.",
       "verify_role_account": "Verify whether this role/shared mailbox is expected.",
-      "maintain_posture": "Current mail posture looks healthy; keep monitoring it."
+      "maintain_posture": "Current mail posture looks healthy; keep monitoring it.",
+      "review_dmarc_reporting": "Review whether external DMARC reporting destinations are expected and authorized."
     },
     "similarDomainReason": {
       "tld_variant": "TLD variant",
@@ -799,7 +811,32 @@
     },
     "errors": {
       "emailRequired": "Enter a valid email address.",
-      "lookupFailed": "Could not complete email lookup."
+      "lookupFailed": "Could not complete email lookup.",
+      "domainRequired": "Enter a valid domain."
+    },
+    "bulk": {
+      "title": "Bulk Email Intel",
+      "description": "Run live checks for up to 25 emails without storing results.",
+      "emails": "Email addresses",
+      "placeholder": "one@example.com\ntwo@example.com",
+      "check": "Check list",
+      "email": "Email"
+    },
+    "domain": {
+      "title": "Domain Mail Posture",
+      "description": "Analyze mail readiness for a domain without a specific mailbox.",
+      "domain": "Domain",
+      "placeholder": "example.com",
+      "check": "Check domain"
+    },
+    "deliverability": {
+      "mx_ready": "Domain has MX records for receiving mail.",
+      "spf_present": "SPF record is present.",
+      "spf_strict": "SPF uses a strict -all policy.",
+      "dmarc_present": "DMARC record is present.",
+      "dmarc_enforced": "DMARC is enforced with quarantine or reject.",
+      "domain_resolves": "Domain resolves to A/AAAA records.",
+      "web_available": "Domain website responds over HTTPS."
     }
   },
   "navigation": {

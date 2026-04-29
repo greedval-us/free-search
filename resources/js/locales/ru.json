@@ -702,7 +702,8 @@
       "dmarc": "DMARC-разбор извлекает policy, адреса отчётности и alignment-подсказки. reject сильнее всего, quarantine умеренный, none только мониторинг.",
       "searchLinks": "Pivot-ссылки открывают публичный поиск в новой вкладке. Платформа не получает и не сохраняет внешние результаты.",
       "graph": "Граф сущностей связывает email с доменом, локальной частью, провайдером, MX-хостами, SPF include, DMARC report destinations, Gravatar hash и сработавшими сигналами.",
-      "recommendations": "Рекомендации строятся из текущих технических сигналов и показывают, какие действия сильнее всего улучшат posture."
+      "recommendations": "Рекомендации строятся из текущих технических сигналов и показывают, какие действия сильнее всего улучшат posture.",
+      "riskBreakdown": "Показывает, какие сигналы добавили баллы к риску. Информационные и положительные сигналы не увеличивают риск."
     },
     "lookup": {
       "title": "Email Intelligence",
@@ -745,15 +746,19 @@
       "weak_spf": "SPF-политика есть, но она недостаточно строгая.",
       "open_spf": "SPF-политика разрешает всех отправителей.",
       "monitoring_dmarc": "DMARC работает только в режиме мониторинга.",
-      "random_local_part": "Локальная часть выглядит случайной или машинно-сгенерированной."
+      "random_local_part": "Локальная часть выглядит случайной или машинно-сгенерированной.",
+      "external_dmarc_reporting": "DMARC-отчеты отправляются на внешний домен."
     },
     "errors": {
       "emailRequired": "Введите корректный email.",
-      "lookupFailed": "Не удалось выполнить проверку email."
+      "lookupFailed": "Не удалось выполнить проверку email.",
+      "domainRequired": "Введите корректный домен."
     },
     "tabs": {
       "search": "Поиск",
-      "analytics": "Аналитика"
+      "analytics": "Аналитика",
+      "bulk": "Bulk",
+      "domain": "Домен"
     },
     "analytics": {
       "title": "Email аналитика",
@@ -785,7 +790,14 @@
       "durationMs": "Время (мс)",
       "similarDomains": "Похожие домены",
       "report": "Открыть отчёт",
-      "downloadReport": "Скачать отчёт"
+      "downloadReport": "Скачать отчёт",
+      "riskBreakdown": "Расшифровка риска",
+      "dmarcReports": "DMARC отчеты",
+      "spfIncludes": "SPF include первого уровня",
+      "resolved": "Найдено",
+      "external": "Внешний домен",
+      "deliverability": "Доставляемость",
+      "deliverabilityHints": "Подсказки доставляемости"
     },
     "recommendation": {
       "configure_mx": "Настроить MX-записи домена.",
@@ -793,13 +805,38 @@
       "enforce_dmarc": "Перевести DMARC к quarantine или reject после мониторинга.",
       "review_disposable": "Вручную проверить использование одноразовой почты.",
       "verify_role_account": "Проверить, ожидаем ли этот общий/ролевой ящик.",
-      "maintain_posture": "Текущая почтовая конфигурация выглядит здоровой; продолжайте мониторинг."
+      "maintain_posture": "Текущая почтовая конфигурация выглядит здоровой; продолжайте мониторинг.",
+      "review_dmarc_reporting": "Проверьте, что внешние DMARC-адреса отчетности ожидаемы и авторизованы."
     },
     "similarDomainReason": {
       "tld_variant": "вариант TLD",
       "separator_variant": "вариант разделителя",
       "compact_variant": "слитный вариант",
       "lookalike_variant": "похожий символ"
+    },
+    "bulk": {
+      "title": "Bulk Email Intel",
+      "description": "Массовая онлайн-проверка до 25 email без сохранения результатов.",
+      "emails": "Email-адреса",
+      "placeholder": "one@example.com\ntwo@example.com",
+      "check": "Проверить список",
+      "email": "Email"
+    },
+    "domain": {
+      "title": "Domain Mail Posture",
+      "description": "Анализ почтовой готовности домена без конкретного email.",
+      "domain": "Домен",
+      "placeholder": "example.com",
+      "check": "Проверить домен"
+    },
+    "deliverability": {
+      "mx_ready": "Есть MX-записи для приема почты.",
+      "spf_present": "SPF-запись присутствует.",
+      "spf_strict": "SPF использует строгую политику -all.",
+      "dmarc_present": "DMARC-запись присутствует.",
+      "dmarc_enforced": "DMARC включен в режиме quarantine или reject.",
+      "domain_resolves": "Домен резолвится в A/AAAA.",
+      "web_available": "Сайт домена отвечает по HTTPS."
     }
   },
   "navigation": {

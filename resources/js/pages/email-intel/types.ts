@@ -17,6 +17,59 @@ export type EmailIntelGraphEdge = {
     kind: string;
 };
 
+export type EmailDeliverability = {
+    score: number;
+    status: string;
+    hints: Array<{
+        key: string;
+        level: string;
+        message: string;
+        passed: boolean;
+    }>;
+};
+
+export type EmailBulkIntelResult = {
+    items: Array<{
+        email: string;
+        ok: boolean;
+        riskScore?: number;
+        riskLevel?: string;
+        provider?: string;
+        mxCount?: number;
+        hasSpf?: boolean;
+        hasDmarc?: boolean;
+        deliverabilityScore?: number;
+        signals?: EmailIntelSignal[];
+        error?: string;
+    }>;
+    total: number;
+};
+
+export type DomainMailPostureResult = {
+    checkedAt: string;
+    domain: string;
+    dns: {
+        mx: Array<{ host: string; priority: number }>;
+        a: string[];
+        aaaa: string[];
+        txt: string[];
+        dmarc: string[];
+    };
+    provider: {
+        name: string;
+        type: string;
+        confidence: number;
+        mxHosts: string[];
+    };
+    spf: EmailIntelResult['analytics']['spf'];
+    spfExpandedIncludes: EmailIntelResult['analytics']['spfExpandedIncludes'];
+    dmarc: EmailIntelResult['analytics']['dmarc'];
+    dmarcReports: EmailIntelResult['analytics']['dmarcReports'];
+    scores: EmailIntelResult['analytics']['scores'];
+    webSnapshot: EmailIntelResult['analytics']['webSnapshot'];
+    deliverability: EmailDeliverability;
+};
+
 export type EmailIntelResult = {
     checkedAt: string;
     target: {
@@ -61,6 +114,16 @@ export type EmailIntelResult = {
             all: string | null;
             strictness: string;
         };
+        spfExpandedIncludes: Array<{
+            domain: string;
+            resolved: boolean;
+            record: string | null;
+            includes: string[];
+            ip4: string[];
+            ip6: string[];
+            all: string | null;
+            strictness: string;
+        }>;
         dmarc: {
             present: boolean;
             record: string | null;
@@ -72,6 +135,21 @@ export type EmailIntelResult = {
             adkim: string | null;
             aspf: string | null;
             strength: string;
+        };
+        dmarcReports: {
+            destinations: Array<{
+                kind: string;
+                mailbox: string;
+                domain: string;
+                external: boolean;
+            }>;
+            externalDestinations: Array<{
+                kind: string;
+                mailbox: string;
+                domain: string;
+                external: boolean;
+            }>;
+            hasExternalReporting: boolean;
         };
         localPart: {
             isRoleAccount: boolean;
@@ -88,6 +166,16 @@ export type EmailIntelResult = {
             domainHealth: number;
             identityConfidence: number;
             overall: number;
+        };
+        deliverability: EmailDeliverability;
+        riskBreakdown: {
+            items: Array<{
+                type: string;
+                level: string;
+                message: string;
+                points: number;
+            }>;
+            total: number;
         };
         searchLinks: Array<{
             label: string;

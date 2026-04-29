@@ -3,15 +3,19 @@
 namespace App\Modules\EmailIntel\Application\Services;
 
 use App\Modules\EmailIntel\Application\Services\EmailIntel\EmailDmarcParser;
+use App\Modules\EmailIntel\Application\Services\EmailIntel\EmailDmarcReportAnalyzer;
+use App\Modules\EmailIntel\Application\Services\EmailIntel\EmailDeliverabilityHintBuilder;
 use App\Modules\EmailIntel\Application\Services\EmailIntel\EmailDnsResolver;
 use App\Modules\EmailIntel\Application\Services\EmailIntel\EmailDomainWebSnapshot;
 use App\Modules\EmailIntel\Application\Services\EmailIntel\EmailEntityGraphBuilder;
 use App\Modules\EmailIntel\Application\Services\EmailIntel\EmailLocalPartAnalyzer;
 use App\Modules\EmailIntel\Application\Services\EmailIntel\EmailProviderDetector;
 use App\Modules\EmailIntel\Application\Services\EmailIntel\EmailRecommendationBuilder;
+use App\Modules\EmailIntel\Application\Services\EmailIntel\EmailRiskBreakdownBuilder;
 use App\Modules\EmailIntel\Application\Services\EmailIntel\EmailSearchLinkBuilder;
 use App\Modules\EmailIntel\Application\Services\EmailIntel\EmailSecurityScoreCalculator;
 use App\Modules\EmailIntel\Application\Services\EmailIntel\EmailSimilarDomainGenerator;
+use App\Modules\EmailIntel\Application\Services\EmailIntel\EmailSpfIncludeResolver;
 use App\Modules\EmailIntel\Application\Services\EmailIntel\EmailSpfParser;
 use App\Modules\EmailIntel\Domain\DTO\EmailIntelResultDTO;
 use Carbon\Carbon;
@@ -56,9 +60,13 @@ final class EmailIntelService
         private readonly EmailDnsResolver $dnsResolver,
         private readonly EmailProviderDetector $providerDetector,
         private readonly EmailSpfParser $spfParser,
+        private readonly EmailSpfIncludeResolver $spfIncludeResolver,
         private readonly EmailDmarcParser $dmarcParser,
+        private readonly EmailDmarcReportAnalyzer $dmarcReportAnalyzer,
         private readonly EmailLocalPartAnalyzer $localPartAnalyzer,
         private readonly EmailSecurityScoreCalculator $scoreCalculator,
+        private readonly EmailRiskBreakdownBuilder $riskBreakdownBuilder,
+        private readonly EmailDeliverabilityHintBuilder $deliverabilityHintBuilder,
         private readonly EmailSearchLinkBuilder $searchLinkBuilder,
         private readonly EmailEntityGraphBuilder $graphBuilder,
         private readonly EmailRecommendationBuilder $recommendationBuilder,
@@ -73,9 +81,12 @@ final class EmailIntelService
 
         $dns = $this->dnsResolver->resolve($domain);
         $spf = $this->spfParser->parse($dns['txt']);
+        $spfExpandedIncludes = $this->spfIncludeResolver->resolve($spf['includes']);
         $dmarc = $this->dmarcParser->parse($dns['dmarc']);
+        $dmarcReports = $this->dmarcReportAnalyzer->analyze($domain, $dmarc);
         $localPartAnalysis = $this->localPartAnalyzer->analyze($localPart);
         $provider = $this->providerDetector->detect($domain, $dns['mx']);
+        $webSnapshot = $this->domainWebSnapshot->inspect($domain);
 
         $isDisposable = in_array($domain, self::DISPOSABLE_DOMAINS, true);
         $isFreeProvider = in_array($domain, self::FREE_PROVIDERS, true);
@@ -90,8 +101,10 @@ final class EmailIntelService
             isRoleAccount: $isRoleAccount,
             looksRandom: (bool) $localPartAnalysis['looksRandom'],
             hasDomainAddress: count($dns['a']) + count($dns['aaaa']) > 0,
+            hasExternalDmarcReporting: (bool) $dmarcReports['hasExternalReporting'],
         );
-        $riskScore = $this->riskScore($signals);
+        $riskBreakdown = $this->riskBreakdownBuilder->build($signals);
+        $riskScore = $riskBreakdown['total'];
         $target = [
             'email' => $email,
             'localPart' => $localPart,
@@ -120,12 +133,16 @@ final class EmailIntelService
         $analytics = [
             'provider' => $provider,
             'spf' => $spf,
+            'spfExpandedIncludes' => $spfExpandedIncludes,
             'dmarc' => $dmarc,
+            'dmarcReports' => $dmarcReports,
             'localPart' => $localPartAnalysis,
             'scores' => $this->scoreCalculator->calculate($dns, $spf, $dmarc, $profile),
+            'riskBreakdown' => $riskBreakdown,
+            'deliverability' => $this->deliverabilityHintBuilder->build($dns, $spf, $dmarc, $webSnapshot),
             'searchLinks' => $this->searchLinkBuilder->build($email, $localPart, $domain),
             'similarDomains' => $this->similarDomainGenerator->generate($domain),
-            'webSnapshot' => $this->domainWebSnapshot->inspect($domain),
+            'webSnapshot' => $webSnapshot,
             'pivots' => [
                 'username' => '/username',
                 'siteIntel' => '/site-intel',
@@ -159,6 +176,7 @@ final class EmailIntelService
         bool $isRoleAccount,
         bool $looksRandom,
         bool $hasDomainAddress,
+        bool $hasExternalDmarcReporting,
     ): array {
         $signals = [];
 
@@ -200,30 +218,15 @@ final class EmailIntelService
             $signals[] = ['type' => 'free_provider', 'level' => 'info', 'message' => 'Domain is a common free mailbox provider.'];
         }
 
+        if ($hasExternalDmarcReporting) {
+            $signals[] = ['type' => 'external_dmarc_reporting', 'level' => 'low', 'message' => 'DMARC reports are sent to an external domain.'];
+        }
+
         if ($signals === []) {
             $signals[] = ['type' => 'baseline_ok', 'level' => 'positive', 'message' => 'No strong technical risk signals detected.'];
         }
 
         return $signals;
-    }
-
-    /**
-     * @param array<int, array{type: string, level: string, message: string}> $signals
-     */
-    private function riskScore(array $signals): int
-    {
-        $score = 0;
-
-        foreach ($signals as $signal) {
-            $score += match ($signal['level']) {
-                'high' => 30,
-                'medium' => 15,
-                'low' => 7,
-                default => 0,
-            };
-        }
-
-        return min(100, $score);
     }
 
     private function riskLevel(int $riskScore): string
