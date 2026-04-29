@@ -678,3 +678,81 @@ fio.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
         })
     
     fio.form = fioForm
+/**
+* @see \Inertia\Controller::__invoke
+ * @see vendor/inertiajs/inertia-laravel/src/Controller.php:13
+ * @route '/email-intel'
+ */
+export const emailIntel = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+    url: emailIntel.url(options),
+    method: 'get',
+})
+
+emailIntel.definition = {
+    methods: ["get","head"],
+    url: '/email-intel',
+} satisfies RouteDefinition<["get","head"]>
+
+/**
+* @see \Inertia\Controller::__invoke
+ * @see vendor/inertiajs/inertia-laravel/src/Controller.php:13
+ * @route '/email-intel'
+ */
+emailIntel.url = (options?: RouteQueryOptions) => {
+    return emailIntel.definition.url + queryParams(options)
+}
+
+/**
+* @see \Inertia\Controller::__invoke
+ * @see vendor/inertiajs/inertia-laravel/src/Controller.php:13
+ * @route '/email-intel'
+ */
+emailIntel.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+    url: emailIntel.url(options),
+    method: 'get',
+})
+/**
+* @see \Inertia\Controller::__invoke
+ * @see vendor/inertiajs/inertia-laravel/src/Controller.php:13
+ * @route '/email-intel'
+ */
+emailIntel.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
+    url: emailIntel.url(options),
+    method: 'head',
+})
+
+    /**
+* @see \Inertia\Controller::__invoke
+ * @see vendor/inertiajs/inertia-laravel/src/Controller.php:13
+ * @route '/email-intel'
+ */
+    const emailIntelForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+        action: emailIntel.url(options),
+        method: 'get',
+    })
+
+            /**
+* @see \Inertia\Controller::__invoke
+ * @see vendor/inertiajs/inertia-laravel/src/Controller.php:13
+ * @route '/email-intel'
+ */
+        emailIntelForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+            action: emailIntel.url(options),
+            method: 'get',
+        })
+            /**
+* @see \Inertia\Controller::__invoke
+ * @see vendor/inertiajs/inertia-laravel/src/Controller.php:13
+ * @route '/email-intel'
+ */
+        emailIntelForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+            action: emailIntel.url({
+                        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
+                            _method: 'HEAD',
+                            ...(options?.query ?? options?.mergeQuery ?? {}),
+                        }
+                    }),
+            method: 'get',
+        })
+    
+    emailIntel.form = emailIntelForm
