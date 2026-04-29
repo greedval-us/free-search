@@ -700,7 +700,9 @@
       "localPart": "Анализ локальной части смотрит на имя ящика до @: ролевые адреса, plus-addressing, годы, разделители и случайно выглядящие строки.",
       "spf": "SPF-разбор извлекает механизмы, include и финальную all-политику. Строгий -all сильнее всего; +all рискованен.",
       "dmarc": "DMARC-разбор извлекает policy, адреса отчётности и alignment-подсказки. reject сильнее всего, quarantine умеренный, none только мониторинг.",
-      "searchLinks": "Pivot-ссылки открывают публичный поиск в новой вкладке. Платформа не получает и не сохраняет внешние результаты."
+      "searchLinks": "Pivot-ссылки открывают публичный поиск в новой вкладке. Платформа не получает и не сохраняет внешние результаты.",
+      "graph": "Граф сущностей связывает email с доменом, локальной частью, провайдером, MX-хостами, SPF include, DMARC report destinations, Gravatar hash и сработавшими сигналами.",
+      "recommendations": "Рекомендации строятся из текущих технических сигналов и показывают, какие действия сильнее всего улучшат posture."
     },
     "lookup": {
       "title": "Email Intelligence",
@@ -754,6 +756,8 @@
       "analytics": "Аналитика"
     },
     "analytics": {
+      "title": "Email аналитика",
+      "description": "Глубокий онлайн-анализ защиты почты, инфраструктуры, pivot-ссылок и графа сущностей.",
       "overallScore": "Общий скор",
       "mailSecurity": "Защита почты",
       "domainHealth": "Здоровье домена",
@@ -772,7 +776,30 @@
       "strictness": "Строгость",
       "policy": "Политика",
       "strength": "Сила",
-      "searchLinks": "OSINT pivot-ссылки"
+      "searchLinks": "OSINT pivot-ссылки",
+      "graph": "Граф сущностей",
+      "recommendations": "Рекомендации",
+      "priority": "Приоритет",
+      "impact": "Эффект",
+      "webSnapshot": "Web snapshot домена",
+      "durationMs": "Время (мс)",
+      "similarDomains": "Похожие домены",
+      "report": "Открыть отчёт",
+      "downloadReport": "Скачать отчёт"
+    },
+    "recommendation": {
+      "configure_mx": "Настроить MX-записи домена.",
+      "harden_spf": "Усилить SPF и избегать разрешающих all-механизмов.",
+      "enforce_dmarc": "Перевести DMARC к quarantine или reject после мониторинга.",
+      "review_disposable": "Вручную проверить использование одноразовой почты.",
+      "verify_role_account": "Проверить, ожидаем ли этот общий/ролевой ящик.",
+      "maintain_posture": "Текущая почтовая конфигурация выглядит здоровой; продолжайте мониторинг."
+    },
+    "similarDomainReason": {
+      "tld_variant": "вариант TLD",
+      "separator_variant": "вариант разделителя",
+      "compact_variant": "слитный вариант",
+      "lookalike_variant": "похожий символ"
     }
   },
   "navigation": {

@@ -15,6 +15,13 @@ export const useEmailIntelLookup = (t: TranslateFn, locale: Ref<'en' | 'ru'>) =>
 
     const canLookup = computed(() => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email.trim()));
 
+    const reset = () => {
+        form.email = '';
+        error.value = null;
+        result.value = null;
+        loading.value = false;
+    };
+
     const lookup = async () => {
         if (!canLookup.value) {
             error.value = t('emailIntel.errors.emailRequired');
@@ -59,6 +66,7 @@ export const useEmailIntelLookup = (t: TranslateFn, locale: Ref<'en' | 'ru'>) =>
         result,
         canLookup,
         lookup,
+        reset,
     };
 };
 

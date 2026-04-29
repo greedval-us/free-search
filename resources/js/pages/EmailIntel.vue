@@ -1,8 +1,9 @@
 <script setup lang="ts">
 import { Head } from '@inertiajs/vue3';
-import { BarChart3, ExternalLink, LoaderCircle, MailSearch, Search } from 'lucide-vue-next';
+import { BarChart3, Download, ExternalLink, FileText, LoaderCircle, MailSearch, Search } from 'lucide-vue-next';
 import { computed, ref } from 'vue';
 import { useI18n } from '@/composables/useI18n';
+import EmailEntityGraph from './email-intel/components/EmailEntityGraph.vue';
 import { useEmailIntelLookup } from './email-intel/composables/useEmailIntelLookup';
 
 defineOptions({
@@ -17,10 +18,20 @@ defineOptions({
 });
 
 const { t, locale } = useI18n();
-const { form, loading, error, result, canLookup, lookup } = useEmailIntelLookup(t, locale);
+const searchLookup = useEmailIntelLookup(t, locale);
+const analyticsLookup = useEmailIntelLookup(t, locale);
 const activeTab = ref<'search' | 'analytics'>('search');
 
 const pageTitle = computed(() => t('emailIntel.headTitle'));
+const panelTitle = computed(() => t(activeTab.value === 'search' ? 'emailIntel.lookup.title' : 'emailIntel.analytics.title'));
+const panelDescription = computed(() => t(activeTab.value === 'search' ? 'emailIntel.lookup.description' : 'emailIntel.analytics.description'));
+const activeLookup = computed(() => (activeTab.value === 'search' ? searchLookup : analyticsLookup));
+const form = computed(() => activeLookup.value.form);
+const loading = computed(() => activeLookup.value.loading.value);
+const error = computed(() => activeLookup.value.error.value);
+const result = computed(() => activeLookup.value.result.value);
+const canLookup = computed(() => activeLookup.value.canLookup.value);
+const analyticsResult = computed(() => analyticsLookup.result.value);
 
 const formatDateTime = (value: string): string => new Date(value).toLocaleString();
 
@@ -53,6 +64,32 @@ const scoreClass = (score: number): string => {
 
     return 'text-rose-300';
 };
+
+const reportUrl = computed(() => {
+    const email = analyticsResult.value?.target.email ?? analyticsLookup.form.email.trim();
+    const query = new URLSearchParams({ email, locale: locale.value });
+
+    return `/email-intel/report?${query.toString()}`;
+});
+
+const lookup = () => activeLookup.value.lookup();
+
+const switchTab = (tab: 'search' | 'analytics') => {
+    if (activeTab.value === tab) {
+        return;
+    }
+
+    activeTab.value = tab;
+    activeLookup.value.reset();
+};
+
+const openReport = () => {
+    window.open(reportUrl.value, '_blank', 'noopener,noreferrer');
+};
+
+const downloadReport = () => {
+    window.open(`${reportUrl.value}&download=1`, '_blank', 'noopener,noreferrer');
+};
 </script>
 
 <template>
@@ -62,7 +99,7 @@ const scoreClass = (score: number): string => {
         <div class="flex items-center justify-center gap-1 rounded-lg bg-slate-800/80 p-1">
             <button
                 type="button"
-                @click="activeTab = 'search'"
+                @click="switchTab('search')"
                 :class="[
                     'flex items-center rounded-md px-3 py-1.5 text-xs font-medium transition-all',
                     activeTab === 'search'
@@ -75,7 +112,7 @@ const scoreClass = (score: number): string => {
             </button>
             <button
                 type="button"
-                @click="activeTab = 'analytics'"
+                @click="switchTab('analytics')"
                 :class="[
                     'flex items-center rounded-md px-3 py-1.5 text-xs font-medium transition-all',
                     activeTab === 'analytics'
@@ -93,7 +130,7 @@ const scoreClass = (score: number): string => {
                 <div class="space-y-1">
                     <div class="flex items-center gap-2 text-sm font-semibold">
                         <MailSearch class="h-4 w-4 text-cyan-400" />
-                        <span>{{ t('emailIntel.lookup.title') }}</span>
+                        <span>{{ panelTitle }}</span>
                         <span class="group relative inline-flex">
                             <span
                                 class="inline-flex h-5 w-5 cursor-help items-center justify-center rounded-full border border-border text-[11px] font-semibold text-muted-foreground"
@@ -106,7 +143,7 @@ const scoreClass = (score: number): string => {
                             </span>
                         </span>
                     </div>
-                    <p class="text-xs text-muted-foreground">{{ t('emailIntel.lookup.description') }}</p>
+                    <p class="text-xs text-muted-foreground">{{ panelDescription }}</p>
                 </div>
             </div>
 
@@ -129,6 +166,28 @@ const scoreClass = (score: number): string => {
                 >
                     <LoaderCircle v-if="loading" class="h-4 w-4 animate-spin" />
                     <span>{{ loading ? t('emailIntel.lookup.checking') : t('emailIntel.lookup.check') }}</span>
+                </button>
+
+                <button
+                    v-if="activeTab === 'analytics'"
+                    type="button"
+                    :disabled="!result"
+                    class="inline-flex h-10 cursor-pointer items-center gap-2 rounded-md bg-primary px-4 text-sm font-semibold text-primary-foreground hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-60"
+                    @click="openReport"
+                >
+                    <FileText class="h-4 w-4" />
+                    {{ t('emailIntel.analytics.report') }}
+                </button>
+
+                <button
+                    v-if="activeTab === 'analytics'"
+                    type="button"
+                    :disabled="!result"
+                    class="inline-flex h-10 cursor-pointer items-center gap-2 rounded-md border border-input bg-background px-4 text-sm font-medium hover:bg-accent disabled:cursor-not-allowed disabled:opacity-60"
+                    @click="downloadReport"
+                >
+                    <Download class="h-4 w-4" />
+                    {{ t('emailIntel.analytics.downloadReport') }}
                 </button>
             </div>
 
@@ -430,6 +489,80 @@ const scoreClass = (score: number): string => {
                             {{ link.label }}
                         </a>
                     </div>
+                </div>
+
+                <div class="rounded-lg border border-border/70 bg-background/60 p-3 text-xs">
+                    <div class="mb-2 flex items-center gap-2">
+                        <p class="font-semibold">{{ t('emailIntel.analytics.recommendations') }}</p>
+                        <span class="group relative inline-flex">
+                            <span
+                                class="inline-flex h-5 w-5 cursor-help items-center justify-center rounded-full border border-border text-[11px] font-semibold text-muted-foreground"
+                                :aria-label="t('emailIntel.help.label')"
+                            >
+                                ?
+                            </span>
+                            <span class="pointer-events-none absolute left-0 top-6 z-20 hidden w-80 rounded-md border border-border/70 bg-popover p-2 text-[11px] leading-relaxed text-popover-foreground shadow-xl group-hover:block">
+                                {{ t('emailIntel.help.recommendations') }}
+                            </span>
+                        </span>
+                    </div>
+                    <div class="space-y-2">
+                        <div
+                            v-for="item in result.analytics.recommendations"
+                            :key="item.key"
+                            class="rounded-md border border-border/70 bg-background/70 p-2 text-muted-foreground"
+                        >
+                            <p class="font-semibold text-foreground">{{ t(`emailIntel.recommendation.${item.key}`) }}</p>
+                            <p class="mt-1">{{ t('emailIntel.analytics.priority') }}: {{ item.priority }}, {{ t('emailIntel.analytics.impact') }}: +{{ item.impact }}</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="grid gap-3 xl:grid-cols-2">
+                    <div class="rounded-lg border border-border/70 bg-background/60 p-3 text-xs">
+                        <p class="mb-2 font-semibold">{{ t('emailIntel.analytics.webSnapshot') }}</p>
+                        <p class="text-muted-foreground">{{ result.analytics.webSnapshot.url }}</p>
+                        <p class="mt-1 text-muted-foreground">HTTP: {{ result.analytics.webSnapshot.status ?? '-' }}</p>
+                        <p class="mt-1 text-muted-foreground">{{ t('emailIntel.analytics.durationMs') }}: {{ result.analytics.webSnapshot.durationMs }}</p>
+                        <p class="mt-1 text-muted-foreground">
+                            HSTS: {{ result.analytics.webSnapshot.securityHeaders.strictTransportSecurity ? t('common.yes') : t('common.no') }},
+                            CSP: {{ result.analytics.webSnapshot.securityHeaders.contentSecurityPolicy ? t('common.yes') : t('common.no') }}
+                        </p>
+                    </div>
+
+                    <div class="rounded-lg border border-border/70 bg-background/60 p-3 text-xs">
+                        <p class="mb-2 font-semibold">{{ t('emailIntel.analytics.similarDomains') }}</p>
+                        <div class="flex flex-wrap gap-2">
+                            <span
+                                v-for="item in result.analytics.similarDomains"
+                                :key="item.domain"
+                                class="rounded-md border border-border px-2 py-1 text-muted-foreground"
+                            >
+                                {{ item.domain }} ({{ t(`emailIntel.similarDomainReason.${item.reason}`) }})
+                            </span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="rounded-lg border border-border/70 bg-background/60 p-3 text-xs">
+                    <div class="mb-2 flex items-center gap-2">
+                        <p class="font-semibold">{{ t('emailIntel.analytics.graph') }}</p>
+                        <span class="group relative inline-flex">
+                            <span
+                                class="inline-flex h-5 w-5 cursor-help items-center justify-center rounded-full border border-border text-[11px] font-semibold text-muted-foreground"
+                                :aria-label="t('emailIntel.help.label')"
+                            >
+                                ?
+                            </span>
+                            <span class="pointer-events-none absolute left-0 top-6 z-20 hidden w-80 rounded-md border border-border/70 bg-popover p-2 text-[11px] leading-relaxed text-popover-foreground shadow-xl group-hover:block">
+                                {{ t('emailIntel.help.graph') }}
+                            </span>
+                        </span>
+                    </div>
+                    <EmailEntityGraph
+                        :nodes="result.analytics.graph.nodes"
+                        :edges="result.analytics.graph.edges"
+                    />
                 </div>
             </div>
         </section>

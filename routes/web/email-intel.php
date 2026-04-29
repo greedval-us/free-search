@@ -9,4 +9,8 @@ Route::prefix('email-intel')->name('email-intel.')->group(function (): void {
     Route::get('lookup', [EmailIntelController::class, 'lookup'])
         ->middleware('throttle:60,1')
         ->name('lookup');
+
+    Route::get('report', [EmailIntelController::class, 'report'])
+        ->middleware('throttle:20,1')
+        ->name('report');
 });

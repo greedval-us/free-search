@@ -4,10 +4,14 @@ namespace App\Modules\EmailIntel\Application\Services;
 
 use App\Modules\EmailIntel\Application\Services\EmailIntel\EmailDmarcParser;
 use App\Modules\EmailIntel\Application\Services\EmailIntel\EmailDnsResolver;
+use App\Modules\EmailIntel\Application\Services\EmailIntel\EmailDomainWebSnapshot;
+use App\Modules\EmailIntel\Application\Services\EmailIntel\EmailEntityGraphBuilder;
 use App\Modules\EmailIntel\Application\Services\EmailIntel\EmailLocalPartAnalyzer;
 use App\Modules\EmailIntel\Application\Services\EmailIntel\EmailProviderDetector;
+use App\Modules\EmailIntel\Application\Services\EmailIntel\EmailRecommendationBuilder;
 use App\Modules\EmailIntel\Application\Services\EmailIntel\EmailSearchLinkBuilder;
 use App\Modules\EmailIntel\Application\Services\EmailIntel\EmailSecurityScoreCalculator;
+use App\Modules\EmailIntel\Application\Services\EmailIntel\EmailSimilarDomainGenerator;
 use App\Modules\EmailIntel\Application\Services\EmailIntel\EmailSpfParser;
 use App\Modules\EmailIntel\Domain\DTO\EmailIntelResultDTO;
 use Carbon\Carbon;
@@ -56,6 +60,10 @@ final class EmailIntelService
         private readonly EmailLocalPartAnalyzer $localPartAnalyzer,
         private readonly EmailSecurityScoreCalculator $scoreCalculator,
         private readonly EmailSearchLinkBuilder $searchLinkBuilder,
+        private readonly EmailEntityGraphBuilder $graphBuilder,
+        private readonly EmailRecommendationBuilder $recommendationBuilder,
+        private readonly EmailSimilarDomainGenerator $similarDomainGenerator,
+        private readonly EmailDomainWebSnapshot $domainWebSnapshot,
     ) {
     }
 
@@ -84,6 +92,13 @@ final class EmailIntelService
             hasDomainAddress: count($dns['a']) + count($dns['aaaa']) > 0,
         );
         $riskScore = $this->riskScore($signals);
+        $target = [
+            'email' => $email,
+            'localPart' => $localPart,
+            'domain' => $domain,
+            'normalized' => $email,
+            'sha256' => hash('sha256', $email),
+        ];
         $profile = [
             'isFreeProvider' => $isFreeProvider,
             'isDisposable' => $isDisposable,
@@ -91,41 +106,41 @@ final class EmailIntelService
             'gravatarHash' => md5($email),
             'gravatarUrl' => 'https://www.gravatar.com/avatar/' . md5($email) . '?d=404',
         ];
+        $dnsPayload = [
+            'mx' => $dns['mx'],
+            'a' => $dns['a'],
+            'aaaa' => $dns['aaaa'],
+            'txt' => $dns['txt'],
+            'dmarc' => $dns['dmarc'],
+            'emailSecurity' => [
+                'hasSpf' => (bool) $spf['present'],
+                'hasDmarc' => (bool) $dmarc['present'],
+            ],
+        ];
+        $analytics = [
+            'provider' => $provider,
+            'spf' => $spf,
+            'dmarc' => $dmarc,
+            'localPart' => $localPartAnalysis,
+            'scores' => $this->scoreCalculator->calculate($dns, $spf, $dmarc, $profile),
+            'searchLinks' => $this->searchLinkBuilder->build($email, $localPart, $domain),
+            'similarDomains' => $this->similarDomainGenerator->generate($domain),
+            'webSnapshot' => $this->domainWebSnapshot->inspect($domain),
+            'pivots' => [
+                'username' => '/username',
+                'siteIntel' => '/site-intel',
+                'gravatar' => 'https://www.gravatar.com/avatar/' . md5($email) . '?d=404',
+            ],
+        ];
+        $analytics['recommendations'] = $this->recommendationBuilder->build($signals, $analytics);
+        $analytics['graph'] = $this->graphBuilder->build($target, $dnsPayload, $profile, $analytics, $signals);
 
         return new EmailIntelResultDTO(
             checkedAt: Carbon::now()->toIso8601String(),
-            target: [
-                'email' => $email,
-                'localPart' => $localPart,
-                'domain' => $domain,
-                'normalized' => $email,
-                'sha256' => hash('sha256', $email),
-            ],
-            dns: [
-                'mx' => $dns['mx'],
-                'a' => $dns['a'],
-                'aaaa' => $dns['aaaa'],
-                'txt' => $dns['txt'],
-                'dmarc' => $dns['dmarc'],
-                'emailSecurity' => [
-                    'hasSpf' => (bool) $spf['present'],
-                    'hasDmarc' => (bool) $dmarc['present'],
-                ],
-            ],
+            target: $target,
+            dns: $dnsPayload,
             profile: $profile,
-            analytics: [
-                'provider' => $provider,
-                'spf' => $spf,
-                'dmarc' => $dmarc,
-                'localPart' => $localPartAnalysis,
-                'scores' => $this->scoreCalculator->calculate($dns, $spf, $dmarc, $profile),
-                'searchLinks' => $this->searchLinkBuilder->build($email, $localPart, $domain),
-                'pivots' => [
-                    'username' => '/username',
-                    'siteIntel' => '/site-intel',
-                    'gravatar' => 'https://www.gravatar.com/avatar/' . md5($email) . '?d=404',
-                ],
-            ],
+            analytics: $analytics,
             riskScore: $riskScore,
             riskLevel: $this->riskLevel($riskScore),
             signals: $signals,

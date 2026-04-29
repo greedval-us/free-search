@@ -4,6 +4,19 @@ export type EmailIntelSignal = {
     message: string;
 };
 
+export type EmailIntelGraphNode = {
+    id: string;
+    type: string;
+    label: string;
+    level?: string;
+};
+
+export type EmailIntelGraphEdge = {
+    source: string;
+    target: string;
+    kind: string;
+};
+
 export type EmailIntelResult = {
     checkedAt: string;
     target: {
@@ -81,6 +94,26 @@ export type EmailIntelResult = {
             type: string;
             url: string;
         }>;
+        similarDomains: Array<{
+            domain: string;
+            reason: string;
+        }>;
+        webSnapshot: {
+            url: string;
+            available: boolean;
+            status: number | null;
+            durationMs: number;
+            securityHeaders: Record<string, boolean>;
+        };
+        recommendations: Array<{
+            key: string;
+            priority: string;
+            impact: number;
+        }>;
+        graph: {
+            nodes: EmailIntelGraphNode[];
+            edges: EmailIntelGraphEdge[];
+        };
         pivots: {
             username: string;
             siteIntel: string;
