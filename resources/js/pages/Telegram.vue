@@ -1,7 +1,8 @@
 <script setup lang="ts">
 import { Head } from '@inertiajs/vue3';
-import { computed, ref } from 'vue';
+import { computed, onMounted, ref } from 'vue';
 import { useI18n } from '@/composables/useI18n';
+import { getRepeatQueryParams, readRepeatQueryParam } from '@/composables/useRepeatQuery';
 import { TELEGRAM_TABS } from './telegram/tabs';
 import type { TelegramTabValue } from './telegram/types';
 
@@ -25,6 +26,18 @@ const pageTitle = computed(() => t('telegram.headTitle'));
 const activeTabDefinition = computed(
     () => TELEGRAM_TABS.find((tab) => tab.key === activeTab.value) ?? TELEGRAM_TABS[0]
 );
+
+onMounted(() => {
+    const params = getRepeatQueryParams();
+    if (!params) {
+        return;
+    }
+
+    const tab = readRepeatQueryParam(params, ['tab']);
+    if (tab === 'search' || tab === 'analytics' || tab === 'parser') {
+        activeTab.value = tab;
+    }
+});
 </script>
 
 <template>

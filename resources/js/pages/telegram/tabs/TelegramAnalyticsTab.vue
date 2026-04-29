@@ -1,5 +1,12 @@
 ﻿<script setup lang="ts">
 import { BarChart3, ChevronDown, ChevronUp, Download, FileText, RefreshCw, Settings } from 'lucide-vue-next';
+import { onMounted } from 'vue';
+import {
+    getRepeatQueryParams,
+    isRepeatAutorunEnabled,
+    readRepeatQueryInt,
+    readRepeatQueryParam,
+} from '@/composables/useRepeatQuery';
 import TelegramAnalyticsEmptyState from './analytics/components/TelegramAnalyticsEmptyState.vue';
 import TelegramAnalyticsStatCards from './analytics/components/TelegramAnalyticsStatCards.vue';
 import TelegramAnalyticsTopPosts from './analytics/components/TelegramAnalyticsTopPosts.vue';
@@ -93,6 +100,48 @@ const {
     yTicks,
     toggleSeries,
 } = useTelegramAnalyticsTab();
+
+onMounted(() => {
+    const params = getRepeatQueryParams();
+    if (!params) {
+        return;
+    }
+
+    const tab = readRepeatQueryParam(params, ['tab']);
+    if (tab !== 'analytics') {
+        return;
+    }
+
+    const chatUsername = readRepeatQueryParam(params, ['chatUsername']);
+    const keyword = readRepeatQueryParam(params, ['keyword']);
+    const dateFrom = readRepeatQueryParam(params, ['dateFrom']);
+    const dateTo = readRepeatQueryParam(params, ['dateTo']);
+    const scorePriority = readRepeatQueryParam(params, ['scorePriority']);
+    const periodDays = readRepeatQueryInt(params, 'periodDays');
+
+    if (chatUsername !== '') {
+        form.chatUsername = chatUsername;
+    }
+
+    if (keyword !== '') {
+        form.keyword = keyword;
+    }
+
+    if (scorePriority === 'balanced' || scorePriority === 'reach' || scorePriority === 'discussion' || scorePriority === 'virality') {
+        form.scorePriority = scorePriority;
+    }
+
+    if (dateFrom !== '' && dateTo !== '') {
+        form.dateFrom = dateFrom;
+        form.dateTo = dateTo;
+    } else if (periodDays === 1 || periodDays === 3 || periodDays === 7) {
+        applyPreset(periodDays);
+    }
+
+    if (isRepeatAutorunEnabled(params) && canLoadAnalytics.value) {
+        void loadAnalytics();
+    }
+});
 </script>
 
 <template>

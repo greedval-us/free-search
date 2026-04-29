@@ -1,7 +1,8 @@
 <script setup lang="ts">
 import { Activity, LoaderCircle } from 'lucide-vue-next';
-import { computed } from 'vue';
+import { computed, onMounted } from 'vue';
 import { useI18n } from '@/composables/useI18n';
+import { getRepeatQueryParams, isRepeatAutorunEnabled, readRepeatQueryParam } from '@/composables/useRepeatQuery';
 import { useSiteHealth } from '../composables/useSiteHealth';
 
 const { t } = useI18n();
@@ -41,6 +42,27 @@ const signalLabel = (signal: string) => {
 
     return translated === key ? signal : translated;
 };
+
+onMounted(() => {
+    const params = getRepeatQueryParams();
+    if (!params) {
+        return;
+    }
+
+    const tab = readRepeatQueryParam(params, ['tab']);
+    if (tab !== '' && tab !== 'siteHealth') {
+        return;
+    }
+
+    const target = readRepeatQueryParam(params, ['target']);
+    if (target !== '') {
+        form.target = target;
+    }
+
+    if (isRepeatAutorunEnabled(params) && canCheck.value) {
+        void check();
+    }
+});
 </script>
 
 <template>

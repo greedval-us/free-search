@@ -1,8 +1,9 @@
 <script setup lang="ts">
 import { Head } from '@inertiajs/vue3';
 import { LoaderCircle, Search } from 'lucide-vue-next';
-import { computed } from 'vue';
+import { computed, onMounted } from 'vue';
 import { useI18n } from '@/composables/useI18n';
+import { getRepeatQueryParams, isRepeatAutorunEnabled, readRepeatQueryParam } from '@/composables/useRepeatQuery';
 import { useFioLookup } from './fio/composables/useFioLookup';
 
 defineOptions({
@@ -42,6 +43,28 @@ const ageBucketLabel = (key: string): string => {
 
     return translated === translationKey ? key : translated;
 };
+
+onMounted(() => {
+    const params = getRepeatQueryParams();
+    if (!params) {
+        return;
+    }
+
+    const fullName = readRepeatQueryParam(params, ['full_name', 'fullName']);
+    const qualifier = readRepeatQueryParam(params, ['qualifier']);
+
+    if (fullName !== '') {
+        form.fullName = fullName;
+    }
+
+    if (qualifier !== '') {
+        form.qualifier = qualifier;
+    }
+
+    if (isRepeatAutorunEnabled(params) && canLookup.value) {
+        void lookup();
+    }
+});
 </script>
 
 <template>

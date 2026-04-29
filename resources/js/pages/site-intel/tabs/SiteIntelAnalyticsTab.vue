@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import { BarChart3, Download, FileText, LoaderCircle } from 'lucide-vue-next';
+import { onMounted } from 'vue';
 import { useI18n } from '@/composables/useI18n';
+import { getRepeatQueryParams, isRepeatAutorunEnabled, readRepeatQueryParam } from '@/composables/useRepeatQuery';
 import { useSiteIntelAnalytics } from '../composables/useSiteIntelAnalytics';
 import { useSiteIntelAnalyticsViewModel } from '../composables/useSiteIntelAnalyticsViewModel';
 import SiteIntelMetricBars from './components/SiteIntelMetricBars.vue';
@@ -21,6 +23,27 @@ const {
     domainAgeDays,
     totalResponseTimeMs,
 } = useSiteIntelAnalyticsViewModel(result, t);
+
+onMounted(() => {
+    const params = getRepeatQueryParams();
+    if (!params) {
+        return;
+    }
+
+    const tab = readRepeatQueryParam(params, ['tab']);
+    if (tab !== 'analytics') {
+        return;
+    }
+
+    const target = readRepeatQueryParam(params, ['target']);
+    if (target !== '') {
+        form.target = target;
+    }
+
+    if (isRepeatAutorunEnabled(params) && canAnalyze.value) {
+        void analyze();
+    }
+});
 </script>
 
 <template>

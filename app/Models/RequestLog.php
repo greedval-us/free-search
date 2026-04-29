@@ -7,6 +7,8 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class RequestLog extends Model
 {
+    public $timestamps = false;
+
     /**
      * The table associated with the model.
      */
@@ -22,12 +24,17 @@ class RequestLog extends Model
         'method',
         'path',
         'route_name',
+        'module_key',
+        'action_key',
         'request_data',
+        'query_preview',
         'response_data',
+        'metadata',
         'status_code',
         'response_time',
         'ip_address',
         'user_agent',
+        'created_at',
     ];
 
     /**
@@ -40,6 +47,7 @@ class RequestLog extends Model
         return [
             'request_data' => 'array',
             'response_data' => 'array',
+            'metadata' => 'array',
             'response_time' => 'double',
             'status_code' => 'integer',
             'created_at' => 'datetime',

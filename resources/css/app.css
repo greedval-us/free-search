@@ -187,6 +187,10 @@
             linear-gradient(to right, rgba(148, 163, 184, 0.12) 1px, transparent 1px),
             linear-gradient(to bottom, rgba(148, 163, 184, 0.12) 1px, transparent 1px);
     }
+
+    body.dashboard-scroll-lock {
+        overflow: hidden;
+    }
 }
 
 @layer utilities {

@@ -1,7 +1,8 @@
 <script setup lang="ts">
 import { LoaderCircle, Search } from 'lucide-vue-next';
-import { computed, reactive, watch } from 'vue';
+import { computed, onMounted, reactive, watch } from 'vue';
 import { useI18n } from '@/composables/useI18n';
+import { getRepeatQueryParams, isRepeatAutorunEnabled, readRepeatQueryParam } from '@/composables/useRepeatQuery';
 import { useUsernameSearch } from '../composables/useUsernameSearch';
 import type { UsernameSearchStatus } from '../types';
 
@@ -111,6 +112,27 @@ const categoryLabel = (category: string) => {
 
     return translated;
 };
+
+onMounted(() => {
+    const params = getRepeatQueryParams();
+    if (!params) {
+        return;
+    }
+
+    const tab = readRepeatQueryParam(params, ['tab']);
+    if (tab !== '' && tab !== 'search') {
+        return;
+    }
+
+    const username = readRepeatQueryParam(params, ['username']);
+    if (username !== '') {
+        form.username = username;
+    }
+
+    if (isRepeatAutorunEnabled(params) && canSearch.value) {
+        void search();
+    }
+});
 </script>
 
 <template>

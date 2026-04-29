@@ -1,7 +1,8 @@
 <script setup lang="ts">
 import { Head } from '@inertiajs/vue3';
-import { computed, ref } from 'vue';
+import { computed, onMounted, ref } from 'vue';
 import { useI18n } from '@/composables/useI18n';
+import { getRepeatQueryParams, readRepeatQueryParam } from '@/composables/useRepeatQuery';
 import { SITE_INTEL_TABS } from './site-intel/tabs';
 import type { SiteIntelTabValue } from './site-intel/types';
 
@@ -25,6 +26,18 @@ const pageTitle = computed(() => t('siteIntel.headTitle'));
 const activeTabDefinition = computed(
     () => SITE_INTEL_TABS.find((tab) => tab.key === activeTab.value) ?? SITE_INTEL_TABS[0]
 );
+
+onMounted(() => {
+    const params = getRepeatQueryParams();
+    if (!params) {
+        return;
+    }
+
+    const tab = readRepeatQueryParam(params, ['tab']);
+    if (tab === 'siteHealth' || tab === 'domainLite' || tab === 'analytics') {
+        activeTab.value = tab;
+    }
+});
 </script>
 
 <template>
