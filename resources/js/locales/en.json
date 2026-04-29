@@ -686,6 +686,95 @@
       "unknown": "Unknown"
     }
   },
+  "emailIntel": {
+    "headTitle": "Email Intel",
+    "help": {
+      "label": "What is this data?",
+      "overview": "Checks an email address in live mode: domain DNS, MX records, SPF/DMARC, mailbox profile hints and local risk signals. Results are returned in the current response and are not stored.",
+      "riskScore": "Risk score is built from technical signals: missing MX, missing SPF/DMARC, non-resolving domain, disposable provider and role-account hints.",
+      "target": "Normalized target data. SHA-256 helps compare the same address across exported reports without exposing the raw email.",
+      "profile": "Mailbox profile hints are local heuristics: common free providers, disposable domains, role/shared inboxes and Gravatar hash.",
+      "signals": "Signals explain why the score changed. They are indicators for analyst review, not proof of malicious activity.",
+      "dns": "DNS data is collected live from public records. MX shows mail routing; SPF and DMARC describe anti-spoofing posture.",
+      "provider": "Provider fingerprint is inferred from MX hosts and domain patterns. It is a confidence hint, not a paid provider lookup.",
+      "localPart": "Local-part analysis looks at the mailbox name before @: role accounts, plus addressing, year patterns, separators and random-looking strings.",
+      "spf": "SPF parsing extracts mechanisms, includes and the final all policy. Strict -all is strongest; +all is risky.",
+      "dmarc": "DMARC parsing extracts policy, reporting addresses and alignment hints. reject is strongest, quarantine is moderate, none is monitoring-only.",
+      "searchLinks": "Pivot links open public search pages in a new tab. The platform does not fetch or store those external results."
+    },
+    "tabs": {
+      "search": "Search",
+      "analytics": "Analytics"
+    },
+    "lookup": {
+      "title": "Email Intelligence",
+      "description": "Live email checks via DNS and local heuristics, without storing results.",
+      "email": "Email",
+      "placeholder": "name@example.com",
+      "check": "Check",
+      "checking": "Checking...",
+      "empty": "Enter an email address to start analysis.",
+      "checkedAt": "Checked at",
+      "riskScore": "Risk score",
+      "riskLevel": "Risk level",
+      "mxRecords": "MX records",
+      "emailSecurity": "Email security",
+      "target": "Target",
+      "domain": "Domain",
+      "localPart": "Local part",
+      "profile": "Profile",
+      "freeProvider": "Free provider",
+      "disposable": "Disposable",
+      "roleAccount": "Role account",
+      "signals": "Signals",
+      "dns": "DNS"
+    },
+    "analytics": {
+      "overallScore": "Overall score",
+      "mailSecurity": "Mail security",
+      "domainHealth": "Domain health",
+      "identityConfidence": "Identity confidence",
+      "provider": "Provider fingerprint",
+      "type": "Type",
+      "confidence": "Confidence",
+      "localPart": "Local-part analysis",
+      "length": "Length",
+      "entropy": "Entropy",
+      "tokens": "Tokens",
+      "plusAddressing": "Plus addressing",
+      "looksRandom": "Looks random",
+      "spf": "SPF breakdown",
+      "dmarc": "DMARC breakdown",
+      "strictness": "Strictness",
+      "policy": "Policy",
+      "strength": "Strength",
+      "searchLinks": "OSINT pivot links"
+    },
+    "riskLevel": {
+      "clean": "Clean",
+      "low": "Low",
+      "medium": "Medium",
+      "high": "High"
+    },
+    "signal": {
+      "missing_mx": "Domain has no MX records.",
+      "domain_not_resolving": "Domain has no A/AAAA records.",
+      "missing_spf": "SPF record is missing.",
+      "weak_spf": "SPF policy is present but not strict.",
+      "open_spf": "SPF policy allows all senders.",
+      "missing_dmarc": "DMARC record is missing.",
+      "monitoring_dmarc": "DMARC is in monitoring mode only.",
+      "disposable_provider": "Domain matches a local disposable-mail list.",
+      "role_account": "Local part looks like a role/shared inbox.",
+      "random_local_part": "Local part looks random or machine-generated.",
+      "free_provider": "Domain is a common free mailbox provider.",
+      "baseline_ok": "No strong technical risk signals detected."
+    },
+    "errors": {
+      "emailRequired": "Enter a valid email address.",
+      "lookupFailed": "Could not complete email lookup."
+    }
+  },
   "navigation": {
     "platform": "Platform",
     "dashboard": "Dashboard",
@@ -693,13 +782,16 @@
     "username": "Username",
     "siteIntel": "Site Intel",
     "fio": "FIO",
+    "emailIntel": "Email Intel",
     "repository": "Repository",
     "documentation": "Documentation"
   },
   "common": {
     "language": "Language",
     "saved": "Saved.",
-    "cancel": "Cancel"
+    "cancel": "Cancel",
+    "yes": "Yes",
+    "no": "No"
   },
   "userMenu": {
     "settings": "Settings",
