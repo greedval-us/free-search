@@ -1,8 +1,9 @@
 <script setup lang="ts">
 import { Head } from '@inertiajs/vue3';
 import { BarChart3, Download, ExternalLink, FileText, LoaderCircle, MailSearch, Search } from 'lucide-vue-next';
-import { computed, ref } from 'vue';
+import { computed, onMounted, ref } from 'vue';
 import { useI18n } from '@/composables/useI18n';
+import { getRepeatQueryParams, isRepeatAutorunEnabled, readRepeatQueryParam } from '@/composables/useRepeatQuery';
 import EmailEntityGraph from './email-intel/components/EmailEntityGraph.vue';
 import { useEmailIntelLookup } from './email-intel/composables/useEmailIntelLookup';
 import type { DomainMailPostureResult, EmailBulkIntelResult } from './email-intel/types';
@@ -184,6 +185,59 @@ const openReport = () => {
 const downloadReport = () => {
     window.open(`${reportUrl.value}&download=1`, '_blank', 'noopener,noreferrer');
 };
+
+onMounted(() => {
+    const params = getRepeatQueryParams();
+    if (!params) {
+        return;
+    }
+
+    const requestedTab = readRepeatQueryParam(params, ['tab']);
+    const tab = requestedTab === 'search' || requestedTab === 'analytics' || requestedTab === 'bulk' || requestedTab === 'domain'
+        ? requestedTab
+        : activeTab.value;
+
+    activeTab.value = tab;
+
+    const email = readRepeatQueryParam(params, ['email']);
+    if (email !== '') {
+        searchLookup.form.email = email;
+        analyticsLookup.form.email = email;
+    }
+
+    const emails = readRepeatQueryParam(params, ['emails']);
+    if (emails !== '') {
+        bulkEmails.value = emails;
+    }
+
+    const domain = readRepeatQueryParam(params, ['domain']);
+    if (domain !== '') {
+        domainForm.value = domain;
+    }
+
+    if (!isRepeatAutorunEnabled(params)) {
+        return;
+    }
+
+    if (tab === 'search' && searchLookup.canLookup.value) {
+        void searchLookup.lookup();
+        return;
+    }
+
+    if (tab === 'analytics' && analyticsLookup.canLookup.value) {
+        void analyticsLookup.lookup();
+        return;
+    }
+
+    if (tab === 'bulk' && canBulkLookup.value) {
+        void bulkLookup();
+        return;
+    }
+
+    if (tab === 'domain' && canDomainLookup.value) {
+        void domainLookup();
+    }
+});
 </script>
 
 <template>
@@ -414,7 +468,7 @@ const downloadReport = () => {
                         <p class="mb-2 font-semibold">{{ t('emailIntel.analytics.deliverabilityHints') }}</p>
                         <div class="space-y-2">
                             <p v-for="hint in domainResult.deliverability.hints" :key="hint.key" class="text-muted-foreground">
-                                {{ hint.passed ? 'OK' : 'FAIL' }} - {{ t(`emailIntel.deliverability.${hint.key}`) }}
+                                {{ hint.passed ? t('common.ok') : t('common.fail') }} - {{ t(`emailIntel.deliverability.${hint.key}`) }}
                             </p>
                         </div>
                     </div>
@@ -616,7 +670,7 @@ const downloadReport = () => {
                             :key="hint.key"
                             class="rounded-md border border-border/70 bg-background/70 p-2 text-muted-foreground"
                         >
-                            {{ hint.passed ? 'OK' : 'FAIL' }} - {{ t(`emailIntel.deliverability.${hint.key}`) }}
+                            {{ hint.passed ? t('common.ok') : t('common.fail') }} - {{ t(`emailIntel.deliverability.${hint.key}`) }}
                         </p>
                     </div>
                 </div>

@@ -1,7 +1,13 @@
 <script setup lang="ts">
 import { ChevronDown, ChevronUp, Search, Settings } from 'lucide-vue-next';
-import { computed } from 'vue';
+import { computed, onMounted } from 'vue';
 import { useI18n } from '@/composables/useI18n';
+import {
+    getRepeatQueryParams,
+    isRepeatAutorunEnabled,
+    readRepeatQueryInt,
+    readRepeatQueryParam,
+} from '@/composables/useRepeatQuery';
 import { useTelegramSearch } from '../composables/useTelegramSearch';
 
 const { t } = useI18n();
@@ -58,6 +64,54 @@ const mediaLabel = (type: string) => {
 
     return map[type] ?? t('telegram.mediaTypes.other');
 };
+
+onMounted(() => {
+    const params = getRepeatQueryParams();
+    if (!params) {
+        return;
+    }
+
+    const tab = readRepeatQueryParam(params, ['tab']);
+    if (tab !== '' && tab !== 'search') {
+        return;
+    }
+
+    const chatUsername = readRepeatQueryParam(params, ['chatUsername']);
+    const keyword = readRepeatQueryParam(params, ['q']);
+    const fromUsername = readRepeatQueryParam(params, ['fromUsername']);
+    const dateFrom = readRepeatQueryParam(params, ['dateFrom']);
+    const dateTo = readRepeatQueryParam(params, ['dateTo']);
+    const limit = readRepeatQueryInt(params, 'limit');
+
+    if (chatUsername !== '') {
+        form.chatUsername = chatUsername;
+    }
+
+    if (keyword !== '') {
+        form.q = keyword;
+    }
+
+    if (fromUsername !== '') {
+        form.fromUsername = fromUsername;
+    }
+
+    if (dateFrom !== '') {
+        form.dateFrom = dateFrom;
+    }
+
+    if (dateTo !== '') {
+        form.dateTo = dateTo;
+    }
+
+    if (limit !== null) {
+        form.limit = limit;
+        clampLimit();
+    }
+
+    if (isRepeatAutorunEnabled(params) && canSearch.value) {
+        void searchMessages(false);
+    }
+});
 </script>
 
 <template>

@@ -99,6 +99,22 @@ class User extends Authenticatable
     }
 
     /**
+     * Get saved user queries.
+     */
+    public function savedQueries(): HasMany
+    {
+        return $this->hasMany(UserSavedQuery::class);
+    }
+
+    /**
+     * Get pinned modules for the user.
+     */
+    public function modulePins(): HasMany
+    {
+        return $this->hasMany(UserModulePin::class);
+    }
+
+    /**
      * Scope a query to only include admin users.
      */
     public function scopeAdmins($query)

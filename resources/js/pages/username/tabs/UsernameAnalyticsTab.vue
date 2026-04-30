@@ -1,7 +1,8 @@
 <script setup lang="ts">
 import { BarChart3, Download, FileText, LoaderCircle, Search } from 'lucide-vue-next';
-import { computed } from 'vue';
+import { computed, onMounted } from 'vue';
 import { useI18n } from '@/composables/useI18n';
+import { getRepeatQueryParams, isRepeatAutorunEnabled, readRepeatQueryParam } from '@/composables/useRepeatQuery';
 import { useUsernameSearch } from '../composables/useUsernameSearch';
 import UsernameEntityGraph from './analytics/components/UsernameEntityGraph.vue';
 
@@ -40,6 +41,27 @@ const reasonLabel = (reason: string) => {
 
     return translated;
 };
+
+onMounted(() => {
+    const params = getRepeatQueryParams();
+    if (!params) {
+        return;
+    }
+
+    const tab = readRepeatQueryParam(params, ['tab']);
+    if (tab !== 'analytics') {
+        return;
+    }
+
+    const username = readRepeatQueryParam(params, ['username']);
+    if (username !== '') {
+        form.username = username;
+    }
+
+    if (isRepeatAutorunEnabled(params) && canSearch.value) {
+        void search();
+    }
+});
 </script>
 
 <template>

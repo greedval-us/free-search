@@ -1,7 +1,8 @@
 <script setup lang="ts">
 import { Globe, LoaderCircle } from 'lucide-vue-next';
-import { computed } from 'vue';
+import { computed, onMounted } from 'vue';
 import { useI18n } from '@/composables/useI18n';
+import { getRepeatQueryParams, isRepeatAutorunEnabled, readRepeatQueryParam } from '@/composables/useRepeatQuery';
 import { useDomainLite } from '../composables/useDomainLite';
 
 const { t } = useI18n();
@@ -34,6 +35,27 @@ const signalLabel = (signal: string) => {
 
     return translated === key ? signal : translated;
 };
+
+onMounted(() => {
+    const params = getRepeatQueryParams();
+    if (!params) {
+        return;
+    }
+
+    const tab = readRepeatQueryParam(params, ['tab']);
+    if (tab !== '' && tab !== 'domainLite') {
+        return;
+    }
+
+    const domain = readRepeatQueryParam(params, ['domain']);
+    if (domain !== '') {
+        form.domain = domain;
+    }
+
+    if (isRepeatAutorunEnabled(params) && canLookup.value) {
+        void lookup();
+    }
+});
 </script>
 
 <template>

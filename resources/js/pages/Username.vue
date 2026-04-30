@@ -1,7 +1,8 @@
 <script setup lang="ts">
 import { Head } from '@inertiajs/vue3';
-import { computed, ref } from 'vue';
+import { computed, onMounted, ref } from 'vue';
 import { useI18n } from '@/composables/useI18n';
+import { getRepeatQueryParams, readRepeatQueryParam } from '@/composables/useRepeatQuery';
 import { USERNAME_TABS } from './username/tabs';
 import type { UsernameTabValue } from './username/types';
 
@@ -25,6 +26,18 @@ const pageTitle = computed(() => t('username.headTitle'));
 const activeTabDefinition = computed(
     () => USERNAME_TABS.find((tab) => tab.key === activeTab.value) ?? USERNAME_TABS[0]
 );
+
+onMounted(() => {
+    const params = getRepeatQueryParams();
+    if (!params) {
+        return;
+    }
+
+    const tab = readRepeatQueryParam(params, ['tab']);
+    if (tab === 'search' || tab === 'analytics') {
+        activeTab.value = tab;
+    }
+});
 </script>
 
 <template>

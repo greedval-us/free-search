@@ -561,6 +561,22 @@
       "strengthSignals": "Позитивные сигналы",
       "noStrengthSignals": "Сильные позитивные сигналы не обнаружены.",
       "recommendations": "Рекомендации",
+      "scoreBreakdownTitle": "Разбор оценок",
+      "signalBalanceTitle": "Баланс сигналов",
+      "dnsProfileTitle": "DNS-профиль",
+      "httpLatencyTitle": "Задержки HTTP-цепочки (мс)",
+      "additionalSnapshotMetrics": "Дополнительные метрики снимка",
+      "snapshotHttpFinalStatus": "Финальный HTTP-статус",
+      "snapshotTotalResponseTime": "Общее время ответа",
+      "snapshotSslDaysRemaining": "Осталось дней до окончания SSL",
+      "snapshotWhois": "WHOIS",
+      "snapshotDomainAge": "Возраст домена",
+      "snapshotEmailSecurity": "Почтовая защита",
+      "snapshotWhoisRegistrar": "WHOIS регистратор",
+      "snapshotWhoisCountry": "WHOIS страна",
+      "snapshotDays": "дней",
+      "recommendationMaintain": "поддерживать",
+      "scoreUnit": "балла",
       "help": {
         "overview": "Объединяет Site Health и Domain Lite: общий score, сигналы риска и рекомендации.",
         "scoreBreakdown": "Показывает срез по ключевым измерениям: общий балл, состояние сайта, безопасность домена и покрытие security-заголовков.",
@@ -638,6 +654,7 @@
       "topRegion": "Основной регион",
       "medianAge": "Медианный возраст",
       "averageConfidence": "Средняя уверенность",
+      "average": "Среднее",
       "qualifierMatches": "Совпадения по уточнению",
       "qualifierTerms": "Использованные термины уточнения",
       "regionClusters": "Кластеры по региону",
@@ -839,19 +856,99 @@
       "web_available": "Сайт домена отвечает по HTTPS."
     }
   },
+  "dashboard": {
+    "meta": {
+      "title": "Панель"
+    },
+    "header": {
+      "kicker": "Панель пользователя",
+      "title": "Моя активность",
+      "subtitle": "Отслеживайте реальные запросы, последние действия и быстро возвращайтесь в нужные модули.",
+      "badge": "История запросов сохраняется автоматически"
+    },
+    "summary": {
+      "total": "Все запросы",
+      "last7": "За 7 дней",
+      "last30": "За 30 дней",
+      "activeDays": "Активные дни"
+    },
+    "sections": {
+      "favorite": "Любимый модуль",
+      "topModules": "Популярные модули",
+      "weekly": "Активность по дням",
+      "recentQueries": "Последние запросы",
+      "quickActions": "Быстрые действия",
+      "insights": "Полезные выводы",
+      "savedQueries": "Сохраненные запросы"
+    },
+    "favorite": {
+      "usedPrefix": "Использован",
+      "usedSuffix": "раз",
+      "empty": "История запросов пока пустая. Запустите первый поиск."
+    },
+    "modules": {
+      "username": "Поиск по юзернейму",
+      "fio": "Поиск по ФИО",
+      "site-intel": "Аналитика сайта",
+      "email-intel": "Аналитика email",
+      "telegram": "Аналитика Telegram",
+      "default": "Поисковый модуль",
+      "lastUsed": "Последний запуск",
+      "open": "Открыть модуль",
+      "empty": "Активности по модулям пока нет."
+    },
+    "weekly": {
+      "empty": "Данных за неделю пока нет."
+    },
+    "recent": {
+      "empty": "Запросов пока нет.",
+      "runAgain": "Повторить",
+      "save": "Сохранить запрос"
+    },
+    "common": {
+      "na": "н/д"
+    },
+    "insights": {
+      "topDay": "Самый активный день",
+      "lastQuery": "Последний запрос",
+      "favorite": "Любимый модуль"
+    },
+    "saved": {
+      "empty": "Сохраненных запросов пока нет.",
+      "run": "Запустить",
+      "delete": "Удалить"
+    },
+    "filters": {
+      "allModules": "Все модули",
+      "queryPlaceholder": "Поиск по тексту запроса",
+      "period7": "7 дней",
+      "period30": "30 дней",
+      "period90": "90 дней",
+      "apply": "Применить фильтры",
+      "reset": "Сбросить"
+    }
+  },
   "navigation": {
     "platform": "Платформа",
+    "menu": "Меню навигации",
     "dashboard": "Панель",
-    "telegram": "Telegram",
-    "username": "Username",
-    "siteIntel": "Site Intel",
-    "fio": "FIO",
-    "emailIntel": "Email Intel",
+    "telegram": "Телеграм",
+    "username": "Юзернейм",
+    "siteIntel": "Анализ сайта",
+    "fio": "ФИО",
+    "emailIntel": "Анализ Email",
     "repository": "Репозиторий",
     "documentation": "Документация"
   },
   "common": {
     "language": "Язык",
+    "toggleSidebar": "Переключить боковое меню",
+    "sidebar": "Боковое меню",
+    "mobileSidebarDescription": "Отображает мобильное боковое меню.",
+    "close": "Закрыть",
+    "more": "Еще",
+    "ok": "OK",
+    "fail": "ОШИБКА",
     "saved": "Сохранено.",
     "cancel": "Отмена",
     "yes": "Да",
