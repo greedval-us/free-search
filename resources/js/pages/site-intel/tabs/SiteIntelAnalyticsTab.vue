@@ -170,13 +170,13 @@ onMounted(() => {
 
             <div class="grid gap-2 xl:grid-cols-2">
                 <SiteIntelMetricBars
-                    title="Score breakdown"
+                    :title="t('siteIntel.analytics.scoreBreakdownTitle')"
                     :items="scoreBars"
                     :hint="t('siteIntel.analytics.help.scoreBreakdown')"
                     :help-label="t('siteIntel.help.label')"
                 />
                 <SiteIntelMetricBars
-                    title="Signal balance"
+                    :title="t('siteIntel.analytics.signalBalanceTitle')"
                     :items="signalBars"
                     :hint="t('siteIntel.analytics.help.signalBalance')"
                     :help-label="t('siteIntel.help.label')"
@@ -185,13 +185,13 @@ onMounted(() => {
 
             <div class="grid gap-2 xl:grid-cols-2">
                 <SiteIntelMetricBars
-                    title="DNS profile"
+                    :title="t('siteIntel.analytics.dnsProfileTitle')"
                     :items="dnsBars"
                     :hint="t('siteIntel.analytics.help.dnsProfile')"
                     :help-label="t('siteIntel.help.label')"
                 />
                 <SiteIntelMetricBars
-                    title="HTTP latency chain (ms)"
+                    :title="t('siteIntel.analytics.httpLatencyTitle')"
                     :items="httpLatencyBars"
                     value-suffix=" ms"
                     :hint="t('siteIntel.analytics.help.httpLatency')"
@@ -201,7 +201,7 @@ onMounted(() => {
 
             <div class="rounded-lg border border-border/70 bg-background/60 p-3 text-xs">
                 <div class="mb-2 flex items-center gap-2">
-                    <p class="font-semibold">Additional snapshot metrics</p>
+                    <p class="font-semibold">{{ t('siteIntel.analytics.additionalSnapshotMetrics') }}</p>
                     <span class="group relative inline-flex">
                         <span
                             class="inline-flex h-5 w-5 cursor-help items-center justify-center rounded-full border border-border text-[11px] font-semibold text-muted-foreground"
@@ -215,14 +215,14 @@ onMounted(() => {
                     </span>
                 </div>
                 <div class="grid gap-2 sm:grid-cols-2 xl:grid-cols-4">
-                    <p>HTTP final status: <span class="text-muted-foreground">{{ result.siteHealth.http.finalStatus || '-' }}</span></p>
-                    <p>Total response time: <span class="text-muted-foreground">{{ totalResponseTimeMs }} ms</span></p>
-                    <p>SSL days remaining: <span class="text-muted-foreground">{{ result.siteHealth.ssl.daysRemaining ?? '-' }}</span></p>
-                    <p>WHOIS: <span class="text-muted-foreground">{{ result.domainLite.whois.available ? t('siteIntel.common.available') : t('siteIntel.common.unavailable') }}</span></p>
-                    <p>Domain age: <span class="text-muted-foreground">{{ domainAgeDays ?? '-' }} days</span></p>
-                    <p>Email security: <span class="text-muted-foreground">{{ emailSecurityScore }}/2 (SPF + DMARC)</span></p>
-                    <p>WHOIS registrar: <span class="text-muted-foreground">{{ result.domainLite.whois.registrar || '-' }}</span></p>
-                    <p>WHOIS country: <span class="text-muted-foreground">{{ result.domainLite.whois.country || '-' }}</span></p>
+                    <p>{{ t('siteIntel.analytics.snapshotHttpFinalStatus') }}: <span class="text-muted-foreground">{{ result.siteHealth.http.finalStatus || '-' }}</span></p>
+                    <p>{{ t('siteIntel.analytics.snapshotTotalResponseTime') }}: <span class="text-muted-foreground">{{ totalResponseTimeMs }} ms</span></p>
+                    <p>{{ t('siteIntel.analytics.snapshotSslDaysRemaining') }}: <span class="text-muted-foreground">{{ result.siteHealth.ssl.daysRemaining ?? '-' }}</span></p>
+                    <p>{{ t('siteIntel.analytics.snapshotWhois') }}: <span class="text-muted-foreground">{{ result.domainLite.whois.available ? t('siteIntel.common.available') : t('siteIntel.common.unavailable') }}</span></p>
+                    <p>{{ t('siteIntel.analytics.snapshotDomainAge') }}: <span class="text-muted-foreground">{{ domainAgeDays ?? '-' }} {{ t('siteIntel.analytics.snapshotDays') }}</span></p>
+                    <p>{{ t('siteIntel.analytics.snapshotEmailSecurity') }}: <span class="text-muted-foreground">{{ emailSecurityScore }}/2 (SPF + DMARC)</span></p>
+                    <p>{{ t('siteIntel.analytics.snapshotWhoisRegistrar') }}: <span class="text-muted-foreground">{{ result.domainLite.whois.registrar || '-' }}</span></p>
+                    <p>{{ t('siteIntel.analytics.snapshotWhoisCountry') }}: <span class="text-muted-foreground">{{ result.domainLite.whois.country || '-' }}</span></p>
                 </div>
             </div>
 
@@ -289,7 +289,7 @@ onMounted(() => {
                     <li v-for="item in recommendationsWithImpact" :key="item.key" class="rounded border border-border/60 p-2">
                         <div class="mb-1 flex items-center justify-between gap-2">
                             <span class="text-[11px]">{{ item.label }}</span>
-                            <span class="text-[11px] text-emerald-300">{{ item.impact > 0 ? `~ +${item.impact} score` : 'maintain' }}</span>
+                            <span class="text-[11px] text-emerald-300">{{ item.impact > 0 ? `~ +${item.impact} ${t('siteIntel.analytics.scoreUnit')}` : t('siteIntel.analytics.recommendationMaintain') }}</span>
                         </div>
                         <div v-if="item.impact > 0" class="h-2 rounded bg-muted/50">
                             <div class="h-2 rounded bg-emerald-400/80 transition-all duration-300" :style="{ width: `${clampPercent(item.impact * 5)}%` }" />

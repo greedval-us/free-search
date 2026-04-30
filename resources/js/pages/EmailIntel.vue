@@ -468,7 +468,7 @@ onMounted(() => {
                         <p class="mb-2 font-semibold">{{ t('emailIntel.analytics.deliverabilityHints') }}</p>
                         <div class="space-y-2">
                             <p v-for="hint in domainResult.deliverability.hints" :key="hint.key" class="text-muted-foreground">
-                                {{ hint.passed ? 'OK' : 'FAIL' }} - {{ t(`emailIntel.deliverability.${hint.key}`) }}
+                                {{ hint.passed ? t('common.ok') : t('common.fail') }} - {{ t(`emailIntel.deliverability.${hint.key}`) }}
                             </p>
                         </div>
                     </div>
@@ -670,7 +670,7 @@ onMounted(() => {
                             :key="hint.key"
                             class="rounded-md border border-border/70 bg-background/70 p-2 text-muted-foreground"
                         >
-                            {{ hint.passed ? 'OK' : 'FAIL' }} - {{ t(`emailIntel.deliverability.${hint.key}`) }}
+                            {{ hint.passed ? t('common.ok') : t('common.fail') }} - {{ t(`emailIntel.deliverability.${hint.key}`) }}
                         </p>
                     </div>
                 </div>

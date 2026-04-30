@@ -179,7 +179,7 @@ onMounted(() => {
                                 <span class="text-muted-foreground">
                                     {{ t('fio.lookup.reliability') }}: {{ Math.round(stat.reliability * 100) }}%,
                                     {{ t('fio.lookup.matches') }}: {{ stat.matches }},
-                                    Avg: {{ stat.averageConfidence }}%
+                                    {{ t('fio.lookup.average') }}: {{ stat.averageConfidence }}%
                                 </span>
                             </div>
                             <div class="h-2 rounded bg-slate-700/70">
