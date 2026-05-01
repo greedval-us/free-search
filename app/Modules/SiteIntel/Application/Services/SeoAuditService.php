@@ -66,14 +66,7 @@ final class SeoAuditService
         $international = $this->internationalAnalyzer->analyze($crawl);
         $crawlBudget = $this->crawlBudgetAnalyzer->analyze($host);
         $profile = $this->profileResolver->resolve($performance, $quality, $crawl, $platformType);
-        $sitemapAudit = ($sitemap['available'] ?? false) === true
-            ? $this->sitemapUrlAuditor->audit((string) ($sitemap['url'] ?? ''), min(15, $crawlLimit + 2))
-            : [
-                'source' => (string) ($sitemap['url'] ?? ''),
-                'sampled' => 0,
-                'non200' => [],
-                'checked' => [],
-            ];
+        $sitemapAudit = $this->resolveSitemapAudit($sitemap, $crawlLimit);
 
         $score = $this->scoreCalculator->calculate(
             $meta,
@@ -142,6 +135,24 @@ final class SeoAuditService
             'sitemapAudit' => $sitemapAudit,
             'score' => $score,
             'recommendations' => $recommendations,
+        ];
+    }
+
+    /**
+     * @param  array<string, mixed>  $sitemap
+     * @return array<string, mixed>
+     */
+    private function resolveSitemapAudit(array $sitemap, int $crawlLimit): array
+    {
+        if (($sitemap['available'] ?? false) === true) {
+            return $this->sitemapUrlAuditor->audit((string) ($sitemap['url'] ?? ''), min(15, $crawlLimit + 2));
+        }
+
+        return [
+            'source' => (string) ($sitemap['url'] ?? ''),
+            'sampled' => 0,
+            'non200' => [],
+            'checked' => [],
         ];
     }
 }

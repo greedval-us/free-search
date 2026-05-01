@@ -4,6 +4,12 @@ namespace App\Modules\SiteIntel\Application\Services\SeoAudit;
 
 final class SeoAuditScoreCalculator
 {
+    public function __construct(
+        private readonly SeoAuditTechnicalThresholds $thresholds,
+        private readonly SeoAuditScoringProfilePolicy $profilePolicy,
+    ) {
+    }
+
     /**
      * @param  array<string, mixed>  $meta
      * @param  array<string, int>  $headings
@@ -44,14 +50,14 @@ final class SeoAuditScoreCalculator
         $score = 100;
         $signals = [];
         $profileKey = (string) ($profile['key'] ?? 'generic');
-        $weights = $this->profileWeights($profileKey);
+        $weights = $this->profilePolicy->weights($profileKey);
 
-        if (($meta['titleLength'] ?? 0) < 15 || ($meta['titleLength'] ?? 0) > 65) {
+        if ($this->thresholds->isTitleOutOfRange((int) ($meta['titleLength'] ?? 0))) {
             $score -= (int) round(10 * $weights['meta']);
             $signals[] = 'title_length_out_of_range';
         }
 
-        if (($meta['descriptionLength'] ?? 0) < 50 || ($meta['descriptionLength'] ?? 0) > 170) {
+        if ($this->thresholds->isDescriptionOutOfRange((int) ($meta['descriptionLength'] ?? 0))) {
             $score -= 8;
             $signals[] = 'description_length_out_of_range';
         }
@@ -76,12 +82,12 @@ final class SeoAuditScoreCalculator
             $signals[] = 'sitemap_missing';
         }
 
-        if (($performance['ttfbMsApprox'] ?? 0) > 1200) {
+        if ($this->thresholds->isSlowTtfb((int) ($performance['ttfbMsApprox'] ?? 0))) {
             $score -= (int) round(8 * $weights['performance']);
             $signals[] = 'slow_response';
         }
 
-        if (($performance['pageSizeKb'] ?? 0) > 1500) {
+        if ($this->thresholds->isHeavyPage((int) ($performance['pageSizeKb'] ?? 0))) {
             $score -= (int) round(6 * $weights['page_size']);
             $signals[] = 'heavy_page';
         }
@@ -103,7 +109,7 @@ final class SeoAuditScoreCalculator
             $score -= 15;
             $signals[] = 'soft_404_detected';
         }
-        if ((int) ($performance['renderBlocking']['total'] ?? 0) > 6) {
+        if ($this->thresholds->hasHighRenderBlocking((int) ($performance['renderBlocking']['total'] ?? 0))) {
             $score -= (int) round(5 * $weights['render_blocking']);
             $signals[] = 'render_blocking_resources';
         }
@@ -176,9 +182,9 @@ final class SeoAuditScoreCalculator
             $signals[] = 'sitemap_non_200_urls';
         }
 
-        $score += $this->profileBaseBonus($profileKey);
+        $score += $this->profilePolicy->baseBonus($profileKey);
         $score = max(0, min(100, $score));
-        $levelThresholds = $this->profileLevelThresholds($profileKey);
+        $levelThresholds = $this->profilePolicy->levelThresholds($profileKey);
         $level = $score >= $levelThresholds['high']
             ? 'high'
             : ($score >= $levelThresholds['medium'] ? 'medium' : 'low');
@@ -191,72 +197,4 @@ final class SeoAuditScoreCalculator
         ];
     }
 
-    /**
-     * @return array<string, float>
-     */
-    private function profileWeights(string $profileKey): array
-    {
-        $default = [
-            'meta' => 1.0,
-            'performance' => 1.0,
-            'render_blocking' => 1.0,
-            'text_ratio' => 1.0,
-            'page_size' => 1.0,
-            'crawl_budget_hits' => 1.0,
-            'crawl_budget_5xx' => 1.0,
-        ];
-
-        return match ($profileKey) {
-            'media-platform' => [
-                'meta' => 1.0,
-                'performance' => 0.75,
-                'render_blocking' => 0.45,
-                'text_ratio' => 0.4,
-                'page_size' => 0.5,
-                'crawl_budget_hits' => 0.0,
-                'crawl_budget_5xx' => 0.5,
-            ],
-            'storefront' => [
-                'meta' => 1.0,
-                'performance' => 0.9,
-                'render_blocking' => 0.8,
-                'text_ratio' => 0.8,
-                'page_size' => 0.8,
-                'crawl_budget_hits' => 0.6,
-                'crawl_budget_5xx' => 0.9,
-            ],
-            'content-site' => [
-                'meta' => 1.0,
-                'performance' => 1.0,
-                'render_blocking' => 0.9,
-                'text_ratio' => 1.0,
-                'page_size' => 1.0,
-                'crawl_budget_hits' => 0.8,
-                'crawl_budget_5xx' => 1.0,
-            ],
-            default => $default,
-        };
-    }
-
-    private function profileBaseBonus(string $profileKey): int
-    {
-        return match ($profileKey) {
-            'media-platform' => 8,
-            'storefront' => 3,
-            default => 0,
-        };
-    }
-
-    /**
-     * @return array{high: int, medium: int}
-     */
-    private function profileLevelThresholds(string $profileKey): array
-    {
-        return match ($profileKey) {
-            'media-platform' => ['high' => 78, 'medium' => 50],
-            'storefront' => ['high' => 80, 'medium' => 54],
-            'content-site' => ['high' => 80, 'medium' => 55],
-            default => ['high' => 80, 'medium' => 55],
-        };
-    }
 }

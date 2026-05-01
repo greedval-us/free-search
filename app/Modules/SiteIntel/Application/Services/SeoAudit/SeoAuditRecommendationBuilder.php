@@ -4,6 +4,11 @@ namespace App\Modules\SiteIntel\Application\Services\SeoAudit;
 
 final class SeoAuditRecommendationBuilder
 {
+    public function __construct(
+        private readonly SeoAuditTechnicalThresholds $thresholds,
+    ) {
+    }
+
     /**
      * @param  array<string, mixed>  $meta
      * @param  array<string, int>  $headings
@@ -51,11 +56,11 @@ final class SeoAuditRecommendationBuilder
             $items[] = ['priority' => 'critical', 'key' => 'enable_https'];
         }
 
-        if (($meta['titleLength'] ?? 0) < 15 || ($meta['titleLength'] ?? 0) > 65) {
+        if ($this->thresholds->isTitleOutOfRange((int) ($meta['titleLength'] ?? 0))) {
             $items[] = ['priority' => 'medium', 'key' => 'improve_title_length'];
         }
 
-        if (($meta['descriptionLength'] ?? 0) < 50 || ($meta['descriptionLength'] ?? 0) > 170) {
+        if ($this->thresholds->isDescriptionOutOfRange((int) ($meta['descriptionLength'] ?? 0))) {
             $items[] = ['priority' => 'medium', 'key' => 'improve_description_length'];
         }
 
@@ -71,11 +76,11 @@ final class SeoAuditRecommendationBuilder
             $items[] = ['priority' => 'medium', 'key' => 'add_sitemap'];
         }
 
-        if (($performance['ttfbMsApprox'] ?? 0) > 1200) {
+        if ($this->thresholds->isSlowTtfb((int) ($performance['ttfbMsApprox'] ?? 0))) {
             $items[] = ['priority' => 'medium', 'key' => 'improve_ttfb'];
         }
 
-        if (($performance['pageSizeKb'] ?? 0) > 1500) {
+        if ($this->thresholds->isHeavyPage((int) ($performance['pageSizeKb'] ?? 0))) {
             $items[] = ['priority' => 'low', 'key' => 'reduce_page_size'];
         }
 
@@ -88,7 +93,7 @@ final class SeoAuditRecommendationBuilder
         if (($soft404['detected'] ?? false) === true) {
             $items[] = ['priority' => 'critical', 'key' => 'fix_soft_404'];
         }
-        if ((int) ($performance['renderBlocking']['total'] ?? 0) > 6) {
+        if ($this->thresholds->hasHighRenderBlocking((int) ($performance['renderBlocking']['total'] ?? 0))) {
             $items[] = ['priority' => 'medium', 'key' => 'reduce_render_blocking'];
         }
         if (($pagination['isPaginated'] ?? false) === true && !(($pagination['hasRelPrev'] ?? false) && ($pagination['hasRelNext'] ?? false))) {
