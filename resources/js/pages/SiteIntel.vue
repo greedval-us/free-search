@@ -34,7 +34,7 @@ onMounted(() => {
     }
 
     const tab = readRepeatQueryParam(params, ['tab']);
-    if (tab === 'siteHealth' || tab === 'domainLite' || tab === 'analytics') {
+    if (tab === 'siteHealth' || tab === 'domainLite' || tab === 'analytics' || tab === 'seoAudit') {
         activeTab.value = tab;
     }
 });

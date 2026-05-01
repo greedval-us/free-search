@@ -1,4 +1,4 @@
-export type SiteIntelTabValue = 'siteHealth' | 'domainLite' | 'analytics';
+export type SiteIntelTabValue = 'siteHealth' | 'domainLite' | 'analytics' | 'seoAudit';
 
 export type SiteHealthResult = {
     target: {
@@ -105,4 +105,114 @@ export type SiteIntelAnalyticsResult = {
     };
     siteHealth: SiteHealthResult;
     domainLite: DomainLiteResult;
+};
+
+export type SiteIntelSeoAuditResult = {
+    target: {
+        input: string;
+        finalUrl: string;
+        host: string;
+    };
+    checkedAt: string;
+    status: {
+        httpCode: number;
+        responseTimeMs: number;
+    };
+    meta: {
+        title: string;
+        titleLength: number;
+        description: string;
+        descriptionLength: number;
+        canonical: string;
+        robots: string;
+    };
+    headings: {
+        h1: number;
+        h2: number;
+        h3: number;
+    };
+    links: {
+        internal: number;
+        external: number;
+        nofollow: number;
+    };
+    indexability: {
+        metaRobots: string;
+        xRobotsTag: string;
+        indexable: boolean;
+        reason: string;
+    };
+    robots: {
+        url: string;
+        available: boolean;
+        status: number;
+        sitemapFromRobots: string;
+    };
+    sitemap: {
+        url: string;
+        available: boolean;
+        status: number;
+        entries: number;
+    };
+    performance: {
+        ttfbMsApprox: number;
+        pageSizeKb: number;
+        resourceCount: number;
+    };
+    security: {
+        https: boolean;
+        mixedContent: boolean;
+        hasCsp: boolean;
+        hasHsts: boolean;
+    };
+    crawl: {
+        limit: number;
+        scanned: number;
+        pages: Array<{
+            url: string;
+            status: number;
+            title: string;
+            description: string;
+            titleLength: number;
+            descriptionLength: number;
+            h1Count: number;
+            canonical: string;
+            indexable: boolean;
+            hreflang: {
+                count: number;
+                tags: Array<{ lang: string; href: string }>;
+            };
+        }>;
+        duplicates: {
+            titles: Array<{ value: string; count: number; urls: string[] }>;
+            descriptions: Array<{ value: string; count: number; urls: string[] }>;
+            h1: Array<{ value: string; count: number; urls: string[] }>;
+        };
+        canonicalAudit: {
+            missing: string[];
+            crossDomain: Array<{ url: string; canonical: string }>;
+            invalid: Array<{ url: string; canonical: string }>;
+            selfReferencing: number;
+        };
+        hreflangAudit: {
+            pagesWithHreflang: number;
+            pagesWithoutSelfReference: string[];
+            duplicateLangTags: Array<{ url: string; lang: string; count: number }>;
+        };
+    };
+    sitemapAudit: {
+        source: string;
+        sampled: number;
+        non200: Array<{ url: string; status: number }>;
+        checked: Array<{ url: string; status: number }>;
+    };
+    score: {
+        value: number;
+        level: 'low' | 'medium' | 'high';
+        signals: string[];
+    };
+    recommendations: Array<{
+        priority: 'critical' | 'medium' | 'low';
+        key: string;
+    }>;
 };
