@@ -809,7 +809,17 @@
         "storefront": "Storefront"
       },
       "platformType": "Platform type",
-      "platformAuto": "Auto detect"
+      "platformAuto": "Auto detect",
+      "filterNon200Only": "Only non-200",
+      "filterNoindexOnly": "Only noindex",
+      "filterOrphanOnly": "Only orphan-risk",
+      "legendIndexable": "Indexable",
+      "legendNoindex": "Noindex",
+      "legendNon200": "Non-200 status",
+      "legendOrphan": "Orphan-risk",
+      "filterMode": "Mode",
+      "filterModeAll": "Match all",
+      "filterModeAny": "Match any"
     }
   },
   "fio": {

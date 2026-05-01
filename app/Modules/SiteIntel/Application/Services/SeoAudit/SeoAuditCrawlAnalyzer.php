@@ -24,6 +24,7 @@ final class SeoAuditCrawlAnalyzer
         $visited = [];
         $queue = [$startUrl];
         $pages = [];
+        $pageLinks = [];
 
         while ($queue !== [] && count($pages) < $limit) {
             $url = array_shift($queue);
@@ -61,6 +62,7 @@ final class SeoAuditCrawlAnalyzer
             }
 
             $links = $this->contentExtractor->extractCrawlableLinks($html, $finalUrl, $host);
+            $pageLinks[$finalUrl] = $links;
             foreach ($links as $link) {
                 if (!isset($visited[$link]) && !in_array($link, $queue, true) && count($queue) + count($pages) < ($limit * 4)) {
                     $queue[] = $link;
@@ -72,9 +74,87 @@ final class SeoAuditCrawlAnalyzer
             'limit' => $limit,
             'scanned' => count($pages),
             'pages' => $pages,
+            'linkGraph' => $this->buildLinkGraph($pages, $pageLinks),
             'duplicates' => $this->buildDuplicates($pages),
             'canonicalAudit' => $this->buildCanonicalAudit($pages, $host),
             'hreflangAudit' => $this->buildHreflangAudit($pages),
+        ];
+    }
+
+    /**
+     * @param  array<int, array<string, mixed>>  $pages
+     * @param  array<string, array<int, string>>  $pageLinks
+     * @return array<string, mixed>
+     */
+    private function buildLinkGraph(array $pages, array $pageLinks): array
+    {
+        $knownUrls = [];
+        foreach ($pages as $page) {
+            $url = (string) ($page['url'] ?? '');
+            if ($url !== '') {
+                $knownUrls[$url] = true;
+            }
+        }
+
+        $outDegree = [];
+        $inDegree = [];
+        $edges = [];
+
+        foreach ($pageLinks as $source => $targets) {
+            if (!isset($knownUrls[$source])) {
+                continue;
+            }
+
+            foreach ($targets as $target) {
+                if (!isset($knownUrls[$target])) {
+                    continue;
+                }
+
+                $edgeKey = $source . '|' . $target;
+                if (isset($edges[$edgeKey])) {
+                    continue;
+                }
+
+                $edges[$edgeKey] = [
+                    'source' => $source,
+                    'target' => $target,
+                ];
+                $outDegree[$source] = (int) ($outDegree[$source] ?? 0) + 1;
+                $inDegree[$target] = (int) ($inDegree[$target] ?? 0) + 1;
+            }
+        }
+
+        $nodes = [];
+        foreach ($pages as $page) {
+            $url = (string) ($page['url'] ?? '');
+            if ($url === '') {
+                continue;
+            }
+
+            $status = (int) ($page['status'] ?? 0);
+            $indexable = (bool) ($page['indexable'] ?? false);
+            $in = (int) ($inDegree[$url] ?? 0);
+            $isOrphanRisk = $in === 0;
+
+            $nodes[] = [
+                'id' => $url,
+                'url' => $url,
+                'title' => (string) ($page['title'] ?? ''),
+                'status' => $status,
+                'indexable' => $indexable,
+                'inDegree' => $in,
+                'outDegree' => (int) ($outDegree[$url] ?? 0),
+                'riskFlags' => [
+                    'non200' => $status < 200 || $status >= 300,
+                    'noindex' => !$indexable,
+                    'orphanRisk' => $isOrphanRisk,
+                ],
+            ];
+        }
+
+        return [
+            'nodes' => $nodes,
+            'edges' => array_values($edges),
         ];
     }
 
@@ -238,6 +318,10 @@ final class SeoAuditCrawlAnalyzer
             'limit' => $limit,
             'scanned' => 0,
             'pages' => [],
+            'linkGraph' => [
+                'nodes' => [],
+                'edges' => [],
+            ],
             'duplicates' => [
                 'titles' => [],
                 'descriptions' => [],

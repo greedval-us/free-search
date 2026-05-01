@@ -285,6 +285,26 @@ export type SiteIntelSeoAuditResult = {
             pagesWithoutSelfReference: string[];
             duplicateLangTags: Array<{ url: string; lang: string; count: number }>;
         };
+        linkGraph: {
+            nodes: Array<{
+                id: string;
+                url: string;
+                title: string;
+                status: number;
+                indexable: boolean;
+                inDegree: number;
+                outDegree: number;
+                riskFlags: {
+                    non200: boolean;
+                    noindex: boolean;
+                    orphanRisk: boolean;
+                };
+            }>;
+            edges: Array<{
+                source: string;
+                target: string;
+            }>;
+        };
     };
     sitemapAudit: {
         source: string;

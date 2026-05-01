@@ -1,7 +1,8 @@
 <script setup lang="ts">
 import { LoaderCircle, SearchCheck } from 'lucide-vue-next';
-import { computed } from 'vue';
+import { computed, reactive } from 'vue';
 import { useI18n } from '@/composables/useI18n';
+import SeoAuditLinkGraph from './components/SeoAuditLinkGraph.vue';
 import { useSeoAudit } from '../composables/useSeoAudit';
 
 const { t } = useI18n();
@@ -25,6 +26,50 @@ const signalLabel = (signal: string) => {
 
     return translated === key ? signal : translated;
 };
+
+const recommendationBars = computed(() => {
+    const items = result.value?.recommendations ?? [];
+    const total = items.length || 1;
+    const critical = items.filter((item) => item.priority === 'critical').length;
+    const medium = items.filter((item) => item.priority === 'medium').length;
+    const low = items.filter((item) => item.priority === 'low').length;
+
+    return [
+        { key: 'critical', value: critical, percent: Math.round((critical / total) * 100) },
+        { key: 'medium', value: medium, percent: Math.round((medium / total) * 100) },
+        { key: 'low', value: low, percent: Math.round((low / total) * 100) },
+    ];
+});
+
+const crawlStatusBars = computed(() => {
+    const buckets = result.value?.crawlBudget.statusBuckets;
+    const values = buckets
+        ? [
+              { key: '2xx', value: buckets['2xx'] },
+              { key: '3xx', value: buckets['3xx'] },
+              { key: '4xx', value: buckets['4xx'] },
+              { key: '5xx', value: buckets['5xx'] },
+          ]
+        : [
+              { key: '2xx', value: 0 },
+              { key: '3xx', value: 0 },
+              { key: '4xx', value: 0 },
+              { key: '5xx', value: 0 },
+          ];
+    const max = Math.max(...values.map((item) => item.value), 1);
+
+    return values.map((item) => ({
+        ...item,
+        percent: Math.round((item.value / max) * 100),
+    }));
+});
+
+const linkGraphFilters = reactive({
+    non200Only: false,
+    noindexOnly: false,
+    orphanRiskOnly: false,
+    mode: 'all' as 'any' | 'all',
+});
 </script>
 
 <template>
@@ -210,6 +255,37 @@ const signalLabel = (signal: string) => {
                 </div>
             </div>
 
+            <div class="grid gap-2 xl:grid-cols-2">
+                <div class="rounded-lg border border-border/70 bg-background/60 p-3">
+                    <p class="mb-2 font-semibold">{{ t('siteIntel.seoAudit.recommendationsTitle') }}: severity</p>
+                    <div class="space-y-2">
+                        <div v-for="item in recommendationBars" :key="item.key">
+                            <div class="mb-1 flex items-center justify-between text-[11px] text-muted-foreground">
+                                <span>{{ t(`siteIntel.seoAudit.priority.${item.key}`) }}</span>
+                                <span>{{ item.value }}</span>
+                            </div>
+                            <div class="h-2 rounded bg-muted/50">
+                                <div class="h-2 rounded bg-sky-400/80" :style="{ width: `${item.percent}%` }" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="rounded-lg border border-border/70 bg-background/60 p-3">
+                    <p class="mb-2 font-semibold">{{ t('siteIntel.seoAudit.crawlBudgetTitle') }}: 2xx/3xx/4xx/5xx</p>
+                    <div class="space-y-2">
+                        <div v-for="item in crawlStatusBars" :key="item.key">
+                            <div class="mb-1 flex items-center justify-between text-[11px] text-muted-foreground">
+                                <span>{{ item.key }}</span>
+                                <span>{{ item.value }}</span>
+                            </div>
+                            <div class="h-2 rounded bg-muted/50">
+                                <div class="h-2 rounded bg-emerald-400/80" :style="{ width: `${item.percent}%` }" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
             <div class="grid gap-2 xl:grid-cols-3">
                 <div class="rounded-lg border border-border/70 bg-background/60 p-3">
                     <div class="mb-2 flex items-center gap-2">
@@ -350,6 +426,54 @@ const signalLabel = (signal: string) => {
                     <p>{{ t('siteIntel.seoAudit.crawlBudgetSource') }}: <span class="text-muted-foreground">{{ result.crawlBudget.source }}</span></p>
                     <p>{{ t('siteIntel.seoAudit.crawlBudgetBotHits') }}: <span class="text-muted-foreground">{{ result.crawlBudget.botHits }}</span></p>
                     <p>2xx/3xx/4xx/5xx: <span class="text-muted-foreground">{{ result.crawlBudget.statusBuckets['2xx'] }}/{{ result.crawlBudget.statusBuckets['3xx'] }}/{{ result.crawlBudget.statusBuckets['4xx'] }}/{{ result.crawlBudget.statusBuckets['5xx'] }}</span></p>
+                </div>
+            </div>
+
+            <div class="space-y-2">
+                <p class="text-sm font-semibold">{{ t('siteIntel.seoAudit.linkGraphTitle') }} (graph)</p>
+                <div class="flex flex-wrap gap-3 text-xs text-muted-foreground">
+                    <label class="inline-flex items-center gap-2">
+                        <span>{{ t('siteIntel.seoAudit.filterMode') }}</span>
+                        <select v-model="linkGraphFilters.mode" class="h-7 rounded border border-input bg-background px-2 text-xs">
+                            <option value="all">{{ t('siteIntel.seoAudit.filterModeAll') }}</option>
+                            <option value="any">{{ t('siteIntel.seoAudit.filterModeAny') }}</option>
+                        </select>
+                    </label>
+                    <label class="inline-flex items-center gap-2">
+                        <input v-model="linkGraphFilters.non200Only" type="checkbox" class="h-4 w-4" />
+                        <span>{{ t('siteIntel.seoAudit.filterNon200Only') }}</span>
+                    </label>
+                    <label class="inline-flex items-center gap-2">
+                        <input v-model="linkGraphFilters.noindexOnly" type="checkbox" class="h-4 w-4" />
+                        <span>{{ t('siteIntel.seoAudit.filterNoindexOnly') }}</span>
+                    </label>
+                    <label class="inline-flex items-center gap-2">
+                        <input v-model="linkGraphFilters.orphanRiskOnly" type="checkbox" class="h-4 w-4" />
+                        <span>{{ t('siteIntel.seoAudit.filterOrphanOnly') }}</span>
+                    </label>
+                </div>
+                <SeoAuditLinkGraph
+                    :nodes="result.crawl.linkGraph?.nodes ?? []"
+                    :edges="result.crawl.linkGraph?.edges ?? []"
+                    :filters="linkGraphFilters"
+                />
+                <div class="flex flex-wrap gap-2 text-[11px] text-muted-foreground">
+                    <span class="inline-flex items-center gap-1 rounded-full border border-input px-2 py-1">
+                        <span class="h-2 w-2 rounded-full bg-cyan-500" />
+                        {{ t('siteIntel.seoAudit.legendIndexable') }}
+                    </span>
+                    <span class="inline-flex items-center gap-1 rounded-full border border-input px-2 py-1">
+                        <span class="h-2 w-2 rounded-full bg-amber-500" />
+                        {{ t('siteIntel.seoAudit.legendNoindex') }}
+                    </span>
+                    <span class="inline-flex items-center gap-1 rounded-full border border-input px-2 py-1">
+                        <span class="h-2 w-2 rounded-full bg-red-500" />
+                        {{ t('siteIntel.seoAudit.legendNon200') }}
+                    </span>
+                    <span class="inline-flex items-center gap-1 rounded-full border border-input px-2 py-1">
+                        <span class="h-2 w-2 rounded-full bg-violet-500" />
+                        {{ t('siteIntel.seoAudit.legendOrphan') }}
+                    </span>
                 </div>
             </div>
         </div>

@@ -809,7 +809,17 @@
         "storefront": "Витрина / каталог"
       },
       "platformType": "Тип платформы",
-      "platformAuto": "Автоопределение"
+      "platformAuto": "Автоопределение",
+      "filterNon200Only": "Только non-200",
+      "filterNoindexOnly": "Только noindex",
+      "filterOrphanOnly": "Только orphan-risk",
+      "legendIndexable": "Индексируемая",
+      "legendNoindex": "Noindex",
+      "legendNon200": "Статус non-200",
+      "legendOrphan": "Риск orphan-страницы",
+      "filterMode": "Режим",
+      "filterModeAll": "Все условия",
+      "filterModeAny": "Любое условие"
     }
   },
   "fio": {
