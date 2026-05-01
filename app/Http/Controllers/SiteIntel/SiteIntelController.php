@@ -76,7 +76,7 @@ class SiteIntelController extends Controller
             return $this->jsonError(__('Invalid target URL or domain.'), 422);
         }
 
-        $data = $this->seoAuditService->audit($url, $request->crawlLimit());
+        $data = $this->seoAuditService->audit($url, $request->crawlLimit(), $request->platformType());
 
         return $this->jsonOk([
             'data' => $data,
@@ -94,7 +94,7 @@ class SiteIntelController extends Controller
 
         return $this->htmlReportResponse(
             view: 'reports.site-intel.seo-audit',
-            viewData: $this->reportViewData($this->seoAuditService->audit($url, $request->crawlLimit())),
+            viewData: $this->reportViewData($this->seoAuditService->audit($url, $request->crawlLimit(), $request->platformType())),
             download: $request->boolean('download'),
             filenamePrefix: 'site-intel-seo-audit',
             filenameTarget: (string) parse_url($url, PHP_URL_HOST),

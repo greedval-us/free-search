@@ -6,6 +6,7 @@ final class SeoAuditCrawlerInspector
 {
     public function __construct(
         private readonly SeoAuditHttpFetcher $httpFetcher,
+        private readonly SeoAuditRobotsRulesParser $robotsRulesParser,
     ) {
     }
 
@@ -27,7 +28,9 @@ final class SeoAuditCrawlerInspector
             'url' => $url,
             'available' => $response['status'] >= 200 && $response['status'] < 400 && $content !== '',
             'status' => $response['status'],
+            'content' => $content,
             'sitemapFromRobots' => $sitemapFromRobots,
+            'rules' => $this->robotsRulesParser->parse($content),
         ];
     }
 
@@ -55,4 +58,3 @@ final class SeoAuditCrawlerInspector
         ];
     }
 }
-

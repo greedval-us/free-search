@@ -34,7 +34,12 @@ export type SiteHealthResult = {
     score: {
         value: number;
         level: 'low' | 'medium' | 'high';
+        profile: string;
         signals: string[];
+    };
+    profile: {
+        key: string;
+        label: string;
     };
 };
 
@@ -147,6 +152,18 @@ export type SiteIntelSeoAuditResult = {
         available: boolean;
         status: number;
         sitemapFromRobots: string;
+        content: string;
+        rules: {
+            userAgents: string[];
+            groups: Array<{
+                userAgents: string[];
+                allow: string[];
+                disallow: string[];
+                crawlDelay: number | null;
+            }>;
+            hasWildcardGroup: boolean;
+            hasCrawlDelay: boolean;
+        };
     };
     sitemap: {
         url: string;
@@ -158,12 +175,81 @@ export type SiteIntelSeoAuditResult = {
         ttfbMsApprox: number;
         pageSizeKb: number;
         resourceCount: number;
+        renderBlocking: {
+            css: number;
+            scripts: number;
+            total: number;
+        };
     };
     security: {
         https: boolean;
         mixedContent: boolean;
         hasCsp: boolean;
         hasHsts: boolean;
+    };
+    mobileFriendly: {
+        hasViewportTag: boolean;
+        viewportContent: string;
+        hasDeviceWidth: boolean;
+        isResponsive: boolean;
+    };
+    pagination: {
+        hasRelPrev: boolean;
+        hasRelNext: boolean;
+        isPaginated: boolean;
+    };
+    soft404: {
+        detected: boolean;
+        markers: string[];
+    };
+    quality: {
+        anchors: {
+            total: number;
+            empty: number;
+            generic: number;
+        };
+        htmlValidation: {
+            issues: string[];
+            issueCount: number;
+        };
+        accessibility: {
+            imagesTotal: number;
+            imagesWithoutAlt: number;
+            inputsTotal: number;
+            labelsTotal: number;
+            headingOrderBroken: boolean;
+        };
+        content: {
+            wordCount: number;
+            textLength: number;
+            textToHtmlRatio: number;
+            thinContent: boolean;
+            lowTextRatio: boolean;
+        };
+        linkGraph: {
+            internalOutlinks: number;
+            externalOutlinks: number;
+            orphanRisk: boolean;
+        };
+    };
+    international: {
+        clusters: Array<{ langs: string; count: number }>;
+        missingXDefault: string[];
+        missingReciprocal: Array<{ source: string; target: string; lang: string }>;
+        pagesWithHreflang: number;
+    };
+    crawlBudget: {
+        source: string;
+        periodDays: number;
+        host: string;
+        botHits: number;
+        statusBuckets: {
+            '2xx': number;
+            '3xx': number;
+            '4xx': number;
+            '5xx': number;
+        };
+        topBotAgents: Array<{ agent: string; count: number }>;
     };
     crawl: {
         limit: number;
@@ -209,6 +295,7 @@ export type SiteIntelSeoAuditResult = {
     score: {
         value: number;
         level: 'low' | 'medium' | 'high';
+        profile: string;
         signals: string[];
     };
     recommendations: Array<{

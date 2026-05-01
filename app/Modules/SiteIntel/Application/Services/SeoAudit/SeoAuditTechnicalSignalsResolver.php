@@ -38,6 +38,70 @@ final class SeoAuditTechnicalSignalsResolver
             'ttfbMsApprox' => (int) ($fetchResult['responseTimeMs'] ?? 0),
             'pageSizeKb' => $pageSizeKb,
             'resourceCount' => $resourceCount,
+            'renderBlocking' => $this->resolveRenderBlocking($body),
+        ];
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    public function resolveMobileFriendly(string $html): array
+    {
+        $viewport = '';
+        if (preg_match('/<meta[^>]+name\s*=\s*(["\'])viewport\1[^>]+content\s*=\s*(["\'])(.*?)\2[^>]*>/is', $html, $match) === 1) {
+            $viewport = trim((string) ($match[3] ?? ''));
+        }
+
+        $viewportLower = mb_strtolower($viewport);
+        $hasDeviceWidth = str_contains($viewportLower, 'width=device-width');
+        $isResponsive = $viewport !== '' && $hasDeviceWidth;
+
+        return [
+            'hasViewportTag' => $viewport !== '',
+            'viewportContent' => $viewport,
+            'hasDeviceWidth' => $hasDeviceWidth,
+            'isResponsive' => $isResponsive,
+        ];
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    public function resolvePaginationSignals(string $html): array
+    {
+        $hasPrev = preg_match('/<link[^>]+rel\s*=\s*(["\'])prev\1/i', $html) === 1;
+        $hasNext = preg_match('/<link[^>]+rel\s*=\s*(["\'])next\1/i', $html) === 1;
+
+        return [
+            'hasRelPrev' => $hasPrev,
+            'hasRelNext' => $hasNext,
+            'isPaginated' => $hasPrev || $hasNext,
+        ];
+    }
+
+    public function detectSoft404(string $html, int $statusCode): array
+    {
+        $normalized = mb_strtolower(trim(preg_replace('/\s+/', ' ', strip_tags($html)) ?? ''));
+        $markers = [
+            'page not found',
+            '404',
+            'not found',
+            'страница не найдена',
+            'ничего не найдено',
+        ];
+
+        $matched = [];
+        foreach ($markers as $marker) {
+            if ($normalized !== '' && str_contains($normalized, $marker)) {
+                $matched[] = $marker;
+            }
+        }
+
+        $isSoft404 = $statusCode >= 200 && $statusCode < 300 && $matched !== [];
+
+        return [
+            'detected' => $isSoft404,
+            'markers' => $matched,
         ];
     }
 
@@ -77,5 +141,27 @@ final class SeoAuditTechnicalSignalsResolver
 
         return '';
     }
-}
 
+    /**
+     * @return array<string, int>
+     */
+    private function resolveRenderBlocking(string $html): array
+    {
+        $blockingCss = preg_match_all('/<link\b[^>]*rel\s*=\s*(["\'])stylesheet\1[^>]*>/i', $html) ?: 0;
+
+        $blockingScripts = 0;
+        preg_match_all('/<script\b[^>]*src\s*=\s*(["\'])(.*?)\1[^>]*>/is', $html, $scriptTags);
+        foreach (($scriptTags[0] ?? []) as $tag) {
+            $lower = mb_strtolower((string) $tag);
+            if (!str_contains($lower, ' defer') && !str_contains($lower, ' async')) {
+                $blockingScripts++;
+            }
+        }
+
+        return [
+            'css' => $blockingCss,
+            'scripts' => $blockingScripts,
+            'total' => $blockingCss + $blockingScripts,
+        ];
+    }
+}

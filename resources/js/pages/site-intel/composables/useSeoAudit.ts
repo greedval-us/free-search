@@ -7,6 +7,7 @@ export const useSeoAudit = (t: TranslateFn) => {
     const form = reactive({
         target: '',
         crawlLimit: 8,
+        platformType: 'auto',
     });
 
     const loading = ref(false);
@@ -31,6 +32,7 @@ export const useSeoAudit = (t: TranslateFn) => {
             const query = new URLSearchParams({
                 target: form.target.trim(),
                 crawl_limit: String(form.crawlLimit),
+                platform_type: form.platformType,
             });
 
             const response = await fetch(`/site-intel/seo-audit?${query.toString()}`, {
@@ -71,7 +73,7 @@ export const useSeoAudit = (t: TranslateFn) => {
 };
 
 const reportUrl = (
-    form: { target: string; crawlLimit: number },
+    form: { target: string; crawlLimit: number; platformType: string },
     result: SiteIntelSeoAuditResult | null,
     download = false
 ) => {
@@ -84,6 +86,7 @@ const reportUrl = (
         target,
         locale,
         crawl_limit: String(form.crawlLimit),
+        platform_type: form.platformType,
     });
     if (download) {
         query.set('download', '1');
@@ -92,14 +95,14 @@ const reportUrl = (
     return `/site-intel/seo-report?${query.toString()}`;
 };
 
-const openReport = (form: { target: string; crawlLimit: number }, result: SiteIntelSeoAuditResult | null) => {
+const openReport = (form: { target: string; crawlLimit: number; platformType: string }, result: SiteIntelSeoAuditResult | null) => {
     if (typeof window === 'undefined') {
         return;
     }
     window.open(reportUrl(form, result, false), '_blank', 'noopener,noreferrer');
 };
 
-const downloadReport = (form: { target: string; crawlLimit: number }, result: SiteIntelSeoAuditResult | null) => {
+const downloadReport = (form: { target: string; crawlLimit: number; platformType: string }, result: SiteIntelSeoAuditResult | null) => {
     if (typeof window === 'undefined') {
         return;
     }

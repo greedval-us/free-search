@@ -17,6 +17,7 @@ class SeoAuditRequest extends LocalizedFormRequest
         return [
             'target' => ['required', 'string', 'max:512'],
             'crawl_limit' => ['nullable', 'integer', 'min:3', 'max:20'],
+            'platform_type' => ['nullable', 'string', 'in:auto,generic,media-platform,content-site,storefront'],
             'locale' => $this->localeRule(),
         ];
     }
@@ -39,5 +40,16 @@ class SeoAuditRequest extends LocalizedFormRequest
     public function locale(): string
     {
         return $this->resolveLocale();
+    }
+
+    public function platformType(): ?string
+    {
+        $value = (string) ($this->validated('platform_type') ?? 'auto');
+
+        if ($value === '' || $value === 'auto') {
+            return null;
+        }
+
+        return $value;
     }
 }

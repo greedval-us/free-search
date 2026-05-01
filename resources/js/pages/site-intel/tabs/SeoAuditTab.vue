@@ -68,6 +68,22 @@ const signalLabel = (signal: string) => {
                     <option :value="20">20</option>
                 </select>
             </label>
+            <label class="block w-52">
+                <span class="mb-1 flex items-center gap-1 truncate text-xs font-medium text-muted-foreground">
+                    <span>{{ t('siteIntel.seoAudit.platformType') }}</span>
+                    <span class="group relative inline-flex">
+                        <span class="inline-flex h-4 w-4 cursor-help items-center justify-center rounded-full border border-border text-[10px] font-semibold text-muted-foreground" :aria-label="t('siteIntel.help.label')">?</span>
+                        <span class="pointer-events-none absolute left-0 top-5 z-20 hidden w-80 rounded-md border border-border/70 bg-popover p-2 text-[11px] leading-relaxed text-popover-foreground shadow-xl group-hover:block">{{ t('siteIntel.seoAudit.help.platformType') }}</span>
+                    </span>
+                </span>
+                <select v-model="form.platformType" class="h-10 w-full rounded-md border border-input bg-background px-3 text-sm">
+                    <option value="auto">{{ t('siteIntel.seoAudit.platformAuto') }}</option>
+                    <option value="generic">{{ t('siteIntel.seoAudit.profile.generic') }}</option>
+                    <option value="media-platform">{{ t('siteIntel.seoAudit.profile.media-platform') }}</option>
+                    <option value="content-site">{{ t('siteIntel.seoAudit.profile.content-site') }}</option>
+                    <option value="storefront">{{ t('siteIntel.seoAudit.profile.storefront') }}</option>
+                </select>
+            </label>
 
             <button
                 :disabled="loading || !canAnalyze"
@@ -121,6 +137,16 @@ const signalLabel = (signal: string) => {
                     <p class="text-muted-foreground">{{ t('siteIntel.common.checkedAt') }}</p>
                     <p class="mt-1 text-sm font-semibold">{{ new Date(result.checkedAt).toLocaleString() }}</p>
                 </div>
+            </div>
+            <div class="rounded-lg border border-border/70 bg-background/60 p-3">
+                <div class="mb-1 flex items-center gap-2">
+                    <p class="text-muted-foreground">{{ t('siteIntel.seoAudit.scoreProfile') }}</p>
+                    <span class="group relative inline-flex">
+                        <span class="inline-flex h-4 w-4 cursor-help items-center justify-center rounded-full border border-border text-[10px] font-semibold text-muted-foreground" :aria-label="t('siteIntel.help.label')">?</span>
+                        <span class="pointer-events-none absolute left-0 top-5 z-20 hidden w-80 rounded-md border border-border/70 bg-popover p-2 text-[11px] leading-relaxed text-popover-foreground shadow-xl group-hover:block">{{ t('siteIntel.seoAudit.help.scoreProfile') }}</span>
+                    </span>
+                </div>
+                <p class="mt-1 text-sm font-semibold">{{ t(`siteIntel.seoAudit.profile.${result.profile.key}`) }}</p>
             </div>
 
             <div class="rounded-lg border border-border/70 bg-background/60 p-3">
@@ -180,10 +206,11 @@ const signalLabel = (signal: string) => {
                     </div>
                     <p>{{ t('siteIntel.seoAudit.pageSize') }}: <span class="text-muted-foreground">{{ result.performance.pageSizeKb }} KB</span></p>
                     <p>{{ t('siteIntel.seoAudit.resourcesCount') }}: <span class="text-muted-foreground">{{ result.performance.resourceCount }}</span></p>
+                    <p>{{ t('siteIntel.seoAudit.renderBlocking') }}: <span class="text-muted-foreground">{{ result.performance.renderBlocking.total }}</span></p>
                 </div>
             </div>
 
-            <div class="grid gap-2 xl:grid-cols-2">
+            <div class="grid gap-2 xl:grid-cols-3">
                 <div class="rounded-lg border border-border/70 bg-background/60 p-3">
                     <div class="mb-2 flex items-center gap-2">
                         <p class="font-semibold">{{ t('siteIntel.seoAudit.crawlFilesTitle') }}</p>
@@ -195,6 +222,8 @@ const signalLabel = (signal: string) => {
                     <p>{{ t('siteIntel.seoAudit.robotsTxt') }}: <span class="text-muted-foreground">{{ result.robots.available ? t('siteIntel.common.available') : t('siteIntel.common.missing') }} ({{ result.robots.status }})</span></p>
                     <p>{{ t('siteIntel.seoAudit.sitemapXml') }}: <span class="text-muted-foreground">{{ result.sitemap.available ? t('siteIntel.common.available') : t('siteIntel.common.missing') }} ({{ result.sitemap.status }})</span></p>
                     <p>{{ t('siteIntel.seoAudit.sitemapEntries') }}: <span class="text-muted-foreground">{{ result.sitemap.entries }}</span></p>
+                    <p>{{ t('siteIntel.seoAudit.robotsWildcard') }}: <span class="text-muted-foreground">{{ result.robots.rules.hasWildcardGroup ? t('siteIntel.common.yes') : t('siteIntel.common.no') }}</span></p>
+                    <p>{{ t('siteIntel.seoAudit.robotsCrawlDelay') }}: <span class="text-muted-foreground">{{ result.robots.rules.hasCrawlDelay ? t('siteIntel.common.yes') : t('siteIntel.common.no') }}</span></p>
                 </div>
                 <div class="rounded-lg border border-border/70 bg-background/60 p-3">
                     <p class="mb-2 font-semibold">{{ t('siteIntel.seoAudit.securityTitle') }}</p>
@@ -202,6 +231,18 @@ const signalLabel = (signal: string) => {
                     <p>{{ t('siteIntel.seoAudit.mixedContent') }}: <span class="text-muted-foreground">{{ result.security.mixedContent ? t('siteIntel.common.yes') : t('siteIntel.common.no') }}</span></p>
                     <p>CSP: <span class="text-muted-foreground">{{ result.security.hasCsp ? t('siteIntel.common.yes') : t('siteIntel.common.no') }}</span></p>
                     <p>HSTS: <span class="text-muted-foreground">{{ result.security.hasHsts ? t('siteIntel.common.yes') : t('siteIntel.common.no') }}</span></p>
+                </div>
+                <div class="rounded-lg border border-border/70 bg-background/60 p-3">
+                    <div class="mb-2 flex items-center gap-2">
+                        <p class="font-semibold">{{ t('siteIntel.seoAudit.technicalFlags') }}</p>
+                        <span class="group relative inline-flex">
+                            <span class="inline-flex h-5 w-5 cursor-help items-center justify-center rounded-full border border-border text-[11px] font-semibold text-muted-foreground" :aria-label="t('siteIntel.help.label')">?</span>
+                            <span class="pointer-events-none absolute left-0 top-6 z-20 hidden w-80 rounded-md border border-border/70 bg-popover p-2 text-[11px] leading-relaxed text-popover-foreground shadow-xl group-hover:block">{{ t('siteIntel.seoAudit.help.technicalFlags') }}</span>
+                        </span>
+                    </div>
+                    <p>{{ t('siteIntel.seoAudit.mobileFriendly') }}: <span class="text-muted-foreground">{{ result.mobileFriendly.isResponsive ? t('siteIntel.common.yes') : t('siteIntel.common.no') }}</span></p>
+                    <p>{{ t('siteIntel.seoAudit.pagination') }}: <span class="text-muted-foreground">{{ result.pagination.isPaginated ? t('siteIntel.common.yes') : t('siteIntel.common.no') }}</span></p>
+                    <p>{{ t('siteIntel.seoAudit.soft404') }}: <span class="text-muted-foreground">{{ result.soft404.detected ? t('siteIntel.common.yes') : t('siteIntel.common.no') }}</span></p>
                 </div>
             </div>
 
@@ -242,6 +283,73 @@ const signalLabel = (signal: string) => {
                     <p class="mb-2 font-semibold">{{ t('siteIntel.seoAudit.sitemapAuditTitle') }}</p>
                     <p>{{ t('siteIntel.seoAudit.sitemapSampled') }}: <span class="text-muted-foreground">{{ result.sitemapAudit.sampled }}</span></p>
                     <p>{{ t('siteIntel.seoAudit.sitemapNon200') }}: <span class="text-muted-foreground">{{ result.sitemapAudit.non200.length }}</span></p>
+                </div>
+            </div>
+
+            <div class="grid gap-2 xl:grid-cols-3">
+                <div class="rounded-lg border border-border/70 bg-background/60 p-3">
+                    <div class="mb-2 flex items-center gap-2">
+                        <p class="font-semibold">{{ t('siteIntel.seoAudit.contentQualityTitle') }}</p>
+                        <span class="group relative inline-flex">
+                            <span class="inline-flex h-5 w-5 cursor-help items-center justify-center rounded-full border border-border text-[11px] font-semibold text-muted-foreground" :aria-label="t('siteIntel.help.label')">?</span>
+                            <span class="pointer-events-none absolute left-0 top-6 z-20 hidden w-80 rounded-md border border-border/70 bg-popover p-2 text-[11px] leading-relaxed text-popover-foreground shadow-xl group-hover:block">{{ t('siteIntel.seoAudit.help.contentQuality') }}</span>
+                        </span>
+                    </div>
+                    <p>{{ t('siteIntel.seoAudit.wordCount') }}: <span class="text-muted-foreground">{{ result.quality.content.wordCount }}</span></p>
+                    <p>{{ t('siteIntel.seoAudit.textHtmlRatio') }}: <span class="text-muted-foreground">{{ result.quality.content.textToHtmlRatio }}%</span></p>
+                    <p>{{ t('siteIntel.seoAudit.thinContent') }}: <span class="text-muted-foreground">{{ result.quality.content.thinContent ? t('siteIntel.common.yes') : t('siteIntel.common.no') }}</span></p>
+                </div>
+                <div class="rounded-lg border border-border/70 bg-background/60 p-3">
+                    <div class="mb-2 flex items-center gap-2">
+                        <p class="font-semibold">{{ t('siteIntel.seoAudit.accessibilityTitle') }}</p>
+                        <span class="group relative inline-flex">
+                            <span class="inline-flex h-5 w-5 cursor-help items-center justify-center rounded-full border border-border text-[11px] font-semibold text-muted-foreground" :aria-label="t('siteIntel.help.label')">?</span>
+                            <span class="pointer-events-none absolute left-0 top-6 z-20 hidden w-80 rounded-md border border-border/70 bg-popover p-2 text-[11px] leading-relaxed text-popover-foreground shadow-xl group-hover:block">{{ t('siteIntel.seoAudit.help.accessibility') }}</span>
+                        </span>
+                    </div>
+                    <p>{{ t('siteIntel.seoAudit.imagesWithoutAlt') }}: <span class="text-muted-foreground">{{ result.quality.accessibility.imagesWithoutAlt }}/{{ result.quality.accessibility.imagesTotal }}</span></p>
+                    <p>{{ t('siteIntel.seoAudit.headingOrderBroken') }}: <span class="text-muted-foreground">{{ result.quality.accessibility.headingOrderBroken ? t('siteIntel.common.yes') : t('siteIntel.common.no') }}</span></p>
+                    <p>{{ t('siteIntel.seoAudit.htmlIssues') }}: <span class="text-muted-foreground">{{ result.quality.htmlValidation.issueCount }}</span></p>
+                </div>
+                <div class="rounded-lg border border-border/70 bg-background/60 p-3">
+                    <div class="mb-2 flex items-center gap-2">
+                        <p class="font-semibold">{{ t('siteIntel.seoAudit.linkGraphTitle') }}</p>
+                        <span class="group relative inline-flex">
+                            <span class="inline-flex h-5 w-5 cursor-help items-center justify-center rounded-full border border-border text-[11px] font-semibold text-muted-foreground" :aria-label="t('siteIntel.help.label')">?</span>
+                            <span class="pointer-events-none absolute left-0 top-6 z-20 hidden w-80 rounded-md border border-border/70 bg-popover p-2 text-[11px] leading-relaxed text-popover-foreground shadow-xl group-hover:block">{{ t('siteIntel.seoAudit.help.linkGraph') }}</span>
+                        </span>
+                    </div>
+                    <p>{{ t('siteIntel.seoAudit.internalOutlinks') }}: <span class="text-muted-foreground">{{ result.quality.linkGraph.internalOutlinks }}</span></p>
+                    <p>{{ t('siteIntel.seoAudit.externalOutlinks') }}: <span class="text-muted-foreground">{{ result.quality.linkGraph.externalOutlinks }}</span></p>
+                    <p>{{ t('siteIntel.seoAudit.orphanRisk') }}: <span class="text-muted-foreground">{{ result.quality.linkGraph.orphanRisk ? t('siteIntel.common.yes') : t('siteIntel.common.no') }}</span></p>
+                </div>
+            </div>
+
+            <div class="grid gap-2 xl:grid-cols-2">
+                <div class="rounded-lg border border-border/70 bg-background/60 p-3">
+                    <div class="mb-2 flex items-center gap-2">
+                        <p class="font-semibold">{{ t('siteIntel.seoAudit.internationalTitle') }}</p>
+                        <span class="group relative inline-flex">
+                            <span class="inline-flex h-5 w-5 cursor-help items-center justify-center rounded-full border border-border text-[11px] font-semibold text-muted-foreground" :aria-label="t('siteIntel.help.label')">?</span>
+                            <span class="pointer-events-none absolute left-0 top-6 z-20 hidden w-80 rounded-md border border-border/70 bg-popover p-2 text-[11px] leading-relaxed text-popover-foreground shadow-xl group-hover:block">{{ t('siteIntel.seoAudit.help.international') }}</span>
+                        </span>
+                    </div>
+                    <p>{{ t('siteIntel.seoAudit.hreflangPages') }}: <span class="text-muted-foreground">{{ result.international.pagesWithHreflang }}</span></p>
+                    <p>{{ t('siteIntel.seoAudit.hreflangMissingXDefault') }}: <span class="text-muted-foreground">{{ result.international.missingXDefault.length }}</span></p>
+                    <p>{{ t('siteIntel.seoAudit.hreflangMissingReciprocal') }}: <span class="text-muted-foreground">{{ result.international.missingReciprocal.length }}</span></p>
+                    <p>{{ t('siteIntel.seoAudit.hreflangClusters') }}: <span class="text-muted-foreground">{{ result.international.clusters.length }}</span></p>
+                </div>
+                <div class="rounded-lg border border-border/70 bg-background/60 p-3">
+                    <div class="mb-2 flex items-center gap-2">
+                        <p class="font-semibold">{{ t('siteIntel.seoAudit.crawlBudgetTitle') }}</p>
+                        <span class="group relative inline-flex">
+                            <span class="inline-flex h-5 w-5 cursor-help items-center justify-center rounded-full border border-border text-[11px] font-semibold text-muted-foreground" :aria-label="t('siteIntel.help.label')">?</span>
+                            <span class="pointer-events-none absolute left-0 top-6 z-20 hidden w-80 rounded-md border border-border/70 bg-popover p-2 text-[11px] leading-relaxed text-popover-foreground shadow-xl group-hover:block">{{ t('siteIntel.seoAudit.help.crawlBudget') }}</span>
+                        </span>
+                    </div>
+                    <p>{{ t('siteIntel.seoAudit.crawlBudgetSource') }}: <span class="text-muted-foreground">{{ result.crawlBudget.source }}</span></p>
+                    <p>{{ t('siteIntel.seoAudit.crawlBudgetBotHits') }}: <span class="text-muted-foreground">{{ result.crawlBudget.botHits }}</span></p>
+                    <p>2xx/3xx/4xx/5xx: <span class="text-muted-foreground">{{ result.crawlBudget.statusBuckets['2xx'] }}/{{ result.crawlBudget.statusBuckets['3xx'] }}/{{ result.crawlBudget.statusBuckets['4xx'] }}/{{ result.crawlBudget.statusBuckets['5xx'] }}</span></p>
                 </div>
             </div>
         </div>
