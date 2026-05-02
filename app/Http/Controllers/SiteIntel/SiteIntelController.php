@@ -4,9 +4,11 @@ namespace App\Http\Controllers\SiteIntel;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\SiteIntel\DomainLiteLookupRequest;
+use App\Http\Requests\SiteIntel\SeoAuditRequest;
 use App\Http\Requests\SiteIntel\SiteIntelAnalyticsRequest;
 use App\Http\Requests\SiteIntel\SiteHealthCheckRequest;
 use App\Modules\SiteIntel\Application\Services\DomainLiteService;
+use App\Modules\SiteIntel\Application\Services\SeoAuditService;
 use App\Modules\SiteIntel\Application\Services\SiteHealthService;
 use App\Modules\SiteIntel\Application\Services\SiteIntelAnalyticsService;
 use Illuminate\Http\JsonResponse;
@@ -19,6 +21,7 @@ class SiteIntelController extends Controller
         private readonly SiteHealthService $siteHealthService,
         private readonly DomainLiteService $domainLiteService,
         private readonly SiteIntelAnalyticsService $siteIntelAnalyticsService,
+        private readonly SeoAuditService $seoAuditService,
     ) {
     }
 
@@ -64,6 +67,38 @@ class SiteIntelController extends Controller
         return $this->jsonOk([
             'data' => $data,
         ]);
+    }
+
+    public function seoAudit(SeoAuditRequest $request): JsonResponse
+    {
+        $url = $request->normalizedUrl();
+        if ($url === null) {
+            return $this->jsonError(__('Invalid target URL or domain.'), 422);
+        }
+
+        $data = $this->seoAuditService->audit($url, $request->crawlLimit(), $request->platformType());
+
+        return $this->jsonOk([
+            'data' => $data,
+        ]);
+    }
+
+    public function seoReport(SeoAuditRequest $request): View|Response
+    {
+        $this->applyRequestLocale($request->locale());
+
+        $url = $request->normalizedUrl();
+        if ($url === null) {
+            abort(422, __('Invalid target URL or domain.'));
+        }
+
+        return $this->htmlReportResponse(
+            view: 'reports.site-intel.seo-audit',
+            viewData: $this->reportViewData($this->seoAuditService->audit($url, $request->crawlLimit(), $request->platformType())),
+            download: $request->boolean('download'),
+            filenamePrefix: 'site-intel-seo-audit',
+            filenameTarget: (string) parse_url($url, PHP_URL_HOST),
+        );
     }
 
     public function report(SiteIntelAnalyticsRequest $request): View|Response

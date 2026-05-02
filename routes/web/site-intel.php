@@ -18,6 +18,14 @@ Route::prefix('site-intel')->name('site-intel.')->group(function (): void {
         ->middleware('throttle:60,1')
         ->name('analytics');
 
+    Route::get('seo-audit', [SiteIntelController::class, 'seoAudit'])
+        ->middleware('throttle:60,1')
+        ->name('seo-audit');
+
+    Route::get('seo-report', [SiteIntelController::class, 'seoReport'])
+        ->middleware('throttle:30,1')
+        ->name('seo-report');
+
     Route::get('report', [SiteIntelController::class, 'report'])
         ->middleware('throttle:30,1')
         ->name('report');
