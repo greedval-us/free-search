@@ -1337,7 +1337,7 @@
       "hash": "Generate digest or HMAC to verify integrity and compare artifacts.",
       "transform": "Convert artifacts between Base64, Hex and URL formats for analysis.",
       "ioc": "Extract emails, domains, URLs, IPs and Telegram usernames from raw text.",
-      "classic": "Use Caesar and Atbash for quick text pivot experiments in OSINT workflows.",
+      "classic": "Classical and configurable ciphers for quick OSINT experiments and artifact transformation.",
       "jwt": "Decode JWT header/payload, check timing claims and optionally verify HS signature."
     },
     "input": {
@@ -1406,7 +1406,9 @@
         "isExpired": "Expired",
         "isActive": "Active",
         "now": "Current timestamp",
-        "error": "Error"
+        "error": "Error",
+        "key": "Key",
+        "rails": "Rails"
       }
     },
     "help": {
@@ -1426,7 +1428,23 @@
       "atbash": "Atbash",
       "rot13": "ROT13",
       "rot47": "ROT47",
-      "transform": "Transform"
+      "transform": "Transform",
+      "rot5": "ROT5",
+      "vigenere": "Vigenere",
+      "railFence": "Rail Fence",
+      "key": "Key",
+      "rails": "Rails",
+      "xor": "XOR",
+      "affine": "Affine",
+      "xorKey": "XOR key",
+      "affineA": "Affine A",
+      "affineB": "Affine B",
+      "playfair": "Playfair",
+      "columnar": "Columnar",
+      "playfairKey": "Playfair key",
+      "columnKey": "Column key",
+      "morse": "Morse",
+      "morseSeparator": "Word separator"
     },
     "hints": {
       "hash": {
@@ -1450,7 +1468,15 @@
         "caesar": "Classical shift cipher. Best for simple obfuscation/CTF-style artifacts.",
         "atbash": "Mirror substitution cipher. Same operation for encode/decode.",
         "rot13": "Fixed shift for latin/cyrillic letters. Often used for light obfuscation.",
-        "rot47": "ASCII printable rotation. Useful for mixed punctuation payloads."
+        "rot47": "ASCII printable rotation. Useful for mixed punctuation payloads.",
+        "rot5": "Digit-only rotation by +5. Useful for numeric obfuscation.",
+        "vigenere": "Polyalphabetic cipher with keyword. Supports latin and cyrillic letters in key and text.",
+        "railFence": "Transposition cipher with zig-zag rails. Configure number of rails.",
+        "xor": "XOR cipher with key. Encrypt outputs Base64; decrypt expects Base64 input.",
+        "affine": "Affine substitution cipher for latin letters. A must be coprime with 26.",
+        "playfair": "Digraph substitution cipher. Works on latin letters; J is merged into I.",
+        "columnar": "Columnar transposition with a keyword that defines column order.",
+        "morse": "Morse encode/decode for latin, cyrillic, digits and common punctuation."
       },
       "ioc": {
         "extract": "Extracts emails, domains, URLs, IPs and Telegram usernames using pattern matching. Review results manually for false positives."

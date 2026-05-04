@@ -8,16 +8,42 @@ import { useShifrRequest } from '../composables/useShifrRequest';
 
 const { locale, t } = useI18n();
 const input = ref('');
-const cipher = ref<'caesar' | 'atbash' | 'rot13' | 'rot47'>('caesar');
+const cipher = ref<'caesar' | 'atbash' | 'rot13' | 'rot47' | 'rot5' | 'vigenere' | 'rail_fence' | 'xor' | 'affine' | 'playfair' | 'columnar' | 'morse'>('caesar');
 const direction = ref<'encrypt' | 'decrypt' | 'transform'>('encrypt');
 const shift = ref(3);
+const key = ref('');
+const rails = ref(3);
+const xorKey = ref('');
+const affineA = ref(5);
+const affineB = ref(8);
+const playfairKey = ref('');
+const columnKey = ref('');
+const morseSeparator = ref('/');
 
 const classicHintKey = computed(() => {
   if (cipher.value === 'caesar') return 'shifr.hints.classic.caesar';
   if (cipher.value === 'atbash') return 'shifr.hints.classic.atbash';
   if (cipher.value === 'rot13') return 'shifr.hints.classic.rot13';
-  return 'shifr.hints.classic.rot47';
+  if (cipher.value === 'rot47') return 'shifr.hints.classic.rot47';
+  if (cipher.value === 'rot5') return 'shifr.hints.classic.rot5';
+  if (cipher.value === 'vigenere') return 'shifr.hints.classic.vigenere';
+  if (cipher.value === 'xor') return 'shifr.hints.classic.xor';
+  if (cipher.value === 'affine') return 'shifr.hints.classic.affine';
+  if (cipher.value === 'playfair') return 'shifr.hints.classic.playfair';
+  if (cipher.value === 'columnar') return 'shifr.hints.classic.columnar';
+  if (cipher.value === 'morse') return 'shifr.hints.classic.morse';
+  return 'shifr.hints.classic.railFence';
 });
+
+const isTransformCipher = computed(() => cipher.value === 'rot13' || cipher.value === 'rot47' || cipher.value === 'rot5');
+const showShift = computed(() => cipher.value === 'caesar');
+const showKey = computed(() => cipher.value === 'vigenere');
+const showRails = computed(() => cipher.value === 'rail_fence');
+const showXorKey = computed(() => cipher.value === 'xor');
+const showAffine = computed(() => cipher.value === 'affine');
+const showPlayfairKey = computed(() => cipher.value === 'playfair');
+const showColumnKey = computed(() => cipher.value === 'columnar');
+const showMorseSeparator = computed(() => cipher.value === 'morse');
 
 const { loading, error, result, canRun, run: runRequest } = useShifrRequest('/shifr/classic', () => t('shifr.errors.requestFailed'), computed(() => input.value.trim().length > 0));
 
@@ -27,13 +53,31 @@ const run = async (): Promise<void> => {
     cipher: cipher.value,
     direction: direction.value,
     shift: String(shift.value),
+    key: key.value,
+    rails: String(rails.value),
+    xor_key: xorKey.value,
+    affine_a: String(affineA.value),
+    affine_b: String(affineB.value),
+    playfair_key: playfairKey.value,
+    column_key: columnKey.value,
+    morse_separator: morseSeparator.value,
     locale: locale.value,
   });
   await runRequest(params);
 };
 
 watch(cipher, (nextCipher) => {
-  if (nextCipher === 'rot13' || nextCipher === 'rot47') {
+  shift.value = 3;
+  key.value = '';
+  rails.value = 3;
+  xorKey.value = '';
+  affineA.value = 5;
+  affineB.value = 8;
+  playfairKey.value = '';
+  columnKey.value = '';
+  morseSeparator.value = '/';
+
+  if (nextCipher === 'rot13' || nextCipher === 'rot47' || nextCipher === 'rot5') {
     direction.value = 'transform';
     return;
   }
@@ -53,19 +97,54 @@ watch(cipher, (nextCipher) => {
       <div class="mt-3 grid gap-3 md:grid-cols-3">
         <label>
           <span class="mb-1 block text-xs font-medium text-muted-foreground">{{ t('shifr.classic.cipher') }}</span>
-          <select v-model="cipher" class="h-10 w-full rounded-md border border-input bg-background px-3 text-sm"><option value="caesar">{{ t('shifr.classic.caesar') }}</option><option value="atbash">{{ t('shifr.classic.atbash') }}</option><option value="rot13">{{ t('shifr.classic.rot13') }}</option><option value="rot47">{{ t('shifr.classic.rot47') }}</option></select>
+          <select v-model="cipher" class="h-10 w-full rounded-md border border-input bg-background px-3 text-sm"><option value="caesar">{{ t('shifr.classic.caesar') }}</option><option value="atbash">{{ t('shifr.classic.atbash') }}</option><option value="rot13">{{ t('shifr.classic.rot13') }}</option><option value="rot47">{{ t('shifr.classic.rot47') }}</option><option value="rot5">{{ t('shifr.classic.rot5') }}</option><option value="vigenere">{{ t('shifr.classic.vigenere') }}</option><option value="rail_fence">{{ t('shifr.classic.railFence') }}</option><option value="xor">{{ t('shifr.classic.xor') }}</option><option value="affine">{{ t('shifr.classic.affine') }}</option><option value="playfair">{{ t('shifr.classic.playfair') }}</option><option value="columnar">{{ t('shifr.classic.columnar') }}</option><option value="morse">{{ t('shifr.classic.morse') }}</option></select>
         </label>
         <label>
           <span class="mb-1 block text-xs font-medium text-muted-foreground">{{ t('shifr.classic.direction') }}</span>
           <select v-model="direction" class="h-10 w-full rounded-md border border-input bg-background px-3 text-sm">
-            <option v-if="cipher === 'caesar' || cipher === 'atbash'" value="encrypt">{{ t('shifr.classic.encrypt') }}</option>
-            <option v-if="cipher === 'caesar' || cipher === 'atbash'" value="decrypt">{{ t('shifr.classic.decrypt') }}</option>
-            <option v-if="cipher === 'rot13' || cipher === 'rot47'" value="transform">{{ t('shifr.classic.transform') }}</option>
+            <option v-if="!isTransformCipher" value="encrypt">{{ t('shifr.classic.encrypt') }}</option>
+            <option v-if="!isTransformCipher" value="decrypt">{{ t('shifr.classic.decrypt') }}</option>
+            <option v-if="isTransformCipher" value="transform">{{ t('shifr.classic.transform') }}</option>
           </select>
         </label>
-        <label>
+        <label v-if="showShift">
           <span class="mb-1 block text-xs font-medium text-muted-foreground">{{ t('shifr.classic.shift') }}</span>
-          <input v-model.number="shift" type="number" class="h-10 w-full rounded-md border border-input bg-background px-3 text-sm" :disabled="cipher !== 'caesar'" />
+          <input v-model.number="shift" type="number" class="h-10 w-full rounded-md border border-input bg-background px-3 text-sm" />
+        </label>
+      </div>
+
+      <div class="mt-3 grid gap-3 md:grid-cols-2">
+        <label v-if="showKey">
+          <span class="mb-1 block text-xs font-medium text-muted-foreground">{{ t('shifr.classic.key') }}</span>
+          <input v-model="key" type="text" class="h-10 w-full rounded-md border border-input bg-background px-3 text-sm" />
+        </label>
+        <label v-if="showRails">
+          <span class="mb-1 block text-xs font-medium text-muted-foreground">{{ t('shifr.classic.rails') }}</span>
+          <input v-model.number="rails" type="number" min="2" max="20" class="h-10 w-full rounded-md border border-input bg-background px-3 text-sm" />
+        </label>
+        <label v-if="showXorKey">
+          <span class="mb-1 block text-xs font-medium text-muted-foreground">{{ t('shifr.classic.xorKey') }}</span>
+          <input v-model="xorKey" type="text" class="h-10 w-full rounded-md border border-input bg-background px-3 text-sm" />
+        </label>
+        <label v-if="showAffine">
+          <span class="mb-1 block text-xs font-medium text-muted-foreground">{{ t('shifr.classic.affineA') }}</span>
+          <input v-model.number="affineA" type="number" min="1" max="1000" class="h-10 w-full rounded-md border border-input bg-background px-3 text-sm" />
+        </label>
+        <label v-if="showAffine">
+          <span class="mb-1 block text-xs font-medium text-muted-foreground">{{ t('shifr.classic.affineB') }}</span>
+          <input v-model.number="affineB" type="number" min="-1000" max="1000" class="h-10 w-full rounded-md border border-input bg-background px-3 text-sm" />
+        </label>
+        <label v-if="showPlayfairKey">
+          <span class="mb-1 block text-xs font-medium text-muted-foreground">{{ t('shifr.classic.playfairKey') }}</span>
+          <input v-model="playfairKey" type="text" class="h-10 w-full rounded-md border border-input bg-background px-3 text-sm" />
+        </label>
+        <label v-if="showColumnKey">
+          <span class="mb-1 block text-xs font-medium text-muted-foreground">{{ t('shifr.classic.columnKey') }}</span>
+          <input v-model="columnKey" type="text" class="h-10 w-full rounded-md border border-input bg-background px-3 text-sm" />
+        </label>
+        <label v-if="showMorseSeparator">
+          <span class="mb-1 block text-xs font-medium text-muted-foreground">{{ t('shifr.classic.morseSeparator') }}</span>
+          <input v-model="morseSeparator" type="text" maxlength="5" class="h-10 w-full rounded-md border border-input bg-background px-3 text-sm" />
         </label>
       </div>
 
