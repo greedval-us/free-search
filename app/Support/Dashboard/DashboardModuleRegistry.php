@@ -13,6 +13,7 @@ class DashboardModuleRegistry
         'site-intel' => '/site-intel',
         'email-intel' => '/email-intel',
         'telegram' => '/telegram',
+        'shifr' => '/shifr',
     ];
 
     /**
@@ -44,4 +45,3 @@ class DashboardModuleRegistry
         return self::MODULE_URLS[$moduleKey] ?? '/dashboard';
     }
 }
-

@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { Link } from '@inertiajs/vue3';
-import { AtSign, LayoutGrid, MailSearch, Radar, Send, User } from 'lucide-vue-next';
+import { AtSign, Fingerprint, LayoutGrid, MailSearch, Radar, Send, User } from 'lucide-vue-next';
 import { computed } from 'vue';
 import AppLogo from '@/components/AppLogo.vue';
 import NavFooter from '@/components/NavFooter.vue';
@@ -51,6 +51,11 @@ const mainNavItems = computed<NavItem[]>(() => [
         title: t('navigation.emailIntel'),
         href: '/email-intel',
         icon: MailSearch,
+    },
+    {
+        title: t('navigation.shifr'),
+        href: '/shifr',
+        icon: Fingerprint,
     },
 ]);
 

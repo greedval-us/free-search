@@ -1078,6 +1078,7 @@
       "site-intel": "Site intelligence",
       "email-intel": "Email intelligence",
       "telegram": "Telegram analytics",
+      "shifr": "Cipher toolkit",
       "default": "Search module",
       "lastUsed": "Last used",
       "open": "Open module",
@@ -1123,6 +1124,7 @@
     "siteIntel": "Site Intel",
     "fio": "FIO",
     "emailIntel": "Email Intel",
+    "shifr": "Cipher",
     "repository": "Repository",
     "documentation": "Documentation"
   },
@@ -1320,6 +1322,174 @@
         "submit": "Continue",
         "placeholder": "Enter recovery code"
       }
+    }
+  },
+  "shifr": {
+    "headTitle": "Shifr OSINT Toolkit",
+    "tabs": {
+      "hash": "Hash / HMAC",
+      "transform": "Encode / Decode",
+      "ioc": "IOC Extract",
+      "classic": "Classic ciphers",
+      "jwt": "JWT Inspector"
+    },
+    "descriptions": {
+      "hash": "Generate digest or HMAC to verify integrity and compare artifacts.",
+      "transform": "Convert artifacts between Base64, Hex and URL formats for analysis.",
+      "ioc": "Extract emails, domains, URLs, IPs and Telegram usernames from raw text.",
+      "classic": "Classical and configurable ciphers for quick OSINT experiments and artifact transformation.",
+      "jwt": "Decode JWT header/payload, check timing claims and optionally verify HS signature."
+    },
+    "input": {
+      "label": "Input",
+      "placeholder": "Paste text, token, URL or mixed artifact here"
+    },
+    "hash": {
+      "algorithm": "Algorithm",
+      "hmacKey": "HMAC key (optional)"
+    },
+    "transform": {
+      "operation": "Operation",
+      "base64Encode": "Base64 Encode",
+      "base64Decode": "Base64 Decode",
+      "hexEncode": "Hex Encode",
+      "hexDecode": "Hex Decode",
+      "urlEncode": "URL Encode",
+      "urlDecode": "URL Decode",
+      "base64UrlEncode": "Base64URL Encode",
+      "base64UrlDecode": "Base64URL Decode",
+      "htmlEncode": "HTML Encode",
+      "htmlDecode": "HTML Decode"
+    },
+    "actions": {
+      "run": "Run",
+      "running": "Running...",
+      "reset": "Reset result"
+    },
+    "result": {
+      "title": "Result",
+      "empty": "Enter text to start analysis.",
+      "readable": "Readable",
+      "json": "JSON",
+      "fields": {
+        "algorithm": "Algorithm",
+        "mode": "Mode",
+        "value": "Value",
+        "inputLength": "Input length",
+        "outputLength": "Output length",
+        "analysis": "Analysis",
+        "counts": "Counts",
+        "items": "Items",
+        "possibleAlgorithm": "Possible algorithm",
+        "isHex": "Hex format",
+        "length": "Length",
+        "emails": "Emails",
+        "urls": "URLs",
+        "domains": "Domains",
+        "ips": "IP addresses",
+        "telegramUsernames": "Telegram usernames",
+        "operation": "Operation",
+        "original": "Original text",
+        "result": "Result text",
+        "shift": "Shift",
+        "validFormat": "Valid format",
+        "header": "Header",
+        "payload": "Payload",
+        "timeChecks": "Time checks",
+        "signature": "Signature",
+        "present": "Present",
+        "verified": "Verified",
+        "verificationReason": "Verification note",
+        "issuedAt": "Issued at",
+        "notBefore": "Not before",
+        "expiresAt": "Expires at",
+        "isExpired": "Expired",
+        "isActive": "Active",
+        "now": "Current timestamp",
+        "error": "Error",
+        "key": "Key",
+        "rails": "Rails"
+      }
+    },
+    "help": {
+      "input": "Paste any artifact for quick OSINT transformations: hash, decode, and IOC extraction.",
+      "result": "Result is returned in structured JSON so it is easy to copy to reports or reuse in pivots."
+    },
+    "errors": {
+      "requestFailed": "Request failed."
+    },
+    "classic": {
+      "cipher": "Cipher",
+      "direction": "Direction",
+      "encrypt": "Encrypt",
+      "decrypt": "Decrypt",
+      "shift": "Shift (for Caesar)",
+      "caesar": "Caesar",
+      "atbash": "Atbash",
+      "rot13": "ROT13",
+      "rot47": "ROT47",
+      "transform": "Transform",
+      "rot5": "ROT5",
+      "vigenere": "Vigenere",
+      "railFence": "Rail Fence",
+      "key": "Key",
+      "rails": "Rails",
+      "xor": "XOR",
+      "affine": "Affine",
+      "xorKey": "XOR key",
+      "affineA": "Affine A",
+      "affineB": "Affine B",
+      "playfair": "Playfair",
+      "columnar": "Columnar",
+      "playfairKey": "Playfair key",
+      "columnKey": "Column key",
+      "morse": "Morse",
+      "morseSeparator": "Word separator"
+    },
+    "hints": {
+      "hash": {
+        "hashMode": "Hash mode: use when you need a digest/fingerprint of text for comparison.",
+        "hmacMode": "HMAC mode: use when you need a keyed signature check (integrity with secret key)."
+      },
+      "transform": {
+        "default": "Select an operation to convert between common formats.",
+        "base64Encode": "Useful for packing binary/text into portable ASCII.",
+        "base64Decode": "Use when artifact looks like Base64 text and you need the original content.",
+        "base64UrlEncode": "JWT-safe Base64 variant for URLs and tokens.",
+        "base64UrlDecode": "Decode JWT-safe Base64URL payloads.",
+        "hexEncode": "Convert text/binary to hexadecimal representation.",
+        "hexDecode": "Decode hexadecimal strings back to text/binary.",
+        "urlEncode": "Escape text for safe URL query/path usage.",
+        "urlDecode": "Decode percent-encoded URL fragments.",
+        "htmlEncode": "Escape HTML-sensitive characters to prevent markup interpretation.",
+        "htmlDecode": "Decode HTML entities back to readable characters."
+      },
+      "classic": {
+        "caesar": "Classical shift cipher. Best for simple obfuscation/CTF-style artifacts.",
+        "atbash": "Mirror substitution cipher. Same operation for encode/decode.",
+        "rot13": "Fixed shift for latin/cyrillic letters. Often used for light obfuscation.",
+        "rot47": "ASCII printable rotation. Useful for mixed punctuation payloads.",
+        "rot5": "Digit-only rotation by +5. Useful for numeric obfuscation.",
+        "vigenere": "Polyalphabetic cipher with keyword. Supports latin and cyrillic letters in key and text.",
+        "railFence": "Transposition cipher with zig-zag rails. Configure number of rails.",
+        "xor": "XOR cipher with key. Encrypt outputs Base64; decrypt expects Base64 input.",
+        "affine": "Affine substitution cipher for latin letters. A must be coprime with 26.",
+        "playfair": "Digraph substitution cipher. Works on latin letters; J is merged into I.",
+        "columnar": "Columnar transposition with a keyword that defines column order.",
+        "morse": "Morse encode/decode for latin, cyrillic, digits and common punctuation."
+      },
+      "ioc": {
+        "extract": "Extracts emails, domains, URLs, IPs and Telegram usernames using pattern matching. Review results manually for false positives."
+      },
+      "jwt": {
+        "inspect": "Parses token structure and claims. If secret is set and alg is HS256/384/512, signature verification is attempted."
+      }
+    },
+    "jwt": {
+      "token": "JWT token",
+      "tokenPlaceholder": "Paste JWT here: header.payload.signature",
+      "secret": "Secret (optional for HS verify)",
+      "secretPlaceholder": "Optional shared secret"
     }
   }
 }

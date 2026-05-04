@@ -470,6 +470,84 @@ Controllercd1cc9588bb44331d898a5ce4f55eeff.head = (options?: RouteQueryOptions):
     /**
 * @see \Inertia\Controller::__invoke
  * @see vendor/inertiajs/inertia-laravel/src/Controller.php:13
+ * @route '/shifr'
+ */
+const Controller3d3b36cdb4f38dee299ffd8b2029aaa7 = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+    url: Controller3d3b36cdb4f38dee299ffd8b2029aaa7.url(options),
+    method: 'get',
+})
+
+Controller3d3b36cdb4f38dee299ffd8b2029aaa7.definition = {
+    methods: ["get","head"],
+    url: '/shifr',
+} satisfies RouteDefinition<["get","head"]>
+
+/**
+* @see \Inertia\Controller::__invoke
+ * @see vendor/inertiajs/inertia-laravel/src/Controller.php:13
+ * @route '/shifr'
+ */
+Controller3d3b36cdb4f38dee299ffd8b2029aaa7.url = (options?: RouteQueryOptions) => {
+    return Controller3d3b36cdb4f38dee299ffd8b2029aaa7.definition.url + queryParams(options)
+}
+
+/**
+* @see \Inertia\Controller::__invoke
+ * @see vendor/inertiajs/inertia-laravel/src/Controller.php:13
+ * @route '/shifr'
+ */
+Controller3d3b36cdb4f38dee299ffd8b2029aaa7.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+    url: Controller3d3b36cdb4f38dee299ffd8b2029aaa7.url(options),
+    method: 'get',
+})
+/**
+* @see \Inertia\Controller::__invoke
+ * @see vendor/inertiajs/inertia-laravel/src/Controller.php:13
+ * @route '/shifr'
+ */
+Controller3d3b36cdb4f38dee299ffd8b2029aaa7.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
+    url: Controller3d3b36cdb4f38dee299ffd8b2029aaa7.url(options),
+    method: 'head',
+})
+
+    /**
+* @see \Inertia\Controller::__invoke
+ * @see vendor/inertiajs/inertia-laravel/src/Controller.php:13
+ * @route '/shifr'
+ */
+    const Controller3d3b36cdb4f38dee299ffd8b2029aaa7Form = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+        action: Controller3d3b36cdb4f38dee299ffd8b2029aaa7.url(options),
+        method: 'get',
+    })
+
+            /**
+* @see \Inertia\Controller::__invoke
+ * @see vendor/inertiajs/inertia-laravel/src/Controller.php:13
+ * @route '/shifr'
+ */
+        Controller3d3b36cdb4f38dee299ffd8b2029aaa7Form.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+            action: Controller3d3b36cdb4f38dee299ffd8b2029aaa7.url(options),
+            method: 'get',
+        })
+            /**
+* @see \Inertia\Controller::__invoke
+ * @see vendor/inertiajs/inertia-laravel/src/Controller.php:13
+ * @route '/shifr'
+ */
+        Controller3d3b36cdb4f38dee299ffd8b2029aaa7Form.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+            action: Controller3d3b36cdb4f38dee299ffd8b2029aaa7.url({
+                        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
+                            _method: 'HEAD',
+                            ...(options?.query ?? options?.mergeQuery ?? {}),
+                        }
+                    }),
+            method: 'get',
+        })
+    
+    Controller3d3b36cdb4f38dee299ffd8b2029aaa7.form = Controller3d3b36cdb4f38dee299ffd8b2029aaa7Form
+    /**
+* @see \Inertia\Controller::__invoke
+ * @see vendor/inertiajs/inertia-laravel/src/Controller.php:13
  * @route '/settings/appearance'
  */
 const Controllere19ee86e9cf603ce1a59a1ec5d21dec5 = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -553,6 +631,7 @@ const Controller = {
     '/site-intel': Controller8afb288f411615c9a5737c884d0340a0,
     '/fio': Controller8508b634f2b8fb9774a98f0006915705,
     '/email-intel': Controllercd1cc9588bb44331d898a5ce4f55eeff,
+    '/shifr': Controller3d3b36cdb4f38dee299ffd8b2029aaa7,
     '/settings/appearance': Controllere19ee86e9cf603ce1a59a1ec5d21dec5,
 }
 

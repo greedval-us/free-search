@@ -756,3 +756,81 @@ emailIntel.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
         })
     
     emailIntel.form = emailIntelForm
+/**
+* @see \Inertia\Controller::__invoke
+ * @see vendor/inertiajs/inertia-laravel/src/Controller.php:13
+ * @route '/shifr'
+ */
+export const shifr = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+    url: shifr.url(options),
+    method: 'get',
+})
+
+shifr.definition = {
+    methods: ["get","head"],
+    url: '/shifr',
+} satisfies RouteDefinition<["get","head"]>
+
+/**
+* @see \Inertia\Controller::__invoke
+ * @see vendor/inertiajs/inertia-laravel/src/Controller.php:13
+ * @route '/shifr'
+ */
+shifr.url = (options?: RouteQueryOptions) => {
+    return shifr.definition.url + queryParams(options)
+}
+
+/**
+* @see \Inertia\Controller::__invoke
+ * @see vendor/inertiajs/inertia-laravel/src/Controller.php:13
+ * @route '/shifr'
+ */
+shifr.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+    url: shifr.url(options),
+    method: 'get',
+})
+/**
+* @see \Inertia\Controller::__invoke
+ * @see vendor/inertiajs/inertia-laravel/src/Controller.php:13
+ * @route '/shifr'
+ */
+shifr.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
+    url: shifr.url(options),
+    method: 'head',
+})
+
+    /**
+* @see \Inertia\Controller::__invoke
+ * @see vendor/inertiajs/inertia-laravel/src/Controller.php:13
+ * @route '/shifr'
+ */
+    const shifrForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+        action: shifr.url(options),
+        method: 'get',
+    })
+
+            /**
+* @see \Inertia\Controller::__invoke
+ * @see vendor/inertiajs/inertia-laravel/src/Controller.php:13
+ * @route '/shifr'
+ */
+        shifrForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+            action: shifr.url(options),
+            method: 'get',
+        })
+            /**
+* @see \Inertia\Controller::__invoke
+ * @see vendor/inertiajs/inertia-laravel/src/Controller.php:13
+ * @route '/shifr'
+ */
+        shifrForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+            action: shifr.url({
+                        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
+                            _method: 'HEAD',
+                            ...(options?.query ?? options?.mergeQuery ?? {}),
+                        }
+                    }),
+            method: 'get',
+        })
+    
+    shifr.form = shifrForm
