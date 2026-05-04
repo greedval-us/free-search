@@ -3,6 +3,7 @@
 namespace App\Http\Requests\Shifr;
 
 use App\Http\Requests\LocalizedFormRequest;
+use App\Modules\Shifr\DTO\ClassicCipherLookupDTO;
 
 final class ShifrClassicCipherRequest extends LocalizedFormRequest
 {
@@ -93,5 +94,23 @@ final class ShifrClassicCipherRequest extends LocalizedFormRequest
     public function morseSeparator(): string
     {
         return trim((string) ($this->validated('morse_separator') ?? '/'));
+    }
+
+    public function toDto(): ClassicCipherLookupDTO
+    {
+        return new ClassicCipherLookupDTO(
+            text: $this->text(),
+            cipher: $this->cipher(),
+            direction: $this->direction(),
+            shift: $this->shift(),
+            key: $this->key(),
+            rails: $this->rails(),
+            xorKey: $this->xorKey(),
+            affineA: $this->affineA(),
+            affineB: $this->affineB(),
+            playfairKey: $this->playfairKey(),
+            columnKey: $this->columnKey(),
+            morseSeparator: $this->morseSeparator(),
+        );
     }
 }

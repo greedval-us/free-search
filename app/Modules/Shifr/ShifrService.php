@@ -13,6 +13,7 @@ use App\Modules\Shifr\DTO\AtbashRequestDTO;
 use App\Modules\Shifr\DTO\AtbashResultDTO;
 use App\Modules\Shifr\DTO\CaesarCipherRequestDTO;
 use App\Modules\Shifr\DTO\CaesarCipherResultDTO;
+use App\Modules\Shifr\DTO\ClassicCipherLookupDTO;
 
 class ShifrService implements ShifrServiceInterface
 {
@@ -24,6 +25,23 @@ class ShifrService implements ShifrServiceInterface
         private readonly Rot13TransformAction $rot13Transform,
         private readonly Rot47TransformAction $rot47Transform,
     ) {}
+
+    public function processClassic(ClassicCipherLookupDTO $dto): ?array
+    {
+        return match ($dto->cipher) {
+            'caesar' => $this->resolveCaesar($dto),
+            'atbash' => $this->resolveAtbash($dto),
+            'rot13', 'rot47', 'rot5' => $this->resolveRot($dto),
+            'vigenere' => $this->resolveVigenere($dto),
+            'rail_fence' => $this->resolveRailFence($dto),
+            'xor' => $this->resolveXor($dto),
+            'affine' => $this->resolveAffine($dto),
+            'playfair' => $this->resolvePlayfair($dto),
+            'columnar' => $this->resolveColumnar($dto),
+            'morse' => $this->resolveMorse($dto),
+            default => null,
+        };
+    }
 
     public function encryptCaesar(string $message, int $shift): CaesarCipherResultDTO
     {
@@ -246,6 +264,117 @@ class ShifrService implements ShifrServiceInterface
             original: $message,
             result: $this->morseDecode($message, $separator),
         );
+    }
+
+    private function resolveCaesar(ClassicCipherLookupDTO $dto): ?array
+    {
+        return match ($dto->direction) {
+            'encrypt' => $this->encryptCaesar($dto->text, $dto->shift)->toArray(),
+            'decrypt' => $this->decryptCaesar($dto->text, $dto->shift)->toArray(),
+            default => null,
+        };
+    }
+
+    private function resolveAtbash(ClassicCipherLookupDTO $dto): ?array
+    {
+        return match ($dto->direction) {
+            'encrypt' => $this->encryptAtbash($dto->text)->toArray(),
+            'decrypt' => $this->decryptAtbash($dto->text)->toArray(),
+            default => null,
+        };
+    }
+
+    private function resolveRot(ClassicCipherLookupDTO $dto): ?array
+    {
+        if ($dto->direction !== 'transform') {
+            return null;
+        }
+
+        return match ($dto->cipher) {
+            'rot13' => $this->transformRot13($dto->text)->toArray(),
+            'rot47' => $this->transformRot47($dto->text)->toArray(),
+            'rot5' => $this->transformRot5($dto->text)->toArray(),
+            default => null,
+        };
+    }
+
+    private function resolveVigenere(ClassicCipherLookupDTO $dto): ?array
+    {
+        if ($dto->key === '') {
+            return null;
+        }
+
+        return match ($dto->direction) {
+            'encrypt' => $this->encryptVigenere($dto->text, $dto->key)->toArray(),
+            'decrypt' => $this->decryptVigenere($dto->text, $dto->key)->toArray(),
+            default => null,
+        };
+    }
+
+    private function resolveRailFence(ClassicCipherLookupDTO $dto): ?array
+    {
+        return match ($dto->direction) {
+            'encrypt' => $this->encryptRailFence($dto->text, $dto->rails)->toArray(),
+            'decrypt' => $this->decryptRailFence($dto->text, $dto->rails)->toArray(),
+            default => null,
+        };
+    }
+
+    private function resolveXor(ClassicCipherLookupDTO $dto): ?array
+    {
+        if ($dto->xorKey === '') {
+            return null;
+        }
+
+        return match ($dto->direction) {
+            'encrypt' => $this->encryptXor($dto->text, $dto->xorKey)->toArray(),
+            'decrypt' => $this->decryptXor($dto->text, $dto->xorKey)->toArray(),
+            default => null,
+        };
+    }
+
+    private function resolveAffine(ClassicCipherLookupDTO $dto): ?array
+    {
+        return match ($dto->direction) {
+            'encrypt' => $this->encryptAffine($dto->text, $dto->affineA, $dto->affineB)->toArray(),
+            'decrypt' => $this->decryptAffine($dto->text, $dto->affineA, $dto->affineB)->toArray(),
+            default => null,
+        };
+    }
+
+    private function resolvePlayfair(ClassicCipherLookupDTO $dto): ?array
+    {
+        if ($dto->playfairKey === '') {
+            return null;
+        }
+
+        return match ($dto->direction) {
+            'encrypt' => $this->encryptPlayfair($dto->text, $dto->playfairKey)->toArray(),
+            'decrypt' => $this->decryptPlayfair($dto->text, $dto->playfairKey)->toArray(),
+            default => null,
+        };
+    }
+
+    private function resolveColumnar(ClassicCipherLookupDTO $dto): ?array
+    {
+        if ($dto->columnKey === '') {
+            return null;
+        }
+
+        return match ($dto->direction) {
+            'encrypt' => $this->encryptColumnar($dto->text, $dto->columnKey)->toArray(),
+            'decrypt' => $this->decryptColumnar($dto->text, $dto->columnKey)->toArray(),
+            default => null,
+        };
+    }
+
+    private function resolveMorse(ClassicCipherLookupDTO $dto): ?array
+    {
+        return match ($dto->direction) {
+            'encrypt' => $this->encryptMorse($dto->text, $dto->morseSeparator)->toArray(),
+            'decrypt' => $this->decryptMorse($dto->text, $dto->morseSeparator)->toArray(),
+            default => null,
+        };
     }
 
     private function vigenere(string $text, string $key, bool $decrypt): string

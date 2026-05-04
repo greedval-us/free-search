@@ -4,9 +4,15 @@ namespace App\Modules\Shifr\Contracts;
 
 use App\Modules\Shifr\DTO\AtbashResultDTO;
 use App\Modules\Shifr\DTO\CaesarCipherResultDTO;
+use App\Modules\Shifr\DTO\ClassicCipherLookupDTO;
 
 interface ShifrServiceInterface
 {
+    /**
+     * @return array<string, mixed>|null
+     */
+    public function processClassic(ClassicCipherLookupDTO $dto): ?array;
+
     public function encryptCaesar(string $message, int $shift): CaesarCipherResultDTO;
 
     public function decryptCaesar(string $message, int $shift): CaesarCipherResultDTO;
