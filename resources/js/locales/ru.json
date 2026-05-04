@@ -1078,6 +1078,7 @@
       "site-intel": "Аналитика сайта",
       "email-intel": "Аналитика email",
       "telegram": "Аналитика Telegram",
+      "shifr": "Модуль шифров",
       "default": "Поисковый модуль",
       "lastUsed": "Последний запуск",
       "open": "Открыть модуль",
@@ -1123,6 +1124,7 @@
     "siteIntel": "Анализ сайта",
     "fio": "ФИО",
     "emailIntel": "Анализ Email",
+    "shifr": "Шифр",
     "repository": "Репозиторий",
     "documentation": "Документация"
   },
@@ -1320,6 +1322,61 @@
         "submit": "Продолжить",
         "placeholder": "Введите код восстановления"
       }
+    }
+  },
+  "shifr": {
+    "headTitle": "Shifr OSINT Toolkit",
+    "tabs": {
+      "hash": "Хеш / HMAC",
+      "transform": "Кодировать / Декодировать",
+      "ioc": "Извлечение IOC",
+      "classic": "Классические шифры"
+    },
+    "descriptions": {
+      "hash": "Генерация хеша или HMAC для проверки целостности и сравнения артефактов.",
+      "transform": "Преобразование артефактов между Base64, Hex и URL форматами.",
+      "ioc": "Извлечение email, доменов, URL, IP и Telegram username из сырого текста.",
+      "classic": "Используйте Caesar и Atbash для быстрых экспериментов и pivot-поиска в OSINT."
+    },
+    "input": {
+      "label": "Входные данные",
+      "placeholder": "Вставьте текст, токен, URL или смешанный артефакт"
+    },
+    "hash": {
+      "algorithm": "Алгоритм",
+      "hmacKey": "Ключ HMAC (опционально)"
+    },
+    "transform": {
+      "operation": "Операция",
+      "base64Encode": "Base64 кодировать",
+      "base64Decode": "Base64 декодировать",
+      "hexEncode": "Hex кодировать",
+      "hexDecode": "Hex декодировать",
+      "urlEncode": "URL кодировать",
+      "urlDecode": "URL декодировать"
+    },
+    "actions": {
+      "run": "Запустить",
+      "running": "Выполняется...",
+      "reset": "Сбросить результат"
+    },
+    "result": {
+      "title": "Результат",
+      "empty": "Введите текст, чтобы начать анализ."
+    },
+    "help": {
+      "input": "Быстрые OSINT-преобразования артефактов: хеширование, декодирование и извлечение IOC.",
+      "result": "Результат возвращается в структурированном JSON, чтобы его было удобно копировать в отчеты и использовать для pivot-поиска."
+    },
+    "errors": {
+      "requestFailed": "Ошибка запроса."
+    },
+    "classic": {
+      "cipher": "Шифр",
+      "direction": "Режим",
+      "encrypt": "Шифровать",
+      "decrypt": "Дешифровать",
+      "shift": "Сдвиг (для Caesar)"
     }
   }
 }

@@ -104,7 +104,7 @@ const props = withDefaults(
                 date_from: '',
                 date_to: '',
             },
-            available_modules: ['username', 'fio', 'site-intel', 'email-intel', 'telegram'],
+            available_modules: ['username', 'fio', 'site-intel', 'email-intel', 'telegram', 'shifr'],
         }),
     }
 );
@@ -123,6 +123,7 @@ const quickActions = computed(() => {
         { key: 'fio', count: 0, last_at: null, url: '/fio', is_pinned: false },
         { key: 'site-intel', count: 0, last_at: null, url: '/site-intel', is_pinned: false },
         { key: 'email-intel', count: 0, last_at: null, url: '/email-intel', is_pinned: false },
+        { key: 'shifr', count: 0, last_at: null, url: '/shifr', is_pinned: false },
     ] as ModuleCard[];
 });
 

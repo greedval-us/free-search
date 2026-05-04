@@ -1078,6 +1078,7 @@
       "site-intel": "Site intelligence",
       "email-intel": "Email intelligence",
       "telegram": "Telegram analytics",
+      "shifr": "Cipher toolkit",
       "default": "Search module",
       "lastUsed": "Last used",
       "open": "Open module",
@@ -1123,6 +1124,7 @@
     "siteIntel": "Site Intel",
     "fio": "FIO",
     "emailIntel": "Email Intel",
+    "shifr": "Cipher",
     "repository": "Repository",
     "documentation": "Documentation"
   },
@@ -1320,6 +1322,61 @@
         "submit": "Continue",
         "placeholder": "Enter recovery code"
       }
+    }
+  },
+  "shifr": {
+    "headTitle": "Shifr OSINT Toolkit",
+    "tabs": {
+      "hash": "Hash / HMAC",
+      "transform": "Encode / Decode",
+      "ioc": "IOC Extract",
+      "classic": "Classic ciphers"
+    },
+    "descriptions": {
+      "hash": "Generate digest or HMAC to verify integrity and compare artifacts.",
+      "transform": "Convert artifacts between Base64, Hex and URL formats for analysis.",
+      "ioc": "Extract emails, domains, URLs, IPs and Telegram usernames from raw text.",
+      "classic": "Use Caesar and Atbash for quick text pivot experiments in OSINT workflows."
+    },
+    "input": {
+      "label": "Input",
+      "placeholder": "Paste text, token, URL or mixed artifact here"
+    },
+    "hash": {
+      "algorithm": "Algorithm",
+      "hmacKey": "HMAC key (optional)"
+    },
+    "transform": {
+      "operation": "Operation",
+      "base64Encode": "Base64 Encode",
+      "base64Decode": "Base64 Decode",
+      "hexEncode": "Hex Encode",
+      "hexDecode": "Hex Decode",
+      "urlEncode": "URL Encode",
+      "urlDecode": "URL Decode"
+    },
+    "actions": {
+      "run": "Run",
+      "running": "Running...",
+      "reset": "Reset result"
+    },
+    "result": {
+      "title": "Result",
+      "empty": "Enter text to start analysis."
+    },
+    "help": {
+      "input": "Paste any artifact for quick OSINT transformations: hash, decode, and IOC extraction.",
+      "result": "Result is returned in structured JSON so it is easy to copy to reports or reuse in pivots."
+    },
+    "errors": {
+      "requestFailed": "Request failed."
+    },
+    "classic": {
+      "cipher": "Cipher",
+      "direction": "Direction",
+      "encrypt": "Encrypt",
+      "decrypt": "Decrypt",
+      "shift": "Shift (for Caesar)"
     }
   }
 }
