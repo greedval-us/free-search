@@ -35,7 +35,7 @@ const run = async (): Promise<void> => {
       <div class="mt-3 grid gap-3 md:grid-cols-3">
         <label>
           <span class="mb-1 block text-xs font-medium text-muted-foreground">{{ t('shifr.classic.cipher') }}</span>
-          <select v-model="cipher" class="h-10 w-full rounded-md border border-input bg-background px-3 text-sm"><option value="caesar">Caesar</option><option value="atbash">Atbash</option></select>
+          <select v-model="cipher" class="h-10 w-full rounded-md border border-input bg-background px-3 text-sm"><option value="caesar">{{ t('shifr.classic.caesar') }}</option><option value="atbash">{{ t('shifr.classic.atbash') }}</option></select>
         </label>
         <label>
           <span class="mb-1 block text-xs font-medium text-muted-foreground">{{ t('shifr.classic.direction') }}</span>

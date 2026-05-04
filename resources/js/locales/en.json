@@ -1362,7 +1362,31 @@
     },
     "result": {
       "title": "Result",
-      "empty": "Enter text to start analysis."
+      "empty": "Enter text to start analysis.",
+      "readable": "Readable",
+      "json": "JSON",
+      "fields": {
+        "algorithm": "Algorithm",
+        "mode": "Mode",
+        "value": "Value",
+        "inputLength": "Input length",
+        "outputLength": "Output length",
+        "analysis": "Analysis",
+        "counts": "Counts",
+        "items": "Items",
+        "possibleAlgorithm": "Possible algorithm",
+        "isHex": "Hex format",
+        "length": "Length",
+        "emails": "Emails",
+        "urls": "URLs",
+        "domains": "Domains",
+        "ips": "IP addresses",
+        "telegramUsernames": "Telegram usernames",
+        "operation": "Operation",
+        "original": "Original text",
+        "result": "Result text",
+        "shift": "Shift"
+      }
     },
     "help": {
       "input": "Paste any artifact for quick OSINT transformations: hash, decode, and IOC extraction.",
@@ -1376,7 +1400,9 @@
       "direction": "Direction",
       "encrypt": "Encrypt",
       "decrypt": "Decrypt",
-      "shift": "Shift (for Caesar)"
+      "shift": "Shift (for Caesar)",
+      "caesar": "Caesar",
+      "atbash": "Atbash"
     }
   }
 }

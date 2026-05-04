@@ -1325,7 +1325,7 @@
     }
   },
   "shifr": {
-    "headTitle": "Shifr OSINT Toolkit",
+    "headTitle": "Шифр OSINT Toolkit",
     "tabs": {
       "hash": "Хеш / HMAC",
       "transform": "Кодировать / Декодировать",
@@ -1362,7 +1362,31 @@
     },
     "result": {
       "title": "Результат",
-      "empty": "Введите текст, чтобы начать анализ."
+      "empty": "Введите текст, чтобы начать анализ.",
+      "readable": "Читаемый",
+      "json": "JSON",
+      "fields": {
+        "algorithm": "Алгоритм",
+        "mode": "Режим",
+        "value": "Значение",
+        "inputLength": "Длина входа",
+        "outputLength": "Длина выхода",
+        "analysis": "Анализ",
+        "counts": "Количество",
+        "items": "Данные",
+        "possibleAlgorithm": "Возможный алгоритм",
+        "isHex": "Hex формат",
+        "length": "Длина",
+        "emails": "Email",
+        "urls": "URL",
+        "domains": "Домены",
+        "ips": "IP адреса",
+        "telegramUsernames": "Telegram username",
+        "operation": "Операция",
+        "original": "Исходный текст",
+        "result": "Результат",
+        "shift": "Сдвиг"
+      }
     },
     "help": {
       "input": "Быстрые OSINT-преобразования артефактов: хеширование, декодирование и извлечение IOC.",
@@ -1376,7 +1400,9 @@
       "direction": "Режим",
       "encrypt": "Шифровать",
       "decrypt": "Дешифровать",
-      "shift": "Сдвиг (для Caesar)"
+      "shift": "Сдвиг (для Caesar)",
+      "caesar": "Цезарь",
+      "atbash": "Атбаш"
     }
   }
 }
