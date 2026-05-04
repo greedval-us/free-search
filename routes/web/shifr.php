@@ -18,6 +18,10 @@ Route::prefix('shifr')->name('shifr.')->group(function (): void {
         ->middleware('throttle:90,1')
         ->name('ioc-extract');
 
+    Route::get('jwt-inspect', [ShifrController::class, 'inspectJwt'])
+        ->middleware('throttle:90,1')
+        ->name('jwt-inspect');
+
     Route::get('classic', [ShifrController::class, 'classic'])
         ->middleware('throttle:90,1')
         ->name('classic');

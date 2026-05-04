@@ -8,11 +8,11 @@ import { useShifrRequest } from '../composables/useShifrRequest';
 
 const { locale, t } = useI18n();
 const input = ref('');
-const state = useShifrRequest('/shifr/ioc-extract', () => t('shifr.errors.requestFailed'), computed(() => input.value.trim().length > 0));
+const { loading, error, result, canRun, run: runRequest } = useShifrRequest('/shifr/ioc-extract', () => t('shifr.errors.requestFailed'), computed(() => input.value.trim().length > 0));
 
 const run = async (): Promise<void> => {
   const params = new URLSearchParams({ text: input.value, locale: locale.value });
-  await state.run(params);
+  await runRequest(params);
 };
 </script>
 
@@ -24,12 +24,12 @@ const run = async (): Promise<void> => {
 
       <p class="mt-2 text-xs text-muted-foreground">{{ t('shifr.hints.ioc.extract') }}</p>
 
-      <button :disabled="!state.canRun" class="mt-3 inline-flex h-10 items-center gap-2 rounded-md bg-primary px-5 text-sm font-semibold text-primary-foreground disabled:opacity-60" @click="run">
-        <LoaderCircle v-if="state.loading" class="h-4 w-4 animate-spin" />{{ state.loading ? t('shifr.actions.running') : t('shifr.actions.run') }}
+      <button :disabled="!canRun" class="mt-3 inline-flex h-10 items-center gap-2 rounded-md bg-primary px-5 text-sm font-semibold text-primary-foreground disabled:opacity-60" @click="run">
+        <LoaderCircle v-if="loading" class="h-4 w-4 animate-spin" />{{ loading ? t('shifr.actions.running') : t('shifr.actions.run') }}
       </button>
-      <p v-if="state.error" class="mt-2 text-sm text-destructive">{{ state.error }}</p>
+      <p v-if="error" class="mt-2 text-sm text-destructive">{{ error }}</p>
     </ShifrFormCard>
 
-    <ShifrResultCard :title="t('shifr.result.title')" :help-text="t('shifr.help.result')" :result="state.result" :empty-text="t('shifr.result.empty')" />
+    <ShifrResultCard :title="t('shifr.result.title')" :help-text="t('shifr.help.result')" :result="result" :empty-text="t('shifr.result.empty')" />
   </div>
 </template>

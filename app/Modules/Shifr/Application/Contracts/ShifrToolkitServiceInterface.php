@@ -4,6 +4,7 @@ namespace App\Modules\Shifr\Application\Contracts;
 
 use App\Modules\Shifr\DTO\Toolkit\HashLookupDTO;
 use App\Modules\Shifr\DTO\Toolkit\IocLookupDTO;
+use App\Modules\Shifr\DTO\Toolkit\JwtLookupDTO;
 use App\Modules\Shifr\DTO\Toolkit\TransformLookupDTO;
 
 interface ShifrToolkitServiceInterface
@@ -22,4 +23,9 @@ interface ShifrToolkitServiceInterface
      * @return array<string, mixed>
      */
     public function extractIocs(IocLookupDTO $dto): array;
+
+    /**
+     * @return array<string, mixed>
+     */
+    public function inspectJwt(JwtLookupDTO $dto): array;
 }

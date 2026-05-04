@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Shifr\ShifrClassicCipherRequest;
 use App\Http\Requests\Shifr\ShifrHashRequest;
 use App\Http\Requests\Shifr\ShifrIocExtractRequest;
+use App\Http\Requests\Shifr\ShifrJwtInspectRequest;
 use App\Http\Requests\Shifr\ShifrTransformRequest;
 use App\Modules\Shifr\Application\Contracts\ShifrToolkitServiceInterface;
 use App\Modules\Shifr\Contracts\ShifrServiceInterface;
@@ -43,6 +44,15 @@ final class ShifrController extends Controller
 
         return $this->jsonOk([
             'data' => $this->toolkitService->extractIocs($request->toDto()),
+        ]);
+    }
+
+    public function inspectJwt(ShifrJwtInspectRequest $request): JsonResponse
+    {
+        $this->applyRequestLocale($request->locale());
+
+        return $this->jsonOk([
+            'data' => $this->toolkitService->inspectJwt($request->toDto()),
         ]);
     }
 

@@ -1330,13 +1330,15 @@
       "hash": "Hash / HMAC",
       "transform": "Encode / Decode",
       "ioc": "IOC Extract",
-      "classic": "Classic ciphers"
+      "classic": "Classic ciphers",
+      "jwt": "JWT Inspector"
     },
     "descriptions": {
       "hash": "Generate digest or HMAC to verify integrity and compare artifacts.",
       "transform": "Convert artifacts between Base64, Hex and URL formats for analysis.",
       "ioc": "Extract emails, domains, URLs, IPs and Telegram usernames from raw text.",
-      "classic": "Use Caesar and Atbash for quick text pivot experiments in OSINT workflows."
+      "classic": "Use Caesar and Atbash for quick text pivot experiments in OSINT workflows.",
+      "jwt": "Decode JWT header/payload, check timing claims and optionally verify HS signature."
     },
     "input": {
       "label": "Input",
@@ -1389,7 +1391,22 @@
         "operation": "Operation",
         "original": "Original text",
         "result": "Result text",
-        "shift": "Shift"
+        "shift": "Shift",
+        "validFormat": "Valid format",
+        "header": "Header",
+        "payload": "Payload",
+        "timeChecks": "Time checks",
+        "signature": "Signature",
+        "present": "Present",
+        "verified": "Verified",
+        "verificationReason": "Verification note",
+        "issuedAt": "Issued at",
+        "notBefore": "Not before",
+        "expiresAt": "Expires at",
+        "isExpired": "Expired",
+        "isActive": "Active",
+        "now": "Current timestamp",
+        "error": "Error"
       }
     },
     "help": {
@@ -1437,7 +1454,16 @@
       },
       "ioc": {
         "extract": "Extracts emails, domains, URLs, IPs and Telegram usernames using pattern matching. Review results manually for false positives."
+      },
+      "jwt": {
+        "inspect": "Parses token structure and claims. If secret is set and alg is HS256/384/512, signature verification is attempted."
       }
+    },
+    "jwt": {
+      "token": "JWT token",
+      "tokenPlaceholder": "Paste JWT here: header.payload.signature",
+      "secret": "Secret (optional for HS verify)",
+      "secretPlaceholder": "Optional shared secret"
     }
   }
 }
