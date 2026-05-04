@@ -60,46 +60,7 @@ final class ShifrController extends Controller
     {
         $this->applyRequestLocale($request->locale());
 
-        $result = match (true) {
-            $request->cipher() === 'caesar' && $request->direction() === 'encrypt' => $this->shifrService->encryptCaesar($request->text(), $request->shift())->toArray(),
-            $request->cipher() === 'caesar' && $request->direction() === 'decrypt' => $this->shifrService->decryptCaesar($request->text(), $request->shift())->toArray(),
-            $request->cipher() === 'atbash' && $request->direction() === 'encrypt' => $this->shifrService->encryptAtbash($request->text())->toArray(),
-            $request->cipher() === 'atbash' && $request->direction() === 'decrypt' => $this->shifrService->decryptAtbash($request->text())->toArray(),
-            $request->cipher() === 'rot13' && $request->direction() === 'transform' => $this->shifrService->transformRot13($request->text())->toArray(),
-            $request->cipher() === 'rot47' && $request->direction() === 'transform' => $this->shifrService->transformRot47($request->text())->toArray(),
-            $request->cipher() === 'rot5' && $request->direction() === 'transform' => $this->shifrService->transformRot5($request->text())->toArray(),
-            $request->cipher() === 'vigenere' && $request->direction() === 'encrypt' => $request->key() !== ''
-                ? $this->shifrService->encryptVigenere($request->text(), $request->key())->toArray()
-                : null,
-            $request->cipher() === 'vigenere' && $request->direction() === 'decrypt' => $request->key() !== ''
-                ? $this->shifrService->decryptVigenere($request->text(), $request->key())->toArray()
-                : null,
-            $request->cipher() === 'rail_fence' && $request->direction() === 'encrypt' => $this->shifrService->encryptRailFence($request->text(), $request->rails())->toArray(),
-            $request->cipher() === 'rail_fence' && $request->direction() === 'decrypt' => $this->shifrService->decryptRailFence($request->text(), $request->rails())->toArray(),
-            $request->cipher() === 'xor' && $request->direction() === 'encrypt' => $request->xorKey() !== ''
-                ? $this->shifrService->encryptXor($request->text(), $request->xorKey())->toArray()
-                : null,
-            $request->cipher() === 'xor' && $request->direction() === 'decrypt' => $request->xorKey() !== ''
-                ? $this->shifrService->decryptXor($request->text(), $request->xorKey())->toArray()
-                : null,
-            $request->cipher() === 'affine' && $request->direction() === 'encrypt' => $this->shifrService->encryptAffine($request->text(), $request->affineA(), $request->affineB())->toArray(),
-            $request->cipher() === 'affine' && $request->direction() === 'decrypt' => $this->shifrService->decryptAffine($request->text(), $request->affineA(), $request->affineB())->toArray(),
-            $request->cipher() === 'playfair' && $request->direction() === 'encrypt' => $request->playfairKey() !== ''
-                ? $this->shifrService->encryptPlayfair($request->text(), $request->playfairKey())->toArray()
-                : null,
-            $request->cipher() === 'playfair' && $request->direction() === 'decrypt' => $request->playfairKey() !== ''
-                ? $this->shifrService->decryptPlayfair($request->text(), $request->playfairKey())->toArray()
-                : null,
-            $request->cipher() === 'columnar' && $request->direction() === 'encrypt' => $request->columnKey() !== ''
-                ? $this->shifrService->encryptColumnar($request->text(), $request->columnKey())->toArray()
-                : null,
-            $request->cipher() === 'columnar' && $request->direction() === 'decrypt' => $request->columnKey() !== ''
-                ? $this->shifrService->decryptColumnar($request->text(), $request->columnKey())->toArray()
-                : null,
-            $request->cipher() === 'morse' && $request->direction() === 'encrypt' => $this->shifrService->encryptMorse($request->text(), $request->morseSeparator())->toArray(),
-            $request->cipher() === 'morse' && $request->direction() === 'decrypt' => $this->shifrService->decryptMorse($request->text(), $request->morseSeparator())->toArray(),
-            default => null,
-        };
+        $result = $this->resolveClassicResult($request);
 
         if ($result === null) {
             return $this->jsonError(__('Unsupported cipher/direction pair or missing required settings.'), 422);
@@ -108,5 +69,136 @@ final class ShifrController extends Controller
         return $this->jsonOk([
             'data' => $result,
         ]);
+    }
+
+    private function resolveClassicResult(ShifrClassicCipherRequest $request): ?array
+    {
+        $cipher = $request->cipher();
+        $direction = $request->direction();
+
+        return match ($cipher) {
+            'caesar' => $this->resolveCaesar($request, $direction),
+            'atbash' => $this->resolveAtbash($request, $direction),
+            'rot13', 'rot47', 'rot5' => $this->resolveRot($request, $cipher, $direction),
+            'vigenere' => $this->resolveVigenere($request, $direction),
+            'rail_fence' => $this->resolveRailFence($request, $direction),
+            'xor' => $this->resolveXor($request, $direction),
+            'affine' => $this->resolveAffine($request, $direction),
+            'playfair' => $this->resolvePlayfair($request, $direction),
+            'columnar' => $this->resolveColumnar($request, $direction),
+            'morse' => $this->resolveMorse($request, $direction),
+            default => null,
+        };
+    }
+
+    private function resolveCaesar(ShifrClassicCipherRequest $request, string $direction): ?array
+    {
+        return match ($direction) {
+            'encrypt' => $this->shifrService->encryptCaesar($request->text(), $request->shift())->toArray(),
+            'decrypt' => $this->shifrService->decryptCaesar($request->text(), $request->shift())->toArray(),
+            default => null,
+        };
+    }
+
+    private function resolveAtbash(ShifrClassicCipherRequest $request, string $direction): ?array
+    {
+        return match ($direction) {
+            'encrypt' => $this->shifrService->encryptAtbash($request->text())->toArray(),
+            'decrypt' => $this->shifrService->decryptAtbash($request->text())->toArray(),
+            default => null,
+        };
+    }
+
+    private function resolveRot(ShifrClassicCipherRequest $request, string $cipher, string $direction): ?array
+    {
+        if ($direction !== 'transform') {
+            return null;
+        }
+
+        return match ($cipher) {
+            'rot13' => $this->shifrService->transformRot13($request->text())->toArray(),
+            'rot47' => $this->shifrService->transformRot47($request->text())->toArray(),
+            'rot5' => $this->shifrService->transformRot5($request->text())->toArray(),
+            default => null,
+        };
+    }
+
+    private function resolveVigenere(ShifrClassicCipherRequest $request, string $direction): ?array
+    {
+        if ($request->key() === '') {
+            return null;
+        }
+
+        return match ($direction) {
+            'encrypt' => $this->shifrService->encryptVigenere($request->text(), $request->key())->toArray(),
+            'decrypt' => $this->shifrService->decryptVigenere($request->text(), $request->key())->toArray(),
+            default => null,
+        };
+    }
+
+    private function resolveRailFence(ShifrClassicCipherRequest $request, string $direction): ?array
+    {
+        return match ($direction) {
+            'encrypt' => $this->shifrService->encryptRailFence($request->text(), $request->rails())->toArray(),
+            'decrypt' => $this->shifrService->decryptRailFence($request->text(), $request->rails())->toArray(),
+            default => null,
+        };
+    }
+
+    private function resolveXor(ShifrClassicCipherRequest $request, string $direction): ?array
+    {
+        if ($request->xorKey() === '') {
+            return null;
+        }
+
+        return match ($direction) {
+            'encrypt' => $this->shifrService->encryptXor($request->text(), $request->xorKey())->toArray(),
+            'decrypt' => $this->shifrService->decryptXor($request->text(), $request->xorKey())->toArray(),
+            default => null,
+        };
+    }
+
+    private function resolveAffine(ShifrClassicCipherRequest $request, string $direction): ?array
+    {
+        return match ($direction) {
+            'encrypt' => $this->shifrService->encryptAffine($request->text(), $request->affineA(), $request->affineB())->toArray(),
+            'decrypt' => $this->shifrService->decryptAffine($request->text(), $request->affineA(), $request->affineB())->toArray(),
+            default => null,
+        };
+    }
+
+    private function resolvePlayfair(ShifrClassicCipherRequest $request, string $direction): ?array
+    {
+        if ($request->playfairKey() === '') {
+            return null;
+        }
+
+        return match ($direction) {
+            'encrypt' => $this->shifrService->encryptPlayfair($request->text(), $request->playfairKey())->toArray(),
+            'decrypt' => $this->shifrService->decryptPlayfair($request->text(), $request->playfairKey())->toArray(),
+            default => null,
+        };
+    }
+
+    private function resolveColumnar(ShifrClassicCipherRequest $request, string $direction): ?array
+    {
+        if ($request->columnKey() === '') {
+            return null;
+        }
+
+        return match ($direction) {
+            'encrypt' => $this->shifrService->encryptColumnar($request->text(), $request->columnKey())->toArray(),
+            'decrypt' => $this->shifrService->decryptColumnar($request->text(), $request->columnKey())->toArray(),
+            default => null,
+        };
+    }
+
+    private function resolveMorse(ShifrClassicCipherRequest $request, string $direction): ?array
+    {
+        return match ($direction) {
+            'encrypt' => $this->shifrService->encryptMorse($request->text(), $request->morseSeparator())->toArray(),
+            'decrypt' => $this->shifrService->decryptMorse($request->text(), $request->morseSeparator())->toArray(),
+            default => null,
+        };
     }
 }

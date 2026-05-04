@@ -3,20 +3,10 @@
 namespace App\Modules\Shifr\Actions\Toolkit;
 
 use App\Modules\Shifr\DTO\Toolkit\HashLookupDTO;
+use App\Modules\Shifr\Support\HashAlgorithms;
 
 final class ComputeHashAction
 {
-    private const SUPPORTED = [
-        'md5',
-        'sha1',
-        'sha224',
-        'sha256',
-        'sha384',
-        'sha512',
-        'sha3-256',
-        'sha3-512',
-        'blake2b512',
-    ];
 
     /**
      * @return array<string, mixed>
@@ -25,9 +15,7 @@ final class ComputeHashAction
     {
         $algorithm = strtolower($dto->algorithm);
 
-        if (!in_array($algorithm, self::SUPPORTED, true)) {
-            $algorithm = 'sha256';
-        }
+        $algorithm = $this->resolveAlgorithm($algorithm, $dto->hmacKey !== null && $dto->hmacKey !== '');
 
         $hash = $dto->hmacKey !== null && $dto->hmacKey !== ''
             ? hash_hmac($algorithm, $dto->input, $dto->hmacKey)
@@ -40,6 +28,31 @@ final class ComputeHashAction
             'inputLength' => mb_strlen($dto->input),
             'analysis' => $this->analyzeHashLike($dto->input),
         ];
+    }
+
+    private function resolveAlgorithm(string $algorithm, bool $isHmac): string
+    {
+        if (!in_array($algorithm, HashAlgorithms::ALL, true)) {
+            return HashAlgorithms::DEFAULT;
+        }
+
+        $available = array_map('strtolower', hash_algos());
+        if (!in_array($algorithm, $available, true)) {
+            return HashAlgorithms::DEFAULT;
+        }
+
+        if (!$isHmac) {
+            return $algorithm;
+        }
+
+        if (function_exists('hash_hmac_algos')) {
+            $hmacAvailable = array_map('strtolower', hash_hmac_algos());
+            if (!in_array($algorithm, $hmacAvailable, true)) {
+                return HashAlgorithms::DEFAULT;
+            }
+        }
+
+        return $algorithm;
     }
 
     /**

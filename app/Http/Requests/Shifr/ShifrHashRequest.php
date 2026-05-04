@@ -4,6 +4,7 @@ namespace App\Http\Requests\Shifr;
 
 use App\Http\Requests\LocalizedFormRequest;
 use App\Modules\Shifr\DTO\Toolkit\HashLookupDTO;
+use App\Modules\Shifr\Support\HashAlgorithms;
 
 final class ShifrHashRequest extends LocalizedFormRequest
 {
@@ -16,7 +17,7 @@ final class ShifrHashRequest extends LocalizedFormRequest
     {
         return [
             'text' => ['required', 'string', 'max:20000'],
-            'algorithm' => ['nullable', 'string', 'in:md5,sha1,sha224,sha256,sha384,sha512,sha3-256,sha3-512,blake2b512'],
+            'algorithm' => ['nullable', 'string', 'in:' . HashAlgorithms::validationRuleList()],
             'hmac_key' => ['nullable', 'string', 'max:1000'],
             'locale' => $this->localeRule(),
         ];
@@ -26,7 +27,7 @@ final class ShifrHashRequest extends LocalizedFormRequest
     {
         return new HashLookupDTO(
             input: (string) $this->validated('text'),
-            algorithm: (string) ($this->validated('algorithm') ?? 'sha256'),
+            algorithm: (string) ($this->validated('algorithm') ?? HashAlgorithms::DEFAULT),
             hmacKey: $this->filled('hmac_key') ? (string) $this->validated('hmac_key') : null,
         );
     }

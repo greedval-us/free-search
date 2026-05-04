@@ -8,7 +8,8 @@ import { useShifrRequest } from '../composables/useShifrRequest';
 
 const { locale, t } = useI18n();
 const input = ref('');
-const cipher = ref<'caesar' | 'atbash' | 'rot13' | 'rot47' | 'rot5' | 'vigenere' | 'rail_fence' | 'xor' | 'affine' | 'playfair' | 'columnar' | 'morse'>('caesar');
+type CipherType = 'caesar' | 'atbash' | 'rot13' | 'rot47' | 'rot5' | 'vigenere' | 'rail_fence' | 'xor' | 'affine' | 'playfair' | 'columnar' | 'morse';
+const cipher = ref<CipherType>('caesar');
 const direction = ref<'encrypt' | 'decrypt' | 'transform'>('encrypt');
 const shift = ref(3);
 const key = ref('');
@@ -20,22 +21,25 @@ const playfairKey = ref('');
 const columnKey = ref('');
 const morseSeparator = ref('/');
 
-const classicHintKey = computed(() => {
-  if (cipher.value === 'caesar') return 'shifr.hints.classic.caesar';
-  if (cipher.value === 'atbash') return 'shifr.hints.classic.atbash';
-  if (cipher.value === 'rot13') return 'shifr.hints.classic.rot13';
-  if (cipher.value === 'rot47') return 'shifr.hints.classic.rot47';
-  if (cipher.value === 'rot5') return 'shifr.hints.classic.rot5';
-  if (cipher.value === 'vigenere') return 'shifr.hints.classic.vigenere';
-  if (cipher.value === 'xor') return 'shifr.hints.classic.xor';
-  if (cipher.value === 'affine') return 'shifr.hints.classic.affine';
-  if (cipher.value === 'playfair') return 'shifr.hints.classic.playfair';
-  if (cipher.value === 'columnar') return 'shifr.hints.classic.columnar';
-  if (cipher.value === 'morse') return 'shifr.hints.classic.morse';
-  return 'shifr.hints.classic.railFence';
-});
+const transformCiphers: CipherType[] = ['rot13', 'rot47', 'rot5'];
+const hintByCipher: Record<CipherType, string> = {
+  caesar: 'shifr.hints.classic.caesar',
+  atbash: 'shifr.hints.classic.atbash',
+  rot13: 'shifr.hints.classic.rot13',
+  rot47: 'shifr.hints.classic.rot47',
+  rot5: 'shifr.hints.classic.rot5',
+  vigenere: 'shifr.hints.classic.vigenere',
+  rail_fence: 'shifr.hints.classic.railFence',
+  xor: 'shifr.hints.classic.xor',
+  affine: 'shifr.hints.classic.affine',
+  playfair: 'shifr.hints.classic.playfair',
+  columnar: 'shifr.hints.classic.columnar',
+  morse: 'shifr.hints.classic.morse',
+};
 
-const isTransformCipher = computed(() => cipher.value === 'rot13' || cipher.value === 'rot47' || cipher.value === 'rot5');
+const classicHintKey = computed(() => hintByCipher[cipher.value]);
+
+const isTransformCipher = computed(() => transformCiphers.includes(cipher.value));
 const showShift = computed(() => cipher.value === 'caesar');
 const showKey = computed(() => cipher.value === 'vigenere');
 const showRails = computed(() => cipher.value === 'rail_fence');
@@ -66,7 +70,7 @@ const run = async (): Promise<void> => {
   await runRequest(params);
 };
 
-watch(cipher, (nextCipher) => {
+const resetSettings = (): void => {
   shift.value = 3;
   key.value = '';
   rails.value = 3;
@@ -76,8 +80,12 @@ watch(cipher, (nextCipher) => {
   playfairKey.value = '';
   columnKey.value = '';
   morseSeparator.value = '/';
+};
 
-  if (nextCipher === 'rot13' || nextCipher === 'rot47' || nextCipher === 'rot5') {
+watch(cipher, (nextCipher) => {
+  resetSettings();
+
+  if (transformCiphers.includes(nextCipher)) {
     direction.value = 'transform';
     return;
   }

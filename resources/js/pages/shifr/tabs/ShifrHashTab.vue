@@ -1,5 +1,5 @@
-<script setup lang="ts">
-import { computed, ref } from 'vue';
+﻿<script setup lang="ts">
+import { computed, onBeforeUnmount, onMounted, ref } from 'vue';
 import { LoaderCircle } from 'lucide-vue-next';
 import { useI18n } from '@/composables/useI18n';
 import ShifrFormCard from '../components/ShifrFormCard.vue';
@@ -8,8 +8,40 @@ import { useShifrRequest } from '../composables/useShifrRequest';
 
 const { locale, t } = useI18n();
 const input = ref('');
-const algorithm = ref<'md5' | 'sha1' | 'sha224' | 'sha256' | 'sha384' | 'sha512' | 'sha3-256' | 'sha3-512' | 'blake2b512'>('sha256');
+const algorithmOptions = [
+  { value: 'md5', label: 'MD5' },
+  { value: 'sha1', label: 'SHA1' },
+  { value: 'sha224', label: 'SHA224' },
+  { value: 'sha256', label: 'SHA256' },
+  { value: 'sha384', label: 'SHA384' },
+  { value: 'sha512', label: 'SHA512' },
+  { value: 'sha512/224', label: 'SHA512/224' },
+  { value: 'sha512/256', label: 'SHA512/256' },
+  { value: 'sha3-224', label: 'SHA3-224' },
+  { value: 'sha3-256', label: 'SHA3-256' },
+  { value: 'sha3-384', label: 'SHA3-384' },
+  { value: 'sha3-512', label: 'SHA3-512' },
+  { value: 'blake2s256', label: 'BLAKE2s-256' },
+  { value: 'blake2b512', label: 'BLAKE2b-512' },
+  { value: 'ripemd128', label: 'RIPEMD-128' },
+  { value: 'ripemd160', label: 'RIPEMD-160' },
+  { value: 'ripemd256', label: 'RIPEMD-256' },
+  { value: 'ripemd320', label: 'RIPEMD-320' },
+  { value: 'whirlpool', label: 'WHIRLPOOL' },
+  { value: 'xxh32', label: 'XXH32' },
+  { value: 'xxh64', label: 'XXH64' },
+  { value: 'xxh3', label: 'XXH3' },
+  { value: 'xxh128', label: 'XXH128' },
+  { value: 'crc32', label: 'CRC32' },
+  { value: 'crc32b', label: 'CRC32B' },
+  { value: 'adler32', label: 'ADLER32' },
+] as const;
+type HashAlgorithm = (typeof algorithmOptions)[number]['value'];
+
+const algorithm = ref<HashAlgorithm>('sha256');
 const hmacKey = ref('');
+const algorithmMenuOpen = ref(false);
+const algorithmMenuRef = ref<HTMLElement | null>(null);
 
 const stateHint = computed(() => {
   if (hmacKey.value.trim() !== '') {
@@ -26,6 +58,21 @@ const run = async (): Promise<void> => {
   if (hmacKey.value.trim() !== '') params.set('hmac_key', hmacKey.value);
   await runRequest(params);
 };
+
+const onOutsideClick = (event: MouseEvent): void => {
+  if (!algorithmMenuRef.value) return;
+  if (event.target instanceof Node && !algorithmMenuRef.value.contains(event.target)) {
+    algorithmMenuOpen.value = false;
+  }
+};
+
+const selectAlgorithm = (value: (typeof algorithmOptions)[number]['value']): void => {
+  algorithm.value = value;
+  algorithmMenuOpen.value = false;
+};
+
+onMounted(() => document.addEventListener('click', onOutsideClick));
+onBeforeUnmount(() => document.removeEventListener('click', onOutsideClick));
 </script>
 
 <template>
@@ -37,17 +84,24 @@ const run = async (): Promise<void> => {
       <div class="mt-3 grid gap-3 md:grid-cols-2">
         <label>
           <span class="mb-1 block text-xs font-medium text-muted-foreground">{{ t('shifr.hash.algorithm') }}</span>
-          <select v-model="algorithm" class="h-10 w-full rounded-md border border-input bg-background px-3 text-sm">
-            <option value="md5">MD5</option>
-            <option value="sha1">SHA1</option>
-            <option value="sha224">SHA224</option>
-            <option value="sha256">SHA256</option>
-            <option value="sha384">SHA384</option>
-            <option value="sha512">SHA512</option>
-            <option value="sha3-256">SHA3-256</option>
-            <option value="sha3-512">SHA3-512</option>
-            <option value="blake2b512">BLAKE2b-512</option>
-          </select>
+          <div ref="algorithmMenuRef" class="relative z-30 overflow-visible">
+            <button type="button" class="flex h-10 w-full items-center justify-between rounded-md border border-input bg-background px-3 text-sm" @click="algorithmMenuOpen = !algorithmMenuOpen">
+              <span>{{ algorithm.toUpperCase() }}</span>
+              <span class="text-xs text-muted-foreground">&#9662;</span>
+            </button>
+            <div v-if="algorithmMenuOpen" class="shifr-hash-algorithm-select absolute z-[120] mt-1 max-h-52 w-full overflow-y-auto rounded-md border border-input bg-background p-1 shadow-2xl">
+              <button
+                v-for="item in algorithmOptions"
+                :key="item.value"
+                type="button"
+                class="block w-full rounded px-2 py-1.5 text-left text-sm hover:bg-muted"
+                :class="{ 'bg-muted': algorithm === item.value }"
+                @click="selectAlgorithm(item.value)"
+              >
+                {{ item.label }}
+              </button>
+            </div>
+          </div>
         </label>
         <label>
           <span class="mb-1 block text-xs font-medium text-muted-foreground">{{ t('shifr.hash.hmacKey') }}</span>
@@ -68,3 +122,31 @@ const run = async (): Promise<void> => {
     <ShifrResultCard :title="t('shifr.result.title')" :help-text="t('shifr.help.result')" :result="result" :empty-text="t('shifr.result.empty')" />
   </div>
 </template>
+
+<style scoped>
+.shifr-hash-algorithm-select {
+  scrollbar-width: thin;
+  scrollbar-color: hsl(var(--muted-foreground) / 0.35) hsl(var(--muted) / 0.2);
+}
+
+.shifr-hash-algorithm-select::-webkit-scrollbar {
+  width: 10px;
+}
+
+.shifr-hash-algorithm-select::-webkit-scrollbar-track {
+  background: hsl(var(--muted) / 0.25);
+  border-radius: 9999px;
+}
+
+.shifr-hash-algorithm-select::-webkit-scrollbar-thumb {
+  background: hsl(var(--muted-foreground) / 0.4);
+  border-radius: 9999px;
+  border: 2px solid hsl(var(--background));
+}
+
+.shifr-hash-algorithm-select::-webkit-scrollbar-thumb:hover {
+  background: hsl(var(--muted-foreground) / 0.55);
+}
+</style>
+
+
