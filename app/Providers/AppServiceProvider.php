@@ -10,6 +10,8 @@ use App\Modules\Telegram\Parser\TelegramParserApplicationService;
 use App\Modules\Telegram\Search\Contracts\TelegramSearchApplicationServiceInterface;
 use App\Modules\Telegram\Search\TelegramSearchApplicationService;
 use App\Modules\Telegram\TelegramService;
+use App\Modules\Shifr\Contracts\ShifrServiceInterface;
+use App\Modules\Shifr\ShifrService;
 use App\Modules\Fio\Domain\Contracts\FioPublicSearchProviderInterface;
 use App\Modules\Fio\Infrastructure\Providers\FioMultiSourceSearchProvider;
 use App\Modules\Username\Domain\Contracts\UsernameSourceCheckerInterface;
@@ -31,6 +33,7 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(TelegramSearchApplicationServiceInterface::class, TelegramSearchApplicationService::class);
         $this->app->bind(TelegramParserApplicationServiceInterface::class, TelegramParserApplicationService::class);
         $this->app->bind(TelegramAnalyticsApplicationServiceInterface::class, TelegramAnalyticsApplicationService::class);
+        $this->app->bind(ShifrServiceInterface::class, ShifrService::class);
         $this->app->bind(UsernameSourceCheckerInterface::class, UsernameSourceHttpChecker::class);
         $this->app->bind(FioPublicSearchProviderInterface::class, FioMultiSourceSearchProvider::class);
     }

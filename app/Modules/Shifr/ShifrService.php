@@ -6,12 +6,13 @@ use App\Modules\Shifr\Actions\AtbashDecryptAction;
 use App\Modules\Shifr\Actions\AtbashEncryptAction;
 use App\Modules\Shifr\Actions\CaesarDecryptAction;
 use App\Modules\Shifr\Actions\CaesarEncryptAction;
+use App\Modules\Shifr\Contracts\ShifrServiceInterface;
 use App\Modules\Shifr\DTO\AtbashRequestDTO;
 use App\Modules\Shifr\DTO\AtbashResultDTO;
 use App\Modules\Shifr\DTO\CaesarCipherRequestDTO;
 use App\Modules\Shifr\DTO\CaesarCipherResultDTO;
 
-class ShifrService
+class ShifrService implements ShifrServiceInterface
 {
     public function __construct(
         private readonly CaesarEncryptAction $encryptCaesar,
@@ -24,17 +25,17 @@ class ShifrService
     {
         $dto = new CaesarCipherRequestDTO([
             'message' => $message,
-            'shift'   => $shift,
+            'shift' => $shift,
         ]);
 
         return $this->encryptCaesar->execute($dto);
     }
 
-    public function decryptCaesar(string $message, int $shift): CaesarCipherResultDto
+    public function decryptCaesar(string $message, int $shift): CaesarCipherResultDTO
     {
-        $dto = new CaesarCipherRequestDto([
+        $dto = new CaesarCipherRequestDTO([
             'message' => $message,
-            'shift'   => $shift,
+            'shift' => $shift,
         ]);
 
         return $this->decryptCaesar->execute($dto);
@@ -51,11 +52,10 @@ class ShifrService
 
     public function decryptAtbash(string $message): AtbashResultDTO
     {
-        $dto = new AtbashRequestDto([
+        $dto = new AtbashRequestDTO([
             'message' => $message,
         ]);
 
         return $this->decryptAtbash->execute($dto);
     }
-
 }
