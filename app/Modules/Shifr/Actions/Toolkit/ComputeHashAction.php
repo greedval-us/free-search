@@ -9,8 +9,13 @@ final class ComputeHashAction
     private const SUPPORTED = [
         'md5',
         'sha1',
+        'sha224',
         'sha256',
+        'sha384',
         'sha512',
+        'sha3-256',
+        'sha3-512',
+        'blake2b512',
     ];
 
     /**

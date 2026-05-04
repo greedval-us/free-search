@@ -1353,7 +1353,11 @@
       "hexEncode": "Hex Encode",
       "hexDecode": "Hex Decode",
       "urlEncode": "URL Encode",
-      "urlDecode": "URL Decode"
+      "urlDecode": "URL Decode",
+      "base64UrlEncode": "Base64URL Encode",
+      "base64UrlDecode": "Base64URL Decode",
+      "htmlEncode": "HTML Encode",
+      "htmlDecode": "HTML Decode"
     },
     "actions": {
       "run": "Run",
@@ -1402,7 +1406,35 @@
       "decrypt": "Decrypt",
       "shift": "Shift (for Caesar)",
       "caesar": "Caesar",
-      "atbash": "Atbash"
+      "atbash": "Atbash",
+      "rot13": "ROT13",
+      "rot47": "ROT47",
+      "transform": "Transform"
+    },
+    "hints": {
+      "hash": {
+        "hashMode": "Hash mode: use when you need a digest/fingerprint of text for comparison.",
+        "hmacMode": "HMAC mode: use when you need a keyed signature check (integrity with secret key)."
+      },
+      "transform": {
+        "default": "Select an operation to convert between common formats.",
+        "base64Encode": "Useful for packing binary/text into portable ASCII.",
+        "base64Decode": "Use when artifact looks like Base64 text and you need the original content.",
+        "base64UrlEncode": "JWT-safe Base64 variant for URLs and tokens.",
+        "base64UrlDecode": "Decode JWT-safe Base64URL payloads.",
+        "hexEncode": "Convert text/binary to hexadecimal representation.",
+        "hexDecode": "Decode hexadecimal strings back to text/binary.",
+        "urlEncode": "Escape text for safe URL query/path usage.",
+        "urlDecode": "Decode percent-encoded URL fragments.",
+        "htmlEncode": "Escape HTML-sensitive characters to prevent markup interpretation.",
+        "htmlDecode": "Decode HTML entities back to readable characters."
+      },
+      "classic": {
+        "caesar": "Classical shift cipher. Best for simple obfuscation/CTF-style artifacts.",
+        "atbash": "Mirror substitution cipher. Same operation for encode/decode.",
+        "rot13": "Fixed shift for latin/cyrillic letters. Often used for light obfuscation.",
+        "rot47": "ASCII printable rotation. Useful for mixed punctuation payloads."
+      }
     }
   }
 }

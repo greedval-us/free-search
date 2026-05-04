@@ -16,7 +16,7 @@ final class ShifrHashRequest extends LocalizedFormRequest
     {
         return [
             'text' => ['required', 'string', 'max:20000'],
-            'algorithm' => ['nullable', 'string', 'in:md5,sha1,sha256,sha512'],
+            'algorithm' => ['nullable', 'string', 'in:md5,sha1,sha224,sha256,sha384,sha512,sha3-256,sha3-512,blake2b512'],
             'hmac_key' => ['nullable', 'string', 'max:1000'],
             'locale' => $this->localeRule(),
         ];

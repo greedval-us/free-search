@@ -16,7 +16,7 @@ final class ShifrTransformRequest extends LocalizedFormRequest
     {
         return [
             'text' => ['required', 'string', 'max:20000'],
-            'operation' => ['required', 'string', 'in:base64_encode,base64_decode,hex_encode,hex_decode,url_encode,url_decode'],
+            'operation' => ['required', 'string', 'in:base64_encode,base64_decode,base64url_encode,base64url_decode,hex_encode,hex_decode,url_encode,url_decode,html_encode,html_decode'],
             'locale' => $this->localeRule(),
         ];
     }

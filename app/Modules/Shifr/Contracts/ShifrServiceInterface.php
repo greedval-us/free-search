@@ -14,5 +14,8 @@ interface ShifrServiceInterface
     public function encryptAtbash(string $message): AtbashResultDTO;
 
     public function decryptAtbash(string $message): AtbashResultDTO;
-}
 
+    public function transformRot13(string $message): AtbashResultDTO;
+
+    public function transformRot47(string $message): AtbashResultDTO;
+}

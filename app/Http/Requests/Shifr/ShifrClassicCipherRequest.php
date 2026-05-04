@@ -15,8 +15,8 @@ final class ShifrClassicCipherRequest extends LocalizedFormRequest
     {
         return [
             'text' => ['required', 'string', 'max:20000'],
-            'cipher' => ['required', 'string', 'in:caesar,atbash'],
-            'direction' => ['required', 'string', 'in:encrypt,decrypt'],
+            'cipher' => ['required', 'string', 'in:caesar,atbash,rot13,rot47'],
+            'direction' => ['required', 'string', 'in:encrypt,decrypt,transform'],
             'shift' => ['nullable', 'integer', 'min:-1000', 'max:1000'],
             'locale' => $this->localeRule(),
         ];

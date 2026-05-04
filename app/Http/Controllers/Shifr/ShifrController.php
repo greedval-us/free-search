@@ -50,12 +50,19 @@ final class ShifrController extends Controller
     {
         $this->applyRequestLocale($request->locale());
 
-        $result = match ([$request->cipher(), $request->direction()]) {
-            ['caesar', 'encrypt'] => $this->shifrService->encryptCaesar($request->text(), $request->shift())->toArray(),
-            ['caesar', 'decrypt'] => $this->shifrService->decryptCaesar($request->text(), $request->shift())->toArray(),
-            ['atbash', 'encrypt'] => $this->shifrService->encryptAtbash($request->text())->toArray(),
-            ['atbash', 'decrypt'] => $this->shifrService->decryptAtbash($request->text())->toArray(),
+        $result = match (true) {
+            $request->cipher() === 'caesar' && $request->direction() === 'encrypt' => $this->shifrService->encryptCaesar($request->text(), $request->shift())->toArray(),
+            $request->cipher() === 'caesar' && $request->direction() === 'decrypt' => $this->shifrService->decryptCaesar($request->text(), $request->shift())->toArray(),
+            $request->cipher() === 'atbash' && $request->direction() === 'encrypt' => $this->shifrService->encryptAtbash($request->text())->toArray(),
+            $request->cipher() === 'atbash' && $request->direction() === 'decrypt' => $this->shifrService->decryptAtbash($request->text())->toArray(),
+            $request->cipher() === 'rot13' && $request->direction() === 'transform' => $this->shifrService->transformRot13($request->text())->toArray(),
+            $request->cipher() === 'rot47' && $request->direction() === 'transform' => $this->shifrService->transformRot47($request->text())->toArray(),
+            default => null,
         };
+
+        if ($result === null) {
+            return $this->jsonError(__('Unsupported cipher/direction pair.'), 422);
+        }
 
         return $this->jsonOk([
             'data' => $result,

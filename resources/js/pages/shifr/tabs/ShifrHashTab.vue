@@ -8,8 +8,16 @@ import { useShifrRequest } from '../composables/useShifrRequest';
 
 const { locale, t } = useI18n();
 const input = ref('');
-const algorithm = ref<'md5' | 'sha1' | 'sha256' | 'sha512'>('sha256');
+const algorithm = ref<'md5' | 'sha1' | 'sha224' | 'sha256' | 'sha384' | 'sha512' | 'sha3-256' | 'sha3-512' | 'blake2b512'>('sha256');
 const hmacKey = ref('');
+
+const stateHint = computed(() => {
+  if (hmacKey.value.trim() !== '') {
+    return t('shifr.hints.hash.hmacMode');
+  }
+
+  return t('shifr.hints.hash.hashMode');
+});
 
 const { loading, error, result, canRun, run: runRequest } = useShifrRequest('/shifr/hash', () => t('shifr.errors.requestFailed'), computed(() => input.value.trim().length > 0));
 
@@ -30,7 +38,15 @@ const run = async (): Promise<void> => {
         <label>
           <span class="mb-1 block text-xs font-medium text-muted-foreground">{{ t('shifr.hash.algorithm') }}</span>
           <select v-model="algorithm" class="h-10 w-full rounded-md border border-input bg-background px-3 text-sm">
-            <option value="md5">MD5</option><option value="sha1">SHA1</option><option value="sha256">SHA256</option><option value="sha512">SHA512</option>
+            <option value="md5">MD5</option>
+            <option value="sha1">SHA1</option>
+            <option value="sha224">SHA224</option>
+            <option value="sha256">SHA256</option>
+            <option value="sha384">SHA384</option>
+            <option value="sha512">SHA512</option>
+            <option value="sha3-256">SHA3-256</option>
+            <option value="sha3-512">SHA3-512</option>
+            <option value="blake2b512">BLAKE2b-512</option>
           </select>
         </label>
         <label>
@@ -38,6 +54,8 @@ const run = async (): Promise<void> => {
           <input v-model="hmacKey" type="text" class="h-10 w-full rounded-md border border-input bg-background px-3 text-sm" />
         </label>
       </div>
+
+      <p class="mt-2 text-xs text-muted-foreground">{{ stateHint }}</p>
 
       <div class="mt-3 flex items-center gap-3">
         <button :disabled="!canRun" class="inline-flex h-10 items-center gap-2 rounded-md bg-primary px-5 text-sm font-semibold text-primary-foreground disabled:opacity-60" @click="run">
