@@ -1434,6 +1434,9 @@
         "atbash": "Mirror substitution cipher. Same operation for encode/decode.",
         "rot13": "Fixed shift for latin/cyrillic letters. Often used for light obfuscation.",
         "rot47": "ASCII printable rotation. Useful for mixed punctuation payloads."
+      },
+      "ioc": {
+        "extract": "Extracts emails, domains, URLs, IPs and Telegram usernames using pattern matching. Review results manually for false positives."
       }
     }
   }
