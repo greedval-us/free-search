@@ -1,21 +1,13 @@
 <?php
 
-namespace App\Modules\Shifr;
+namespace App\Modules\Shifr\Actions;
 
-use App\Modules\Shifr\Actions\AtbashDecryptAction;
-use App\Modules\Shifr\Actions\AtbashEncryptAction;
-use App\Modules\Shifr\Actions\CaesarDecryptAction;
-use App\Modules\Shifr\Actions\CaesarEncryptAction;
-use App\Modules\Shifr\Actions\Rot13TransformAction;
-use App\Modules\Shifr\Actions\Rot47TransformAction;
-use App\Modules\Shifr\Contracts\ShifrServiceInterface;
 use App\Modules\Shifr\DTO\AtbashRequestDTO;
 use App\Modules\Shifr\DTO\AtbashResultDTO;
 use App\Modules\Shifr\DTO\CaesarCipherRequestDTO;
-use App\Modules\Shifr\DTO\CaesarCipherResultDTO;
 use App\Modules\Shifr\DTO\ClassicCipherLookupDTO;
 
-class ShifrService implements ShifrServiceInterface
+final class ProcessClassicCipherAction
 {
     public function __construct(
         private readonly CaesarEncryptAction $encryptCaesar,
@@ -24,9 +16,13 @@ class ShifrService implements ShifrServiceInterface
         private readonly AtbashDecryptAction $decryptAtbash,
         private readonly Rot13TransformAction $rot13Transform,
         private readonly Rot47TransformAction $rot47Transform,
-    ) {}
+    ) {
+    }
 
-    public function processClassic(ClassicCipherLookupDTO $dto): ?array
+    /**
+     * @return array<string, mixed>|null
+     */
+    public function execute(ClassicCipherLookupDTO $dto): ?array
     {
         return match ($dto->cipher) {
             'caesar' => $this->resolveCaesar($dto),
@@ -43,243 +39,29 @@ class ShifrService implements ShifrServiceInterface
         };
     }
 
-    public function encryptCaesar(string $message, int $shift): CaesarCipherResultDTO
-    {
-        $dto = new CaesarCipherRequestDTO([
-            'message' => $message,
-            'shift' => $shift,
-        ]);
-
-        return $this->encryptCaesar->execute($dto);
-    }
-
-    public function decryptCaesar(string $message, int $shift): CaesarCipherResultDTO
-    {
-        $dto = new CaesarCipherRequestDTO([
-            'message' => $message,
-            'shift' => $shift,
-        ]);
-
-        return $this->decryptCaesar->execute($dto);
-    }
-
-    public function encryptAtbash(string $message): AtbashResultDTO
-    {
-        $dto = new AtbashRequestDTO([
-            'message' => $message,
-        ]);
-
-        return $this->encryptAtbash->execute($dto);
-    }
-
-    public function decryptAtbash(string $message): AtbashResultDTO
-    {
-        $dto = new AtbashRequestDTO([
-            'message' => $message,
-        ]);
-
-        return $this->decryptAtbash->execute($dto);
-    }
-
-    public function transformRot13(string $message): AtbashResultDTO
-    {
-        $dto = new AtbashRequestDTO([
-            'message' => $message,
-        ]);
-
-        return $this->rot13Transform->execute($dto);
-    }
-
-    public function transformRot47(string $message): AtbashResultDTO
-    {
-        $dto = new AtbashRequestDTO([
-            'message' => $message,
-        ]);
-
-        return $this->rot47Transform->execute($dto);
-    }
-
-    public function transformRot5(string $message): AtbashResultDTO
-    {
-        $result = preg_replace_callback('/\d/', static function (array $matches): string {
-            $digit = (int) $matches[0];
-
-            return (string) (($digit + 5) % 10);
-        }, $message);
-
-        return new AtbashResultDTO(
-            original: $message,
-            result: $result ?? $message,
-        );
-    }
-
-    public function encryptVigenere(string $message, string $key): AtbashResultDTO
-    {
-        return new AtbashResultDTO(
-            original: $message,
-            result: $this->vigenere($message, $key, false),
-        );
-    }
-
-    public function decryptVigenere(string $message, string $key): AtbashResultDTO
-    {
-        return new AtbashResultDTO(
-            original: $message,
-            result: $this->vigenere($message, $key, true),
-        );
-    }
-
-    public function encryptRailFence(string $message, int $rails): AtbashResultDTO
-    {
-        return new AtbashResultDTO(
-            original: $message,
-            result: $this->railFenceEncrypt($message, $rails),
-        );
-    }
-
-    public function decryptRailFence(string $message, int $rails): AtbashResultDTO
-    {
-        return new AtbashResultDTO(
-            original: $message,
-            result: $this->railFenceDecrypt($message, $rails),
-        );
-    }
-
-    public function encryptXor(string $message, string $key): AtbashResultDTO
-    {
-        if ($key === '' || $message === '') {
-            return new AtbashResultDTO(
-                original: $message,
-                result: $message,
-            );
-        }
-
-        $result = $this->xorBytes($message, $key);
-
-        return new AtbashResultDTO(
-            original: $message,
-            result: base64_encode($result),
-        );
-    }
-
-    public function decryptXor(string $message, string $key): AtbashResultDTO
-    {
-        if ($key === '' || $message === '') {
-            return new AtbashResultDTO(
-                original: $message,
-                result: $message,
-            );
-        }
-
-        $decoded = base64_decode($message, true);
-        if ($decoded === false) {
-            return new AtbashResultDTO(
-                original: $message,
-                result: $message,
-            );
-        }
-
-        return new AtbashResultDTO(
-            original: $message,
-            result: $this->xorBytes($decoded, $key),
-        );
-    }
-
-    private function xorBytes(string $input, string $key): string
-    {
-        $keyBytes = array_values(unpack('C*', $key) ?: []);
-        $inputBytes = array_values(unpack('C*', $input) ?: []);
-        $keyLength = count($keyBytes);
-
-        if ($keyLength === 0) {
-            return $input;
-        }
-
-        foreach ($inputBytes as $index => $byte) {
-            $inputBytes[$index] = $byte ^ $keyBytes[$index % $keyLength];
-        }
-
-        return pack('C*', ...$inputBytes) ?: '';
-    }
-
-    public function encryptAffine(string $message, int $a, int $b): AtbashResultDTO
-    {
-        return new AtbashResultDTO(
-            original: $message,
-            result: $this->affine($message, $a, $b, false),
-        );
-    }
-
-    public function decryptAffine(string $message, int $a, int $b): AtbashResultDTO
-    {
-        return new AtbashResultDTO(
-            original: $message,
-            result: $this->affine($message, $a, $b, true),
-        );
-    }
-
-    public function encryptPlayfair(string $message, string $key): AtbashResultDTO
-    {
-        return new AtbashResultDTO(
-            original: $message,
-            result: $this->playfair($message, $key, false),
-        );
-    }
-
-    public function decryptPlayfair(string $message, string $key): AtbashResultDTO
-    {
-        return new AtbashResultDTO(
-            original: $message,
-            result: $this->playfair($message, $key, true),
-        );
-    }
-
-    public function encryptColumnar(string $message, string $key): AtbashResultDTO
-    {
-        return new AtbashResultDTO(
-            original: $message,
-            result: $this->columnarEncrypt($message, $key),
-        );
-    }
-
-    public function decryptColumnar(string $message, string $key): AtbashResultDTO
-    {
-        return new AtbashResultDTO(
-            original: $message,
-            result: $this->columnarDecrypt($message, $key),
-        );
-    }
-
-    public function encryptMorse(string $message, string $separator): AtbashResultDTO
-    {
-        return new AtbashResultDTO(
-            original: $message,
-            result: $this->morseEncode($message, $separator),
-        );
-    }
-
-    public function decryptMorse(string $message, string $separator): AtbashResultDTO
-    {
-        return new AtbashResultDTO(
-            original: $message,
-            result: $this->morseDecode($message, $separator),
-        );
-    }
-
     private function resolveCaesar(ClassicCipherLookupDTO $dto): ?array
     {
+        $request = new CaesarCipherRequestDTO([
+            'message' => $dto->text,
+            'shift' => $dto->shift,
+        ]);
+
         return match ($dto->direction) {
-            'encrypt' => $this->encryptCaesar($dto->text, $dto->shift)->toArray(),
-            'decrypt' => $this->decryptCaesar($dto->text, $dto->shift)->toArray(),
+            'encrypt' => $this->encryptCaesar->execute($request)->toArray(),
+            'decrypt' => $this->decryptCaesar->execute($request)->toArray(),
             default => null,
         };
     }
 
     private function resolveAtbash(ClassicCipherLookupDTO $dto): ?array
     {
+        $request = new AtbashRequestDTO([
+            'message' => $dto->text,
+        ]);
+
         return match ($dto->direction) {
-            'encrypt' => $this->encryptAtbash($dto->text)->toArray(),
-            'decrypt' => $this->decryptAtbash($dto->text)->toArray(),
+            'encrypt' => $this->encryptAtbash->execute($request)->toArray(),
+            'decrypt' => $this->decryptAtbash->execute($request)->toArray(),
             default => null,
         };
     }
@@ -290,9 +72,13 @@ class ShifrService implements ShifrServiceInterface
             return null;
         }
 
+        $request = new AtbashRequestDTO([
+            'message' => $dto->text,
+        ]);
+
         return match ($dto->cipher) {
-            'rot13' => $this->transformRot13($dto->text)->toArray(),
-            'rot47' => $this->transformRot47($dto->text)->toArray(),
+            'rot13' => $this->rot13Transform->execute($request)->toArray(),
+            'rot47' => $this->rot47Transform->execute($request)->toArray(),
             'rot5' => $this->transformRot5($dto->text)->toArray(),
             default => null,
         };
@@ -375,6 +161,120 @@ class ShifrService implements ShifrServiceInterface
             'decrypt' => $this->decryptMorse($dto->text, $dto->morseSeparator)->toArray(),
             default => null,
         };
+    }
+
+    private function transformRot5(string $message): AtbashResultDTO
+    {
+        $result = preg_replace_callback('/\d/', static function (array $matches): string {
+            $digit = (int) $matches[0];
+
+            return (string) (($digit + 5) % 10);
+        }, $message);
+
+        return new AtbashResultDTO(
+            original: $message,
+            result: $result ?? $message,
+        );
+    }
+
+    private function encryptVigenere(string $message, string $key): AtbashResultDTO
+    {
+        return new AtbashResultDTO(original: $message, result: $this->vigenere($message, $key, false));
+    }
+
+    private function decryptVigenere(string $message, string $key): AtbashResultDTO
+    {
+        return new AtbashResultDTO(original: $message, result: $this->vigenere($message, $key, true));
+    }
+
+    private function encryptRailFence(string $message, int $rails): AtbashResultDTO
+    {
+        return new AtbashResultDTO(original: $message, result: $this->railFenceEncrypt($message, $rails));
+    }
+
+    private function decryptRailFence(string $message, int $rails): AtbashResultDTO
+    {
+        return new AtbashResultDTO(original: $message, result: $this->railFenceDecrypt($message, $rails));
+    }
+
+    private function encryptXor(string $message, string $key): AtbashResultDTO
+    {
+        if ($key === '' || $message === '') {
+            return new AtbashResultDTO(original: $message, result: $message);
+        }
+
+        return new AtbashResultDTO(original: $message, result: base64_encode($this->xorBytes($message, $key)));
+    }
+
+    private function decryptXor(string $message, string $key): AtbashResultDTO
+    {
+        if ($key === '' || $message === '') {
+            return new AtbashResultDTO(original: $message, result: $message);
+        }
+
+        $decoded = base64_decode($message, true);
+        if ($decoded === false) {
+            return new AtbashResultDTO(original: $message, result: $message);
+        }
+
+        return new AtbashResultDTO(original: $message, result: $this->xorBytes($decoded, $key));
+    }
+
+    private function xorBytes(string $input, string $key): string
+    {
+        $keyBytes = array_values(unpack('C*', $key) ?: []);
+        $inputBytes = array_values(unpack('C*', $input) ?: []);
+        $keyLength = count($keyBytes);
+
+        if ($keyLength === 0) {
+            return $input;
+        }
+
+        foreach ($inputBytes as $index => $byte) {
+            $inputBytes[$index] = $byte ^ $keyBytes[$index % $keyLength];
+        }
+
+        return pack('C*', ...$inputBytes) ?: '';
+    }
+
+    private function encryptAffine(string $message, int $a, int $b): AtbashResultDTO
+    {
+        return new AtbashResultDTO(original: $message, result: $this->affine($message, $a, $b, false));
+    }
+
+    private function decryptAffine(string $message, int $a, int $b): AtbashResultDTO
+    {
+        return new AtbashResultDTO(original: $message, result: $this->affine($message, $a, $b, true));
+    }
+
+    private function encryptPlayfair(string $message, string $key): AtbashResultDTO
+    {
+        return new AtbashResultDTO(original: $message, result: $this->playfair($message, $key, false));
+    }
+
+    private function decryptPlayfair(string $message, string $key): AtbashResultDTO
+    {
+        return new AtbashResultDTO(original: $message, result: $this->playfair($message, $key, true));
+    }
+
+    private function encryptColumnar(string $message, string $key): AtbashResultDTO
+    {
+        return new AtbashResultDTO(original: $message, result: $this->columnarEncrypt($message, $key));
+    }
+
+    private function decryptColumnar(string $message, string $key): AtbashResultDTO
+    {
+        return new AtbashResultDTO(original: $message, result: $this->columnarDecrypt($message, $key));
+    }
+
+    private function encryptMorse(string $message, string $separator): AtbashResultDTO
+    {
+        return new AtbashResultDTO(original: $message, result: $this->morseEncode($message, $separator));
+    }
+
+    private function decryptMorse(string $message, string $separator): AtbashResultDTO
+    {
+        return new AtbashResultDTO(original: $message, result: $this->morseDecode($message, $separator));
     }
 
     private function vigenere(string $text, string $key, bool $decrypt): string
@@ -639,16 +539,14 @@ class ShifrService implements ShifrServiceInterface
         $pairs = [];
 
         if ($decrypt) {
-            for ($i = 0; $i < count($chars); $i += 2) {
-                $a = $chars[$i];
-                $b = $chars[$i + 1] ?? 'X';
-                $pairs[] = [$a, $b];
+            for ($i = 0, $len = count($chars); $i < $len; $i += 2) {
+                $pairs[] = [$chars[$i], $chars[$i + 1] ?? 'X'];
             }
 
             return $pairs;
         }
 
-        for ($i = 0; $i < count($chars);) {
+        for ($i = 0, $len = count($chars); $i < $len;) {
             $a = $chars[$i];
             $b = $chars[$i + 1] ?? 'X';
 
@@ -660,11 +558,6 @@ class ShifrService implements ShifrServiceInterface
 
             $pairs[] = [$a, $b];
             $i += 2;
-        }
-
-        if (count($pairs) > 0 && strlen(implode('', end($pairs))) < 2) {
-            $last = array_pop($pairs);
-            $pairs[] = [$last[0], 'X'];
         }
 
         return $pairs;
@@ -693,7 +586,6 @@ class ShifrService implements ShifrServiceInterface
 
         $order = $this->columnOrder($normalizedKey);
         $result = '';
-
         foreach ($order as $c) {
             for ($r = 0; $r < $rows; $r++) {
                 if ($grid[$r][$c] !== null) {
@@ -754,16 +646,12 @@ class ShifrService implements ShifrServiceInterface
     private function columnOrder(string $key): array
     {
         $pairs = [];
-        for ($i = 0; $i < strlen($key); $i++) {
+        for ($i = 0, $len = strlen($key); $i < $len; $i++) {
             $pairs[] = ['char' => $key[$i], 'idx' => $i];
         }
 
         usort($pairs, static function (array $a, array $b): int {
-            if ($a['char'] === $b['char']) {
-                return $a['idx'] <=> $b['idx'];
-            }
-
-            return $a['char'] <=> $b['char'];
+            return $a['char'] === $b['char'] ? $a['idx'] <=> $b['idx'] : $a['char'] <=> $b['char'];
         });
 
         return array_map(static fn (array $pair): int => $pair['idx'], $pairs);

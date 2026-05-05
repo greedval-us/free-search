@@ -8,15 +8,15 @@ use App\Http\Requests\Shifr\ShifrHashRequest;
 use App\Http\Requests\Shifr\ShifrIocExtractRequest;
 use App\Http\Requests\Shifr\ShifrJwtInspectRequest;
 use App\Http\Requests\Shifr\ShifrTransformRequest;
+use App\Modules\Shifr\Application\Contracts\ShifrClassicCipherServiceInterface;
 use App\Modules\Shifr\Application\Contracts\ShifrToolkitServiceInterface;
-use App\Modules\Shifr\Contracts\ShifrServiceInterface;
 use Illuminate\Http\JsonResponse;
 
 final class ShifrController extends Controller
 {
     public function __construct(
         private readonly ShifrToolkitServiceInterface $toolkitService,
-        private readonly ShifrServiceInterface $shifrService,
+        private readonly ShifrClassicCipherServiceInterface $classicCipherService,
     ) {
     }
 
@@ -60,7 +60,7 @@ final class ShifrController extends Controller
     {
         $this->applyRequestLocale($request->locale());
 
-        $result = $this->shifrService->processClassic($request->toDto());
+        $result = $this->classicCipherService->process($request->toDto());
 
         if ($result === null) {
             return $this->jsonError(__('Unsupported cipher/direction pair or missing required settings.'), 422);
