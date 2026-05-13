@@ -14,6 +14,7 @@ const isPrimitive = (value: unknown): boolean =>
 const keyLabel = (key: string): string => {
   const translationKey = `shifr.result.fields.${key}`;
   const translated = t(translationKey);
+
   if (translated !== translationKey) {
     return translated;
   }

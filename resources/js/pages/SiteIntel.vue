@@ -29,11 +29,13 @@ const activeTabDefinition = computed(
 
 onMounted(() => {
     const params = getRepeatQueryParams();
+
     if (!params) {
         return;
     }
 
     const tab = readRepeatQueryParam(params, ['tab']);
+
     if (tab === 'siteHealth' || tab === 'domainLite' || tab === 'analytics' || tab === 'seoAudit') {
         activeTab.value = tab;
     }

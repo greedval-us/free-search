@@ -67,11 +67,13 @@ const mediaLabel = (type: string) => {
 
 onMounted(() => {
     const params = getRepeatQueryParams();
+
     if (!params) {
         return;
     }
 
     const tab = readRepeatQueryParam(params, ['tab']);
+
     if (tab !== '' && tab !== 'search') {
         return;
     }

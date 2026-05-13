@@ -2,7 +2,8 @@
 import { Head } from '@inertiajs/vue3';
 import { computed, ref } from 'vue';
 import { useI18n } from '@/composables/useI18n';
-import { SHIFR_TABS, type ShifrTabValue } from './shifr/tabs';
+import { SHIFR_TABS  } from './shifr/tabs';
+import type {ShifrTabValue} from './shifr/tabs';
 
 defineOptions({
     layout: {

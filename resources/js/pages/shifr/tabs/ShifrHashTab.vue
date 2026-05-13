@@ -1,6 +1,6 @@
 ﻿<script setup lang="ts">
-import { computed, onBeforeUnmount, onMounted, ref } from 'vue';
 import { LoaderCircle } from 'lucide-vue-next';
+import { computed, onBeforeUnmount, onMounted, ref } from 'vue';
 import { useI18n } from '@/composables/useI18n';
 import ShifrFormCard from '../components/ShifrFormCard.vue';
 import ShifrResultCard from '../components/ShifrResultCard.vue';
@@ -55,12 +55,19 @@ const { loading, error, result, canRun, run: runRequest } = useShifrRequest('/sh
 
 const run = async (): Promise<void> => {
   const params = new URLSearchParams({ text: input.value, algorithm: algorithm.value, locale: locale.value });
-  if (hmacKey.value.trim() !== '') params.set('hmac_key', hmacKey.value);
+
+  if (hmacKey.value.trim() !== '') {
+params.set('hmac_key', hmacKey.value);
+}
+
   await runRequest(params);
 };
 
 const onOutsideClick = (event: MouseEvent): void => {
-  if (!algorithmMenuRef.value) return;
+  if (!algorithmMenuRef.value) {
+return;
+}
+
   if (event.target instanceof Node && !algorithmMenuRef.value.contains(event.target)) {
     algorithmMenuOpen.value = false;
   }

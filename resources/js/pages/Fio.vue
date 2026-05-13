@@ -46,6 +46,7 @@ const ageBucketLabel = (key: string): string => {
 
 onMounted(() => {
     const params = getRepeatQueryParams();
+
     if (!params) {
         return;
     }

@@ -7,8 +7,8 @@ import {
     SidebarMenuButton,
     SidebarMenuItem,
 } from '@/components/ui/sidebar';
-import { useI18n } from '@/composables/useI18n';
 import { useCurrentUrl } from '@/composables/useCurrentUrl';
+import { useI18n } from '@/composables/useI18n';
 import type { NavItem } from '@/types';
 
 defineProps<{

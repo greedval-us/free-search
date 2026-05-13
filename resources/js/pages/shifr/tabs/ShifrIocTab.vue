@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { computed, ref } from 'vue';
 import { LoaderCircle } from 'lucide-vue-next';
+import { computed, ref } from 'vue';
 import { useI18n } from '@/composables/useI18n';
 import ShifrFormCard from '../components/ShifrFormCard.vue';
 import ShifrResultCard from '../components/ShifrResultCard.vue';

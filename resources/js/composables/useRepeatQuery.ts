@@ -17,6 +17,7 @@ export const getRepeatQueryParams = (): URLSearchParams | null => {
 export const readRepeatQueryParam = (params: URLSearchParams, keys: string[]): string => {
     for (const key of keys) {
         const value = decodeParam(params.get(key));
+
         if (value !== '') {
             return value;
         }
@@ -27,6 +28,7 @@ export const readRepeatQueryParam = (params: URLSearchParams, keys: string[]): s
 
 export const readRepeatQueryInt = (params: URLSearchParams, key: string): number | null => {
     const value = decodeParam(params.get(key));
+
     if (!/^\d+$/.test(value)) {
         return null;
     }

@@ -10,6 +10,7 @@ const { form, loading, error, result, canLookup, lookup } = useDomainLite(t);
 
 const riskBadgeClass = computed(() => {
     const level = result.value?.risk.level;
+
     if (level === 'low') {
         return 'border-emerald-500/40 bg-emerald-500/10 text-emerald-300';
     }
@@ -38,16 +39,19 @@ const signalLabel = (signal: string) => {
 
 onMounted(() => {
     const params = getRepeatQueryParams();
+
     if (!params) {
         return;
     }
 
     const tab = readRepeatQueryParam(params, ['tab']);
+
     if (tab !== '' && tab !== 'domainLite') {
         return;
     }
 
     const domain = readRepeatQueryParam(params, ['domain']);
+
     if (domain !== '') {
         form.domain = domain;
     }

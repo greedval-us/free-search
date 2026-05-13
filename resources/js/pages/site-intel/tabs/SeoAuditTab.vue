@@ -2,17 +2,19 @@
 import { LoaderCircle, SearchCheck } from 'lucide-vue-next';
 import { computed, reactive } from 'vue';
 import { useI18n } from '@/composables/useI18n';
-import SeoAuditLinkGraph from './components/SeoAuditLinkGraph.vue';
 import { useSeoAudit } from '../composables/useSeoAudit';
+import SeoAuditLinkGraph from './components/SeoAuditLinkGraph.vue';
 
 const { t } = useI18n();
 const { form, loading, error, result, canAnalyze, canUseReportActions, analyze, openReport, downloadReport } = useSeoAudit(t);
 
 const scoreClass = computed(() => {
     const level = result.value?.score.level;
+
     if (level === 'high') {
         return 'text-emerald-300';
     }
+
     if (level === 'medium') {
         return 'text-amber-300';
     }
@@ -191,7 +193,7 @@ const linkGraphFilters = reactive({
                         <span class="pointer-events-none absolute left-0 top-5 z-20 hidden w-80 rounded-md border border-border/70 bg-popover p-2 text-[11px] leading-relaxed text-popover-foreground shadow-xl group-hover:block">{{ t('siteIntel.seoAudit.help.scoreProfile') }}</span>
                     </span>
                 </div>
-                <p class="mt-1 text-sm font-semibold">{{ t(`siteIntel.seoAudit.profile.${result.profile.key}`) }}</p>
+                <p class="mt-1 text-sm font-semibold">{{ t(`siteIntel.seoAudit.profile.${result.score.profile}`) }}</p>
             </div>
 
             <div class="rounded-lg border border-border/70 bg-background/60 p-3">

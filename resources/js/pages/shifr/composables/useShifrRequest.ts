@@ -1,4 +1,5 @@
-import { computed, ref, type Ref } from 'vue';
+import { computed, ref  } from 'vue';
+import type {Ref} from 'vue';
 
 export interface ShifrRequestState {
   loading: Ref<boolean>;
@@ -41,6 +42,7 @@ export const useShifrRequest = (
 
       if (!response.ok || !payload?.ok) {
         error.value = payload?.message ?? requestFailedMessage();
+
         return;
       }
 

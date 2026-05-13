@@ -88,6 +88,7 @@ const reportUrl = (
         crawl_limit: String(form.crawlLimit),
         platform_type: form.platformType,
     });
+
     if (download) {
         query.set('download', '1');
     }
@@ -99,6 +100,7 @@ const openReport = (form: { target: string; crawlLimit: number; platformType: st
     if (typeof window === 'undefined') {
         return;
     }
+
     window.open(reportUrl(form, result, false), '_blank', 'noopener,noreferrer');
 };
 
@@ -106,6 +108,7 @@ const downloadReport = (form: { target: string; crawlLimit: number; platformType
     if (typeof window === 'undefined') {
         return;
     }
+
     window.open(reportUrl(form, result, true), '_blank', 'noopener,noreferrer');
 };
 

@@ -34,14 +34,24 @@ const domainResult = ref<DomainMailPostureResult | null>(null);
 
 const pageTitle = computed(() => t('emailIntel.headTitle'));
 const panelTitle = computed(() => {
-    if (activeTab.value === 'bulk') return t('emailIntel.bulk.title');
-    if (activeTab.value === 'domain') return t('emailIntel.domain.title');
+    if (activeTab.value === 'bulk') {
+return t('emailIntel.bulk.title');
+}
+
+    if (activeTab.value === 'domain') {
+return t('emailIntel.domain.title');
+}
 
     return t(activeTab.value === 'search' ? 'emailIntel.lookup.title' : 'emailIntel.analytics.title');
 });
 const panelDescription = computed(() => {
-    if (activeTab.value === 'bulk') return t('emailIntel.bulk.description');
-    if (activeTab.value === 'domain') return t('emailIntel.domain.description');
+    if (activeTab.value === 'bulk') {
+return t('emailIntel.bulk.description');
+}
+
+    if (activeTab.value === 'domain') {
+return t('emailIntel.domain.description');
+}
 
     return t(activeTab.value === 'search' ? 'emailIntel.lookup.description' : 'emailIntel.analytics.description');
 });
@@ -72,17 +82,33 @@ const signalLabel = (type: string, fallback: string): string => {
 };
 
 const signalClass = (level: string): string => {
-    if (level === 'high') return 'border-rose-500/30 bg-rose-500/10 text-rose-200';
-    if (level === 'medium') return 'border-amber-500/30 bg-amber-500/10 text-amber-200';
-    if (level === 'low') return 'border-sky-500/30 bg-sky-500/10 text-sky-200';
-    if (level === 'positive') return 'border-emerald-500/30 bg-emerald-500/10 text-emerald-200';
+    if (level === 'high') {
+return 'border-rose-500/30 bg-rose-500/10 text-rose-200';
+}
+
+    if (level === 'medium') {
+return 'border-amber-500/30 bg-amber-500/10 text-amber-200';
+}
+
+    if (level === 'low') {
+return 'border-sky-500/30 bg-sky-500/10 text-sky-200';
+}
+
+    if (level === 'positive') {
+return 'border-emerald-500/30 bg-emerald-500/10 text-emerald-200';
+}
 
     return 'border-border bg-background/70 text-muted-foreground';
 };
 
 const scoreClass = (score: number): string => {
-    if (score >= 80) return 'text-emerald-300';
-    if (score >= 50) return 'text-amber-300';
+    if (score >= 80) {
+return 'text-emerald-300';
+}
+
+    if (score >= 50) {
+return 'text-amber-300';
+}
 
     return 'text-rose-300';
 };
@@ -125,6 +151,7 @@ const switchTab = (tab: 'search' | 'analytics' | 'bulk' | 'domain') => {
 const bulkLookup = async () => {
     if (!canBulkLookup.value) {
         bulkError.value = t('emailIntel.errors.emailRequired');
+
         return;
     }
 
@@ -139,6 +166,7 @@ const bulkLookup = async () => {
 
         if (!response.ok || !payload?.ok) {
             bulkError.value = payload?.message ?? t('emailIntel.errors.lookupFailed');
+
             return;
         }
 
@@ -153,6 +181,7 @@ const bulkLookup = async () => {
 const domainLookup = async () => {
     if (!canDomainLookup.value) {
         domainError.value = t('emailIntel.errors.domainRequired');
+
         return;
     }
 
@@ -167,6 +196,7 @@ const domainLookup = async () => {
 
         if (!response.ok || !payload?.ok) {
             domainError.value = payload?.message ?? t('emailIntel.errors.lookupFailed');
+
             return;
         }
 
@@ -188,6 +218,7 @@ const downloadReport = () => {
 
 onMounted(() => {
     const params = getRepeatQueryParams();
+
     if (!params) {
         return;
     }
@@ -200,17 +231,20 @@ onMounted(() => {
     activeTab.value = tab;
 
     const email = readRepeatQueryParam(params, ['email']);
+
     if (email !== '') {
         searchLookup.form.email = email;
         analyticsLookup.form.email = email;
     }
 
     const emails = readRepeatQueryParam(params, ['emails']);
+
     if (emails !== '') {
         bulkEmails.value = emails;
     }
 
     const domain = readRepeatQueryParam(params, ['domain']);
+
     if (domain !== '') {
         domainForm.value = domain;
     }
@@ -221,16 +255,19 @@ onMounted(() => {
 
     if (tab === 'search' && searchLookup.canLookup.value) {
         void searchLookup.lookup();
+
         return;
     }
 
     if (tab === 'analytics' && analyticsLookup.canLookup.value) {
         void analyticsLookup.lookup();
+
         return;
     }
 
     if (tab === 'bulk' && canBulkLookup.value) {
         void bulkLookup();
+
         return;
     }
 

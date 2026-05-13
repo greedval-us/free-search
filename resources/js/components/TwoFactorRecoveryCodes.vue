@@ -11,9 +11,9 @@ import {
     CardHeader,
     CardTitle,
 } from '@/components/ui/card';
+import { useI18n } from '@/composables/useI18n';
 import { useTwoFactorAuth } from '@/composables/useTwoFactorAuth';
 import { regenerateRecoveryCodes } from '@/routes/two-factor';
-import { useI18n } from '@/composables/useI18n';
 
 const { recoveryCodesList, fetchRecoveryCodes, errors } = useTwoFactorAuth();
 const { t } = useI18n();
