@@ -4,6 +4,7 @@ import Telegram from './Telegram'
 import Username from './Username'
 import SiteIntel from './SiteIntel'
 import CompanyIntel from './CompanyIntel'
+import DocumentIntel from './DocumentIntel'
 import Fio from './Fio'
 import EmailIntel from './EmailIntel'
 import Shifr from './Shifr'
@@ -15,6 +16,7 @@ Telegram: Object.assign(Telegram, Telegram),
 Username: Object.assign(Username, Username),
 SiteIntel: Object.assign(SiteIntel, SiteIntel),
 CompanyIntel: Object.assign(CompanyIntel, CompanyIntel),
+DocumentIntel: Object.assign(DocumentIntel, DocumentIntel),
 Fio: Object.assign(Fio, Fio),
 EmailIntel: Object.assign(EmailIntel, EmailIntel),
 Shifr: Object.assign(Shifr, Shifr),

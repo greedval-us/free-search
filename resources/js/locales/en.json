@@ -1151,6 +1151,65 @@
       "lookupFailed": "Could not complete company analysis."
     }
   },
+  "documentIntel": {
+    "headTitle": "Document Intel",
+    "title": "Document Intel",
+    "description": "Live OSINT pivots for public documents and metadata exposure checks.",
+    "query": "Domain or company",
+    "placeholder": "example.com or Acme Corp",
+    "search": "Analyze",
+    "searching": "Analyzing...",
+    "empty": "Run analysis to view document intelligence pivots.",
+    "checkedAt": "Checked at",
+    "detectedDomain": "Detected domain",
+    "signalCount": "Signals",
+    "pivotCount": "Pivots",
+    "signals": "Signals",
+    "recommendations": "Recommendations",
+    "domainIntel": "Domain intelligence",
+    "pivots": "Document pivots",
+    "available": "Available",
+    "unavailable": "Unavailable",
+    "registrar": "Registrar",
+    "createdAt": "Created at",
+    "expiresAt": "Expires at",
+    "help": {
+      "label": "What is this data?",
+      "overview": "Helps find publicly exposed company documents and starting points for metadata analysis.",
+      "pivots": "Use pivot links to discover indexed files and archive snapshots in open sources."
+    },
+    "signal": {
+      "domain_not_detected": "Domain was not detected in query",
+      "no_dns_resolution": "No DNS resolution",
+      "missing_spf": "SPF missing",
+      "missing_dmarc": "DMARC missing",
+      "whois_unavailable": "WHOIS unavailable",
+      "baseline_ok": "No strong technical issues detected"
+    },
+    "recommendation": {
+      "specify_company_domain": "Specify official domain for precise document intelligence.",
+      "validate_domain_and_dns": "Validate domain spelling and DNS configuration.",
+      "configure_spf": "Configure SPF policy for company domain.",
+      "configure_dmarc": "Configure DMARC policy for company domain.",
+      "check_whois_visibility": "Review WHOIS/RDAP visibility.",
+      "start_document_collection": "Start collecting indexed documents by file types (PDF, DOCX, XLSX, PPTX).",
+      "review_document_metadata": "Review metadata of discovered documents for names, software, and internal paths."
+    },
+    "links": {
+      "pdf_search": "PDF search",
+      "docx_search": "DOCX search",
+      "xlsx_search": "XLSX search",
+      "pptx_search": "PPTX search",
+      "robots_txt": "robots.txt",
+      "sitemap_xml": "sitemap.xml",
+      "wayback_docs": "Wayback snapshots",
+      "github_leaks": "GitHub leak keywords"
+    },
+    "errors": {
+      "queryRequired": "Enter domain or company name.",
+      "lookupFailed": "Could not complete document intelligence lookup."
+    }
+  },
   "dashboard": {
     "meta": {
       "title": "Dashboard"
@@ -1186,6 +1245,7 @@
       "fio": "FIO search",
       "site-intel": "Site intelligence",
       "email-intel": "Email intelligence",
+      "document-intel": "Document intelligence",
       "telegram": "Telegram analytics",
       "shifr": "Cipher toolkit",
       "default": "Search module",
@@ -1234,6 +1294,7 @@
     "fio": "FIO",
     "emailIntel": "Email Intel",
     "companyIntel": "Company Intel",
+    "documentIntel": "Document Intel",
     "shifr": "Cipher",
     "repository": "Repository",
     "documentation": "Documentation"

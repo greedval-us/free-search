@@ -681,6 +681,84 @@ companyIntel.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 /**
 * @see \Inertia\Controller::__invoke
  * @see vendor/inertiajs/inertia-laravel/src/Controller.php:13
+ * @route '/document-intel'
+ */
+export const documentIntel = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+    url: documentIntel.url(options),
+    method: 'get',
+})
+
+documentIntel.definition = {
+    methods: ["get","head"],
+    url: '/document-intel',
+} satisfies RouteDefinition<["get","head"]>
+
+/**
+* @see \Inertia\Controller::__invoke
+ * @see vendor/inertiajs/inertia-laravel/src/Controller.php:13
+ * @route '/document-intel'
+ */
+documentIntel.url = (options?: RouteQueryOptions) => {
+    return documentIntel.definition.url + queryParams(options)
+}
+
+/**
+* @see \Inertia\Controller::__invoke
+ * @see vendor/inertiajs/inertia-laravel/src/Controller.php:13
+ * @route '/document-intel'
+ */
+documentIntel.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+    url: documentIntel.url(options),
+    method: 'get',
+})
+/**
+* @see \Inertia\Controller::__invoke
+ * @see vendor/inertiajs/inertia-laravel/src/Controller.php:13
+ * @route '/document-intel'
+ */
+documentIntel.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
+    url: documentIntel.url(options),
+    method: 'head',
+})
+
+    /**
+* @see \Inertia\Controller::__invoke
+ * @see vendor/inertiajs/inertia-laravel/src/Controller.php:13
+ * @route '/document-intel'
+ */
+    const documentIntelForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+        action: documentIntel.url(options),
+        method: 'get',
+    })
+
+            /**
+* @see \Inertia\Controller::__invoke
+ * @see vendor/inertiajs/inertia-laravel/src/Controller.php:13
+ * @route '/document-intel'
+ */
+        documentIntelForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+            action: documentIntel.url(options),
+            method: 'get',
+        })
+            /**
+* @see \Inertia\Controller::__invoke
+ * @see vendor/inertiajs/inertia-laravel/src/Controller.php:13
+ * @route '/document-intel'
+ */
+        documentIntelForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+            action: documentIntel.url({
+                        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
+                            _method: 'HEAD',
+                            ...(options?.query ?? options?.mergeQuery ?? {}),
+                        }
+                    }),
+            method: 'get',
+        })
+    
+    documentIntel.form = documentIntelForm
+/**
+* @see \Inertia\Controller::__invoke
+ * @see vendor/inertiajs/inertia-laravel/src/Controller.php:13
  * @route '/fio'
  */
 export const fio = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
