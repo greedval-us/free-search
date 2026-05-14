@@ -603,6 +603,84 @@ siteIntel.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 /**
 * @see \Inertia\Controller::__invoke
  * @see vendor/inertiajs/inertia-laravel/src/Controller.php:13
+ * @route '/company-intel'
+ */
+export const companyIntel = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+    url: companyIntel.url(options),
+    method: 'get',
+})
+
+companyIntel.definition = {
+    methods: ["get","head"],
+    url: '/company-intel',
+} satisfies RouteDefinition<["get","head"]>
+
+/**
+* @see \Inertia\Controller::__invoke
+ * @see vendor/inertiajs/inertia-laravel/src/Controller.php:13
+ * @route '/company-intel'
+ */
+companyIntel.url = (options?: RouteQueryOptions) => {
+    return companyIntel.definition.url + queryParams(options)
+}
+
+/**
+* @see \Inertia\Controller::__invoke
+ * @see vendor/inertiajs/inertia-laravel/src/Controller.php:13
+ * @route '/company-intel'
+ */
+companyIntel.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+    url: companyIntel.url(options),
+    method: 'get',
+})
+/**
+* @see \Inertia\Controller::__invoke
+ * @see vendor/inertiajs/inertia-laravel/src/Controller.php:13
+ * @route '/company-intel'
+ */
+companyIntel.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
+    url: companyIntel.url(options),
+    method: 'head',
+})
+
+    /**
+* @see \Inertia\Controller::__invoke
+ * @see vendor/inertiajs/inertia-laravel/src/Controller.php:13
+ * @route '/company-intel'
+ */
+    const companyIntelForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+        action: companyIntel.url(options),
+        method: 'get',
+    })
+
+            /**
+* @see \Inertia\Controller::__invoke
+ * @see vendor/inertiajs/inertia-laravel/src/Controller.php:13
+ * @route '/company-intel'
+ */
+        companyIntelForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+            action: companyIntel.url(options),
+            method: 'get',
+        })
+            /**
+* @see \Inertia\Controller::__invoke
+ * @see vendor/inertiajs/inertia-laravel/src/Controller.php:13
+ * @route '/company-intel'
+ */
+        companyIntelForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+            action: companyIntel.url({
+                        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
+                            _method: 'HEAD',
+                            ...(options?.query ?? options?.mergeQuery ?? {}),
+                        }
+                    }),
+            method: 'get',
+        })
+    
+    companyIntel.form = companyIntelForm
+/**
+* @see \Inertia\Controller::__invoke
+ * @see vendor/inertiajs/inertia-laravel/src/Controller.php:13
  * @route '/fio'
  */
 export const fio = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({

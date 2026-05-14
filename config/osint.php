@@ -43,6 +43,31 @@ return [
         ],
     ],
 
+    'company_intel' => [
+        'risk' => [
+            'signals_for_medium' => (int) env('OSINT_COMPANY_INTEL_SIGNALS_FOR_MEDIUM', 1),
+            'signals_for_high' => (int) env('OSINT_COMPANY_INTEL_SIGNALS_FOR_HIGH', 3),
+        ],
+        'links' => [
+            'global' => [
+                'news_search' => 'https://news.google.com/search?q={query}',
+                'reddit_mentions' => 'https://www.reddit.com/search/?q={query}',
+                'github_search' => 'https://github.com/search?q={query}',
+                'job_signals' => 'https://www.google.com/search?q={query_jobs}',
+                'linkedin_search' => 'https://www.google.com/search?q={query_linkedin}',
+                'opencorporates_search' => 'https://opencorporates.com/companies?q={query}',
+                'wikidata_search' => 'https://www.wikidata.org/w/index.php?search={query}',
+            ],
+            'domain' => [
+                'crtsh_history' => 'https://crt.sh/?q={domain}',
+                'urlhaus_lookup' => 'https://urlhaus.abuse.ch/browse.php?search={domain}',
+                'phishtank_lookup' => 'https://phishtank.org/phish_search.php?search={domain}&valid=y&active=y',
+                'viewdns_whois' => 'https://viewdns.info/whois/?domain={domain}',
+                'wayback_archive' => 'https://web.archive.org/web/*/{domain}',
+            ],
+        ],
+    ],
+
     'telegram' => [
         'analytics' => [
             'period_min_days' => (int) env('OSINT_TELEGRAM_ANALYTICS_PERIOD_MIN_DAYS', 1),

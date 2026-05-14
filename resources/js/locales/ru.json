@@ -1070,6 +1070,87 @@
       "web_available": "Сайт домена отвечает по HTTPS."
     }
   },
+  "companyIntel": {
+    "headTitle": "Разведка компании",
+    "title": "Разведка компании",
+    "description": "Онлайн OSINT-срез по названию компании или домену из открытых источников.",
+    "query": "Название компании или домен",
+    "placeholder": "example.com или Acme Corp",
+    "search": "Анализировать",
+    "searching": "Анализ...",
+    "empty": "Запустите анализ, чтобы увидеть данные по компании.",
+    "checkedAt": "Проверено",
+    "detectedDomain": "Определенный домен",
+    "riskScore": "Уровень риска",
+    "signalCount": "Сигналы",
+    "signals": "Риск-сигналы",
+    "noSignals": "Сильные риск-сигналы не обнаружены.",
+    "strengths": "Позитивные сигналы",
+    "recommendations": "Рекомендации",
+    "domainIntel": "Доменная разведка",
+    "osintLinks": "Публичные OSINT pivot-ссылки",
+    "labels": {
+      "dns": "DNS",
+      "mailSecurity": "Почтовая защита",
+      "whois": "WHOIS"
+    },
+    "links": {
+      "news_search": "Поиск новостей",
+      "reddit_mentions": "Упоминания в Reddit",
+      "github_search": "Поиск в GitHub",
+      "job_signals": "Сигналы по вакансиям",
+      "linkedin_search": "Поиск компании в LinkedIn",
+      "opencorporates_search": "Поиск в OpenCorporates",
+      "wikidata_search": "Поиск в Wikidata",
+      "crtsh_history": "История сертификатов (crt.sh)",
+      "urlhaus_lookup": "Проверка домена в URLhaus",
+      "phishtank_lookup": "Проверка в PhishTank",
+      "viewdns_whois": "WHOIS в ViewDNS",
+      "wayback_archive": "Снимки в Wayback"
+    },
+    "help": {
+      "label": "Что это за данные?",
+      "overview": "Живой OSINT по компании: доменная техразведка, риск/позитивные сигналы и быстрые переходы в открытые источники.",
+      "links": "Используйте ссылки для ручных pivot-переходов по реестрам, архивам, соцплощадкам и threat-источникам."
+    },
+    "strength": {
+      "dns_resolution_ok": "Домен корректно резолвится в DNS",
+      "spf_present": "SPF настроен",
+      "dmarc_present": "DMARC настроен",
+      "whois_available": "WHOIS данные доступны"
+    },
+    "recommendation": {
+      "specify_official_domain": "Укажите официальный домен компании для более глубокой техразведки.",
+      "verify_company_domain_or_dns": "Проверьте корректность домена и DNS-настройки.",
+      "configure_spf": "Настройте SPF-политику для почтового домена компании.",
+      "configure_dmarc": "Настройте DMARC и постепенно переходите к enforcement-режиму.",
+      "check_whois_visibility": "Проверьте доступность WHOIS или RDAP для домена.",
+      "maintain_monitoring": "Текущий профиль выглядит стабильно, продолжайте регулярный мониторинг."
+    },
+    "available": "Доступно",
+    "unavailable": "Недоступно",
+    "registrar": "Регистратор",
+    "country": "Страна",
+    "createdAt": "Создан",
+    "expiresAt": "Истекает",
+    "risk": {
+      "unknown": "Неизвестно",
+      "low": "Низкий",
+      "medium": "Средний",
+      "high": "Высокий"
+    },
+    "signal": {
+      "domain_not_detected": "Домен не определен в запросе",
+      "no_dns_resolution": "Нет DNS-резолвинга",
+      "missing_spf": "Отсутствует SPF",
+      "missing_dmarc": "Отсутствует DMARC",
+      "whois_unavailable": "WHOIS недоступен"
+    },
+    "errors": {
+      "queryRequired": "Введите название компании или домен.",
+      "lookupFailed": "Не удалось выполнить анализ компании."
+    }
+  },
   "dashboard": {
     "meta": {
       "title": "Панель"
@@ -1104,6 +1185,7 @@
       "username": "Поиск по юзернейму",
       "fio": "Поиск по ФИО",
       "site-intel": "Аналитика сайта",
+      "company-intel": "Разведка компании",
       "email-intel": "Аналитика email",
       "telegram": "Аналитика Telegram",
       "shifr": "Модуль шифров",
@@ -1150,6 +1232,7 @@
     "telegram": "Телеграм",
     "username": "Юзернейм",
     "siteIntel": "Анализ сайта",
+    "companyIntel": "Разведка компании",
     "fio": "ФИО",
     "emailIntel": "Анализ Email",
     "shifr": "Шифр",

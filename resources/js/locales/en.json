@@ -1070,6 +1070,87 @@
       "web_available": "Domain website responds over HTTPS."
     }
   },
+  "companyIntel": {
+    "headTitle": "Company Intel",
+    "title": "Company Intel",
+    "description": "Live OSINT snapshot for a company name or domain from public sources.",
+    "query": "Company name or domain",
+    "placeholder": "example.com or Acme Corp",
+    "search": "Analyze",
+    "searching": "Analyzing...",
+    "empty": "Run analysis to view company intelligence.",
+    "checkedAt": "Checked at",
+    "detectedDomain": "Detected domain",
+    "riskScore": "Risk level",
+    "signalCount": "Signals",
+    "signals": "Risk signals",
+    "noSignals": "No strong risk signals.",
+    "strengths": "Positive signals",
+    "recommendations": "Recommendations",
+    "domainIntel": "Domain intelligence",
+    "osintLinks": "Public OSINT pivots",
+    "labels": {
+      "dns": "DNS",
+      "mailSecurity": "Mail security",
+      "whois": "WHOIS"
+    },
+    "links": {
+      "news_search": "News search",
+      "reddit_mentions": "Reddit mentions",
+      "github_search": "GitHub org/code",
+      "job_signals": "Job signals",
+      "linkedin_search": "LinkedIn company search",
+      "opencorporates_search": "OpenCorporates search",
+      "wikidata_search": "Wikidata search",
+      "crtsh_history": "Certificate history (crt.sh)",
+      "urlhaus_lookup": "URLhaus domain lookup",
+      "phishtank_lookup": "PhishTank lookup",
+      "viewdns_whois": "WHOIS in ViewDNS",
+      "wayback_archive": "Wayback snapshots"
+    },
+    "help": {
+      "label": "What is this data?",
+      "overview": "Live company OSINT: domain posture, risk/strength signals, and direct pivots to open intelligence sources.",
+      "links": "Use links for manual pivoting across public registries, archives, social and threat datasets."
+    },
+    "strength": {
+      "dns_resolution_ok": "Domain resolves in DNS",
+      "spf_present": "SPF is configured",
+      "dmarc_present": "DMARC is configured",
+      "whois_available": "WHOIS data is available"
+    },
+    "recommendation": {
+      "specify_official_domain": "Specify an official company domain for deeper technical intelligence.",
+      "verify_company_domain_or_dns": "Verify that the domain is correct and DNS is configured properly.",
+      "configure_spf": "Configure SPF policy for company mail domain.",
+      "configure_dmarc": "Configure DMARC policy and move toward enforcement.",
+      "check_whois_visibility": "Review WHOIS visibility or RDAP availability for the domain.",
+      "maintain_monitoring": "Current posture looks stable; continue regular monitoring."
+    },
+    "available": "Available",
+    "unavailable": "Unavailable",
+    "registrar": "Registrar",
+    "country": "Country",
+    "createdAt": "Created at",
+    "expiresAt": "Expires at",
+    "risk": {
+      "unknown": "Unknown",
+      "low": "Low",
+      "medium": "Medium",
+      "high": "High"
+    },
+    "signal": {
+      "domain_not_detected": "Domain was not detected in query",
+      "no_dns_resolution": "No DNS resolution",
+      "missing_spf": "SPF missing",
+      "missing_dmarc": "DMARC missing",
+      "whois_unavailable": "WHOIS unavailable"
+    },
+    "errors": {
+      "queryRequired": "Enter a company name or domain.",
+      "lookupFailed": "Could not complete company analysis."
+    }
+  },
   "dashboard": {
     "meta": {
       "title": "Dashboard"
@@ -1152,6 +1233,7 @@
     "siteIntel": "Site Intel",
     "fio": "FIO",
     "emailIntel": "Email Intel",
+    "companyIntel": "Company Intel",
     "shifr": "Cipher",
     "repository": "Repository",
     "documentation": "Documentation"
