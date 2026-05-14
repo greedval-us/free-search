@@ -30,6 +30,14 @@ const formatDateTime = (value: string | null) => {
     return new Date(value).toLocaleString();
 };
 
+const formatDays = (value: number | null) => {
+    if (value === null || Number.isNaN(value)) {
+        return '-';
+    }
+
+    return value.toString();
+};
+
 const signalLabel = (signal: string) => {
     const key = `siteIntel.domainLite.signal.${signal}`;
     const translated = t(key);
@@ -136,6 +144,9 @@ onMounted(() => {
                 <div class="rounded-lg border p-3" :class="riskBadgeClass">
                     <p class="text-xs">{{ t('siteIntel.domainLite.riskScore') }}</p>
                     <p class="mt-1 text-xl font-semibold">{{ result.risk.score }}</p>
+                    <p class="mt-1 text-[11px] leading-relaxed opacity-90">
+                        {{ t('siteIntel.domainLite.riskScoreHint') }}
+                    </p>
                 </div>
             </div>
 
@@ -181,8 +192,20 @@ onMounted(() => {
                 <p class="mt-1">{{ t('siteIntel.domainLite.createdAt') }}: {{ formatDateTime(result.whois.createdAt) }}</p>
                 <p class="mt-1">{{ t('siteIntel.domainLite.updatedAt') }}: {{ formatDateTime(result.whois.updatedAt) }}</p>
                 <p class="mt-1">{{ t('siteIntel.domainLite.expiresAt') }}: {{ formatDateTime(result.whois.expiresAt) }}</p>
+                <p class="mt-1">{{ t('siteIntel.domainLite.domainAgeDays') }}: {{ formatDays(result.whois.timing.domainAgeDays) }}</p>
+                <p class="mt-1">{{ t('siteIntel.domainLite.daysToExpiry') }}: {{ formatDays(result.whois.timing.daysToExpiry) }}</p>
                 <p class="mt-1">{{ t('siteIntel.domainLite.registrar') }}: {{ result.whois.registrar || '-' }}</p>
                 <p class="mt-1">{{ t('siteIntel.domainLite.country') }}: {{ result.whois.country || '-' }}</p>
+            </div>
+
+            <div class="rounded-lg border border-border/70 bg-background/60 p-3 text-xs">
+                <p class="mb-2 font-semibold">{{ t('siteIntel.domainLite.emailSecurity') }}</p>
+                <p>{{ t('siteIntel.domainLite.spf') }}: {{ result.dns.emailSecurity.hasSpf ? t('siteIntel.common.yes') : t('siteIntel.common.no') }}</p>
+                <p class="mt-1">{{ t('siteIntel.domainLite.spfPolicy') }}: {{ result.dns.emailSecurity.spfPolicy.allQualifier ?? '-' }}</p>
+                <p class="mt-1">{{ t('siteIntel.domainLite.spfIncludeCount') }}: {{ result.dns.emailSecurity.spfPolicy.includeCount }}</p>
+                <p class="mt-1">{{ t('siteIntel.domainLite.dmarcPolicy') }}: {{ result.dns.emailSecurity.dmarcPolicy.policy ?? '-' }}</p>
+                <p class="mt-1">{{ t('siteIntel.domainLite.dmarcPct') }}: {{ result.dns.emailSecurity.dmarcPolicy.percentage ?? '-' }}</p>
+                <p class="mt-1">{{ t('siteIntel.domainLite.dnssec') }}: {{ result.dns.dnssec.enabled ? t('siteIntel.common.yes') : t('siteIntel.common.no') }} (DNSKEY: {{ result.dns.dnssec.dnskeyCount }})</p>
             </div>
 
             <div class="rounded-lg border border-border/70 bg-background/60 p-3 text-xs">

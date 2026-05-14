@@ -36,14 +36,59 @@ final class DomainLiteRiskScoreCalculator
             $signals[] = 'missing_spf';
         }
 
+        $spfQualifier = $dns['emailSecurity']['spfPolicy']['allQualifier'] ?? null;
+        if ($spfQualifier === '+' || $spfQualifier === '?') {
+            $score += 12;
+            $signals[] = 'weak_spf_policy';
+        } elseif ($spfQualifier === '~') {
+            $score += 4;
+            $signals[] = 'soft_spf_policy';
+        }
+
+        $spfIncludeCount = (int) ($dns['emailSecurity']['spfPolicy']['includeCount'] ?? 0);
+        if ($spfIncludeCount >= 5) {
+            $score += 6;
+            $signals[] = 'spf_too_many_includes';
+        }
+
         if (($dns['emailSecurity']['hasDmarc'] ?? false) !== true) {
             $score += 8;
             $signals[] = 'missing_dmarc';
         }
 
+        $dmarcPolicy = $dns['emailSecurity']['dmarcPolicy']['policy'] ?? null;
+        if ($dmarcPolicy === 'none') {
+            $score += 8;
+            $signals[] = 'dmarc_monitoring_only';
+        }
+
+        $dmarcPct = $dns['emailSecurity']['dmarcPolicy']['percentage'] ?? null;
+        if (is_int($dmarcPct) && $dmarcPct > 0 && $dmarcPct < 100) {
+            $score += 4;
+            $signals[] = 'dmarc_partial_enforcement';
+        }
+
+        if (($dns['dnssec']['enabled'] ?? false) !== true) {
+            $score += 4;
+            $signals[] = 'dnssec_missing';
+        }
+
         if (($whois['available'] ?? false) !== true) {
             $score += 8;
             $signals[] = 'whois_unavailable';
+        }
+
+        if (is_string($whois['createdAt'] ?? null)) {
+            $createdAt = Carbon::parse($whois['createdAt']);
+            $domainAgeDays = $createdAt->diffInDays(Carbon::now(), false);
+
+            if ($domainAgeDays >= 0 && $domainAgeDays <= 30) {
+                $score += 28;
+                $signals[] = 'new_domain_30_days';
+            } elseif ($domainAgeDays <= 90) {
+                $score += 14;
+                $signals[] = 'new_domain_90_days';
+            }
         }
 
         if (is_string($whois['expiresAt'] ?? null)) {
@@ -76,4 +121,3 @@ final class DomainLiteRiskScoreCalculator
         ];
     }
 }
-

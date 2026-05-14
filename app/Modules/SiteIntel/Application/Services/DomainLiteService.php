@@ -23,6 +23,7 @@ final class DomainLiteService
     {
         $dns = $this->dnsResolver->resolve($domain);
         $whois = $this->whoisLookup->lookup($domain);
+        $whois = $this->enrichWhois($whois);
         $risk = $this->riskScoreCalculator->calculate($dns, $whois);
 
         return [
@@ -32,5 +33,31 @@ final class DomainLiteService
             'whois' => $whois,
             'risk' => $risk,
         ];
+    }
+
+    /**
+     * @param array<string, mixed> $whois
+     * @return array<string, mixed>
+     */
+    private function enrichWhois(array $whois): array
+    {
+        $now = Carbon::now();
+        $domainAgeDays = null;
+        $daysToExpiry = null;
+
+        if (is_string($whois['createdAt'] ?? null) && $whois['createdAt'] !== '') {
+            $domainAgeDays = (int) floor(Carbon::parse($whois['createdAt'])->diffInDays($now, false));
+        }
+
+        if (is_string($whois['expiresAt'] ?? null) && $whois['expiresAt'] !== '') {
+            $daysToExpiry = (int) floor($now->diffInDays(Carbon::parse($whois['expiresAt']), false));
+        }
+
+        $whois['timing'] = [
+            'domainAgeDays' => $domainAgeDays,
+            'daysToExpiry' => $daysToExpiry,
+        ];
+
+        return $whois;
     }
 }
