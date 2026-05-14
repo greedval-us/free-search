@@ -229,6 +229,21 @@ onMounted(() => {
                 </ul>
             </div>
 
+            <div class="rounded-lg border border-border/70 bg-background/60 p-3 text-xs">
+                <p class="mb-2 font-semibold">{{ t('siteIntel.domainLite.riskBreakdown') }}</p>
+                <p v-if="result.risk.breakdown.length === 0" class="text-emerald-300">{{ t('siteIntel.domainLite.noRiskBreakdown') }}</p>
+                <div v-else class="space-y-2">
+                    <div
+                        v-for="entry in result.risk.breakdown"
+                        :key="`${entry.key}-${entry.points}`"
+                        class="rounded border border-border/50 bg-background/40 px-2 py-1.5"
+                    >
+                        <p class="font-medium">{{ signalLabel(entry.key) }}</p>
+                        <p class="text-muted-foreground">{{ t('siteIntel.domainLite.riskImpactPoints') }}: +{{ entry.points }}</p>
+                    </div>
+                </div>
+            </div>
+
             <div v-if="result.whois.sample" class="rounded-lg border border-border/70 bg-background/60 p-3 text-xs">
                 <p class="mb-2 font-semibold">{{ t('siteIntel.domainLite.whoisSample') }}</p>
                 <pre class="overflow-x-auto whitespace-pre-wrap text-[11px] text-muted-foreground">{{ result.whois.sample }}</pre>

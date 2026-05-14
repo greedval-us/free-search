@@ -525,6 +525,9 @@
       "dnssec": "DNSSEC",
       "riskSignals": "Сигналы риска",
       "noRiskSignals": "Сильные сигналы риска не обнаружены.",
+      "riskBreakdown": "Почему такая оценка риска",
+      "noRiskBreakdown": "Негативные сигналы не повлияли на итоговый балл.",
+      "riskImpactPoints": "Вклад в баллы",
       "whoisSample": "Фрагмент WHOIS",
       "help": {
         "overview": "Собирает лёгкую DNS/WHOIS-сводку в реальном времени без хранения истории.",

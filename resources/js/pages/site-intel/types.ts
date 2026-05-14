@@ -91,6 +91,10 @@ export type DomainLiteResult = {
         score: number;
         level: 'low' | 'medium' | 'high';
         signals: string[];
+        breakdown: Array<{
+            key: string;
+            points: number;
+        }>;
     };
 };
 
