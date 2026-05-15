@@ -24,7 +24,7 @@ const formatNumber = (value: number | null | undefined) => {
         <article
             v-for="card in cards"
             :key="card.label"
-            class="rounded-xl border border-sidebar-border/80 bg-card/75 p-4 shadow-xl backdrop-blur"
+            class="intel-panel-strong"
         >
             <p class="text-xs uppercase tracking-wide text-muted-foreground">{{ card.label }}</p>
             <p class="mt-2 text-2xl font-semibold">
@@ -36,3 +36,4 @@ const formatNumber = (value: number | null | undefined) => {
         </article>
     </div>
 </template>
+

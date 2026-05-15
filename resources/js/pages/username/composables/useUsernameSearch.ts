@@ -1,4 +1,5 @@
 import { computed, reactive, ref } from 'vue';
+import { apiRequest } from '@/lib/api';
 import type { UsernameAnalytics, UsernameSearchResponse } from '../types';
 
 type TranslateFn = (key: string) => string;
@@ -59,29 +60,20 @@ export const useUsernameSearch = (t: TranslateFn) => {
         localDiff.value = null;
 
         try {
-            const endpoint = `/username/search?username=${encodeURIComponent(normalizedUsername.value)}`;
-            const response = await fetch(endpoint, {
+            const apiResult = await apiRequest<UsernameSearchResponse>('/username/search', {
                 method: 'GET',
-                headers: {
-                    Accept: 'application/json',
+                query: {
+                    username: normalizedUsername.value,
                 },
             });
 
-            const payload = await safeJson(response);
-            const apiError = resolveApiError(payload);
-
-            if (!response.ok) {
-                error.value = apiError ?? t('username.errors.searchFailed');
+            if (!apiResult.ok) {
+                error.value = apiResult.message ?? t('username.errors.searchFailed');
 
                 return;
             }
 
-            if (!payload || !payload.ok) {
-                error.value = apiError ?? t('username.errors.searchFailed');
-
-                return;
-            }
-
+            const payload = apiResult.data;
             items.value = payload.items ?? [];
             checkedAt.value = payload.checkedAt ?? null;
             summary.value = payload.summary ?? null;
@@ -133,45 +125,6 @@ export const useUsernameSearch = (t: TranslateFn) => {
 };
 
 const STORAGE_PREFIX = 'username:snapshot:';
-
-const safeJson = async (response: Response): Promise<UsernameSearchResponse | null> => {
-    const contentType = response.headers.get('content-type') ?? '';
-
-    if (!contentType.includes('application/json')) {
-        return null;
-    }
-
-    try {
-        return (await response.json()) as UsernameSearchResponse;
-    } catch {
-        return null;
-    }
-};
-
-const resolveApiError = (payload: UsernameSearchResponse | null): string | null => {
-    if (!payload || typeof payload !== 'object') {
-        return null;
-    }
-
-    const anyPayload = payload as Record<string, unknown>;
-    const message = anyPayload.message;
-
-    if (typeof message === 'string' && message.trim() !== '') {
-        return message;
-    }
-
-    const errors = anyPayload.errors;
-
-    if (errors && typeof errors === 'object') {
-        for (const value of Object.values(errors as Record<string, unknown>)) {
-            if (Array.isArray(value) && value.length > 0 && typeof value[0] === 'string') {
-                return value[0];
-            }
-        }
-    }
-
-    return null;
-};
 
 const computeLocalDiff = (
     username: string,

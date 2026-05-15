@@ -1,6 +1,10 @@
 <script setup lang="ts">
-import { Activity, LoaderCircle } from 'lucide-vue-next';
+import { Activity } from 'lucide-vue-next';
 import { computed, onMounted } from 'vue';
+import HelpTooltip from '@/components/ui/HelpTooltip.vue';
+import IntelResultPanel from '@/components/ui/IntelResultPanel.vue';
+import IntelSearchForm from '@/components/ui/IntelSearchForm.vue';
+import IntelSearchPanel from '@/components/ui/IntelSearchPanel.vue';
 import { useI18n } from '@/composables/useI18n';
 import { getRepeatQueryParams, isRepeatAutorunEnabled, readRepeatQueryParam } from '@/composables/useRepeatQuery';
 import { useSiteHealth } from '../composables/useSiteHealth';
@@ -70,23 +74,13 @@ onMounted(() => {
 </script>
 
 <template>
-    <section class="sticky top-0 z-10 shrink-0 rounded-xl border border-sidebar-border/80 bg-card/70 p-4 shadow-xl backdrop-blur">
+    <IntelSearchPanel>
         <div class="flex items-center justify-between gap-3">
             <div class="space-y-1">
                 <div class="flex items-center gap-2 text-sm font-semibold">
                     <Activity class="h-4 w-4 text-cyan-400" />
                     <span>{{ t('siteIntel.siteHealth.title') }}</span>
-                    <span class="group relative inline-flex">
-                        <span
-                            class="inline-flex h-5 w-5 cursor-help items-center justify-center rounded-full border border-border text-[11px] font-semibold text-muted-foreground"
-                            :aria-label="t('siteIntel.help.label')"
-                        >
-                            ?
-                        </span>
-                        <span class="pointer-events-none absolute left-0 top-6 z-20 hidden w-80 rounded-md border border-border/70 bg-popover p-2 text-[11px] leading-relaxed text-popover-foreground shadow-xl group-hover:block">
-                            {{ t('siteIntel.siteHealth.help.overview') }}
-                        </span>
-                    </span>
+                    <HelpTooltip :label="t('siteIntel.help.label')" :text="t('siteIntel.siteHealth.help.overview')" />
                 </div>
                 <p class="text-xs text-muted-foreground">
                     {{ t('siteIntel.siteHealth.description') }}
@@ -94,33 +88,21 @@ onMounted(() => {
             </div>
         </div>
 
-        <div class="mt-3 flex flex-wrap items-end gap-3">
-            <label class="block min-w-0 flex-1">
-                <span class="mb-1 block truncate text-xs font-medium text-muted-foreground">{{ t('siteIntel.siteHealth.target') }}</span>
-                <input
-                    v-model="form.target"
-                    type="text"
-                    class="h-10 w-full rounded-md border border-input bg-background px-3 text-sm"
-                    :placeholder="t('siteIntel.siteHealth.placeholder')"
-                    @keydown.enter.prevent="check"
-                />
-            </label>
+        <IntelSearchForm
+            v-model="form.target"
+            :label="t('siteIntel.siteHealth.target')"
+            :placeholder="t('siteIntel.siteHealth.placeholder')"
+            :button-text="t('siteIntel.siteHealth.check')"
+            :loading-text="t('siteIntel.siteHealth.checking')"
+            :loading="loading"
+            :disabled="!canCheck"
+            :error="error"
+            @submit="check"
+        />
+    </IntelSearchPanel>
 
-            <button
-                :disabled="loading || !canCheck"
-                class="inline-flex h-10 cursor-pointer items-center gap-2 rounded-md bg-primary px-5 text-sm font-semibold text-primary-foreground disabled:cursor-not-allowed disabled:opacity-60"
-                @click="check"
-            >
-                <LoaderCircle v-if="loading" class="h-4 w-4 animate-spin" />
-                <span>{{ loading ? t('siteIntel.siteHealth.checking') : t('siteIntel.siteHealth.check') }}</span>
-            </button>
-        </div>
-
-        <p v-if="error" class="mt-3 text-sm text-destructive">{{ error }}</p>
-    </section>
-
-    <section class="flex min-h-0 flex-1 flex-col rounded-xl border border-sidebar-border/80 bg-card/70 p-4 shadow-xl backdrop-blur">
-        <div v-if="!result" class="rounded-md border border-dashed border-border p-6 text-center text-sm text-muted-foreground">
+    <IntelResultPanel>
+        <div v-if="!result" class="intel-empty">
             {{ t('siteIntel.siteHealth.empty') }}
         </div>
 
@@ -152,17 +134,7 @@ onMounted(() => {
             <div class="rounded-lg border border-border/70 bg-background/60 p-3 text-xs">
                 <div class="mb-2 flex items-center gap-2">
                     <p class="font-semibold">{{ t('siteIntel.siteHealth.dns') }}</p>
-                    <span class="group relative inline-flex">
-                        <span
-                            class="inline-flex h-5 w-5 cursor-help items-center justify-center rounded-full border border-border text-[11px] font-semibold text-muted-foreground"
-                            :aria-label="t('siteIntel.help.label')"
-                        >
-                            ?
-                        </span>
-                        <span class="pointer-events-none absolute left-0 top-6 z-20 hidden w-80 rounded-md border border-border/70 bg-popover p-2 text-[11px] leading-relaxed text-popover-foreground shadow-xl group-hover:block">
-                            {{ t('siteIntel.siteHealth.help.dns') }}
-                        </span>
-                    </span>
+                    <HelpTooltip :label="t('siteIntel.help.label')" :text="t('siteIntel.siteHealth.help.dns')" />
                 </div>
                 <p>{{ t('siteIntel.siteHealth.aRecords') }}: {{ result.dns.a.join(', ') || '-' }}</p>
                 <p class="mt-1">{{ t('siteIntel.siteHealth.aaaaRecords') }}: {{ result.dns.aaaa.join(', ') || '-' }}</p>
@@ -171,17 +143,7 @@ onMounted(() => {
             <div class="rounded-lg border border-border/70 bg-background/60 p-3 text-xs">
                 <div class="mb-2 flex items-center gap-2">
                     <p class="font-semibold">{{ t('siteIntel.siteHealth.ssl') }}</p>
-                    <span class="group relative inline-flex">
-                        <span
-                            class="inline-flex h-5 w-5 cursor-help items-center justify-center rounded-full border border-border text-[11px] font-semibold text-muted-foreground"
-                            :aria-label="t('siteIntel.help.label')"
-                        >
-                            ?
-                        </span>
-                        <span class="pointer-events-none absolute left-0 top-6 z-20 hidden w-80 rounded-md border border-border/70 bg-popover p-2 text-[11px] leading-relaxed text-popover-foreground shadow-xl group-hover:block">
-                            {{ t('siteIntel.siteHealth.help.ssl') }}
-                        </span>
-                    </span>
+                    <HelpTooltip :label="t('siteIntel.help.label')" :text="t('siteIntel.siteHealth.help.ssl')" />
                 </div>
                 <p>{{ t('siteIntel.siteHealth.sslAvailable') }}: {{ result.ssl.available ? t('siteIntel.common.yes') : t('siteIntel.common.no') }}</p>
                 <p class="mt-1">{{ t('siteIntel.siteHealth.sslIssuer') }}: {{ result.ssl.issuer || '-' }}</p>
@@ -192,17 +154,7 @@ onMounted(() => {
             <div class="rounded-lg border border-border/70 bg-background/60 p-3 text-xs">
                 <div class="mb-2 flex items-center gap-2">
                     <p class="font-semibold">{{ t('siteIntel.siteHealth.securityHeaders') }}</p>
-                    <span class="group relative inline-flex">
-                        <span
-                            class="inline-flex h-5 w-5 cursor-help items-center justify-center rounded-full border border-border text-[11px] font-semibold text-muted-foreground"
-                            :aria-label="t('siteIntel.help.label')"
-                        >
-                            ?
-                        </span>
-                        <span class="pointer-events-none absolute left-0 top-6 z-20 hidden w-80 rounded-md border border-border/70 bg-popover p-2 text-[11px] leading-relaxed text-popover-foreground shadow-xl group-hover:block">
-                            {{ t('siteIntel.siteHealth.help.securityHeaders') }}
-                        </span>
-                    </span>
+                    <HelpTooltip :label="t('siteIntel.help.label')" :text="t('siteIntel.siteHealth.help.securityHeaders')" />
                 </div>
                 <div class="space-y-1">
                     <p v-for="(headerInfo, headerName) in result.headers" :key="headerName">
@@ -216,17 +168,7 @@ onMounted(() => {
             <div class="rounded-lg border border-border/70 bg-background/60 p-3 text-xs">
                 <div class="mb-2 flex items-center gap-2">
                     <p class="font-semibold">{{ t('siteIntel.siteHealth.httpChain') }}</p>
-                    <span class="group relative inline-flex">
-                        <span
-                            class="inline-flex h-5 w-5 cursor-help items-center justify-center rounded-full border border-border text-[11px] font-semibold text-muted-foreground"
-                            :aria-label="t('siteIntel.help.label')"
-                        >
-                            ?
-                        </span>
-                        <span class="pointer-events-none absolute left-0 top-6 z-20 hidden w-80 rounded-md border border-border/70 bg-popover p-2 text-[11px] leading-relaxed text-popover-foreground shadow-xl group-hover:block">
-                            {{ t('siteIntel.siteHealth.help.httpChain') }}
-                        </span>
-                    </span>
+                    <HelpTooltip :label="t('siteIntel.help.label')" :text="t('siteIntel.siteHealth.help.httpChain')" />
                 </div>
                 <div class="space-y-2">
                     <div
@@ -253,5 +195,8 @@ onMounted(() => {
                 </ul>
             </div>
         </div>
-    </section>
+    </IntelResultPanel>
 </template>
+
+
+

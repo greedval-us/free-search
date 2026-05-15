@@ -1,7 +1,16 @@
 <script setup lang="ts">
 import { Head } from '@inertiajs/vue3';
-import { Building2, LoaderCircle } from 'lucide-vue-next';
+import { Building2 } from 'lucide-vue-next';
 import { computed, reactive, ref } from 'vue';
+import EmptyState from '@/components/ui/EmptyState.vue';
+import IntelResultPanel from '@/components/ui/IntelResultPanel.vue';
+import IntelSearchForm from '@/components/ui/IntelSearchForm.vue';
+import IntelSearchPanel from '@/components/ui/IntelSearchPanel.vue';
+import MetricCard from '@/components/ui/MetricCard.vue';
+import PageHeader from '@/components/ui/PageHeader.vue';
+import RiskBadge from '@/components/ui/RiskBadge.vue';
+import SectionCard from '@/components/ui/SectionCard.vue';
+import { apiRequest } from '@/lib/api';
 import { useI18n } from '@/composables/useI18n';
 
 defineOptions({
@@ -70,24 +79,6 @@ const result = ref<CompanyIntelResult | null>(null);
 
 const canLookup = computed(() => form.query.trim().length >= 2);
 
-const riskBadgeClass = computed(() => {
-    const level = result.value?.summary.riskLevel;
-
-    if (level === 'low') {
-        return 'border-emerald-500/40 bg-emerald-500/10 text-emerald-300';
-    }
-
-    if (level === 'medium') {
-        return 'border-amber-500/40 bg-amber-500/10 text-amber-300';
-    }
-
-    if (level === 'high') {
-        return 'border-rose-500/40 bg-rose-500/10 text-rose-300';
-    }
-
-    return 'border-slate-500/40 bg-slate-500/10 text-slate-300';
-});
-
 const formatDateTime = (value: string | null) => {
     if (!value) {
         return '-';
@@ -150,27 +141,21 @@ const lookup = async () => {
     result.value = null;
 
     try {
-        const query = new URLSearchParams({
-            query: form.query.trim(),
-            locale: locale.value,
-        });
-
-        const response = await fetch(`/company-intel/lookup?${query.toString()}`, {
+        const apiResult = await apiRequest<CompanyIntelResult>('/company-intel/lookup', {
             method: 'GET',
-            headers: {
-                Accept: 'application/json',
+            query: {
+                query: form.query.trim(),
+                locale: locale.value,
             },
         });
 
-        const payload = await response.json();
-
-        if (!response.ok || !payload?.ok) {
-            error.value = payload?.message ?? t('companyIntel.errors.lookupFailed');
+        if (!apiResult.ok) {
+            error.value = apiResult.message || t('companyIntel.errors.lookupFailed');
 
             return;
         }
 
-        result.value = payload.data as CompanyIntelResult;
+        result.value = apiResult.data;
     } catch (exception) {
         error.value = exception instanceof Error ? exception.message : t('companyIntel.errors.lookupFailed');
     } finally {
@@ -183,98 +168,54 @@ const lookup = async () => {
     <Head :title="pageTitle" />
 
     <div class="flex h-full min-h-0 flex-1 flex-col gap-4 overflow-hidden rounded-xl p-4">
-        <section class="sticky top-0 z-10 shrink-0 rounded-xl border border-sidebar-border/80 bg-card/70 p-4 shadow-xl backdrop-blur">
+        <IntelSearchPanel>
             <div class="flex items-center justify-between gap-3">
-                <div class="space-y-1">
-                    <div class="flex items-center gap-2 text-sm font-semibold">
-                        <Building2 class="h-4 w-4 text-cyan-400" />
-                        <span>{{ t('companyIntel.title') }}</span>
-                        <span class="group relative inline-flex">
-                            <span
-                                class="inline-flex h-5 w-5 cursor-help items-center justify-center rounded-full border border-border text-[11px] font-semibold text-muted-foreground"
-                                :aria-label="t('companyIntel.help.label')"
-                            >
-                                ?
-                            </span>
-                            <span class="pointer-events-none absolute left-0 top-6 z-20 hidden w-80 rounded-md border border-border/70 bg-popover p-2 text-[11px] leading-relaxed text-popover-foreground shadow-xl group-hover:block">
-                                {{ t('companyIntel.help.overview') }}
-                            </span>
-                        </span>
-                    </div>
-                    <p class="text-xs text-muted-foreground">{{ t('companyIntel.description') }}</p>
-                </div>
+                <PageHeader :icon="Building2" :title="t('companyIntel.title')" :description="t('companyIntel.description')" :help-label="t('companyIntel.help.label')" :help-text="t('companyIntel.help.overview')" />
             </div>
 
-            <div class="mt-3 flex flex-wrap items-end gap-3">
-                <label class="block min-w-0 flex-1">
-                    <span class="mb-1 block truncate text-xs font-medium text-muted-foreground">{{ t('companyIntel.query') }}</span>
-                    <input
-                        v-model="form.query"
-                        type="text"
-                        class="h-10 w-full rounded-md border border-input bg-background px-3 text-sm"
-                        :placeholder="t('companyIntel.placeholder')"
-                        @keydown.enter.prevent="lookup"
-                    />
-                </label>
+            <IntelSearchForm
+                v-model="form.query"
+                :label="t('companyIntel.query')"
+                :placeholder="t('companyIntel.placeholder')"
+                :button-text="t('companyIntel.search')"
+                :loading-text="t('companyIntel.searching')"
+                :loading="loading"
+                :disabled="!canLookup"
+                :error="error"
+                @submit="lookup"
+            />
+        </IntelSearchPanel>
 
-                <button
-                    :disabled="loading || !canLookup"
-                    class="inline-flex h-10 cursor-pointer items-center gap-2 rounded-md bg-primary px-5 text-sm font-semibold text-primary-foreground disabled:cursor-not-allowed disabled:opacity-60"
-                    @click="lookup"
-                >
-                    <LoaderCircle v-if="loading" class="h-4 w-4 animate-spin" />
-                    <span>{{ loading ? t('companyIntel.searching') : t('companyIntel.search') }}</span>
-                </button>
-            </div>
-
-            <p v-if="error" class="mt-3 text-sm text-destructive">{{ error }}</p>
-        </section>
-
-        <section class="flex min-h-0 flex-1 flex-col rounded-xl border border-sidebar-border/80 bg-card/70 p-4 shadow-xl backdrop-blur">
-            <div v-if="!result" class="rounded-md border border-dashed border-border p-6 text-center text-sm text-muted-foreground">
-                {{ t('companyIntel.empty') }}
-            </div>
+        <IntelResultPanel>
+            <EmptyState v-if="!result" :text="t('companyIntel.empty')" />
 
             <div v-else class="telegram-scroll min-h-0 flex-1 overflow-y-auto space-y-3 pr-1">
                 <div class="grid gap-2 sm:grid-cols-2 xl:grid-cols-4">
-                    <div class="rounded-lg border border-border/70 bg-background/60 p-3">
-                        <p class="text-xs text-muted-foreground">{{ t('companyIntel.checkedAt') }}</p>
-                        <p class="mt-1 text-sm font-semibold">{{ formatDateTime(result.checkedAt) }}</p>
-                    </div>
-                    <div class="rounded-lg border border-border/70 bg-background/60 p-3">
-                        <p class="text-xs text-muted-foreground">{{ t('companyIntel.detectedDomain') }}</p>
-                        <p class="mt-1 text-sm font-semibold">{{ result.domain ?? '-' }}</p>
-                    </div>
-                    <div class="rounded-lg border p-3" :class="riskBadgeClass">
-                        <p class="text-xs">{{ t('companyIntel.riskScore') }}</p>
-                        <p class="mt-1 text-sm font-semibold">{{ riskLabel(result.summary.riskLevel) }} <span v-if="result.summary.riskScore !== null">({{ result.summary.riskScore }}/100)</span></p>
-                    </div>
-                    <div class="rounded-lg border border-border/70 bg-background/60 p-3">
-                        <p class="text-xs text-muted-foreground">{{ t('companyIntel.signalCount') }}</p>
-                        <p class="mt-1 text-xl font-semibold">{{ result.summary.signals.length }}</p>
-                    </div>
+                    <MetricCard :title="t('companyIntel.checkedAt')" :value="formatDateTime(result.checkedAt)" />
+                    <MetricCard :title="t('companyIntel.detectedDomain')" :value="result.domain ?? '-'" />
+                    <RiskBadge :label="t('companyIntel.riskScore')" :level="result.summary.riskLevel" :score="result.summary.riskScore">
+                        {{ riskLabel(result.summary.riskLevel) }}
+                    </RiskBadge>
+                    <MetricCard :title="t('companyIntel.signalCount')" :value="result.summary.signals.length" />
                 </div>
 
-                <div class="rounded-lg border border-border/70 bg-background/60 p-3 text-xs">
-                    <p class="mb-2 font-semibold">{{ t('companyIntel.riskScore') }}</p>
+                <SectionCard :title="t('companyIntel.riskScore')">
                     <p class="text-muted-foreground">{{ riskExplanationLabel(result.summary.riskExplanation) }}</p>
-                </div>
+                </SectionCard>
 
-                <div class="rounded-lg border border-border/70 bg-background/60 p-3 text-xs">
-                    <p class="mb-2 font-semibold">{{ t('companyIntel.signals') }}</p>
+                <SectionCard :title="t('companyIntel.signals')">
                     <p v-if="result.summary.signals.length === 0" class="text-emerald-300">{{ t('companyIntel.noSignals') }}</p>
                     <ul v-else class="list-disc space-y-1 pl-4 text-muted-foreground">
                         <li v-for="signal in result.summary.signals" :key="signal">{{ signalLabel(signal) }}</li>
                     </ul>
-                </div>
+                </SectionCard>
 
-                <div class="rounded-lg border border-border/70 bg-background/60 p-3 text-xs">
-                    <p class="mb-2 font-semibold">{{ t('companyIntel.strengths') }}</p>
+                <SectionCard :title="t('companyIntel.strengths')">
                     <p v-if="result.summary.strengths.length === 0" class="text-muted-foreground">-</p>
                     <ul v-else class="list-disc space-y-1 pl-4 text-muted-foreground">
                         <li v-for="strength in result.summary.strengths" :key="strength">{{ strengthLabel(strength) }}</li>
                     </ul>
-                </div>
+                </SectionCard>
 
                 <div v-if="result.domainIntel.available" class="rounded-lg border border-border/70 bg-background/60 p-3 text-xs space-y-1">
                     <p class="mb-2 font-semibold">{{ t('companyIntel.domainIntel') }}</p>
@@ -290,16 +231,13 @@ const lookup = async () => {
                     <p>{{ t('companyIntel.daysToExpiry') }}: {{ result.domainIntel.whois?.daysToExpiry ?? '-' }}</p>
                 </div>
 
-                <div class="rounded-lg border border-border/70 bg-background/60 p-3 text-xs">
-                    <p class="mb-2 font-semibold">{{ t('companyIntel.recommendations') }}</p>
+                <SectionCard :title="t('companyIntel.recommendations')">
                     <ul class="mb-3 list-disc space-y-1 pl-4 text-muted-foreground">
                         <li v-for="recommendation in result.summary.recommendations" :key="recommendation">{{ recommendationLabel(recommendation) }}</li>
                     </ul>
-                </div>
+                </SectionCard>
 
-                <div class="rounded-lg border border-border/70 bg-background/60 p-3 text-xs">
-                    <p class="mb-2 font-semibold">{{ t('companyIntel.osintLinks') }}</p>
-                    <p class="mb-2 text-muted-foreground">{{ t('companyIntel.help.links') }}</p>
+                <SectionCard :title="t('companyIntel.osintLinks')" :description="t('companyIntel.help.links')">
                     <div class="space-y-1">
                         <a
                             v-for="link in result.osintLinks"
@@ -312,8 +250,8 @@ const lookup = async () => {
                             {{ linkLabel(link.label) }}
                         </a>
                     </div>
-                </div>
+                </SectionCard>
             </div>
-        </section>
+        </IntelResultPanel>
     </div>
 </template>

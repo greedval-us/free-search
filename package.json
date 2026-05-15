@@ -10,7 +10,10 @@
         "format:check": "prettier --check resources/",
         "lint": "eslint . --fix",
         "lint:check": "eslint .",
-        "types:check": "vue-tsc --noEmit"
+        "types:check": "vue-tsc --noEmit",
+        "i18n:check": "node scripts/i18n/pipeline.mjs",
+        "i18n:check:strict": "node scripts/i18n/pipeline.mjs --strict",
+        "quality:check": "npm run format:check && npm run lint:check && npm run types:check && npm run i18n:check"
     },
     "devDependencies": {
         "@eslint/js": "^9.19.0",

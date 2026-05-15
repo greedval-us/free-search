@@ -1,6 +1,10 @@
 <script setup lang="ts">
-import { BarChart3, Download, FileText, LoaderCircle } from 'lucide-vue-next';
+import { BarChart3, Download, FileText } from 'lucide-vue-next';
 import { onMounted } from 'vue';
+import HelpTooltip from '@/components/ui/HelpTooltip.vue';
+import IntelResultPanel from '@/components/ui/IntelResultPanel.vue';
+import IntelSearchForm from '@/components/ui/IntelSearchForm.vue';
+import IntelSearchPanel from '@/components/ui/IntelSearchPanel.vue';
 import { useI18n } from '@/composables/useI18n';
 import { getRepeatQueryParams, isRepeatAutorunEnabled, readRepeatQueryParam } from '@/composables/useRepeatQuery';
 import { useSiteIntelAnalytics } from '../composables/useSiteIntelAnalytics';
@@ -50,75 +54,55 @@ onMounted(() => {
 </script>
 
 <template>
-    <section class="sticky top-0 z-10 shrink-0 rounded-xl border border-sidebar-border/80 bg-card/70 p-4 shadow-xl backdrop-blur">
+    <IntelSearchPanel>
         <div class="flex items-center justify-between gap-3">
             <div class="space-y-1">
                 <div class="flex items-center gap-2 text-sm font-semibold">
                     <BarChart3 class="h-4 w-4 text-cyan-400" />
                     <span>{{ t('siteIntel.analytics.title') }}</span>
-                    <span class="group relative inline-flex">
-                        <span
-                            class="inline-flex h-5 w-5 cursor-help items-center justify-center rounded-full border border-border text-[11px] font-semibold text-muted-foreground"
-                            :aria-label="t('siteIntel.help.label')"
-                        >
-                            ?
-                        </span>
-                        <span class="pointer-events-none absolute left-0 top-6 z-20 hidden w-80 rounded-md border border-border/70 bg-popover p-2 text-[11px] leading-relaxed text-popover-foreground shadow-xl group-hover:block">
-                            {{ t('siteIntel.analytics.help.overview') }}
-                        </span>
-                    </span>
+                    <HelpTooltip :label="t('siteIntel.help.label')" :text="t('siteIntel.analytics.help.overview')" />
                 </div>
                 <p class="text-xs text-muted-foreground">{{ t('siteIntel.analytics.description') }}</p>
             </div>
         </div>
 
-        <div class="mt-3 flex flex-wrap items-end gap-3">
-            <label class="block min-w-0 flex-1">
-                <span class="mb-1 block truncate text-xs font-medium text-muted-foreground">{{ t('siteIntel.analytics.target') }}</span>
-                <input
-                    v-model="form.target"
-                    type="text"
-                    class="h-10 w-full rounded-md border border-input bg-background px-3 text-sm"
-                    :placeholder="t('siteIntel.analytics.placeholder')"
-                    @keydown.enter.prevent="analyze"
-                />
-            </label>
+        <IntelSearchForm
+            v-model="form.target"
+            :label="t('siteIntel.analytics.target')"
+            :placeholder="t('siteIntel.analytics.placeholder')"
+            :button-text="t('siteIntel.analytics.analyze')"
+            :loading-text="t('siteIntel.analytics.analyzing')"
+            :loading="loading"
+            :disabled="!canAnalyze"
+            :error="error"
+            @submit="analyze"
+        >
+            <template #actions>
+                <button
+                    type="button"
+                    :disabled="!canUseReportActions"
+                    class="inline-flex h-10 cursor-pointer items-center gap-2 rounded-md bg-primary px-4 text-sm font-semibold text-primary-foreground hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-60"
+                    @click="openReport"
+                >
+                    <FileText class="h-4 w-4" />
+                    {{ t('siteIntel.analytics.report') }}
+                </button>
 
-            <button
-                :disabled="loading || !canAnalyze"
-                class="inline-flex h-10 cursor-pointer items-center gap-2 rounded-md bg-primary px-5 text-sm font-semibold text-primary-foreground disabled:cursor-not-allowed disabled:opacity-60"
-                @click="analyze"
-            >
-                <LoaderCircle v-if="loading" class="h-4 w-4 animate-spin" />
-                <span>{{ loading ? t('siteIntel.analytics.analyzing') : t('siteIntel.analytics.analyze') }}</span>
-            </button>
+                <button
+                    type="button"
+                    :disabled="!canUseReportActions"
+                    class="inline-flex h-10 cursor-pointer items-center gap-2 rounded-md border border-input bg-background px-4 text-sm font-medium hover:bg-accent disabled:cursor-not-allowed disabled:opacity-60"
+                    @click="downloadReport"
+                >
+                    <Download class="h-4 w-4" />
+                    {{ t('siteIntel.analytics.downloadReport') }}
+                </button>
+            </template>
+        </IntelSearchForm>
+    </IntelSearchPanel>
 
-            <button
-                type="button"
-                :disabled="!canUseReportActions"
-                class="inline-flex h-10 cursor-pointer items-center gap-2 rounded-md bg-primary px-4 text-sm font-semibold text-primary-foreground hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-60"
-                @click="openReport"
-            >
-                <FileText class="h-4 w-4" />
-                {{ t('siteIntel.analytics.report') }}
-            </button>
-
-            <button
-                type="button"
-                :disabled="!canUseReportActions"
-                class="inline-flex h-10 cursor-pointer items-center gap-2 rounded-md border border-input bg-background px-4 text-sm font-medium hover:bg-accent disabled:cursor-not-allowed disabled:opacity-60"
-                @click="downloadReport"
-            >
-                <Download class="h-4 w-4" />
-                {{ t('siteIntel.analytics.downloadReport') }}
-            </button>
-        </div>
-
-        <p v-if="error" class="mt-3 text-sm text-destructive">{{ error }}</p>
-    </section>
-
-    <section class="flex min-h-0 flex-1 flex-col rounded-xl border border-sidebar-border/80 bg-card/70 p-4 shadow-xl backdrop-blur">
-        <div v-if="!result" class="rounded-md border border-dashed border-border p-6 text-center text-sm text-muted-foreground">
+    <IntelResultPanel>
+        <div v-if="!result" class="intel-empty">
             {{ t('siteIntel.analytics.empty') }}
         </div>
 
@@ -205,17 +189,7 @@ onMounted(() => {
             <div class="rounded-lg border border-border/70 bg-background/60 p-3 text-xs">
                 <div class="mb-2 flex items-center gap-2">
                     <p class="font-semibold">{{ t('siteIntel.analytics.additionalSnapshotMetrics') }}</p>
-                    <span class="group relative inline-flex">
-                        <span
-                            class="inline-flex h-5 w-5 cursor-help items-center justify-center rounded-full border border-border text-[11px] font-semibold text-muted-foreground"
-                            :aria-label="t('siteIntel.help.label')"
-                        >
-                            ?
-                        </span>
-                        <span class="pointer-events-none absolute left-0 top-6 z-20 hidden w-80 rounded-md border border-border/70 bg-popover p-2 text-[11px] leading-relaxed text-popover-foreground shadow-xl group-hover:block">
-                            {{ t('siteIntel.analytics.help.snapshotMetrics') }}
-                        </span>
-                    </span>
+                    <HelpTooltip :label="t('siteIntel.help.label')" :text="t('siteIntel.analytics.help.snapshotMetrics')" />
                 </div>
                 <div class="grid gap-2 sm:grid-cols-2 xl:grid-cols-4">
                     <p>{{ t('siteIntel.analytics.snapshotHttpFinalStatus') }}: <span class="text-muted-foreground">{{ result.siteHealth.http.finalStatus || '-' }}</span></p>
@@ -233,17 +207,7 @@ onMounted(() => {
                 <div class="rounded-lg border border-border/70 bg-background/60 p-3 text-xs">
                     <div class="mb-2 flex items-center gap-2">
                         <p class="font-semibold">{{ t('siteIntel.analytics.riskSignals') }}</p>
-                        <span class="group relative inline-flex">
-                            <span
-                                class="inline-flex h-5 w-5 cursor-help items-center justify-center rounded-full border border-border text-[11px] font-semibold text-muted-foreground"
-                                :aria-label="t('siteIntel.help.label')"
-                            >
-                                ?
-                            </span>
-                            <span class="pointer-events-none absolute left-0 top-6 z-20 hidden w-80 rounded-md border border-border/70 bg-popover p-2 text-[11px] leading-relaxed text-popover-foreground shadow-xl group-hover:block">
-                                {{ t('siteIntel.analytics.help.riskSignals') }}
-                            </span>
-                        </span>
+                        <HelpTooltip :label="t('siteIntel.help.label')" :text="t('siteIntel.analytics.help.riskSignals')" />
                     </div>
                     <p v-if="result.overview.signals.risks.length === 0" class="text-emerald-300">{{ t('siteIntel.analytics.noRiskSignals') }}</p>
                     <ul v-else class="list-disc space-y-1 pl-4 text-muted-foreground">
@@ -254,17 +218,7 @@ onMounted(() => {
                 <div class="rounded-lg border border-border/70 bg-background/60 p-3 text-xs">
                     <div class="mb-2 flex items-center gap-2">
                         <p class="font-semibold">{{ t('siteIntel.analytics.strengthSignals') }}</p>
-                        <span class="group relative inline-flex">
-                            <span
-                                class="inline-flex h-5 w-5 cursor-help items-center justify-center rounded-full border border-border text-[11px] font-semibold text-muted-foreground"
-                                :aria-label="t('siteIntel.help.label')"
-                            >
-                                ?
-                            </span>
-                            <span class="pointer-events-none absolute left-0 top-6 z-20 hidden w-80 rounded-md border border-border/70 bg-popover p-2 text-[11px] leading-relaxed text-popover-foreground shadow-xl group-hover:block">
-                                {{ t('siteIntel.analytics.help.strengthSignals') }}
-                            </span>
-                        </span>
+                        <HelpTooltip :label="t('siteIntel.help.label')" :text="t('siteIntel.analytics.help.strengthSignals')" />
                     </div>
                     <p v-if="result.overview.signals.strengths.length === 0" class="text-muted-foreground">{{ t('siteIntel.analytics.noStrengthSignals') }}</p>
                     <ul v-else class="list-disc space-y-1 pl-4 text-muted-foreground">
@@ -276,17 +230,7 @@ onMounted(() => {
             <div class="rounded-lg border border-border/70 bg-background/60 p-3 text-xs">
                 <div class="mb-2 flex items-center gap-2">
                     <p class="font-semibold">{{ t('siteIntel.analytics.recommendations') }}</p>
-                    <span class="group relative inline-flex">
-                        <span
-                            class="inline-flex h-5 w-5 cursor-help items-center justify-center rounded-full border border-border text-[11px] font-semibold text-muted-foreground"
-                            :aria-label="t('siteIntel.help.label')"
-                        >
-                            ?
-                        </span>
-                        <span class="pointer-events-none absolute left-0 top-6 z-20 hidden w-80 rounded-md border border-border/70 bg-popover p-2 text-[11px] leading-relaxed text-popover-foreground shadow-xl group-hover:block">
-                            {{ t('siteIntel.analytics.help.recommendations') }}
-                        </span>
-                    </span>
+                    <HelpTooltip :label="t('siteIntel.help.label')" :text="t('siteIntel.analytics.help.recommendations')" />
                 </div>
                 <ul class="space-y-2 text-muted-foreground">
                     <li v-for="item in recommendationsWithImpact" :key="item.key" class="rounded border border-border/60 p-2">
@@ -301,5 +245,8 @@ onMounted(() => {
                 </ul>
             </div>
         </div>
-    </section>
+    </IntelResultPanel>
 </template>
+
+
+

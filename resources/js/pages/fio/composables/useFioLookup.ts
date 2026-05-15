@@ -1,5 +1,6 @@
 import { computed, reactive, ref } from 'vue';
 import type { Ref } from 'vue';
+import { apiRequest } from '@/lib/api';
 import type { FioLookupResult } from '../types';
 
 type TranslateFn = (key: string) => string;
@@ -28,32 +29,22 @@ export const useFioLookup = (t: TranslateFn, locale: Ref<'en' | 'ru'>) => {
         result.value = null;
 
         try {
-            const query = new URLSearchParams({
-                full_name: form.fullName.trim(),
-                locale: locale.value,
-            });
-
-            if (form.qualifier.trim().length > 0) {
-                query.set('qualifier', form.qualifier.trim());
-            }
-
-            const response = await fetch(`/fio/lookup?${query.toString()}`, {
+            const apiResult = await apiRequest<FioLookupResult>('/fio/lookup', {
                 method: 'GET',
-                headers: {
-                    Accept: 'application/json',
+                query: {
+                    full_name: form.fullName.trim(),
+                    qualifier: form.qualifier.trim().length > 0 ? form.qualifier.trim() : undefined,
+                    locale: locale.value,
                 },
             });
 
-            const payload = await safeJson(response);
-            const apiError = resolveApiError(payload);
-
-            if (!response.ok || !payload?.ok) {
-                error.value = apiError ?? t('fio.lookup.errors.lookupFailed');
+            if (!apiResult.ok) {
+                error.value = apiResult.message ?? t('fio.lookup.errors.lookupFailed');
 
                 return;
             }
 
-            result.value = payload.data as FioLookupResult;
+            result.value = apiResult.data;
         } catch (exception) {
             error.value = exception instanceof Error ? exception.message : t('fio.lookup.errors.lookupFailed');
         } finally {
@@ -69,42 +60,4 @@ export const useFioLookup = (t: TranslateFn, locale: Ref<'en' | 'ru'>) => {
         canLookup,
         lookup,
     };
-};
-
-const safeJson = async (response: Response): Promise<Record<string, unknown> | null> => {
-    const contentType = response.headers.get('content-type') ?? '';
-
-    if (!contentType.includes('application/json')) {
-        return null;
-    }
-
-    try {
-        return (await response.json()) as Record<string, unknown>;
-    } catch {
-        return null;
-    }
-};
-
-const resolveApiError = (payload: Record<string, unknown> | null): string | null => {
-    if (!payload || typeof payload !== 'object') {
-        return null;
-    }
-
-    const message = payload.message;
-
-    if (typeof message === 'string' && message.trim() !== '') {
-        return message;
-    }
-
-    const errors = payload.errors;
-
-    if (errors && typeof errors === 'object') {
-        for (const value of Object.values(errors as Record<string, unknown>)) {
-            if (Array.isArray(value) && value.length > 0 && typeof value[0] === 'string') {
-                return value[0];
-            }
-        }
-    }
-
-    return null;
 };

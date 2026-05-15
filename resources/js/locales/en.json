@@ -15,8 +15,8 @@
       "placeholderAuthor": "@username or id",
       "showAdvanced": "Show filters",
       "hideAdvanced": "Hide filters",
-      "find": "Find",
-      "searching": "Searching...",
+      "find": "Analyze",
+      "searching": "Analyzing...",
       "limit": "Limit",
       "dateFrom": "Date from",
       "dateTo": "Date to",
@@ -34,7 +34,7 @@
       "advancedAriaShow": "Show additional filters",
       "advancedAriaHide": "Hide additional filters",
       "help": {
-        "overview": "Live search across Telegram messages with filters by channel, keyword, author and date range."
+        "overview": "Operational Telegram search for analysts: filter by channel, author, keyword, and date to isolate relevant evidence quickly."
       }
     },
     "messages": {
@@ -87,8 +87,8 @@
     },
     "errors": {
       "channelRequired": "Please enter the channel username first.",
-      "searchFailed": "Search request failed.",
-      "unknownSearchError": "Unknown search error.",
+      "searchFailed": "Unable to complete analysis. Please retry in a moment.",
+      "unknownSearchError": "Unexpected response received. Please retry the analysis.",
       "commentsFailed": "Failed to load comments."
     },
     "tabs": {
@@ -136,7 +136,7 @@
         }
       },
       "help": {
-        "overview": "Collects Telegram messages/comments online and prepares export files without long-term storage."
+        "overview": "Controlled online collection workflow for Telegram messages and comments with export-ready outputs and minimal storage footprint."
       },
       "errors": {
         "customBothDates": "Please specify both custom period dates.",
@@ -225,9 +225,9 @@
       },
       "help": {
         "label": "What is this data?",
-        "overview": "Live analytics snapshot for selected channel and period with scoring, charts and anti-fraud signals.",
+        "overview": "Executive-friendly Telegram analytics with trends, engagement signals, and anti-fraud context for rapid decision-making.",
         "formula": "Post score formula. Variables: V = views, F = forwards, R = replies, Re = reactions, G = gifts. Calculation: score = V*wV + F*wF + R*wR + Re*wRe + G*wG.",
-        "antiFraud": "Anti-Fraud risk score (0-100) is formed from trigger points. We detect suspicious patterns (for example interactions without views, time bursts, abnormal ratios), sum trigger scores, and map risk level: low < 30, medium 30-59, high >= 60.",
+        "antiFraud": "Anti-Fraud score (0-100) aggregates suspicious engagement patterns and trigger clusters to prioritize review workload.",
         "funnel": "Shows the step-by-step conversion from all posts to posts with meaningful engagement.",
         "audience": "Shows author structure: concentration, recurring contributors, and peak activity hours.",
         "activity": "Shows period dynamics by bucket: number of posts, views, and interactions.",
@@ -430,11 +430,11 @@
     },
     "siteHealth": {
       "title": "Site Health",
-      "description": "Online checks for SSL, DNS, redirects, status and security headers.",
+      "description": "Production-style health check for public web assets: DNS, SSL, redirects, status, and baseline hardening controls.",
       "target": "URL or domain",
       "placeholder": "example.com or https://example.com",
-      "check": "Check",
-      "checking": "Checking...",
+      "check": "Analyze",
+      "checking": "Analyzing...",
       "empty": "Run a check to view site health details.",
       "finalStatus": "Final status",
       "redirects": "Redirects",
@@ -463,7 +463,7 @@
         "permissions_policy": "Permissions-Policy"
       },
       "help": {
-        "overview": "Combines DNS, HTTP chain, SSL and security headers into a quick health score for the target.",
+        "overview": "Quickly assess external site trust and resilience using technical signals that matter for risk triage and monitoring.",
         "dns": "A/AAAA records show whether the domain resolves for IPv4 and IPv6.",
         "ssl": "Certificate details and validity period for HTTPS endpoint.",
         "securityHeaders": "Checks baseline hardening headers that reduce browser-side attack surface.",
@@ -487,17 +487,17 @@
       },
       "errors": {
         "targetRequired": "Enter URL or domain.",
-        "checkFailed": "Could not complete site health check."
+        "checkFailed": "Unable to complete analysis. Please retry in a moment."
       }
     },
     "domainLite": {
       "title": "Domain Lite",
-      "description": "Online WHOIS and DNS lookup with a lightweight risk score.",
+      "description": "Concise domain intelligence baseline: WHOIS and DNS posture with practical risk scoring for fast triage.",
       "whois": "WHOIS",
       "domain": "Domain",
       "placeholder": "example.com",
-      "check": "Lookup",
-      "checking": "Looking up...",
+      "check": "Analyze",
+      "checking": "Analyzing...",
       "empty": "Run lookup to view domain summary.",
       "mxCount": "MX records",
       "riskScore": "Risk score",
@@ -530,7 +530,7 @@
       "riskImpactPoints": "Impact points",
       "whoisSample": "WHOIS sample",
       "help": {
-        "overview": "Collects lightweight DNS and WHOIS data in real time without storing historical snapshots.",
+        "overview": "Use Domain Lite to validate ownership, lifecycle, and mail-security posture before deeper investigation.",
         "dns": "DNS block includes infrastructure and email records (A/AAAA/NS/MX/SPF/DMARC).",
         "whois": "WHOIS provides registration metadata: registrar and domain lifecycle dates.",
         "risk": "Risk score increases when DNS/WHOIS has weak or missing data."
@@ -556,7 +556,7 @@
       },
       "errors": {
         "domainRequired": "Enter domain.",
-        "lookupFailed": "Could not complete domain lookup."
+        "lookupFailed": "Unable to complete analysis. Please retry in a moment."
       }
     },
     "analytics": {
@@ -1073,12 +1073,12 @@
   "companyIntel": {
     "headTitle": "Company Intel",
     "title": "Company Intel",
-    "description": "Live OSINT snapshot for a company name or domain from public sources.",
+    "description": "Commercial OSINT snapshot for company profiling: domain posture, trust signals, and reputation pivots from public sources.",
     "query": "Company name or domain",
     "placeholder": "example.com or Acme Corp",
     "search": "Analyze",
     "searching": "Analyzing...",
-    "empty": "Run analysis to view company intelligence.",
+    "empty": "Run company profiling to view technical trust signals, risk context, and OSINT pivots.",
     "checkedAt": "Checked at",
     "detectedDomain": "Detected domain",
     "riskScore": "Risk level",
@@ -1088,7 +1088,7 @@
     "strengths": "Positive signals",
     "recommendations": "Recommendations",
     "domainIntel": "Domain intelligence",
-    "osintLinks": "Public OSINT pivots",
+    "osintLinks": "OSINT intelligence pivots",
     "labels": {
       "dns": "DNS",
       "mailSecurity": "Mail security",
@@ -1128,8 +1128,8 @@
     },
     "help": {
       "label": "What is this data?",
-      "overview": "Live company OSINT: domain posture, risk/strength signals, and direct pivots to open intelligence sources.",
-      "links": "Use links for manual pivoting across public registries, archives, social and threat datasets."
+      "overview": "Build a fast company intelligence baseline: verify domain trust, review risk signals, and pivot into open-source investigations.",
+      "links": "Use pivots for deeper verification across registries, archives, social traces, and threat-intelligence datasets."
     },
     "strength": {
       "dns_resolution_ok": "Domain resolves in DNS",
@@ -1203,18 +1203,18 @@
     },
     "errors": {
       "queryRequired": "Enter a company name or domain.",
-      "lookupFailed": "Could not complete company analysis."
+      "lookupFailed": "Unable to complete analysis. Please retry in a moment."
     }
   },
   "documentIntel": {
     "headTitle": "Document Intel",
     "title": "Document Intel",
-    "description": "Live OSINT pivots for public documents and metadata exposure checks.",
+    "description": "Document exposure intelligence from public sources: discover indexed files, metadata risks, and investigation pivots.",
     "query": "Domain or company",
     "placeholder": "example.com or Acme Corp",
     "search": "Analyze",
     "searching": "Analyzing...",
-    "empty": "Run analysis to view document intelligence pivots.",
+    "empty": "Run document intelligence to inspect indexed documents, metadata exposure, and related risk indicators.",
     "checkedAt": "Checked at",
     "detectedDomain": "Detected domain",
     "signalCount": "Signals",
@@ -1222,7 +1222,7 @@
     "signals": "Signals",
     "recommendations": "Recommendations",
     "domainIntel": "Domain intelligence",
-    "pivots": "Document pivots",
+    "pivots": "Document intelligence pivots",
     "available": "Available",
     "unavailable": "Unavailable",
     "registrar": "Registrar",
@@ -1230,8 +1230,8 @@
     "expiresAt": "Expires at",
     "help": {
       "label": "What is this data?",
-      "overview": "Helps find publicly exposed company documents and starting points for metadata analysis.",
-      "pivots": "Use pivot links to discover indexed files and archive snapshots in open sources."
+      "overview": "Identify publicly exposed documents and metadata traces that can leak internal details, identities, or infrastructure clues.",
+      "pivots": "Use these pivots to discover file footprints, archive history, and possible exposure surfaces before deep review."
     },
     "signal": {
       "domain_not_detected": "Domain was not detected in query",
@@ -1306,7 +1306,7 @@
     },
     "errors": {
       "queryRequired": "Enter domain or company name.",
-      "lookupFailed": "Could not complete document intelligence lookup."
+      "lookupFailed": "Unable to complete analysis. Please retry in a moment."
     }
   },
   "dashboard": {
@@ -1343,6 +1343,7 @@
       "username": "Username search",
       "fio": "FIO search",
       "site-intel": "Site intelligence",
+      "company-intel": "Company intelligence",
       "email-intel": "Email intelligence",
       "document-intel": "Document intelligence",
       "telegram": "Telegram analytics",
@@ -1496,24 +1497,24 @@
     }
   },
   "welcome": {
-    "headTitle": "Uraboros | Telegram Analytics",
-    "platformTitle": "Telegram Intelligence Platform",
+    "headTitle": "Uraboros | OSINT Intelligence Platform",
+    "platformTitle": "Uraboros Intelligence Platform",
     "dashboard": "Dashboard",
     "signIn": "Sign in",
     "register": "Register",
-    "pill": "Search, monitoring, OSINT",
-    "heroTitle": "Starting point for Telegram intelligence workflows",
-    "heroDescription": "The platform helps collect data, filter noise, and surface meaningful signals. You can scale this baseline into deep analytics pipelines and investigation scenarios.",
-    "openDashboard": "Open Dashboard",
-    "getStarted": "Get Started",
-    "createAccount": "Create account",
+    "pill": "OSINT ? Analytics ? Investigations",
+    "heroTitle": "Commercial-grade OSINT workspace for analysts and investigation teams",
+    "heroDescription": "Run search, verification, and analysis in one platform: move from first signal to report-ready findings without fragmented tooling.",
+    "openDashboard": "Open Workspace",
+    "getStarted": "Start Investigation",
+    "createAccount": "Create Workspace Account",
     "features": {
-      "monitoringTitle": "Channel and chat monitoring",
-      "monitoringText": "Collect Telegram signals in one workspace without manual routine.",
-      "osintTitle": "OSINT and link analysis",
-      "osintText": "Track entities, relationships, and campaign dynamics in context.",
-      "dashboardsTitle": "Actionable dashboards",
-      "dashboardsText": "Focus on key metrics and quickly move from hypotheses to validation."
+      "monitoringTitle": "Unified operational workflow",
+      "monitoringText": "Reduce analyst overhead with one interface for collection, validation, and intelligence pivots.",
+      "osintTitle": "Cross-source OSINT pivots",
+      "osintText": "Link entities, infrastructure, and public traces across threat, archive, and reputation sources.",
+      "dashboardsTitle": "Executive-ready output",
+      "dashboardsText": "Deliver structured insights with clear risk narratives and audit-friendly context."
     }
   },
   "auth": {

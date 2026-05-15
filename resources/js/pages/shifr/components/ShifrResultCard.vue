@@ -29,7 +29,7 @@ const keyLabel = (key: string): string => {
 </script>
 
 <template>
-  <section class="flex min-h-0 flex-1 flex-col rounded-xl border border-sidebar-border/80 bg-card/70 p-4 shadow-xl backdrop-blur">
+  <section class="flex min-h-0 flex-1 flex-col intel-panel">
     <div class="mb-2 flex items-center justify-between gap-2">
       <div class="flex items-center gap-2">
         <p class="text-xs font-medium text-muted-foreground">{{ title }}</p>
@@ -76,3 +76,4 @@ const keyLabel = (key: string): string => {
     </div>
   </section>
 </template>
+

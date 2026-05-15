@@ -72,7 +72,7 @@ onMounted(() => {
     <Head :title="pageTitle" />
 
     <div class="flex h-full min-h-0 flex-1 flex-col gap-4 overflow-hidden rounded-xl p-4">
-        <section class="sticky top-0 z-10 shrink-0 rounded-xl border border-sidebar-border/80 bg-card/70 p-4 shadow-xl backdrop-blur">
+        <section class="sticky top-0 z-10 shrink-0 intel-panel">
             <div class="flex items-center justify-between gap-3">
                 <div class="space-y-1">
                     <div class="flex items-center gap-2 text-sm font-semibold">
@@ -118,8 +118,8 @@ onMounted(() => {
             <p v-if="error" class="mt-3 text-sm text-destructive">{{ error }}</p>
         </section>
 
-        <section class="flex min-h-0 flex-1 flex-col rounded-xl border border-sidebar-border/80 bg-card/70 p-4 shadow-xl backdrop-blur">
-            <div v-if="!result" class="rounded-md border border-dashed border-border p-6 text-center text-sm text-muted-foreground">
+        <section class="flex min-h-0 flex-1 flex-col intel-panel">
+            <div v-if="!result" class="intel-empty">
                 {{ t('fio.lookup.empty') }}
             </div>
 
@@ -296,3 +296,4 @@ onMounted(() => {
         </section>
     </div>
 </template>
+

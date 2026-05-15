@@ -13,139 +13,105 @@ withDefaults(
     },
 );
 
-const { t, locale, setLocale } = useI18n();
+const { locale, setLocale } = useI18n();
 
-const heroCopy = computed(() => {
+const copy = computed(() => {
     if (locale.value === 'ru') {
         return {
             headTitle: 'Uraboros | OSINT Platform',
-            platformTitle: 'OSINT Intelligence Platform',
-            pill: 'Telegram, Username, Site, FIO, Email',
-            heroTitle: 'Единая платформа для поиска и аналитики',
+            platformTitle: 'Uraboros Intelligence Platform',
+            badge: 'OSINT • Analytics • Investigations',
+            heroTitle: 'Коммерческая OSINT-платформа для аналитиков и команд расследований',
             heroDescription:
-                'Работайте с Telegram, username, сайтами, ФИО и email в одном окне: находите сигналы, анализируйте риски и быстро возвращайтесь к результатам через Dashboard.',
+                'Единое рабочее пространство для поиска, верификации и аналитики: от первичного сигнала до проверяемого отчета без переключения между десятками сервисов.',
+            primaryCta: 'Открыть рабочее пространство',
+            secondaryCta: 'Создать аккаунт',
+            valueTitle: 'Что вы получаете',
+            valueItems: [
+                {
+                    title: 'Быстрый переход от сигнала к гипотезе',
+                    text: 'Поиск, pivots, риск-сигналы и рекомендации в едином UX-потоке без ручной склейки данных.',
+                },
+                {
+                    title: 'Модульная архитектура для OSINT',
+                    text: 'Telegram, Company Intel, Site Intel, Document Intel, Username, FIO и Email в одном продукте.',
+                },
+                {
+                    title: 'Профессиональная подача результатов',
+                    text: 'Структурированные выводы, понятные пояснения риска и быстрый экспорт для отчета/брифа.',
+                },
+            ],
+            modulesTitle: 'Ключевые модули',
+            modulesSubtitle: 'Готовые рабочие сценарии для практической разведки',
+            modules: [
+                { title: 'Company Intel', text: 'Репутация, доменные сигналы, OSINT-переходы по бренду и инфраструктуре.' },
+                { title: 'Site Intel', text: 'WHOIS/DNS/SSL/заголовки безопасности и технические риски сайта.' },
+                { title: 'Document Intel', text: 'Поиск открытых документов, метаданные и признаки утечек.' },
+                { title: 'Telegram Analytics', text: 'Аналитика каналов, anti-fraud сигналы, отчеты и экспорт.' },
+                { title: 'Username & Email Intel', text: 'Проверка следов на платформах, сигналы совпадений и риск-профиль.' },
+                { title: 'Dashboard', text: 'История запросов, повтор сценариев и централизованная рабочая лента.' },
+            ],
+            metrics: [
+                { value: '7+', label: 'OSINT-модулей в одном контуре' },
+                { value: '100%', label: 'Публичные источники без платных API' },
+                { value: '1 workflow', label: 'От сигнала до отчета в едином интерфейсе' },
+            ],
+            finalTitle: 'Готовы перейти к продуктивной разведке?',
+            finalText: 'Запустите платформу и начните с любого модуля. Интерфейс и подсказки уже адаптированы под ежедневную аналитическую работу.',
+            signIn: 'Войти',
+            dashboard: 'Панель',
+            register: 'Регистрация',
         };
     }
 
     return {
         headTitle: 'Uraboros | OSINT Platform',
-        platformTitle: 'OSINT Intelligence Platform',
-        pill: 'Telegram, Username, Site, FIO, Email',
-        heroTitle: 'One platform for search and intelligence',
+        platformTitle: 'Uraboros Intelligence Platform',
+        badge: 'OSINT • Analytics • Investigations',
+        heroTitle: 'Commercial-grade OSINT platform for analysts and investigation teams',
         heroDescription:
-            'Work across Telegram, username, site, full-name, and email modules in one workspace: detect signals, analyze risks, and revisit results through Dashboard.',
+            'A unified workspace for search, verification, and intelligence workflows: from first signal to report-ready findings without tool fragmentation.',
+        primaryCta: 'Open Workspace',
+        secondaryCta: 'Create Account',
+        valueTitle: 'What you get',
+        valueItems: [
+            {
+                title: 'Fast path from signal to hypothesis',
+                text: 'Search, pivots, risk signals, and recommendations in one UX flow without manual data stitching.',
+            },
+            {
+                title: 'Modular OSINT architecture',
+                text: 'Telegram, Company Intel, Site Intel, Document Intel, Username, FIO, and Email in one product.',
+            },
+            {
+                title: 'Professional result delivery',
+                text: 'Structured findings, clear risk explanations, and quick export for reports and briefings.',
+            },
+        ],
+        modulesTitle: 'Core modules',
+        modulesSubtitle: 'Ready-to-use workflows for practical intelligence operations',
+        modules: [
+            { title: 'Company Intel', text: 'Reputation, domain signals, and OSINT pivots across brand and infrastructure.' },
+            { title: 'Site Intel', text: 'WHOIS/DNS/SSL/security-header analysis and technical risk posture.' },
+            { title: 'Document Intel', text: 'Public document discovery, metadata extraction, and exposure indicators.' },
+            { title: 'Telegram Analytics', text: 'Channel analytics, anti-fraud signals, reporting, and export.' },
+            { title: 'Username & Email Intel', text: 'Cross-platform traces, confidence signals, and risk profiling.' },
+            { title: 'Dashboard', text: 'Query history, workflow reruns, and centralized analyst context.' },
+        ],
+        metrics: [
+            { value: '7+', label: 'OSINT modules in one platform' },
+            { value: '100%', label: 'Public-source workflows, no paid APIs' },
+            { value: '1 workflow', label: 'From signal to report in one interface' },
+        ],
+        finalTitle: 'Ready to move faster with intelligence workflows?',
+        finalText: 'Launch the platform and start from any module. UI copy and hints are shaped for day-to-day analyst work.',
+        signIn: 'Sign in',
+        dashboard: 'Dashboard',
+        register: 'Register',
     };
 });
 
-const pageTitle = computed(() => heroCopy.value.headTitle);
-
-const features = computed(() => {
-    if (locale.value === 'ru') {
-        return [
-            {
-                title: 'Мульти-модульный OSINT',
-                text: 'Telegram, Username, Site Intel, FIO и Email Intel в едином рабочем пространстве.',
-            },
-            {
-                title: 'Онлайн-поиск и проверка',
-                text: 'Быстрая проверка сущностей и источников с аналитикой без перегруженного интерфейса.',
-            },
-            {
-                title: 'Централизованный Dashboard',
-                text: 'История действий, сохраненные запросы и быстрый повтор сценариев в одном месте.',
-            },
-        ];
-    }
-
-    return [
-        {
-            title: 'Multi-module OSINT',
-            text: 'Telegram, Username, Site Intel, FIO, and Email Intel in one operational workspace.',
-        },
-        {
-            title: 'Live search and verification',
-            text: 'Fast entity checks and source validation with analytics in a clean interface.',
-        },
-        {
-            title: 'Centralized Dashboard',
-            text: 'Action history, saved queries, and quick reruns of your workflows in one place.',
-        },
-    ];
-});
-
-const moduleCards = computed(() => {
-    if (locale.value === 'ru') {
-        return [
-            {
-                title: 'Telegram',
-                text: 'Поиск сообщений и комментариев, аналитика каналов, сбор и экспорт данных по периодам.',
-            },
-            {
-                title: 'Username OSINT',
-                text: 'Проверка никнеймов по открытым платформам, оценка совпадений и граф связей.',
-            },
-            {
-                title: 'Site Intel',
-                text: 'Site Health, Domain Lite, SEO-аудит и аналитические сигналы по доменам.',
-            },
-            {
-                title: 'FIO Intel',
-                text: 'Поиск публичных упоминаний ФИО из нескольких источников с кластеризацией и скорингом.',
-            },
-            {
-                title: 'Email Intel',
-                text: 'DNS/MX/SPF/DMARC анализ, риск-сигналы, граф сущностей и массовая проверка.',
-            },
-            {
-                title: 'Dashboard',
-                text: 'История запросов, сохраненные сценарии, избранные модули и быстрый повтор действий.',
-            },
-        ];
-    }
-
-    return [
-        {
-            title: 'Telegram',
-            text: 'Message and comments search, channel analytics, collection, and export by period.',
-        },
-        {
-            title: 'Username OSINT',
-            text: 'Cross-platform username checks with match confidence and relationship graph.',
-        },
-        {
-            title: 'Site Intel',
-            text: 'Site Health, Domain Lite, SEO audit, and domain-level analytics signals.',
-        },
-        {
-            title: 'FIO Intel',
-            text: 'Public full-name lookup from multiple sources with clustering and confidence scoring.',
-        },
-        {
-            title: 'Email Intel',
-            text: 'DNS/MX/SPF/DMARC analysis, risk signals, entity graph, and bulk checks.',
-        },
-        {
-            title: 'Dashboard',
-            text: 'Query history, saved queries, pinned modules, and quick reruns.',
-        },
-    ];
-});
-
-const commercialBullets = computed(() => {
-    if (locale.value === 'ru') {
-        return [
-            '5 рабочих модулей в одном интерфейсе',
-            'Онлайн-поиск и аналитика без перегруженного интерфейса',
-            'Быстрый переход от сигнала к проверке гипотез',
-        ];
-    }
-
-    return [
-        '5 operational modules in one interface',
-        'Live search and analytics in a clean workflow',
-        'Fast path from signal detection to hypothesis validation',
-    ];
-});
+const pageTitle = computed(() => copy.value.headTitle);
 
 const toggleLocale = () => {
     setLocale(locale.value === 'ru' ? 'en' : 'ru');
@@ -155,22 +121,22 @@ const toggleLocale = () => {
 <template>
     <Head :title="pageTitle" />
 
-    <div class="relative min-h-screen overflow-hidden bg-slate-950 text-slate-100">
+    <div class="relative min-h-screen overflow-hidden bg-[#0a1020] text-slate-100">
         <div class="pointer-events-none absolute inset-0">
-            <div class="absolute -top-32 left-1/2 h-80 w-80 -translate-x-1/2 rounded-full bg-cyan-500/30 blur-3xl" />
-            <div class="absolute bottom-0 left-0 h-72 w-72 rounded-full bg-emerald-500/20 blur-3xl" />
-            <div class="absolute right-0 top-1/3 h-72 w-72 rounded-full bg-indigo-500/25 blur-3xl" />
-            <div class="grid-pattern absolute inset-0 opacity-30" />
+            <div class="absolute -top-40 left-1/2 h-96 w-96 -translate-x-1/2 rounded-full bg-sky-500/30 blur-3xl" />
+            <div class="absolute right-0 top-24 h-80 w-80 rounded-full bg-emerald-400/15 blur-3xl" />
+            <div class="absolute bottom-0 left-0 h-80 w-80 rounded-full bg-cyan-400/15 blur-3xl" />
+            <div class="grid-pattern absolute inset-0 opacity-20" />
         </div>
 
-        <div class="relative mx-auto flex w-full max-w-6xl flex-col px-6 py-8 sm:px-8 lg:px-10">
-            <header class="mb-10 flex items-center justify-between">
+        <div class="relative mx-auto w-full max-w-7xl px-6 py-8 sm:px-8 lg:px-10">
+            <header class="mb-10 flex items-center justify-between gap-4">
                 <div>
-                    <p class="text-xs uppercase tracking-[0.22em] text-cyan-300">Uraboros</p>
-                    <h1 class="mt-2 text-xl font-semibold sm:text-2xl">{{ heroCopy.platformTitle }}</h1>
+                    <p class="text-xs uppercase tracking-[0.28em] text-cyan-300">Uraboros</p>
+                    <h1 class="mt-2 text-xl font-semibold sm:text-2xl">{{ copy.platformTitle }}</h1>
                 </div>
 
-                <nav class="flex items-center gap-3">
+                <div class="flex items-center gap-3">
                     <button
                         type="button"
                         class="rounded-lg border border-slate-700 bg-slate-900/70 px-3 py-2 text-sm font-medium text-slate-100 transition hover:border-cyan-300/40 hover:text-cyan-100"
@@ -184,7 +150,7 @@ const toggleLocale = () => {
                         :href="dashboard()"
                         class="rounded-lg border border-cyan-300/40 bg-cyan-400/10 px-4 py-2 text-sm font-medium text-cyan-100 transition hover:bg-cyan-400/20"
                     >
-                        {{ t('welcome.dashboard') }}
+                        {{ copy.dashboard }}
                     </Link>
 
                     <template v-else>
@@ -192,31 +158,31 @@ const toggleLocale = () => {
                             :href="login()"
                             class="rounded-lg border border-slate-700 bg-slate-900/70 px-4 py-2 text-sm font-medium text-slate-100 transition hover:border-cyan-300/40 hover:text-cyan-100"
                         >
-                            {{ t('welcome.signIn') }}
+                            {{ copy.signIn }}
                         </Link>
                         <Link
                             v-if="canRegister"
                             :href="register()"
                             class="rounded-lg border border-cyan-300/40 bg-cyan-400/10 px-4 py-2 text-sm font-medium text-cyan-100 transition hover:bg-cyan-400/20"
                         >
-                            {{ t('welcome.register') }}
+                            {{ copy.register }}
                         </Link>
                     </template>
-                </nav>
+                </div>
             </header>
 
             <main class="grid gap-6">
-                <section class="rounded-3xl border border-slate-800/90 bg-slate-900/70 p-8 shadow-2xl backdrop-blur xl:p-10">
+                <section class="rounded-3xl border border-slate-800/90 bg-slate-900/75 p-8 shadow-2xl backdrop-blur xl:p-10">
                     <p class="inline-flex rounded-full border border-cyan-300/35 bg-cyan-300/10 px-3 py-1 text-xs font-medium text-cyan-200">
-                        {{ heroCopy.pill }}
+                        {{ copy.badge }}
                     </p>
 
-                    <h2 class="mt-5 max-w-3xl text-3xl font-semibold leading-tight sm:text-4xl xl:text-5xl">
-                        {{ heroCopy.heroTitle }}
+                    <h2 class="mt-5 max-w-4xl text-3xl font-semibold leading-tight sm:text-4xl xl:text-5xl">
+                        {{ copy.heroTitle }}
                     </h2>
 
-                    <p class="mt-5 max-w-2xl text-sm leading-relaxed text-slate-300 sm:text-base">
-                        {{ heroCopy.heroDescription }}
+                    <p class="mt-5 max-w-3xl text-sm leading-relaxed text-slate-300 sm:text-base">
+                        {{ copy.heroDescription }}
                     </p>
 
                     <div class="mt-8 flex flex-wrap gap-3">
@@ -224,7 +190,7 @@ const toggleLocale = () => {
                             :href="$page.props.auth.user ? dashboard() : login()"
                             class="rounded-xl bg-cyan-400 px-5 py-2.5 text-sm font-semibold text-slate-950 transition hover:bg-cyan-300"
                         >
-                            {{ $page.props.auth.user ? t('welcome.openDashboard') : t('welcome.getStarted') }}
+                            {{ copy.primaryCta }}
                         </Link>
 
                         <Link
@@ -232,35 +198,31 @@ const toggleLocale = () => {
                             :href="register()"
                             class="rounded-xl border border-slate-700 bg-slate-900/80 px-5 py-2.5 text-sm font-semibold text-slate-100 transition hover:border-cyan-300/40 hover:text-cyan-100"
                         >
-                            {{ t('welcome.createAccount') }}
+                            {{ copy.secondaryCta }}
                         </Link>
                     </div>
                 </section>
 
-                <aside class="grid gap-4 md:grid-cols-3">
+                <section class="grid gap-4 md:grid-cols-3">
                     <article
-                        v-for="feature in features"
-                        :key="feature.title"
+                        v-for="item in copy.valueItems"
+                        :key="item.title"
                         class="rounded-2xl border border-slate-800 bg-slate-900/65 p-5 shadow-lg backdrop-blur"
                     >
-                        <h3 class="text-base font-semibold text-cyan-100">{{ feature.title }}</h3>
-                        <p class="mt-2 text-sm leading-relaxed text-slate-300">{{ feature.text }}</p>
+                        <h3 class="text-base font-semibold text-cyan-100">{{ item.title }}</h3>
+                        <p class="mt-2 text-sm leading-relaxed text-slate-300">{{ item.text }}</p>
                     </article>
-                </aside>
+                </section>
 
                 <section class="rounded-3xl border border-slate-800/90 bg-slate-900/65 p-6 shadow-2xl backdrop-blur xl:p-8">
                     <div class="mb-5 flex flex-wrap items-end justify-between gap-3">
-                        <h3 class="text-2xl font-semibold text-slate-100">
-                            {{ locale === 'ru' ? 'Функционал платформы' : 'Platform capabilities' }}
-                        </h3>
-                        <p class="text-sm text-slate-300">
-                            {{ locale === 'ru' ? 'Общий обзор модулей' : 'High-level module overview' }}
-                        </p>
+                        <h3 class="text-2xl font-semibold text-slate-100">{{ copy.modulesTitle }}</h3>
+                        <p class="text-sm text-slate-300">{{ copy.modulesSubtitle }}</p>
                     </div>
 
                     <div class="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
                         <article
-                            v-for="card in moduleCards"
+                            v-for="card in copy.modules"
                             :key="card.title"
                             class="rounded-2xl border border-slate-800 bg-slate-950/50 p-4"
                         >
@@ -270,46 +232,33 @@ const toggleLocale = () => {
                     </div>
                 </section>
 
-                <section class="grid gap-4 lg:grid-cols-[1.15fr_0.85fr]">
+                <section class="grid gap-4 lg:grid-cols-[1.05fr_0.95fr]">
                     <article class="rounded-3xl border border-slate-800/90 bg-slate-900/65 p-6 shadow-xl backdrop-blur">
-                        <h3 class="text-lg font-semibold text-slate-100">
-                            {{ locale === 'ru' ? 'Почему выбирают Uraboros' : 'Why teams choose Uraboros' }}
-                        </h3>
-                        <ul class="mt-3 space-y-2 text-sm text-slate-300">
-                            <li
-                                v-for="item in commercialBullets"
-                                :key="item"
-                                class="rounded-xl border border-slate-800 bg-slate-950/45 px-3 py-2"
-                            >
-                                {{ item }}
-                            </li>
-                        </ul>
+                        <h3 class="text-lg font-semibold text-slate-100">{{ copy.valueTitle }}</h3>
+                        <div class="mt-4 grid gap-3 sm:grid-cols-3">
+                            <div v-for="metric in copy.metrics" :key="metric.label" class="rounded-xl border border-slate-800 bg-slate-950/45 px-3 py-3">
+                                <p class="text-2xl font-semibold text-cyan-200">{{ metric.value }}</p>
+                                <p class="mt-1 text-xs text-slate-300">{{ metric.label }}</p>
+                            </div>
+                        </div>
                     </article>
 
                     <article class="rounded-3xl border border-cyan-300/25 bg-gradient-to-br from-cyan-400/15 via-slate-900/80 to-emerald-400/10 p-6 shadow-xl backdrop-blur">
-                        <h3 class="text-lg font-semibold text-slate-100">
-                            {{ locale === 'ru' ? 'Запустить платформу' : 'Launch the platform' }}
-                        </h3>
-                        <p class="mt-2 text-sm leading-relaxed text-slate-300">
-                            {{
-                                locale === 'ru'
-                                    ? 'Откройте рабочее пространство и начните анализ с нужного модуля.'
-                                    : 'Open your workspace and start from the module you need.'
-                            }}
-                        </p>
+                        <h3 class="text-lg font-semibold text-slate-100">{{ copy.finalTitle }}</h3>
+                        <p class="mt-2 text-sm leading-relaxed text-slate-300">{{ copy.finalText }}</p>
                         <div class="mt-5 flex flex-wrap gap-2">
                             <Link
                                 :href="$page.props.auth.user ? dashboard() : login()"
                                 class="rounded-xl bg-cyan-400 px-4 py-2 text-sm font-semibold text-slate-950 transition hover:bg-cyan-300"
                             >
-                                {{ $page.props.auth.user ? t('welcome.openDashboard') : t('welcome.getStarted') }}
+                                {{ copy.primaryCta }}
                             </Link>
                             <Link
                                 v-if="!$page.props.auth.user && canRegister"
                                 :href="register()"
                                 class="rounded-xl border border-slate-700 bg-slate-900/75 px-4 py-2 text-sm font-semibold text-slate-100 transition hover:border-cyan-300/40 hover:text-cyan-100"
                             >
-                                {{ t('welcome.createAccount') }}
+                                {{ copy.secondaryCta }}
                             </Link>
                         </div>
                     </article>

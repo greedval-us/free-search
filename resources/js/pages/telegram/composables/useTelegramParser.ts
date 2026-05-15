@@ -1,4 +1,5 @@
 import { computed, onBeforeUnmount, onMounted, reactive, ref } from 'vue';
+import { apiRequest } from '@/lib/api';
 
 type ParserPeriod = 'day' | 'week' | 'month' | 'custom';
 type ParserStage = 'idle' | 'messages' | 'comments' | 'finishing' | 'completed' | 'failed' | 'stopped';
@@ -94,19 +95,17 @@ export const useTelegramParser = (t: TranslateFn) => {
         const activeRunId = runId.value;
 
         if (activeRunId) {
-            fetch(`/telegram/parser/stop/${activeRunId}`, {
+            apiRequest<ParserStatusResponse>(`/telegram/parser/stop/${activeRunId}`, {
                 method: 'POST',
                 headers: {
-                    Accept: 'application/json',
                     'X-CSRF-TOKEN': document.querySelector<HTMLMetaElement>('meta[name="csrf-token"]')?.content ?? '',
                 },
             })
-                .then(async (response) => {
-                    const payload = (await response.json()) as ParserStatusResponse;
-
-                    if (!response.ok || !payload.ok || payload.runId !== runId.value) {
+                .then((response) => {
+                    if (!response.ok || response.data.runId !== runId.value) {
                         return;
                     }
+                    const payload = response.data;
 
                     stage.value = payload.stage;
                     progress.value = payload.progress;
@@ -131,10 +130,9 @@ export const useTelegramParser = (t: TranslateFn) => {
         const activeRunId = runId.value;
 
         if (activeRunId) {
-            fetch(`/telegram/parser/stop/${activeRunId}`, {
+            apiRequest<ParserStatusResponse>(`/telegram/parser/stop/${activeRunId}`, {
                 method: 'POST',
                 headers: {
-                    Accept: 'application/json',
                     'X-CSRF-TOKEN': document.querySelector<HTMLMetaElement>('meta[name="csrf-token"]')?.content ?? '',
                 },
             }).catch(() => undefined);
@@ -176,10 +174,9 @@ export const useTelegramParser = (t: TranslateFn) => {
         progress.value = 1;
 
         try {
-            const response = await fetch('/telegram/parser/start', {
+            const response = await apiRequest<ParserStatusResponse>('/telegram/parser/start', {
                 method: 'POST',
                 headers: {
-                    'Accept': 'application/json',
                     'Content-Type': 'application/json',
                     'X-CSRF-TOKEN': document.querySelector<HTMLMetaElement>('meta[name="csrf-token"]')?.content ?? '',
                 },
@@ -191,11 +188,11 @@ export const useTelegramParser = (t: TranslateFn) => {
                     dateTo: form.dateTo,
                 }),
             });
-            const payload = (await response.json()) as ParserStatusResponse;
 
-            if (!response.ok || !payload.ok || !payload.runId) {
-                throw new Error(payload.error ?? t('telegram.parser.errors.failed'));
+            if (!response.ok || !response.data.runId) {
+                throw new Error(response.message ?? t('telegram.parser.errors.failed'));
             }
+            const payload = response.data;
 
             runId.value = payload.runId;
             stage.value = payload.stage;
@@ -213,17 +210,14 @@ export const useTelegramParser = (t: TranslateFn) => {
                 pollRequestInFlight.value = true;
 
                 try {
-                    const statusResponse = await fetch(`/telegram/parser/status/${runId.value}`, {
+                    const statusResponse = await apiRequest<ParserStatusResponse>(`/telegram/parser/status/${runId.value}`, {
                         method: 'GET',
-                        headers: {
-                            Accept: 'application/json',
-                        },
                     });
-                    const statusPayload = (await statusResponse.json()) as ParserStatusResponse;
 
-                    if (!statusResponse.ok || !statusPayload.ok) {
-                        throw new Error(statusPayload.error ?? t('telegram.parser.errors.failed'));
+                    if (!statusResponse.ok) {
+                        throw new Error(statusResponse.message ?? t('telegram.parser.errors.failed'));
                     }
+                    const statusPayload = statusResponse.data;
 
                     stage.value = statusPayload.stage;
                     progress.value = statusPayload.progress;

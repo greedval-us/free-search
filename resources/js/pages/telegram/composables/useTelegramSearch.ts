@@ -1,5 +1,6 @@
 import { nextTick, reactive, ref } from 'vue';
 import TelegramSearchController from '@/actions/App/Http/Controllers/Telegram/TelegramSearchController';
+import { apiRequest } from '@/lib/api';
 import type { CommentState, SearchItem, SearchResponse } from '../types';
 
 type TranslateFn = (key: string) => string;
@@ -79,7 +80,7 @@ export const useTelegramSearch = (t: TranslateFn) => {
         }
 
         try {
-            const response = await fetch(
+            const apiResult = await apiRequest<SearchResponse>(
                 TelegramSearchController.messages({
                     query: {
                         chatUsername: form.chatUsername.trim(),
@@ -91,21 +92,15 @@ export const useTelegramSearch = (t: TranslateFn) => {
                         offsetId: append ? (nextOffsetId.value ?? 0) : 0,
                     },
                 }).url,
-                {
-                    method: 'GET',
-                    headers: {
-                        Accept: 'application/json',
-                    },
-                }
+                { method: 'GET' }
             );
 
-            const payload: SearchResponse = await response.json();
-
-            if (!response.ok || !payload.ok) {
-                error.value = payload.message ?? t('telegram.errors.searchFailed');
+            if (!apiResult.ok) {
+                error.value = apiResult.message ?? t('telegram.errors.searchFailed');
 
                 return;
             }
+            const payload = apiResult.data;
 
             const incoming = payload.items ?? [];
 
@@ -195,7 +190,7 @@ export const useTelegramSearch = (t: TranslateFn) => {
             state.error = null;
 
             try {
-                const response = await fetch(
+                const apiResult = await apiRequest<Record<string, unknown>>(
                     TelegramSearchController.comments({
                         query: {
                             chatUsername: form.chatUsername.trim(),
@@ -204,18 +199,10 @@ export const useTelegramSearch = (t: TranslateFn) => {
                             limit: 20,
                         },
                     }).url,
-                    {
-                        method: 'GET',
-                        headers: {
-                            Accept: 'application/json',
-                        },
-                    }
+                    { method: 'GET' }
                 );
-
-                const payload = await response.json();
-
-                if (!response.ok || !payload?.ok) {
-                    state.error = payload?.message ?? t('telegram.errors.commentsFailed');
+                if (!apiResult.ok) {
+                    state.error = apiResult.message ?? t('telegram.errors.commentsFailed');
 
                     if (!append) {
                         state.items = [];
@@ -227,6 +214,7 @@ export const useTelegramSearch = (t: TranslateFn) => {
 
                     return;
                 }
+                const payload = apiResult.data;
 
                 const incoming = Array.isArray(payload.items) ? payload.items : [];
 
@@ -309,4 +297,3 @@ export const useTelegramSearch = (t: TranslateFn) => {
         commentsToggleLabel,
     };
 };
-

@@ -1,6 +1,10 @@
 <script setup lang="ts">
 import { ChevronDown, ChevronUp, Search, Settings } from 'lucide-vue-next';
 import { computed, onMounted } from 'vue';
+import IntelAdvancedFilters from '@/components/ui/IntelAdvancedFilters.vue';
+import HelpTooltip from '@/components/ui/HelpTooltip.vue';
+import IntelResultPanel from '@/components/ui/IntelResultPanel.vue';
+import IntelSearchPanel from '@/components/ui/IntelSearchPanel.vue';
 import { useI18n } from '@/composables/useI18n';
 import {
     getRepeatQueryParams,
@@ -117,23 +121,13 @@ onMounted(() => {
 </script>
 
 <template>
-    <section class="sticky top-0 z-10 shrink-0 rounded-xl border border-sidebar-border/80 bg-card/70 p-4 shadow-xl backdrop-blur">
+    <IntelSearchPanel>
         <div class="flex items-center justify-between gap-3">
             <div class="space-y-1">
                 <div class="flex items-center gap-2 text-sm font-semibold">
                     <Search class="h-4 w-4 text-cyan-400" />
                     <span>{{ t('telegram.search.title') }}</span>
-                    <span class="group relative inline-flex">
-                        <span
-                            class="inline-flex h-5 w-5 cursor-help items-center justify-center rounded-full border border-border text-[11px] font-semibold text-muted-foreground"
-                            :aria-label="t('telegram.help.label')"
-                        >
-                            ?
-                        </span>
-                        <span class="pointer-events-none absolute left-0 top-6 z-20 hidden w-80 rounded-md border border-border/70 bg-popover p-2 text-[11px] leading-relaxed text-popover-foreground shadow-xl group-hover:block">
-                            {{ t('telegram.search.help.overview') }}
-                        </span>
-                    </span>
+                    <HelpTooltip :label="t('telegram.help.label')" :text="t('telegram.search.help.overview')" />
                 </div>
                 <p class="text-xs text-muted-foreground">
                     {{ searchPanelCollapsed ? t('telegram.search.collapsed') : t('telegram.search.filters') }}
@@ -204,10 +198,7 @@ onMounted(() => {
             </div>
         </div>
 
-        <div
-            v-if="!searchPanelCollapsed && showAdvanced"
-            class="mt-3 grid gap-3 border-t border-border/60 pt-3 md:grid-cols-3"
-        >
+        <IntelAdvancedFilters :open="!searchPanelCollapsed && showAdvanced" content-class="md:grid-cols-3">
             <label class="block min-w-0">
                 <span class="mb-1 block truncate text-xs font-medium text-muted-foreground">{{ t('telegram.search.limit') }}</span>
                 <input
@@ -238,19 +229,19 @@ onMounted(() => {
                     class="h-10 w-full rounded-md border border-input bg-background px-3 text-sm"
                 />
             </label>
-        </div>
+        </IntelAdvancedFilters>
 
         <p v-if="error" class="mt-3 text-sm text-destructive">{{ error }}</p>
-    </section>
+    </IntelSearchPanel>
 
-    <section class="flex min-h-0 flex-1 flex-col rounded-xl border border-sidebar-border/80 bg-card/70 p-4 shadow-xl backdrop-blur">
+    <IntelResultPanel>
         <div class="mb-3 flex items-center justify-between">
             <h2 class="text-sm font-semibold">{{ t('telegram.messages.title') }}</h2>
             <p class="text-xs text-muted-foreground">{{ t('telegram.messages.shown') }}: {{ loadedCount }} / {{ total }}</p>
         </div>
 
         <div ref="messagesContainerRef" class="telegram-scroll min-h-0 flex-1 overflow-y-auto overscroll-contain pr-1">
-            <div v-if="!loading && items.length === 0" class="rounded-md border border-dashed border-border p-6 text-center text-sm text-muted-foreground">
+            <div v-if="!loading && items.length === 0" class="intel-empty">
                 {{ t('telegram.messages.empty') }}
             </div>
 
@@ -517,5 +508,8 @@ onMounted(() => {
                 {{ loadingMore ? t('telegram.messages.loadingMore') : t('telegram.messages.loadMore') }}
             </button>
         </div>
-    </section>
+    </IntelResultPanel>
 </template>
+
+
+

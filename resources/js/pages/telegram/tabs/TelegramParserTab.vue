@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ChevronDown, ChevronUp, Database, Download, LoaderCircle, Square, Wrench } from 'lucide-vue-next';
 import { computed } from 'vue';
+import HelpTooltip from '@/components/ui/HelpTooltip.vue';
 import { useI18n } from '@/composables/useI18n';
 import { useTelegramParser } from '../composables/useTelegramParser';
 
@@ -56,23 +57,13 @@ const stageLabel = computed(() => {
 </script>
 
 <template>
-    <section class="sticky top-0 z-10 shrink-0 rounded-xl border border-sidebar-border/80 bg-card/75 p-4 shadow-xl backdrop-blur">
+    <section class="sticky top-0 z-10 shrink-0 intel-panel-strong">
         <div class="flex items-center justify-between gap-3">
             <div class="space-y-1">
                 <div class="flex items-center gap-2 text-sm font-semibold">
                     <Wrench class="h-4 w-4 text-cyan-400" />
                     <span>{{ t('telegram.parser.title') }}</span>
-                    <span class="group relative inline-flex">
-                        <span
-                            class="inline-flex h-5 w-5 cursor-help items-center justify-center rounded-full border border-border text-[11px] font-semibold text-muted-foreground"
-                            :aria-label="t('telegram.help.label')"
-                        >
-                            ?
-                        </span>
-                        <span class="pointer-events-none absolute left-0 top-6 z-20 hidden w-80 rounded-md border border-border/70 bg-popover p-2 text-[11px] leading-relaxed text-popover-foreground shadow-xl group-hover:block">
-                            {{ t('telegram.parser.help.overview') }}
-                        </span>
-                    </span>
+                    <HelpTooltip :label="t('telegram.help.label')" :text="t('telegram.parser.help.overview')" />
                 </div>
                 <p class="text-xs text-muted-foreground">
                     {{ settingsCollapsed ? t('telegram.parser.collapsed') : t('telegram.parser.subtitle') }}
@@ -193,7 +184,7 @@ const stageLabel = computed(() => {
         </div>
     </section>
 
-    <section class="rounded-xl border border-sidebar-border/80 bg-card/75 p-4 shadow-xl backdrop-blur">
+    <section class="intel-panel-strong">
         <div class="flex items-center justify-between gap-3">
             <h3 class="text-sm font-semibold">{{ t('telegram.parser.progress.title') }}</h3>
             <span class="rounded-full border border-border px-2 py-1 text-xs text-muted-foreground">{{ stageLabel }}</span>
@@ -217,3 +208,4 @@ const stageLabel = computed(() => {
 
     </section>
 </template>
+
