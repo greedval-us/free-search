@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { Globe, LoaderCircle } from 'lucide-vue-next';
 import { computed, onMounted } from 'vue';
+import HelpTooltip from '@/components/ui/HelpTooltip.vue';
 import { useI18n } from '@/composables/useI18n';
 import { getRepeatQueryParams, isRepeatAutorunEnabled, readRepeatQueryParam } from '@/composables/useRepeatQuery';
 import { useDomainLite } from '../composables/useDomainLite';
@@ -77,17 +78,7 @@ onMounted(() => {
                 <div class="flex items-center gap-2 text-sm font-semibold">
                     <Globe class="h-4 w-4 text-cyan-400" />
                     <span>{{ t('siteIntel.domainLite.title') }}</span>
-                    <span class="group relative inline-flex">
-                        <span
-                            class="inline-flex h-5 w-5 cursor-help items-center justify-center rounded-full border border-border text-[11px] font-semibold text-muted-foreground"
-                            :aria-label="t('siteIntel.help.label')"
-                        >
-                            ?
-                        </span>
-                        <span class="pointer-events-none absolute left-0 top-6 z-20 hidden w-80 rounded-md border border-border/70 bg-popover p-2 text-[11px] leading-relaxed text-popover-foreground shadow-xl group-hover:block">
-                            {{ t('siteIntel.domainLite.help.overview') }}
-                        </span>
-                    </span>
+                    <HelpTooltip :label="t('siteIntel.help.label')" :text="t('siteIntel.domainLite.help.overview')" />
                 </div>
                 <p class="text-xs text-muted-foreground">
                     {{ t('siteIntel.domainLite.description') }}
@@ -153,17 +144,7 @@ onMounted(() => {
             <div class="rounded-lg border border-border/70 bg-background/60 p-3 text-xs">
                 <div class="mb-2 flex items-center gap-2">
                     <p class="font-semibold">{{ t('siteIntel.domainLite.dnsSummary') }}</p>
-                    <span class="group relative inline-flex">
-                        <span
-                            class="inline-flex h-5 w-5 cursor-help items-center justify-center rounded-full border border-border text-[11px] font-semibold text-muted-foreground"
-                            :aria-label="t('siteIntel.help.label')"
-                        >
-                            ?
-                        </span>
-                        <span class="pointer-events-none absolute left-0 top-6 z-20 hidden w-80 rounded-md border border-border/70 bg-popover p-2 text-[11px] leading-relaxed text-popover-foreground shadow-xl group-hover:block">
-                            {{ t('siteIntel.domainLite.help.dns') }}
-                        </span>
-                    </span>
+                    <HelpTooltip :label="t('siteIntel.help.label')" :text="t('siteIntel.domainLite.help.dns')" />
                 </div>
                 <p>{{ t('siteIntel.domainLite.aRecords') }}: {{ result.dns.a.join(', ') || '-' }}</p>
                 <p class="mt-1">{{ t('siteIntel.domainLite.aaaaRecords') }}: {{ result.dns.aaaa.join(', ') || '-' }}</p>
@@ -176,17 +157,7 @@ onMounted(() => {
             <div class="rounded-lg border border-border/70 bg-background/60 p-3 text-xs">
                 <div class="mb-2 flex items-center gap-2">
                     <p class="font-semibold">{{ t('siteIntel.domainLite.whois') }}</p>
-                    <span class="group relative inline-flex">
-                        <span
-                            class="inline-flex h-5 w-5 cursor-help items-center justify-center rounded-full border border-border text-[11px] font-semibold text-muted-foreground"
-                            :aria-label="t('siteIntel.help.label')"
-                        >
-                            ?
-                        </span>
-                        <span class="pointer-events-none absolute left-0 top-6 z-20 hidden w-80 rounded-md border border-border/70 bg-popover p-2 text-[11px] leading-relaxed text-popover-foreground shadow-xl group-hover:block">
-                            {{ t('siteIntel.domainLite.help.whois') }}
-                        </span>
-                    </span>
+                    <HelpTooltip :label="t('siteIntel.help.label')" :text="t('siteIntel.domainLite.help.whois')" />
                 </div>
                 <p>{{ t('siteIntel.domainLite.whoisServer') }}: {{ result.whois.server || '-' }}</p>
                 <p class="mt-1">{{ t('siteIntel.domainLite.createdAt') }}: {{ formatDateTime(result.whois.createdAt) }}</p>
@@ -211,17 +182,7 @@ onMounted(() => {
             <div class="rounded-lg border border-border/70 bg-background/60 p-3 text-xs">
                 <div class="mb-2 flex items-center gap-2">
                     <p class="font-semibold">{{ t('siteIntel.domainLite.riskSignals') }}</p>
-                    <span class="group relative inline-flex">
-                        <span
-                            class="inline-flex h-5 w-5 cursor-help items-center justify-center rounded-full border border-border text-[11px] font-semibold text-muted-foreground"
-                            :aria-label="t('siteIntel.help.label')"
-                        >
-                            ?
-                        </span>
-                        <span class="pointer-events-none absolute left-0 top-6 z-20 hidden w-80 rounded-md border border-border/70 bg-popover p-2 text-[11px] leading-relaxed text-popover-foreground shadow-xl group-hover:block">
-                            {{ t('siteIntel.domainLite.help.risk') }}
-                        </span>
-                    </span>
+                    <HelpTooltip :label="t('siteIntel.help.label')" :text="t('siteIntel.domainLite.help.risk')" />
                 </div>
                 <p v-if="result.risk.signals.length === 0" class="text-emerald-300">{{ t('siteIntel.domainLite.noRiskSignals') }}</p>
                 <ul v-else class="list-disc space-y-1 pl-4 text-muted-foreground">

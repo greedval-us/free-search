@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { Activity, LoaderCircle } from 'lucide-vue-next';
 import { computed, onMounted } from 'vue';
+import HelpTooltip from '@/components/ui/HelpTooltip.vue';
 import { useI18n } from '@/composables/useI18n';
 import { getRepeatQueryParams, isRepeatAutorunEnabled, readRepeatQueryParam } from '@/composables/useRepeatQuery';
 import { useSiteHealth } from '../composables/useSiteHealth';
@@ -76,17 +77,7 @@ onMounted(() => {
                 <div class="flex items-center gap-2 text-sm font-semibold">
                     <Activity class="h-4 w-4 text-cyan-400" />
                     <span>{{ t('siteIntel.siteHealth.title') }}</span>
-                    <span class="group relative inline-flex">
-                        <span
-                            class="inline-flex h-5 w-5 cursor-help items-center justify-center rounded-full border border-border text-[11px] font-semibold text-muted-foreground"
-                            :aria-label="t('siteIntel.help.label')"
-                        >
-                            ?
-                        </span>
-                        <span class="pointer-events-none absolute left-0 top-6 z-20 hidden w-80 rounded-md border border-border/70 bg-popover p-2 text-[11px] leading-relaxed text-popover-foreground shadow-xl group-hover:block">
-                            {{ t('siteIntel.siteHealth.help.overview') }}
-                        </span>
-                    </span>
+                    <HelpTooltip :label="t('siteIntel.help.label')" :text="t('siteIntel.siteHealth.help.overview')" />
                 </div>
                 <p class="text-xs text-muted-foreground">
                     {{ t('siteIntel.siteHealth.description') }}
@@ -152,17 +143,7 @@ onMounted(() => {
             <div class="rounded-lg border border-border/70 bg-background/60 p-3 text-xs">
                 <div class="mb-2 flex items-center gap-2">
                     <p class="font-semibold">{{ t('siteIntel.siteHealth.dns') }}</p>
-                    <span class="group relative inline-flex">
-                        <span
-                            class="inline-flex h-5 w-5 cursor-help items-center justify-center rounded-full border border-border text-[11px] font-semibold text-muted-foreground"
-                            :aria-label="t('siteIntel.help.label')"
-                        >
-                            ?
-                        </span>
-                        <span class="pointer-events-none absolute left-0 top-6 z-20 hidden w-80 rounded-md border border-border/70 bg-popover p-2 text-[11px] leading-relaxed text-popover-foreground shadow-xl group-hover:block">
-                            {{ t('siteIntel.siteHealth.help.dns') }}
-                        </span>
-                    </span>
+                    <HelpTooltip :label="t('siteIntel.help.label')" :text="t('siteIntel.siteHealth.help.dns')" />
                 </div>
                 <p>{{ t('siteIntel.siteHealth.aRecords') }}: {{ result.dns.a.join(', ') || '-' }}</p>
                 <p class="mt-1">{{ t('siteIntel.siteHealth.aaaaRecords') }}: {{ result.dns.aaaa.join(', ') || '-' }}</p>
@@ -171,17 +152,7 @@ onMounted(() => {
             <div class="rounded-lg border border-border/70 bg-background/60 p-3 text-xs">
                 <div class="mb-2 flex items-center gap-2">
                     <p class="font-semibold">{{ t('siteIntel.siteHealth.ssl') }}</p>
-                    <span class="group relative inline-flex">
-                        <span
-                            class="inline-flex h-5 w-5 cursor-help items-center justify-center rounded-full border border-border text-[11px] font-semibold text-muted-foreground"
-                            :aria-label="t('siteIntel.help.label')"
-                        >
-                            ?
-                        </span>
-                        <span class="pointer-events-none absolute left-0 top-6 z-20 hidden w-80 rounded-md border border-border/70 bg-popover p-2 text-[11px] leading-relaxed text-popover-foreground shadow-xl group-hover:block">
-                            {{ t('siteIntel.siteHealth.help.ssl') }}
-                        </span>
-                    </span>
+                    <HelpTooltip :label="t('siteIntel.help.label')" :text="t('siteIntel.siteHealth.help.ssl')" />
                 </div>
                 <p>{{ t('siteIntel.siteHealth.sslAvailable') }}: {{ result.ssl.available ? t('siteIntel.common.yes') : t('siteIntel.common.no') }}</p>
                 <p class="mt-1">{{ t('siteIntel.siteHealth.sslIssuer') }}: {{ result.ssl.issuer || '-' }}</p>
@@ -192,17 +163,7 @@ onMounted(() => {
             <div class="rounded-lg border border-border/70 bg-background/60 p-3 text-xs">
                 <div class="mb-2 flex items-center gap-2">
                     <p class="font-semibold">{{ t('siteIntel.siteHealth.securityHeaders') }}</p>
-                    <span class="group relative inline-flex">
-                        <span
-                            class="inline-flex h-5 w-5 cursor-help items-center justify-center rounded-full border border-border text-[11px] font-semibold text-muted-foreground"
-                            :aria-label="t('siteIntel.help.label')"
-                        >
-                            ?
-                        </span>
-                        <span class="pointer-events-none absolute left-0 top-6 z-20 hidden w-80 rounded-md border border-border/70 bg-popover p-2 text-[11px] leading-relaxed text-popover-foreground shadow-xl group-hover:block">
-                            {{ t('siteIntel.siteHealth.help.securityHeaders') }}
-                        </span>
-                    </span>
+                    <HelpTooltip :label="t('siteIntel.help.label')" :text="t('siteIntel.siteHealth.help.securityHeaders')" />
                 </div>
                 <div class="space-y-1">
                     <p v-for="(headerInfo, headerName) in result.headers" :key="headerName">
@@ -216,17 +177,7 @@ onMounted(() => {
             <div class="rounded-lg border border-border/70 bg-background/60 p-3 text-xs">
                 <div class="mb-2 flex items-center gap-2">
                     <p class="font-semibold">{{ t('siteIntel.siteHealth.httpChain') }}</p>
-                    <span class="group relative inline-flex">
-                        <span
-                            class="inline-flex h-5 w-5 cursor-help items-center justify-center rounded-full border border-border text-[11px] font-semibold text-muted-foreground"
-                            :aria-label="t('siteIntel.help.label')"
-                        >
-                            ?
-                        </span>
-                        <span class="pointer-events-none absolute left-0 top-6 z-20 hidden w-80 rounded-md border border-border/70 bg-popover p-2 text-[11px] leading-relaxed text-popover-foreground shadow-xl group-hover:block">
-                            {{ t('siteIntel.siteHealth.help.httpChain') }}
-                        </span>
-                    </span>
+                    <HelpTooltip :label="t('siteIntel.help.label')" :text="t('siteIntel.siteHealth.help.httpChain')" />
                 </div>
                 <div class="space-y-2">
                     <div

@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { LoaderCircle, Search } from 'lucide-vue-next';
 import { computed, onMounted, reactive, watch } from 'vue';
+import HelpTooltip from '@/components/ui/HelpTooltip.vue';
 import { useI18n } from '@/composables/useI18n';
 import { getRepeatQueryParams, isRepeatAutorunEnabled, readRepeatQueryParam } from '@/composables/useRepeatQuery';
 import { useUsernameSearch } from '../composables/useUsernameSearch';
@@ -145,17 +146,7 @@ onMounted(() => {
                 <div class="flex items-center gap-2 text-sm font-semibold">
                     <Search class="h-4 w-4 text-cyan-400" />
                     <span>{{ t('username.search.title') }}</span>
-                    <span class="group relative inline-flex">
-                        <span
-                            class="inline-flex h-5 w-5 cursor-help items-center justify-center rounded-full border border-border text-[11px] font-semibold text-muted-foreground"
-                            :aria-label="t('username.help.label')"
-                        >
-                            ?
-                        </span>
-                        <span class="pointer-events-none absolute left-0 top-6 z-20 hidden w-80 rounded-md border border-border/70 bg-popover p-2 text-[11px] leading-relaxed text-popover-foreground shadow-xl group-hover:block">
-                            {{ t('username.search.help.overview') }}
-                        </span>
-                    </span>
+                    <HelpTooltip :label="t('username.help.label')" :text="t('username.search.help.overview')" />
                 </div>
                 <p class="text-xs text-muted-foreground">
                     {{ t('username.search.description') }}

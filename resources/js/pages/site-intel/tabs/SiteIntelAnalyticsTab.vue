@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { BarChart3, Download, FileText, LoaderCircle } from 'lucide-vue-next';
 import { onMounted } from 'vue';
+import HelpTooltip from '@/components/ui/HelpTooltip.vue';
 import { useI18n } from '@/composables/useI18n';
 import { getRepeatQueryParams, isRepeatAutorunEnabled, readRepeatQueryParam } from '@/composables/useRepeatQuery';
 import { useSiteIntelAnalytics } from '../composables/useSiteIntelAnalytics';
@@ -56,17 +57,7 @@ onMounted(() => {
                 <div class="flex items-center gap-2 text-sm font-semibold">
                     <BarChart3 class="h-4 w-4 text-cyan-400" />
                     <span>{{ t('siteIntel.analytics.title') }}</span>
-                    <span class="group relative inline-flex">
-                        <span
-                            class="inline-flex h-5 w-5 cursor-help items-center justify-center rounded-full border border-border text-[11px] font-semibold text-muted-foreground"
-                            :aria-label="t('siteIntel.help.label')"
-                        >
-                            ?
-                        </span>
-                        <span class="pointer-events-none absolute left-0 top-6 z-20 hidden w-80 rounded-md border border-border/70 bg-popover p-2 text-[11px] leading-relaxed text-popover-foreground shadow-xl group-hover:block">
-                            {{ t('siteIntel.analytics.help.overview') }}
-                        </span>
-                    </span>
+                    <HelpTooltip :label="t('siteIntel.help.label')" :text="t('siteIntel.analytics.help.overview')" />
                 </div>
                 <p class="text-xs text-muted-foreground">{{ t('siteIntel.analytics.description') }}</p>
             </div>
@@ -205,17 +196,7 @@ onMounted(() => {
             <div class="rounded-lg border border-border/70 bg-background/60 p-3 text-xs">
                 <div class="mb-2 flex items-center gap-2">
                     <p class="font-semibold">{{ t('siteIntel.analytics.additionalSnapshotMetrics') }}</p>
-                    <span class="group relative inline-flex">
-                        <span
-                            class="inline-flex h-5 w-5 cursor-help items-center justify-center rounded-full border border-border text-[11px] font-semibold text-muted-foreground"
-                            :aria-label="t('siteIntel.help.label')"
-                        >
-                            ?
-                        </span>
-                        <span class="pointer-events-none absolute left-0 top-6 z-20 hidden w-80 rounded-md border border-border/70 bg-popover p-2 text-[11px] leading-relaxed text-popover-foreground shadow-xl group-hover:block">
-                            {{ t('siteIntel.analytics.help.snapshotMetrics') }}
-                        </span>
-                    </span>
+                    <HelpTooltip :label="t('siteIntel.help.label')" :text="t('siteIntel.analytics.help.snapshotMetrics')" />
                 </div>
                 <div class="grid gap-2 sm:grid-cols-2 xl:grid-cols-4">
                     <p>{{ t('siteIntel.analytics.snapshotHttpFinalStatus') }}: <span class="text-muted-foreground">{{ result.siteHealth.http.finalStatus || '-' }}</span></p>
@@ -233,17 +214,7 @@ onMounted(() => {
                 <div class="rounded-lg border border-border/70 bg-background/60 p-3 text-xs">
                     <div class="mb-2 flex items-center gap-2">
                         <p class="font-semibold">{{ t('siteIntel.analytics.riskSignals') }}</p>
-                        <span class="group relative inline-flex">
-                            <span
-                                class="inline-flex h-5 w-5 cursor-help items-center justify-center rounded-full border border-border text-[11px] font-semibold text-muted-foreground"
-                                :aria-label="t('siteIntel.help.label')"
-                            >
-                                ?
-                            </span>
-                            <span class="pointer-events-none absolute left-0 top-6 z-20 hidden w-80 rounded-md border border-border/70 bg-popover p-2 text-[11px] leading-relaxed text-popover-foreground shadow-xl group-hover:block">
-                                {{ t('siteIntel.analytics.help.riskSignals') }}
-                            </span>
-                        </span>
+                        <HelpTooltip :label="t('siteIntel.help.label')" :text="t('siteIntel.analytics.help.riskSignals')" />
                     </div>
                     <p v-if="result.overview.signals.risks.length === 0" class="text-emerald-300">{{ t('siteIntel.analytics.noRiskSignals') }}</p>
                     <ul v-else class="list-disc space-y-1 pl-4 text-muted-foreground">
@@ -254,17 +225,7 @@ onMounted(() => {
                 <div class="rounded-lg border border-border/70 bg-background/60 p-3 text-xs">
                     <div class="mb-2 flex items-center gap-2">
                         <p class="font-semibold">{{ t('siteIntel.analytics.strengthSignals') }}</p>
-                        <span class="group relative inline-flex">
-                            <span
-                                class="inline-flex h-5 w-5 cursor-help items-center justify-center rounded-full border border-border text-[11px] font-semibold text-muted-foreground"
-                                :aria-label="t('siteIntel.help.label')"
-                            >
-                                ?
-                            </span>
-                            <span class="pointer-events-none absolute left-0 top-6 z-20 hidden w-80 rounded-md border border-border/70 bg-popover p-2 text-[11px] leading-relaxed text-popover-foreground shadow-xl group-hover:block">
-                                {{ t('siteIntel.analytics.help.strengthSignals') }}
-                            </span>
-                        </span>
+                        <HelpTooltip :label="t('siteIntel.help.label')" :text="t('siteIntel.analytics.help.strengthSignals')" />
                     </div>
                     <p v-if="result.overview.signals.strengths.length === 0" class="text-muted-foreground">{{ t('siteIntel.analytics.noStrengthSignals') }}</p>
                     <ul v-else class="list-disc space-y-1 pl-4 text-muted-foreground">
@@ -276,17 +237,7 @@ onMounted(() => {
             <div class="rounded-lg border border-border/70 bg-background/60 p-3 text-xs">
                 <div class="mb-2 flex items-center gap-2">
                     <p class="font-semibold">{{ t('siteIntel.analytics.recommendations') }}</p>
-                    <span class="group relative inline-flex">
-                        <span
-                            class="inline-flex h-5 w-5 cursor-help items-center justify-center rounded-full border border-border text-[11px] font-semibold text-muted-foreground"
-                            :aria-label="t('siteIntel.help.label')"
-                        >
-                            ?
-                        </span>
-                        <span class="pointer-events-none absolute left-0 top-6 z-20 hidden w-80 rounded-md border border-border/70 bg-popover p-2 text-[11px] leading-relaxed text-popover-foreground shadow-xl group-hover:block">
-                            {{ t('siteIntel.analytics.help.recommendations') }}
-                        </span>
-                    </span>
+                    <HelpTooltip :label="t('siteIntel.help.label')" :text="t('siteIntel.analytics.help.recommendations')" />
                 </div>
                 <ul class="space-y-2 text-muted-foreground">
                     <li v-for="item in recommendationsWithImpact" :key="item.key" class="rounded border border-border/60 p-2">
