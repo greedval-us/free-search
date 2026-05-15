@@ -2,6 +2,8 @@
 import { BarChart3, Download, FileText, LoaderCircle } from 'lucide-vue-next';
 import { onMounted } from 'vue';
 import HelpTooltip from '@/components/ui/HelpTooltip.vue';
+import IntelResultPanel from '@/components/ui/IntelResultPanel.vue';
+import IntelSearchPanel from '@/components/ui/IntelSearchPanel.vue';
 import { useI18n } from '@/composables/useI18n';
 import { getRepeatQueryParams, isRepeatAutorunEnabled, readRepeatQueryParam } from '@/composables/useRepeatQuery';
 import { useSiteIntelAnalytics } from '../composables/useSiteIntelAnalytics';
@@ -51,7 +53,7 @@ onMounted(() => {
 </script>
 
 <template>
-    <section class="sticky top-0 z-10 shrink-0 rounded-xl border border-sidebar-border/80 bg-card/70 p-4 shadow-xl backdrop-blur">
+    <IntelSearchPanel>
         <div class="flex items-center justify-between gap-3">
             <div class="space-y-1">
                 <div class="flex items-center gap-2 text-sm font-semibold">
@@ -106,10 +108,10 @@ onMounted(() => {
         </div>
 
         <p v-if="error" class="mt-3 text-sm text-destructive">{{ error }}</p>
-    </section>
+    </IntelSearchPanel>
 
-    <section class="flex min-h-0 flex-1 flex-col rounded-xl border border-sidebar-border/80 bg-card/70 p-4 shadow-xl backdrop-blur">
-        <div v-if="!result" class="rounded-md border border-dashed border-border p-6 text-center text-sm text-muted-foreground">
+    <IntelResultPanel>
+        <div v-if="!result" class="intel-empty">
             {{ t('siteIntel.analytics.empty') }}
         </div>
 
@@ -252,5 +254,8 @@ onMounted(() => {
                 </ul>
             </div>
         </div>
-    </section>
+    </IntelResultPanel>
 </template>
+
+
+

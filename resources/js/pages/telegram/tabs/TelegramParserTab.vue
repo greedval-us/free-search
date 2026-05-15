@@ -57,7 +57,7 @@ const stageLabel = computed(() => {
 </script>
 
 <template>
-    <section class="sticky top-0 z-10 shrink-0 rounded-xl border border-sidebar-border/80 bg-card/75 p-4 shadow-xl backdrop-blur">
+    <section class="sticky top-0 z-10 shrink-0 intel-panel-strong">
         <div class="flex items-center justify-between gap-3">
             <div class="space-y-1">
                 <div class="flex items-center gap-2 text-sm font-semibold">
@@ -184,7 +184,7 @@ const stageLabel = computed(() => {
         </div>
     </section>
 
-    <section class="rounded-xl border border-sidebar-border/80 bg-card/75 p-4 shadow-xl backdrop-blur">
+    <section class="intel-panel-strong">
         <div class="flex items-center justify-between gap-3">
             <h3 class="text-sm font-semibold">{{ t('telegram.parser.progress.title') }}</h3>
             <span class="rounded-full border border-border px-2 py-1 text-xs text-muted-foreground">{{ stageLabel }}</span>
@@ -208,3 +208,4 @@ const stageLabel = computed(() => {
 
     </section>
 </template>
+

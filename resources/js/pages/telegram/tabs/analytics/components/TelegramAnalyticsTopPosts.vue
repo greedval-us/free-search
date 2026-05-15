@@ -36,7 +36,7 @@ const formatDate = (unix: number) => {
 </script>
 
 <template>
-    <article class="rounded-xl border border-sidebar-border/80 bg-card/75 p-4 shadow-xl backdrop-blur">
+    <article class="intel-panel-strong">
         <div class="flex items-center justify-between gap-3">
             <div>
                 <h3 class="text-sm font-semibold">{{ t('telegram.analytics.charts.topPosts') }}</h3>
@@ -101,4 +101,5 @@ const formatDate = (unix: number) => {
         </div>
     </article>
 </template>
+
 

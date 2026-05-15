@@ -2,7 +2,12 @@
 import { Head } from '@inertiajs/vue3';
 import { FileSearch, LoaderCircle } from 'lucide-vue-next';
 import { computed, reactive, ref } from 'vue';
-import HelpTooltip from '@/components/ui/HelpTooltip.vue';
+import EmptyState from '@/components/ui/EmptyState.vue';
+import IntelResultPanel from '@/components/ui/IntelResultPanel.vue';
+import IntelSearchPanel from '@/components/ui/IntelSearchPanel.vue';
+import MetricCard from '@/components/ui/MetricCard.vue';
+import PageHeader from '@/components/ui/PageHeader.vue';
+import SectionCard from '@/components/ui/SectionCard.vue';
 import { useI18n } from '@/composables/useI18n';
 
 defineOptions({
@@ -182,16 +187,9 @@ const lookup = async () => {
     <Head :title="pageTitle" />
 
     <div class="flex h-full min-h-0 flex-1 flex-col gap-4 overflow-hidden rounded-xl p-4">
-        <section class="sticky top-0 z-10 shrink-0 rounded-xl border border-sidebar-border/80 bg-card/70 p-4 shadow-xl backdrop-blur">
+        <IntelSearchPanel>
             <div class="flex items-center justify-between gap-3">
-                <div class="space-y-1">
-                    <div class="flex items-center gap-2 text-sm font-semibold">
-                        <FileSearch class="h-4 w-4 text-cyan-400" />
-                        <span>{{ t('documentIntel.title') }}</span>
-                        <HelpTooltip :label="t('documentIntel.help.label')" :text="t('documentIntel.help.overview')" />
-                    </div>
-                    <p class="text-xs text-muted-foreground">{{ t('documentIntel.description') }}</p>
-                </div>
+                <PageHeader :icon="FileSearch" :title="t('documentIntel.title')" :description="t('documentIntel.description')" :help-label="t('documentIntel.help.label')" :help-text="t('documentIntel.help.overview')" />
             </div>
 
             <div class="mt-3 flex flex-wrap items-end gap-3">
@@ -206,44 +204,30 @@ const lookup = async () => {
             </div>
 
             <p v-if="error" class="mt-3 text-sm text-destructive">{{ error }}</p>
-        </section>
+        </IntelSearchPanel>
 
-        <section class="flex min-h-0 flex-1 flex-col rounded-xl border border-sidebar-border/80 bg-card/70 p-4 shadow-xl backdrop-blur">
-            <div v-if="!result" class="rounded-md border border-dashed border-border p-6 text-center text-sm text-muted-foreground">{{ t('documentIntel.empty') }}</div>
+        <IntelResultPanel>
+            <EmptyState v-if="!result" :text="t('documentIntel.empty')" />
 
             <div v-else class="telegram-scroll min-h-0 flex-1 overflow-y-auto space-y-3 pr-1">
                 <div class="grid gap-2 sm:grid-cols-2 xl:grid-cols-4">
-                    <div class="rounded-lg border border-border/70 bg-background/60 p-3">
-                        <p class="text-xs text-muted-foreground">{{ t('documentIntel.checkedAt') }}</p>
-                        <p class="mt-1 text-sm font-semibold">{{ formatDateTime(result.checkedAt) }}</p>
-                    </div>
-                    <div class="rounded-lg border border-border/70 bg-background/60 p-3">
-                        <p class="text-xs text-muted-foreground">{{ t('documentIntel.detectedDomain') }}</p>
-                        <p class="mt-1 text-sm font-semibold">{{ result.domain ?? '-' }}</p>
-                    </div>
-                    <div class="rounded-lg border border-border/70 bg-background/60 p-3">
-                        <p class="text-xs text-muted-foreground">{{ t('documentIntel.signalCount') }}</p>
-                        <p class="mt-1 text-xl font-semibold">{{ result.signals.length }}</p>
-                    </div>
-                    <div class="rounded-lg border border-border/70 bg-background/60 p-3">
-                        <p class="text-xs text-muted-foreground">{{ t('documentIntel.pivotCount') }}</p>
-                        <p class="mt-1 text-xl font-semibold">{{ result.documentPivots.length }}</p>
-                    </div>
+                    <MetricCard :title="t('documentIntel.checkedAt')" :value="formatDateTime(result.checkedAt)" />
+                    <MetricCard :title="t('documentIntel.detectedDomain')" :value="result.domain ?? '-'" />
+                    <MetricCard :title="t('documentIntel.signalCount')" :value="result.signals.length" />
+                    <MetricCard :title="t('documentIntel.pivotCount')" :value="result.documentPivots.length" />
                 </div>
 
-                <div class="rounded-lg border border-border/70 bg-background/60 p-3 text-xs">
-                    <p class="mb-2 font-semibold">{{ t('documentIntel.signals') }}</p>
+                <SectionCard :title="t('documentIntel.signals')">
                     <ul class="list-disc space-y-1 pl-4 text-muted-foreground">
                         <li v-for="signal in result.signals" :key="signal">{{ signalLabel(signal) }}</li>
                     </ul>
-                </div>
+                </SectionCard>
 
-                <div class="rounded-lg border border-border/70 bg-background/60 p-3 text-xs">
-                    <p class="mb-2 font-semibold">{{ t('documentIntel.recommendations') }}</p>
+                <SectionCard :title="t('documentIntel.recommendations')">
                     <ul class="list-disc space-y-1 pl-4 text-muted-foreground">
                         <li v-for="recommendation in result.recommendations" :key="recommendation">{{ recommendationLabel(recommendation) }}</li>
                     </ul>
-                </div>
+                </SectionCard>
 
                 <div v-if="result.domainIntel.available" class="rounded-lg border border-border/70 bg-background/60 p-3 text-xs space-y-1">
                     <p class="mb-2 font-semibold">{{ t('documentIntel.domainIntel') }}</p>
@@ -255,13 +239,11 @@ const lookup = async () => {
                     <p>{{ t('documentIntel.expiresAt') }}: {{ formatDateTime(result.domainIntel.whois?.expiresAt ?? null) }}</p>
                 </div>
 
-                <div class="rounded-lg border border-border/70 bg-background/60 p-3 text-xs">
-                    <p class="mb-2 font-semibold">{{ t('documentIntel.pivots') }}</p>
-                    <p class="mb-2 text-muted-foreground">{{ t('documentIntel.help.pivots') }}</p>
+                <SectionCard :title="t('documentIntel.pivots')" :description="t('documentIntel.help.pivots')">
                     <div class="space-y-1">
                         <a v-for="pivot in result.documentPivots" :key="pivot.url" class="block break-words text-cyan-300 hover:underline" :href="pivot.url" target="_blank" rel="noopener noreferrer">{{ linkLabel(pivot.label) }}</a>
                     </div>
-                </div>
+                </SectionCard>
 
                 <div class="rounded-lg border border-border/70 bg-background/60 p-3 text-xs">
                     <p class="mb-2 font-semibold">{{ t('documentIntel.documents.title') }}</p>
@@ -330,6 +312,6 @@ const lookup = async () => {
                     </div>
                 </div>
             </div>
-        </section>
+        </IntelResultPanel>
     </div>
 </template>

@@ -3,6 +3,8 @@ import { Head } from '@inertiajs/vue3';
 import { BarChart3, Download, ExternalLink, FileText, LoaderCircle, MailSearch, Search } from 'lucide-vue-next';
 import { computed, onMounted, ref } from 'vue';
 import HelpTooltip from '@/components/ui/HelpTooltip.vue';
+import IntelResultPanel from '@/components/ui/IntelResultPanel.vue';
+import IntelSearchPanel from '@/components/ui/IntelSearchPanel.vue';
 import { useI18n } from '@/composables/useI18n';
 import { getRepeatQueryParams, isRepeatAutorunEnabled, readRepeatQueryParam } from '@/composables/useRepeatQuery';
 import EmailEntityGraph from './email-intel/components/EmailEntityGraph.vue';
@@ -337,7 +339,7 @@ onMounted(() => {
             </button>
         </div>
 
-        <section class="sticky top-0 z-10 shrink-0 rounded-xl border border-sidebar-border/80 bg-card/70 p-4 shadow-xl backdrop-blur">
+        <IntelSearchPanel>
             <div class="flex items-center justify-between gap-3">
                 <div class="space-y-1">
                     <div class="flex items-center gap-2 text-sm font-semibold">
@@ -439,9 +441,9 @@ onMounted(() => {
             <p v-if="error" class="mt-3 text-sm text-destructive">{{ error }}</p>
             <p v-if="bulkError" class="mt-3 text-sm text-destructive">{{ bulkError }}</p>
             <p v-if="domainError" class="mt-3 text-sm text-destructive">{{ domainError }}</p>
-        </section>
+        </IntelSearchPanel>
 
-        <section class="flex min-h-0 flex-1 flex-col rounded-xl border border-sidebar-border/80 bg-card/70 p-4 shadow-xl backdrop-blur">
+        <IntelResultPanel>
             <div v-if="activeTab === 'bulk' && bulkResult" class="telegram-scroll min-h-0 flex-1 overflow-y-auto pr-1">
                 <div class="overflow-hidden rounded-lg border border-border/70 bg-background/60">
                     <table class="w-full text-left text-xs">
@@ -510,7 +512,7 @@ onMounted(() => {
                 </div>
             </div>
 
-            <div v-else-if="!result" class="rounded-md border border-dashed border-border p-6 text-center text-sm text-muted-foreground">
+            <div v-else-if="!result" class="intel-empty">
                 {{ t('emailIntel.lookup.empty') }}
             </div>
 
@@ -702,6 +704,8 @@ onMounted(() => {
                     />
                 </div>
             </div>
-        </section>
+        </IntelResultPanel>
     </div>
 </template>
+
+

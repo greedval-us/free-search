@@ -2,6 +2,8 @@
 import { LoaderCircle, Search } from 'lucide-vue-next';
 import { computed, onMounted, reactive, watch } from 'vue';
 import HelpTooltip from '@/components/ui/HelpTooltip.vue';
+import IntelResultPanel from '@/components/ui/IntelResultPanel.vue';
+import IntelSearchPanel from '@/components/ui/IntelSearchPanel.vue';
 import { useI18n } from '@/composables/useI18n';
 import { getRepeatQueryParams, isRepeatAutorunEnabled, readRepeatQueryParam } from '@/composables/useRepeatQuery';
 import { useUsernameSearch } from '../composables/useUsernameSearch';
@@ -140,7 +142,7 @@ onMounted(() => {
 </script>
 
 <template>
-    <section class="sticky top-0 z-10 shrink-0 rounded-xl border border-sidebar-border/80 bg-card/70 p-4 shadow-xl backdrop-blur">
+    <IntelSearchPanel>
         <div class="flex items-center justify-between gap-3">
             <div class="space-y-1">
                 <div class="flex items-center gap-2 text-sm font-semibold">
@@ -177,9 +179,9 @@ onMounted(() => {
         </div>
 
         <p v-if="error" class="mt-3 text-sm text-destructive">{{ error }}</p>
-    </section>
+    </IntelSearchPanel>
 
-    <section class="flex min-h-0 flex-1 flex-col rounded-xl border border-sidebar-border/80 bg-card/70 p-4 shadow-xl backdrop-blur">
+    <IntelResultPanel>
         <div class="mb-3 flex flex-wrap items-center justify-between gap-2">
             <h2 class="text-sm font-semibold">{{ t('username.results.title') }}</h2>
             <p v-if="checkedAtText" class="text-xs text-muted-foreground">{{ t('username.results.checkedAt') }}: {{ checkedAtText }}</p>
@@ -238,7 +240,7 @@ onMounted(() => {
         </div>
 
         <div class="telegram-scroll min-h-0 flex-1 overflow-y-auto pr-1">
-            <div v-if="!loading && filteredItems.length === 0" class="rounded-md border border-dashed border-border p-6 text-center text-sm text-muted-foreground">
+            <div v-if="!loading && filteredItems.length === 0" class="intel-empty">
                 {{ t('username.results.empty') }}
             </div>
 
@@ -295,5 +297,7 @@ onMounted(() => {
                 </section>
             </div>
         </div>
-    </section>
+    </IntelResultPanel>
 </template>
+
+

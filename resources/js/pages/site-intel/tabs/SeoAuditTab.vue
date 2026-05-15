@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import { LoaderCircle, SearchCheck } from 'lucide-vue-next';
 import { computed, reactive } from 'vue';
+import IntelResultPanel from '@/components/ui/IntelResultPanel.vue';
+import IntelSearchPanel from '@/components/ui/IntelSearchPanel.vue';
 import { useI18n } from '@/composables/useI18n';
 import { useSeoAudit } from '../composables/useSeoAudit';
 import SeoAuditLinkGraph from './components/SeoAuditLinkGraph.vue';
@@ -75,7 +77,7 @@ const linkGraphFilters = reactive({
 </script>
 
 <template>
-    <section class="sticky top-0 z-10 shrink-0 rounded-xl border border-sidebar-border/80 bg-card/70 p-4 shadow-xl backdrop-blur">
+    <IntelSearchPanel>
         <div class="space-y-1">
             <div class="flex items-center gap-2 text-sm font-semibold">
                 <SearchCheck class="h-4 w-4 text-cyan-400" />
@@ -159,10 +161,10 @@ const linkGraphFilters = reactive({
         </div>
 
         <p v-if="error" class="mt-3 text-sm text-destructive">{{ error }}</p>
-    </section>
+    </IntelSearchPanel>
 
-    <section class="flex min-h-0 flex-1 flex-col rounded-xl border border-sidebar-border/80 bg-card/70 p-4 shadow-xl backdrop-blur">
-        <div v-if="!result" class="rounded-md border border-dashed border-border p-6 text-center text-sm text-muted-foreground">
+    <IntelResultPanel>
+        <div v-if="!result" class="intel-empty">
             {{ t('siteIntel.seoAudit.empty') }}
         </div>
 
@@ -479,5 +481,8 @@ const linkGraphFilters = reactive({
                 </div>
             </div>
         </div>
-    </section>
+    </IntelResultPanel>
 </template>
+
+
+

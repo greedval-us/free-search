@@ -1,4 +1,4 @@
-﻿<script setup lang="ts">
+<script setup lang="ts">
 import { BarChart3, ChevronDown, ChevronUp, Download, FileText, RefreshCw, Settings } from 'lucide-vue-next';
 import { onMounted } from 'vue';
 import HelpTooltip from '@/components/ui/HelpTooltip.vue';
@@ -146,7 +146,7 @@ onMounted(() => {
 </script>
 
 <template>
-    <section class="sticky top-0 z-10 shrink-0 rounded-xl border border-sidebar-border/80 bg-card/75 p-4 shadow-xl backdrop-blur">
+    <section class="sticky top-0 z-10 shrink-0 intel-panel-strong">
         <div class="flex items-center justify-between gap-3">
             <div class="space-y-1">
                 <div class="flex items-center gap-2 text-sm font-semibold">
@@ -333,7 +333,7 @@ onMounted(() => {
         <template v-else-if="payload">
             <article
                 v-if="groupInfo"
-                class="rounded-xl border border-sidebar-border/80 bg-card/75 p-4 shadow-xl backdrop-blur"
+                class="intel-panel-strong"
             >
                 <div class="flex flex-wrap items-start justify-between gap-3">
                     <div class="min-w-0">
@@ -386,7 +386,7 @@ onMounted(() => {
 
             <article
                 v-if="fraudSignals"
-                class="rounded-xl border border-sidebar-border/80 bg-card/75 p-4 shadow-xl backdrop-blur"
+                class="intel-panel-strong"
             >
                 <div class="flex flex-wrap items-start justify-between gap-3">
                     <div>
@@ -419,7 +419,7 @@ onMounted(() => {
                             >
                                 <p class="font-semibold">{{ fraudTriggerLabel(trigger.key) }}</p>
                                 <p class="mt-1 text-muted-foreground">
-                                    +{{ trigger.score }} В· {{ formatNumber(trigger.value) }} / {{ formatNumber(trigger.threshold) }}
+                                    +{{ trigger.score }} · {{ formatNumber(trigger.value) }} / {{ formatNumber(trigger.threshold) }}
                                 </p>
                             </article>
                             <p v-if="fraudSignals.triggers.length === 0" class="text-xs text-muted-foreground">
@@ -438,13 +438,13 @@ onMounted(() => {
                                 :key="`fraud-post-${post.id}`"
                                 class="rounded-md border border-border/70 bg-background/80 p-2 text-xs"
                             >
-                                <p class="font-semibold">#{{ post.id }} В· {{ formatDate(post.date) }}</p>
+                                <p class="font-semibold">#{{ post.id }} · {{ formatDate(post.date) }}</p>
                                 <p class="mt-1 line-clamp-2 text-muted-foreground">{{ post.message || t('telegram.analytics.emptyPost') }}</p>
                                 <p class="mt-1 text-muted-foreground">
                                     {{ t('telegram.analytics.fraud.riskScore') }}: {{ formatNumber(post.riskScore) }}
                                 </p>
                                 <p class="mt-1 text-muted-foreground">
-                                    {{ post.reasons.map((reason) => fraudReasonLabel(reason)).join(' В· ') }}
+                                    {{ post.reasons.map((reason) => fraudReasonLabel(reason)).join(' · ') }}
                                 </p>
                             </article>
                         </div>
@@ -453,7 +453,7 @@ onMounted(() => {
             </article>
 
             <div class="grid gap-4 xl:grid-cols-2">
-                <article class="rounded-xl border border-sidebar-border/80 bg-card/75 p-4 shadow-xl backdrop-blur">
+                <article class="intel-panel-strong">
                     <div class="flex items-center justify-between gap-3">
                         <div>
                             <h3 class="text-sm font-semibold">{{ t('telegram.analytics.charts.funnel') }}</h3>
@@ -494,7 +494,7 @@ onMounted(() => {
                     </div>
                 </article>
 
-                <article class="rounded-xl border border-sidebar-border/80 bg-card/75 p-4 shadow-xl backdrop-blur">
+                <article class="intel-panel-strong">
                     <div class="flex items-center justify-between gap-3">
                         <div>
                             <h3 class="text-sm font-semibold">{{ t('telegram.analytics.charts.audience') }}</h3>
@@ -533,7 +533,7 @@ onMounted(() => {
             </div>
 
             <div class="grid gap-4 xl:grid-cols-[minmax(0,2fr)_minmax(340px,1fr)]">
-                <article class="rounded-xl border border-sidebar-border/80 bg-card/75 p-4 shadow-xl backdrop-blur">
+                <article class="intel-panel-strong">
                     <div class="flex items-center justify-between gap-3">
                         <div>
                             <h3 class="text-sm font-semibold">{{ t('telegram.analytics.charts.activity') }}</h3>
@@ -692,7 +692,7 @@ onMounted(() => {
                     </div>
                 </article>
 
-                <article class="rounded-xl border border-sidebar-border/80 bg-card/75 p-4 shadow-xl backdrop-blur">
+                <article class="intel-panel-strong">
                     <div class="flex items-center justify-between">
                         <div>
                             <h3 class="text-sm font-semibold">{{ t('telegram.analytics.charts.distribution') }}</h3>
@@ -747,7 +747,7 @@ onMounted(() => {
 
             <article
                 v-if="hasOpinionLeaders"
-                class="rounded-xl border border-sidebar-border/80 bg-card/75 p-4 shadow-xl backdrop-blur"
+                class="intel-panel-strong"
             >
                 <div class="flex items-center justify-between gap-3">
                     <div>
@@ -952,9 +952,9 @@ onMounted(() => {
                                 <p class="truncate font-medium">{{ leader.authorLabel || `ID ${leader.authorId ?? '-'}` }}</p>
                                 <p class="mt-1 text-muted-foreground">
                                     {{ t('telegram.analytics.stats.forwards') }}: {{ formatNumber(leader.forwards) }}
-                                    В· {{ t('telegram.analytics.stats.replies') }}: {{ formatNumber(leader.replies) }}
-                                    В· {{ t('telegram.analytics.stats.reactions') }}: {{ formatNumber(leader.reactions) }}
-                                    В· {{ t('telegram.analytics.stats.gifts') }}: {{ formatNumber(leader.gifts) }}
+                                    · {{ t('telegram.analytics.stats.replies') }}: {{ formatNumber(leader.replies) }}
+                                    · {{ t('telegram.analytics.stats.reactions') }}: {{ formatNumber(leader.reactions) }}
+                                    · {{ t('telegram.analytics.stats.gifts') }}: {{ formatNumber(leader.gifts) }}
                                 </p>
                             </article>
                         </div>
@@ -964,7 +964,7 @@ onMounted(() => {
 
             <article
                 v-if="false"
-                class="rounded-xl border border-sidebar-border/80 bg-card/75 p-4 shadow-xl backdrop-blur"
+                class="intel-panel-strong"
             >
                 <h3 class="text-sm font-semibold">{{ t('telegram.analytics.charts.opinionLeadersByDay') }}</h3>
                 <p class="mt-1 text-xs text-muted-foreground">
@@ -1024,3 +1024,4 @@ onMounted(() => {
         />
     </section>
 </template>
+

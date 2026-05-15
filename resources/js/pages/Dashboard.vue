@@ -270,7 +270,7 @@ onBeforeUnmount(() => {
         </section>
 
         <section class="grid grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-4 xl:grid-cols-4">
-            <article class="rounded-xl border border-sidebar-border/80 bg-card/70 p-4 shadow-xl backdrop-blur transition hover:-translate-y-0.5 hover:border-primary/40">
+            <article class="intel-panel transition hover:-translate-y-0.5 hover:border-primary/40">
                 <div class="flex items-center gap-2 text-muted-foreground">
                     <Search class="h-4 w-4" />
                     <span class="text-xs uppercase tracking-wide">{{ t('dashboard.summary.total') }}</span>
@@ -278,7 +278,7 @@ onBeforeUnmount(() => {
                 <p class="mt-3 text-2xl font-semibold sm:text-3xl">{{ dashboard.summary.total_actions }}</p>
             </article>
 
-            <article class="rounded-xl border border-sidebar-border/80 bg-card/70 p-4 shadow-xl backdrop-blur transition hover:-translate-y-0.5 hover:border-primary/40">
+            <article class="intel-panel transition hover:-translate-y-0.5 hover:border-primary/40">
                 <div class="flex items-center gap-2 text-muted-foreground">
                     <Flame class="h-4 w-4" />
                     <span class="text-xs uppercase tracking-wide">{{ t('dashboard.summary.last7') }}</span>
@@ -286,7 +286,7 @@ onBeforeUnmount(() => {
                 <p class="mt-3 text-2xl font-semibold sm:text-3xl">{{ dashboard.summary.actions_last_7_days }}</p>
             </article>
 
-            <article class="rounded-xl border border-sidebar-border/80 bg-card/70 p-4 shadow-xl backdrop-blur transition hover:-translate-y-0.5 hover:border-primary/40">
+            <article class="intel-panel transition hover:-translate-y-0.5 hover:border-primary/40">
                 <div class="flex items-center gap-2 text-muted-foreground">
                     <BarChart3 class="h-4 w-4" />
                     <span class="text-xs uppercase tracking-wide">{{ t('dashboard.summary.last30') }}</span>
@@ -294,7 +294,7 @@ onBeforeUnmount(() => {
                 <p class="mt-3 text-2xl font-semibold sm:text-3xl">{{ dashboard.summary.actions_last_30_days }}</p>
             </article>
 
-            <article class="rounded-xl border border-sidebar-border/80 bg-card/70 p-4 shadow-xl backdrop-blur transition hover:-translate-y-0.5 hover:border-primary/40">
+            <article class="intel-panel transition hover:-translate-y-0.5 hover:border-primary/40">
                 <div class="flex items-center gap-2 text-muted-foreground">
                     <Compass class="h-4 w-4" />
                     <span class="text-xs uppercase tracking-wide">{{ t('dashboard.summary.activeDays') }}</span>
@@ -304,7 +304,7 @@ onBeforeUnmount(() => {
         </section>
 
         <section class="grid gap-4 xl:grid-cols-2">
-            <article class="rounded-xl border border-sidebar-border/80 bg-card/70 p-4 shadow-xl backdrop-blur">
+            <article class="intel-panel">
                 <h2 class="text-sm font-semibold uppercase tracking-wide text-muted-foreground">{{ t('dashboard.sections.quickActions') }}</h2>
                 <div class="mt-3 grid grid-cols-1 gap-2 sm:grid-cols-2">
                     <Link
@@ -321,7 +321,7 @@ onBeforeUnmount(() => {
                 </div>
             </article>
 
-            <article class="rounded-xl border border-sidebar-border/80 bg-card/70 p-4 shadow-xl backdrop-blur">
+            <article class="intel-panel">
                 <h2 class="text-sm font-semibold uppercase tracking-wide text-muted-foreground">{{ t('dashboard.sections.insights') }}</h2>
                 <div class="mt-3 space-y-2 text-sm">
                     <p>
@@ -347,7 +347,7 @@ onBeforeUnmount(() => {
         </section>
 
         <section class="grid min-h-0 gap-4 lg:grid-cols-2 2xl:grid-cols-3">
-            <article class="min-h-0 rounded-xl border border-sidebar-border/80 bg-card/70 p-4 shadow-xl backdrop-blur">
+            <article class="min-h-0 intel-panel">
                 <div class="flex items-center justify-between">
                     <h2 class="text-sm font-semibold uppercase tracking-wide text-muted-foreground">{{ t('dashboard.sections.favorite') }}</h2>
                 </div>
@@ -390,7 +390,7 @@ onBeforeUnmount(() => {
                 </ul>
             </article>
 
-            <article class="min-h-0 rounded-xl border border-sidebar-border/80 bg-card/70 p-4 shadow-xl backdrop-blur lg:col-span-2 2xl:col-span-1">
+            <article class="min-h-0 intel-panel lg:col-span-2 2xl:col-span-1">
                 <h2 class="text-sm font-semibold uppercase tracking-wide text-muted-foreground">{{ t('dashboard.sections.weekly') }}</h2>
                 <div class="telegram-scroll mt-4 overflow-x-auto pb-1">
                     <div class="grid min-w-[420px] grid-cols-7 gap-2">
@@ -409,7 +409,7 @@ onBeforeUnmount(() => {
                 <p v-if="dashboard.chart.length === 0" class="mt-4 text-sm text-muted-foreground">{{ t('dashboard.weekly.empty') }}</p>
             </article>
 
-            <article class="min-h-0 rounded-xl border border-sidebar-border/80 bg-card/70 p-4 shadow-xl backdrop-blur">
+            <article class="min-h-0 intel-panel">
                 <h2 class="text-sm font-semibold uppercase tracking-wide text-muted-foreground">{{ t('dashboard.sections.savedQueries') }}</h2>
                 <ul class="telegram-scroll mt-3 max-h-64 space-y-2 overflow-y-auto pr-1 sm:max-h-[26rem]">
                     <li
@@ -445,7 +445,7 @@ onBeforeUnmount(() => {
             </article>
         </section>
 
-        <section class="min-h-0 rounded-xl border border-sidebar-border/80 bg-card/70 p-4 shadow-xl backdrop-blur">
+        <section class="min-h-0 intel-panel">
             <h2 class="text-sm font-semibold uppercase tracking-wide text-muted-foreground">{{ t('dashboard.sections.recentQueries') }}</h2>
 
             <div class="mt-3 grid gap-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
@@ -539,3 +539,4 @@ onBeforeUnmount(() => {
         </div>
     </div>
 </template>
+
