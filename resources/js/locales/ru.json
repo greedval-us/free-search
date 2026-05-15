@@ -1142,8 +1142,8 @@
       "dnssec_enabled": "DNSSEC ???????",
       "spf_strict": "SPF-политика строгая",
       "dmarc_enforced": "DMARC в режиме enforcement",
-      "domain_age_mature": "????? ?? ?????",
-      "domain_not_expiring_soon": "????? ?? ???????? ? ????????? ?????"
+      "domain_age_mature": "Домен не новый",
+      "domain_not_expiring_soon": "Домен не истекает в ближайшее время"
     },
     "recommendation": {
       "specify_official_domain": "Укажите официальный домен компании для более глубокой техразведки.",

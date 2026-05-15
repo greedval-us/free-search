@@ -1,8 +1,9 @@
 <script setup lang="ts">
-import { Globe, LoaderCircle } from 'lucide-vue-next';
+import { Globe } from 'lucide-vue-next';
 import { computed, onMounted } from 'vue';
 import HelpTooltip from '@/components/ui/HelpTooltip.vue';
 import IntelResultPanel from '@/components/ui/IntelResultPanel.vue';
+import IntelSearchForm from '@/components/ui/IntelSearchForm.vue';
 import IntelSearchPanel from '@/components/ui/IntelSearchPanel.vue';
 import { useI18n } from '@/composables/useI18n';
 import { getRepeatQueryParams, isRepeatAutorunEnabled, readRepeatQueryParam } from '@/composables/useRepeatQuery';
@@ -88,29 +89,17 @@ onMounted(() => {
             </div>
         </div>
 
-        <div class="mt-3 flex flex-wrap items-end gap-3">
-            <label class="block min-w-0 flex-1">
-                <span class="mb-1 block truncate text-xs font-medium text-muted-foreground">{{ t('siteIntel.domainLite.domain') }}</span>
-                <input
-                    v-model="form.domain"
-                    type="text"
-                    class="h-10 w-full rounded-md border border-input bg-background px-3 text-sm"
-                    :placeholder="t('siteIntel.domainLite.placeholder')"
-                    @keydown.enter.prevent="lookup"
-                />
-            </label>
-
-            <button
-                :disabled="loading || !canLookup"
-                class="inline-flex h-10 cursor-pointer items-center gap-2 rounded-md bg-primary px-5 text-sm font-semibold text-primary-foreground disabled:cursor-not-allowed disabled:opacity-60"
-                @click="lookup"
-            >
-                <LoaderCircle v-if="loading" class="h-4 w-4 animate-spin" />
-                <span>{{ loading ? t('siteIntel.domainLite.checking') : t('siteIntel.domainLite.check') }}</span>
-            </button>
-        </div>
-
-        <p v-if="error" class="mt-3 text-sm text-destructive">{{ error }}</p>
+        <IntelSearchForm
+            v-model="form.domain"
+            :label="t('siteIntel.domainLite.domain')"
+            :placeholder="t('siteIntel.domainLite.placeholder')"
+            :button-text="t('siteIntel.domainLite.check')"
+            :loading-text="t('siteIntel.domainLite.checking')"
+            :loading="loading"
+            :disabled="!canLookup"
+            :error="error"
+            @submit="lookup"
+        />
     </IntelSearchPanel>
 
     <IntelResultPanel>

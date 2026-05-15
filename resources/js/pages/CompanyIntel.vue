@@ -1,14 +1,16 @@
 <script setup lang="ts">
 import { Head } from '@inertiajs/vue3';
-import { Building2, LoaderCircle } from 'lucide-vue-next';
+import { Building2 } from 'lucide-vue-next';
 import { computed, reactive, ref } from 'vue';
 import EmptyState from '@/components/ui/EmptyState.vue';
 import IntelResultPanel from '@/components/ui/IntelResultPanel.vue';
+import IntelSearchForm from '@/components/ui/IntelSearchForm.vue';
 import IntelSearchPanel from '@/components/ui/IntelSearchPanel.vue';
 import MetricCard from '@/components/ui/MetricCard.vue';
 import PageHeader from '@/components/ui/PageHeader.vue';
 import RiskBadge from '@/components/ui/RiskBadge.vue';
 import SectionCard from '@/components/ui/SectionCard.vue';
+import { apiRequest } from '@/lib/api';
 import { useI18n } from '@/composables/useI18n';
 
 defineOptions({
@@ -139,27 +141,21 @@ const lookup = async () => {
     result.value = null;
 
     try {
-        const query = new URLSearchParams({
-            query: form.query.trim(),
-            locale: locale.value,
-        });
-
-        const response = await fetch(`/company-intel/lookup?${query.toString()}`, {
+        const apiResult = await apiRequest<CompanyIntelResult>('/company-intel/lookup', {
             method: 'GET',
-            headers: {
-                Accept: 'application/json',
+            query: {
+                query: form.query.trim(),
+                locale: locale.value,
             },
         });
 
-        const payload = await response.json();
-
-        if (!response.ok || !payload?.ok) {
-            error.value = payload?.message ?? t('companyIntel.errors.lookupFailed');
+        if (!apiResult.ok) {
+            error.value = apiResult.message || t('companyIntel.errors.lookupFailed');
 
             return;
         }
 
-        result.value = payload.data as CompanyIntelResult;
+        result.value = apiResult.data;
     } catch (exception) {
         error.value = exception instanceof Error ? exception.message : t('companyIntel.errors.lookupFailed');
     } finally {
@@ -177,29 +173,17 @@ const lookup = async () => {
                 <PageHeader :icon="Building2" :title="t('companyIntel.title')" :description="t('companyIntel.description')" :help-label="t('companyIntel.help.label')" :help-text="t('companyIntel.help.overview')" />
             </div>
 
-            <div class="mt-3 flex flex-wrap items-end gap-3">
-                <label class="block min-w-0 flex-1">
-                    <span class="mb-1 block truncate text-xs font-medium text-muted-foreground">{{ t('companyIntel.query') }}</span>
-                    <input
-                        v-model="form.query"
-                        type="text"
-                        class="h-10 w-full rounded-md border border-input bg-background px-3 text-sm"
-                        :placeholder="t('companyIntel.placeholder')"
-                        @keydown.enter.prevent="lookup"
-                    />
-                </label>
-
-                <button
-                    :disabled="loading || !canLookup"
-                    class="inline-flex h-10 cursor-pointer items-center gap-2 rounded-md bg-primary px-5 text-sm font-semibold text-primary-foreground disabled:cursor-not-allowed disabled:opacity-60"
-                    @click="lookup"
-                >
-                    <LoaderCircle v-if="loading" class="h-4 w-4 animate-spin" />
-                    <span>{{ loading ? t('companyIntel.searching') : t('companyIntel.search') }}</span>
-                </button>
-            </div>
-
-            <p v-if="error" class="mt-3 text-sm text-destructive">{{ error }}</p>
+            <IntelSearchForm
+                v-model="form.query"
+                :label="t('companyIntel.query')"
+                :placeholder="t('companyIntel.placeholder')"
+                :button-text="t('companyIntel.search')"
+                :loading-text="t('companyIntel.searching')"
+                :loading="loading"
+                :disabled="!canLookup"
+                :error="error"
+                @submit="lookup"
+            />
         </IntelSearchPanel>
 
         <IntelResultPanel>

@@ -1,4 +1,5 @@
 import { computed, reactive, ref } from 'vue';
+import { apiRequest } from '@/lib/api';
 import type { TelegramAnalyticsSummary } from '../types';
 
 type TranslateFn = (key: string) => string;
@@ -219,31 +220,18 @@ export const useTelegramAnalytics = (t: TranslateFn) => {
         previousPayload.value = null;
 
         try {
-            const response = await fetch(summaryUrl(), {
+            const apiResult = await apiRequest<TelegramAnalyticsSummary>(summaryUrl(), {
                 method: 'GET',
-                headers: {
-                    Accept: 'application/json',
-                },
             });
 
-            const data = await response.json();
-
-            if (!response.ok || !data?.ok) {
-                const firstError =
-                    data?.errors && typeof data.errors === 'object'
-                        ? Object.values(data.errors).flat().find((message) => typeof message === 'string')
-                        : null;
-
-                error.value =
-                    (typeof firstError === 'string' ? firstError : null) ??
-                    data?.message ??
-                    t('telegram.analytics.errors.loadFailed');
+            if (!apiResult.ok) {
+                error.value = apiResult.message ?? t('telegram.analytics.errors.loadFailed');
                 payload.value = null;
 
                 return;
             }
 
-            payload.value = data.data as TelegramAnalyticsSummary;
+            payload.value = apiResult.data;
 
             const currentFrom = new Date(payload.value.range.dateFrom);
             const currentTo = new Date(payload.value.range.dateTo);
@@ -260,16 +248,13 @@ export const useTelegramAnalytics = (t: TranslateFn) => {
 
                 try {
                     previousQuery.set('snapshotRole', 'previous');
-                    const previousResponse = await fetch(`/telegram/analytics/summary?${previousQuery.toString()}`, {
+                    const previousResult = await apiRequest<TelegramAnalyticsSummary>('/telegram/analytics/summary', {
                         method: 'GET',
-                        headers: {
-                            Accept: 'application/json',
-                        },
+                        query: Object.fromEntries(previousQuery.entries()),
                     });
-                    const previousData = await previousResponse.json();
 
-                    if (previousResponse.ok && previousData?.ok) {
-                        previousPayload.value = previousData.data as TelegramAnalyticsSummary;
+                    if (previousResult.ok) {
+                        previousPayload.value = previousResult.data;
                     }
                 } catch {
                     previousPayload.value = null;

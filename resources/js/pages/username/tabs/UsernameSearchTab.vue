@@ -1,8 +1,9 @@
 <script setup lang="ts">
-import { LoaderCircle, Search } from 'lucide-vue-next';
+import { Search } from 'lucide-vue-next';
 import { computed, onMounted, reactive, watch } from 'vue';
 import HelpTooltip from '@/components/ui/HelpTooltip.vue';
 import IntelResultPanel from '@/components/ui/IntelResultPanel.vue';
+import IntelSearchForm from '@/components/ui/IntelSearchForm.vue';
 import IntelSearchPanel from '@/components/ui/IntelSearchPanel.vue';
 import { useI18n } from '@/composables/useI18n';
 import { getRepeatQueryParams, isRepeatAutorunEnabled, readRepeatQueryParam } from '@/composables/useRepeatQuery';
@@ -156,29 +157,17 @@ onMounted(() => {
             </div>
         </div>
 
-        <div class="mt-3 flex flex-wrap items-end gap-3">
-            <label class="block min-w-0 flex-1">
-                <span class="mb-1 block truncate text-xs font-medium text-muted-foreground">{{ t('username.search.label') }}</span>
-                <input
-                    v-model="form.username"
-                    type="text"
-                    class="h-10 w-full rounded-md border border-input bg-background px-3 text-sm"
-                    :placeholder="t('username.search.placeholder')"
-                    @keydown.enter.prevent="search"
-                />
-            </label>
-
-            <button
-                :disabled="loading || !canSearch"
-                class="inline-flex h-10 cursor-pointer items-center gap-2 rounded-md bg-primary px-5 text-sm font-semibold text-primary-foreground disabled:cursor-not-allowed disabled:opacity-60"
-                @click="search"
-            >
-                <LoaderCircle v-if="loading" class="h-4 w-4 animate-spin" />
-                <span>{{ loading ? t('username.search.searching') : t('username.search.find') }}</span>
-            </button>
-        </div>
-
-        <p v-if="error" class="mt-3 text-sm text-destructive">{{ error }}</p>
+        <IntelSearchForm
+            v-model="form.username"
+            :label="t('username.search.label')"
+            :placeholder="t('username.search.placeholder')"
+            :button-text="t('username.search.find')"
+            :loading-text="t('username.search.searching')"
+            :loading="loading"
+            :disabled="!canSearch"
+            :error="error"
+            @submit="search"
+        />
     </IntelSearchPanel>
 
     <IntelResultPanel>

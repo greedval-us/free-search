@@ -1,8 +1,9 @@
 <script setup lang="ts">
-import { BarChart3, Download, FileText, LoaderCircle, Search } from 'lucide-vue-next';
+import { BarChart3, Download, FileText } from 'lucide-vue-next';
 import { computed, onMounted } from 'vue';
 import HelpTooltip from '@/components/ui/HelpTooltip.vue';
 import IntelResultPanel from '@/components/ui/IntelResultPanel.vue';
+import IntelSearchForm from '@/components/ui/IntelSearchForm.vue';
 import IntelSearchPanel from '@/components/ui/IntelSearchPanel.vue';
 import { useI18n } from '@/composables/useI18n';
 import { getRepeatQueryParams, isRepeatAutorunEnabled, readRepeatQueryParam } from '@/composables/useRepeatQuery';
@@ -85,50 +86,39 @@ onMounted(() => {
             </div>
         </div>
 
-        <div class="mt-3 flex flex-wrap items-end gap-3">
-            <label class="block min-w-0 flex-1">
-                <span class="mb-1 block truncate text-xs font-medium text-muted-foreground">{{ t('username.search.label') }}</span>
-                <input
-                    v-model="form.username"
-                    type="text"
-                    class="h-10 w-full rounded-md border border-input bg-background px-3 text-sm"
-                    :placeholder="t('username.search.placeholder')"
-                    @keydown.enter.prevent="search"
-                />
-            </label>
+        <IntelSearchForm
+            v-model="form.username"
+            :label="t('username.search.label')"
+            :placeholder="t('username.search.placeholder')"
+            :button-text="t('username.search.find')"
+            :loading-text="t('username.search.searching')"
+            :loading="loading"
+            :disabled="!canSearch"
+            :error="error"
+            @submit="search"
+        >
+            <template #actions>
+                <button
+                    type="button"
+                    :disabled="!canUseReportActions"
+                    class="inline-flex h-10 cursor-pointer items-center gap-2 rounded-md bg-primary px-4 text-sm font-semibold text-primary-foreground hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-60"
+                    @click="openReport"
+                >
+                    <FileText class="h-4 w-4" />
+                    {{ t('username.analytics.report') }}
+                </button>
 
-            <button
-                :disabled="loading || !canSearch"
-                class="inline-flex h-10 cursor-pointer items-center gap-2 rounded-md bg-primary px-5 text-sm font-semibold text-primary-foreground disabled:cursor-not-allowed disabled:opacity-60"
-                @click="search"
-            >
-                <LoaderCircle v-if="loading" class="h-4 w-4 animate-spin" />
-                <Search v-else class="h-4 w-4" />
-                <span>{{ loading ? t('username.search.searching') : t('username.search.find') }}</span>
-            </button>
-
-            <button
-                type="button"
-                :disabled="!canUseReportActions"
-                class="inline-flex h-10 cursor-pointer items-center gap-2 rounded-md bg-primary px-4 text-sm font-semibold text-primary-foreground hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-60"
-                @click="openReport"
-            >
-                <FileText class="h-4 w-4" />
-                {{ t('username.analytics.report') }}
-            </button>
-
-            <button
-                type="button"
-                :disabled="!canUseReportActions"
-                class="inline-flex h-10 cursor-pointer items-center gap-2 rounded-md border border-input bg-background px-4 text-sm font-medium hover:bg-accent disabled:cursor-not-allowed disabled:opacity-60"
-                @click="downloadReport"
-            >
-                <Download class="h-4 w-4" />
-                {{ t('username.analytics.downloadReport') }}
-            </button>
-        </div>
-
-        <p v-if="error" class="mt-3 text-sm text-destructive">{{ error }}</p>
+                <button
+                    type="button"
+                    :disabled="!canUseReportActions"
+                    class="inline-flex h-10 cursor-pointer items-center gap-2 rounded-md border border-input bg-background px-4 text-sm font-medium hover:bg-accent disabled:cursor-not-allowed disabled:opacity-60"
+                    @click="downloadReport"
+                >
+                    <Download class="h-4 w-4" />
+                    {{ t('username.analytics.downloadReport') }}
+                </button>
+            </template>
+        </IntelSearchForm>
     </IntelSearchPanel>
 
     <IntelResultPanel>

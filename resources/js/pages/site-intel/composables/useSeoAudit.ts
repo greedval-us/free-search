@@ -1,4 +1,5 @@
 import { computed, reactive, ref } from 'vue';
+import { apiRequest } from '@/lib/api';
 import type { SiteIntelSeoAuditResult } from '../types';
 
 type TranslateFn = (key: string) => string;
@@ -29,29 +30,22 @@ export const useSeoAudit = (t: TranslateFn) => {
         result.value = null;
 
         try {
-            const query = new URLSearchParams({
-                target: form.target.trim(),
-                crawl_limit: String(form.crawlLimit),
-                platform_type: form.platformType,
-            });
-
-            const response = await fetch(`/site-intel/seo-audit?${query.toString()}`, {
+            const apiResult = await apiRequest<SiteIntelSeoAuditResult>('/site-intel/seo-audit', {
                 method: 'GET',
-                headers: {
-                    Accept: 'application/json',
+                query: {
+                    target: form.target.trim(),
+                    crawl_limit: String(form.crawlLimit),
+                    platform_type: form.platformType,
                 },
             });
 
-            const payload = await safeJson(response);
-            const apiError = resolveApiError(payload);
-
-            if (!response.ok || !payload?.ok) {
-                error.value = apiError ?? t('siteIntel.seoAudit.errors.analyzeFailed');
+            if (!apiResult.ok) {
+                error.value = apiResult.message ?? t('siteIntel.seoAudit.errors.analyzeFailed');
 
                 return;
             }
 
-            result.value = payload.data as SiteIntelSeoAuditResult;
+            result.value = apiResult.data;
         } catch (exception) {
             error.value = exception instanceof Error ? exception.message : t('siteIntel.seoAudit.errors.analyzeFailed');
         } finally {
@@ -110,42 +104,4 @@ const downloadReport = (form: { target: string; crawlLimit: number; platformType
     }
 
     window.open(reportUrl(form, result, true), '_blank', 'noopener,noreferrer');
-};
-
-const safeJson = async (response: Response): Promise<Record<string, unknown> | null> => {
-    const contentType = response.headers.get('content-type') ?? '';
-
-    if (!contentType.includes('application/json')) {
-        return null;
-    }
-
-    try {
-        return (await response.json()) as Record<string, unknown>;
-    } catch {
-        return null;
-    }
-};
-
-const resolveApiError = (payload: Record<string, unknown> | null): string | null => {
-    if (!payload || typeof payload !== 'object') {
-        return null;
-    }
-
-    const message = payload.message;
-
-    if (typeof message === 'string' && message.trim() !== '') {
-        return message;
-    }
-
-    const errors = payload.errors;
-
-    if (errors && typeof errors === 'object') {
-        for (const value of Object.values(errors as Record<string, unknown>)) {
-            if (Array.isArray(value) && value.length > 0 && typeof value[0] === 'string') {
-                return value[0];
-            }
-        }
-    }
-
-    return null;
 };

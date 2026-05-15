@@ -7,6 +7,7 @@ import IntelResultPanel from '@/components/ui/IntelResultPanel.vue';
 import IntelSearchPanel from '@/components/ui/IntelSearchPanel.vue';
 import { useI18n } from '@/composables/useI18n';
 import { getRepeatQueryParams, isRepeatAutorunEnabled, readRepeatQueryParam } from '@/composables/useRepeatQuery';
+import { apiRequest } from '@/lib/api';
 import EmailEntityGraph from './email-intel/components/EmailEntityGraph.vue';
 import { useEmailIntelLookup } from './email-intel/composables/useEmailIntelLookup';
 import type { DomainMailPostureResult, EmailBulkIntelResult } from './email-intel/types';
@@ -163,17 +164,21 @@ const bulkLookup = async () => {
     bulkResult.value = null;
 
     try {
-        const query = new URLSearchParams({ emails: bulkEmails.value, locale: locale.value });
-        const response = await fetch(`/email-intel/bulk?${query.toString()}`, { headers: { Accept: 'application/json' } });
-        const payload = await response.json();
+        const apiResult = await apiRequest<EmailBulkIntelResult>('/email-intel/bulk', {
+            method: 'GET',
+            query: {
+                emails: bulkEmails.value,
+                locale: locale.value,
+            },
+        });
 
-        if (!response.ok || !payload?.ok) {
-            bulkError.value = payload?.message ?? t('emailIntel.errors.lookupFailed');
+        if (!apiResult.ok) {
+            bulkError.value = apiResult.message ?? t('emailIntel.errors.lookupFailed');
 
             return;
         }
 
-        bulkResult.value = payload.data as EmailBulkIntelResult;
+        bulkResult.value = apiResult.data;
     } catch (exception) {
         bulkError.value = exception instanceof Error ? exception.message : t('emailIntel.errors.lookupFailed');
     } finally {
@@ -193,17 +198,21 @@ const domainLookup = async () => {
     domainResult.value = null;
 
     try {
-        const query = new URLSearchParams({ domain: domainForm.value.trim(), locale: locale.value });
-        const response = await fetch(`/email-intel/domain-posture?${query.toString()}`, { headers: { Accept: 'application/json' } });
-        const payload = await response.json();
+        const apiResult = await apiRequest<DomainMailPostureResult>('/email-intel/domain-posture', {
+            method: 'GET',
+            query: {
+                domain: domainForm.value.trim(),
+                locale: locale.value,
+            },
+        });
 
-        if (!response.ok || !payload?.ok) {
-            domainError.value = payload?.message ?? t('emailIntel.errors.lookupFailed');
+        if (!apiResult.ok) {
+            domainError.value = apiResult.message ?? t('emailIntel.errors.lookupFailed');
 
             return;
         }
 
-        domainResult.value = payload.data as DomainMailPostureResult;
+        domainResult.value = apiResult.data;
     } catch (exception) {
         domainError.value = exception instanceof Error ? exception.message : t('emailIntel.errors.lookupFailed');
     } finally {

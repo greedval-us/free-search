@@ -2,6 +2,7 @@
 import { LoaderCircle, SearchCheck } from 'lucide-vue-next';
 import { computed, reactive } from 'vue';
 import IntelResultPanel from '@/components/ui/IntelResultPanel.vue';
+import IntelSearchFormComplex from '@/components/ui/IntelSearchFormComplex.vue';
 import IntelSearchPanel from '@/components/ui/IntelSearchPanel.vue';
 import { useI18n } from '@/composables/useI18n';
 import { useSeoAudit } from '../composables/useSeoAudit';
@@ -97,7 +98,7 @@ const linkGraphFilters = reactive({
             <p class="text-xs text-muted-foreground">{{ t('siteIntel.seoAudit.description') }}</p>
         </div>
 
-        <div class="mt-3 flex flex-wrap items-end gap-3">
+        <IntelSearchFormComplex :error="error">
             <label class="block min-w-0 flex-1">
                 <span class="mb-1 block truncate text-xs font-medium text-muted-foreground">{{ t('siteIntel.seoAudit.target') }}</span>
                 <input
@@ -158,9 +159,7 @@ const linkGraphFilters = reactive({
             >
                 {{ t('siteIntel.seoAudit.downloadReport') }}
             </button>
-        </div>
-
-        <p v-if="error" class="mt-3 text-sm text-destructive">{{ error }}</p>
+        </IntelSearchFormComplex>
     </IntelSearchPanel>
 
     <IntelResultPanel>

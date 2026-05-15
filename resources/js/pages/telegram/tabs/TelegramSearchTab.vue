@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ChevronDown, ChevronUp, Search, Settings } from 'lucide-vue-next';
 import { computed, onMounted } from 'vue';
+import IntelAdvancedFilters from '@/components/ui/IntelAdvancedFilters.vue';
 import HelpTooltip from '@/components/ui/HelpTooltip.vue';
 import IntelResultPanel from '@/components/ui/IntelResultPanel.vue';
 import IntelSearchPanel from '@/components/ui/IntelSearchPanel.vue';
@@ -197,10 +198,7 @@ onMounted(() => {
             </div>
         </div>
 
-        <div
-            v-if="!searchPanelCollapsed && showAdvanced"
-            class="mt-3 grid gap-3 border-t border-border/60 pt-3 md:grid-cols-3"
-        >
+        <IntelAdvancedFilters :open="!searchPanelCollapsed && showAdvanced" content-class="md:grid-cols-3">
             <label class="block min-w-0">
                 <span class="mb-1 block truncate text-xs font-medium text-muted-foreground">{{ t('telegram.search.limit') }}</span>
                 <input
@@ -231,7 +229,7 @@ onMounted(() => {
                     class="h-10 w-full rounded-md border border-input bg-background px-3 text-sm"
                 />
             </label>
-        </div>
+        </IntelAdvancedFilters>
 
         <p v-if="error" class="mt-3 text-sm text-destructive">{{ error }}</p>
     </IntelSearchPanel>

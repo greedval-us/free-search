@@ -1,13 +1,15 @@
 <script setup lang="ts">
 import { Head } from '@inertiajs/vue3';
-import { FileSearch, LoaderCircle } from 'lucide-vue-next';
+import { FileSearch } from 'lucide-vue-next';
 import { computed, reactive, ref } from 'vue';
 import EmptyState from '@/components/ui/EmptyState.vue';
 import IntelResultPanel from '@/components/ui/IntelResultPanel.vue';
+import IntelSearchForm from '@/components/ui/IntelSearchForm.vue';
 import IntelSearchPanel from '@/components/ui/IntelSearchPanel.vue';
 import MetricCard from '@/components/ui/MetricCard.vue';
 import PageHeader from '@/components/ui/PageHeader.vue';
 import SectionCard from '@/components/ui/SectionCard.vue';
+import { apiRequest } from '@/lib/api';
 import { useI18n } from '@/composables/useI18n';
 
 defineOptions({
@@ -160,21 +162,21 @@ const lookup = async () => {
     result.value = null;
 
     try {
-        const query = new URLSearchParams({ query: form.query.trim(), locale: locale.value });
-        const response = await fetch(`/document-intel/lookup?${query.toString()}`, {
+        const apiResult = await apiRequest<DocumentIntelResult>('/document-intel/lookup', {
             method: 'GET',
-            headers: { Accept: 'application/json' },
+            query: {
+                query: form.query.trim(),
+                locale: locale.value,
+            },
         });
 
-        const payload = await response.json();
-
-        if (!response.ok || !payload?.ok) {
-            error.value = payload?.message ?? t('documentIntel.errors.lookupFailed');
+        if (!apiResult.ok) {
+            error.value = apiResult.message || t('documentIntel.errors.lookupFailed');
 
             return;
         }
 
-        result.value = payload.data as DocumentIntelResult;
+        result.value = apiResult.data;
     } catch (exception) {
         error.value = exception instanceof Error ? exception.message : t('documentIntel.errors.lookupFailed');
     } finally {
@@ -192,18 +194,17 @@ const lookup = async () => {
                 <PageHeader :icon="FileSearch" :title="t('documentIntel.title')" :description="t('documentIntel.description')" :help-label="t('documentIntel.help.label')" :help-text="t('documentIntel.help.overview')" />
             </div>
 
-            <div class="mt-3 flex flex-wrap items-end gap-3">
-                <label class="block min-w-0 flex-1">
-                    <span class="mb-1 block truncate text-xs font-medium text-muted-foreground">{{ t('documentIntel.query') }}</span>
-                    <input v-model="form.query" type="text" class="h-10 w-full rounded-md border border-input bg-background px-3 text-sm" :placeholder="t('documentIntel.placeholder')" @keydown.enter.prevent="lookup" />
-                </label>
-                <button :disabled="loading || !canLookup" class="inline-flex h-10 cursor-pointer items-center gap-2 rounded-md bg-primary px-5 text-sm font-semibold text-primary-foreground disabled:cursor-not-allowed disabled:opacity-60" @click="lookup">
-                    <LoaderCircle v-if="loading" class="h-4 w-4 animate-spin" />
-                    <span>{{ loading ? t('documentIntel.searching') : t('documentIntel.search') }}</span>
-                </button>
-            </div>
-
-            <p v-if="error" class="mt-3 text-sm text-destructive">{{ error }}</p>
+            <IntelSearchForm
+                v-model="form.query"
+                :label="t('documentIntel.query')"
+                :placeholder="t('documentIntel.placeholder')"
+                :button-text="t('documentIntel.search')"
+                :loading-text="t('documentIntel.searching')"
+                :loading="loading"
+                :disabled="!canLookup"
+                :error="error"
+                @submit="lookup"
+            />
         </IntelSearchPanel>
 
         <IntelResultPanel>

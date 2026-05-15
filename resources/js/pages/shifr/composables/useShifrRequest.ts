@@ -1,5 +1,6 @@
 import { computed, ref  } from 'vue';
 import type {Ref} from 'vue';
+import { apiRequest } from '@/lib/api';
 
 export interface ShifrRequestState {
   loading: Ref<boolean>;
@@ -35,18 +36,19 @@ export const useShifrRequest = (
     reset();
 
     try {
-      const response = await fetch(`${endpoint}?${params.toString()}`, {
-        headers: { Accept: 'application/json' },
+      const query = Object.fromEntries(params.entries());
+      const apiResult = await apiRequest<Record<string, unknown>>(endpoint, {
+        method: 'GET',
+        query,
       });
-      const payload = await response.json();
 
-      if (!response.ok || !payload?.ok) {
-        error.value = payload?.message ?? requestFailedMessage();
+      if (!apiResult.ok) {
+        error.value = apiResult.message ?? requestFailedMessage();
 
         return;
       }
 
-      result.value = payload.data as Record<string, unknown>;
+      result.value = apiResult.data;
     } catch (exception) {
       error.value = exception instanceof Error ? exception.message : requestFailedMessage();
     } finally {
