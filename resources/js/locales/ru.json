@@ -1205,6 +1205,50 @@
       "wayback_docs": "Снимки Wayback",
       "github_leaks": "Ключи утечек в GitHub"
     },
+    "documents": {
+      "title": "Обнаруженные документы",
+      "total": "Всего",
+      "failed": "Не удалось разобрать",
+      "withAuthor": "С автором",
+      "withSoftware": "С указанием ПО",
+      "withDates": "С датами",
+      "list": "Метаданные документов",
+      "empty": "Автоматически документы не обнаружены.",
+      "extension": "Тип",
+      "size": "Размер",
+      "author": "Автор",
+      "software": "ПО",
+      "createdAt": "Создан",
+      "modifiedAt": "Изменен",
+      "lastModified": "HTTP Last-Modified",
+      "error": "Ошибка",
+      "riskAverage": "Средний риск-скор",
+      "riskScore": "Риск-скор",
+      "riskLevel": "Уровень риска",
+      "riskReasons": "Причины риска",
+      "topRiskReasons": "Топ причин риска",
+      "exposedEmails": "Обнаруженные email",
+      "exposedUsernames": "Обнаруженные username",
+      "exposedPaths": "Обнаруженные внутренние пути"
+    },
+    "risk": {
+      "low": "Низкий",
+      "medium": "Средний",
+      "high": "Высокий"
+    },
+    "riskReason": {
+      "doc_access_issue": "Проблема доступа или загрузки",
+      "author_exposed": "Раскрыт автор в метаданных",
+      "emails_exposed": "Найдены email в содержимом",
+      "internal_paths_exposed": "Найдены внутренние пути",
+      "legacy_software_hint": "Признак устаревшего ПО в метаданных"
+    },
+    "error": {
+      "network_error": "Сетевая ошибка",
+      "file_too_large": "Файл превышает лимит размера",
+      "http_403": "Доступ запрещен (403)",
+      "http_404": "Не найдено (404)"
+    },
     "errors": {
       "queryRequired": "Введите домен или название компании.",
       "lookupFailed": "Не удалось выполнить document-intel анализ."

@@ -1205,6 +1205,50 @@
       "wayback_docs": "Wayback snapshots",
       "github_leaks": "GitHub leak keywords"
     },
+    "documents": {
+      "title": "Discovered documents",
+      "total": "Total",
+      "failed": "Failed to parse",
+      "withAuthor": "With author",
+      "withSoftware": "With software",
+      "withDates": "With dates",
+      "list": "Document metadata",
+      "empty": "No documents discovered automatically.",
+      "extension": "Type",
+      "size": "Size",
+      "author": "Author",
+      "software": "Software",
+      "createdAt": "Created",
+      "modifiedAt": "Modified",
+      "lastModified": "HTTP Last-Modified",
+      "error": "Error",
+      "riskAverage": "Average risk score",
+      "riskScore": "Risk score",
+      "riskLevel": "Risk level",
+      "riskReasons": "Risk reasons",
+      "topRiskReasons": "Top risk reasons",
+      "exposedEmails": "Exposed emails",
+      "exposedUsernames": "Exposed usernames",
+      "exposedPaths": "Exposed internal paths"
+    },
+    "risk": {
+      "low": "Low",
+      "medium": "Medium",
+      "high": "High"
+    },
+    "riskReason": {
+      "doc_access_issue": "Access or fetch issue",
+      "author_exposed": "Author metadata exposed",
+      "emails_exposed": "Emails found in content",
+      "internal_paths_exposed": "Internal paths found",
+      "legacy_software_hint": "Legacy software metadata hint"
+    },
+    "error": {
+      "network_error": "Network error",
+      "file_too_large": "File exceeds max size",
+      "http_403": "Access denied (403)",
+      "http_404": "Not found (404)"
+    },
     "errors": {
       "queryRequired": "Enter domain or company name.",
       "lookupFailed": "Could not complete document intelligence lookup."
