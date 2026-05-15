@@ -55,8 +55,22 @@ export type DomainLiteResult = {
         caa: string[];
         emailSecurity: {
             hasSpf: boolean;
+            spfRecord: string | null;
+            spfPolicy: {
+                allQualifier: string | null;
+                includeCount: number;
+                isStrict: boolean;
+            };
             hasDmarc: boolean;
             dmarc: string[];
+            dmarcPolicy: {
+                policy: string | null;
+                percentage: number | null;
+            };
+        };
+        dnssec: {
+            enabled: boolean;
+            dnskeyCount: number;
         };
     };
     whois: {
@@ -68,11 +82,19 @@ export type DomainLiteResult = {
         registrar: string | null;
         country: string | null;
         sample: string | null;
+        timing: {
+            domainAgeDays: number | null;
+            daysToExpiry: number | null;
+        };
     };
     risk: {
         score: number;
         level: 'low' | 'medium' | 'high';
         signals: string[];
+        breakdown: Array<{
+            key: string;
+            points: number;
+        }>;
     };
 };
 

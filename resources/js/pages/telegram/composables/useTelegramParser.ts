@@ -22,6 +22,7 @@ const POLL_INTERVAL_MS = 3000;
 
 const parseDate = (value: string): Date | null => {
     const match = /^(\d{4})-(\d{2})-(\d{2})$/.exec(value);
+
     if (!match) {
         return null;
     }
@@ -81,14 +82,17 @@ export const useTelegramParser = (t: TranslateFn) => {
             window.clearTimeout(pollTimer.value);
             pollTimer.value = null;
         }
+
         pollRequestInFlight.value = false;
 
         loading.value = false;
+
         if (stage.value !== 'completed' && stage.value !== 'failed') {
             stage.value = 'stopped';
         }
 
         const activeRunId = runId.value;
+
         if (activeRunId) {
             fetch(`/telegram/parser/stop/${activeRunId}`, {
                 method: 'POST',
@@ -121,9 +125,11 @@ export const useTelegramParser = (t: TranslateFn) => {
             window.clearTimeout(pollTimer.value);
             pollTimer.value = null;
         }
+
         pollRequestInFlight.value = false;
 
         const activeRunId = runId.value;
+
         if (activeRunId) {
             fetch(`/telegram/parser/stop/${activeRunId}`, {
                 method: 'POST',
@@ -143,17 +149,21 @@ export const useTelegramParser = (t: TranslateFn) => {
         if (customPeriod.value && !keywordActive.value) {
             if (!form.dateFrom || !form.dateTo) {
                 error.value = t('telegram.parser.errors.customBothDates');
+
                 return;
             }
 
             const days = diffDays(form.dateFrom, form.dateTo);
+
             if (days === null || days < 0) {
                 error.value = t('telegram.parser.errors.customInvalid');
+
                 return;
             }
 
             if (days > 30) {
                 error.value = t('telegram.parser.errors.customTooLong');
+
                 return;
             }
         }
@@ -226,6 +236,7 @@ export const useTelegramParser = (t: TranslateFn) => {
                         downloadJsonUrl.value = statusPayload.downloadJsonUrl;
                         loading.value = false;
                         stopSilently();
+
                         return;
                     }
 
@@ -234,12 +245,14 @@ export const useTelegramParser = (t: TranslateFn) => {
                         downloadJsonUrl.value = statusPayload.downloadJsonUrl;
                         loading.value = false;
                         stopSilently();
+
                         return;
                     }
                 } catch (pollError) {
                     loading.value = false;
                     error.value = pollError instanceof Error ? pollError.message : t('telegram.parser.errors.failed');
                     stopSilently();
+
                     return;
                 } finally {
                     pollRequestInFlight.value = false;
@@ -264,17 +277,24 @@ export const useTelegramParser = (t: TranslateFn) => {
     };
 
     const download = () => {
-        if (!downloadUrl.value) return;
+        if (!downloadUrl.value) {
+return;
+}
+
         window.location.href = downloadUrl.value;
     };
 
     const downloadJson = () => {
-        if (!downloadJsonUrl.value) return;
+        if (!downloadJsonUrl.value) {
+return;
+}
+
         window.location.href = downloadJsonUrl.value;
     };
 
     const handleBeforeUnload = () => {
         const activeRunId = runId.value;
+
         if (!activeRunId) {
             return;
         }

@@ -16,21 +16,54 @@ const root = ref<HTMLDivElement | null>(null);
 let cy: cytoscape.Core | null = null;
 
 const nodeColor = (node: UsernameGraphNode): string => {
-    if (node.type === 'username') return '#06b6d4';
-    if (node.type === 'region') return '#8b5cf6';
-    if (node.type === 'category') return '#14b8a6';
-    if (node.type === 'domain') return '#f97316';
-    if (node.status === 'found') return '#10b981';
-    if (node.status === 'not_found') return '#64748b';
+    if (node.type === 'username') {
+return '#06b6d4';
+}
+
+    if (node.type === 'region') {
+return '#8b5cf6';
+}
+
+    if (node.type === 'category') {
+return '#14b8a6';
+}
+
+    if (node.type === 'domain') {
+return '#f97316';
+}
+
+    if (node.status === 'found') {
+return '#10b981';
+}
+
+    if (node.status === 'not_found') {
+return '#64748b';
+}
+
     return '#f59e0b';
 };
 
 const edgeColor = (edge: UsernameGraphEdge): string => {
-    if (edge.kind === 'region') return '#475569';
-    if (edge.kind === 'category') return '#0f766e';
-    if (edge.kind === 'domain') return '#9a3412';
-    if (edge.status === 'found') return '#10b981';
-    if (edge.status === 'not_found') return '#64748b';
+    if (edge.kind === 'region') {
+return '#475569';
+}
+
+    if (edge.kind === 'category') {
+return '#0f766e';
+}
+
+    if (edge.kind === 'domain') {
+return '#9a3412';
+}
+
+    if (edge.status === 'found') {
+return '#10b981';
+}
+
+    if (edge.status === 'not_found') {
+return '#64748b';
+}
+
     return '#f59e0b';
 };
 
@@ -50,13 +83,33 @@ const translatedNodeLabel = (node: UsernameGraphNode): string => {
     const clean = node.label.trim();
     const normalized = clean.toLowerCase();
 
-    if (normalized === 'username' || normalized === 'user') return t('username.search.label');
-    if (normalized === 'found') return t('username.status.found');
-    if (normalized === 'not_found' || normalized === 'not found') return t('username.status.notFound');
-    if (normalized === 'unknown') return t('username.status.unknown');
-    if (normalized === 'region') return t('username.results.region');
-    if (normalized === 'category') return t('username.results.category');
-    if (normalized === 'domain') return t('username.results.domain');
+    if (normalized === 'username' || normalized === 'user') {
+return t('username.search.label');
+}
+
+    if (normalized === 'found') {
+return t('username.status.found');
+}
+
+    if (normalized === 'not_found' || normalized === 'not found') {
+return t('username.status.notFound');
+}
+
+    if (normalized === 'unknown') {
+return t('username.status.unknown');
+}
+
+    if (normalized === 'region') {
+return t('username.results.region');
+}
+
+    if (normalized === 'category') {
+return t('username.results.category');
+}
+
+    if (normalized === 'domain') {
+return t('username.results.domain');
+}
 
     if (node.type === 'category') {
         const categoryKey = `username.categories.${normalizeCategoryKey(clean)}`;
@@ -120,7 +173,9 @@ const buildElements = () => {
 };
 
 const renderGraph = () => {
-    if (!root.value) return;
+    if (!root.value) {
+return;
+}
 
     if (cy) {
         cy.destroy();
@@ -225,7 +280,9 @@ const renderGraph = () => {
     cy.on('tap', 'node', (event) => {
         const node = event.target;
 
-        if (!cy) return;
+        if (!cy) {
+return;
+}
 
         cy.elements().addClass('dimmed');
         node.removeClass('dimmed');
@@ -234,7 +291,10 @@ const renderGraph = () => {
     });
 
     cy.on('tap', (event) => {
-        if (!cy) return;
+        if (!cy) {
+return;
+}
+
         if (event.target === cy) {
             cy.elements().removeClass('dimmed');
         }

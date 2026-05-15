@@ -43,6 +43,92 @@ return [
         ],
     ],
 
+    'company_intel' => [
+        'risk' => [
+            'score_for_medium' => (int) env('OSINT_COMPANY_INTEL_SCORE_FOR_MEDIUM', 30),
+            'score_for_high' => (int) env('OSINT_COMPANY_INTEL_SCORE_FOR_HIGH', 60),
+            'weights' => [
+                'no_dns_resolution' => (int) env('OSINT_COMPANY_INTEL_WEIGHT_NO_DNS_RESOLUTION', 20),
+                'missing_spf' => (int) env('OSINT_COMPANY_INTEL_WEIGHT_MISSING_SPF', 12),
+                'missing_dmarc' => (int) env('OSINT_COMPANY_INTEL_WEIGHT_MISSING_DMARC', 15),
+                'missing_mx' => (int) env('OSINT_COMPANY_INTEL_WEIGHT_MISSING_MX', 8),
+                'weak_ns_redundancy' => (int) env('OSINT_COMPANY_INTEL_WEIGHT_WEAK_NS_REDUNDANCY', 8),
+                'missing_caa' => (int) env('OSINT_COMPANY_INTEL_WEIGHT_MISSING_CAA', 6),
+                'dnssec_not_enabled' => (int) env('OSINT_COMPANY_INTEL_WEIGHT_DNSSEC_NOT_ENABLED', 6),
+                'spf_not_strict' => (int) env('OSINT_COMPANY_INTEL_WEIGHT_SPF_NOT_STRICT', 6),
+                'dmarc_not_enforced' => (int) env('OSINT_COMPANY_INTEL_WEIGHT_DMARC_NOT_ENFORCED', 10),
+                'young_domain' => (int) env('OSINT_COMPANY_INTEL_WEIGHT_YOUNG_DOMAIN', 14),
+                'domain_expired' => (int) env('OSINT_COMPANY_INTEL_WEIGHT_DOMAIN_EXPIRED', 25),
+                'domain_expiring_soon' => (int) env('OSINT_COMPANY_INTEL_WEIGHT_DOMAIN_EXPIRING_SOON', 12),
+                'whois_unavailable' => (int) env('OSINT_COMPANY_INTEL_WEIGHT_WHOIS_UNAVAILABLE', 10),
+                'whois_privacy_redacted' => (int) env('OSINT_COMPANY_INTEL_WEIGHT_WHOIS_PRIVACY_REDACTED', 5),
+            ],
+        ],
+        'links' => [
+            'global' => [
+                'news_search' => 'https://news.google.com/search?q={query}',
+                'reddit_mentions' => 'https://www.reddit.com/search/?q={query}',
+                'github_search' => 'https://github.com/search?q={query}',
+                'job_signals' => 'https://www.google.com/search?q={query_jobs}',
+                'linkedin_search' => 'https://www.google.com/search?q={query_linkedin}',
+                'opencorporates_search' => 'https://opencorporates.com/companies?q={query}',
+                'wikidata_search' => 'https://www.wikidata.org/w/index.php?search={query}',
+                'glassdoor_search' => 'https://www.google.com/search?q={query_glassdoor}',
+                'crunchbase_search' => 'https://www.google.com/search?q={query_crunchbase}',
+                'x_mentions' => 'https://www.google.com/search?q={query_x}',
+                'youtube_mentions' => 'https://www.google.com/search?q={query_youtube}',
+                'medium_mentions' => 'https://www.google.com/search?q={query_medium}',
+                'paste_leaks_search' => 'https://www.google.com/search?q={query_paste}',
+                'patents_search' => 'https://patents.google.com/?q={query}',
+            ],
+            'domain' => [
+                'crtsh_history' => 'https://crt.sh/?q={domain}',
+                'urlhaus_lookup' => 'https://urlhaus.abuse.ch/browse.php?search={domain}',
+                'phishtank_lookup' => 'https://phishtank.org/phish_search.php?search={domain}&valid=y&active=y',
+                'viewdns_whois' => 'https://viewdns.info/whois/?domain={domain}',
+                'wayback_archive' => 'https://web.archive.org/web/*/{domain}',
+                'securitytrails_dns' => 'https://securitytrails.com/domain/{domain}/history/dns',
+                'dnstwister' => 'https://dnstwister.report/search?domain={domain}',
+                'talos_reputation' => 'https://talosintelligence.com/reputation_center/lookup?search={domain}',
+                'virustotal_domain' => 'https://www.virustotal.com/gui/domain/{domain}',
+                'urlscan_domain' => 'https://urlscan.io/domain/{domain}',
+                'otx_domain' => 'https://otx.alienvault.com/indicator/domain/{domain}',
+                'threatcrowd_domain' => 'https://www.threatcrowd.org/domain.php?domain={domain}',
+                'hibp_breaches_domain' => 'https://haveibeenpwned.com/DomainSearch?domain={domain}',
+                'builtwith_profile' => 'https://builtwith.com/{domain}',
+                'dnslytics_domain' => 'https://dnslytics.com/domain/{domain}',
+                'netcraft_report' => 'https://sitereport.netcraft.com/?url=http://{domain}',
+            ],
+        ],
+    ],
+
+    'document_intel' => [
+        'http' => [
+            'user_agent' => env('OSINT_DOCUMENT_INTEL_HTTP_USER_AGENT', 'FreeSearch-DocumentIntel/1.0'),
+            'timeout_seconds' => (int) env('OSINT_DOCUMENT_INTEL_HTTP_TIMEOUT', 10),
+        ],
+        'discovery' => [
+            'max_documents' => (int) env('OSINT_DOCUMENT_INTEL_MAX_DOCUMENTS', 20),
+            'max_file_size_bytes' => (int) env('OSINT_DOCUMENT_INTEL_MAX_FILE_SIZE_BYTES', 5000000),
+            'extensions' => ['pdf', 'docx', 'xlsx', 'pptx'],
+        ],
+        'extraction' => [
+            'max_items_per_type' => (int) env('OSINT_DOCUMENT_INTEL_MAX_ITEMS_PER_TYPE', 15),
+        ],
+        'risk' => [
+            'thresholds' => [
+                'medium' => (int) env('OSINT_DOCUMENT_INTEL_RISK_MEDIUM', 30),
+                'high' => (int) env('OSINT_DOCUMENT_INTEL_RISK_HIGH', 60),
+            ],
+            'weights' => [
+                'author_exposed' => (int) env('OSINT_DOCUMENT_INTEL_RISK_AUTHOR_EXPOSED', 20),
+                'email_exposed' => (int) env('OSINT_DOCUMENT_INTEL_RISK_EMAIL_EXPOSED', 15),
+                'internal_paths_exposed' => (int) env('OSINT_DOCUMENT_INTEL_RISK_INTERNAL_PATHS_EXPOSED', 25),
+                'legacy_software_hint' => (int) env('OSINT_DOCUMENT_INTEL_RISK_LEGACY_SOFTWARE_HINT', 15),
+            ],
+        ],
+    ],
+
     'telegram' => [
         'analytics' => [
             'period_min_days' => (int) env('OSINT_TELEGRAM_ANALYTICS_PERIOD_MIN_DAYS', 1),

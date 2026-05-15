@@ -7,10 +7,10 @@ import {
     readRepeatQueryInt,
     readRepeatQueryParam,
 } from '@/composables/useRepeatQuery';
+import { useTelegramAnalyticsTab } from '../composables/useTelegramAnalyticsTab';
 import TelegramAnalyticsEmptyState from './analytics/components/TelegramAnalyticsEmptyState.vue';
 import TelegramAnalyticsStatCards from './analytics/components/TelegramAnalyticsStatCards.vue';
 import TelegramAnalyticsTopPosts from './analytics/components/TelegramAnalyticsTopPosts.vue';
-import { useTelegramAnalyticsTab } from '../composables/useTelegramAnalyticsTab';
 
 const {
     t,
@@ -18,10 +18,8 @@ const {
     PRIORITIES,
     form,
     loading,
-    comparisonLoading,
     error,
     payload,
-    previousPayload,
     periodLabel,
     dateLimits,
     totalMessages,
@@ -103,11 +101,13 @@ const {
 
 onMounted(() => {
     const params = getRepeatQueryParams();
+
     if (!params) {
         return;
     }
 
     const tab = readRepeatQueryParam(params, ['tab']);
+
     if (tab !== 'analytics') {
         return;
     }

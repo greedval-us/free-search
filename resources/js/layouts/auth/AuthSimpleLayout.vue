@@ -1,7 +1,7 @@
 ﻿<script setup lang="ts">
 import { Link } from '@inertiajs/vue3';
-import { useI18n } from '@/composables/useI18n';
 import AppLogoIcon from '@/components/AppLogoIcon.vue';
+import { useI18n } from '@/composables/useI18n';
 import { home } from '@/routes';
 
 const { locale, setLocale, t } = useI18n();

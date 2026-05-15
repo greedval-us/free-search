@@ -44,16 +44,19 @@ const reasonLabel = (reason: string) => {
 
 onMounted(() => {
     const params = getRepeatQueryParams();
+
     if (!params) {
         return;
     }
 
     const tab = readRepeatQueryParam(params, ['tab']);
+
     if (tab !== 'analytics') {
         return;
     }
 
     const username = readRepeatQueryParam(params, ['username']);
+
     if (username !== '') {
         form.username = username;
     }

@@ -26,16 +26,19 @@ const {
 
 onMounted(() => {
     const params = getRepeatQueryParams();
+
     if (!params) {
         return;
     }
 
     const tab = readRepeatQueryParam(params, ['tab']);
+
     if (tab !== 'analytics') {
         return;
     }
 
     const target = readRepeatQueryParam(params, ['target']);
+
     if (target !== '') {
         form.target = target;
     }

@@ -25,6 +25,7 @@ export const useEmailIntelLookup = (t: TranslateFn, locale: Ref<'en' | 'ru'>) =>
     const lookup = async () => {
         if (!canLookup.value) {
             error.value = t('emailIntel.errors.emailRequired');
+
             return;
         }
 
@@ -48,6 +49,7 @@ export const useEmailIntelLookup = (t: TranslateFn, locale: Ref<'en' | 'ru'>) =>
 
             if (!response.ok || !payload?.ok) {
                 error.value = apiError ?? t('emailIntel.errors.lookupFailed');
+
                 return;
             }
 
@@ -72,6 +74,7 @@ export const useEmailIntelLookup = (t: TranslateFn, locale: Ref<'en' | 'ru'>) =>
 
 const safeJson = async (response: Response): Promise<Record<string, unknown> | null> => {
     const contentType = response.headers.get('content-type') ?? '';
+
     if (!contentType.includes('application/json')) {
         return null;
     }
@@ -89,11 +92,13 @@ const resolveApiError = (payload: Record<string, unknown> | null): string | null
     }
 
     const message = payload.message;
+
     if (typeof message === 'string' && message.trim() !== '') {
         return message;
     }
 
     const errors = payload.errors;
+
     if (errors && typeof errors === 'object') {
         for (const value of Object.values(errors as Record<string, unknown>)) {
             if (Array.isArray(value) && value.length > 0 && typeof value[0] === 'string') {

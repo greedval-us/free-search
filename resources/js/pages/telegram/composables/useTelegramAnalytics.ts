@@ -11,6 +11,7 @@ const DAY_IN_MS = 24 * 60 * 60 * 1000;
 
 const parseDate = (value: string): Date | null => {
     const match = /^(\d{4})-(\d{2})-(\d{2})$/.exec(value);
+
     if (!match) {
         return null;
     }
@@ -42,6 +43,7 @@ const extractYmdFromIso = (value: string | null | undefined): string | null => {
 
 const shiftDate = (value: string, days: number): string | null => {
     const parsed = parseDate(value);
+
     if (!parsed) {
         return null;
     }
@@ -245,6 +247,7 @@ export const useTelegramAnalytics = (t: TranslateFn) => {
 
             const currentFrom = new Date(payload.value.range.dateFrom);
             const currentTo = new Date(payload.value.range.dateTo);
+
             if (!Number.isNaN(currentFrom.getTime()) && !Number.isNaN(currentTo.getTime())) {
                 comparisonLoading.value = true;
                 const spanMs = Math.max(0, currentTo.getTime() - currentFrom.getTime());
@@ -264,6 +267,7 @@ export const useTelegramAnalytics = (t: TranslateFn) => {
                         },
                     });
                     const previousData = await previousResponse.json();
+
                     if (previousResponse.ok && previousData?.ok) {
                         previousPayload.value = previousData.data as TelegramAnalyticsSummary;
                     }

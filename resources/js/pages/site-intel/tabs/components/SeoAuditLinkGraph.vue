@@ -54,27 +54,33 @@ const render = () => {
     };
 
     const selectedChecks: Array<(node: Node) => boolean> = [];
+
     if (activeFilters.non200Only) {
         selectedChecks.push((node) => node.riskFlags.non200);
     }
+
     if (activeFilters.noindexOnly) {
         selectedChecks.push((node) => node.riskFlags.noindex);
     }
+
     if (activeFilters.orphanRiskOnly) {
         selectedChecks.push((node) => node.riskFlags.orphanRisk);
     }
 
     const visibleNodeMap = new Map<string, Node>();
+
     for (const node of props.nodes) {
         if (selectedChecks.length > 0) {
             const isMatch =
                 activeFilters.mode === 'any'
                     ? selectedChecks.some((check) => check(node))
                     : selectedChecks.every((check) => check(node));
+
             if (!isMatch) {
                 continue;
             }
         }
+
         visibleNodeMap.set(node.id, node);
     }
 
@@ -188,6 +194,7 @@ const render = () => {
         if (!cy) {
             return;
         }
+
         const node = event.target;
         cy.elements().addClass('dimmed');
         node.removeClass('dimmed');
@@ -199,6 +206,7 @@ const render = () => {
         if (!cy || event.target !== cy) {
             return;
         }
+
         cy.elements().removeClass('dimmed');
     });
 };

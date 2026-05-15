@@ -115,16 +115,19 @@ const categoryLabel = (category: string) => {
 
 onMounted(() => {
     const params = getRepeatQueryParams();
+
     if (!params) {
         return;
     }
 
     const tab = readRepeatQueryParam(params, ['tab']);
+
     if (tab !== '' && tab !== 'search') {
         return;
     }
 
     const username = readRepeatQueryParam(params, ['username']);
+
     if (username !== '') {
         form.username = username;
     }

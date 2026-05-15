@@ -13,28 +13,63 @@ const root = ref<HTMLDivElement | null>(null);
 let cy: cytoscape.Core | null = null;
 
 const nodeColor = (node: EmailIntelGraphNode): string => {
-    if (node.type === 'email') return '#06b6d4';
-    if (node.type === 'domain') return '#f97316';
-    if (node.type === 'provider') return '#8b5cf6';
-    if (node.type === 'mx_host') return '#14b8a6';
-    if (node.type === 'spf_include') return '#22c55e';
-    if (node.type.includes('dmarc')) return '#eab308';
-    if (node.type === 'risk_signal') return node.level === 'high' ? '#f43f5e' : '#f59e0b';
+    if (node.type === 'email') {
+return '#06b6d4';
+}
+
+    if (node.type === 'domain') {
+return '#f97316';
+}
+
+    if (node.type === 'provider') {
+return '#8b5cf6';
+}
+
+    if (node.type === 'mx_host') {
+return '#14b8a6';
+}
+
+    if (node.type === 'spf_include') {
+return '#22c55e';
+}
+
+    if (node.type.includes('dmarc')) {
+return '#eab308';
+}
+
+    if (node.type === 'risk_signal') {
+return node.level === 'high' ? '#f43f5e' : '#f59e0b';
+}
+
     return '#64748b';
 };
 
 const edgeColor = (edge: EmailIntelGraphEdge): string => {
-    if (edge.kind === 'triggered') return '#f43f5e';
-    if (edge.kind === 'authorizes_sender') return '#22c55e';
-    if (edge.kind === 'reports_to') return '#eab308';
-    if (edge.kind === 'routes_mail_to') return '#14b8a6';
+    if (edge.kind === 'triggered') {
+return '#f43f5e';
+}
+
+    if (edge.kind === 'authorizes_sender') {
+return '#22c55e';
+}
+
+    if (edge.kind === 'reports_to') {
+return '#eab308';
+}
+
+    if (edge.kind === 'routes_mail_to') {
+return '#14b8a6';
+}
+
     return '#64748b';
 };
 
 const shortLabel = (label: string): string => (label.length <= 18 ? label : `${label.slice(0, 17)}...`);
 
 const renderGraph = () => {
-    if (!root.value) return;
+    if (!root.value) {
+return;
+}
 
     if (cy) {
         cy.destroy();
@@ -111,7 +146,10 @@ const renderGraph = () => {
     });
 
     cy.on('tap', 'node', (event) => {
-        if (!cy) return;
+        if (!cy) {
+return;
+}
+
         const node = event.target;
         cy.elements().addClass('dimmed');
         node.removeClass('dimmed');

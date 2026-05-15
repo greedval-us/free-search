@@ -133,6 +133,7 @@ const topDay = computed(() => {
     }
 
     let current = props.dashboard.chart[0];
+
     for (const day of props.dashboard.chart) {
         if (day.count > current.count) {
             current = day;

@@ -10,6 +10,7 @@ const { form, loading, error, result, canCheck, check } = useSiteHealth(t);
 
 const scoreBadgeClass = computed(() => {
     const level = result.value?.score.level;
+
     if (level === 'high') {
         return 'border-emerald-500/40 bg-emerald-500/10 text-emerald-300';
     }
@@ -45,16 +46,19 @@ const signalLabel = (signal: string) => {
 
 onMounted(() => {
     const params = getRepeatQueryParams();
+
     if (!params) {
         return;
     }
 
     const tab = readRepeatQueryParam(params, ['tab']);
+
     if (tab !== '' && tab !== 'siteHealth') {
         return;
     }
 
     const target = readRepeatQueryParam(params, ['target']);
+
     if (target !== '') {
         form.target = target;
     }

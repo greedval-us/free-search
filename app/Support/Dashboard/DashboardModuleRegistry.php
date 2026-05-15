@@ -11,6 +11,8 @@ class DashboardModuleRegistry
         'username' => '/username',
         'fio' => '/fio',
         'site-intel' => '/site-intel',
+        'company-intel' => '/company-intel',
+        'document-intel' => '/document-intel',
         'email-intel' => '/email-intel',
         'telegram' => '/telegram',
         'shifr' => '/shifr',

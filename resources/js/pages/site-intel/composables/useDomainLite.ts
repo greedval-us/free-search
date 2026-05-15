@@ -17,6 +17,7 @@ export const useDomainLite = (t: TranslateFn) => {
     const lookup = async () => {
         if (!canLookup.value) {
             error.value = t('siteIntel.domainLite.errors.domainRequired');
+
             return;
         }
 
@@ -40,6 +41,7 @@ export const useDomainLite = (t: TranslateFn) => {
 
             if (!response.ok || !payload?.ok) {
                 error.value = apiError ?? t('siteIntel.domainLite.errors.lookupFailed');
+
                 return;
             }
 
@@ -63,6 +65,7 @@ export const useDomainLite = (t: TranslateFn) => {
 
 const safeJson = async (response: Response): Promise<Record<string, unknown> | null> => {
     const contentType = response.headers.get('content-type') ?? '';
+
     if (!contentType.includes('application/json')) {
         return null;
     }
@@ -80,11 +83,13 @@ const resolveApiError = (payload: Record<string, unknown> | null): string | null
     }
 
     const message = payload.message;
+
     if (typeof message === 'string' && message.trim() !== '') {
         return message;
     }
 
     const errors = payload.errors;
+
     if (errors && typeof errors === 'object') {
         for (const value of Object.values(errors as Record<string, unknown>)) {
             if (Array.isArray(value) && value.length > 0 && typeof value[0] === 'string') {

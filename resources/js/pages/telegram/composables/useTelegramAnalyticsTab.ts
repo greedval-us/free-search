@@ -310,6 +310,7 @@ export const useTelegramAnalyticsTab = () => {
     const fraudRiskLevelLabel = computed(() => t(`telegram.analytics.fraud.level.${fraudSignals.value?.riskLevel ?? 'low'}`));
     const fraudRiskBadgeClass = computed(() => {
         const level = fraudSignals.value?.riskLevel;
+
         if (level === 'high') {
             return 'border-red-500/40 bg-red-500/10 text-red-300';
         }
@@ -371,6 +372,7 @@ export const useTelegramAnalyticsTab = () => {
             }
 
             const index = map.get(item.dayKey);
+
             if (index === undefined) {
                 continue;
             }
@@ -389,6 +391,7 @@ export const useTelegramAnalyticsTab = () => {
     const leaderSeries = computed(() =>
         opinionLeaders.value.map((leader, index) => {
             const valuesByDay = new Map<string, number>();
+
             for (const row of opinionLeadersDaily.value) {
                 if (row.authorKey !== leader.authorKey) {
                     continue;
@@ -482,6 +485,7 @@ export const useTelegramAnalyticsTab = () => {
         }
 
         const activeCount = leaderSeries.value.filter((series) => visibleLeaderSeries.value[series.key] !== false).length;
+
         if (activeCount <= 1) {
             return;
         }
@@ -498,6 +502,7 @@ export const useTelegramAnalyticsTab = () => {
 
     const hoverZone = (index: number) => {
         const count = timeline.value.length;
+
         if (count <= 1) {
             return {
                 x: padding.left,
@@ -569,6 +574,7 @@ export const useTelegramAnalyticsTab = () => {
         }
 
         const activeCount = Object.values(visibleSeries.value).filter(Boolean).length;
+
         if (activeCount <= 1) {
             return;
         }

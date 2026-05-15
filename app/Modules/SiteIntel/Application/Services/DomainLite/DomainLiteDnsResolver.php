@@ -15,6 +15,7 @@ final class DomainLiteDnsResolver
         $mxRecords = $this->queryDns($domain, defined('DNS_MX') ? DNS_MX : null);
         $txtRecords = $this->queryDns($domain, defined('DNS_TXT') ? DNS_TXT : null);
         $caaRecords = $this->queryDns($domain, defined('DNS_CAA') ? DNS_CAA : null);
+        $dnskeyRecords = $this->queryDns($domain, defined('DNS_DNSKEY') ? DNS_DNSKEY : null);
         $dmarcRecords = $this->queryDns('_dmarc.' . $domain, defined('DNS_TXT') ? DNS_TXT : null);
 
         $a = [];
@@ -73,13 +74,18 @@ final class DomainLiteDnsResolver
             }
         }
 
+        $spfRecord = null;
         $hasSpf = false;
         foreach ($txt as $entry) {
             if (str_starts_with(strtolower($entry), 'v=spf1')) {
                 $hasSpf = true;
+                $spfRecord = $entry;
                 break;
             }
         }
+
+        $spfPolicy = $this->parseSpfPolicy($spfRecord);
+        $dmarcPolicy = $this->parseDmarcPolicy($dmarc[0] ?? null);
 
         return [
             'a' => array_values(array_unique($a)),
@@ -88,11 +94,77 @@ final class DomainLiteDnsResolver
             'mx' => $mx,
             'txt' => $txt,
             'caa' => array_values(array_unique($caa)),
+            'dnssec' => [
+                'enabled' => count($dnskeyRecords) > 0,
+                'dnskeyCount' => count($dnskeyRecords),
+            ],
             'emailSecurity' => [
                 'hasSpf' => $hasSpf,
+                'spfRecord' => $spfRecord,
+                'spfPolicy' => $spfPolicy,
                 'hasDmarc' => count($dmarc) > 0,
                 'dmarc' => $dmarc,
+                'dmarcPolicy' => $dmarcPolicy,
             ],
+        ];
+    }
+
+    /**
+     * @return array{allQualifier: string|null, includeCount: int, isStrict: bool}
+     */
+    private function parseSpfPolicy(?string $spfRecord): array
+    {
+        if ($spfRecord === null || trim($spfRecord) === '') {
+            return [
+                'allQualifier' => null,
+                'includeCount' => 0,
+                'isStrict' => false,
+            ];
+        }
+
+        $lower = strtolower($spfRecord);
+        $includeCount = substr_count($lower, 'include:');
+        $allQualifier = null;
+
+        if (preg_match('/([~?+-])all\b/i', $spfRecord, $matches) === 1) {
+            $allQualifier = $matches[1];
+        } elseif (preg_match('/\ball\b/i', $spfRecord) === 1) {
+            $allQualifier = '+';
+        }
+
+        return [
+            'allQualifier' => $allQualifier,
+            'includeCount' => $includeCount,
+            'isStrict' => $allQualifier === '-',
+        ];
+    }
+
+    /**
+     * @return array{policy: string|null, percentage: int|null}
+     */
+    private function parseDmarcPolicy(?string $dmarcRecord): array
+    {
+        if ($dmarcRecord === null || trim($dmarcRecord) === '') {
+            return [
+                'policy' => null,
+                'percentage' => null,
+            ];
+        }
+
+        $policy = null;
+        $percentage = null;
+
+        if (preg_match('/\bp=([a-z]+)/i', $dmarcRecord, $policyMatches) === 1) {
+            $policy = strtolower($policyMatches[1]);
+        }
+
+        if (preg_match('/\bpct=(\d{1,3})/i', $dmarcRecord, $pctMatches) === 1) {
+            $percentage = max(0, min(100, (int) $pctMatches[1]));
+        }
+
+        return [
+            'policy' => $policy,
+            'percentage' => $percentage,
         ];
     }
 
@@ -110,4 +182,3 @@ final class DomainLiteDnsResolver
         return is_array($result) ? $result : [];
     }
 }
-

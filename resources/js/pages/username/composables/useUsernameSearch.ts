@@ -72,6 +72,7 @@ export const useUsernameSearch = (t: TranslateFn) => {
 
             if (!response.ok) {
                 error.value = apiError ?? t('username.errors.searchFailed');
+
                 return;
             }
 
