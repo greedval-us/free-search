@@ -2,6 +2,8 @@
 
 namespace App\Modules\CompanyIntel\Application\Services\CompanyIntel;
 
+use Carbon\Carbon;
+
 final class CompanyDomainIntelAssembler
 {
     /**
@@ -23,8 +25,13 @@ final class CompanyDomainIntelAssembler
                 'aCount' => count($dns['a'] ?? []),
                 'mxCount' => count($dns['mx'] ?? []),
                 'nsCount' => count($dns['ns'] ?? []),
+                'txtCount' => count($dns['txt'] ?? []),
+                'caaCount' => count($dns['caa'] ?? []),
+                'dnssecEnabled' => (bool) ($dns['dnssec']['enabled'] ?? false),
                 'hasSpf' => (bool) ($dns['emailSecurity']['hasSpf'] ?? false),
+                'spfStrict' => (bool) ($dns['emailSecurity']['spfPolicy']['isStrict'] ?? false),
                 'hasDmarc' => (bool) ($dns['emailSecurity']['hasDmarc'] ?? false),
+                'dmarcPolicy' => $dns['emailSecurity']['dmarcPolicy']['policy'] ?? null,
             ],
             'whois' => [
                 'available' => (bool) ($whois['available'] ?? false),
@@ -32,7 +39,35 @@ final class CompanyDomainIntelAssembler
                 'country' => $whois['country'] ?? null,
                 'createdAt' => $whois['createdAt'] ?? null,
                 'expiresAt' => $whois['expiresAt'] ?? null,
+                'domainAgeDays' => $this->resolveDomainAgeDays($whois['createdAt'] ?? null),
+                'daysToExpiry' => $this->resolveDaysToExpiry($whois['expiresAt'] ?? null),
             ],
         ];
+    }
+
+    private function resolveDomainAgeDays(mixed $createdAt): ?int
+    {
+        if (!is_string($createdAt) || trim($createdAt) === '') {
+            return null;
+        }
+
+        try {
+            return Carbon::parse($createdAt)->diffInDays(now());
+        } catch (\Throwable) {
+            return null;
+        }
+    }
+
+    private function resolveDaysToExpiry(mixed $expiresAt): ?int
+    {
+        if (!is_string($expiresAt) || trim($expiresAt) === '') {
+            return null;
+        }
+
+        try {
+            return now()->diffInDays(Carbon::parse($expiresAt), false);
+        } catch (\Throwable) {
+            return null;
+        }
     }
 }

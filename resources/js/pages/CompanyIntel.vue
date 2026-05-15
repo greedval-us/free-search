@@ -21,6 +21,8 @@ type CompanyIntelResult = {
     checkedAt: string;
     summary: {
         riskLevel: 'unknown' | 'low' | 'medium' | 'high';
+        riskScore: number | null;
+        riskExplanation: string;
         signals: string[];
         strengths: string[];
         recommendations: string[];
@@ -32,7 +34,12 @@ type CompanyIntelResult = {
             nsCount: number;
             mxCount: number;
             hasSpf: boolean;
+            spfStrict: boolean;
             hasDmarc: boolean;
+            dmarcPolicy: string | null;
+            txtCount: number;
+            caaCount: number;
+            dnssecEnabled: boolean;
         };
         whois?: {
             available: boolean;
@@ -40,6 +47,8 @@ type CompanyIntelResult = {
             country: string | null;
             createdAt: string | null;
             expiresAt: string | null;
+            domainAgeDays: number | null;
+            daysToExpiry: number | null;
         };
     };
     osintLinks: Array<{
@@ -113,6 +122,13 @@ const recommendationLabel = (value: string) => {
     const translated = t(key);
 
     return translated === key ? value : translated;
+};
+
+const riskExplanationLabel = (value: string | undefined) => {
+    const key = `companyIntel.riskExplanation.${value ?? 'risk_unknown_missing_domain'}`;
+    const translated = t(key);
+
+    return translated === key ? (value ?? 'risk_unknown_missing_domain') : translated;
 };
 
 const strengthLabel = (value: string) => {
@@ -231,12 +247,17 @@ const lookup = async () => {
                     </div>
                     <div class="rounded-lg border p-3" :class="riskBadgeClass">
                         <p class="text-xs">{{ t('companyIntel.riskScore') }}</p>
-                        <p class="mt-1 text-sm font-semibold">{{ riskLabel(result.summary.riskLevel) }}</p>
+                        <p class="mt-1 text-sm font-semibold">{{ riskLabel(result.summary.riskLevel) }} <span v-if="result.summary.riskScore !== null">({{ result.summary.riskScore }}/100)</span></p>
                     </div>
                     <div class="rounded-lg border border-border/70 bg-background/60 p-3">
                         <p class="text-xs text-muted-foreground">{{ t('companyIntel.signalCount') }}</p>
                         <p class="mt-1 text-xl font-semibold">{{ result.summary.signals.length }}</p>
                     </div>
+                </div>
+
+                <div class="rounded-lg border border-border/70 bg-background/60 p-3 text-xs">
+                    <p class="mb-2 font-semibold">{{ t('companyIntel.riskScore') }}</p>
+                    <p class="text-muted-foreground">{{ riskExplanationLabel(result.summary.riskExplanation) }}</p>
                 </div>
 
                 <div class="rounded-lg border border-border/70 bg-background/60 p-3 text-xs">
@@ -258,12 +279,15 @@ const lookup = async () => {
                 <div v-if="result.domainIntel.available" class="rounded-lg border border-border/70 bg-background/60 p-3 text-xs space-y-1">
                     <p class="mb-2 font-semibold">{{ t('companyIntel.domainIntel') }}</p>
                     <p>{{ t('companyIntel.labels.dns') }}: A {{ result.domainIntel.dns?.aCount ?? 0 }}, NS {{ result.domainIntel.dns?.nsCount ?? 0 }}, MX {{ result.domainIntel.dns?.mxCount ?? 0 }}</p>
-                    <p>{{ t('companyIntel.labels.mailSecurity') }}: SPF {{ result.domainIntel.dns?.hasSpf ? t('common.yes') : t('common.no') }}, DMARC {{ result.domainIntel.dns?.hasDmarc ? t('common.yes') : t('common.no') }}</p>
+                    <p>TXT {{ result.domainIntel.dns?.txtCount ?? 0 }}, CAA {{ result.domainIntel.dns?.caaCount ?? 0 }}, DNSSEC {{ result.domainIntel.dns?.dnssecEnabled ? t('common.yes') : t('common.no') }}</p>
+                    <p>{{ t('companyIntel.labels.mailSecurity') }}: SPF {{ result.domainIntel.dns?.hasSpf ? t('common.yes') : t('common.no') }} ({{ result.domainIntel.dns?.spfStrict ? t('common.yes') : t('common.no') }} strict), DMARC {{ result.domainIntel.dns?.hasDmarc ? t('common.yes') : t('common.no') }} (p={{ result.domainIntel.dns?.dmarcPolicy ?? '-' }})</p>
                     <p>{{ t('companyIntel.labels.whois') }}: {{ result.domainIntel.whois?.available ? t('companyIntel.available') : t('companyIntel.unavailable') }}</p>
                     <p>{{ t('companyIntel.registrar') }}: {{ result.domainIntel.whois?.registrar ?? '-' }}</p>
                     <p>{{ t('companyIntel.country') }}: {{ result.domainIntel.whois?.country ?? '-' }}</p>
                     <p>{{ t('companyIntel.createdAt') }}: {{ formatDateTime(result.domainIntel.whois?.createdAt ?? null) }}</p>
                     <p>{{ t('companyIntel.expiresAt') }}: {{ formatDateTime(result.domainIntel.whois?.expiresAt ?? null) }}</p>
+                    <p>{{ t('companyIntel.domainAgeDays') }}: {{ result.domainIntel.whois?.domainAgeDays ?? '-' }}</p>
+                    <p>{{ t('companyIntel.daysToExpiry') }}: {{ result.domainIntel.whois?.daysToExpiry ?? '-' }}</p>
                 </div>
 
                 <div class="rounded-lg border border-border/70 bg-background/60 p-3 text-xs">

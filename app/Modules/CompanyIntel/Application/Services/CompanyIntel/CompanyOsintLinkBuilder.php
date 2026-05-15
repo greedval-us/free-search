@@ -16,6 +16,12 @@ final class CompanyOsintLinkBuilder
                 '{query}' => rawurlencode($query),
                 '{query_jobs}' => rawurlencode($query . ' jobs careers'),
                 '{query_linkedin}' => rawurlencode($query . ' site:linkedin.com/company'),
+                '{query_glassdoor}' => rawurlencode($query . ' site:glassdoor.com'),
+                '{query_crunchbase}' => rawurlencode($query . ' site:crunchbase.com/organization'),
+                '{query_x}' => rawurlencode($query . ' site:x.com'),
+                '{query_youtube}' => rawurlencode($query . ' site:youtube.com'),
+                '{query_medium}' => rawurlencode($query . ' site:medium.com'),
+                '{query_paste}' => rawurlencode($query . ' (paste OR leak OR dump)'),
             ]);
 
             $links[] = [
