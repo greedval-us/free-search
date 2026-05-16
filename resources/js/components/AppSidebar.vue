@@ -63,14 +63,14 @@ const mainNavItems = computed<NavItem[]>(() => [
         icon: MailSearch,
     },
     {
-        title: t('navigation.domainInfraIntel'),
-        href: '/domain-infra-intel',
-        icon: Globe,
-    },
-    {
         title: t('navigation.newsMediaIntel'),
         href: '/news-media-intel',
         icon: Newspaper,
+    },
+    {
+        title: t('navigation.domainInfraIntel'),
+        href: '/domain-infra-intel',
+        icon: Globe,
     },
     {
         title: t('navigation.shifr'),
