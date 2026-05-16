@@ -21,9 +21,14 @@ final class FioBingRssSearchProvider extends AbstractFioHttpSearchProvider imple
      */
     public function search(string $fullName, ?string $qualifier = null): array
     {
-        $query = $this->buildQuery($fullName, $qualifier, 3);
-        $url = 'https://www.bing.com/search?format=rss&q=' . urlencode($query);
+        $queries = $this->queryVariants($fullName, $qualifier, 3, 'web');
+        $entries = [];
 
-        return $this->resultParser->parse($this->fetch($url));
+        foreach ($queries as $query) {
+            $url = 'https://www.bing.com/search?format=rss&q=' . urlencode($query);
+            $entries = [...$entries, ...$this->resultParser->parse($this->fetch($url))];
+        }
+
+        return $this->deduplicateEntries($entries);
     }
 }

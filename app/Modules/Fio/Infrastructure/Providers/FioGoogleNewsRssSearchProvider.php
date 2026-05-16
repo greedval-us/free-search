@@ -21,9 +21,14 @@ final class FioGoogleNewsRssSearchProvider extends AbstractFioHttpSearchProvider
      */
     public function search(string $fullName, ?string $qualifier = null): array
     {
-        $query = $this->buildQuery($fullName, $qualifier, 2);
-        $url = 'https://news.google.com/rss/search?q=' . urlencode($query) . '&hl=en-US&gl=US&ceid=US:en';
+        $queries = $this->queryVariants($fullName, $qualifier, 2, 'news');
+        $entries = [];
 
-        return $this->resultParser->parse($this->fetch($url));
+        foreach ($queries as $query) {
+            $url = 'https://news.google.com/rss/search?q=' . urlencode($query) . '&hl=en-US&gl=US&ceid=US:en';
+            $entries = [...$entries, ...$this->resultParser->parse($this->fetch($url))];
+        }
+
+        return $this->deduplicateEntries($entries);
     }
 }

@@ -2,6 +2,7 @@
 
 namespace App\Modules\Fio\Infrastructure\Providers;
 
+use App\Modules\Fio\Domain\DTO\PublicSearchEntryDTO;
 use App\Modules\Fio\Domain\Services\FioQualifierLexicon;
 use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Support\Facades\Http;
@@ -29,6 +30,58 @@ abstract class AbstractFioHttpSearchProvider
     }
 
     /**
+     * @return array<int, string>
+     */
+    protected function queryVariants(string $fullName, ?string $qualifier, int $termsLimit, string $scope = 'web'): array
+    {
+        $baseQuery = $this->buildQuery($fullName, $qualifier, $termsLimit);
+        $variants = [$baseQuery];
+
+        $dorksEnabled = (bool) config('fio.dork_search.enabled', true);
+        if (!$dorksEnabled) {
+            return $variants;
+        }
+
+        $templateMap = config('fio.dork_search.templates', []);
+        if (!is_array($templateMap)) {
+            return $variants;
+        }
+
+        $templates = $templateMap[$scope] ?? [];
+        if (!is_array($templates) || $templates === []) {
+            return $variants;
+        }
+
+        $qualifierTerms = $this->qualifierLexicon->queryTerms($qualifier, $termsLimit);
+        $qualifierExpression = $qualifierTerms === []
+            ? ''
+            : '(' . implode(' OR ', array_map(static fn (string $term): string => '"' . $term . '"', $qualifierTerms)) . ')';
+
+        foreach ($templates as $template) {
+            if (!is_string($template) || trim($template) === '') {
+                continue;
+            }
+
+            $query = strtr($template, [
+                '{name}' => '"' . $fullName . '"',
+                '{query}' => $baseQuery,
+                '{qualifiers}' => $qualifierExpression,
+            ]);
+
+            $normalized = preg_replace('/\s+/u', ' ', trim(str_replace('()', '', $query)));
+            if (!is_string($normalized) || $normalized === '') {
+                continue;
+            }
+
+            $variants[] = $normalized;
+        }
+
+        $maxVariants = max(1, (int) config('fio.dork_search.max_variants_per_source', 4));
+
+        return array_slice(array_values(array_unique($variants)), 0, $maxVariants);
+    }
+
+    /**
      * @param array<string, string> $headers
      */
     protected function fetch(string $url, array $headers = []): string
@@ -49,6 +102,29 @@ abstract class AbstractFioHttpSearchProvider
         }
 
         return (string) $response->body();
+    }
+
+    /**
+     * @param  array<int, PublicSearchEntryDTO>  $entries
+     * @return array<int, PublicSearchEntryDTO>
+     */
+    protected function deduplicateEntries(array $entries): array
+    {
+        $map = [];
+
+        foreach ($entries as $entry) {
+            $urlKey = mb_strtolower(trim($entry->url));
+            $titleKey = mb_strtolower(trim($entry->title));
+            $key = $urlKey !== '' ? $urlKey : $titleKey;
+
+            if ($key === '' || array_key_exists($key, $map)) {
+                continue;
+            }
+
+            $map[$key] = $entry;
+        }
+
+        return array_values($map);
     }
 
     private function userAgent(): string

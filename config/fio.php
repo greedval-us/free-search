@@ -54,4 +54,55 @@ return [
         'reddit' => 0.75,
         'yahoo' => 0.80,
     ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | Dork Search
+    |--------------------------------------------------------------------------
+    |
+    | Query variants used in addition to the base query.
+    | Available placeholders:
+    | - {name}       : quoted full name
+    | - {query}      : base query (name + qualifier terms)
+    | - {qualifiers} : OR-expression of qualifier terms (may be empty)
+    |
+    */
+    'network_dork_search' => [
+        'max_queries' => (int) env('OSINT_FIO_DORK_MAX_QUERIES', 6),
+        'templates' => [
+            '{name}',
+            '{name} {qualifiers}',
+            '{name} (intext:{name} OR intitle:{name}) {qualifiers}',
+            '{name} (site:linkedin.com OR site:facebook.com OR site:vk.com OR site:ok.ru OR site:instagram.com OR site:x.com OR site:t.me) {qualifiers}',
+            '{name} (site:gov OR site:edu OR site:mil) {qualifiers}',
+            '{name} (resume OR biography OR profile OR contact) {qualifiers}',
+        ],
+        'engines' => [
+            [
+                'source' => 'duckduckgo',
+                'url_template' => 'https://html.duckduckgo.com/html/?q={query}',
+                'headers' => [],
+            ],
+            [
+                'source' => 'bing',
+                'url_template' => 'https://www.bing.com/search?format=rss&q={query}',
+                'headers' => ['Accept' => 'application/rss+xml, application/xml, text/xml;q=0.9, */*;q=0.8'],
+            ],
+            [
+                'source' => 'googlenews',
+                'url_template' => 'https://news.google.com/rss/search?q={query}&hl=ru&gl=RU&ceid=RU:ru',
+                'headers' => ['Accept' => 'application/rss+xml, application/xml, text/xml;q=0.9, */*;q=0.8'],
+            ],
+            [
+                'source' => 'reddit',
+                'url_template' => 'https://www.reddit.com/search.rss?q={query}',
+                'headers' => ['Accept' => 'application/rss+xml, application/xml, text/xml;q=0.9, */*;q=0.8'],
+            ],
+            [
+                'source' => 'yahoo',
+                'url_template' => 'https://search.yahoo.com/rss?p={query}',
+                'headers' => ['Accept' => 'application/rss+xml, application/xml, text/xml;q=0.9, */*;q=0.8'],
+            ],
+        ],
+    ],
 ];
