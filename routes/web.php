@@ -26,6 +26,8 @@ Route::middleware(['auth', 'verified'])->group(function (): void {
     require __DIR__.'/web/document-intel.php';
     require __DIR__.'/web/fio.php';
     require __DIR__.'/web/email-intel.php';
+    require __DIR__.'/web/domain-infra-intel.php';
+    require __DIR__.'/web/news-media-intel.php';
     require __DIR__.'/web/shifr.php';
 });
 

@@ -1309,6 +1309,72 @@
       "lookupFailed": "Не удалось выполнить анализ. Повторите запрос через несколько секунд."
     }
   },
+  "domainInfraIntel": {
+    "headTitle": "Domain & Infra Intel",
+    "title": "Domain & Infra Intel",
+    "description": "RDAP, ASN, сертификаты и соседние домены.",
+    "empty": "Введите домен для анализа инфраструктуры.",
+    "form": {
+      "domain": "Домен",
+      "placeholder": "example.com",
+      "search": "Проверить",
+      "searching": "Анализ..."
+    },
+    "summary": {
+      "domain": "Домен",
+      "ips": "IP-адреса",
+      "asn": "ASN",
+      "org": "Организация"
+    },
+    "rdap": {
+      "title": "RDAP / NS / Соседи",
+      "statuses": "Статусы",
+      "nameservers": "NS-серверы",
+      "neighbors": "Соседние домены"
+    },
+    "certs": {
+      "title": "Certificate Transparency",
+      "none": "Записи сертификатов не найдены.",
+      "issuer": "Издатель"
+    },
+    "errors": {
+      "domainRequired": "Введите домен (минимум 3 символа).",
+      "lookupFailed": "Не удалось выполнить анализ доменной инфраструктуры."
+    }
+  },
+  "newsMediaIntel": {
+    "headTitle": "News & Media Intel",
+    "title": "News / Media Intel",
+    "description": "Мониторинг упоминаний, темы, тональность и таймлайн.",
+    "empty": "Введите запрос для мониторинга упоминаний.",
+    "form": {
+      "query": "Запрос",
+      "placeholder": "персона или компания",
+      "search": "Мониторить",
+      "searching": "Мониторинг..."
+    },
+    "summary": {
+      "mentions": "Упоминания",
+      "positive": "Позитив",
+      "neutral": "Нейтрально",
+      "negative": "Негатив"
+    },
+    "topics": {
+      "title": "Топ темы"
+    },
+    "timeline": {
+      "title": "Таймлайн",
+      "none": "Точки таймлайна пока не найдены."
+    },
+    "mentions": {
+      "title": "Упоминания",
+      "none": "Упоминания не найдены."
+    },
+    "errors": {
+      "queryRequired": "Введите запрос (минимум 2 символа).",
+      "lookupFailed": "Не удалось выполнить news/media поиск."
+    }
+  },
   "dashboard": {
     "meta": {
       "title": "Панель"
@@ -1346,6 +1412,8 @@
       "company-intel": "Разведка компании",
       "document-intel": "Разведка документов",
       "email-intel": "Аналитика email",
+      "domain-infra-intel": "Домен и инфраструктура",
+      "news-media-intel": "Новости и медиа",
       "telegram": "Аналитика Telegram",
       "shifr": "Модуль шифров",
       "default": "Поисковый модуль",
@@ -1395,6 +1463,8 @@
     "documentIntel": "Разведка документов",
     "fio": "ФИО",
     "emailIntel": "Анализ Email",
+    "domainInfraIntel": "Домен и инфраструктура",
+    "newsMediaIntel": "Новости и медиа",
     "shifr": "Шифр",
     "repository": "Репозиторий",
     "documentation": "Документация"

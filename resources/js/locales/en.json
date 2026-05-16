@@ -1309,6 +1309,72 @@
       "lookupFailed": "Unable to complete analysis. Please retry in a moment."
     }
   },
+  "domainInfraIntel": {
+    "headTitle": "Domain & Infra Intel",
+    "title": "Domain & Infra Intel",
+    "description": "RDAP, ASN, certificate transparency and neighbor context.",
+    "empty": "Enter domain to inspect infrastructure posture.",
+    "form": {
+      "domain": "Domain",
+      "placeholder": "example.com",
+      "search": "Inspect",
+      "searching": "Inspecting..."
+    },
+    "summary": {
+      "domain": "Domain",
+      "ips": "IPs",
+      "asn": "ASN",
+      "org": "Organization"
+    },
+    "rdap": {
+      "title": "RDAP / NS / Neighbors",
+      "statuses": "Statuses",
+      "nameservers": "Nameservers",
+      "neighbors": "Neighbors"
+    },
+    "certs": {
+      "title": "Certificate Transparency",
+      "none": "No certificate records found.",
+      "issuer": "Issuer"
+    },
+    "errors": {
+      "domainRequired": "Enter domain (minimum 3 characters).",
+      "lookupFailed": "Unable to complete domain infrastructure lookup."
+    }
+  },
+  "newsMediaIntel": {
+    "headTitle": "News & Media Intel",
+    "title": "News / Media Intel",
+    "description": "Mentions monitoring with topic extraction, sentiment and timeline.",
+    "empty": "Enter query to monitor mentions.",
+    "form": {
+      "query": "Query",
+      "placeholder": "person or company",
+      "search": "Monitor",
+      "searching": "Monitoring..."
+    },
+    "summary": {
+      "mentions": "Mentions",
+      "positive": "Positive",
+      "neutral": "Neutral",
+      "negative": "Negative"
+    },
+    "topics": {
+      "title": "Top topics"
+    },
+    "timeline": {
+      "title": "Timeline",
+      "none": "No timeline points yet."
+    },
+    "mentions": {
+      "title": "Mentions",
+      "none": "No mentions found."
+    },
+    "errors": {
+      "queryRequired": "Enter query (minimum 2 characters).",
+      "lookupFailed": "Unable to complete news/media lookup."
+    }
+  },
   "dashboard": {
     "meta": {
       "title": "Dashboard"
@@ -1345,6 +1411,8 @@
       "site-intel": "Site intelligence",
       "company-intel": "Company intelligence",
       "email-intel": "Email intelligence",
+      "domain-infra-intel": "Domain and infrastructure intelligence",
+      "news-media-intel": "News and media intelligence",
       "document-intel": "Document intelligence",
       "telegram": "Telegram analytics",
       "shifr": "Cipher toolkit",
@@ -1393,6 +1461,8 @@
     "siteIntel": "Site Intel",
     "fio": "FIO",
     "emailIntel": "Email Intel",
+    "domainInfraIntel": "Domain & Infra Intel",
+    "newsMediaIntel": "News & Media Intel",
     "companyIntel": "Company Intel",
     "documentIntel": "Document Intel",
     "shifr": "Cipher",
