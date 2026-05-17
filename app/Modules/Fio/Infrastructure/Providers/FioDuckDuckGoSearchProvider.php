@@ -21,9 +21,14 @@ final class FioDuckDuckGoSearchProvider extends AbstractFioHttpSearchProvider im
      */
     public function search(string $fullName, ?string $qualifier = null): array
     {
-        $query = $this->buildQuery($fullName, $qualifier, 3);
-        $url = 'https://html.duckduckgo.com/html/?q=' . urlencode($query);
+        $queries = $this->queryVariants($fullName, $qualifier, 3, 'web');
+        $entries = [];
 
-        return $this->resultParser->parse($this->fetch($url));
+        foreach ($queries as $query) {
+            $url = 'https://html.duckduckgo.com/html/?q=' . urlencode($query);
+            $entries = [...$entries, ...$this->resultParser->parse($this->fetch($url))];
+        }
+
+        return $this->deduplicateEntries($entries);
     }
 }

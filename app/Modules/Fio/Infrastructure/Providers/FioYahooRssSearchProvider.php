@@ -23,24 +23,27 @@ final class FioYahooRssSearchProvider extends AbstractFioHttpSearchProvider impl
      */
     public function search(string $fullName, ?string $qualifier = null): array
     {
-        $query = $this->buildQuery($fullName, $qualifier, 2);
-        $url = 'https://search.yahoo.com/rss?p=' . urlencode($query);
+        $queries = $this->queryVariants($fullName, $qualifier, 2, 'web');
+        $items = [];
 
-        $items = $this->resultParser->parse($this->fetch($url, [
-            'Accept' => self::RSS_ACCEPT_HEADER,
-        ]));
+        foreach ($queries as $query) {
+            $url = 'https://search.yahoo.com/rss?p=' . urlencode($query);
+            $parsed = $this->resultParser->parse($this->fetch($url, [
+                'Accept' => self::RSS_ACCEPT_HEADER,
+            ]));
 
-        // Normalize parser source label from "bing" to "yahoo" for this provider.
-        return array_map(
-            static fn (PublicSearchEntryDTO $item): PublicSearchEntryDTO => new PublicSearchEntryDTO(
-                title: $item->title,
-                snippet: $item->snippet,
-                url: $item->url,
-                domain: $item->domain,
-                source: 'yahoo',
-            ),
-            $items
-        );
+            $items = [...$items, ...array_map(
+                static fn (PublicSearchEntryDTO $item): PublicSearchEntryDTO => new PublicSearchEntryDTO(
+                    title: $item->title,
+                    snippet: $item->snippet,
+                    url: $item->url,
+                    domain: $item->domain,
+                    source: 'yahoo',
+                ),
+                $parsed
+            )];
+        }
+
+        return $this->deduplicateEntries($items);
     }
-
 }

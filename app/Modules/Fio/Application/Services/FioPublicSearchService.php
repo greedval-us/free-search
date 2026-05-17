@@ -30,6 +30,7 @@ final class FioPublicSearchService
 
         $entries = $this->searchProvider->search($normalizedName, $normalizedQualifier);
         $matches = $this->matchAssembler->assembleMany($normalizedName, $entries, $normalizedQualifier);
+        $matches = $this->filterRelevantMatches($normalizedName, $matches);
         $regionClusters = $this->clusterBuilder->buildRegionClusters($matches);
         $ageClusters = $this->clusterBuilder->buildAgeClusters($matches);
         $summary = $this->summaryBuilder->build($matches, $regionClusters, $ageClusters);
@@ -95,5 +96,83 @@ final class FioPublicSearchService
         usort($result, static fn (array $a, array $b): int => $b['matches'] <=> $a['matches']);
 
         return $result;
+    }
+
+    /**
+     * @param  array<int, \App\Modules\Fio\Domain\DTO\FioMatchDTO>  $matches
+     * @return array<int, \App\Modules\Fio\Domain\DTO\FioMatchDTO>
+     */
+    private function filterRelevantMatches(string $fullName, array $matches): array
+    {
+        $minConfidence = 45;
+        $nameParts = $this->extractNameParts($fullName);
+        $requiredHits = count($nameParts) >= 3 ? 2 : max(1, count($nameParts));
+
+        $filtered = array_values(array_filter(
+            $matches,
+            function ($match) use ($nameParts, $requiredHits, $minConfidence): bool {
+                if ($match->confidence < $minConfidence) {
+                    return false;
+                }
+
+                $text = mb_strtolower(trim($match->title . ' ' . $match->snippet . ' ' . $match->url));
+                $nameHits = $this->countNameHits($text, $nameParts);
+                if ($nameHits < $requiredHits) {
+                    return false;
+                }
+
+                if ($this->isLikelyCjkNoise($text, $nameHits)) {
+                    return false;
+                }
+
+                return true;
+            }
+        ));
+
+        usort($filtered, static fn ($a, $b): int => $b->confidence <=> $a->confidence);
+
+        return $filtered;
+    }
+
+    /**
+     * @return array<int, string>
+     */
+    private function extractNameParts(string $fullName): array
+    {
+        $parts = preg_split('/\s+/u', mb_strtolower(trim($fullName))) ?: [];
+
+        return array_values(array_filter(
+            $parts,
+            static fn (string $part): bool => mb_strlen($part) > 1
+        ));
+    }
+
+    /**
+     * @param  array<int, string>  $nameParts
+     */
+    private function countNameHits(string $text, array $nameParts): int
+    {
+        $hits = 0;
+
+        foreach ($nameParts as $part) {
+            if (str_contains($text, $part)) {
+                $hits++;
+            }
+        }
+
+        return $hits;
+    }
+
+    private function isLikelyCjkNoise(string $text, int $nameHits): bool
+    {
+        preg_match_all('/\p{Han}|\p{Hiragana}|\p{Katakana}/u', $text, $cjkMatches);
+        $cjkCount = count($cjkMatches[0] ?? []);
+        if ($cjkCount === 0) {
+            return false;
+        }
+
+        $hasCyrillicOrLatin = preg_match('/[\p{Cyrillic}\p{Latin}]/u', $text) === 1;
+
+        return $nameHits <= 1 && ($cjkCount >= 6 || !$hasCyrillicOrLatin);
     }
 }

@@ -23,11 +23,16 @@ final class FioRedditRssSearchProvider extends AbstractFioHttpSearchProvider imp
      */
     public function search(string $fullName, ?string $qualifier = null): array
     {
-        $query = $this->buildQuery($fullName, $qualifier, 2);
-        $url = 'https://www.reddit.com/search.rss?q=' . urlencode($query);
+        $queries = $this->queryVariants($fullName, $qualifier, 2, 'social');
+        $entries = [];
 
-        return $this->resultParser->parse($this->fetch($url, [
-            'Accept' => self::RSS_ACCEPT_HEADER,
-        ]));
+        foreach ($queries as $query) {
+            $url = 'https://www.reddit.com/search.rss?q=' . urlencode($query);
+            $entries = [...$entries, ...$this->resultParser->parse($this->fetch($url, [
+                'Accept' => self::RSS_ACCEPT_HEADER,
+            ]))];
+        }
+
+        return $this->deduplicateEntries($entries);
     }
 }

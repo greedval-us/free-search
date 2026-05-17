@@ -915,6 +915,162 @@ emailIntel.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 /**
 * @see \Inertia\Controller::__invoke
  * @see vendor/inertiajs/inertia-laravel/src/Controller.php:13
+ * @route '/domain-infra-intel'
+ */
+export const domainInfraIntel = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+    url: domainInfraIntel.url(options),
+    method: 'get',
+})
+
+domainInfraIntel.definition = {
+    methods: ["get","head"],
+    url: '/domain-infra-intel',
+} satisfies RouteDefinition<["get","head"]>
+
+/**
+* @see \Inertia\Controller::__invoke
+ * @see vendor/inertiajs/inertia-laravel/src/Controller.php:13
+ * @route '/domain-infra-intel'
+ */
+domainInfraIntel.url = (options?: RouteQueryOptions) => {
+    return domainInfraIntel.definition.url + queryParams(options)
+}
+
+/**
+* @see \Inertia\Controller::__invoke
+ * @see vendor/inertiajs/inertia-laravel/src/Controller.php:13
+ * @route '/domain-infra-intel'
+ */
+domainInfraIntel.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+    url: domainInfraIntel.url(options),
+    method: 'get',
+})
+/**
+* @see \Inertia\Controller::__invoke
+ * @see vendor/inertiajs/inertia-laravel/src/Controller.php:13
+ * @route '/domain-infra-intel'
+ */
+domainInfraIntel.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
+    url: domainInfraIntel.url(options),
+    method: 'head',
+})
+
+    /**
+* @see \Inertia\Controller::__invoke
+ * @see vendor/inertiajs/inertia-laravel/src/Controller.php:13
+ * @route '/domain-infra-intel'
+ */
+    const domainInfraIntelForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+        action: domainInfraIntel.url(options),
+        method: 'get',
+    })
+
+            /**
+* @see \Inertia\Controller::__invoke
+ * @see vendor/inertiajs/inertia-laravel/src/Controller.php:13
+ * @route '/domain-infra-intel'
+ */
+        domainInfraIntelForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+            action: domainInfraIntel.url(options),
+            method: 'get',
+        })
+            /**
+* @see \Inertia\Controller::__invoke
+ * @see vendor/inertiajs/inertia-laravel/src/Controller.php:13
+ * @route '/domain-infra-intel'
+ */
+        domainInfraIntelForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+            action: domainInfraIntel.url({
+                        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
+                            _method: 'HEAD',
+                            ...(options?.query ?? options?.mergeQuery ?? {}),
+                        }
+                    }),
+            method: 'get',
+        })
+    
+    domainInfraIntel.form = domainInfraIntelForm
+/**
+* @see \Inertia\Controller::__invoke
+ * @see vendor/inertiajs/inertia-laravel/src/Controller.php:13
+ * @route '/news-media-intel'
+ */
+export const newsMediaIntel = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+    url: newsMediaIntel.url(options),
+    method: 'get',
+})
+
+newsMediaIntel.definition = {
+    methods: ["get","head"],
+    url: '/news-media-intel',
+} satisfies RouteDefinition<["get","head"]>
+
+/**
+* @see \Inertia\Controller::__invoke
+ * @see vendor/inertiajs/inertia-laravel/src/Controller.php:13
+ * @route '/news-media-intel'
+ */
+newsMediaIntel.url = (options?: RouteQueryOptions) => {
+    return newsMediaIntel.definition.url + queryParams(options)
+}
+
+/**
+* @see \Inertia\Controller::__invoke
+ * @see vendor/inertiajs/inertia-laravel/src/Controller.php:13
+ * @route '/news-media-intel'
+ */
+newsMediaIntel.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+    url: newsMediaIntel.url(options),
+    method: 'get',
+})
+/**
+* @see \Inertia\Controller::__invoke
+ * @see vendor/inertiajs/inertia-laravel/src/Controller.php:13
+ * @route '/news-media-intel'
+ */
+newsMediaIntel.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
+    url: newsMediaIntel.url(options),
+    method: 'head',
+})
+
+    /**
+* @see \Inertia\Controller::__invoke
+ * @see vendor/inertiajs/inertia-laravel/src/Controller.php:13
+ * @route '/news-media-intel'
+ */
+    const newsMediaIntelForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+        action: newsMediaIntel.url(options),
+        method: 'get',
+    })
+
+            /**
+* @see \Inertia\Controller::__invoke
+ * @see vendor/inertiajs/inertia-laravel/src/Controller.php:13
+ * @route '/news-media-intel'
+ */
+        newsMediaIntelForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+            action: newsMediaIntel.url(options),
+            method: 'get',
+        })
+            /**
+* @see \Inertia\Controller::__invoke
+ * @see vendor/inertiajs/inertia-laravel/src/Controller.php:13
+ * @route '/news-media-intel'
+ */
+        newsMediaIntelForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+            action: newsMediaIntel.url({
+                        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
+                            _method: 'HEAD',
+                            ...(options?.query ?? options?.mergeQuery ?? {}),
+                        }
+                    }),
+            method: 'get',
+        })
+    
+    newsMediaIntel.form = newsMediaIntelForm
+/**
+* @see \Inertia\Controller::__invoke
+ * @see vendor/inertiajs/inertia-laravel/src/Controller.php:13
  * @route '/shifr'
  */
 export const shifr = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({

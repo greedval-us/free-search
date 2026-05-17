@@ -7,6 +7,8 @@ import CompanyIntel from './CompanyIntel'
 import DocumentIntel from './DocumentIntel'
 import Fio from './Fio'
 import EmailIntel from './EmailIntel'
+import DomainInfraIntel from './DomainInfraIntel'
+import NewsMediaIntel from './NewsMediaIntel'
 import Shifr from './Shifr'
 import Settings from './Settings'
 const Controllers = {
@@ -19,6 +21,8 @@ CompanyIntel: Object.assign(CompanyIntel, CompanyIntel),
 DocumentIntel: Object.assign(DocumentIntel, DocumentIntel),
 Fio: Object.assign(Fio, Fio),
 EmailIntel: Object.assign(EmailIntel, EmailIntel),
+DomainInfraIntel: Object.assign(DomainInfraIntel, DomainInfraIntel),
+NewsMediaIntel: Object.assign(NewsMediaIntel, NewsMediaIntel),
 Shifr: Object.assign(Shifr, Shifr),
 Settings: Object.assign(Settings, Settings),
 }
