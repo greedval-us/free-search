@@ -1340,6 +1340,12 @@
     "errors": {
       "domainRequired": "Enter domain (minimum 3 characters).",
       "lookupFailed": "Unable to complete domain infrastructure lookup."
+    },
+    "help": {
+      "label": "About block",
+      "overview": "Domain and infrastructure intelligence combines DNS resolution, RDAP, ASN attribution, reverse host pivots and certificate transparency for quick technical context.",
+      "rdap": "RDAP statuses and nameservers help assess domain lifecycle and delegation posture. Neighbor domains come from reverse DNS of resolved IPs.",
+      "certs": "Certificate transparency shows where domain names appeared in issued certificates and helps reveal subdomains or infrastructure reuse."
     }
   },
   "newsMediaIntel": {
@@ -1373,6 +1379,13 @@
     "errors": {
       "queryRequired": "Enter query (minimum 2 characters).",
       "lookupFailed": "Unable to complete news/media lookup."
+    },
+    "help": {
+      "label": "About block",
+      "overview": "News and media monitoring aggregates mentions from public feeds, then builds topics, timeline and sentiment snapshot.",
+      "topics": "Topics are extracted from titles and snippets with stop-word filtering. They are heuristic indicators, not a linguistic model.",
+      "timeline": "Timeline groups mention counts by publication date to highlight spikes and event windows.",
+      "mentions": "Mentions are deduplicated by URL. Long headlines and links are wrapped to stay inside the card."
     }
   },
   "dashboard": {

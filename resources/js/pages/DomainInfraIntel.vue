@@ -9,8 +9,8 @@ import IntelSearchPanel from '@/components/ui/IntelSearchPanel.vue';
 import MetricCard from '@/components/ui/MetricCard.vue';
 import PageHeader from '@/components/ui/PageHeader.vue';
 import SectionCard from '@/components/ui/SectionCard.vue';
+import { useIntelLookup } from '@/composables/useIntelLookup';
 import { useI18n } from '@/composables/useI18n';
-import { apiRequest } from '@/lib/api';
 import type { DomainInfraResult } from './domain-infra-intel/types';
 
 defineOptions({
@@ -22,35 +22,14 @@ defineOptions({
 const { t, locale } = useI18n();
 const pageTitle = computed(() => t('domainInfraIntel.headTitle'));
 const domain = ref('');
-const loading = ref(false);
-const error = ref<string | null>(null);
-const result = ref<DomainInfraResult | null>(null);
-const canSearch = computed(() => domain.value.trim().length >= 3);
-
-const lookup = async () => {
-    if (!canSearch.value) {
-        error.value = t('domainInfraIntel.errors.domainRequired');
-        return;
-    }
-
-    loading.value = true;
-    error.value = null;
-    result.value = null;
-
-    const res = await apiRequest<DomainInfraResult>('/domain-infra-intel/lookup', {
-        method: 'GET',
-        query: { domain: domain.value.trim(), locale: locale.value },
-    });
-
-    if (!res.ok) {
-        error.value = res.message ?? t('domainInfraIntel.errors.lookupFailed');
-        loading.value = false;
-        return;
-    }
-
-    result.value = res.data;
-    loading.value = false;
-};
+const { loading, error, result, canSearch, lookup } = useIntelLookup<DomainInfraResult>(domain, {
+    endpoint: '/domain-infra-intel/lookup',
+    minLength: 3,
+    queryKey: 'domain',
+    locale,
+    requiredError: t('domainInfraIntel.errors.domainRequired'),
+    fallbackError: t('domainInfraIntel.errors.lookupFailed'),
+});
 </script>
 
 <template>
@@ -58,7 +37,13 @@ const lookup = async () => {
 
     <div class="flex h-full min-h-0 flex-1 flex-col gap-4 overflow-hidden rounded-xl p-4">
         <IntelSearchPanel>
-            <PageHeader :icon="Globe" :title="t('domainInfraIntel.title')" :description="t('domainInfraIntel.description')" />
+            <PageHeader
+                :icon="Globe"
+                :title="t('domainInfraIntel.title')"
+                :description="t('domainInfraIntel.description')"
+                :help-label="t('domainInfraIntel.help.label')"
+                :help-text="t('domainInfraIntel.help.overview')"
+            />
 
             <IntelSearchForm
                 v-model="domain"
@@ -85,16 +70,18 @@ const lookup = async () => {
                 </div>
 
                 <SectionCard :title="t('domainInfraIntel.rdap.title')">
+                    <p class="mb-2 text-xs text-muted-foreground">{{ t('domainInfraIntel.help.rdap') }}</p>
                     <p class="text-sm">{{ t('domainInfraIntel.rdap.statuses') }}: <span class="text-muted-foreground">{{ result.rdap?.statuses?.join(', ') || '-' }}</span></p>
                     <p class="text-sm">{{ t('domainInfraIntel.rdap.nameservers') }}: <span class="text-muted-foreground">{{ (result.rdap?.nameservers || []).map((n: any) => n.ldhName).filter(Boolean).join(', ') || '-' }}</span></p>
                     <p class="text-sm">{{ t('domainInfraIntel.rdap.neighbors') }}: <span class="text-muted-foreground">{{ result.neighbors.join(', ') || '-' }}</span></p>
                 </SectionCard>
 
                 <SectionCard :title="t('domainInfraIntel.certs.title')">
+                    <p class="mb-2 text-xs text-muted-foreground">{{ t('domainInfraIntel.help.certs') }}</p>
                     <div v-if="result.crtsh.length === 0" class="intel-empty">{{ t('domainInfraIntel.certs.none') }}</div>
                     <div v-else class="space-y-2">
                         <article v-for="(cert, index) in result.crtsh.slice(0, 20)" :key="`${cert.nameValue}-${index}`" class="intel-surface text-xs">
-                            <p class="font-medium">{{ cert.nameValue }}</p>
+                            <p class="break-all font-medium">{{ cert.nameValue }}</p>
                             <p class="text-muted-foreground">{{ t('domainInfraIntel.certs.issuer') }}: {{ cert.issuer || '-' }}</p>
                             <p class="text-muted-foreground">{{ cert.notBefore || '-' }} -> {{ cert.notAfter || '-' }}</p>
                         </article>

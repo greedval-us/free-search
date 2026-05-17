@@ -9,8 +9,8 @@ import IntelSearchPanel from '@/components/ui/IntelSearchPanel.vue';
 import MetricCard from '@/components/ui/MetricCard.vue';
 import PageHeader from '@/components/ui/PageHeader.vue';
 import SectionCard from '@/components/ui/SectionCard.vue';
+import { useIntelLookup } from '@/composables/useIntelLookup';
 import { useI18n } from '@/composables/useI18n';
-import { apiRequest } from '@/lib/api';
 import type { NewsResult } from './news-media-intel/types';
 
 defineOptions({
@@ -22,35 +22,14 @@ defineOptions({
 const { t, locale } = useI18n();
 const pageTitle = computed(() => t('newsMediaIntel.headTitle'));
 const query = ref('');
-const loading = ref(false);
-const error = ref<string | null>(null);
-const result = ref<NewsResult | null>(null);
-const canSearch = computed(() => query.value.trim().length >= 2);
-
-const lookup = async () => {
-    if (!canSearch.value) {
-        error.value = t('newsMediaIntel.errors.queryRequired');
-        return;
-    }
-
-    loading.value = true;
-    error.value = null;
-    result.value = null;
-
-    const res = await apiRequest<NewsResult>('/news-media-intel/lookup', {
-        method: 'GET',
-        query: { query: query.value.trim(), locale: locale.value },
-    });
-
-    if (!res.ok) {
-        error.value = res.message ?? t('newsMediaIntel.errors.lookupFailed');
-        loading.value = false;
-        return;
-    }
-
-    result.value = res.data;
-    loading.value = false;
-};
+const { loading, error, result, canSearch, lookup } = useIntelLookup<NewsResult>(query, {
+    endpoint: '/news-media-intel/lookup',
+    minLength: 2,
+    queryKey: 'query',
+    locale,
+    requiredError: t('newsMediaIntel.errors.queryRequired'),
+    fallbackError: t('newsMediaIntel.errors.lookupFailed'),
+});
 </script>
 
 <template>
@@ -58,7 +37,13 @@ const lookup = async () => {
 
     <div class="flex h-full min-h-0 flex-1 flex-col gap-4 overflow-hidden rounded-xl p-4">
         <IntelSearchPanel>
-            <PageHeader :icon="Newspaper" :title="t('newsMediaIntel.title')" :description="t('newsMediaIntel.description')" />
+            <PageHeader
+                :icon="Newspaper"
+                :title="t('newsMediaIntel.title')"
+                :description="t('newsMediaIntel.description')"
+                :help-label="t('newsMediaIntel.help.label')"
+                :help-text="t('newsMediaIntel.help.overview')"
+            />
 
             <IntelSearchForm
                 v-model="query"
@@ -85,6 +70,7 @@ const lookup = async () => {
                 </div>
 
                 <SectionCard :title="t('newsMediaIntel.topics.title')">
+                    <p class="mb-2 text-xs text-muted-foreground">{{ t('newsMediaIntel.help.topics') }}</p>
                     <div class="flex flex-wrap gap-2">
                         <span v-for="topic in result.topics.slice(0, 18)" :key="topic.topic" class="rounded-full border border-border/80 px-2 py-1 text-xs text-muted-foreground">
                             {{ topic.topic }} ({{ topic.count }})
@@ -93,6 +79,7 @@ const lookup = async () => {
                 </SectionCard>
 
                 <SectionCard :title="t('newsMediaIntel.timeline.title')">
+                    <p class="mb-2 text-xs text-muted-foreground">{{ t('newsMediaIntel.help.timeline') }}</p>
                     <div v-if="result.timeline.length === 0" class="intel-empty">{{ t('newsMediaIntel.timeline.none') }}</div>
                     <div v-else class="space-y-1 text-sm">
                         <p v-for="point in result.timeline" :key="point.date">{{ point.date }}: <span class="text-muted-foreground">{{ point.mentions }}</span></p>
@@ -100,15 +87,23 @@ const lookup = async () => {
                 </SectionCard>
 
                 <SectionCard :title="t('newsMediaIntel.mentions.title')">
+                    <p class="mb-2 text-xs text-muted-foreground">{{ t('newsMediaIntel.help.mentions') }}</p>
                     <div v-if="result.mentions.length === 0" class="intel-empty">{{ t('newsMediaIntel.mentions.none') }}</div>
                     <div v-else class="space-y-2">
                         <article v-for="(item, index) in result.mentions.slice(0, 60)" :key="`${item.link}-${index}`" class="intel-surface">
-                            <div class="mb-1 flex items-center justify-between gap-2">
-                                <p class="font-medium">{{ item.title }}</p>
-                                <span class="text-xs text-cyan-300">{{ item.source }}</span>
+                            <div class="mb-1 flex min-w-0 items-center justify-between gap-2">
+                                <p class="min-w-0 break-words text-sm font-medium">{{ item.title }}</p>
+                                <span class="shrink-0 text-xs text-cyan-300">{{ item.source }}</span>
                             </div>
-                            <p class="mb-1 text-xs text-muted-foreground">{{ item.snippet }}</p>
-                            <a :href="item.link" target="_blank" rel="noopener noreferrer" class="text-xs text-cyan-300 hover:underline">{{ item.link }}</a>
+                            <p class="mb-1 break-words text-xs text-muted-foreground">{{ item.snippet }}</p>
+                            <a
+                                :href="item.link"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                class="block break-all text-xs text-cyan-300 hover:underline"
+                            >
+                                {{ item.link }}
+                            </a>
                         </article>
                     </div>
                 </SectionCard>
