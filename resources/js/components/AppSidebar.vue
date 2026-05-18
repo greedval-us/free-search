@@ -19,7 +19,7 @@ import { useI18n } from '@/composables/useI18n';
 import { dashboard } from '@/routes';
 import type { NavItem } from '@/types';
 
-const { t } = useI18n();
+const { t, locale } = useI18n();
 
 const mainNavItems = computed<NavItem[]>(() => [
     {
@@ -81,7 +81,7 @@ const mainNavItems = computed<NavItem[]>(() => [
 
 const footerNavItems = computed<NavItem[]>(() => [
     {
-        title: 'Wiki / Modules',
+        title: locale.value === 'ru' ? 'Вики модулей' : 'Modules Wiki',
         href: '/wiki/modules',
         icon: BookOpenText,
     },
