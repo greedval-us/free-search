@@ -5,13 +5,13 @@ namespace App\Modules\CompanyIntel\Application\Services;
 use App\Modules\CompanyIntel\Application\Services\CompanyIntel\CompanyDomainIntelAssembler;
 use App\Modules\CompanyIntel\Application\Services\CompanyIntel\CompanyOsintLinkBuilder;
 use App\Modules\CompanyIntel\Application\Services\CompanyIntel\CompanySummaryBuilder;
-use App\Modules\SiteIntel\Application\Services\DomainLite\DomainLiteDnsResolver;
+use App\Modules\SiteIntel\Application\Contracts\DomainLiteDnsResolverInterface;
 use App\Modules\SiteIntel\Application\Services\DomainLite\DomainLiteWhoisLookup;
 
 final class CompanyIntelService
 {
     public function __construct(
-        private readonly DomainLiteDnsResolver $dnsResolver,
+        private readonly DomainLiteDnsResolverInterface $dnsResolver,
         private readonly DomainLiteWhoisLookup $whoisLookup,
         private readonly CompanyDomainIntelAssembler $domainIntelAssembler,
         private readonly CompanyOsintLinkBuilder $osintLinkBuilder,

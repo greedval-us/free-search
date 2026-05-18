@@ -1,15 +1,22 @@
 <?php
 
 return [
+    // Кэш для результатов поиска username и анализа похожести.
     'cache' => [
+        // TTL для основного поиска профилей (секунды).
         'search_ttl_seconds' => 300,
+        // TTL для блока similarity/вариантов (секунды).
         'similarity_ttl_seconds' => 300,
     ],
 
+    // Настройки аналитики и генерации похожих вариантов username.
     'analytics' => [
         'similarity' => [
+            // Максимальное число вариантов username.
             'max_variants' => 18,
+            // Сколько вариантов проверять углублённо в первую очередь.
             'deep_check_variants' => 3,
+            // Приоритетные источники для similarity-аналитики.
             'priority_source_keys' => [
                 'telegram',
                 'github',
@@ -19,10 +26,14 @@ return [
                 'reddit',
             ],
             'rules' => [
+                // Допустимые разделители при генерации вариантов.
                 'separators' => ['_', '.', '-'],
+                // Частые префиксы/суффиксы.
                 'prefixes' => ['real', 'official', 'the'],
                 'suffixes' => ['official', 'dev', 'team', 'hq'],
+                // Частые цифровые хвосты.
                 'numeric_suffixes' => ['1', '01', '24', '2026'],
+                // Базовые leet-замены.
                 'leet_substitutions' => [
                     'a' => '4',
                     'e' => '3',
@@ -30,6 +41,7 @@ return [
                     'o' => '0',
                     's' => '5',
                 ],
+                // Простые опечатки по соседним клавишам.
                 'typo_substitutions' => [
                     'a' => ['q', 's', 'z'],
                     'e' => ['w', 'r', '3'],
@@ -40,6 +52,7 @@ return [
                     'r' => ['e', 't'],
                     'n' => ['b', 'm'],
                 ],
+                // Карта транслитерации кириллицы в латиницу.
                 'transliteration_map' => [
                     'а' => 'a',
                     'б' => 'b',
@@ -79,6 +92,7 @@ return [
         ],
     ],
 
+    // Карта категорий источников для UI/аналитики.
     'taxonomy' => [
         'categories_by_source_key' => [
             'vk' => 'social',
@@ -113,6 +127,7 @@ return [
         ],
     ],
 
+    // Базовые HTTP-параметры проверки профилей.
     'request' => [
         'connect_timeout' => 6,
         'timeout' => 8,
@@ -120,6 +135,7 @@ return [
         'user_agent' => 'Mozilla/5.0 (compatible; UraborosOSINT/1.0; +https://localhost)',
     ],
 
+    // Каталог источников: шаблоны профилей, регионы и маркеры "не найдено".
     'sources' => [
         // CIS
         [

@@ -2,10 +2,12 @@
 
 namespace App\Modules\SiteIntel\Application\Services\SeoAudit;
 
+use App\Modules\SiteIntel\Application\Contracts\SeoAuditHttpFetcherInterface;
+
 final class SeoAuditCrawlAnalyzer
 {
     public function __construct(
-        private readonly SeoAuditHttpFetcher $httpFetcher,
+        private readonly SeoAuditHttpFetcherInterface $httpFetcher,
         private readonly SeoAuditContentExtractor $contentExtractor,
         private readonly SeoAuditTechnicalSignalsResolver $technicalSignalsResolver,
     ) {

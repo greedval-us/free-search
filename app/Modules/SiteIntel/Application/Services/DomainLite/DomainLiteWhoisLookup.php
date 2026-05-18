@@ -2,10 +2,12 @@
 
 namespace App\Modules\SiteIntel\Application\Services\DomainLite;
 
+use App\Modules\SiteIntel\Application\Contracts\DomainLiteWhoisClientInterface;
+
 final class DomainLiteWhoisLookup
 {
     public function __construct(
-        private readonly DomainLiteWhoisClient $whoisClient,
+        private readonly DomainLiteWhoisClientInterface $whoisClient,
         private readonly DomainLiteWhoisParser $whoisParser,
     ) {
     }

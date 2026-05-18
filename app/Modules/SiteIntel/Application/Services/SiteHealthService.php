@@ -2,20 +2,20 @@
 
 namespace App\Modules\SiteIntel\Application\Services;
 
-use App\Modules\SiteIntel\Application\Services\SiteHealth\SiteHealthDnsResolver;
-use App\Modules\SiteIntel\Application\Services\SiteHealth\SiteHealthHttpInspector;
+use App\Modules\SiteIntel\Application\Contracts\SiteHealthDnsResolverInterface;
+use App\Modules\SiteIntel\Application\Contracts\SiteHealthHttpInspectorInterface;
+use App\Modules\SiteIntel\Application\Contracts\SiteHealthSslInspectorInterface;
 use App\Modules\SiteIntel\Application\Services\SiteHealth\SiteHealthScoreCalculator;
 use App\Modules\SiteIntel\Application\Services\SiteHealth\SiteHealthSecurityHeadersExtractor;
-use App\Modules\SiteIntel\Application\Services\SiteHealth\SiteHealthSslInspector;
 use Carbon\Carbon;
 use RuntimeException;
 
 final class SiteHealthService
 {
     public function __construct(
-        private readonly SiteHealthDnsResolver $dnsResolver,
-        private readonly SiteHealthHttpInspector $httpInspector,
-        private readonly SiteHealthSslInspector $sslInspector,
+        private readonly SiteHealthDnsResolverInterface $dnsResolver,
+        private readonly SiteHealthHttpInspectorInterface $httpInspector,
+        private readonly SiteHealthSslInspectorInterface $sslInspector,
         private readonly SiteHealthSecurityHeadersExtractor $securityHeadersExtractor,
         private readonly SiteHealthScoreCalculator $scoreCalculator,
     ) {

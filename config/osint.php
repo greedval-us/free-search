@@ -1,14 +1,21 @@
 <?php
 
 return [
+    // Политики ретраев для frontend API-запросов (по умолчанию и для отдельных endpoint'ов).
     'frontend_api_retry' => [
         'default' => [
+            // Количество повторов при ошибке.
             'attempts' => (int) env('OSINT_FRONTEND_RETRY_DEFAULT_ATTEMPTS', 2),
+            // Базовая задержка между повторами (мс).
             'base_delay_ms' => (int) env('OSINT_FRONTEND_RETRY_DEFAULT_BASE_DELAY_MS', 250),
+            // Максимальная задержка между повторами (мс).
             'max_delay_ms' => (int) env('OSINT_FRONTEND_RETRY_DEFAULT_MAX_DELAY_MS', 1500),
+            // Повторять ли при сетевой ошибке (обрыв, timeout и т.п.).
             'retry_on_network_error' => (bool) env('OSINT_FRONTEND_RETRY_DEFAULT_ON_NETWORK_ERROR', true),
+            // HTTP-статусы, при которых допустим повтор.
             'retry_on_statuses' => [408, 425, 429, 500, 502, 503, 504],
         ],
+        // Точечные переопределения ретраев для конкретных маршрутов.
         'endpoint_rules' => [
             [
                 'path' => '/telegram/parser/status/',
@@ -83,12 +90,14 @@ return [
         ],
     ],
 
+    // Настройки формирования HTML-отчётов и имени файлов выгрузки.
     'reports' => [
         'generated_at_format' => 'd.m.Y H:i',
         'filename_timestamp_format' => 'Ymd-His',
         'download_content_type' => 'text/html; charset=UTF-8',
     ],
 
+    // Общие HTTP-настройки FIO-модуля.
     'fio' => [
         'http' => [
             'user_agent' => env('OSINT_FIO_HTTP_USER_AGENT', 'FreeSearch-FIO/1.0'),
@@ -98,6 +107,7 @@ return [
         ],
     ],
 
+    // Настройки модулей SiteIntel (HTTP-проверки, WHOIS).
     'site_intel' => [
         'http' => [
             'user_agent' => env('OSINT_SITE_HEALTH_HTTP_USER_AGENT', 'FreeSearch-SiteHealth/1.0'),
@@ -115,6 +125,7 @@ return [
         ],
     ],
 
+    // Сетевые параметры для Username-модуля.
     'username' => [
         'http' => [
             'connect_timeout_seconds' => (int) env('OSINT_USERNAME_HTTP_CONNECT_TIMEOUT', 6),
@@ -125,11 +136,14 @@ return [
         ],
     ],
 
+    // Пороги и веса риск-оценки для CompanyIntel + шаблоны внешних OSINT-ссылок.
     'company_intel' => [
         'risk' => [
+            // Пороговые значения финального score.
             'score_for_medium' => (int) env('OSINT_COMPANY_INTEL_SCORE_FOR_MEDIUM', 30),
             'score_for_high' => (int) env('OSINT_COMPANY_INTEL_SCORE_FOR_HIGH', 60),
             'weights' => [
+                // Веса сигналов риска (чем выше, тем сильнее вклад в общий риск).
                 'no_dns_resolution' => (int) env('OSINT_COMPANY_INTEL_WEIGHT_NO_DNS_RESOLUTION', 20),
                 'missing_spf' => (int) env('OSINT_COMPANY_INTEL_WEIGHT_MISSING_SPF', 12),
                 'missing_dmarc' => (int) env('OSINT_COMPANY_INTEL_WEIGHT_MISSING_DMARC', 15),
@@ -147,6 +161,7 @@ return [
             ],
         ],
         'links' => [
+            // Шаблоны глобальных поисковых ссылок. Плейсхолдеры подставляются в сервисе.
             'global' => [
                 'news_search' => 'https://news.google.com/search?q={query}',
                 'reddit_mentions' => 'https://www.reddit.com/search/?q={query}',
@@ -163,6 +178,7 @@ return [
                 'paste_leaks_search' => 'https://www.google.com/search?q={query_paste}',
                 'patents_search' => 'https://patents.google.com/?q={query}',
             ],
+            // Шаблоны ссылок, завязанных на домен.
             'domain' => [
                 'crtsh_history' => 'https://crt.sh/?q={domain}',
                 'urlhaus_lookup' => 'https://urlhaus.abuse.ch/browse.php?search={domain}',
@@ -184,17 +200,20 @@ return [
         ],
     ],
 
+    // Настройки поиска и извлечения метаданных документов.
     'document_intel' => [
         'http' => [
             'user_agent' => env('OSINT_DOCUMENT_INTEL_HTTP_USER_AGENT', 'FreeSearch-DocumentIntel/1.0'),
             'timeout_seconds' => (int) env('OSINT_DOCUMENT_INTEL_HTTP_TIMEOUT', 10),
         ],
         'discovery' => [
+            // Лимиты поиска документов и размер скачиваемого файла.
             'max_documents' => (int) env('OSINT_DOCUMENT_INTEL_MAX_DOCUMENTS', 20),
             'max_file_size_bytes' => (int) env('OSINT_DOCUMENT_INTEL_MAX_FILE_SIZE_BYTES', 5000000),
             'extensions' => ['pdf', 'docx', 'xlsx', 'pptx'],
         ],
         'extraction' => [
+            // Максимум артефактов каждого типа в ответе.
             'max_items_per_type' => (int) env('OSINT_DOCUMENT_INTEL_MAX_ITEMS_PER_TYPE', 15),
         ],
         'risk' => [
@@ -211,6 +230,7 @@ return [
         ],
     ],
 
+    // Настройки Telegram-аналитики: диапазоны, кэш, лимиты выборки, антифрод и scoring-профили.
     'telegram' => [
         'analytics' => [
             'period_min_days' => (int) env('OSINT_TELEGRAM_ANALYTICS_PERIOD_MIN_DAYS', 1),

@@ -2,10 +2,10 @@
 
 namespace App\Modules\SiteIntel\Application\Services;
 
+use App\Modules\SiteIntel\Application\Contracts\SeoAuditHttpFetcherInterface;
 use App\Modules\SiteIntel\Application\Services\SeoAudit\SeoAuditContentExtractor;
 use App\Modules\SiteIntel\Application\Services\SeoAudit\SeoAuditCrawlAnalyzer;
 use App\Modules\SiteIntel\Application\Services\SeoAudit\SeoAuditCrawlerInspector;
-use App\Modules\SiteIntel\Application\Services\SeoAudit\SeoAuditHttpFetcher;
 use App\Modules\SiteIntel\Application\Services\SeoAudit\SeoAuditRecommendationBuilder;
 use App\Modules\SiteIntel\Application\Services\SeoAudit\SeoAuditScoreCalculator;
 use App\Modules\SiteIntel\Application\Services\SeoAudit\SeoAuditSitemapUrlAuditor;
@@ -19,7 +19,7 @@ use Carbon\Carbon;
 final class SeoAuditService
 {
     public function __construct(
-        private readonly SeoAuditHttpFetcher $httpFetcher,
+        private readonly SeoAuditHttpFetcherInterface $httpFetcher,
         private readonly SeoAuditContentExtractor $contentExtractor,
         private readonly SeoAuditTechnicalSignalsResolver $technicalSignalsResolver,
         private readonly SeoAuditCrawlerInspector $crawlerInspector,
