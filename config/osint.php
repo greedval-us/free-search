@@ -201,6 +201,16 @@ return [
     ],
 
     // Настройки поиска и извлечения метаданных документов.
+    // NewsMediaIntel settings (RSS + NewsAPI).
+    'news_media_intel' => [
+        'newsapi' => [
+            'api_key' => env('OSINT_NEWSAPI_KEY', ''),
+            'base_url' => env('OSINT_NEWSAPI_BASE_URL', 'https://newsapi.org/v2/everything'),
+            'language' => env('OSINT_NEWSAPI_LANGUAGE', 'ru'),
+            'page_size' => (int) env('OSINT_NEWSAPI_PAGE_SIZE', 30),
+            'timeout_seconds' => (int) env('OSINT_NEWSAPI_TIMEOUT', 15),
+        ],
+    ],
     'document_intel' => [
         'http' => [
             'user_agent' => env('OSINT_DOCUMENT_INTEL_HTTP_USER_AGENT', 'FreeSearch-DocumentIntel/1.0'),
@@ -352,3 +362,4 @@ return [
         ],
     ],
 ];
+

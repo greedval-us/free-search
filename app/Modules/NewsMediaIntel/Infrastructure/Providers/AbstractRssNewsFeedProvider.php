@@ -37,7 +37,7 @@ abstract class AbstractRssNewsFeedProvider
             $title = trim((string) ($item->title ?? ''));
             $snippet = trim(strip_tags((string) ($item->description ?? '')));
             $link = trim((string) ($item->link ?? ''));
-            $publishedAt = trim((string) ($item->pubDate ?? ''));
+            $publishedAt = $this->extractPublishedAt($item);
 
             if ($title === '' || $link === '') {
                 continue;
@@ -54,5 +54,32 @@ abstract class AbstractRssNewsFeedProvider
 
         return $items;
     }
-}
 
+    private function extractPublishedAt(SimpleXMLElement $item): string
+    {
+        $candidates = [
+            trim((string) ($item->pubDate ?? '')),
+            trim((string) ($item->published ?? '')),
+            trim((string) ($item->updated ?? '')),
+        ];
+
+        foreach ($item->getNamespaces(true) as $namespaceUri) {
+            $children = $item->children($namespaceUri);
+            if (!$children instanceof SimpleXMLElement) {
+                continue;
+            }
+
+            $candidates[] = trim((string) ($children->date ?? ''));
+            $candidates[] = trim((string) ($children->published ?? ''));
+            $candidates[] = trim((string) ($children->updated ?? ''));
+        }
+
+        foreach ($candidates as $candidate) {
+            if ($candidate !== '') {
+                return $candidate;
+            }
+        }
+
+        return '';
+    }
+}

@@ -1376,6 +1376,11 @@
       "title": "Упоминания",
       "none": "Упоминания не найдены."
     },
+    "sources": {
+      "googlenews": "Google News",
+      "bing": "Bing News",
+      "newsapi": "NewsAPI"
+    },
     "errors": {
       "queryRequired": "Введите запрос (минимум 2 символа).",
       "lookupFailed": "Не удалось выполнить news/media поиск."
@@ -1847,3 +1852,4 @@
     }
   }
 }
+
