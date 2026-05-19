@@ -3,12 +3,13 @@
 return [
     /*
     |--------------------------------------------------------------------------
-    | FIO Qualifier Lexicon
+    | Лексикон квалификаторов FIO
     |--------------------------------------------------------------------------
     |
-    | Key is a semantic role label, values are synonyms used for:
-    | - query expansion in providers
-    | - qualifier matching in confidence scoring
+    | Ключ — семантическая роль, значения — синонимы/маркеры.
+    | Используется для:
+    | - расширения поисковых запросов у провайдеров
+    | - совпадений по квалификаторам в confidence scoring
     |
     */
     'qualifier_lexicon' => [
@@ -41,10 +42,11 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-    | Source Reliability
+    | Надёжность источников
     |--------------------------------------------------------------------------
     |
-    | Relative trust score by source key. Used in confidence weighting.
+    | Относительный коэффициент доверия по source key.
+    | Применяется как вес в итоговой confidence-оценке.
     |
     */
     'source_reliability' => [
@@ -57,14 +59,14 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-    | Dork Search
+    | Dork-поиск
     |--------------------------------------------------------------------------
     |
-    | Query variants used in addition to the base query.
-    | Available placeholders:
-    | - {name}       : quoted full name
-    | - {query}      : base query (name + qualifier terms)
-    | - {qualifiers} : OR-expression of qualifier terms (may be empty)
+    | Шаблоны запросов, которые дополняют базовый запрос.
+    | Доступные плейсхолдеры:
+    | - {name}       : ФИО в кавычках
+    | - {query}      : базовый запрос (ФИО + квалификаторы)
+    | - {qualifiers} : OR-выражение квалификаторов (может быть пустым)
     |
     */
     'network_dork_search' => [

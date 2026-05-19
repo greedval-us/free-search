@@ -2,19 +2,21 @@
 
 namespace App\Modules\EmailIntel\Application\Services\EmailIntel;
 
+use App\Modules\EmailIntel\Application\Contracts\EmailDnsResolverInterface;
+use App\Modules\EmailIntel\Application\Contracts\EmailDomainWebSnapshotInterface;
 use Carbon\Carbon;
 
 final class EmailDomainIntelAssembler
 {
     public function __construct(
-        private readonly EmailDnsResolver $dnsResolver,
+        private readonly EmailDnsResolverInterface $dnsResolver,
         private readonly EmailSpfParser $spfParser,
         private readonly EmailSpfIncludeResolver $spfIncludeResolver,
         private readonly EmailDmarcParser $dmarcParser,
         private readonly EmailDmarcReportAnalyzer $dmarcReportAnalyzer,
         private readonly EmailProviderDetector $providerDetector,
         private readonly EmailSecurityScoreCalculator $scoreCalculator,
-        private readonly EmailDomainWebSnapshot $domainWebSnapshot,
+        private readonly EmailDomainWebSnapshotInterface $domainWebSnapshot,
         private readonly EmailDeliverabilityHintBuilder $deliverabilityHintBuilder,
     ) {
     }

@@ -10,6 +10,7 @@ import EmailIntel from './EmailIntel'
 import DomainInfraIntel from './DomainInfraIntel'
 import NewsMediaIntel from './NewsMediaIntel'
 import Shifr from './Shifr'
+import Wiki from './Wiki'
 import Settings from './Settings'
 const Controllers = {
     DashboardController: Object.assign(DashboardController, DashboardController),
@@ -24,6 +25,7 @@ EmailIntel: Object.assign(EmailIntel, EmailIntel),
 DomainInfraIntel: Object.assign(DomainInfraIntel, DomainInfraIntel),
 NewsMediaIntel: Object.assign(NewsMediaIntel, NewsMediaIntel),
 Shifr: Object.assign(Shifr, Shifr),
+Wiki: Object.assign(Wiki, Wiki),
 Settings: Object.assign(Settings, Settings),
 }
 

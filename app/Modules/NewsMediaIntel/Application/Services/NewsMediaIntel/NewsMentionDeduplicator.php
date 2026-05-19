@@ -16,7 +16,16 @@ final class NewsMentionDeduplicator
 
         foreach ($mentions as $mention) {
             $key = mb_strtolower(trim($mention->link));
-            if ($key === '' || isset($map[$key])) {
+            if ($key === '') {
+                continue;
+            }
+
+            if (isset($map[$key])) {
+                $existing = $map[$key];
+                if ($this->shouldReplace($existing, $mention)) {
+                    $map[$key] = $mention;
+                }
+
                 continue;
             }
 
@@ -25,5 +34,35 @@ final class NewsMentionDeduplicator
 
         return array_values($map);
     }
-}
 
+    private function shouldReplace(NewsMentionDTO $existing, NewsMentionDTO $candidate): bool
+    {
+        $existingHasValidDate = $this->hasValidPublishedAt($existing->publishedAt);
+        $candidateHasValidDate = $this->hasValidPublishedAt($candidate->publishedAt);
+
+        if (!$existingHasValidDate && $candidateHasValidDate) {
+            return true;
+        }
+
+        if ($existingHasValidDate !== $candidateHasValidDate) {
+            return false;
+        }
+
+        return mb_strlen(trim($candidate->snippet)) > mb_strlen(trim($existing->snippet));
+    }
+
+    private function hasValidPublishedAt(string $value): bool
+    {
+        $raw = trim($value);
+        if ($raw === '') {
+            return false;
+        }
+
+        $timestamp = strtotime($raw);
+        if ($timestamp === false) {
+            return false;
+        }
+
+        return date('Y-m-d', $timestamp) !== '1970-01-01';
+    }
+}

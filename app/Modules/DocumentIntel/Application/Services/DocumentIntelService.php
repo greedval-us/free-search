@@ -2,23 +2,23 @@
 
 namespace App\Modules\DocumentIntel\Application\Services;
 
+use App\Modules\DocumentIntel\Application\Contracts\DocumentMetadataExtractorInterface;
+use App\Modules\DocumentIntel\Application\Contracts\DocumentUrlCollectorInterface;
 use App\Modules\DocumentIntel\Application\Services\DocumentIntel\DocumentPivotBuilder;
 use App\Modules\DocumentIntel\Application\Services\DocumentIntel\DocumentRecommendationBuilder;
 use App\Modules\DocumentIntel\Application\Services\DocumentIntel\DocumentRiskScorer;
 use App\Modules\DocumentIntel\Application\Services\DocumentIntel\DocumentSignalBuilder;
 use App\Modules\DocumentIntel\Application\Services\DocumentIntel\DocumentSummaryBuilder;
-use App\Modules\DocumentIntel\Application\Services\DocumentIntel\DocumentMetadataExtractor;
-use App\Modules\DocumentIntel\Application\Services\DocumentIntel\DocumentUrlCollector;
-use App\Modules\SiteIntel\Application\Services\DomainLite\DomainLiteDnsResolver;
+use App\Modules\SiteIntel\Application\Contracts\DomainLiteDnsResolverInterface;
 use App\Modules\SiteIntel\Application\Services\DomainLite\DomainLiteWhoisLookup;
 
 final class DocumentIntelService
 {
     public function __construct(
-        private readonly DomainLiteDnsResolver $dnsResolver,
+        private readonly DomainLiteDnsResolverInterface $dnsResolver,
         private readonly DomainLiteWhoisLookup $whoisLookup,
-        private readonly DocumentUrlCollector $documentUrlCollector,
-        private readonly DocumentMetadataExtractor $documentMetadataExtractor,
+        private readonly DocumentUrlCollectorInterface $documentUrlCollector,
+        private readonly DocumentMetadataExtractorInterface $documentMetadataExtractor,
         private readonly DocumentPivotBuilder $pivotBuilder,
         private readonly DocumentSignalBuilder $signalBuilder,
         private readonly DocumentRecommendationBuilder $recommendationBuilder,

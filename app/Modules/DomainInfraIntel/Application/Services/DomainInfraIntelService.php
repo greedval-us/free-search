@@ -2,22 +2,22 @@
 
 namespace App\Modules\DomainInfraIntel\Application\Services;
 
-use App\Modules\DomainInfraIntel\Application\Services\DomainInfraIntel\AsnLookupClient;
-use App\Modules\DomainInfraIntel\Application\Services\DomainInfraIntel\CertificateTransparencyClient;
-use App\Modules\DomainInfraIntel\Application\Services\DomainInfraIntel\DomainIpResolver;
-use App\Modules\DomainInfraIntel\Application\Services\DomainInfraIntel\DomainRdapClient;
-use App\Modules\DomainInfraIntel\Application\Services\DomainInfraIntel\NeighborDomainResolver;
+use App\Modules\DomainInfraIntel\Application\Contracts\AsnLookupClientInterface;
+use App\Modules\DomainInfraIntel\Application\Contracts\CertificateTransparencyClientInterface;
+use App\Modules\DomainInfraIntel\Application\Contracts\DomainIpResolverInterface;
+use App\Modules\DomainInfraIntel\Application\Contracts\DomainRdapClientInterface;
+use App\Modules\DomainInfraIntel\Application\Contracts\NeighborDomainResolverInterface;
 use App\Modules\DomainInfraIntel\Domain\DTO\DomainInfraIntelResultDTO;
 use App\Modules\SiteIntel\Support\DomainNormalizer;
 
 final class DomainInfraIntelService
 {
     public function __construct(
-        private readonly DomainIpResolver $ipResolver,
-        private readonly DomainRdapClient $rdapClient,
-        private readonly CertificateTransparencyClient $certificateTransparencyClient,
-        private readonly AsnLookupClient $asnLookupClient,
-        private readonly NeighborDomainResolver $neighborDomainResolver,
+        private readonly DomainIpResolverInterface $ipResolver,
+        private readonly DomainRdapClientInterface $rdapClient,
+        private readonly CertificateTransparencyClientInterface $certificateTransparencyClient,
+        private readonly AsnLookupClientInterface $asnLookupClient,
+        private readonly NeighborDomainResolverInterface $neighborDomainResolver,
     ) {
     }
 
@@ -52,4 +52,3 @@ final class DomainInfraIntelService
         ))->toArray();
     }
 }
-

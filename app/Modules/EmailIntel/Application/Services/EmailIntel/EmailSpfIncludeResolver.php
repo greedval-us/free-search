@@ -2,12 +2,15 @@
 
 namespace App\Modules\EmailIntel\Application\Services\EmailIntel;
 
+use App\Modules\EmailIntel\Application\Contracts\EmailTxtRecordLookupInterface;
+
 final class EmailSpfIncludeResolver
 {
     private const MAX_INCLUDES = 12;
 
     public function __construct(
         private readonly EmailSpfParser $spfParser,
+        private readonly EmailTxtRecordLookupInterface $txtRecordLookup,
     ) {
     }
 
@@ -46,14 +49,6 @@ final class EmailSpfIncludeResolver
      */
     private function txtRecords(string $domain): array
     {
-        $records = @dns_get_record($domain, DNS_TXT);
-        if ($records === false) {
-            return [];
-        }
-
-        return array_values(array_filter(array_map(
-            static fn (array $record): ?string => isset($record['txt']) ? (string) $record['txt'] : null,
-            $records,
-        )));
+        return $this->txtRecordLookup->lookup($domain);
     }
 }

@@ -1376,6 +1376,11 @@
       "title": "Mentions",
       "none": "No mentions found."
     },
+    "sources": {
+      "googlenews": "Google News",
+      "bing": "Bing News",
+      "newsapi": "NewsAPI"
+    },
     "errors": {
       "queryRequired": "Enter query (minimum 2 characters).",
       "lookupFailed": "Unable to complete news/media lookup."

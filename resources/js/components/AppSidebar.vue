@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { Link } from '@inertiajs/vue3';
-import { AtSign, Building2, FileSearch, Fingerprint, Globe, LayoutGrid, MailSearch, Newspaper, Radar, Send, User } from 'lucide-vue-next';
+import { AtSign, BookOpenText, Building2, FileSearch, Fingerprint, Globe, LayoutGrid, MailSearch, Newspaper, Radar, Send, User } from 'lucide-vue-next';
 import { computed } from 'vue';
 import AppLogo from '@/components/AppLogo.vue';
 import NavFooter from '@/components/NavFooter.vue';
@@ -19,7 +19,7 @@ import { useI18n } from '@/composables/useI18n';
 import { dashboard } from '@/routes';
 import type { NavItem } from '@/types';
 
-const { t } = useI18n();
+const { t, locale } = useI18n();
 
 const mainNavItems = computed<NavItem[]>(() => [
     {
@@ -79,9 +79,13 @@ const mainNavItems = computed<NavItem[]>(() => [
     },
 ]);
 
-const footerNavItems: NavItem[] = [
-
-];
+const footerNavItems = computed<NavItem[]>(() => [
+    {
+        title: locale.value === 'ru' ? 'Вики модулей' : 'Modules Wiki',
+        href: '/wiki/modules',
+        icon: BookOpenText,
+    },
+]);
 </script>
 
 <template>

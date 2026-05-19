@@ -2,10 +2,12 @@
 
 namespace App\Modules\SiteIntel\Application\Services\SeoAudit;
 
+use App\Modules\SiteIntel\Application\Contracts\SeoAuditHttpFetcherInterface;
+
 final class SeoAuditSitemapUrlAuditor
 {
     public function __construct(
-        private readonly SeoAuditHttpFetcher $httpFetcher,
+        private readonly SeoAuditHttpFetcherInterface $httpFetcher,
     ) {
     }
 
@@ -68,4 +70,3 @@ final class SeoAuditSitemapUrlAuditor
         return array_values(array_unique($urls));
     }
 }
-
