@@ -306,6 +306,11 @@
       "parser": "Parser"
     },
     "search": {
+      "title": "YouTube Search",
+      "collapsed": "Search panel is collapsed",
+      "filters": "Video search filters and parameters",
+      "resultTitle": "Videos",
+      "shown": "Shown",
       "hint": "Search videos with YouTube Data API v3.",
       "query": "Query",
       "channelId": "Channel ID",
@@ -315,6 +320,8 @@
       "submit": "Search"
     },
     "analytics": {
+      "title": "YouTube Analytics",
+      "collapsed": "Settings panel is collapsed",
       "hint": "Summary for one video or latest channel videos.",
       "mode": "Mode",
       "videoId": "Video ID",
@@ -332,6 +339,8 @@
       }
     },
     "parser": {
+      "title": "YouTube Parser",
+      "collapsed": "Settings panel is collapsed",
       "hint": "Parse top-level comments and available replies.",
       "videoId": "Video ID",
       "query": "Query",

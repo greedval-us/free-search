@@ -306,6 +306,11 @@
       "parser": "Парсер"
     },
     "search": {
+      "title": "YouTube Поиск",
+      "collapsed": "Панель поиска свернута",
+      "filters": "Фильтры и параметры поиска видео",
+      "resultTitle": "Видео",
+      "shown": "Показано",
       "hint": "Поиск видео через YouTube Data API v3.",
       "query": "Запрос",
       "channelId": "Channel ID",
@@ -315,6 +320,8 @@
       "submit": "Найти"
     },
     "analytics": {
+      "title": "YouTube Аналитика",
+      "collapsed": "Панель настроек свернута",
       "hint": "Сводка по одному видео или последним видео канала.",
       "mode": "Режим",
       "videoId": "Video ID",
@@ -332,6 +339,8 @@
       }
     },
     "parser": {
+      "title": "YouTube Парсер",
+      "collapsed": "Панель настроек свернута",
       "hint": "Парсинг верхнеуровневых комментариев и доступных ответов.",
       "videoId": "Video ID",
       "query": "Запрос",

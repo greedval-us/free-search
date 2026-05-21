@@ -1,8 +1,6 @@
 <script setup lang="ts">
 import { Head } from '@inertiajs/vue3'
 import { computed, ref } from 'vue'
-import { Youtube } from 'lucide-vue-next'
-import PageHeader from '@/components/ui/PageHeader.vue'
 import { useI18n } from '@/composables/useI18n'
 import { YOUTUBE_TABS } from './youtube/tabs'
 import type { YouTubeTabValue } from './youtube/types'
@@ -22,13 +20,6 @@ const activeTabDefinition = computed(() => YOUTUBE_TABS.find((tab) => tab.key ==
   <Head :title="t('youtube.headTitle')" />
 
   <div class="flex h-full min-h-0 flex-1 flex-col gap-4 overflow-hidden rounded-xl p-4">
-    <PageHeader
-      :icon="Youtube"
-      :title="t('youtube.headTitle')"
-      :help-label="t('youtube.help.label')"
-      :help-text="activeTab === 'search' ? t('youtube.search.hint') : activeTab === 'analytics' ? t('youtube.analytics.hint') : t('youtube.parser.hint')"
-    />
-
     <div class="flex items-center justify-center gap-1 rounded-lg bg-slate-800/80 p-1">
       <button
         v-for="tab in YOUTUBE_TABS"
