@@ -1433,6 +1433,7 @@
       "domain-infra-intel": "Домен и инфраструктура",
       "news-media-intel": "Новости и медиа",
       "telegram": "Аналитика Telegram",
+      "youtube": "YouTube",
       "shifr": "Модуль шифров",
       "default": "Поисковый модуль",
       "lastUsed": "Последний запуск",
@@ -1475,6 +1476,7 @@
     "menu": "Меню навигации",
     "dashboard": "Панель",
     "telegram": "Телеграм",
+    "youtube": "YouTube",
     "username": "Юзернейм",
     "siteIntel": "Анализ сайта",
     "companyIntel": "Разведка компании",
@@ -1852,4 +1854,3 @@
     }
   }
 }
-

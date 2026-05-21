@@ -18,6 +18,7 @@ class DashboardModuleRegistry
         'news-media-intel' => '/news-media-intel',
         'telegram' => '/telegram',
         'shifr' => '/shifr',
+        'youtube' => '/youtube',
     ];
 
     /**
@@ -37,7 +38,7 @@ class DashboardModuleRegistry
     {
         $prefix = explode('.', $routeName)[0] ?? '';
 
-        if (!$this->isSupported($prefix)) {
+        if (! $this->isSupported($prefix)) {
             return null;
         }
 
