@@ -1,4 +1,4 @@
-{
+﻿{
   "telegram": {
     "headTitle": "Telegram",
     "search": {
@@ -293,6 +293,76 @@
     },
     "help": {
       "label": "Что это за данные?"
+    }
+  },
+  "youtube": {
+    "headTitle": "YouTube",
+    "help": {
+      "label": "Что это за данные?"
+    },
+    "tabs": {
+      "search": "Поиск",
+      "analytics": "Аналитика",
+      "parser": "Парсер"
+    },
+    "search": {
+      "hint": "Поиск видео через YouTube Data API v3.",
+      "query": "Запрос",
+      "channelId": "Channel ID",
+      "order": "Сортировка",
+      "limit": "Лимит",
+      "placeholder": "например: osint tools",
+      "submit": "Найти"
+    },
+    "analytics": {
+      "hint": "Сводка по одному видео или последним видео канала.",
+      "mode": "Режим",
+      "videoId": "Video ID",
+      "channelId": "Channel ID",
+      "limit": "Лимит",
+      "submit": "Анализировать",
+      "topVideos": "Топ видео",
+      "metrics": {
+        "videos": "Видео",
+        "views": "Просмотры",
+        "likes": "Лайки",
+        "comments": "Комментарии",
+        "avgViews": "Средние просмотры",
+        "engagement": "ER"
+      }
+    },
+    "parser": {
+      "hint": "Парсинг верхнеуровневых комментариев и доступных ответов.",
+      "videoId": "Video ID",
+      "query": "Запрос",
+      "order": "Сортировка",
+      "limit": "Лимит",
+      "submit": "Собрать комментарии",
+      "replies": "Ответы"
+    },
+    "options": {
+      "searchOrder": {
+        "relevance": "Релевантность",
+        "date": "Дата",
+        "viewCount": "Просмотры",
+        "rating": "Рейтинг"
+      },
+      "mode": {
+        "video": "Видео",
+        "channel": "Канал"
+      },
+      "parserOrder": {
+        "relevance": "Релевантность",
+        "time": "Сначала новые"
+      }
+    },
+    "common": {
+      "loading": "Загрузка...",
+      "empty": "Пока нет данных",
+      "published": "Опубликовано",
+      "open": "Открыть",
+      "loadMore": "Загрузить ещё",
+      "requestFailed": "Ошибка запроса"
     }
   },
   "username": {

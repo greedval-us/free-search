@@ -1,4 +1,4 @@
-{
+﻿{
   "telegram": {
     "headTitle": "Telegram",
     "help": {
@@ -293,6 +293,76 @@
         "topPosts": "Top posts",
         "topPostsHint": "Posts ranked by an engagement score."
       }
+    }
+  },
+  "youtube": {
+    "headTitle": "YouTube",
+    "help": {
+      "label": "What is this data?"
+    },
+    "tabs": {
+      "search": "Search",
+      "analytics": "Analytics",
+      "parser": "Parser"
+    },
+    "search": {
+      "hint": "Search videos with YouTube Data API v3.",
+      "query": "Query",
+      "channelId": "Channel ID",
+      "order": "Order",
+      "limit": "Limit",
+      "placeholder": "for example: osint tools",
+      "submit": "Search"
+    },
+    "analytics": {
+      "hint": "Summary for one video or latest channel videos.",
+      "mode": "Mode",
+      "videoId": "Video ID",
+      "channelId": "Channel ID",
+      "limit": "Limit",
+      "submit": "Analyze",
+      "topVideos": "Top videos",
+      "metrics": {
+        "videos": "Videos",
+        "views": "Views",
+        "likes": "Likes",
+        "comments": "Comments",
+        "avgViews": "Avg views",
+        "engagement": "ER"
+      }
+    },
+    "parser": {
+      "hint": "Parse top-level comments and available replies.",
+      "videoId": "Video ID",
+      "query": "Query",
+      "order": "Order",
+      "limit": "Limit",
+      "submit": "Parse comments",
+      "replies": "Replies"
+    },
+    "options": {
+      "searchOrder": {
+        "relevance": "Relevance",
+        "date": "Date",
+        "viewCount": "Views",
+        "rating": "Rating"
+      },
+      "mode": {
+        "video": "Video",
+        "channel": "Channel"
+      },
+      "parserOrder": {
+        "relevance": "Relevance",
+        "time": "Newest first"
+      }
+    },
+    "common": {
+      "loading": "Loading...",
+      "empty": "No data yet",
+      "published": "Published",
+      "open": "Open",
+      "loadMore": "Load more",
+      "requestFailed": "Request failed"
     }
   },
   "username": {
