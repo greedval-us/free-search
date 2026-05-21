@@ -2,12 +2,13 @@
 
 namespace App\Modules\YouTube;
 
+use App\Modules\YouTube\Core\Contracts\YouTubeGatewayInterface;
 use Illuminate\Http\Client\PendingRequest;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Http;
 use RuntimeException;
 
-class YouTubeDataApiClient
+class YouTubeDataApiClient implements YouTubeGatewayInterface
 {
     public function searchVideos(array $params): array
     {

@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\YouTube;
 
+use App\Modules\YouTube\DTO\Request\YouTubeSearchQueryDTO;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Carbon;
 use Illuminate\Validation\Rule;
@@ -42,36 +43,33 @@ class YouTubeSearchRequest extends FormRequest
         });
     }
 
-    /**
-     * @return array<string, string|int>
-     */
-    public function toApiParams(): array
+    public function toDTO(): YouTubeSearchQueryDTO
     {
         $validated = $this->validated();
 
-        $params = [
-            'q' => trim((string) $validated['q']),
-            'maxResults' => (int) ($validated['limit'] ?? 12),
-            'order' => (string) ($validated['order'] ?? 'relevance'),
-            'safeSearch' => (string) ($validated['safeSearch'] ?? 'moderate'),
-        ];
+        return new YouTubeSearchQueryDTO(
+            query: trim((string) $validated['q']),
+            maxResults: (int) ($validated['limit'] ?? 12),
+            order: (string) ($validated['order'] ?? 'relevance'),
+            safeSearch: (string) ($validated['safeSearch'] ?? 'moderate'),
+            channelId: trim((string) ($validated['channelId'] ?? '')),
+            regionCode: trim((string) ($validated['regionCode'] ?? '')),
+            relevanceLanguage: trim((string) ($validated['relevanceLanguage'] ?? '')),
+            pageToken: trim((string) ($validated['pageToken'] ?? '')),
+            publishedAfter: ! empty($validated['publishedAfter'])
+                ? Carbon::createFromFormat('Y-m-d', $validated['publishedAfter'])->startOfDay()->toRfc3339String()
+                : null,
+            publishedBefore: ! empty($validated['publishedBefore'])
+                ? Carbon::createFromFormat('Y-m-d', $validated['publishedBefore'])->endOfDay()->toRfc3339String()
+                : null,
+        );
+    }
 
-        foreach (['channelId', 'regionCode', 'relevanceLanguage', 'pageToken'] as $key) {
-            $value = trim((string) ($validated[$key] ?? ''));
-
-            if ($value !== '') {
-                $params[$key] = $value;
-            }
-        }
-
-        if (! empty($validated['publishedAfter'])) {
-            $params['publishedAfter'] = Carbon::createFromFormat('Y-m-d', $validated['publishedAfter'])->startOfDay()->toRfc3339String();
-        }
-
-        if (! empty($validated['publishedBefore'])) {
-            $params['publishedBefore'] = Carbon::createFromFormat('Y-m-d', $validated['publishedBefore'])->endOfDay()->toRfc3339String();
-        }
-
-        return $params;
+    /**
+     * @return array<string, mixed>
+     */
+    public function toApiParams(): array
+    {
+        return $this->toDTO()->toArray();
     }
 }

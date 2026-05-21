@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\YouTube;
 
+use App\Modules\YouTube\DTO\Request\YouTubeCommentsQueryDTO;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
@@ -23,27 +24,24 @@ class YouTubeParserRequest extends FormRequest
         ];
     }
 
-    /**
-     * @return array<string, string|int>
-     */
-    public function toApiParams(): array
+    public function toDTO(): YouTubeCommentsQueryDTO
     {
         $validated = $this->validated();
 
-        $params = [
-            'videoId' => trim((string) $validated['videoId']),
-            'maxResults' => (int) ($validated['limit'] ?? 20),
-            'order' => (string) ($validated['order'] ?? 'relevance'),
-        ];
+        return new YouTubeCommentsQueryDTO(
+            videoId: trim((string) $validated['videoId']),
+            maxResults: (int) ($validated['limit'] ?? 20),
+            order: (string) ($validated['order'] ?? 'relevance'),
+            pageToken: trim((string) ($validated['pageToken'] ?? '')),
+            searchTerms: trim((string) ($validated['searchTerms'] ?? '')),
+        );
+    }
 
-        foreach (['pageToken', 'searchTerms'] as $key) {
-            $value = trim((string) ($validated[$key] ?? ''));
-
-            if ($value !== '') {
-                $params[$key] = $value;
-            }
-        }
-
-        return $params;
+    /**
+     * @return array<string, mixed>
+     */
+    public function toApiParams(): array
+    {
+        return $this->toDTO()->toArray();
     }
 }

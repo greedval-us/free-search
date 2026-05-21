@@ -4,18 +4,18 @@ namespace App\Http\Controllers\YouTube;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\YouTube\YouTubeAnalyticsRequest;
-use App\Modules\YouTube\YouTubeDataApiClient;
+use App\Modules\YouTube\Analytics\Contracts\YouTubeAnalyticsApplicationServiceInterface;
 use Illuminate\Http\JsonResponse;
 use RuntimeException;
 
 class YouTubeAnalyticsController extends Controller
 {
-    public function __construct(private readonly YouTubeDataApiClient $client) {}
+    public function __construct(private readonly YouTubeAnalyticsApplicationServiceInterface $service) {}
 
     public function summary(YouTubeAnalyticsRequest $request): JsonResponse
     {
         try {
-            return $this->jsonOk(['data' => $this->client->analyticsSummary($request->toLookupParams())]);
+            return $this->jsonOk(['data' => $this->service->summary($request->toDTO())]);
         } catch (RuntimeException $exception) {
             return $this->jsonError($exception->getMessage(), $this->statusCode($exception));
         }

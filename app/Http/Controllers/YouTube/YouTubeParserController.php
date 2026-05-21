@@ -4,18 +4,18 @@ namespace App\Http\Controllers\YouTube;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\YouTube\YouTubeParserRequest;
-use App\Modules\YouTube\YouTubeDataApiClient;
+use App\Modules\YouTube\Parser\Contracts\YouTubeParserApplicationServiceInterface;
 use Illuminate\Http\JsonResponse;
 use RuntimeException;
 
 class YouTubeParserController extends Controller
 {
-    public function __construct(private readonly YouTubeDataApiClient $client) {}
+    public function __construct(private readonly YouTubeParserApplicationServiceInterface $service) {}
 
     public function comments(YouTubeParserRequest $request): JsonResponse
     {
         try {
-            return $this->jsonOk(['data' => $this->client->videoComments($request->toApiParams())]);
+            return $this->jsonOk(['data' => $this->service->comments($request->toDTO())]);
         } catch (RuntimeException $exception) {
             return $this->jsonError($exception->getMessage(), $this->statusCode($exception));
         }

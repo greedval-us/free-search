@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\YouTube;
 
+use App\Modules\YouTube\DTO\Request\YouTubeAnalyticsLookupDTO;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
@@ -22,18 +23,23 @@ class YouTubeAnalyticsRequest extends FormRequest
         ];
     }
 
+    public function toDTO(): YouTubeAnalyticsLookupDTO
+    {
+        $validated = $this->validated();
+
+        return new YouTubeAnalyticsLookupDTO(
+            mode: (string) ($validated['mode'] ?? (! empty($validated['channelId']) ? 'channel' : 'video')),
+            videoId: trim((string) ($validated['videoId'] ?? '')),
+            channelId: trim((string) ($validated['channelId'] ?? '')),
+            limit: (int) ($validated['limit'] ?? 10),
+        );
+    }
+
     /**
      * @return array{mode: string, videoId: string, channelId: string, limit: int}
      */
     public function toLookupParams(): array
     {
-        $validated = $this->validated();
-
-        return [
-            'mode' => (string) ($validated['mode'] ?? (! empty($validated['channelId']) ? 'channel' : 'video')),
-            'videoId' => trim((string) ($validated['videoId'] ?? '')),
-            'channelId' => trim((string) ($validated['channelId'] ?? '')),
-            'limit' => (int) ($validated['limit'] ?? 10),
-        ];
+        return $this->toDTO()->toArray();
     }
 }
