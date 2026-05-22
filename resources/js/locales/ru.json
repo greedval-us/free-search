@@ -335,20 +335,46 @@
     "analytics": {
       "title": "YouTube Аналитика",
       "collapsed": "Панель настроек свернута",
-      "hint": "Сводка по одному видео или последним видео канала.",
+      "hint": "Понятный отчёт по публичным данным YouTube API: профиль канала/видео, KPI, вовлечённость, лидеры, теги и распределения.",
       "mode": "Режим",
       "videoId": "Video ID",
       "channelId": "Channel ID",
       "limit": "Лимит",
       "submit": "Анализировать",
+      "channelProfile": "Профиль канала",
+      "videoProfile": "Профиль видео",
+      "createdAt": "Создан",
+      "country": "Страна",
       "topVideos": "Топ видео",
+      "insights": "Быстрые выводы",
+      "timeline": "Динамика публикаций",
+      "distribution": "Распределения",
+      "duration": "Длительность",
+      "quality": "Качество",
+      "captions": "Субтитры",
+      "withCaptions": "С субтитрами",
+      "withoutCaptions": "Без субтитров",
+      "tags": "Теги и темы",
+      "noTags": "Теги не найдены в публичных данных.",
+      "leaders": {
+        "views": "Лидеры по просмотрам",
+        "likes": "Лидеры по лайкам",
+        "comments": "Лидеры по комментариям",
+        "engagement": "Лидеры по вовлечённости"
+      },
       "metrics": {
         "videos": "Видео",
         "views": "Просмотры",
         "likes": "Лайки",
         "comments": "Комментарии",
         "avgViews": "Средние просмотры",
-        "engagement": "ER"
+        "avgLikes": "Средние лайки",
+        "avgComments": "Средние комментарии",
+        "medianViews": "Медиана просмотров",
+        "engagement": "ER",
+        "commentRate": "Доля комментариев",
+        "subscribers": "Подписчики",
+        "channelViews": "Просмотры канала"
       }
     },
     "parser": {

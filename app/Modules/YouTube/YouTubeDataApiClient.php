@@ -10,275 +10,43 @@ use RuntimeException;
 
 class YouTubeDataApiClient implements YouTubeGatewayInterface
 {
-    public function searchVideos(array $params): array
+    public function search(array $params): array
     {
-        $type = (string) ($params['type'] ?? 'video');
-        $payload = $this->get('search', [
+        return $this->get('search', [
             ...$params,
-            'part' => 'snippet',
-            'type' => $type,
+            'part' => $params['part'] ?? 'snippet',
         ]);
-
-        $videoIds = $type === 'video'
-            ? collect($payload['items'] ?? [])
-                ->map(fn (array $item): ?string => Arr::get($item, 'id.videoId'))
-                ->filter()
-                ->values()
-                ->all()
-            : [];
-
-        $detailsById = $this->videosById($videoIds);
-
-        return [
-            'items' => collect($payload['items'] ?? [])
-                ->map(fn (array $item): array => $this->presentSearchItem($item, $detailsById, $type))
-                ->values()
-                ->all(),
-            'pagination' => [
-                'nextPageToken' => $payload['nextPageToken'] ?? null,
-                'prevPageToken' => $payload['prevPageToken'] ?? null,
-                'total' => (int) Arr::get($payload, 'pageInfo.totalResults', 0),
-                'perPage' => (int) Arr::get($payload, 'pageInfo.resultsPerPage', 0),
-            ],
-        ];
     }
 
-    public function analyticsSummary(array $params): array
+    public function videos(array $params): array
     {
-        if ($params['mode'] === 'channel' || $params['channelId'] !== '') {
-            return $this->channelSummary($params['channelId'], $params['limit']);
-        }
-
-        return $this->videoSummary($params['videoId']);
-    }
-
-    public function videoComments(array $params): array
-    {
-        $payload = $this->get('commentThreads', [
+        return $this->get('videos', [
             ...$params,
-            'part' => 'snippet,replies',
-            'textFormat' => 'plainText',
+            'part' => $params['part'] ?? 'snippet,statistics,contentDetails,status',
         ]);
-
-        return [
-            'items' => collect($payload['items'] ?? [])
-                ->map(fn (array $item): array => $this->presentCommentThread($item))
-                ->values()
-                ->all(),
-            'pagination' => [
-                'nextPageToken' => $payload['nextPageToken'] ?? null,
-                'total' => (int) Arr::get($payload, 'pageInfo.totalResults', 0),
-                'perPage' => (int) Arr::get($payload, 'pageInfo.resultsPerPage', 0),
-            ],
-        ];
     }
 
-    private function videoSummary(string $videoId): array
+    public function channels(array $params): array
     {
-        $video = $this->videosById([$videoId])[$videoId] ?? null;
-
-        if ($video === null) {
-            return [
-                'mode' => 'video',
-                'video' => null,
-                'totals' => $this->emptyTotals(),
-                'topVideos' => [],
-            ];
-        }
-
-        return [
-            'mode' => 'video',
-            'video' => $video,
-            'totals' => $this->totals([$video]),
-            'topVideos' => [$video],
-        ];
+        return $this->get('channels', [
+            ...$params,
+            'part' => $params['part'] ?? 'snippet,statistics,contentDetails,topicDetails,status,brandingSettings',
+        ]);
     }
 
-    private function channelSummary(string $channelId, int $limit): array
+    public function commentThreads(array $params): array
     {
-        $search = $this->get('search', [
-            'part' => 'snippet',
-            'channelId' => $channelId,
-            'type' => 'video',
-            'order' => 'date',
-            'maxResults' => $limit,
+        return $this->get('commentThreads', [
+            ...$params,
+            'part' => $params['part'] ?? 'snippet,replies',
+            'textFormat' => $params['textFormat'] ?? 'plainText',
         ]);
-
-        $videoIds = collect($search['items'] ?? [])
-            ->map(fn (array $item): ?string => Arr::get($item, 'id.videoId'))
-            ->filter()
-            ->values()
-            ->all();
-
-        $videos = array_values($this->videosById($videoIds));
-
-        usort($videos, fn (array $a, array $b): int => ($b['views'] <=> $a['views']));
-
-        return [
-            'mode' => 'channel',
-            'channelId' => $channelId,
-            'video' => null,
-            'totals' => $this->totals($videos),
-            'topVideos' => $videos,
-        ];
     }
 
     /**
-     * @param  array<int, string>  $videoIds
-     * @return array<string, array<string, mixed>>
+     * @param  array<string, mixed>  $query
+     * @return array<string, mixed>
      */
-    private function videosById(array $videoIds): array
-    {
-        if ($videoIds === []) {
-            return [];
-        }
-
-        $payload = $this->get('videos', [
-            'part' => 'snippet,statistics,contentDetails',
-            'id' => implode(',', array_unique($videoIds)),
-            'maxResults' => 50,
-        ]);
-
-        return collect($payload['items'] ?? [])
-            ->mapWithKeys(fn (array $item): array => [$item['id'] => $this->presentVideo($item)])
-            ->all();
-    }
-
-    /**
-     * @param  array<string, array<string, mixed>>  $detailsById
-     */
-    private function presentSearchItem(array $item, array $detailsById, string $type): array
-    {
-        $id = $this->searchItemId($item, $type);
-        $videoId = $type === 'video' ? $id : '';
-        $detail = $detailsById[$videoId] ?? [];
-
-        return [
-            ...$detail,
-            'id' => $id,
-            'type' => $type,
-            'title' => (string) Arr::get($item, 'snippet.title', Arr::get($detail, 'title', '')),
-            'description' => (string) Arr::get($item, 'snippet.description', Arr::get($detail, 'description', '')),
-            'channelId' => (string) Arr::get($item, 'snippet.channelId', Arr::get($detail, 'channelId', '')),
-            'channelTitle' => (string) Arr::get($item, 'snippet.channelTitle', Arr::get($detail, 'channelTitle', '')),
-            'publishedAt' => (string) Arr::get($item, 'snippet.publishedAt', Arr::get($detail, 'publishedAt', '')),
-            'thumbnail' => (string) Arr::get($item, 'snippet.thumbnails.medium.url', Arr::get($detail, 'thumbnail', '')),
-            'duration' => (string) Arr::get($detail, 'duration', ''),
-            'views' => (int) Arr::get($detail, 'views', 0),
-            'likes' => (int) Arr::get($detail, 'likes', 0),
-            'comments' => (int) Arr::get($detail, 'comments', 0),
-            'url' => $this->searchItemUrl($id, $type),
-        ];
-    }
-
-    private function searchItemId(array $item, string $type): string
-    {
-        return (string) match ($type) {
-            'channel' => Arr::get($item, 'id.channelId', ''),
-            'playlist' => Arr::get($item, 'id.playlistId', ''),
-            default => Arr::get($item, 'id.videoId', ''),
-        };
-    }
-
-    private function searchItemUrl(string $id, string $type): string
-    {
-        if ($id === '') {
-            return '';
-        }
-
-        return match ($type) {
-            'channel' => "https://www.youtube.com/channel/{$id}",
-            'playlist' => "https://www.youtube.com/playlist?list={$id}",
-            default => $this->videoUrl($id),
-        };
-    }
-
-    private function presentVideo(array $item): array
-    {
-        $statistics = $item['statistics'] ?? [];
-        $videoId = (string) $item['id'];
-
-        return [
-            'id' => $videoId,
-            'type' => 'video',
-            'title' => (string) Arr::get($item, 'snippet.title', ''),
-            'description' => (string) Arr::get($item, 'snippet.description', ''),
-            'channelId' => (string) Arr::get($item, 'snippet.channelId', ''),
-            'channelTitle' => (string) Arr::get($item, 'snippet.channelTitle', ''),
-            'publishedAt' => (string) Arr::get($item, 'snippet.publishedAt', ''),
-            'thumbnail' => (string) Arr::get($item, 'snippet.thumbnails.medium.url', Arr::get($item, 'snippet.thumbnails.default.url', '')),
-            'duration' => (string) Arr::get($item, 'contentDetails.duration', ''),
-            'views' => (int) ($statistics['viewCount'] ?? 0),
-            'likes' => (int) ($statistics['likeCount'] ?? 0),
-            'comments' => (int) ($statistics['commentCount'] ?? 0),
-            'favorites' => (int) ($statistics['favoriteCount'] ?? 0),
-            'url' => $this->videoUrl($videoId),
-        ];
-    }
-
-    private function presentCommentThread(array $item): array
-    {
-        $snippet = Arr::get($item, 'snippet.topLevelComment.snippet', []);
-
-        return [
-            'id' => (string) Arr::get($item, 'snippet.topLevelComment.id', $item['id'] ?? ''),
-            'threadId' => (string) ($item['id'] ?? ''),
-            'videoId' => (string) Arr::get($item, 'snippet.videoId', ''),
-            'author' => (string) Arr::get($snippet, 'authorDisplayName', ''),
-            'authorChannelUrl' => (string) Arr::get($snippet, 'authorChannelUrl', ''),
-            'text' => (string) Arr::get($snippet, 'textDisplay', ''),
-            'likeCount' => (int) Arr::get($snippet, 'likeCount', 0),
-            'publishedAt' => (string) Arr::get($snippet, 'publishedAt', ''),
-            'updatedAt' => (string) Arr::get($snippet, 'updatedAt', ''),
-            'replyCount' => (int) Arr::get($item, 'snippet.totalReplyCount', 0),
-            'replies' => collect(Arr::get($item, 'replies.comments', []))
-                ->map(fn (array $reply): array => [
-                    'id' => (string) ($reply['id'] ?? ''),
-                    'author' => (string) Arr::get($reply, 'snippet.authorDisplayName', ''),
-                    'text' => (string) Arr::get($reply, 'snippet.textDisplay', ''),
-                    'likeCount' => (int) Arr::get($reply, 'snippet.likeCount', 0),
-                    'publishedAt' => (string) Arr::get($reply, 'snippet.publishedAt', ''),
-                ])
-                ->values()
-                ->all(),
-        ];
-    }
-
-    /**
-     * @param  array<int, array<string, mixed>>  $videos
-     */
-    private function totals(array $videos): array
-    {
-        if ($videos === []) {
-            return $this->emptyTotals();
-        }
-
-        $views = array_sum(array_column($videos, 'views'));
-        $likes = array_sum(array_column($videos, 'likes'));
-        $comments = array_sum(array_column($videos, 'comments'));
-
-        return [
-            'videos' => count($videos),
-            'views' => $views,
-            'likes' => $likes,
-            'comments' => $comments,
-            'avgViews' => (int) round($views / count($videos)),
-            'engagementRate' => $views > 0 ? round((($likes + $comments) / $views) * 100, 2) : 0.0,
-        ];
-    }
-
-    private function emptyTotals(): array
-    {
-        return [
-            'videos' => 0,
-            'views' => 0,
-            'likes' => 0,
-            'comments' => 0,
-            'avgViews' => 0,
-            'engagementRate' => 0.0,
-        ];
-    }
-
     private function get(string $endpoint, array $query): array
     {
         $key = trim((string) config('services.youtube.key', ''));
@@ -308,10 +76,5 @@ class YouTubeDataApiClient implements YouTubeGatewayInterface
             ->acceptJson()
             ->timeout(20)
             ->retry(2, 250);
-    }
-
-    private function videoUrl(string $videoId): string
-    {
-        return $videoId !== '' ? "https://www.youtube.com/watch?v={$videoId}" : '';
     }
 }

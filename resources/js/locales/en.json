@@ -335,20 +335,46 @@
     "analytics": {
       "title": "YouTube Analytics",
       "collapsed": "Settings panel is collapsed",
-      "hint": "Summary for one video or latest channel videos.",
+      "hint": "Readable report from public YouTube API data: channel/video profile, KPIs, engagement, leaders, tags, and distributions.",
       "mode": "Mode",
       "videoId": "Video ID",
       "channelId": "Channel ID",
       "limit": "Limit",
       "submit": "Analyze",
+      "channelProfile": "Channel profile",
+      "videoProfile": "Video profile",
+      "createdAt": "Created",
+      "country": "Country",
       "topVideos": "Top videos",
+      "insights": "Quick insights",
+      "timeline": "Publishing timeline",
+      "distribution": "Distributions",
+      "duration": "Duration",
+      "quality": "Quality",
+      "captions": "Captions",
+      "withCaptions": "With captions",
+      "withoutCaptions": "Without captions",
+      "tags": "Tags and topics",
+      "noTags": "No tags found in public data.",
+      "leaders": {
+        "views": "Leaders by views",
+        "likes": "Leaders by likes",
+        "comments": "Leaders by comments",
+        "engagement": "Leaders by engagement"
+      },
       "metrics": {
         "videos": "Videos",
         "views": "Views",
         "likes": "Likes",
         "comments": "Comments",
         "avgViews": "Avg views",
-        "engagement": "ER"
+        "avgLikes": "Avg likes",
+        "avgComments": "Avg comments",
+        "medianViews": "Median views",
+        "engagement": "ER",
+        "commentRate": "Comment rate",
+        "subscribers": "Subscribers",
+        "channelViews": "Channel views"
       }
     },
     "parser": {

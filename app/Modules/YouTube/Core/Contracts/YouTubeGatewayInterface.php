@@ -8,17 +8,23 @@ interface YouTubeGatewayInterface
      * @param  array<string, mixed>  $params
      * @return array<string, mixed>
      */
-    public function searchVideos(array $params): array;
+    public function search(array $params): array;
 
     /**
      * @param  array<string, mixed>  $params
      * @return array<string, mixed>
      */
-    public function analyticsSummary(array $params): array;
+    public function videos(array $params): array;
 
     /**
      * @param  array<string, mixed>  $params
      * @return array<string, mixed>
      */
-    public function videoComments(array $params): array;
+    public function channels(array $params): array;
+
+    /**
+     * @param  array<string, mixed>  $params
+     * @return array<string, mixed>
+     */
+    public function commentThreads(array $params): array;
 }
