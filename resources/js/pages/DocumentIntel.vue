@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { Head } from '@inertiajs/vue3';
 import { FileSearch } from 'lucide-vue-next';
-import { computed, reactive, ref } from 'vue';
+import { computed, onMounted, reactive, ref } from 'vue';
 import EmptyState from '@/components/ui/EmptyState.vue';
 import IntelResultPanel from '@/components/ui/IntelResultPanel.vue';
 import IntelSearchForm from '@/components/ui/IntelSearchForm.vue';
@@ -9,6 +9,7 @@ import IntelSearchPanel from '@/components/ui/IntelSearchPanel.vue';
 import MetricCard from '@/components/ui/MetricCard.vue';
 import PageHeader from '@/components/ui/PageHeader.vue';
 import SectionCard from '@/components/ui/SectionCard.vue';
+import { getRepeatQueryParams, isRepeatAutorunEnabled, readRepeatQueryParam } from '@/composables/useRepeatQuery';
 import { apiRequest } from '@/lib/api';
 import { useI18n } from '@/composables/useI18n';
 
@@ -183,6 +184,24 @@ const lookup = async () => {
         loading.value = false;
     }
 };
+
+onMounted(() => {
+    const params = getRepeatQueryParams();
+
+    if (!params) {
+        return;
+    }
+
+    const value = readRepeatQueryParam(params, ['query']);
+
+    if (value !== '') {
+        form.query = value;
+    }
+
+    if (isRepeatAutorunEnabled(params) && canLookup.value) {
+        void lookup();
+    }
+});
 </script>
 
 <template>

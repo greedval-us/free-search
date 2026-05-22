@@ -1,11 +1,12 @@
 <script setup lang="ts">
 import { BarChart3, ChevronDown, ChevronUp, ExternalLink, LoaderCircle, Tags } from 'lucide-vue-next'
-import { computed, ref } from 'vue'
+import { computed, onMounted, ref } from 'vue'
 import EmptyState from '@/components/ui/EmptyState.vue'
 import HelpTooltip from '@/components/ui/HelpTooltip.vue'
 import IntelResultPanel from '@/components/ui/IntelResultPanel.vue'
 import MetricCard from '@/components/ui/MetricCard.vue'
 import SectionCard from '@/components/ui/SectionCard.vue'
+import { getRepeatQueryParams, isRepeatAutorunEnabled, readRepeatQueryInt, readRepeatQueryParam } from '@/composables/useRepeatQuery'
 import { useI18n } from '@/composables/useI18n'
 import { apiRequest } from '@/lib/api'
 import type { YouTubeAnalyticsPayload, YouTubeVideo } from '../types'
@@ -86,6 +87,36 @@ const videoMetric = (video: YouTubeVideo, key: string) => {
 
   return fmt(video.views)
 }
+
+onMounted(() => {
+  const params = getRepeatQueryParams()
+
+  if (!params) {
+    return
+  }
+
+  const tab = readRepeatQueryParam(params, ['tab'])
+  if (tab !== 'analytics') {
+    return
+  }
+
+  const mode = readRepeatQueryParam(params, ['mode'])
+  const videoId = readRepeatQueryParam(params, ['videoId'])
+  const channelId = readRepeatQueryParam(params, ['channelId'])
+  const limit = readRepeatQueryInt(params, 'limit')
+
+  if (mode === 'video' || mode === 'channel') form.value.mode = mode
+  if (videoId !== '') form.value.videoId = videoId
+  if (channelId !== '') form.value.channelId = channelId
+  if (limit !== null) {
+    form.value.limit = limit
+    clampLimit()
+  }
+
+  if (isRepeatAutorunEnabled(params) && canRun.value) {
+    void runAnalytics()
+  }
+})
 </script>
 
 <template>

@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { Head } from '@inertiajs/vue3'
-import { computed, ref } from 'vue'
+import { computed, onMounted, ref } from 'vue'
+import { getRepeatQueryParams, readRepeatQueryParam } from '@/composables/useRepeatQuery'
 import { useI18n } from '@/composables/useI18n'
 import { YOUTUBE_TABS } from './youtube/tabs'
 import type { YouTubeTabValue } from './youtube/types'
@@ -14,6 +15,20 @@ defineOptions({
 const { t } = useI18n()
 const activeTab = ref<YouTubeTabValue>('search')
 const activeTabDefinition = computed(() => YOUTUBE_TABS.find((tab) => tab.key === activeTab.value) ?? YOUTUBE_TABS[0])
+
+onMounted(() => {
+  const params = getRepeatQueryParams()
+
+  if (!params) {
+    return
+  }
+
+  const tab = readRepeatQueryParam(params, ['tab'])
+
+  if (tab === 'search' || tab === 'analytics' || tab === 'parser') {
+    activeTab.value = tab
+  }
+})
 </script>
 
 <template>

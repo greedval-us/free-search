@@ -1014,6 +1014,11 @@ Controllere19ee86e9cf603ce1a59a1ec5d21dec5.head = (options?: RouteQueryOptions):
     
     Controllere19ee86e9cf603ce1a59a1ec5d21dec5.form = Controllere19ee86e9cf603ce1a59a1ec5d21dec5Form
 
+/**
+* Multiple routes resolve to \Inertia\Controller::Controller, so this export is a
+* dictionary keyed by URI rather than a callable. Call a specific route with `Controller['<uri>'](...)`,
+* or import the route by name from your generated `routes/` directory.
+*/
 const Controller = {
     '/': Controller980bb49ee7ae63891f1d891d2fbcf1c9,
     '/telegram': Controllerd5ecae56bdcfbb8acbee4b606463b6bd,

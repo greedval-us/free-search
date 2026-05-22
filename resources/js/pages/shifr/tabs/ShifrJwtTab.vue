@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { LoaderCircle } from 'lucide-vue-next';
-import { computed, ref } from 'vue';
+import { computed, onMounted, ref } from 'vue';
+import { getRepeatQueryParams, isRepeatAutorunEnabled, readRepeatQueryParam } from '@/composables/useRepeatQuery';
 import { useI18n } from '@/composables/useI18n';
 import ShifrFormCard from '../components/ShifrFormCard.vue';
 import ShifrResultCard from '../components/ShifrResultCard.vue';
@@ -21,6 +22,29 @@ const run = async (): Promise<void> => {
 
   await runRequest(params);
 };
+
+onMounted(() => {
+  const params = getRepeatQueryParams();
+
+  if (!params) {
+    return;
+  }
+
+  const tab = readRepeatQueryParam(params, ['tab']);
+  if (tab !== 'jwt') {
+    return;
+  }
+
+  const tokenValue = readRepeatQueryParam(params, ['token']);
+  const secretValue = readRepeatQueryParam(params, ['secret']);
+
+  if (tokenValue !== '') token.value = tokenValue;
+  if (secretValue !== '') secret.value = secretValue;
+
+  if (isRepeatAutorunEnabled(params) && canRun.value) {
+    void run();
+  }
+});
 </script>
 
 <template>

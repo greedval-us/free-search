@@ -1,9 +1,10 @@
 ﻿<script setup lang="ts">
 import { ChevronDown, ChevronUp, ExternalLink, LoaderCircle, Search, Settings } from 'lucide-vue-next'
-import { computed, ref } from 'vue'
+import { computed, onMounted, ref } from 'vue'
 import HelpTooltip from '@/components/ui/HelpTooltip.vue'
 import IntelResultPanel from '@/components/ui/IntelResultPanel.vue'
 import IntelSearchPanel from '@/components/ui/IntelSearchPanel.vue'
+import { getRepeatQueryParams, isRepeatAutorunEnabled, readRepeatQueryInt, readRepeatQueryParam } from '@/composables/useRepeatQuery'
 import { useI18n } from '@/composables/useI18n'
 import { apiRequest } from '@/lib/api'
 import type { YouTubeSearchPayload, YouTubeVideo } from '../types'
@@ -91,6 +92,54 @@ const runSearch = async (append = false) => {
 
   result.value = response.data
 }
+
+onMounted(() => {
+  const params = getRepeatQueryParams()
+
+  if (!params) {
+    return
+  }
+
+  const tab = readRepeatQueryParam(params, ['tab'])
+  if (tab !== '' && tab !== 'search') {
+    return
+  }
+
+  const q = readRepeatQueryParam(params, ['q'])
+  const type = readRepeatQueryParam(params, ['type'])
+  const channelId = readRepeatQueryParam(params, ['channelId'])
+  const order = readRepeatQueryParam(params, ['order'])
+  const publishedAfter = readRepeatQueryParam(params, ['publishedAfter'])
+  const publishedBefore = readRepeatQueryParam(params, ['publishedBefore'])
+  const regionCode = readRepeatQueryParam(params, ['regionCode'])
+  const relevanceLanguage = readRepeatQueryParam(params, ['relevanceLanguage'])
+  const safeSearch = readRepeatQueryParam(params, ['safeSearch'])
+  const videoDuration = readRepeatQueryParam(params, ['videoDuration'])
+  const videoDefinition = readRepeatQueryParam(params, ['videoDefinition'])
+  const videoCaption = readRepeatQueryParam(params, ['videoCaption'])
+  const limit = readRepeatQueryInt(params, 'limit')
+
+  if (q !== '') form.value.q = q
+  if (type === 'video' || type === 'channel' || type === 'playlist') form.value.type = type
+  if (channelId !== '') form.value.channelId = channelId
+  if (order !== '') form.value.order = order
+  if (publishedAfter !== '') form.value.publishedAfter = publishedAfter
+  if (publishedBefore !== '') form.value.publishedBefore = publishedBefore
+  if (regionCode !== '') form.value.regionCode = regionCode
+  if (relevanceLanguage !== '') form.value.relevanceLanguage = relevanceLanguage
+  if (safeSearch !== '') form.value.safeSearch = safeSearch
+  if (videoDuration !== '') form.value.videoDuration = videoDuration
+  if (videoDefinition !== '') form.value.videoDefinition = videoDefinition
+  if (videoCaption !== '') form.value.videoCaption = videoCaption
+  if (limit !== null) {
+    form.value.limit = limit
+    clampLimit()
+  }
+
+  if (isRepeatAutorunEnabled(params) && canSearch.value) {
+    void runSearch(false)
+  }
+})
 </script>
 
 <template>

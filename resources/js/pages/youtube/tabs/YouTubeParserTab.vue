@@ -1,9 +1,10 @@
 ﻿<script setup lang="ts">
 import { ChevronDown, ChevronUp, LoaderCircle, MessageSquareText } from 'lucide-vue-next'
-import { ref } from 'vue'
+import { onMounted, ref } from 'vue'
 import HelpTooltip from '@/components/ui/HelpTooltip.vue'
 import IntelResultPanel from '@/components/ui/IntelResultPanel.vue'
 import EmptyState from '@/components/ui/EmptyState.vue'
+import { getRepeatQueryParams, isRepeatAutorunEnabled, readRepeatQueryInt, readRepeatQueryParam } from '@/composables/useRepeatQuery'
 import { useI18n } from '@/composables/useI18n'
 import { apiRequest } from '@/lib/api'
 import type { YouTubeCommentsPayload } from '../types'
@@ -53,6 +54,33 @@ const runParser = async (append = false) => {
 
   result.value = response.data
 }
+
+onMounted(() => {
+  const params = getRepeatQueryParams()
+
+  if (!params) {
+    return
+  }
+
+  const tab = readRepeatQueryParam(params, ['tab'])
+  if (tab !== 'parser') {
+    return
+  }
+
+  const videoId = readRepeatQueryParam(params, ['videoId'])
+  const order = readRepeatQueryParam(params, ['order'])
+  const searchTerms = readRepeatQueryParam(params, ['searchTerms'])
+  const limit = readRepeatQueryInt(params, 'limit')
+
+  if (videoId !== '') form.value.videoId = videoId
+  if (order === 'relevance' || order === 'time') form.value.order = order
+  if (searchTerms !== '') form.value.searchTerms = searchTerms
+  if (limit !== null) form.value.limit = Math.min(100, Math.max(1, limit))
+
+  if (isRepeatAutorunEnabled(params) && form.value.videoId.trim() !== '') {
+    void runParser(false)
+  }
+})
 </script>
 
 <template>
