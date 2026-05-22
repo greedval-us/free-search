@@ -311,11 +311,24 @@
       "filters": "Video search filters and parameters",
       "resultTitle": "Videos",
       "shown": "Shown",
-      "hint": "Search videos with YouTube Data API v3.",
+      "hint": "Search public videos, channels, and playlists with YouTube Data API v3. Only public data returned by the official API is available.",
       "query": "Query",
-      "channelId": "Channel ID",
+      "type": "Search type",
+      "channelFilter": "Channel filter",
+      "channelPlaceholder": "optional: UC...",
       "order": "Order",
       "limit": "Limit",
+      "publishedAfter": "Published after",
+      "publishedBefore": "Published before",
+      "regionCode": "Region",
+      "relevanceLanguage": "Language",
+      "safeSearch": "Safe search",
+      "videoDuration": "Duration",
+      "videoDefinition": "Quality",
+      "videoCaption": "Captions",
+      "advancedAriaShow": "Show advanced filters",
+      "advancedAriaHide": "Hide advanced filters",
+      "publicDataHint": "API v3 public search supports videos, channels, and playlists by keyword; optionally filter by channel, dates, region, language, and video-specific attributes.",
       "placeholder": "for example: osint tools",
       "submit": "Search"
     },
@@ -350,11 +363,38 @@
       "replies": "Replies"
     },
     "options": {
+      "searchType": {
+        "video": "Videos",
+        "channel": "Channels",
+        "playlist": "Playlists"
+      },
       "searchOrder": {
-        "relevance": "Relevance",
-        "date": "Date",
-        "viewCount": "Views",
-        "rating": "Rating"
+        "relevance": "Most relevant",
+        "date": "Newest first",
+        "viewCount": "Most viewed",
+        "rating": "Highest rated",
+        "title": "Title"
+      },
+      "safeSearch": {
+        "moderate": "Moderate",
+        "none": "No filter",
+        "strict": "Strict"
+      },
+      "videoDuration": {
+        "any": "Any",
+        "short": "Under 4 minutes",
+        "medium": "4-20 minutes",
+        "long": "Over 20 minutes"
+      },
+      "videoDefinition": {
+        "any": "Any",
+        "high": "HD",
+        "standard": "SD"
+      },
+      "videoCaption": {
+        "any": "Any",
+        "closedCaption": "With captions",
+        "none": "No captions"
       },
       "mode": {
         "video": "Video",

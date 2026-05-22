@@ -12,23 +12,26 @@ class YouTubeDataApiClient implements YouTubeGatewayInterface
 {
     public function searchVideos(array $params): array
     {
+        $type = (string) ($params['type'] ?? 'video');
         $payload = $this->get('search', [
             ...$params,
             'part' => 'snippet',
-            'type' => 'video',
+            'type' => $type,
         ]);
 
-        $videoIds = collect($payload['items'] ?? [])
-            ->map(fn (array $item): ?string => Arr::get($item, 'id.videoId'))
-            ->filter()
-            ->values()
-            ->all();
+        $videoIds = $type === 'video'
+            ? collect($payload['items'] ?? [])
+                ->map(fn (array $item): ?string => Arr::get($item, 'id.videoId'))
+                ->filter()
+                ->values()
+                ->all()
+            : [];
 
         $detailsById = $this->videosById($videoIds);
 
         return [
             'items' => collect($payload['items'] ?? [])
-                ->map(fn (array $item): array => $this->presentSearchItem($item, $detailsById))
+                ->map(fn (array $item): array => $this->presentSearchItem($item, $detailsById, $type))
                 ->values()
                 ->all(),
             'pagination' => [
@@ -144,22 +147,50 @@ class YouTubeDataApiClient implements YouTubeGatewayInterface
     /**
      * @param  array<string, array<string, mixed>>  $detailsById
      */
-    private function presentSearchItem(array $item, array $detailsById): array
+    private function presentSearchItem(array $item, array $detailsById, string $type): array
     {
-        $videoId = (string) Arr::get($item, 'id.videoId', '');
+        $id = $this->searchItemId($item, $type);
+        $videoId = $type === 'video' ? $id : '';
         $detail = $detailsById[$videoId] ?? [];
 
         return [
             ...$detail,
-            'id' => $videoId,
+            'id' => $id,
+            'type' => $type,
             'title' => (string) Arr::get($item, 'snippet.title', Arr::get($detail, 'title', '')),
             'description' => (string) Arr::get($item, 'snippet.description', Arr::get($detail, 'description', '')),
             'channelId' => (string) Arr::get($item, 'snippet.channelId', Arr::get($detail, 'channelId', '')),
             'channelTitle' => (string) Arr::get($item, 'snippet.channelTitle', Arr::get($detail, 'channelTitle', '')),
             'publishedAt' => (string) Arr::get($item, 'snippet.publishedAt', Arr::get($detail, 'publishedAt', '')),
             'thumbnail' => (string) Arr::get($item, 'snippet.thumbnails.medium.url', Arr::get($detail, 'thumbnail', '')),
-            'url' => $this->videoUrl($videoId),
+            'duration' => (string) Arr::get($detail, 'duration', ''),
+            'views' => (int) Arr::get($detail, 'views', 0),
+            'likes' => (int) Arr::get($detail, 'likes', 0),
+            'comments' => (int) Arr::get($detail, 'comments', 0),
+            'url' => $this->searchItemUrl($id, $type),
         ];
+    }
+
+    private function searchItemId(array $item, string $type): string
+    {
+        return (string) match ($type) {
+            'channel' => Arr::get($item, 'id.channelId', ''),
+            'playlist' => Arr::get($item, 'id.playlistId', ''),
+            default => Arr::get($item, 'id.videoId', ''),
+        };
+    }
+
+    private function searchItemUrl(string $id, string $type): string
+    {
+        if ($id === '') {
+            return '';
+        }
+
+        return match ($type) {
+            'channel' => "https://www.youtube.com/channel/{$id}",
+            'playlist' => "https://www.youtube.com/playlist?list={$id}",
+            default => $this->videoUrl($id),
+        };
     }
 
     private function presentVideo(array $item): array
@@ -169,6 +200,7 @@ class YouTubeDataApiClient implements YouTubeGatewayInterface
 
         return [
             'id' => $videoId,
+            'type' => 'video',
             'title' => (string) Arr::get($item, 'snippet.title', ''),
             'description' => (string) Arr::get($item, 'snippet.description', ''),
             'channelId' => (string) Arr::get($item, 'snippet.channelId', ''),

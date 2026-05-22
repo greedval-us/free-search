@@ -311,11 +311,24 @@
       "filters": "Фильтры и параметры поиска видео",
       "resultTitle": "Видео",
       "shown": "Показано",
-      "hint": "Поиск видео через YouTube Data API v3.",
+      "hint": "Поиск публичных видео, каналов и плейлистов через YouTube Data API v3. Доступны только открытые данные, которые возвращает официальный API.",
       "query": "Запрос",
-      "channelId": "Channel ID",
+      "type": "Что искать",
+      "channelFilter": "Фильтр по каналу",
+      "channelPlaceholder": "опционально: UC...",
       "order": "Сортировка",
       "limit": "Лимит",
+      "publishedAfter": "Опубликовано с",
+      "publishedBefore": "Опубликовано по",
+      "regionCode": "Регион",
+      "relevanceLanguage": "Язык",
+      "safeSearch": "Safe search",
+      "videoDuration": "Длительность",
+      "videoDefinition": "Качество",
+      "videoCaption": "Субтитры",
+      "advancedAriaShow": "Показать расширенные фильтры",
+      "advancedAriaHide": "Скрыть расширенные фильтры",
+      "publicDataHint": "Публичный поиск API v3: видео, каналы и плейлисты по ключевым словам; опционально можно ограничить выдачу каналом, датами, регионом, языком и video-фильтрами.",
       "placeholder": "например: osint tools",
       "submit": "Найти"
     },
@@ -350,11 +363,38 @@
       "replies": "Ответы"
     },
     "options": {
+      "searchType": {
+        "video": "Видео",
+        "channel": "Каналы",
+        "playlist": "Плейлисты"
+      },
       "searchOrder": {
-        "relevance": "Релевантность",
-        "date": "Дата",
-        "viewCount": "Просмотры",
-        "rating": "Рейтинг"
+        "relevance": "По релевантности",
+        "date": "Сначала новые",
+        "viewCount": "По просмотрам",
+        "rating": "По рейтингу",
+        "title": "По названию"
+      },
+      "safeSearch": {
+        "moderate": "Обычный",
+        "none": "Без фильтра",
+        "strict": "Строгий"
+      },
+      "videoDuration": {
+        "any": "Любая",
+        "short": "До 4 минут",
+        "medium": "4-20 минут",
+        "long": "Более 20 минут"
+      },
+      "videoDefinition": {
+        "any": "Любое",
+        "high": "HD",
+        "standard": "SD"
+      },
+      "videoCaption": {
+        "any": "Любые",
+        "closedCaption": "С субтитрами",
+        "none": "Без субтитров"
       },
       "mode": {
         "video": "Видео",

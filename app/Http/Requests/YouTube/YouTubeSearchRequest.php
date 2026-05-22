@@ -19,14 +19,18 @@ class YouTubeSearchRequest extends FormRequest
     {
         return [
             'q' => ['required', 'string', 'max:255'],
+            'type' => ['nullable', Rule::in(['video', 'channel', 'playlist'])],
             'channelId' => ['nullable', 'string', 'max:255'],
-            'order' => ['nullable', Rule::in(['date', 'rating', 'relevance', 'title', 'videoCount', 'viewCount'])],
+            'order' => ['nullable', Rule::in(['relevance', 'date', 'viewCount', 'rating', 'title', 'videoCount'])],
             'publishedAfter' => ['nullable', 'date_format:Y-m-d'],
             'publishedBefore' => ['nullable', 'date_format:Y-m-d'],
             'regionCode' => ['nullable', 'string', 'size:2'],
             'relevanceLanguage' => ['nullable', 'string', 'max:12'],
             'safeSearch' => ['nullable', Rule::in(['moderate', 'none', 'strict'])],
-            'limit' => ['nullable', 'integer', 'min:1', 'max:50'],
+            'videoDuration' => ['nullable', Rule::in(['any', 'short', 'medium', 'long'])],
+            'videoDefinition' => ['nullable', Rule::in(['any', 'high', 'standard'])],
+            'videoCaption' => ['nullable', Rule::in(['any', 'closedCaption', 'none'])],
+            'limit' => ['nullable', 'integer', 'min:1', 'max:10'],
             'pageToken' => ['nullable', 'string', 'max:255'],
         ];
     }
@@ -49,13 +53,17 @@ class YouTubeSearchRequest extends FormRequest
 
         return new YouTubeSearchQueryDTO(
             query: trim((string) $validated['q']),
-            maxResults: (int) ($validated['limit'] ?? 12),
+            type: (string) ($validated['type'] ?? 'video'),
+            maxResults: min(10, max(1, (int) ($validated['limit'] ?? 10))),
             order: (string) ($validated['order'] ?? 'relevance'),
             safeSearch: (string) ($validated['safeSearch'] ?? 'moderate'),
             channelId: trim((string) ($validated['channelId'] ?? '')),
             regionCode: trim((string) ($validated['regionCode'] ?? '')),
             relevanceLanguage: trim((string) ($validated['relevanceLanguage'] ?? '')),
             pageToken: trim((string) ($validated['pageToken'] ?? '')),
+            videoDuration: (string) ($validated['videoDuration'] ?? 'any'),
+            videoDefinition: (string) ($validated['videoDefinition'] ?? 'any'),
+            videoCaption: (string) ($validated['videoCaption'] ?? 'any'),
             publishedAfter: ! empty($validated['publishedAfter'])
                 ? Carbon::createFromFormat('Y-m-d', $validated['publishedAfter'])->startOfDay()->toRfc3339String()
                 : null,

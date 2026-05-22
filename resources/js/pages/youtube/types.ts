@@ -2,6 +2,7 @@
 
 export type YouTubeVideo = {
   id: string
+  type: 'video' | 'channel' | 'playlist'
   title: string
   description: string
   channelId: string
