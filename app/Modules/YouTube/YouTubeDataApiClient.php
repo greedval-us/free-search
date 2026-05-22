@@ -3,6 +3,7 @@
 namespace App\Modules\YouTube;
 
 use App\Modules\YouTube\Core\Contracts\YouTubeGatewayInterface;
+use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Http\Client\PendingRequest;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Http;
@@ -55,11 +56,15 @@ class YouTubeDataApiClient implements YouTubeGatewayInterface
             throw new RuntimeException('YOUTUBE_DATA_API_KEY is not configured.');
         }
 
-        $response = $this->http()
-            ->get($endpoint, [
-                ...$query,
-                'key' => $key,
-            ]);
+        try {
+            $response = $this->http()
+                ->get($endpoint, [
+                    ...$query,
+                    'key' => $key,
+                ]);
+        } catch (ConnectionException $exception) {
+            throw new RuntimeException('Could not connect to YouTube API. Check internet connection and API key restrictions.', 503, previous: $exception);
+        }
 
         if ($response->failed()) {
             $message = (string) Arr::get($response->json(), 'error.message', 'YouTube API request failed.');
@@ -75,6 +80,6 @@ class YouTubeDataApiClient implements YouTubeGatewayInterface
         return Http::baseUrl(rtrim((string) config('services.youtube.base_url'), '/'))
             ->acceptJson()
             ->timeout(20)
-            ->retry(2, 250);
+            ->retry(2, 250, throw: false);
     }
 }

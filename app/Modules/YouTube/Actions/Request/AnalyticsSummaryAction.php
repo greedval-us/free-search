@@ -8,7 +8,9 @@ use App\Modules\YouTube\Core\Contracts\YouTubeGatewayInterface;
 use App\Modules\YouTube\DTO\Request\YouTubeAnalyticsLookupDTO;
 use App\Modules\YouTube\Presenters\YouTubeChannelPresenter;
 use App\Modules\YouTube\Presenters\YouTubeVideoPresenter;
+use App\Modules\YouTube\Support\YouTubeChannelInputNormalizer;
 use Illuminate\Support\Arr;
+use RuntimeException;
 
 class AnalyticsSummaryAction extends AbstractYouTubeAction
 {
@@ -17,6 +19,7 @@ class AnalyticsSummaryAction extends AbstractYouTubeAction
         private readonly YouTubeAnalyticsReportBuilder $reportBuilder,
         private readonly YouTubeVideoPresenter $videoPresenter,
         private readonly YouTubeChannelPresenter $channelPresenter,
+        private readonly YouTubeChannelInputNormalizer $channelInputNormalizer,
     ) {
         parent::__construct($gateway);
     }
@@ -64,14 +67,15 @@ class AnalyticsSummaryAction extends AbstractYouTubeAction
      */
     private function channelSummary(string $channelId, int $limit): array
     {
-        $videos = array_values($this->latestChannelVideos($channelId, min(50, max(1, $limit))));
+        $resolvedChannelId = $this->resolveChannelId($channelId);
+        $videos = array_values($this->latestChannelVideos($resolvedChannelId, min(50, max(1, $limit))));
 
         return $this->summaryPayload(
             mode: 'channel',
             videos: $videos,
             video: null,
-            channel: $this->channelsById([$channelId])[$channelId] ?? null,
-            channelId: $channelId,
+            channel: $this->channelsById([$resolvedChannelId])[$resolvedChannelId] ?? null,
+            channelId: $resolvedChannelId,
         );
     }
 
@@ -141,6 +145,53 @@ class AnalyticsSummaryAction extends AbstractYouTubeAction
             ->all();
 
         return $this->videosById($videoIds);
+    }
+
+    private function resolveChannelId(string $channelInput): string
+    {
+        $channelInput = trim($channelInput);
+
+        if ($this->channelInputNormalizer->looksLikeChannelId($channelInput)) {
+            return $channelInput;
+        }
+
+        $byHandle = $this->firstChannelId([
+            'forHandle' => $this->channelInputNormalizer->normalizeHandle($channelInput),
+        ]);
+
+        if ($byHandle !== null) {
+            return $byHandle;
+        }
+
+        $byUsername = $this->firstChannelId([
+            'forUsername' => $this->channelInputNormalizer->normalizeUsername($channelInput),
+        ]);
+
+        if ($byUsername !== null) {
+            return $byUsername;
+        }
+
+        throw new RuntimeException('YouTube channel not found. Use a channel ID like UC..., @handle, or legacy username.', 404);
+    }
+
+    /**
+     * @param  array<string, mixed>  $params
+     */
+    private function firstChannelId(array $params): ?string
+    {
+        if (trim((string) reset($params)) === '') {
+            return null;
+        }
+
+        $payload = $this->gateway->channels([
+            ...$params,
+            'part' => 'id',
+            'maxResults' => 1,
+        ]);
+
+        $id = Arr::get($payload, 'items.0.id');
+
+        return is_string($id) && $id !== '' ? $id : null;
     }
 
     /**

@@ -127,7 +127,7 @@ const videoMetric = (video: YouTubeVideo, key: string) => {
         </label>
         <label class="block min-w-0 xl:col-span-4">
           <span class="mb-1 block truncate text-xs font-medium text-muted-foreground">{{ t('youtube.analytics.channelId') }}</span>
-          <input v-model="form.channelId" type="text" class="h-10 w-full rounded-md border border-input bg-background px-3 text-sm" :disabled="form.mode !== 'channel'" />
+          <input v-model="form.channelId" type="text" class="h-10 w-full rounded-md border border-input bg-background px-3 text-sm" :placeholder="t('youtube.analytics.channelPlaceholder')" :disabled="form.mode !== 'channel'" />
         </label>
         <label class="block min-w-0 xl:col-span-2">
           <span class="mb-1 block truncate text-xs font-medium text-muted-foreground">{{ t('youtube.analytics.limit') }}</span>
