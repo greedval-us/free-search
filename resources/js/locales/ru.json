@@ -315,7 +315,7 @@
       "query": "Запрос",
       "type": "Что искать",
       "channelFilter": "Фильтр по каналу",
-      "channelPlaceholder": "опционально: UC...",
+      "channelPlaceholder": "опционально: UC..., @handle или username",
       "order": "Сортировка",
       "limit": "Лимит",
       "publishedAfter": "Опубликовано с",

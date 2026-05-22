@@ -7,6 +7,7 @@ use App\Modules\YouTube\Core\Contracts\YouTubeGatewayInterface;
 use App\Modules\YouTube\DTO\Request\YouTubeSearchQueryDTO;
 use App\Modules\YouTube\Presenters\YouTubeSearchItemPresenter;
 use App\Modules\YouTube\Presenters\YouTubeVideoPresenter;
+use App\Modules\YouTube\Support\YouTubeChannelResolver;
 use Illuminate\Support\Arr;
 
 class SearchVideosAction extends AbstractYouTubeAction
@@ -15,6 +16,7 @@ class SearchVideosAction extends AbstractYouTubeAction
         YouTubeGatewayInterface $gateway,
         private readonly YouTubeSearchItemPresenter $searchItemPresenter,
         private readonly YouTubeVideoPresenter $videoPresenter,
+        private readonly YouTubeChannelResolver $channelResolver,
     ) {
         parent::__construct($gateway);
     }
@@ -25,6 +27,7 @@ class SearchVideosAction extends AbstractYouTubeAction
     public function handle(YouTubeSearchQueryDTO $query): array
     {
         $params = $query->toArray();
+        $params = $this->resolveChannelFilter($params);
         $type = (string) ($params['type'] ?? 'video');
         $payload = $this->gateway->search($params);
         $detailsById = $type === 'video'
@@ -43,6 +46,23 @@ class SearchVideosAction extends AbstractYouTubeAction
                 'perPage' => (int) Arr::get($payload, 'pageInfo.resultsPerPage', 0),
             ],
         ];
+    }
+
+    /**
+     * @param  array<string, mixed>  $params
+     * @return array<string, mixed>
+     */
+    private function resolveChannelFilter(array $params): array
+    {
+        $channelInput = trim((string) ($params['channelId'] ?? ''));
+
+        if ($channelInput === '') {
+            return $params;
+        }
+
+        $params['channelId'] = $this->channelResolver->resolve($channelInput);
+
+        return $params;
     }
 
     /**

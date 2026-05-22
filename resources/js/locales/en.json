@@ -315,7 +315,7 @@
       "query": "Query",
       "type": "Search type",
       "channelFilter": "Channel filter",
-      "channelPlaceholder": "optional: UC...",
+      "channelPlaceholder": "optional: UC..., @handle, or username",
       "order": "Order",
       "limit": "Limit",
       "publishedAfter": "Published after",

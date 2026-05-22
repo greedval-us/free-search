@@ -9,6 +9,7 @@ use App\Modules\YouTube\DTO\Request\YouTubeAnalyticsLookupDTO;
 use App\Modules\YouTube\Presenters\YouTubeChannelPresenter;
 use App\Modules\YouTube\Presenters\YouTubeVideoPresenter;
 use App\Modules\YouTube\Support\YouTubeChannelInputNormalizer;
+use App\Modules\YouTube\Support\YouTubeChannelResolver;
 use App\Modules\YouTube\Support\YouTubeDurationFormatter;
 use App\Modules\YouTube\Support\YouTubeUrlBuilder;
 use Tests\TestCase;
@@ -23,7 +24,7 @@ class YouTubeAnalyticsSummaryActionTest extends TestCase
             new YouTubeAnalyticsReportBuilder(),
             new YouTubeVideoPresenter(new YouTubeDurationFormatter(), new YouTubeUrlBuilder()),
             new YouTubeChannelPresenter(new YouTubeUrlBuilder()),
-            new YouTubeChannelInputNormalizer(),
+            new YouTubeChannelResolver($gateway, new YouTubeChannelInputNormalizer()),
         );
 
         $summary = $action->handle(new YouTubeAnalyticsLookupDTO('channel', '', '@yoj996', 3));
