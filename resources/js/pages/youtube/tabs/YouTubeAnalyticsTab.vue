@@ -42,8 +42,8 @@ const runAnalytics = async () => {
   const response = await apiRequest<YouTubeAnalyticsPayload>('/youtube/analytics/summary', {
     query: {
       mode: form.value.mode,
-      videoId: form.value.videoId,
-      channelId: form.value.channelId,
+      videoId: form.value.mode === 'video' ? form.value.videoId : '',
+      channelId: form.value.mode === 'channel' ? form.value.channelId : '',
       limit: form.value.limit,
     },
   })
@@ -121,13 +121,13 @@ const videoMetric = (video: YouTubeVideo, key: string) => {
             <option value="video">{{ t('youtube.options.mode.video') }}</option>
           </select>
         </label>
-        <label class="block min-w-0 xl:col-span-4">
+        <label v-if="form.mode === 'video'" class="block min-w-0 xl:col-span-8">
           <span class="mb-1 block truncate text-xs font-medium text-muted-foreground">{{ t('youtube.analytics.videoId') }}</span>
-          <input v-model="form.videoId" type="text" class="h-10 w-full rounded-md border border-input bg-background px-3 text-sm" :disabled="form.mode !== 'video'" />
+          <input v-model="form.videoId" type="text" class="h-10 w-full rounded-md border border-input bg-background px-3 text-sm" />
         </label>
-        <label class="block min-w-0 xl:col-span-4">
+        <label v-else class="block min-w-0 xl:col-span-8">
           <span class="mb-1 block truncate text-xs font-medium text-muted-foreground">{{ t('youtube.analytics.channelId') }}</span>
-          <input v-model="form.channelId" type="text" class="h-10 w-full rounded-md border border-input bg-background px-3 text-sm" :placeholder="t('youtube.analytics.channelPlaceholder')" :disabled="form.mode !== 'channel'" />
+          <input v-model="form.channelId" type="text" class="h-10 w-full rounded-md border border-input bg-background px-3 text-sm" :placeholder="t('youtube.analytics.channelPlaceholder')" />
         </label>
         <label class="block min-w-0 xl:col-span-2">
           <span class="mb-1 block truncate text-xs font-medium text-muted-foreground">{{ t('youtube.analytics.limit') }}</span>
