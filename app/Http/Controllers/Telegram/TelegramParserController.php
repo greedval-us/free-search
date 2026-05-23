@@ -2,12 +2,12 @@
 
 namespace App\Http\Controllers\Telegram;
 
+use App\Http\Controllers\Concerns\HandlesArrayPayloadResponses;
 use App\Http\Controllers\Concerns\HandlesParserDownloads;
 use App\Http\Requests\Telegram\TelegramParserStartRequest;
 use App\Modules\Export\Excel\Contracts\ExcelWorkbookServiceInterface;
 use App\Modules\Telegram\Parser\Contracts\TelegramParserApplicationServiceInterface;
 use App\Modules\Telegram\Parser\Contracts\TelegramParserExportBuilderInterface;
-use App\Support\Reports\Contracts\ReportFilenamePolicyInterface;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
@@ -15,42 +15,39 @@ use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class TelegramParserController extends BaseTelegramController
 {
+    use HandlesArrayPayloadResponses;
     use HandlesParserDownloads;
 
     public function __construct(
         private readonly TelegramParserApplicationServiceInterface $parserApplicationService,
         private readonly TelegramParserExportBuilderInterface $exportBuilder,
         private readonly ExcelWorkbookServiceInterface $excelWorkbookService,
-        private readonly ReportFilenamePolicyInterface $reportFilenamePolicy,
     ) {
     }
 
     public function start(TelegramParserStartRequest $request): JsonResponse
     {
-        return $this->jsonPayload($this->parserApplicationService->start($request->toStartDTO())->toArray());
+        return $this->jsonPayloadFrom($this->parserApplicationService->start($request->toStartDTO()));
     }
 
     public function status(Request $request, string $runId): JsonResponse
     {
-        $run = $this->parserApplicationService->status($this->userId($request), $runId);
-        abort_unless($run !== null, 404);
-
-        return $this->jsonPayload($run->toArray());
+        return $this->jsonPayloadFromOrNotFound(
+            $this->parserApplicationService->status($this->userId($request), $runId)
+        );
     }
 
     public function stop(Request $request, string $runId): JsonResponse
     {
-        $run = $this->parserApplicationService->stop($this->userId($request), $runId);
-        abort_unless($run !== null, 404);
-
-        return $this->jsonPayload($run->toArray());
+        return $this->jsonPayloadFromOrNotFound(
+            $this->parserApplicationService->stop($this->userId($request), $runId)
+        );
     }
 
     public function downloadExcel(Request $request, string $runId): BinaryFileResponse
     {
         $payload = $this->parserApplicationService->getDownloadPayload($this->userId($request), $runId);
         $filename = $this->buildExportFilename(
-            $this->reportFilenamePolicy,
             'telegram-parser',
             (string) ($payload['chatUsername'] ?? 'chat'),
             'xlsx'
@@ -63,7 +60,6 @@ class TelegramParserController extends BaseTelegramController
     {
         $payload = $this->parserApplicationService->getDownloadPayload($this->userId($request), $runId);
         $filename = $this->buildExportFilename(
-            $this->reportFilenamePolicy,
             'telegram-parser',
             (string) ($payload['chatUsername'] ?? 'chat'),
             'json'

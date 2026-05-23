@@ -25,16 +25,14 @@ trait HandlesParserDownloads
     }
 
     protected function buildExportFilename(
-        ReportFilenamePolicyInterface $policy,
         string $prefix,
         string $target,
         string $extension
     ): string {
-        return $policy->buildWithExtension(
+        return app(ReportFilenamePolicyInterface::class)->buildWithExtension(
             prefix: $prefix,
             target: $target,
             extension: $extension,
         );
     }
 }
-

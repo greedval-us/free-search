@@ -2,7 +2,9 @@
 
 namespace App\Modules\Telegram\DTO\Result;
 
-class ParserRunStatusDTO
+use App\Support\Contracts\ArrayPayloadable;
+
+class ParserRunStatusDTO implements ArrayPayloadable
 {
     /**
      * @param array<string, mixed> $payload

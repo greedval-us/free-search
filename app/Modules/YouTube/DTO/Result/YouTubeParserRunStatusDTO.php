@@ -2,7 +2,9 @@
 
 namespace App\Modules\YouTube\DTO\Result;
 
-class YouTubeParserRunStatusDTO
+use App\Support\Contracts\ArrayPayloadable;
+
+class YouTubeParserRunStatusDTO implements ArrayPayloadable
 {
     /**
      * @param array<string, mixed> $payload
@@ -20,4 +22,3 @@ class YouTubeParserRunStatusDTO
         return $this->payload;
     }
 }
-
