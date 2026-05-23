@@ -6,14 +6,15 @@ use App\Modules\Shifr\Application\Contracts\ShifrClassicCipherServiceInterface;
 use App\Modules\Shifr\Application\Contracts\ShifrToolkitServiceInterface;
 use App\Modules\Shifr\Application\Services\ShifrClassicCipherService;
 use App\Modules\Shifr\Application\Services\ShifrToolkitService;
-use Illuminate\Support\ServiceProvider;
+use App\Support\Providers\BindingsServiceProvider;
 
-final class ShifrServiceProvider extends ServiceProvider
+final class ShifrServiceProvider extends BindingsServiceProvider
 {
-    public function register(): void
+    protected function bindings(): array
     {
-        $this->app->bind(ShifrClassicCipherServiceInterface::class, ShifrClassicCipherService::class);
-        $this->app->bind(ShifrToolkitServiceInterface::class, ShifrToolkitService::class);
+        return [
+            ShifrClassicCipherServiceInterface::class => ShifrClassicCipherService::class,
+            ShifrToolkitServiceInterface::class => ShifrToolkitService::class,
+        ];
     }
 }
-

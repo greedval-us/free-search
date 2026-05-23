@@ -4,13 +4,14 @@ namespace App\Modules\Username\Providers;
 
 use App\Modules\Username\Domain\Contracts\UsernameSourceCheckerInterface;
 use App\Modules\Username\Infrastructure\Http\UsernameSourceHttpChecker;
-use Illuminate\Support\ServiceProvider;
+use App\Support\Providers\BindingsServiceProvider;
 
-final class UsernameServiceProvider extends ServiceProvider
+final class UsernameServiceProvider extends BindingsServiceProvider
 {
-    public function register(): void
+    protected function bindings(): array
     {
-        $this->app->bind(UsernameSourceCheckerInterface::class, UsernameSourceHttpChecker::class);
+        return [
+            UsernameSourceCheckerInterface::class => UsernameSourceHttpChecker::class,
+        ];
     }
 }
-

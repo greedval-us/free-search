@@ -4,13 +4,14 @@ namespace App\Modules\NewsMediaIntel\Providers;
 
 use App\Modules\NewsMediaIntel\Application\Contracts\NewsFeedFetcherInterface;
 use App\Modules\NewsMediaIntel\Infrastructure\Providers\RssNewsFeedFetcher;
-use Illuminate\Support\ServiceProvider;
+use App\Support\Providers\BindingsServiceProvider;
 
-final class NewsMediaIntelServiceProvider extends ServiceProvider
+final class NewsMediaIntelServiceProvider extends BindingsServiceProvider
 {
-    public function register(): void
+    protected function bindings(): array
     {
-        $this->app->bind(NewsFeedFetcherInterface::class, RssNewsFeedFetcher::class);
+        return [
+            NewsFeedFetcherInterface::class => RssNewsFeedFetcher::class,
+        ];
     }
 }
-

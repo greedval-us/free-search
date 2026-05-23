@@ -8,15 +8,16 @@ use App\Modules\EmailIntel\Application\Contracts\EmailTxtRecordLookupInterface;
 use App\Modules\EmailIntel\Infrastructure\Clients\EmailDnsResolver;
 use App\Modules\EmailIntel\Infrastructure\Clients\EmailDomainWebSnapshot;
 use App\Modules\EmailIntel\Infrastructure\Clients\EmailTxtRecordLookup;
-use Illuminate\Support\ServiceProvider;
+use App\Support\Providers\BindingsServiceProvider;
 
-final class EmailIntelServiceProvider extends ServiceProvider
+final class EmailIntelServiceProvider extends BindingsServiceProvider
 {
-    public function register(): void
+    protected function bindings(): array
     {
-        $this->app->bind(EmailDnsResolverInterface::class, EmailDnsResolver::class);
-        $this->app->bind(EmailDomainWebSnapshotInterface::class, EmailDomainWebSnapshot::class);
-        $this->app->bind(EmailTxtRecordLookupInterface::class, EmailTxtRecordLookup::class);
+        return [
+            EmailDnsResolverInterface::class => EmailDnsResolver::class,
+            EmailDomainWebSnapshotInterface::class => EmailDomainWebSnapshot::class,
+            EmailTxtRecordLookupInterface::class => EmailTxtRecordLookup::class,
+        ];
     }
 }
-

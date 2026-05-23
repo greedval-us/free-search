@@ -12,17 +12,18 @@ use App\Modules\DomainInfraIntel\Infrastructure\Clients\CertificateTransparencyC
 use App\Modules\DomainInfraIntel\Infrastructure\Clients\DomainIpResolver;
 use App\Modules\DomainInfraIntel\Infrastructure\Clients\DomainRdapClient;
 use App\Modules\DomainInfraIntel\Infrastructure\Clients\NeighborDomainResolver;
-use Illuminate\Support\ServiceProvider;
+use App\Support\Providers\BindingsServiceProvider;
 
-final class DomainInfraIntelServiceProvider extends ServiceProvider
+final class DomainInfraIntelServiceProvider extends BindingsServiceProvider
 {
-    public function register(): void
+    protected function bindings(): array
     {
-        $this->app->bind(DomainIpResolverInterface::class, DomainIpResolver::class);
-        $this->app->bind(DomainRdapClientInterface::class, DomainRdapClient::class);
-        $this->app->bind(CertificateTransparencyClientInterface::class, CertificateTransparencyClient::class);
-        $this->app->bind(AsnLookupClientInterface::class, AsnLookupClient::class);
-        $this->app->bind(NeighborDomainResolverInterface::class, NeighborDomainResolver::class);
+        return [
+            DomainIpResolverInterface::class => DomainIpResolver::class,
+            DomainRdapClientInterface::class => DomainRdapClient::class,
+            CertificateTransparencyClientInterface::class => CertificateTransparencyClient::class,
+            AsnLookupClientInterface::class => AsnLookupClient::class,
+            NeighborDomainResolverInterface::class => NeighborDomainResolver::class,
+        ];
     }
 }
-

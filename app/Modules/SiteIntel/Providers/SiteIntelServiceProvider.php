@@ -14,18 +14,19 @@ use App\Modules\SiteIntel\Infrastructure\Clients\SeoAuditHttpFetcher;
 use App\Modules\SiteIntel\Infrastructure\Clients\SiteHealthDnsResolver;
 use App\Modules\SiteIntel\Infrastructure\Clients\SiteHealthHttpInspector;
 use App\Modules\SiteIntel\Infrastructure\Clients\SiteHealthSslInspector;
-use Illuminate\Support\ServiceProvider;
+use App\Support\Providers\BindingsServiceProvider;
 
-final class SiteIntelServiceProvider extends ServiceProvider
+final class SiteIntelServiceProvider extends BindingsServiceProvider
 {
-    public function register(): void
+    protected function bindings(): array
     {
-        $this->app->bind(SiteHealthDnsResolverInterface::class, SiteHealthDnsResolver::class);
-        $this->app->bind(SiteHealthHttpInspectorInterface::class, SiteHealthHttpInspector::class);
-        $this->app->bind(SiteHealthSslInspectorInterface::class, SiteHealthSslInspector::class);
-        $this->app->bind(SeoAuditHttpFetcherInterface::class, SeoAuditHttpFetcher::class);
-        $this->app->bind(DomainLiteDnsResolverInterface::class, DomainLiteDnsResolver::class);
-        $this->app->bind(DomainLiteWhoisClientInterface::class, DomainLiteWhoisClient::class);
+        return [
+            SiteHealthDnsResolverInterface::class => SiteHealthDnsResolver::class,
+            SiteHealthHttpInspectorInterface::class => SiteHealthHttpInspector::class,
+            SiteHealthSslInspectorInterface::class => SiteHealthSslInspector::class,
+            SeoAuditHttpFetcherInterface::class => SeoAuditHttpFetcher::class,
+            DomainLiteDnsResolverInterface::class => DomainLiteDnsResolver::class,
+            DomainLiteWhoisClientInterface::class => DomainLiteWhoisClient::class,
+        ];
     }
 }
-

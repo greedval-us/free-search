@@ -10,16 +10,17 @@ use App\Modules\YouTube\Parser\YouTubeParserApplicationService;
 use App\Modules\YouTube\Search\Contracts\YouTubeSearchApplicationServiceInterface;
 use App\Modules\YouTube\Search\YouTubeSearchApplicationService;
 use App\Modules\YouTube\YouTubeDataApiClient;
-use Illuminate\Support\ServiceProvider;
+use App\Support\Providers\BindingsServiceProvider;
 
-final class YouTubeServiceProvider extends ServiceProvider
+final class YouTubeServiceProvider extends BindingsServiceProvider
 {
-    public function register(): void
+    protected function bindings(): array
     {
-        $this->app->bind(YouTubeGatewayInterface::class, YouTubeDataApiClient::class);
-        $this->app->bind(YouTubeSearchApplicationServiceInterface::class, YouTubeSearchApplicationService::class);
-        $this->app->bind(YouTubeParserApplicationServiceInterface::class, YouTubeParserApplicationService::class);
-        $this->app->bind(YouTubeAnalyticsApplicationServiceInterface::class, YouTubeAnalyticsApplicationService::class);
+        return [
+            YouTubeGatewayInterface::class => YouTubeDataApiClient::class,
+            YouTubeSearchApplicationServiceInterface::class => YouTubeSearchApplicationService::class,
+            YouTubeParserApplicationServiceInterface::class => YouTubeParserApplicationService::class,
+            YouTubeAnalyticsApplicationServiceInterface::class => YouTubeAnalyticsApplicationService::class,
+        ];
     }
 }
-

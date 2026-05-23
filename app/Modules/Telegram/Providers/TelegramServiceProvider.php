@@ -10,16 +10,17 @@ use App\Modules\Telegram\Parser\TelegramParserApplicationService;
 use App\Modules\Telegram\Search\Contracts\TelegramSearchApplicationServiceInterface;
 use App\Modules\Telegram\Search\TelegramSearchApplicationService;
 use App\Modules\Telegram\TelegramService;
-use Illuminate\Support\ServiceProvider;
+use App\Support\Providers\BindingsServiceProvider;
 
-final class TelegramServiceProvider extends ServiceProvider
+final class TelegramServiceProvider extends BindingsServiceProvider
 {
-    public function register(): void
+    protected function bindings(): array
     {
-        $this->app->bind(TelegramGatewayInterface::class, TelegramService::class);
-        $this->app->bind(TelegramSearchApplicationServiceInterface::class, TelegramSearchApplicationService::class);
-        $this->app->bind(TelegramParserApplicationServiceInterface::class, TelegramParserApplicationService::class);
-        $this->app->bind(TelegramAnalyticsApplicationServiceInterface::class, TelegramAnalyticsApplicationService::class);
+        return [
+            TelegramGatewayInterface::class => TelegramService::class,
+            TelegramSearchApplicationServiceInterface::class => TelegramSearchApplicationService::class,
+            TelegramParserApplicationServiceInterface::class => TelegramParserApplicationService::class,
+            TelegramAnalyticsApplicationServiceInterface::class => TelegramAnalyticsApplicationService::class,
+        ];
     }
 }
-

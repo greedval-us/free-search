@@ -4,13 +4,14 @@ namespace App\Modules\Fio\Providers;
 
 use App\Modules\Fio\Domain\Contracts\FioPublicSearchProviderInterface;
 use App\Modules\Fio\Infrastructure\Providers\FioMultiSourceSearchProvider;
-use Illuminate\Support\ServiceProvider;
+use App\Support\Providers\BindingsServiceProvider;
 
-final class FioServiceProvider extends ServiceProvider
+final class FioServiceProvider extends BindingsServiceProvider
 {
-    public function register(): void
+    protected function bindings(): array
     {
-        $this->app->bind(FioPublicSearchProviderInterface::class, FioMultiSourceSearchProvider::class);
+        return [
+            FioPublicSearchProviderInterface::class => FioMultiSourceSearchProvider::class,
+        ];
     }
 }
-

@@ -6,14 +6,15 @@ use App\Modules\DocumentIntel\Application\Contracts\DocumentMetadataExtractorInt
 use App\Modules\DocumentIntel\Application\Contracts\DocumentUrlCollectorInterface;
 use App\Modules\DocumentIntel\Infrastructure\Clients\DocumentMetadataExtractor;
 use App\Modules\DocumentIntel\Infrastructure\Clients\DocumentUrlCollector;
-use Illuminate\Support\ServiceProvider;
+use App\Support\Providers\BindingsServiceProvider;
 
-final class DocumentIntelServiceProvider extends ServiceProvider
+final class DocumentIntelServiceProvider extends BindingsServiceProvider
 {
-    public function register(): void
+    protected function bindings(): array
     {
-        $this->app->bind(DocumentUrlCollectorInterface::class, DocumentUrlCollector::class);
-        $this->app->bind(DocumentMetadataExtractorInterface::class, DocumentMetadataExtractor::class);
+        return [
+            DocumentUrlCollectorInterface::class => DocumentUrlCollector::class,
+            DocumentMetadataExtractorInterface::class => DocumentMetadataExtractor::class,
+        ];
     }
 }
-
