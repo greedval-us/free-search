@@ -17,6 +17,10 @@ class RequestQueryPreviewResolver
         'domain',
         'target',
         'url',
+        'videoId',
+        'video_id',
+        'channelId',
+        'channel_id',
         'full_name',
         'keyword',
         'fio',
@@ -40,4 +44,3 @@ class RequestQueryPreviewResolver
         return null;
     }
 }
-
