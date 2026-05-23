@@ -2,15 +2,10 @@
 
 namespace App\Http\Requests\DomainInfraIntel;
 
-use App\Http\Requests\LocalizedFormRequest;
+use App\Http\Requests\AbstractLocalizedRequest;
 
-class DomainInfraIntelLookupRequest extends LocalizedFormRequest
+class DomainInfraIntelLookupRequest extends AbstractLocalizedRequest
 {
-    public function authorize(): bool
-    {
-        return true;
-    }
-
     public function rules(): array
     {
         return [
@@ -23,10 +18,4 @@ class DomainInfraIntelLookupRequest extends LocalizedFormRequest
     {
         return mb_strtolower(trim((string) $this->validated('domain')));
     }
-
-    public function locale(): string
-    {
-        return $this->resolveLocale();
-    }
 }
-

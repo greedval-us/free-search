@@ -4,13 +4,13 @@ namespace App\Http\Controllers\NewsMediaIntel;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\NewsMediaIntel\NewsMediaIntelLookupRequest;
-use App\Modules\NewsMediaIntel\Application\Services\NewsMediaIntelService;
+use App\Modules\NewsMediaIntel\Application\Contracts\NewsMediaIntelServiceInterface;
 use Illuminate\Http\JsonResponse;
 
 final class NewsMediaIntelController extends Controller
 {
     public function __construct(
-        private readonly NewsMediaIntelService $newsMediaIntelService,
+        private readonly NewsMediaIntelServiceInterface $newsMediaIntelService,
     ) {
     }
 
@@ -19,8 +19,7 @@ final class NewsMediaIntelController extends Controller
         $this->applyRequestLocale($request->locale());
 
         return $this->jsonOk([
-            'data' => $this->newsMediaIntelService->monitor($request->searchQuery()),
+            'data' => $this->newsMediaIntelService->monitor($request->searchQuery())->toArray(),
         ]);
     }
 }
-

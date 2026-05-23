@@ -2,18 +2,8 @@
 
 namespace App\Http\Requests\Shifr;
 
-use App\Http\Requests\LocalizedFormRequest;
+use App\Http\Requests\AbstractLocalizedRequest;
 
-abstract class AbstractShifrRequest extends LocalizedFormRequest
+abstract class AbstractShifrRequest extends AbstractLocalizedRequest
 {
-    public function authorize(): bool
-    {
-        return true;
-    }
-
-    public function locale(): string
-    {
-        return $this->resolveLocale();
-    }
 }
-

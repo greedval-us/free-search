@@ -2,15 +2,10 @@
 
 namespace App\Http\Requests\NewsMediaIntel;
 
-use App\Http\Requests\LocalizedFormRequest;
+use App\Http\Requests\AbstractLocalizedRequest;
 
-class NewsMediaIntelLookupRequest extends LocalizedFormRequest
+class NewsMediaIntelLookupRequest extends AbstractLocalizedRequest
 {
-    public function authorize(): bool
-    {
-        return true;
-    }
-
     public function rules(): array
     {
         return [
@@ -23,10 +18,4 @@ class NewsMediaIntelLookupRequest extends LocalizedFormRequest
     {
         return trim((string) $this->validated('query'));
     }
-
-    public function locale(): string
-    {
-        return $this->resolveLocale();
-    }
 }
-

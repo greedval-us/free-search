@@ -2,15 +2,10 @@
 
 namespace App\Http\Requests\Fio;
 
-use App\Http\Requests\LocalizedFormRequest;
+use App\Http\Requests\AbstractLocalizedRequest;
 
-class FioLookupRequest extends LocalizedFormRequest
+class FioLookupRequest extends AbstractLocalizedRequest
 {
-    public function authorize(): bool
-    {
-        return true;
-    }
-
     public function rules(): array
     {
         return [
@@ -26,11 +21,6 @@ class FioLookupRequest extends LocalizedFormRequest
         $value = preg_replace('/\s+/u', ' ', $value);
 
         return is_string($value) ? $value : '';
-    }
-
-    public function locale(): string
-    {
-        return $this->resolveLocale();
     }
 
     public function qualifier(): ?string
