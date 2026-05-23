@@ -5,6 +5,7 @@ namespace App\Http\Controllers\YouTube;
 use App\Http\Controllers\Concerns\HandlesArrayPayloadResponses;
 use App\Http\Controllers\Concerns\HandlesParserDownloads;
 use App\Http\Controllers\Concerns\ResolvesAuthenticatedUserId;
+use App\Http\Controllers\Concerns\ResolvesHttpStatusCodeFromException;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\YouTube\YouTubeParserRequest;
 use App\Http\Requests\YouTube\YouTubeParserStartRequest;
@@ -22,6 +23,7 @@ class YouTubeParserController extends Controller
     use HandlesArrayPayloadResponses;
     use HandlesParserDownloads;
     use ResolvesAuthenticatedUserId;
+    use ResolvesHttpStatusCodeFromException;
 
     public function __construct(
         private readonly YouTubeParserApplicationServiceInterface $parserApplicationService,
@@ -33,9 +35,9 @@ class YouTubeParserController extends Controller
     public function comments(YouTubeParserRequest $request): JsonResponse
     {
         try {
-            return $this->jsonOk(['data' => $this->parserApplicationService->comments($request->toDTO())]);
+            return $this->jsonData($this->parserApplicationService->comments($request->toDTO()));
         } catch (RuntimeException $exception) {
-            return $this->jsonError($exception->getMessage(), $this->statusCode($exception));
+            return $this->jsonError($exception->getMessage(), $this->statusCodeFromException($exception));
         }
     }
 
@@ -80,13 +82,6 @@ class YouTubeParserController extends Controller
         );
 
         return $this->streamJsonDownload($payload, $filename);
-    }
-
-    private function statusCode(RuntimeException $exception): int
-    {
-        $code = $exception->getCode();
-
-        return $code >= 400 && $code < 600 ? $code : 422;
     }
 
 }

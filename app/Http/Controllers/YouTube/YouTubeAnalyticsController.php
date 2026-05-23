@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\YouTube;
 
+use App\Http\Controllers\Concerns\ResolvesHttpStatusCodeFromException;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\YouTube\YouTubeAnalyticsRequest;
 use App\Modules\YouTube\Analytics\Contracts\YouTubeAnalyticsApplicationServiceInterface;
@@ -12,39 +13,37 @@ use RuntimeException;
 
 class YouTubeAnalyticsController extends Controller
 {
+    use ResolvesHttpStatusCodeFromException;
+
     public function __construct(private readonly YouTubeAnalyticsApplicationServiceInterface $service) {}
 
     public function summary(YouTubeAnalyticsRequest $request): JsonResponse
     {
         try {
-            return $this->jsonOk(['data' => $this->service->summary($request->toDTO())]);
+            $query = $request->toDTO();
+
+            return $this->jsonData($this->service->summary($query));
         } catch (RuntimeException $exception) {
-            return $this->jsonError($exception->getMessage(), $this->statusCode($exception));
+            return $this->jsonError($exception->getMessage(), $this->statusCodeFromException($exception));
         }
     }
 
     public function report(YouTubeAnalyticsRequest $request): View|Response
     {
-        $this->applyRequestLocale($request->locale());
+        $query = $request->toDTO();
+        $report = $this->service->summary($query);
+        $target = $query->mode === 'video'
+            ? $query->videoId
+            : $query->channelId;
 
-        $report = $this->service->summary($request->toDTO());
-        $target = $request->toDTO()->mode === 'video'
-            ? $request->toDTO()->videoId
-            : $request->toDTO()->channelId;
-
-        return $this->htmlReportResponse(
+        return $this->localizedHtmlReportResponse(
+            locale: $request->locale(),
             view: 'reports.youtube.analytics',
-            viewData: $this->reportViewData($report),
+            report: $report,
             download: $request->boolean('download'),
             filenamePrefix: 'youtube-analytics',
             filenameTarget: $target !== '' ? $target : 'report',
         );
     }
 
-    private function statusCode(RuntimeException $exception): int
-    {
-        $code = $exception->getCode();
-
-        return $code >= 400 && $code < 600 ? $code : 422;
-    }
 }

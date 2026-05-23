@@ -25,13 +25,12 @@ class UsernameSearchController extends Controller
 
     public function report(UsernameSearchRequest $request): View|Response
     {
-        $this->applyRequestLocale($request->locale());
-
         $result = $this->searchService->search($request->toQueryDTO());
 
-        return $this->htmlReportResponse(
+        return $this->localizedHtmlReportResponse(
+            locale: $request->locale(),
             view: 'reports.username.analytics',
-            viewData: $this->reportViewData($result->toArray()),
+            report: $result->toArray(),
             download: $request->boolean('download'),
             filenamePrefix: 'username-analytics',
             filenameTarget: $request->username(),

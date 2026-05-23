@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Http\Controllers\Concerns\HandlesHtmlReports;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Response;
+use Illuminate\View\View;
 
 abstract class Controller
 {
@@ -25,6 +27,11 @@ abstract class Controller
         return $this->jsonPayload(array_merge(['ok' => true], $payload), $status);
     }
 
+    protected function jsonData(mixed $data, int $status = 200): JsonResponse
+    {
+        return $this->jsonOk(['data' => $data], $status);
+    }
+
     /**
      * @param array<string, mixed> $payload
      */
@@ -39,5 +46,29 @@ abstract class Controller
     protected function applyRequestLocale(string $locale): void
     {
         app()->setLocale($locale);
+    }
+
+    /**
+     * @param array<string, mixed> $report
+     * @param array<string, mixed> $extraViewData
+     */
+    protected function localizedHtmlReportResponse(
+        string $locale,
+        string $view,
+        array $report,
+        array $extraViewData = [],
+        bool $download = false,
+        string $filenamePrefix = 'report',
+        string $filenameTarget = 'report',
+    ): View|Response {
+        $this->applyRequestLocale($locale);
+
+        return $this->htmlReportResponse(
+            view: $view,
+            viewData: $this->reportViewData($report, $extraViewData),
+            download: $download,
+            filenamePrefix: $filenamePrefix,
+            filenameTarget: $filenameTarget,
+        );
     }
 }

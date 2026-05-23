@@ -26,20 +26,17 @@ class EmailIntelController extends Controller
     {
         $this->applyRequestLocale($request->locale());
 
-        return $this->jsonOk([
-            'data' => $this->emailIntelService->lookup($request->email())->toArray(),
-        ]);
+        return $this->jsonData($this->emailIntelService->lookup($request->email())->toArray());
     }
 
     public function report(EmailIntelLookupRequest $request): View|Response
     {
-        $this->applyRequestLocale($request->locale());
-
         $result = $this->emailIntelService->lookup($request->email());
 
-        return $this->htmlReportResponse(
+        return $this->localizedHtmlReportResponse(
+            locale: $request->locale(),
             view: 'reports.email-intel.analytics',
-            viewData: $this->reportViewData($result->toArray()),
+            report: $result->toArray(),
             download: $request->boolean('download'),
             filenamePrefix: 'email-intel',
             filenameTarget: str_replace('@', '-at-', $request->email()),
@@ -50,17 +47,13 @@ class EmailIntelController extends Controller
     {
         $this->applyRequestLocale($request->locale());
 
-        return $this->jsonOk([
-            'data' => $this->bulkIntelService->lookup($request->emails()),
-        ]);
+        return $this->jsonData($this->bulkIntelService->lookup($request->emails()));
     }
 
     public function domainPosture(EmailIntelDomainPostureRequest $request): JsonResponse
     {
         $this->applyRequestLocale($request->locale());
 
-        return $this->jsonOk([
-            'data' => $this->domainMailPostureService->inspect($request->domain()),
-        ]);
+        return $this->jsonData($this->domainMailPostureService->inspect($request->domain()));
     }
 }

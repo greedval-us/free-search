@@ -28,24 +28,24 @@ class TelegramAnalyticsController extends BaseTelegramController
             (string) $request->query('snapshotRole', '')
         );
 
-        return $this->jsonOk(['data' => $data->data]);
+        return $this->jsonData($data->data);
     }
 
     public function report(TelegramAnalyticsRequest $request): View|Response
     {
-        $this->applyRequestLocale($request->locale());
-
         $params = $request->toParamsDTO();
         $range = $this->rangeResolver->resolveRange($request);
         $reportData = $this->analyticsApplicationService->buildReport($params, $range['from'], $range['to']);
         $data = $reportData->report;
         $previousData = $reportData->previousReport;
 
-        return $this->htmlReportResponse(
+        return $this->localizedHtmlReportResponse(
+            locale: $request->locale(),
             view: 'reports.telegram.analytics',
-            viewData: $this->reportViewData($data, [
+            report: $data,
+            extraViewData: [
                 'previousReport' => $previousData,
-            ]),
+            ],
             download: $request->boolean('download'),
             filenamePrefix: 'telegram-analytics',
             filenameTarget: $request->chatUsername(),
