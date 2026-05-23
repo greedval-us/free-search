@@ -11,8 +11,10 @@ use App\Modules\Shifr\Actions\Classic\Rot13TransformAction;
 use App\Modules\Shifr\Actions\Classic\Rot47TransformAction;
 use App\Modules\Shifr\Actions\Classic\Support\ClassicCipherResultFactory;
 use App\Modules\Shifr\DTO\Classic\AtbashRequestDTO;
+use App\Modules\Shifr\DTO\Classic\AtbashResultDTO;
 use App\Modules\Shifr\DTO\Classic\CaesarCipherRequestDTO;
 use App\Modules\Shifr\DTO\Classic\ClassicCipherLookupDTO;
+use App\Modules\Shifr\DTO\Contracts\ShifrResultDataInterface;
 
 final class ShiftMirrorCipherProcessor implements ClassicCipherProcessorInterface
 {
@@ -32,7 +34,7 @@ final class ShiftMirrorCipherProcessor implements ClassicCipherProcessorInterfac
         return in_array($cipher, ['caesar', 'atbash', 'rot13', 'rot47', 'rot5'], true);
     }
 
-    public function process(ClassicCipherLookupDTO $dto): ?array
+    public function process(ClassicCipherLookupDTO $dto): ?ShifrResultDataInterface
     {
         return match ($dto->cipher) {
             'caesar' => $this->resolveCaesar($dto),
@@ -42,7 +44,7 @@ final class ShiftMirrorCipherProcessor implements ClassicCipherProcessorInterfac
         };
     }
 
-    private function resolveCaesar(ClassicCipherLookupDTO $dto): ?array
+    private function resolveCaesar(ClassicCipherLookupDTO $dto): ?ShifrResultDataInterface
     {
         $request = new CaesarCipherRequestDTO([
             'message' => $dto->text,
@@ -50,26 +52,26 @@ final class ShiftMirrorCipherProcessor implements ClassicCipherProcessorInterfac
         ]);
 
         return match ($dto->direction) {
-            'encrypt' => $this->encryptCaesar->execute($request)->toArray(),
-            'decrypt' => $this->decryptCaesar->execute($request)->toArray(),
+            'encrypt' => $this->encryptCaesar->execute($request),
+            'decrypt' => $this->decryptCaesar->execute($request),
             default => null,
         };
     }
 
-    private function resolveAtbash(ClassicCipherLookupDTO $dto): ?array
+    private function resolveAtbash(ClassicCipherLookupDTO $dto): ?ShifrResultDataInterface
     {
         $request = new AtbashRequestDTO([
             'message' => $dto->text,
         ]);
 
         return match ($dto->direction) {
-            'encrypt' => $this->encryptAtbash->execute($request)->toArray(),
-            'decrypt' => $this->decryptAtbash->execute($request)->toArray(),
+            'encrypt' => $this->encryptAtbash->execute($request),
+            'decrypt' => $this->decryptAtbash->execute($request),
             default => null,
         };
     }
 
-    private function resolveRot(ClassicCipherLookupDTO $dto): ?array
+    private function resolveRot(ClassicCipherLookupDTO $dto): ?ShifrResultDataInterface
     {
         if ($dto->direction !== 'transform') {
             return null;
@@ -80,8 +82,8 @@ final class ShiftMirrorCipherProcessor implements ClassicCipherProcessorInterfac
         ]);
 
         return match ($dto->cipher) {
-            'rot13' => $this->rot13Transform->execute($request)->toArray(),
-            'rot47' => $this->rot47Transform->execute($request)->toArray(),
+            'rot13' => $this->rot13Transform->execute($request),
+            'rot47' => $this->rot47Transform->execute($request),
             'rot5' => $this->transformRot5($dto->text),
             default => null,
         };
@@ -90,9 +92,8 @@ final class ShiftMirrorCipherProcessor implements ClassicCipherProcessorInterfac
     /**
      * ROT5 is symmetric, so one transform is enough.
      *
-     * @return array<string, mixed>
      */
-    private function transformRot5(string $message): array
+    private function transformRot5(string $message): AtbashResultDTO
     {
         $result = preg_replace_callback('/\d/', static function (array $matches): string {
             $digit = (int) $matches[0];

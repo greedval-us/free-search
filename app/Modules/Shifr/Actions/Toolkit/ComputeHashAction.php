@@ -3,15 +3,13 @@
 namespace App\Modules\Shifr\Actions\Toolkit;
 
 use App\Modules\Shifr\DTO\Toolkit\HashLookupDTO;
+use App\Modules\Shifr\DTO\Toolkit\Results\HashResultDTO;
 use App\Modules\Shifr\Support\HashAlgorithms;
 
 final class ComputeHashAction
 {
 
-    /**
-     * @return array<string, mixed>
-     */
-    public function execute(HashLookupDTO $dto): array
+    public function execute(HashLookupDTO $dto): HashResultDTO
     {
         $algorithm = strtolower($dto->algorithm);
 
@@ -21,13 +19,13 @@ final class ComputeHashAction
             ? hash_hmac($algorithm, $dto->input, $dto->hmacKey)
             : hash($algorithm, $dto->input);
 
-        return [
-            'algorithm' => $algorithm,
-            'mode' => $dto->hmacKey !== null && $dto->hmacKey !== '' ? 'hmac' : 'hash',
-            'value' => $hash,
-            'inputLength' => mb_strlen($dto->input),
-            'analysis' => $this->analyzeHashLike($dto->input),
-        ];
+        return new HashResultDTO(
+            algorithm: $algorithm,
+            mode: $dto->hmacKey !== null && $dto->hmacKey !== '' ? 'hmac' : 'hash',
+            value: $hash,
+            inputLength: mb_strlen($dto->input),
+            analysis: $this->analyzeHashLike($dto->input),
+        );
     }
 
     private function resolveAlgorithm(string $algorithm, bool $isHmac): string

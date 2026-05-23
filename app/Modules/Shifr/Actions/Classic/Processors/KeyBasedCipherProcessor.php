@@ -5,6 +5,7 @@ namespace App\Modules\Shifr\Actions\Classic\Processors;
 use App\Modules\Shifr\Actions\Classic\Contracts\ClassicCipherProcessorInterface;
 use App\Modules\Shifr\Actions\Classic\Support\ClassicCipherResultFactory;
 use App\Modules\Shifr\DTO\Classic\ClassicCipherLookupDTO;
+use App\Modules\Shifr\DTO\Contracts\ShifrResultDataInterface;
 use App\Modules\Shifr\Support\ClassicCiphers\ClassicCipherAffinePlayfair;
 use App\Modules\Shifr\Support\ClassicCiphers\ClassicCipherTransposition;
 use App\Modules\Shifr\Support\ClassicCiphers\ClassicCipherVigenere;
@@ -26,7 +27,7 @@ final class KeyBasedCipherProcessor implements ClassicCipherProcessorInterface
         return in_array($cipher, ['vigenere', 'xor', 'playfair', 'columnar'], true);
     }
 
-    public function process(ClassicCipherLookupDTO $dto): ?array
+    public function process(ClassicCipherLookupDTO $dto): ?ShifrResultDataInterface
     {
         return match ($dto->cipher) {
             'vigenere' => $this->resolveVigenere($dto),
@@ -37,7 +38,7 @@ final class KeyBasedCipherProcessor implements ClassicCipherProcessorInterface
         };
     }
 
-    private function resolveVigenere(ClassicCipherLookupDTO $dto): ?array
+    private function resolveVigenere(ClassicCipherLookupDTO $dto): ?ShifrResultDataInterface
     {
         if ($dto->key === '') {
             return null;
@@ -50,7 +51,7 @@ final class KeyBasedCipherProcessor implements ClassicCipherProcessorInterface
         };
     }
 
-    private function resolveXor(ClassicCipherLookupDTO $dto): ?array
+    private function resolveXor(ClassicCipherLookupDTO $dto): ?ShifrResultDataInterface
     {
         if ($dto->xorKey === '') {
             return null;
@@ -63,7 +64,7 @@ final class KeyBasedCipherProcessor implements ClassicCipherProcessorInterface
         };
     }
 
-    private function resolvePlayfair(ClassicCipherLookupDTO $dto): ?array
+    private function resolvePlayfair(ClassicCipherLookupDTO $dto): ?ShifrResultDataInterface
     {
         if ($dto->playfairKey === '') {
             return null;
@@ -82,7 +83,7 @@ final class KeyBasedCipherProcessor implements ClassicCipherProcessorInterface
         };
     }
 
-    private function resolveColumnar(ClassicCipherLookupDTO $dto): ?array
+    private function resolveColumnar(ClassicCipherLookupDTO $dto): ?ShifrResultDataInterface
     {
         if ($dto->columnKey === '') {
             return null;

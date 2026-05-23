@@ -3,22 +3,17 @@
 namespace App\Modules\Shifr\Actions\Toolkit;
 
 use App\Modules\Shifr\DTO\Toolkit\JwtLookupDTO;
+use App\Modules\Shifr\DTO\Toolkit\Results\JwtInspectResultDTO;
 
 final class InspectJwtAction
 {
-    /**
-     * @return array<string, mixed>
-     */
-    public function execute(JwtLookupDTO $dto): array
+    public function execute(JwtLookupDTO $dto): JwtInspectResultDTO
     {
         $token = trim($dto->token);
         $parts = explode('.', $token);
 
         if (count($parts) !== 3) {
-            return [
-                'validFormat' => false,
-                'error' => 'Token must have 3 parts separated by dots.',
-            ];
+            return JwtInspectResultDTO::invalidFormat('Token must have 3 parts separated by dots.');
         }
 
         [$headerB64, $payloadB64, $signatureB64] = $parts;
@@ -58,13 +53,13 @@ final class InspectJwtAction
             $signature['verificationReason'] = $verified['reason'];
         }
 
-        return [
-            'validFormat' => $header !== null && $payload !== null,
-            'header' => $header,
-            'payload' => $payload,
-            'timeChecks' => $timeChecks,
-            'signature' => $signature,
-        ];
+        return new JwtInspectResultDTO(
+            validFormat: $header !== null && $payload !== null,
+            header: $header,
+            payload: $payload,
+            timeChecks: $timeChecks,
+            signature: $signature,
+        );
     }
 
     /**

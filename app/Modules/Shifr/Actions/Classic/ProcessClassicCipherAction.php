@@ -7,6 +7,7 @@ use App\Modules\Shifr\Actions\Classic\Processors\KeyBasedCipherProcessor;
 use App\Modules\Shifr\Actions\Classic\Processors\PatternCipherProcessor;
 use App\Modules\Shifr\Actions\Classic\Processors\ShiftMirrorCipherProcessor;
 use App\Modules\Shifr\DTO\Classic\ClassicCipherLookupDTO;
+use App\Modules\Shifr\DTO\Contracts\ShifrResultDataInterface;
 
 final class ProcessClassicCipherAction
 {
@@ -27,10 +28,7 @@ final class ProcessClassicCipherAction
         ];
     }
 
-    /**
-     * @return array<string, mixed>|null
-     */
-    public function execute(ClassicCipherLookupDTO $dto): ?array
+    public function execute(ClassicCipherLookupDTO $dto): ?ShifrResultDataInterface
     {
         foreach ($this->processors as $processor) {
             if (!$processor->supports($dto->cipher)) {

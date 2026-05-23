@@ -5,6 +5,7 @@ namespace App\Modules\Shifr\Actions\Classic\Processors;
 use App\Modules\Shifr\Actions\Classic\Contracts\ClassicCipherProcessorInterface;
 use App\Modules\Shifr\Actions\Classic\Support\ClassicCipherResultFactory;
 use App\Modules\Shifr\DTO\Classic\ClassicCipherLookupDTO;
+use App\Modules\Shifr\DTO\Contracts\ShifrResultDataInterface;
 use App\Modules\Shifr\Support\ClassicCiphers\ClassicCipherAffinePlayfair;
 use App\Modules\Shifr\Support\ClassicCiphers\ClassicCipherRailFence;
 use App\Modules\Shifr\Support\ClassicCiphers\ClassicCipherTransposition;
@@ -24,7 +25,7 @@ final class PatternCipherProcessor implements ClassicCipherProcessorInterface
         return in_array($cipher, ['rail_fence', 'affine', 'morse'], true);
     }
 
-    public function process(ClassicCipherLookupDTO $dto): ?array
+    public function process(ClassicCipherLookupDTO $dto): ?ShifrResultDataInterface
     {
         return match ($dto->cipher) {
             'rail_fence' => $this->resolveRailFence($dto),
@@ -34,7 +35,7 @@ final class PatternCipherProcessor implements ClassicCipherProcessorInterface
         };
     }
 
-    private function resolveRailFence(ClassicCipherLookupDTO $dto): ?array
+    private function resolveRailFence(ClassicCipherLookupDTO $dto): ?ShifrResultDataInterface
     {
         return match ($dto->direction) {
             'encrypt' => $this->resultFactory->fromOriginalAndResult($dto->text, $this->railFence->encrypt($dto->text, $dto->rails)),
@@ -43,7 +44,7 @@ final class PatternCipherProcessor implements ClassicCipherProcessorInterface
         };
     }
 
-    private function resolveAffine(ClassicCipherLookupDTO $dto): ?array
+    private function resolveAffine(ClassicCipherLookupDTO $dto): ?ShifrResultDataInterface
     {
         return match ($dto->direction) {
             'encrypt' => $this->resultFactory->fromOriginalAndResult(
@@ -58,7 +59,7 @@ final class PatternCipherProcessor implements ClassicCipherProcessorInterface
         };
     }
 
-    private function resolveMorse(ClassicCipherLookupDTO $dto): ?array
+    private function resolveMorse(ClassicCipherLookupDTO $dto): ?ShifrResultDataInterface
     {
         return match ($dto->direction) {
             'encrypt' => $this->resultFactory->fromOriginalAndResult(

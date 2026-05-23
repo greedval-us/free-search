@@ -11,6 +11,7 @@ use App\Http\Requests\Shifr\ShifrJwtInspectRequest;
 use App\Http\Requests\Shifr\ShifrTransformRequest;
 use App\Modules\Shifr\Application\Contracts\ShifrClassicCipherServiceInterface;
 use App\Modules\Shifr\Application\Contracts\ShifrToolkitServiceInterface;
+use App\Modules\Shifr\DTO\Contracts\ShifrResultDataInterface;
 use Illuminate\Http\JsonResponse;
 
 final class ShifrController extends Controller
@@ -64,19 +65,19 @@ final class ShifrController extends Controller
         }
 
         return $this->jsonOk([
-            'data' => $result,
+            'data' => $result->toArray(),
         ]);
     }
 
     /**
-     * @param callable(): array<string, mixed> $resolver
+     * @param callable(): ShifrResultDataInterface $resolver
      */
     private function respondWithData(AbstractShifrRequest $request, callable $resolver): JsonResponse
     {
         $this->applyRequestLocaleFor($request);
 
         return $this->jsonOk([
-            'data' => $resolver(),
+            'data' => $resolver()->toArray(),
         ]);
     }
 
