@@ -140,6 +140,133 @@ class RequestLogRunUrlBuilder
             ]);
         }
 
+        if ($path === '/youtube/search/videos') {
+            return $this->buildUrl('/youtube', [
+                'tab' => 'search',
+                'q' => $this->readString($payload, ['q']),
+                'type' => $this->readString($payload, ['type']),
+                'channelId' => $this->readString($payload, ['channelId']),
+                'order' => $this->readString($payload, ['order']),
+                'publishedAfter' => $this->readString($payload, ['publishedAfter']),
+                'publishedBefore' => $this->readString($payload, ['publishedBefore']),
+                'regionCode' => $this->readString($payload, ['regionCode']),
+                'relevanceLanguage' => $this->readString($payload, ['relevanceLanguage']),
+                'safeSearch' => $this->readString($payload, ['safeSearch']),
+                'videoDuration' => $this->readString($payload, ['videoDuration']),
+                'videoDefinition' => $this->readString($payload, ['videoDefinition']),
+                'videoCaption' => $this->readString($payload, ['videoCaption']),
+                'limit' => $this->readIntString($payload, 'limit'),
+                'autorun' => '1',
+            ]);
+        }
+
+        if ($path === '/youtube/analytics/summary' || $path === '/youtube/analytics/report') {
+            return $this->buildUrl('/youtube', [
+                'tab' => 'analytics',
+                'mode' => $this->readString($payload, ['mode']),
+                'videoId' => $this->readString($payload, ['videoId']),
+                'channelId' => $this->readString($payload, ['channelId']),
+                'periodDays' => $this->readIntString($payload, 'periodDays'),
+                'dateFrom' => $this->readString($payload, ['dateFrom']),
+                'dateTo' => $this->readString($payload, ['dateTo']),
+                'autorun' => '1',
+            ]);
+        }
+
+        if ($path === '/youtube/parser/comments') {
+            return $this->buildUrl('/youtube', [
+                'tab' => 'parser',
+                'videoId' => $this->readString($payload, ['videoId']),
+                'order' => $this->readString($payload, ['order']),
+                'searchTerms' => $this->readString($payload, ['searchTerms']),
+                'limit' => $this->readIntString($payload, 'limit'),
+                'autorun' => '1',
+            ]);
+        }
+
+        if ($path === '/news-media-intel/lookup') {
+            return $this->buildUrl('/news-media-intel', [
+                'query' => $this->readString($payload, ['query']),
+                'autorun' => '1',
+            ]);
+        }
+
+        if ($path === '/domain-infra-intel/lookup') {
+            return $this->buildUrl('/domain-infra-intel', [
+                'domain' => $this->readString($payload, ['domain']),
+                'autorun' => '1',
+            ]);
+        }
+
+        if ($path === '/document-intel/lookup') {
+            return $this->buildUrl('/document-intel', [
+                'query' => $this->readString($payload, ['query']),
+                'autorun' => '1',
+            ]);
+        }
+
+        if ($path === '/company-intel/lookup') {
+            return $this->buildUrl('/company-intel', [
+                'query' => $this->readString($payload, ['query']),
+                'autorun' => '1',
+            ]);
+        }
+
+        if ($path === '/shifr/hash') {
+            return $this->buildUrl('/shifr', [
+                'tab' => 'hash',
+                'text' => $this->readString($payload, ['text']),
+                'algorithm' => $this->readString($payload, ['algorithm']),
+                'hmac_key' => $this->readString($payload, ['hmac_key']),
+                'autorun' => '1',
+            ]);
+        }
+
+        if ($path === '/shifr/transform') {
+            return $this->buildUrl('/shifr', [
+                'tab' => 'transform',
+                'text' => $this->readString($payload, ['text']),
+                'operation' => $this->readString($payload, ['operation']),
+                'autorun' => '1',
+            ]);
+        }
+
+        if ($path === '/shifr/ioc-extract') {
+            return $this->buildUrl('/shifr', [
+                'tab' => 'ioc',
+                'text' => $this->readString($payload, ['text']),
+                'autorun' => '1',
+            ]);
+        }
+
+        if ($path === '/shifr/jwt-inspect') {
+            return $this->buildUrl('/shifr', [
+                'tab' => 'jwt',
+                'token' => $this->readString($payload, ['token']),
+                'secret' => $this->readString($payload, ['secret']),
+                'autorun' => '1',
+            ]);
+        }
+
+        if ($path === '/shifr/classic') {
+            return $this->buildUrl('/shifr', [
+                'tab' => 'classic',
+                'text' => $this->readString($payload, ['text']),
+                'cipher' => $this->readString($payload, ['cipher']),
+                'direction' => $this->readString($payload, ['direction']),
+                'shift' => $this->readIntString($payload, 'shift'),
+                'key' => $this->readString($payload, ['key']),
+                'rails' => $this->readIntString($payload, 'rails'),
+                'xor_key' => $this->readString($payload, ['xor_key']),
+                'affine_a' => $this->readIntString($payload, 'affine_a'),
+                'affine_b' => $this->readIntString($payload, 'affine_b'),
+                'playfair_key' => $this->readString($payload, ['playfair_key']),
+                'column_key' => $this->readString($payload, ['column_key']),
+                'morse_separator' => $this->readString($payload, ['morse_separator']),
+                'autorun' => '1',
+            ]);
+        }
+
         return null;
     }
 

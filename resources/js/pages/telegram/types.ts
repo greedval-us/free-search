@@ -75,6 +75,17 @@ export type CommentState = {
     nextOffsetId: number | null;
 };
 
+export type CommentsResponse = {
+    items: CommentItem[];
+    pagination: {
+        limit: number;
+        offsetId: number;
+        nextOffsetId: number | null;
+        hasMore: boolean;
+        total: number;
+    };
+};
+
 export type TelegramAnalyticsSummary = {
     range: {
         chatUsername: string;

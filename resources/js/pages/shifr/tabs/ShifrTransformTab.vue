@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { LoaderCircle } from 'lucide-vue-next';
-import { computed, ref } from 'vue';
+import { computed, onMounted, ref } from 'vue';
+import { getRepeatQueryParams, isRepeatAutorunEnabled, readRepeatQueryParam } from '@/composables/useRepeatQuery';
 import { useI18n } from '@/composables/useI18n';
 import ShifrFormCard from '../components/ShifrFormCard.vue';
 import ShifrResultCard from '../components/ShifrResultCard.vue';
@@ -33,6 +34,34 @@ const run = async (): Promise<void> => {
   const params = new URLSearchParams({ text: input.value, operation: operation.value, locale: locale.value });
   await runRequest(params);
 };
+
+onMounted(() => {
+  const params = getRepeatQueryParams();
+
+  if (!params) {
+    return;
+  }
+
+  const tab = readRepeatQueryParam(params, ['tab']);
+  if (tab !== 'transform') {
+    return;
+  }
+
+  const text = readRepeatQueryParam(params, ['text']);
+  const op = readRepeatQueryParam(params, ['operation']);
+
+  if (text !== '') input.value = text;
+  if (op !== '' && [
+    'base64_encode', 'base64_decode', 'base64url_encode', 'base64url_decode',
+    'hex_encode', 'hex_decode', 'url_encode', 'url_decode', 'html_encode', 'html_decode',
+  ].includes(op)) {
+    operation.value = op as typeof operation.value;
+  }
+
+  if (isRepeatAutorunEnabled(params) && canRun.value) {
+    void run();
+  }
+});
 </script>
 
 <template>

@@ -1146,3 +1146,81 @@ shifr.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
         })
     
     shifr.form = shifrForm
+/**
+* @see \Inertia\Controller::__invoke
+ * @see vendor/inertiajs/inertia-laravel/src/Controller.php:13
+ * @route '/youtube'
+ */
+export const youtube = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+    url: youtube.url(options),
+    method: 'get',
+})
+
+youtube.definition = {
+    methods: ["get","head"],
+    url: '/youtube',
+} satisfies RouteDefinition<["get","head"]>
+
+/**
+* @see \Inertia\Controller::__invoke
+ * @see vendor/inertiajs/inertia-laravel/src/Controller.php:13
+ * @route '/youtube'
+ */
+youtube.url = (options?: RouteQueryOptions) => {
+    return youtube.definition.url + queryParams(options)
+}
+
+/**
+* @see \Inertia\Controller::__invoke
+ * @see vendor/inertiajs/inertia-laravel/src/Controller.php:13
+ * @route '/youtube'
+ */
+youtube.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+    url: youtube.url(options),
+    method: 'get',
+})
+/**
+* @see \Inertia\Controller::__invoke
+ * @see vendor/inertiajs/inertia-laravel/src/Controller.php:13
+ * @route '/youtube'
+ */
+youtube.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
+    url: youtube.url(options),
+    method: 'head',
+})
+
+    /**
+* @see \Inertia\Controller::__invoke
+ * @see vendor/inertiajs/inertia-laravel/src/Controller.php:13
+ * @route '/youtube'
+ */
+    const youtubeForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+        action: youtube.url(options),
+        method: 'get',
+    })
+
+            /**
+* @see \Inertia\Controller::__invoke
+ * @see vendor/inertiajs/inertia-laravel/src/Controller.php:13
+ * @route '/youtube'
+ */
+        youtubeForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+            action: youtube.url(options),
+            method: 'get',
+        })
+            /**
+* @see \Inertia\Controller::__invoke
+ * @see vendor/inertiajs/inertia-laravel/src/Controller.php:13
+ * @route '/youtube'
+ */
+        youtubeForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+            action: youtube.url({
+                        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
+                            _method: 'HEAD',
+                            ...(options?.query ?? options?.mergeQuery ?? {}),
+                        }
+                    }),
+            method: 'get',
+        })
+    
+    youtube.form = youtubeForm

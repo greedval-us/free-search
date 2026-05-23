@@ -860,6 +860,84 @@ Controller3d3b36cdb4f38dee299ffd8b2029aaa7.head = (options?: RouteQueryOptions):
     /**
 * @see \Inertia\Controller::__invoke
  * @see vendor/inertiajs/inertia-laravel/src/Controller.php:13
+ * @route '/youtube'
+ */
+const Controllereead2cc10890942e10f92884e5bdc477 = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+    url: Controllereead2cc10890942e10f92884e5bdc477.url(options),
+    method: 'get',
+})
+
+Controllereead2cc10890942e10f92884e5bdc477.definition = {
+    methods: ["get","head"],
+    url: '/youtube',
+} satisfies RouteDefinition<["get","head"]>
+
+/**
+* @see \Inertia\Controller::__invoke
+ * @see vendor/inertiajs/inertia-laravel/src/Controller.php:13
+ * @route '/youtube'
+ */
+Controllereead2cc10890942e10f92884e5bdc477.url = (options?: RouteQueryOptions) => {
+    return Controllereead2cc10890942e10f92884e5bdc477.definition.url + queryParams(options)
+}
+
+/**
+* @see \Inertia\Controller::__invoke
+ * @see vendor/inertiajs/inertia-laravel/src/Controller.php:13
+ * @route '/youtube'
+ */
+Controllereead2cc10890942e10f92884e5bdc477.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+    url: Controllereead2cc10890942e10f92884e5bdc477.url(options),
+    method: 'get',
+})
+/**
+* @see \Inertia\Controller::__invoke
+ * @see vendor/inertiajs/inertia-laravel/src/Controller.php:13
+ * @route '/youtube'
+ */
+Controllereead2cc10890942e10f92884e5bdc477.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
+    url: Controllereead2cc10890942e10f92884e5bdc477.url(options),
+    method: 'head',
+})
+
+    /**
+* @see \Inertia\Controller::__invoke
+ * @see vendor/inertiajs/inertia-laravel/src/Controller.php:13
+ * @route '/youtube'
+ */
+    const Controllereead2cc10890942e10f92884e5bdc477Form = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+        action: Controllereead2cc10890942e10f92884e5bdc477.url(options),
+        method: 'get',
+    })
+
+            /**
+* @see \Inertia\Controller::__invoke
+ * @see vendor/inertiajs/inertia-laravel/src/Controller.php:13
+ * @route '/youtube'
+ */
+        Controllereead2cc10890942e10f92884e5bdc477Form.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+            action: Controllereead2cc10890942e10f92884e5bdc477.url(options),
+            method: 'get',
+        })
+            /**
+* @see \Inertia\Controller::__invoke
+ * @see vendor/inertiajs/inertia-laravel/src/Controller.php:13
+ * @route '/youtube'
+ */
+        Controllereead2cc10890942e10f92884e5bdc477Form.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+            action: Controllereead2cc10890942e10f92884e5bdc477.url({
+                        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
+                            _method: 'HEAD',
+                            ...(options?.query ?? options?.mergeQuery ?? {}),
+                        }
+                    }),
+            method: 'get',
+        })
+    
+    Controllereead2cc10890942e10f92884e5bdc477.form = Controllereead2cc10890942e10f92884e5bdc477Form
+    /**
+* @see \Inertia\Controller::__invoke
+ * @see vendor/inertiajs/inertia-laravel/src/Controller.php:13
  * @route '/settings/appearance'
  */
 const Controllere19ee86e9cf603ce1a59a1ec5d21dec5 = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -953,6 +1031,7 @@ const Controller = {
     '/domain-infra-intel': Controllerbf4eae8bf1021500b89ea52c7b9fa2f1,
     '/news-media-intel': Controller36a2b357ae6134bc8055dfa5be128cd4,
     '/shifr': Controller3d3b36cdb4f38dee299ffd8b2029aaa7,
+    '/youtube': Controllereead2cc10890942e10f92884e5bdc477,
     '/settings/appearance': Controllere19ee86e9cf603ce1a59a1ec5d21dec5,
 }
 

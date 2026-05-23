@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { Head } from '@inertiajs/vue3';
-import { computed, ref } from 'vue';
+import { computed, onMounted, ref } from 'vue';
+import { getRepeatQueryParams, readRepeatQueryParam } from '@/composables/useRepeatQuery';
 import { useI18n } from '@/composables/useI18n';
 import { SHIFR_TABS  } from './shifr/tabs';
 import type {ShifrTabValue} from './shifr/tabs';
@@ -21,6 +22,20 @@ const activeTab = ref<ShifrTabValue>('hash');
 
 const pageTitle = computed(() => t('shifr.headTitle'));
 const activeTabDefinition = computed(() => SHIFR_TABS.find((tab) => tab.key === activeTab.value) ?? SHIFR_TABS[0]);
+
+onMounted(() => {
+    const params = getRepeatQueryParams();
+
+    if (!params) {
+        return;
+    }
+
+    const tab = readRepeatQueryParam(params, ['tab']);
+
+    if (tab === 'hash' || tab === 'transform' || tab === 'ioc' || tab === 'classic' || tab === 'jwt') {
+        activeTab.value = tab;
+    }
+});
 </script>
 
 <template>

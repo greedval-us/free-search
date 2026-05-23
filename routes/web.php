@@ -1,8 +1,8 @@
 <?php
 
-use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\Dashboard\ModulePinController;
 use App\Http\Controllers\Dashboard\SavedQueryController;
+use App\Http\Controllers\DashboardController;
 use Illuminate\Support\Facades\Route;
 use Laravel\Fortify\Features;
 
@@ -29,6 +29,7 @@ Route::middleware(['auth', 'verified'])->group(function (): void {
     require __DIR__.'/web/domain-infra-intel.php';
     require __DIR__.'/web/news-media-intel.php';
     require __DIR__.'/web/shifr.php';
+    require __DIR__.'/web/youtube.php';
     require __DIR__.'/web/wiki.php';
 });
 

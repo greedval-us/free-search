@@ -1,7 +1,7 @@
 import { nextTick, reactive, ref } from 'vue';
 import TelegramSearchController from '@/actions/App/Http/Controllers/Telegram/TelegramSearchController';
 import { apiRequest } from '@/lib/api';
-import type { CommentState, SearchItem, SearchResponse } from '../types';
+import type { CommentsResponse, CommentState, SearchItem, SearchResponse } from '../types';
 
 type TranslateFn = (key: string) => string;
 
@@ -190,7 +190,7 @@ export const useTelegramSearch = (t: TranslateFn) => {
             state.error = null;
 
             try {
-                const apiResult = await apiRequest<Record<string, unknown>>(
+                const apiResult = await apiRequest<CommentsResponse>(
                     TelegramSearchController.comments({
                         query: {
                             chatUsername: form.chatUsername.trim(),
@@ -216,7 +216,7 @@ export const useTelegramSearch = (t: TranslateFn) => {
                 }
                 const payload = apiResult.data;
 
-                const incoming = Array.isArray(payload.items) ? payload.items : [];
+                const incoming = payload.items ?? [];
 
                 if (append) {
                     const known = new Set(state.items.map((item) => item.id));

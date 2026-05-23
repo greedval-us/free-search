@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { Link } from '@inertiajs/vue3';
-import { AtSign, BookOpenText, Building2, FileSearch, Fingerprint, Globe, LayoutGrid, MailSearch, Newspaper, Radar, Send, User } from 'lucide-vue-next';
+import { AtSign, BookOpenText, Building2, FileSearch, Fingerprint, Globe, LayoutGrid, MailSearch, Newspaper, Radar, Send, User, Youtube } from 'lucide-vue-next';
 import { computed } from 'vue';
 import AppLogo from '@/components/AppLogo.vue';
 import NavFooter from '@/components/NavFooter.vue';
@@ -31,6 +31,11 @@ const mainNavItems = computed<NavItem[]>(() => [
         title: t('navigation.telegram'),
         href: '/telegram',
         icon: Send,
+    },
+    {
+        title: t('navigation.youtube'),
+        href: '/youtube',
+        icon: Youtube,
     },
     {
         title: t('navigation.username'),

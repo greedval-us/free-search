@@ -295,6 +295,234 @@
       }
     }
   },
+  "youtube": {
+    "headTitle": "YouTube",
+    "help": {
+      "label": "What is this data?"
+    },
+    "tabs": {
+      "search": "Search",
+      "analytics": "Analytics",
+      "parser": "Parser"
+    },
+    "search": {
+      "title": "YouTube Search",
+      "collapsed": "Search panel is collapsed",
+      "filters": "Video search filters and parameters",
+      "resultTitle": "Videos",
+      "shown": "Shown",
+      "hint": "Search public videos, channels, and playlists with YouTube Data API v3. Only public data returned by the official API is available.",
+      "query": "Query",
+      "type": "Search type",
+      "channelFilter": "Channel filter",
+      "channelPlaceholder": "optional: UC..., @handle, or username",
+      "order": "Order",
+      "limit": "Limit",
+      "publishedAfter": "Published after",
+      "publishedBefore": "Published before",
+      "regionCode": "Region",
+      "relevanceLanguage": "Language",
+      "safeSearch": "Safe search",
+      "videoDuration": "Duration",
+      "videoDefinition": "Quality",
+      "videoCaption": "Captions",
+      "advancedAriaShow": "Show advanced filters",
+      "advancedAriaHide": "Hide advanced filters",
+      "publicDataHint": "API v3 public search supports videos, channels, and playlists by keyword; optionally filter by channel, dates, region, language, and video-specific attributes.",
+      "placeholder": "for example: osint tools",
+      "submit": "Search",
+      "empty": "Run a search to view videos."
+    },
+    "analytics": {
+      "title": "YouTube Analytics",
+      "collapsed": "Settings panel is collapsed",
+      "hint": "Analyze channel activity for the last 1-7 days.",
+      "mode": "Mode",
+      "videoId": "Video ID",
+      "channelId": "Channel",
+      "channelPlaceholder": "UC..., @handle, or username",
+      "period": "Publication period (days)",
+      "dateFrom": "Date from",
+      "dateTo": "Date to",
+      "customPeriodTooLong": "Custom period cannot be longer than 7 days.",
+      "submit": "Analyze",
+      "refresh": "Refresh",
+      "report": "Open report",
+      "downloadReport": "Download report",
+      "empty": {
+        "title": "YouTube Analytics",
+        "description": "Select a video or channel and click Refresh to build a report from public YouTube API data."
+      },
+      "channelProfile": "Channel profile",
+      "videoProfile": "Video profile",
+      "createdAt": "Created",
+      "country": "Country",
+      "topVideos": "Top videos",
+      "insights": "Quick insights",
+      "timeline": "Publishing timeline",
+      "distribution": "Distributions",
+      "duration": "Duration",
+      "quality": "Quality",
+      "captions": "Captions",
+      "withCaptions": "With captions",
+      "withoutCaptions": "Without captions",
+      "tags": "Tags and topics",
+      "noTags": "No tags found in public data.",
+      "durationLabels": {
+        "short": "Short",
+        "medium": "Medium",
+        "long": "Long"
+      },
+      "help": {
+        "label": "?",
+        "fields": {
+          "mode": "Analysis mode: single video or channel.",
+          "videoId": "YouTube video ID or video URL. Used for single-video analytics.",
+          "channelId": "Channel ID, @handle, or username. Used to build analytics for recent channel publications.",
+          "period": "Quick period presets: last 1, 3, or 7 days.",
+          "dateFrom": "Start date for a custom period. Works together with “Date to”.",
+          "dateTo": "End date for a custom period. Maximum range is 7 days."
+        },
+        "insights": "Quick interpretation of the current dataset: focus video, top video by views, engagement, and dominant duration.",
+        "timeline": "Interactive day-by-day dynamics: hover to see exact values for views, likes, and comments.",
+        "distribution": "Content mix by duration, quality, and captions. Bars show relative share inside the current dataset.",
+        "leaders": "Leaderboards are ranked by the selected metric: views, likes, comments, and engagement."
+      },
+      "insightsLabels": {
+        "focus_video": "Focus video",
+        "top_video": "Top video by views",
+        "engagement": "Engagement rate",
+        "duration_mix": "Dominant duration"
+      },
+      "leaders": {
+        "views": "Leaders by views",
+        "likes": "Leaders by likes",
+        "comments": "Leaders by comments",
+        "engagement": "Leaders by engagement"
+      },
+      "metrics": {
+        "videos": "Videos",
+        "views": "Views",
+        "likes": "Likes",
+        "comments": "Comments",
+        "avgViews": "Avg views",
+        "avgLikes": "Avg likes",
+        "avgComments": "Avg comments",
+        "medianViews": "Median views",
+        "engagement": "ER",
+        "commentRate": "Comment rate",
+        "subscribers": "Subscribers",
+        "channelViews": "Channel views"
+      },
+      "metricHints": {
+        "videos": "Number of videos included in the analyzed dataset.",
+        "views": "Total views across all videos in the dataset.",
+        "likes": "Total likes across all videos in the dataset.",
+        "comments": "Total comments across all videos in the dataset.",
+        "avgViews": "Average views per video in the dataset.",
+        "engagement": "Engagement Rate: (likes + comments) divided by views, in percent.",
+        "subscribers": "Current channel subscriber count (if available in the public API).",
+        "channelViews": "Total channel views from the public API.",
+        "medianViews": "Median views: the middle value, less sensitive to outliers.",
+        "commentRate": "Comments-to-views ratio, in percent."
+      }
+    },
+    "comments": {
+      "toggleShow": "Comments",
+      "toggleHide": "Hide comments",
+      "empty": "No comments found",
+      "toggleShowReplies": "Show replies",
+      "toggleHideReplies": "Hide replies",
+      "repliesPartialHint": "Only a subset of replies available via the public YouTube API is shown."
+    },
+    "parser": {
+      "title": "YouTube Parser",
+      "collapsed": "Settings panel is collapsed",
+      "subtitle": "Online YouTube comments collection and export",
+      "hint": "Collect comments from the selected video and load all available replies.",
+      "videoId": "Video ID",
+      "query": "Query",
+      "order": "Order",
+      "start": "Start collect",
+      "stop": "Stop",
+      "collecting": "Collecting...",
+      "download": "Download Excel",
+      "downloadJson": "Download JSON",
+      "replies": "Replies",
+      "progress": {
+        "title": "Collection progress",
+        "comments": "Comments processed",
+        "replies": "Replies processed",
+        "stage": {
+          "idle": "Idle",
+          "comments": "Collecting comments",
+          "replies": "Collecting replies",
+          "finishing": "Preparing export",
+          "completed": "Completed",
+          "failed": "Failed",
+          "stopped": "Stopped"
+        }
+      },
+      "errors": {
+        "videoRequired": "Please enter a video ID or video URL.",
+        "failed": "Parser failed."
+      },
+      "help": {
+        "overview": "YouTube parser collects comments and all available replies under the selected video, then prepares Excel and JSON exports."
+      }
+    },
+    "options": {
+      "searchType": {
+        "video": "Videos",
+        "channel": "Channels",
+        "playlist": "Playlists"
+      },
+      "searchOrder": {
+        "relevance": "Most relevant",
+        "date": "Newest first",
+        "viewCount": "Most viewed",
+        "rating": "Highest rated",
+        "title": "Title"
+      },
+      "safeSearch": {
+        "moderate": "Moderate",
+        "none": "No filter",
+        "strict": "Strict"
+      },
+      "videoDuration": {
+        "any": "Any",
+        "short": "Under 4 minutes",
+        "medium": "4-20 minutes",
+        "long": "Over 20 minutes"
+      },
+      "videoDefinition": {
+        "any": "Any",
+        "high": "HD",
+        "standard": "SD"
+      },
+      "videoCaption": {
+        "any": "Any",
+        "closedCaption": "With captions",
+        "none": "No captions"
+      },
+      "mode": {
+        "video": "Video",
+        "channel": "Channel"
+      },
+      "parserOrder": {
+        "relevance": "Relevance",
+        "time": "Newest first"
+      }
+    },
+    "common": {
+      "loading": "Loading...",
+      "empty": "No data yet",
+      "published": "Published",
+      "open": "Open",
+      "loadMore": "Load more",
+      "requestFailed": "Request failed"
+    }
+  },
   "username": {
     "headTitle": "Username",
     "help": {
@@ -1433,6 +1661,7 @@
       "news-media-intel": "News and media intelligence",
       "document-intel": "Document intelligence",
       "telegram": "Telegram analytics",
+      "youtube": "YouTube",
       "shifr": "Cipher toolkit",
       "default": "Search module",
       "lastUsed": "Last used",
@@ -1475,6 +1704,7 @@
     "menu": "Navigation menu",
     "dashboard": "Dashboard",
     "telegram": "Telegram",
+    "youtube": "YouTube",
     "username": "Username",
     "siteIntel": "Site Intel",
     "fio": "FIO",

@@ -180,13 +180,13 @@ export const useTelegramParser = (t: TranslateFn) => {
                     'Content-Type': 'application/json',
                     'X-CSRF-TOKEN': document.querySelector<HTMLMetaElement>('meta[name="csrf-token"]')?.content ?? '',
                 },
-                body: JSON.stringify({
+                body: {
                     chatUsername: form.chatUsername.trim(),
                     keyword: form.keyword.trim(),
                     period: form.period,
                     dateFrom: form.dateFrom,
                     dateTo: form.dateTo,
-                }),
+                },
             });
 
             if (!response.ok || !response.data.runId) {

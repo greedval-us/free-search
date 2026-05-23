@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { Head } from '@inertiajs/vue3';
 import { Newspaper } from 'lucide-vue-next';
-import { computed, ref } from 'vue';
+import { computed, onMounted, ref } from 'vue';
 import EmptyState from '@/components/ui/EmptyState.vue';
 import IntelResultPanel from '@/components/ui/IntelResultPanel.vue';
 import IntelSearchForm from '@/components/ui/IntelSearchForm.vue';
@@ -9,6 +9,7 @@ import IntelSearchPanel from '@/components/ui/IntelSearchPanel.vue';
 import MetricCard from '@/components/ui/MetricCard.vue';
 import PageHeader from '@/components/ui/PageHeader.vue';
 import SectionCard from '@/components/ui/SectionCard.vue';
+import { getRepeatQueryParams, isRepeatAutorunEnabled, readRepeatQueryParam } from '@/composables/useRepeatQuery';
 import { useIntelLookup } from '@/composables/useIntelLookup';
 import { useI18n } from '@/composables/useI18n';
 import type { NewsResult } from './news-media-intel/types';
@@ -89,6 +90,24 @@ const { loading, error, result, canSearch, lookup } = useIntelLookup<NewsResult>
     locale,
     requiredError: t('newsMediaIntel.errors.queryRequired'),
     fallbackError: t('newsMediaIntel.errors.lookupFailed'),
+});
+
+onMounted(() => {
+    const params = getRepeatQueryParams();
+
+    if (!params) {
+        return;
+    }
+
+    const value = readRepeatQueryParam(params, ['query']);
+
+    if (value !== '') {
+        query.value = value;
+    }
+
+    if (isRepeatAutorunEnabled(params) && canSearch.value) {
+        void lookup();
+    }
 });
 </script>
 

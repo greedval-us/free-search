@@ -34,4 +34,9 @@ return [
             'channel' => env('SLACK_BOT_USER_DEFAULT_CHANNEL'),
         ],
     ],
+
+    'youtube' => [
+        'key' => env('YOUTUBE_DATA_API_KEY'),
+        'base_url' => env('YOUTUBE_DATA_API_BASE_URL', 'https://www.googleapis.com/youtube/v3'),
+    ],
 ];

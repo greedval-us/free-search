@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { LoaderCircle } from 'lucide-vue-next';
-import { computed, ref, watch } from 'vue';
+import { computed, onMounted, ref, watch } from 'vue';
+import { getRepeatQueryParams, isRepeatAutorunEnabled, readRepeatQueryInt, readRepeatQueryParam } from '@/composables/useRepeatQuery';
 import { useI18n } from '@/composables/useI18n';
 import ShifrFormCard from '../components/ShifrFormCard.vue';
 import ShifrResultCard from '../components/ShifrResultCard.vue';
@@ -93,6 +94,56 @@ watch(cipher, (nextCipher) => {
 
   if (direction.value === 'transform') {
     direction.value = 'encrypt';
+  }
+});
+
+onMounted(() => {
+  const params = getRepeatQueryParams();
+
+  if (!params) {
+    return;
+  }
+
+  const tab = readRepeatQueryParam(params, ['tab']);
+  if (tab !== 'classic') {
+    return;
+  }
+
+  const text = readRepeatQueryParam(params, ['text']);
+  const cipherValue = readRepeatQueryParam(params, ['cipher']);
+  const directionValue = readRepeatQueryParam(params, ['direction']);
+  const shiftValue = readRepeatQueryInt(params, 'shift');
+  const keyValue = readRepeatQueryParam(params, ['key']);
+  const railsValue = readRepeatQueryInt(params, 'rails');
+  const xorKeyValue = readRepeatQueryParam(params, ['xor_key']);
+  const affineAValue = readRepeatQueryInt(params, 'affine_a');
+  const affineBValue = readRepeatQueryInt(params, 'affine_b');
+  const playfairKeyValue = readRepeatQueryParam(params, ['playfair_key']);
+  const columnKeyValue = readRepeatQueryParam(params, ['column_key']);
+  const morseSeparatorValue = readRepeatQueryParam(params, ['morse_separator']);
+
+  if (text !== '') input.value = text;
+  if ([
+    'caesar', 'atbash', 'rot13', 'rot47', 'rot5', 'vigenere',
+    'rail_fence', 'xor', 'affine', 'playfair', 'columnar', 'morse',
+  ].includes(cipherValue)) {
+    cipher.value = cipherValue as CipherType;
+  }
+  if (directionValue === 'encrypt' || directionValue === 'decrypt' || directionValue === 'transform') {
+    direction.value = directionValue;
+  }
+  if (shiftValue !== null) shift.value = shiftValue;
+  if (keyValue !== '') key.value = keyValue;
+  if (railsValue !== null) rails.value = railsValue;
+  if (xorKeyValue !== '') xorKey.value = xorKeyValue;
+  if (affineAValue !== null) affineA.value = affineAValue;
+  if (affineBValue !== null) affineB.value = affineBValue;
+  if (playfairKeyValue !== '') playfairKey.value = playfairKeyValue;
+  if (columnKeyValue !== '') columnKey.value = columnKeyValue;
+  if (morseSeparatorValue !== '') morseSeparator.value = morseSeparatorValue;
+
+  if (isRepeatAutorunEnabled(params) && canRun.value) {
+    void run();
   }
 });
 </script>
