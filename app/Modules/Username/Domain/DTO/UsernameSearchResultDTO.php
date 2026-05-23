@@ -2,7 +2,9 @@
 
 namespace App\Modules\Username\Domain\DTO;
 
-final class UsernameSearchResultDTO
+use App\Support\Contracts\ArrayPayloadable;
+
+final class UsernameSearchResultDTO implements ArrayPayloadable
 {
     /**
      * @param array<int, UsernameSourceCheckResultDTO> $items

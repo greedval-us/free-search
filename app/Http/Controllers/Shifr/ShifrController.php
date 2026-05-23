@@ -64,7 +64,7 @@ final class ShifrController extends Controller
             return $this->jsonError(__('Unsupported cipher/direction pair or missing required settings.'), 422);
         }
 
-        return $this->jsonData($result->toArray());
+        return $this->jsonDataFrom($result);
     }
 
     /**
@@ -74,6 +74,6 @@ final class ShifrController extends Controller
     {
         $this->applyRequestLocale($request->locale());
 
-        return $this->jsonData($resolver()->toArray());
+        return $this->jsonDataFrom($resolver());
     }
 }

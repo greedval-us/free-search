@@ -2,7 +2,9 @@
 
 namespace App\Modules\Fio\Domain\DTO;
 
-final class FioLookupResultDTO
+use App\Support\Contracts\ArrayPayloadable;
+
+final class FioLookupResultDTO implements ArrayPayloadable
 {
     /**
      * @param array<int, FioClusterDTO> $regionClusters

@@ -2,7 +2,9 @@
 
 namespace App\Modules\DomainInfraIntel\Domain\DTO;
 
-final class DomainInfraIntelResultDTO
+use App\Support\Contracts\ArrayPayloadable;
+
+final class DomainInfraIntelResultDTO implements ArrayPayloadable
 {
     /**
      * @param array<int, string> $ips
@@ -38,4 +40,3 @@ final class DomainInfraIntelResultDTO
         ];
     }
 }
-

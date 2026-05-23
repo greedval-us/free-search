@@ -31,6 +31,6 @@ class FioLookupController extends Controller
             return $this->jsonError($exception->getMessage(), $this->statusCodeFromException($exception, 502));
         }
 
-        return $this->jsonData($result->toArray());
+        return $this->jsonDataFrom($result);
     }
 }

@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers\Telegram;
 
-use App\Http\Controllers\Concerns\HandlesArrayPayloadResponses;
 use App\Http\Controllers\Concerns\HandlesParserDownloads;
 use App\Http\Requests\Telegram\TelegramParserStartRequest;
 use App\Modules\Export\Excel\Contracts\ExcelWorkbookServiceInterface;
@@ -15,7 +14,6 @@ use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class TelegramParserController extends BaseTelegramController
 {
-    use HandlesArrayPayloadResponses;
     use HandlesParserDownloads;
 
     public function __construct(

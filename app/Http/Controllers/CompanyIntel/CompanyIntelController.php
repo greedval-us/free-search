@@ -16,12 +16,12 @@ class CompanyIntelController extends Controller
 
     public function lookup(CompanyIntelLookupRequest $request): JsonResponse
     {
-        return $this->localizedJsonData(
+        return $this->localizedJsonDataFrom(
             $request->locale(),
             $this->companyIntelService->lookup(
                 $request->searchQuery(),
                 $request->normalizedDomain(),
-            )->toArray()
+            )
         );
     }
 }

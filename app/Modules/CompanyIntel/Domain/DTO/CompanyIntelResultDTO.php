@@ -2,7 +2,9 @@
 
 namespace App\Modules\CompanyIntel\Domain\DTO;
 
-final class CompanyIntelResultDTO
+use App\Support\Contracts\ArrayPayloadable;
+
+final class CompanyIntelResultDTO implements ArrayPayloadable
 {
     /**
      * @param array<string, mixed> $domainIntel
@@ -34,4 +36,3 @@ final class CompanyIntelResultDTO
         ];
     }
 }
-

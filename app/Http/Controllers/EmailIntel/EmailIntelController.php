@@ -24,9 +24,9 @@ class EmailIntelController extends Controller
 
     public function lookup(EmailIntelLookupRequest $request): JsonResponse
     {
-        return $this->localizedJsonData(
+        return $this->localizedJsonDataFrom(
             $request->locale(),
-            $this->emailIntelService->lookup($request->email())->toArray()
+            $this->emailIntelService->lookup($request->email())
         );
     }
 

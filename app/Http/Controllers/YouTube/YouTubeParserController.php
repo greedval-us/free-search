@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers\YouTube;
 
-use App\Http\Controllers\Concerns\HandlesArrayPayloadResponses;
 use App\Http\Controllers\Concerns\HandlesParserDownloads;
 use App\Http\Controllers\Concerns\ResolvesAuthenticatedUserId;
 use App\Http\Controllers\Concerns\ResolvesHttpStatusCodeFromException;
@@ -20,7 +19,6 @@ use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class YouTubeParserController extends Controller
 {
-    use HandlesArrayPayloadResponses;
     use HandlesParserDownloads;
     use ResolvesAuthenticatedUserId;
     use ResolvesHttpStatusCodeFromException;

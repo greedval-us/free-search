@@ -16,9 +16,9 @@ final class DomainInfraIntelController extends Controller
 
     public function lookup(DomainInfraIntelLookupRequest $request): JsonResponse
     {
-        return $this->localizedJsonData(
+        return $this->localizedJsonDataFrom(
             $request->locale(),
-            $this->domainInfraIntelService->inspect($request->domain())->toArray()
+            $this->domainInfraIntelService->inspect($request->domain())
         );
     }
 }

@@ -20,12 +20,12 @@ class TelegramSearchController extends BaseTelegramController
 
     public function messages(SearchMessagesRequest $request): JsonResponse
     {
-        return $this->jsonPayload($this->searchApplicationService->messages($request->toQueryDTO())->toArray());
+        return $this->jsonPayloadFrom($this->searchApplicationService->messages($request->toQueryDTO()));
     }
 
     public function comments(SearchCommentsRequest $request): JsonResponse
     {
-        return $this->jsonPayload($this->searchApplicationService->comments($request->toQueryDTO())->toArray());
+        return $this->jsonPayloadFrom($this->searchApplicationService->comments($request->toQueryDTO()));
     }
 
     public function media(StreamTelegramMediaRequest $request): BinaryFileResponse

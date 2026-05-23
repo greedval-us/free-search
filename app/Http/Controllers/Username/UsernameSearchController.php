@@ -20,7 +20,7 @@ class UsernameSearchController extends Controller
     {
         $result = $this->searchService->search($request->toQueryDTO());
 
-        return $this->jsonOk($result->toArray());
+        return $this->jsonOkFrom($result);
     }
 
     public function report(UsernameSearchRequest $request): View|Response
