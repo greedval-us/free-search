@@ -110,6 +110,10 @@
             'avgViews' => 'Avg views',
             'engagementRate' => 'Engagement rate',
             'insights' => 'Quick insights',
+            'insightFocusVideo' => 'Focus video',
+            'insightTopVideo' => 'Top video by views',
+            'insightEngagement' => 'Engagement rate',
+            'insightDurationMix' => 'Dominant duration',
             'metric' => 'Metric',
             'value' => 'Value',
             'timeline' => 'Publishing timeline',
@@ -157,6 +161,12 @@
         : (string) ($report['channel']['id'] ?? '-');
 
     $duration = $report['distribution']['duration'] ?? [];
+    $insightLabels = [
+        'focus_video' => $tr['insightFocusVideo'] ?? 'Focus video',
+        'top_video' => $tr['insightTopVideo'] ?? 'Top video by views',
+        'engagement' => $tr['insightEngagement'] ?? 'Engagement rate',
+        'duration_mix' => $tr['insightDurationMix'] ?? 'Dominant duration',
+    ];
 @endphp
 
 <main class="container">
@@ -216,7 +226,7 @@
                 <tbody>
                 @forelse(($report['insights'] ?? []) as $insight)
                     <tr>
-                        <td>{{ $insight['label'] ?? '-' }}</td>
+                        <td>{{ $insightLabels[(string) ($insight['key'] ?? '')] ?? ($insight['label'] ?? '-') }}</td>
                         <td>{{ $insight['value'] ?? '-' }}</td>
                     </tr>
                 @empty

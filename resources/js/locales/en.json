@@ -362,6 +362,32 @@
       "withoutCaptions": "Without captions",
       "tags": "Tags and topics",
       "noTags": "No tags found in public data.",
+      "durationLabels": {
+        "short": "Short",
+        "medium": "Medium",
+        "long": "Long"
+      },
+      "help": {
+        "label": "?",
+        "fields": {
+          "mode": "Analysis mode: single video or channel.",
+          "videoId": "YouTube video ID or video URL. Used for single-video analytics.",
+          "channelId": "Channel ID, @handle, or username. Used to build analytics for recent channel publications.",
+          "period": "Quick period presets: last 1, 3, or 7 days.",
+          "dateFrom": "Start date for a custom period. Works together with “Date to”.",
+          "dateTo": "End date for a custom period. Maximum range is 7 days."
+        },
+        "insights": "Quick interpretation of the current dataset: focus video, top video by views, engagement, and dominant duration.",
+        "timeline": "Interactive day-by-day dynamics: hover to see exact values for views, likes, and comments.",
+        "distribution": "Content mix by duration, quality, and captions. Bars show relative share inside the current dataset.",
+        "leaders": "Leaderboards are ranked by the selected metric: views, likes, comments, and engagement."
+      },
+      "insightsLabels": {
+        "focus_video": "Focus video",
+        "top_video": "Top video by views",
+        "engagement": "Engagement rate",
+        "duration_mix": "Dominant duration"
+      },
       "leaders": {
         "views": "Leaders by views",
         "likes": "Leaders by likes",
@@ -381,9 +407,24 @@
         "commentRate": "Comment rate",
         "subscribers": "Subscribers",
         "channelViews": "Channel views"
+      },
+      "metricHints": {
+        "videos": "Number of videos included in the analyzed dataset.",
+        "views": "Total views across all videos in the dataset.",
+        "likes": "Total likes across all videos in the dataset.",
+        "comments": "Total comments across all videos in the dataset.",
+        "avgViews": "Average views per video in the dataset.",
+        "engagement": "Engagement Rate: (likes + comments) divided by views, in percent.",
+        "subscribers": "Current channel subscriber count (if available in the public API).",
+        "channelViews": "Total channel views from the public API.",
+        "medianViews": "Median views: the middle value, less sensitive to outliers.",
+        "commentRate": "Comments-to-views ratio, in percent."
       }
     },
     "comments": {
+      "toggleShow": "Comments",
+      "toggleHide": "Hide comments",
+      "empty": "No comments found",
       "toggleShowReplies": "Show replies",
       "toggleHideReplies": "Hide replies",
       "repliesPartialHint": "Only a subset of replies available via the public YouTube API is shown."

@@ -433,7 +433,7 @@ onMounted(() => {
                   class="cursor-pointer rounded-full border border-input px-3 py-1 text-xs font-medium text-foreground hover:bg-accent"
                   @click="toggleComments(video)"
                 >
-                  {{ ensureCommentState(video.id).open ? 'Скрыть комментарии' : `Комментарии (${fmt(video.comments)})` }}
+                  {{ ensureCommentState(video.id).open ? t('youtube.comments.toggleHide') : `${t('youtube.comments.toggleShow')} (${fmt(video.comments)})` }}
                 </button>
               </div>
 
@@ -445,7 +445,7 @@ onMounted(() => {
                   {{ ensureCommentState(video.id).error }}
                 </p>
                 <p v-else-if="ensureCommentState(video.id).items.length === 0" class="text-xs text-muted-foreground">
-                  Комментарии не найдены
+                  {{ t('youtube.comments.empty') }}
                 </p>
                 <div v-else class="space-y-2">
                   <article
