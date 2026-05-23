@@ -6,9 +6,9 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\EmailIntel\EmailIntelBulkLookupRequest;
 use App\Http\Requests\EmailIntel\EmailIntelDomainPostureRequest;
 use App\Http\Requests\EmailIntel\EmailIntelLookupRequest;
-use App\Modules\EmailIntel\Application\Services\EmailIntel\DomainMailPostureService;
-use App\Modules\EmailIntel\Application\Services\EmailIntel\EmailBulkIntelService;
-use App\Modules\EmailIntel\Application\Services\EmailIntelService;
+use App\Modules\EmailIntel\Application\Contracts\DomainMailPostureServiceInterface;
+use App\Modules\EmailIntel\Application\Contracts\EmailBulkIntelServiceInterface;
+use App\Modules\EmailIntel\Application\Contracts\EmailIntelServiceInterface;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Response;
 use Illuminate\View\View;
@@ -16,9 +16,9 @@ use Illuminate\View\View;
 class EmailIntelController extends Controller
 {
     public function __construct(
-        private readonly EmailIntelService $emailIntelService,
-        private readonly EmailBulkIntelService $bulkIntelService,
-        private readonly DomainMailPostureService $domainMailPostureService,
+        private readonly EmailIntelServiceInterface $emailIntelService,
+        private readonly EmailBulkIntelServiceInterface $bulkIntelService,
+        private readonly DomainMailPostureServiceInterface $domainMailPostureService,
     ) {
     }
 

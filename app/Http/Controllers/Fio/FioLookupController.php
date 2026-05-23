@@ -4,14 +4,14 @@ namespace App\Http\Controllers\Fio;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Fio\FioLookupRequest;
-use App\Modules\Fio\Application\Services\FioPublicSearchService;
+use App\Modules\Fio\Application\Contracts\FioPublicSearchServiceInterface;
 use Illuminate\Http\JsonResponse;
 use RuntimeException;
 
 class FioLookupController extends Controller
 {
     public function __construct(
-        private readonly FioPublicSearchService $fioPublicSearchService,
+        private readonly FioPublicSearchServiceInterface $fioPublicSearchService,
     ) {
     }
 

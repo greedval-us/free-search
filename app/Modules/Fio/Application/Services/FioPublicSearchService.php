@@ -2,6 +2,7 @@
 
 namespace App\Modules\Fio\Application\Services;
 
+use App\Modules\Fio\Application\Contracts\FioPublicSearchServiceInterface;
 use App\Modules\Fio\Domain\Contracts\FioPublicSearchProviderInterface;
 use App\Modules\Fio\Domain\Contracts\FioSearchDiagnosticsAwareInterface;
 use App\Modules\Fio\Domain\DTO\FioLookupResultDTO;
@@ -10,7 +11,7 @@ use App\Modules\Fio\Domain\Services\FioNameNormalizer;
 use App\Modules\Fio\Domain\Services\FioQualifierLexicon;
 use App\Modules\Fio\Domain\Services\FioSummaryBuilder;
 
-final class FioPublicSearchService
+final class FioPublicSearchService implements FioPublicSearchServiceInterface
 {
     public function __construct(
         private readonly FioPublicSearchProviderInterface $searchProvider,

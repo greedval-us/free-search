@@ -4,13 +4,13 @@ namespace App\Http\Controllers\DocumentIntel;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\DocumentIntel\DocumentIntelLookupRequest;
-use App\Modules\DocumentIntel\Application\Services\DocumentIntelService;
+use App\Modules\DocumentIntel\Application\Contracts\DocumentIntelServiceInterface;
 use Illuminate\Http\JsonResponse;
 
 class DocumentIntelController extends Controller
 {
     public function __construct(
-        private readonly DocumentIntelService $documentIntelService,
+        private readonly DocumentIntelServiceInterface $documentIntelService,
     ) {
     }
 

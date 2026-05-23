@@ -3,6 +3,7 @@
 namespace App\Modules\DocumentIntel\Application\Services;
 
 use App\Modules\DocumentIntel\Application\Contracts\DocumentMetadataExtractorInterface;
+use App\Modules\DocumentIntel\Application\Contracts\DocumentIntelServiceInterface;
 use App\Modules\DocumentIntel\Application\Contracts\DocumentUrlCollectorInterface;
 use App\Modules\DocumentIntel\Application\Services\DocumentIntel\DocumentPivotBuilder;
 use App\Modules\DocumentIntel\Application\Services\DocumentIntel\DocumentRecommendationBuilder;
@@ -12,7 +13,7 @@ use App\Modules\DocumentIntel\Application\Services\DocumentIntel\DocumentSummary
 use App\Modules\SiteIntel\Application\Contracts\DomainLiteDnsResolverInterface;
 use App\Modules\SiteIntel\Application\Services\DomainLite\DomainLiteWhoisLookup;
 
-final class DocumentIntelService
+final class DocumentIntelService implements DocumentIntelServiceInterface
 {
     public function __construct(
         private readonly DomainLiteDnsResolverInterface $dnsResolver,
