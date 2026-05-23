@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Concerns;
 
+use App\Support\Reports\Contracts\ReportFilenamePolicyInterface;
 use Carbon\Carbon;
 use Illuminate\Http\Response;
 use Illuminate\View\View;
@@ -36,7 +37,7 @@ trait HandlesHtmlReports
             return view($view, $viewData);
         }
 
-        $filename = app(\App\Support\Reports\ReportFilenamePolicy::class)->build(
+        $filename = app(ReportFilenamePolicyInterface::class)->build(
             prefix: $filenamePrefix,
             target: $filenameTarget,
         );
@@ -57,4 +58,3 @@ trait HandlesHtmlReports
         return (string) config('osint.reports.download_content_type', 'text/html; charset=UTF-8');
     }
 }
-

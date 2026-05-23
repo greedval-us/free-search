@@ -2,13 +2,14 @@
 
 namespace App\Http\Controllers\YouTube;
 
+use App\Http\Controllers\Concerns\HandlesParserDownloads;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\YouTube\YouTubeParserRequest;
 use App\Http\Requests\YouTube\YouTubeParserStartRequest;
 use App\Modules\Export\Excel\Contracts\ExcelWorkbookServiceInterface;
 use App\Modules\YouTube\Parser\Contracts\YouTubeParserApplicationServiceInterface;
 use App\Modules\YouTube\Parser\Contracts\YouTubeParserExportBuilderInterface;
-use App\Support\Reports\ReportFilenamePolicy;
+use App\Support\Reports\Contracts\ReportFilenamePolicyInterface;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use RuntimeException;
@@ -17,11 +18,13 @@ use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class YouTubeParserController extends Controller
 {
+    use HandlesParserDownloads;
+
     public function __construct(
         private readonly YouTubeParserApplicationServiceInterface $service,
         private readonly YouTubeParserExportBuilderInterface $exportBuilder,
         private readonly ExcelWorkbookServiceInterface $excelWorkbookService,
-        private readonly ReportFilenamePolicy $reportFilenamePolicy,
+        private readonly ReportFilenamePolicyInterface $reportFilenamePolicy,
     ) {
     }
 
@@ -58,7 +61,12 @@ class YouTubeParserController extends Controller
     public function downloadExcel(Request $request, string $runId): BinaryFileResponse
     {
         $payload = $this->service->getDownloadPayload($this->userId($request), $runId);
-        $filename = $this->buildExportFilename('youtube-parser', (string) ($payload['videoId'] ?? 'video'), 'xlsx');
+        $filename = $this->buildExportFilename(
+            $this->reportFilenamePolicy,
+            'youtube-parser',
+            (string) ($payload['videoId'] ?? 'video'),
+            'xlsx'
+        );
 
         return $this->excelWorkbookService->download($filename, $this->exportBuilder->buildSheets($payload));
     }
@@ -66,18 +74,14 @@ class YouTubeParserController extends Controller
     public function downloadJson(Request $request, string $runId): StreamedResponse
     {
         $payload = $this->service->getDownloadPayload($this->userId($request), $runId);
-        $filename = $this->buildExportFilename('youtube-parser', (string) ($payload['videoId'] ?? 'video'), 'json');
-
-        return response()->streamDownload(
-            static function () use ($payload): void {
-                echo json_encode(
-                    $payload,
-                    JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES
-                );
-            },
-            $filename,
-            ['Content-Type' => 'application/json; charset=UTF-8']
+        $filename = $this->buildExportFilename(
+            $this->reportFilenamePolicy,
+            'youtube-parser',
+            (string) ($payload['videoId'] ?? 'video'),
+            'json'
         );
+
+        return $this->streamJsonDownload($payload, $filename);
     }
 
     private function statusCode(RuntimeException $exception): int
@@ -92,12 +96,4 @@ class YouTubeParserController extends Controller
         return (int) $request->user()->id;
     }
 
-    private function buildExportFilename(string $prefix, string $target, string $extension): string
-    {
-        return $this->reportFilenamePolicy->buildWithExtension(
-            prefix: $prefix,
-            target: $target,
-            extension: $extension,
-        );
-    }
 }

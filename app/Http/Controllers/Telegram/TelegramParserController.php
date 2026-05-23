@@ -2,11 +2,12 @@
 
 namespace App\Http\Controllers\Telegram;
 
+use App\Http\Controllers\Concerns\HandlesParserDownloads;
 use App\Http\Requests\Telegram\TelegramParserStartRequest;
 use App\Modules\Export\Excel\Contracts\ExcelWorkbookServiceInterface;
-use App\Modules\Telegram\Parser\Contracts\TelegramParserExportBuilderInterface;
 use App\Modules\Telegram\Parser\Contracts\TelegramParserApplicationServiceInterface;
-use App\Support\Reports\ReportFilenamePolicy;
+use App\Modules\Telegram\Parser\Contracts\TelegramParserExportBuilderInterface;
+use App\Support\Reports\Contracts\ReportFilenamePolicyInterface;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
@@ -14,11 +15,13 @@ use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class TelegramParserController extends BaseTelegramController
 {
+    use HandlesParserDownloads;
+
     public function __construct(
         private readonly TelegramParserApplicationServiceInterface $parserApplicationService,
         private readonly TelegramParserExportBuilderInterface $exportBuilder,
         private readonly ExcelWorkbookServiceInterface $excelWorkbookService,
-        private readonly ReportFilenamePolicy $reportFilenamePolicy,
+        private readonly ReportFilenamePolicyInterface $reportFilenamePolicy,
     ) {
     }
 
@@ -46,7 +49,12 @@ class TelegramParserController extends BaseTelegramController
     public function downloadExcel(Request $request, string $runId): BinaryFileResponse
     {
         $payload = $this->parserApplicationService->getDownloadPayload($this->userId($request), $runId);
-        $filename = $this->buildExportFilename('telegram-parser', (string) ($payload['chatUsername'] ?? 'chat'), 'xlsx');
+        $filename = $this->buildExportFilename(
+            $this->reportFilenamePolicy,
+            'telegram-parser',
+            (string) ($payload['chatUsername'] ?? 'chat'),
+            'xlsx'
+        );
 
         return $this->excelWorkbookService->download($filename, $this->exportBuilder->buildSheets($payload));
     }
@@ -54,26 +62,13 @@ class TelegramParserController extends BaseTelegramController
     public function downloadJson(Request $request, string $runId): StreamedResponse
     {
         $payload = $this->parserApplicationService->getDownloadPayload($this->userId($request), $runId);
-        $filename = $this->buildExportFilename('telegram-parser', (string) ($payload['chatUsername'] ?? 'chat'), 'json');
-
-        return response()->streamDownload(
-            static function () use ($payload): void {
-                echo json_encode(
-                    $payload,
-                    JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES
-                );
-            },
-            $filename,
-            ['Content-Type' => 'application/json; charset=UTF-8']
+        $filename = $this->buildExportFilename(
+            $this->reportFilenamePolicy,
+            'telegram-parser',
+            (string) ($payload['chatUsername'] ?? 'chat'),
+            'json'
         );
-    }
 
-    private function buildExportFilename(string $prefix, string $chatUsername, string $extension): string
-    {
-        return $this->reportFilenamePolicy->buildWithExtension(
-            prefix: $prefix,
-            target: $chatUsername,
-            extension: $extension,
-        );
+        return $this->streamJsonDownload($payload, $filename);
     }
 }

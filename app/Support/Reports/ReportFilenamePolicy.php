@@ -2,9 +2,10 @@
 
 namespace App\Support\Reports;
 
+use App\Support\Reports\Contracts\ReportFilenamePolicyInterface;
 use Carbon\CarbonInterface;
 
-final class ReportFilenamePolicy
+final class ReportFilenamePolicy implements ReportFilenamePolicyInterface
 {
     public function build(string $prefix, string $target, ?CarbonInterface $now = null): string
     {

@@ -5,6 +5,7 @@ use App\Providers\DashboardServiceProvider;
 use App\Providers\FortifyServiceProvider;
 use App\Providers\MadelineProtoServiceProvider;
 use App\Providers\MoonShineServiceProvider;
+use App\Providers\SupportServiceProvider;
 use App\Modules\CompanyIntel\Providers\CompanyIntelServiceProvider;
 use App\Modules\DomainInfraIntel\Providers\DomainInfraIntelServiceProvider;
 use App\Modules\DocumentIntel\Providers\DocumentIntelServiceProvider;
@@ -20,6 +21,7 @@ use App\Modules\YouTube\Providers\YouTubeServiceProvider;
 
 return [
     AppServiceProvider::class,
+    SupportServiceProvider::class,
     DashboardServiceProvider::class,
     CompanyIntelServiceProvider::class,
     UsernameServiceProvider::class,
