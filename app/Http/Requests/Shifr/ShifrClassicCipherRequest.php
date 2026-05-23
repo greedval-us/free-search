@@ -2,16 +2,10 @@
 
 namespace App\Http\Requests\Shifr;
 
-use App\Http\Requests\LocalizedFormRequest;
 use App\Modules\Shifr\DTO\Classic\ClassicCipherLookupDTO;
 
-final class ShifrClassicCipherRequest extends LocalizedFormRequest
+final class ShifrClassicCipherRequest extends AbstractShifrRequest
 {
-    public function authorize(): bool
-    {
-        return true;
-    }
-
     public function rules(): array
     {
         return [
@@ -59,11 +53,6 @@ final class ShifrClassicCipherRequest extends LocalizedFormRequest
     public function rails(): int
     {
         return (int) ($this->validated('rails') ?? 3);
-    }
-
-    public function locale(): string
-    {
-        return $this->resolveLocale();
     }
 
     public function xorKey(): string

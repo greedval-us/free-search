@@ -2,16 +2,10 @@
 
 namespace App\Http\Requests\Shifr;
 
-use App\Http\Requests\LocalizedFormRequest;
 use App\Modules\Shifr\DTO\Toolkit\JwtLookupDTO;
 
-final class ShifrJwtInspectRequest extends LocalizedFormRequest
+final class ShifrJwtInspectRequest extends AbstractShifrRequest
 {
-    public function authorize(): bool
-    {
-        return true;
-    }
-
     public function rules(): array
     {
         return [
@@ -27,10 +21,5 @@ final class ShifrJwtInspectRequest extends LocalizedFormRequest
             token: (string) $this->validated('token'),
             secret: $this->filled('secret') ? (string) $this->validated('secret') : null,
         );
-    }
-
-    public function locale(): string
-    {
-        return $this->resolveLocale();
     }
 }

@@ -2,16 +2,10 @@
 
 namespace App\Http\Requests\Shifr;
 
-use App\Http\Requests\LocalizedFormRequest;
 use App\Modules\Shifr\DTO\Toolkit\TransformLookupDTO;
 
-final class ShifrTransformRequest extends LocalizedFormRequest
+final class ShifrTransformRequest extends AbstractShifrRequest
 {
-    public function authorize(): bool
-    {
-        return true;
-    }
-
     public function rules(): array
     {
         return [
@@ -27,10 +21,5 @@ final class ShifrTransformRequest extends LocalizedFormRequest
             input: (string) $this->validated('text'),
             operation: (string) $this->validated('operation'),
         );
-    }
-
-    public function locale(): string
-    {
-        return $this->resolveLocale();
     }
 }
