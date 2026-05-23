@@ -6,7 +6,9 @@ use App\Modules\YouTube\Analytics\Contracts\YouTubeAnalyticsApplicationServiceIn
 use App\Modules\YouTube\Analytics\YouTubeAnalyticsApplicationService;
 use App\Modules\YouTube\Core\Contracts\YouTubeGatewayInterface;
 use App\Modules\YouTube\Parser\Contracts\YouTubeParserApplicationServiceInterface;
+use App\Modules\YouTube\Parser\Contracts\YouTubeParserExportBuilderInterface;
 use App\Modules\YouTube\Parser\YouTubeParserApplicationService;
+use App\Modules\YouTube\Parser\YouTubeParserExportBuilder;
 use App\Modules\YouTube\Search\Contracts\YouTubeSearchApplicationServiceInterface;
 use App\Modules\YouTube\Search\YouTubeSearchApplicationService;
 use App\Modules\YouTube\YouTubeDataApiClient;
@@ -20,6 +22,7 @@ final class YouTubeServiceProvider extends BindingsServiceProvider
             YouTubeGatewayInterface::class => YouTubeDataApiClient::class,
             YouTubeSearchApplicationServiceInterface::class => YouTubeSearchApplicationService::class,
             YouTubeParserApplicationServiceInterface::class => YouTubeParserApplicationService::class,
+            YouTubeParserExportBuilderInterface::class => YouTubeParserExportBuilder::class,
             YouTubeAnalyticsApplicationServiceInterface::class => YouTubeAnalyticsApplicationService::class,
         ];
     }

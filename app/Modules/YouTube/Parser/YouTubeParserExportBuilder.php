@@ -3,11 +3,12 @@
 namespace App\Modules\YouTube\Parser;
 
 use App\Modules\Export\Excel\SheetDefinition;
+use App\Modules\YouTube\Parser\Contracts\YouTubeParserExportBuilderInterface;
 use Carbon\Carbon;
 use PhpOffice\PhpSpreadsheet\Shared\Date as ExcelDate;
 use PhpOffice\PhpSpreadsheet\Style\NumberFormat;
 
-class YouTubeParserExportBuilder
+class YouTubeParserExportBuilder implements YouTubeParserExportBuilderInterface
 {
     /**
      * @param array<string, mixed> $payload

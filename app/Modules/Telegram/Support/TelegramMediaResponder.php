@@ -3,10 +3,11 @@
 namespace App\Modules\Telegram\Support;
 
 use App\Modules\Telegram\Core\Contracts\TelegramGatewayInterface;
+use App\Modules\Telegram\Support\Contracts\TelegramMediaResponderInterface;
 use Illuminate\Support\Facades\File;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 
-class TelegramMediaResponder
+class TelegramMediaResponder implements TelegramMediaResponderInterface
 {
     public function __construct(
         private readonly TelegramGatewayInterface $telegramService,

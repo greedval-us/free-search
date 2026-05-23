@@ -6,8 +6,8 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\YouTube\YouTubeParserRequest;
 use App\Http\Requests\YouTube\YouTubeParserStartRequest;
 use App\Modules\Export\Excel\Contracts\ExcelWorkbookServiceInterface;
-use App\Modules\YouTube\Parser\YouTubeParserExportBuilder;
 use App\Modules\YouTube\Parser\Contracts\YouTubeParserApplicationServiceInterface;
+use App\Modules\YouTube\Parser\Contracts\YouTubeParserExportBuilderInterface;
 use App\Support\Reports\ReportFilenamePolicy;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -19,7 +19,7 @@ class YouTubeParserController extends Controller
 {
     public function __construct(
         private readonly YouTubeParserApplicationServiceInterface $service,
-        private readonly YouTubeParserExportBuilder $exportBuilder,
+        private readonly YouTubeParserExportBuilderInterface $exportBuilder,
         private readonly ExcelWorkbookServiceInterface $excelWorkbookService,
         private readonly ReportFilenamePolicy $reportFilenamePolicy,
     ) {

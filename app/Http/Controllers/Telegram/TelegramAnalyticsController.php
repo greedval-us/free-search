@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Telegram;
 
 use App\Http\Requests\Telegram\TelegramAnalyticsRequest;
 use App\Modules\Telegram\Analytics\Contracts\TelegramAnalyticsApplicationServiceInterface;
-use App\Modules\Telegram\Analytics\TelegramAnalyticsRangeResolver;
+use App\Modules\Telegram\Analytics\Contracts\TelegramAnalyticsRangeResolverInterface;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Response;
 use Illuminate\View\View;
@@ -13,7 +13,7 @@ class TelegramAnalyticsController extends BaseTelegramController
 {
     public function __construct(
         private readonly TelegramAnalyticsApplicationServiceInterface $analyticsApplicationService,
-        private readonly TelegramAnalyticsRangeResolver $rangeResolver,
+        private readonly TelegramAnalyticsRangeResolverInterface $rangeResolver,
     ) {
     }
 

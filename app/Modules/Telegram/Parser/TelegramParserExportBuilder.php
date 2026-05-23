@@ -3,11 +3,12 @@
 namespace App\Modules\Telegram\Parser;
 
 use App\Modules\Export\Excel\SheetDefinition;
+use App\Modules\Telegram\Parser\Contracts\TelegramParserExportBuilderInterface;
 use Carbon\Carbon;
 use PhpOffice\PhpSpreadsheet\Shared\Date as ExcelDate;
 use PhpOffice\PhpSpreadsheet\Style\NumberFormat;
 
-class TelegramParserExportBuilder
+class TelegramParserExportBuilder implements TelegramParserExportBuilderInterface
 {
     /**
      * @param array<string, mixed> $payload
@@ -201,4 +202,3 @@ class TelegramParserExportBuilder
         return json_encode($value, JSON_UNESCAPED_UNICODE) ?: '';
     }
 }
-

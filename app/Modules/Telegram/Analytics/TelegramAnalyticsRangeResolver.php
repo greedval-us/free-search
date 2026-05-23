@@ -3,9 +3,10 @@
 namespace App\Modules\Telegram\Analytics;
 
 use App\Http\Requests\Telegram\TelegramAnalyticsRequest;
+use App\Modules\Telegram\Analytics\Contracts\TelegramAnalyticsRangeResolverInterface;
 use Carbon\Carbon;
 
-class TelegramAnalyticsRangeResolver
+class TelegramAnalyticsRangeResolver implements TelegramAnalyticsRangeResolverInterface
 {
     /**
      * @return array{from: Carbon, to: Carbon}
@@ -81,4 +82,3 @@ class TelegramAnalyticsRangeResolver
         }
     }
 }
-

@@ -6,7 +6,7 @@ use App\Http\Requests\Telegram\SearchCommentsRequest;
 use App\Http\Requests\Telegram\SearchMessagesRequest;
 use App\Http\Requests\Telegram\StreamTelegramMediaRequest;
 use App\Modules\Telegram\Search\Contracts\TelegramSearchApplicationServiceInterface;
-use App\Modules\Telegram\Support\TelegramMediaResponder;
+use App\Modules\Telegram\Support\Contracts\TelegramMediaResponderInterface;
 use Illuminate\Http\JsonResponse;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 
@@ -14,7 +14,7 @@ class TelegramSearchController extends BaseTelegramController
 {
     public function __construct(
         private readonly TelegramSearchApplicationServiceInterface $searchApplicationService,
-        private readonly TelegramMediaResponder $mediaResponder,
+        private readonly TelegramMediaResponderInterface $mediaResponder,
     ) {
     }
 
@@ -39,4 +39,3 @@ class TelegramSearchController extends BaseTelegramController
         return $this->mediaResponder->respond($media);
     }
 }
-
