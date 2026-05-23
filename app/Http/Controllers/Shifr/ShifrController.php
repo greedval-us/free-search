@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Shifr;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Shifr\AbstractShifrRequest;
 use App\Http\Requests\Shifr\ShifrClassicCipherRequest;
 use App\Http\Requests\Shifr\ShifrHashRequest;
 use App\Http\Requests\Shifr\ShifrIocExtractRequest;
@@ -11,7 +12,6 @@ use App\Http\Requests\Shifr\ShifrTransformRequest;
 use App\Modules\Shifr\Application\Contracts\ShifrClassicCipherServiceInterface;
 use App\Modules\Shifr\Application\Contracts\ShifrToolkitServiceInterface;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
 
 final class ShifrController extends Controller
 {
@@ -71,7 +71,7 @@ final class ShifrController extends Controller
     /**
      * @param callable(): array<string, mixed> $resolver
      */
-    private function respondWithData(Request $request, callable $resolver): JsonResponse
+    private function respondWithData(AbstractShifrRequest $request, callable $resolver): JsonResponse
     {
         $this->applyRequestLocaleFor($request);
 
@@ -80,18 +80,8 @@ final class ShifrController extends Controller
         ]);
     }
 
-    private function applyRequestLocaleFor(Request $request): void
+    private function applyRequestLocaleFor(AbstractShifrRequest $request): void
     {
-        if (method_exists($request, 'locale')) {
-            /** @var mixed $locale */
-            $locale = $request->locale();
-            $this->applyRequestLocale(is_string($locale) ? $locale : app()->getLocale());
-
-            return;
-        }
-
-        /** @var mixed $inputLocale */
-        $inputLocale = $request->input('locale');
-        $this->applyRequestLocale(is_string($inputLocale) ? $inputLocale : app()->getLocale());
+        $this->applyRequestLocale($request->locale());
     }
 }

@@ -3,9 +3,16 @@
 namespace App\Http\Requests\Shifr;
 
 use App\Modules\Shifr\DTO\Classic\ClassicCipherLookupDTO;
+use Illuminate\Validation\Rule;
+use Illuminate\Validation\Validator;
 
 final class ShifrClassicCipherRequest extends AbstractShifrRequest
 {
+    /**
+     * @var array<int, string>
+     */
+    private const TRANSFORM_ONLY_CIPHERS = ['rot13', 'rot47', 'rot5'];
+
     public function rules(): array
     {
         return [
@@ -13,16 +20,56 @@ final class ShifrClassicCipherRequest extends AbstractShifrRequest
             'cipher' => ['required', 'string', 'in:caesar,atbash,rot13,rot47,rot5,vigenere,rail_fence,xor,affine,playfair,columnar,morse'],
             'direction' => ['required', 'string', 'in:encrypt,decrypt,transform'],
             'shift' => ['nullable', 'integer', 'min:-1000', 'max:1000'],
-            'key' => ['nullable', 'string', 'max:200'],
+            'key' => [
+                'nullable',
+                'string',
+                'max:200',
+                Rule::requiredIf(fn (): bool => $this->input('cipher') === 'vigenere'),
+            ],
             'rails' => ['nullable', 'integer', 'min:2', 'max:20'],
-            'xor_key' => ['nullable', 'string', 'max:200'],
+            'xor_key' => [
+                'nullable',
+                'string',
+                'max:200',
+                Rule::requiredIf(fn (): bool => $this->input('cipher') === 'xor'),
+            ],
             'affine_a' => ['nullable', 'integer', 'min:1', 'max:1000'],
             'affine_b' => ['nullable', 'integer', 'min:-1000', 'max:1000'],
-            'playfair_key' => ['nullable', 'string', 'max:200'],
-            'column_key' => ['nullable', 'string', 'max:200'],
+            'playfair_key' => [
+                'nullable',
+                'string',
+                'max:200',
+                Rule::requiredIf(fn (): bool => $this->input('cipher') === 'playfair'),
+            ],
+            'column_key' => [
+                'nullable',
+                'string',
+                'max:200',
+                Rule::requiredIf(fn (): bool => $this->input('cipher') === 'columnar'),
+            ],
             'morse_separator' => ['nullable', 'string', 'max:5'],
             'locale' => $this->localeRule(),
         ];
+    }
+
+    public function withValidator(Validator $validator): void
+    {
+        $validator->after(function (Validator $validator): void {
+            $cipher = (string) $this->input('cipher', '');
+            $direction = (string) $this->input('direction', '');
+
+            if ($cipher === '' || $direction === '') {
+                return;
+            }
+
+            if ($this->isTransformOnlyCipher($cipher) && $direction !== 'transform') {
+                $validator->errors()->add('direction', __('For this cipher direction must be transform.'));
+            }
+
+            if (!$this->isTransformOnlyCipher($cipher) && $direction === 'transform') {
+                $validator->errors()->add('direction', __('Transform direction is only available for ROT ciphers.'));
+            }
+        });
     }
 
     public function text(): string
@@ -101,5 +148,10 @@ final class ShifrClassicCipherRequest extends AbstractShifrRequest
             columnKey: $this->columnKey(),
             morseSeparator: $this->morseSeparator(),
         );
+    }
+
+    private function isTransformOnlyCipher(string $cipher): bool
+    {
+        return in_array($cipher, self::TRANSFORM_ONLY_CIPHERS, true);
     }
 }

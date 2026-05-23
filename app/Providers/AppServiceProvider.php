@@ -2,26 +2,6 @@
 
 namespace App\Providers;
 
-use App\Modules\Telegram\Analytics\Contracts\TelegramAnalyticsApplicationServiceInterface;
-use App\Modules\Telegram\Analytics\TelegramAnalyticsApplicationService;
-use App\Modules\Telegram\Core\Contracts\TelegramGatewayInterface;
-use App\Modules\Telegram\Parser\Contracts\TelegramParserApplicationServiceInterface;
-use App\Modules\Telegram\Parser\TelegramParserApplicationService;
-use App\Modules\Telegram\Search\Contracts\TelegramSearchApplicationServiceInterface;
-use App\Modules\Telegram\Search\TelegramSearchApplicationService;
-use App\Modules\Telegram\TelegramService;
-use App\Modules\YouTube\Analytics\Contracts\YouTubeAnalyticsApplicationServiceInterface;
-use App\Modules\YouTube\Analytics\YouTubeAnalyticsApplicationService;
-use App\Modules\YouTube\Core\Contracts\YouTubeGatewayInterface;
-use App\Modules\YouTube\Parser\Contracts\YouTubeParserApplicationServiceInterface;
-use App\Modules\YouTube\Parser\YouTubeParserApplicationService;
-use App\Modules\YouTube\Search\Contracts\YouTubeSearchApplicationServiceInterface;
-use App\Modules\YouTube\Search\YouTubeSearchApplicationService;
-use App\Modules\YouTube\YouTubeDataApiClient;
-use App\Modules\Shifr\Application\Contracts\ShifrClassicCipherServiceInterface;
-use App\Modules\Shifr\Application\Contracts\ShifrToolkitServiceInterface;
-use App\Modules\Shifr\Application\Services\ShifrClassicCipherService;
-use App\Modules\Shifr\Application\Services\ShifrToolkitService;
 use App\Modules\Fio\Domain\Contracts\FioPublicSearchProviderInterface;
 use App\Modules\Fio\Infrastructure\Providers\FioMultiSourceSearchProvider;
 use App\Modules\EmailIntel\Application\Contracts\EmailDnsResolverInterface;
@@ -73,16 +53,6 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        $this->app->bind(TelegramGatewayInterface::class, TelegramService::class);
-        $this->app->bind(TelegramSearchApplicationServiceInterface::class, TelegramSearchApplicationService::class);
-        $this->app->bind(TelegramParserApplicationServiceInterface::class, TelegramParserApplicationService::class);
-        $this->app->bind(TelegramAnalyticsApplicationServiceInterface::class, TelegramAnalyticsApplicationService::class);
-        $this->app->bind(YouTubeGatewayInterface::class, YouTubeDataApiClient::class);
-        $this->app->bind(YouTubeSearchApplicationServiceInterface::class, YouTubeSearchApplicationService::class);
-        $this->app->bind(YouTubeParserApplicationServiceInterface::class, YouTubeParserApplicationService::class);
-        $this->app->bind(YouTubeAnalyticsApplicationServiceInterface::class, YouTubeAnalyticsApplicationService::class);
-        $this->app->bind(ShifrClassicCipherServiceInterface::class, ShifrClassicCipherService::class);
-        $this->app->bind(ShifrToolkitServiceInterface::class, ShifrToolkitService::class);
         $this->app->bind(UsernameSourceCheckerInterface::class, UsernameSourceHttpChecker::class);
         $this->app->bind(FioPublicSearchProviderInterface::class, FioMultiSourceSearchProvider::class);
         $this->app->bind(EmailDnsResolverInterface::class, EmailDnsResolver::class);
