@@ -1,7 +1,6 @@
 <script setup lang="ts">
-import { BarChart3, ChevronDown, ChevronUp, Download, ExternalLink, FileText, LoaderCircle, Tags } from 'lucide-vue-next'
+import { BarChart3, ChevronDown, ChevronUp, Download, ExternalLink, FileText, RefreshCw, Tags } from 'lucide-vue-next'
 import { onMounted } from 'vue'
-import EmptyState from '@/components/ui/EmptyState.vue'
 import HelpTooltip from '@/components/ui/HelpTooltip.vue'
 import IntelResultPanel from '@/components/ui/IntelResultPanel.vue'
 import MetricCard from '@/components/ui/MetricCard.vue'
@@ -9,6 +8,7 @@ import SectionCard from '@/components/ui/SectionCard.vue'
 import { useI18n } from '@/composables/useI18n'
 import { useYouTubeAnalytics } from '../composables/useYouTubeAnalytics'
 import YouTubeAnalyticsDistribution from './analytics/components/YouTubeAnalyticsDistribution.vue'
+import YouTubeAnalyticsEmptyState from './analytics/components/YouTubeAnalyticsEmptyState.vue'
 import YouTubeAnalyticsInsights from './analytics/components/YouTubeAnalyticsInsights.vue'
 import YouTubeAnalyticsLeaders from './analytics/components/YouTubeAnalyticsLeaders.vue'
 import YouTubeAnalyticsTimeline from './analytics/components/YouTubeAnalyticsTimeline.vue'
@@ -124,12 +124,13 @@ onMounted(() => {
         </p>
         <div class="flex w-full flex-wrap justify-end gap-2 md:w-auto">
           <button
+            type="button"
             :disabled="loading || !canRun"
-            class="h-10 cursor-pointer rounded-md bg-primary px-5 text-sm font-semibold text-primary-foreground disabled:cursor-not-allowed disabled:opacity-60"
+            class="inline-flex h-10 cursor-pointer items-center gap-2 rounded-md border border-input bg-background px-4 text-sm font-medium hover:bg-accent disabled:cursor-not-allowed disabled:opacity-60"
             @click="runAnalytics"
           >
-            <LoaderCircle v-if="loading" class="mr-2 inline h-4 w-4 animate-spin" />
-            {{ loading ? t('youtube.common.loading') : t('youtube.analytics.submit') }}
+            <RefreshCw class="h-4 w-4" :class="{ 'animate-spin': loading }" />
+            {{ loading ? t('youtube.common.loading') : t('youtube.analytics.refresh') }}
           </button>
 
           <button
@@ -161,7 +162,7 @@ onMounted(() => {
 
   <IntelResultPanel>
     <div class="telegram-scroll min-h-0 flex-1 space-y-4 overflow-y-auto pr-1">
-      <EmptyState v-if="!result" :text="t('youtube.common.empty')" />
+      <YouTubeAnalyticsEmptyState v-if="!result" :loading="loading" :disabled="!canRun" @refresh="runAnalytics" />
 
       <template v-else>
         <SectionCard v-if="result.channel" :title="t('youtube.analytics.channelProfile')">

@@ -405,7 +405,7 @@ onMounted(() => {
 
     <div class="telegram-scroll min-h-0 flex-1 overflow-y-auto overscroll-contain pr-1">
       <div v-if="!loading && (!result || result.items.length === 0)" class="intel-empty">
-        {{ t('youtube.common.empty') }}
+        {{ t('youtube.search.empty') }}
       </div>
 
       <div v-else class="space-y-3">

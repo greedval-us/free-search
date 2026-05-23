@@ -1,4 +1,4 @@
-﻿{
+{
   "telegram": {
     "headTitle": "Telegram",
     "help": {
@@ -330,7 +330,8 @@
       "advancedAriaHide": "Hide advanced filters",
       "publicDataHint": "API v3 public search supports videos, channels, and playlists by keyword; optionally filter by channel, dates, region, language, and video-specific attributes.",
       "placeholder": "for example: osint tools",
-      "submit": "Search"
+      "submit": "Search",
+      "empty": "Run a search to view videos."
     },
     "analytics": {
       "title": "YouTube Analytics",
@@ -345,8 +346,13 @@
       "dateTo": "Date to",
       "customPeriodTooLong": "Custom period cannot be longer than 7 days.",
       "submit": "Analyze",
+      "refresh": "Refresh",
       "report": "Open report",
       "downloadReport": "Download report",
+      "empty": {
+        "title": "YouTube Analytics",
+        "description": "Select a video or channel and click Refresh to build a report from public YouTube API data."
+      },
       "channelProfile": "Channel profile",
       "videoProfile": "Video profile",
       "createdAt": "Created",
