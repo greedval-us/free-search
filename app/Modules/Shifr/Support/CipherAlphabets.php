@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 
 namespace App\Modules\Shifr\Support;
 
@@ -22,4 +22,3 @@ final class CipherAlphabets
         ];
     }
 }
-

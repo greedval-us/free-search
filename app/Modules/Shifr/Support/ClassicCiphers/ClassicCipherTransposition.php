@@ -1,6 +1,6 @@
-<?php
+﻿<?php
 
-namespace App\Modules\Shifr\Support;
+namespace App\Modules\Shifr\Support\ClassicCiphers;
 
 class ClassicCipherTransposition
 {
@@ -163,4 +163,3 @@ class ClassicCipherTransposition
         ];
     }
 }
-
