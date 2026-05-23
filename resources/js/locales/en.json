@@ -335,7 +335,7 @@
     "analytics": {
       "title": "YouTube Analytics",
       "collapsed": "Settings panel is collapsed",
-      "hint": "Readable report from public YouTube API data: channel/video profile, KPIs, engagement, leaders, tags, and distributions.",
+      "hint": "Analyze channel activity for the last 1-7 days.",
       "mode": "Mode",
       "videoId": "Video ID",
       "channelId": "Channel",
