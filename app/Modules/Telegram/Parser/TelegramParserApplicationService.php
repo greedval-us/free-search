@@ -37,7 +37,16 @@ class TelegramParserApplicationService implements TelegramParserApplicationServi
                 return $state;
             }
 
-            $state = $this->collector->advance($state);
+            try {
+                $state = $this->collector->advance($state);
+            } catch (\Throwable $exception) {
+                $state['status'] = 'failed';
+                $state['stage'] = 'failed';
+                $state['progress'] = 100;
+                $state['error'] = $exception->getMessage();
+
+                return $state;
+            }
 
             if (($state['status'] ?? null) === 'running') {
                 $cursor = is_array($state['cursor'] ?? null) ? $state['cursor'] : [];
@@ -110,4 +119,3 @@ class TelegramParserApplicationService implements TelegramParserApplicationServi
         ]);
     }
 }
-
