@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Fio;
 
+use App\Http\Controllers\Concerns\ResolvesHttpStatusCodeFromException;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Fio\FioLookupRequest;
 use App\Modules\Fio\Application\Contracts\FioPublicSearchServiceInterface;
@@ -10,6 +11,8 @@ use RuntimeException;
 
 class FioLookupController extends Controller
 {
+    use ResolvesHttpStatusCodeFromException;
+
     public function __construct(
         private readonly FioPublicSearchServiceInterface $fioPublicSearchService,
     ) {
@@ -25,11 +28,9 @@ class FioLookupController extends Controller
                 $request->qualifier(),
             );
         } catch (RuntimeException $exception) {
-            return $this->jsonError($exception->getMessage(), 502);
+            return $this->jsonError($exception->getMessage(), $this->statusCodeFromException($exception, 502));
         }
 
-        return $this->jsonOk([
-            'data' => $result->toArray(),
-        ]);
+        return $this->jsonData($result->toArray());
     }
 }

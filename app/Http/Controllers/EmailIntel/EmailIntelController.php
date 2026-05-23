@@ -24,9 +24,10 @@ class EmailIntelController extends Controller
 
     public function lookup(EmailIntelLookupRequest $request): JsonResponse
     {
-        $this->applyRequestLocale($request->locale());
-
-        return $this->jsonData($this->emailIntelService->lookup($request->email())->toArray());
+        return $this->localizedJsonData(
+            $request->locale(),
+            $this->emailIntelService->lookup($request->email())->toArray()
+        );
     }
 
     public function report(EmailIntelLookupRequest $request): View|Response
@@ -45,15 +46,17 @@ class EmailIntelController extends Controller
 
     public function bulk(EmailIntelBulkLookupRequest $request): JsonResponse
     {
-        $this->applyRequestLocale($request->locale());
-
-        return $this->jsonData($this->bulkIntelService->lookup($request->emails()));
+        return $this->localizedJsonData(
+            $request->locale(),
+            $this->bulkIntelService->lookup($request->emails())
+        );
     }
 
     public function domainPosture(EmailIntelDomainPostureRequest $request): JsonResponse
     {
-        $this->applyRequestLocale($request->locale());
-
-        return $this->jsonData($this->domainMailPostureService->inspect($request->domain()));
+        return $this->localizedJsonData(
+            $request->locale(),
+            $this->domainMailPostureService->inspect($request->domain())
+        );
     }
 }

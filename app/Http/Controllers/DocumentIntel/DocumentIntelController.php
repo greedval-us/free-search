@@ -16,13 +16,12 @@ class DocumentIntelController extends Controller
 
     public function lookup(DocumentIntelLookupRequest $request): JsonResponse
     {
-        $this->applyRequestLocale($request->locale());
-
-        return $this->jsonOk([
-            'data' => $this->documentIntelService->lookup(
+        return $this->localizedJsonData(
+            $request->locale(),
+            $this->documentIntelService->lookup(
                 $request->searchQuery(),
                 $request->normalizedDomain(),
-            ),
-        ]);
+            )
+        );
     }
 }

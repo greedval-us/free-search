@@ -48,6 +48,13 @@ abstract class Controller
         app()->setLocale($locale);
     }
 
+    protected function localizedJsonData(string $locale, mixed $data, int $status = 200): JsonResponse
+    {
+        $this->applyRequestLocale($locale);
+
+        return $this->jsonData($data, $status);
+    }
+
     /**
      * @param array<string, mixed> $report
      * @param array<string, mixed> $extraViewData

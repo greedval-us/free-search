@@ -16,10 +16,9 @@ final class NewsMediaIntelController extends Controller
 
     public function lookup(NewsMediaIntelLookupRequest $request): JsonResponse
     {
-        $this->applyRequestLocale($request->locale());
-
-        return $this->jsonOk([
-            'data' => $this->newsMediaIntelService->monitor($request->searchQuery())->toArray(),
-        ]);
+        return $this->localizedJsonData(
+            $request->locale(),
+            $this->newsMediaIntelService->monitor($request->searchQuery())->toArray()
+        );
     }
 }
