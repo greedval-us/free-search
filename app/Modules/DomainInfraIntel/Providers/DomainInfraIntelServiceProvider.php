@@ -6,7 +6,9 @@ use App\Modules\DomainInfraIntel\Application\Contracts\AsnLookupClientInterface;
 use App\Modules\DomainInfraIntel\Application\Contracts\CertificateTransparencyClientInterface;
 use App\Modules\DomainInfraIntel\Application\Contracts\DomainIpResolverInterface;
 use App\Modules\DomainInfraIntel\Application\Contracts\DomainRdapClientInterface;
+use App\Modules\DomainInfraIntel\Application\Contracts\DomainInfraIntelServiceInterface;
 use App\Modules\DomainInfraIntel\Application\Contracts\NeighborDomainResolverInterface;
+use App\Modules\DomainInfraIntel\Application\Services\DomainInfraIntelService;
 use App\Modules\DomainInfraIntel\Infrastructure\Clients\AsnLookupClient;
 use App\Modules\DomainInfraIntel\Infrastructure\Clients\CertificateTransparencyClient;
 use App\Modules\DomainInfraIntel\Infrastructure\Clients\DomainIpResolver;
@@ -24,6 +26,7 @@ final class DomainInfraIntelServiceProvider extends BindingsServiceProvider
             CertificateTransparencyClientInterface::class => CertificateTransparencyClient::class,
             AsnLookupClientInterface::class => AsnLookupClient::class,
             NeighborDomainResolverInterface::class => NeighborDomainResolver::class,
+            DomainInfraIntelServiceInterface::class => DomainInfraIntelService::class,
         ];
     }
 }
