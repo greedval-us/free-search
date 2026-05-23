@@ -39,6 +39,7 @@ const commentsByVideoId = ref<Record<string, {
   error: string | null
   items: YouTubeCommentItem[]
   nextPageToken: string | null
+  openRepliesByCommentId: Record<string, boolean>
 }>>({})
 
 const canSearch = computed(() => form.value.q.trim().length > 0)
@@ -57,6 +58,7 @@ const ensureCommentState = (videoId: string) => {
       error: null,
       items: [],
       nextPageToken: null,
+      openRepliesByCommentId: {},
     }
   }
 
@@ -171,6 +173,14 @@ const toggleComments = async (video: YouTubeVideo) => {
   }
 
   await loadComments(video, false)
+}
+
+const isRepliesOpen = (videoId: string, commentId: string) =>
+  ensureCommentState(videoId).openRepliesByCommentId[commentId] === true
+
+const toggleReplies = (videoId: string, commentId: string) => {
+  const state = ensureCommentState(videoId)
+  state.openRepliesByCommentId[commentId] = !state.openRepliesByCommentId[commentId]
 }
 
 onMounted(() => {
@@ -459,6 +469,40 @@ onMounted(() => {
                       <span>💬 {{ fmt(comment.replyCount) }}</span>
                     </div>
                     <p class="text-xs leading-relaxed text-foreground">{{ comment.text }}</p>
+
+                    <div v-if="comment.replyCount > 0" class="mt-2">
+                      <button
+                        type="button"
+                        class="cursor-pointer rounded-full border border-input px-2.5 py-1 text-[11px] font-medium text-foreground hover:bg-accent"
+                        @click="toggleReplies(video.id, comment.id)"
+                      >
+                        {{ isRepliesOpen(video.id, comment.id)
+                          ? t('youtube.comments.toggleHideReplies')
+                          : `${t('youtube.comments.toggleShowReplies')} (${fmt(comment.replyCount)})` }}
+                      </button>
+                    </div>
+
+                    <div
+                      v-if="comment.replyCount > 0 && isRepliesOpen(video.id, comment.id)"
+                      class="mt-2 space-y-1.5 border-l border-border/70 pl-2"
+                    >
+                      <article
+                        v-for="reply in comment.replies"
+                        :key="reply.id"
+                        class="rounded-md border border-border/60 bg-background/80 p-2"
+                      >
+                        <div class="mb-1 flex flex-wrap items-center gap-2 text-[11px] text-muted-foreground">
+                          <span>{{ reply.author }}</span>
+                          <span>{{ formatDate(reply.publishedAt) }}</span>
+                          <span>👍 {{ fmt(reply.likeCount) }}</span>
+                        </div>
+                        <p class="text-xs leading-relaxed text-foreground">{{ reply.text }}</p>
+                      </article>
+
+                      <p v-if="comment.replyCount > comment.replies.length" class="text-[11px] text-muted-foreground">
+                        {{ t('youtube.comments.repliesPartialHint') }}
+                      </p>
+                    </div>
                   </article>
 
                   <div v-if="ensureCommentState(video.id).nextPageToken" class="pt-1">

@@ -383,6 +383,11 @@
         "channelViews": "Просмотры канала"
       }
     },
+    "comments": {
+      "toggleShowReplies": "Показать ответы",
+      "toggleHideReplies": "Скрыть ответы",
+      "repliesPartialHint": "Показана только часть ответов, доступная через публичный API YouTube."
+    },
     "parser": {
       "title": "YouTube Парсер",
       "collapsed": "Панель настроек свернута",

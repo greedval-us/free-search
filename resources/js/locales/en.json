@@ -383,6 +383,11 @@
         "channelViews": "Channel views"
       }
     },
+    "comments": {
+      "toggleShowReplies": "Show replies",
+      "toggleHideReplies": "Hide replies",
+      "repliesPartialHint": "Only a subset of replies available via the public YouTube API is shown."
+    },
     "parser": {
       "title": "YouTube Parser",
       "collapsed": "Settings panel is collapsed",
