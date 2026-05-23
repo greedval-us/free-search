@@ -1,9 +1,9 @@
 <?php
 
-namespace App\Modules\Shifr\Actions;
+namespace App\Modules\Shifr\Actions\Classic;
 
-use App\Modules\Shifr\DTO\AtbashRequestDTO;
-use App\Modules\Shifr\DTO\AtbashResultDTO;
+use App\Modules\Shifr\DTO\Classic\AtbashRequestDTO;
+use App\Modules\Shifr\DTO\Classic\AtbashResultDTO;
 use App\Modules\Shifr\Support\CipherAlphabets;
 
 final class Rot13TransformAction

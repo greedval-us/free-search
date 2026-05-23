@@ -3,7 +3,7 @@
 namespace App\Http\Requests\Shifr;
 
 use App\Http\Requests\LocalizedFormRequest;
-use App\Modules\Shifr\DTO\ClassicCipherLookupDTO;
+use App\Modules\Shifr\DTO\Classic\ClassicCipherLookupDTO;
 
 final class ShifrClassicCipherRequest extends LocalizedFormRequest
 {

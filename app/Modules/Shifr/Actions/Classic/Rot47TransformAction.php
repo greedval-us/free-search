@@ -1,9 +1,9 @@
 <?php
 
-namespace App\Modules\Shifr\Actions;
+namespace App\Modules\Shifr\Actions\Classic;
 
-use App\Modules\Shifr\DTO\AtbashRequestDTO;
-use App\Modules\Shifr\DTO\AtbashResultDTO;
+use App\Modules\Shifr\DTO\Classic\AtbashRequestDTO;
+use App\Modules\Shifr\DTO\Classic\AtbashResultDTO;
 
 final class Rot47TransformAction
 {
@@ -35,4 +35,3 @@ final class Rot47TransformAction
         return $result;
     }
 }
-

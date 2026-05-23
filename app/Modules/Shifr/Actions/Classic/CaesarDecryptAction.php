@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Modules\Shifr\Actions;
+namespace App\Modules\Shifr\Actions\Classic;
 
-use App\Modules\Shifr\Actions\Contracts\CaesarCipherActionInterface;
-use App\Modules\Shifr\DTO\CaesarCipherRequestDTO;
-use App\Modules\Shifr\DTO\CaesarCipherResultDTO;
+use App\Modules\Shifr\Actions\Classic\Contracts\CaesarCipherActionInterface;
+use App\Modules\Shifr\DTO\Classic\CaesarCipherRequestDTO;
+use App\Modules\Shifr\DTO\Classic\CaesarCipherResultDTO;
 
 class CaesarDecryptAction extends AbstractShiftCipherAction implements CaesarCipherActionInterface
 {

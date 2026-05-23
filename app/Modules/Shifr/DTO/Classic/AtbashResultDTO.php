@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Modules\Shifr\DTO;
+namespace App\Modules\Shifr\DTO\Classic;
 
 class AtbashResultDTO
 {

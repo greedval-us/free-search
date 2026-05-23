@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Modules\Shifr\Actions;
+namespace App\Modules\Shifr\Actions\Classic;
 
 use App\Modules\Shifr\Support\CipherAlphabets;
 
@@ -32,4 +32,3 @@ abstract class AbstractMirrorCipherAction
         return $char;
     }
 }
-

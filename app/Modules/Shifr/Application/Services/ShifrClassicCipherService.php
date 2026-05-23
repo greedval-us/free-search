@@ -2,9 +2,9 @@
 
 namespace App\Modules\Shifr\Application\Services;
 
-use App\Modules\Shifr\Actions\ProcessClassicCipherAction;
+use App\Modules\Shifr\Actions\Classic\ProcessClassicCipherAction;
 use App\Modules\Shifr\Application\Contracts\ShifrClassicCipherServiceInterface;
-use App\Modules\Shifr\DTO\ClassicCipherLookupDTO;
+use App\Modules\Shifr\DTO\Classic\ClassicCipherLookupDTO;
 
 final class ShifrClassicCipherService implements ShifrClassicCipherServiceInterface
 {
@@ -18,4 +18,3 @@ final class ShifrClassicCipherService implements ShifrClassicCipherServiceInterf
         return $this->processClassicCipherAction->execute($dto);
     }
 }
-

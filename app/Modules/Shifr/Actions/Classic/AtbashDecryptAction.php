@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Modules\Shifr\Actions;
+namespace App\Modules\Shifr\Actions\Classic;
 
-use App\Modules\Shifr\Actions\Contracts\AtbashCipherActionInterface;
-use App\Modules\Shifr\DTO\AtbashRequestDTO;
-use App\Modules\Shifr\DTO\AtbashResultDTO;
+use App\Modules\Shifr\Actions\Classic\Contracts\AtbashCipherActionInterface;
+use App\Modules\Shifr\DTO\Classic\AtbashRequestDTO;
+use App\Modules\Shifr\DTO\Classic\AtbashResultDTO;
 
 class AtbashDecryptAction extends AbstractMirrorCipherAction implements AtbashCipherActionInterface
 {

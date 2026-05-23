@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Modules\Shifr\DTO;
+namespace App\Modules\Shifr\DTO\Classic;
 
 final class ClassicCipherLookupDTO
 {
@@ -20,4 +20,3 @@ final class ClassicCipherLookupDTO
     ) {
     }
 }
-
