@@ -9,6 +9,8 @@ use App\Modules\YouTube\DTO\Request\YouTubeAnalyticsLookupDTO;
 use App\Modules\YouTube\Presenters\YouTubeChannelPresenter;
 use App\Modules\YouTube\Presenters\YouTubeVideoPresenter;
 use App\Modules\YouTube\Support\YouTubeChannelResolver;
+use Carbon\CarbonInterface;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Arr;
 
 class AnalyticsSummaryAction extends AbstractYouTubeAction
@@ -31,7 +33,12 @@ class AnalyticsSummaryAction extends AbstractYouTubeAction
         $params = $query->toArray();
 
         if ($params['mode'] === 'channel' || $params['channelId'] !== '') {
-            return $this->channelSummary($params['channelId'], $params['limit']);
+            return $this->channelSummary(
+                channelId: $params['channelId'],
+                periodDays: (int) ($params['periodDays'] ?? 7),
+                dateFrom: (string) ($params['dateFrom'] ?? ''),
+                dateTo: (string) ($params['dateTo'] ?? ''),
+            );
         }
 
         return $this->videoSummary($params['videoId']);
@@ -64,10 +71,11 @@ class AnalyticsSummaryAction extends AbstractYouTubeAction
     /**
      * @return array<string, mixed>
      */
-    private function channelSummary(string $channelId, int $limit): array
+    private function channelSummary(string $channelId, int $periodDays, string $dateFrom, string $dateTo): array
     {
         $resolvedChannelId = $this->channelResolver->resolve($channelId);
-        $videos = array_values($this->latestChannelVideos($resolvedChannelId, min(50, max(1, $limit))));
+        $range = $this->resolveDateRange($periodDays, $dateFrom, $dateTo);
+        $videos = array_values($this->latestChannelVideos($resolvedChannelId, 50, $range['from'], $range['to']));
 
         return $this->summaryPayload(
             mode: 'channel',
@@ -124,18 +132,28 @@ class AnalyticsSummaryAction extends AbstractYouTubeAction
     /**
      * @return array<string, array<string, mixed>>
      */
-    private function latestChannelVideos(string $channelId, int $limit): array
+    private function latestChannelVideos(string $channelId, int $limit, ?CarbonInterface $publishedAfter = null, ?CarbonInterface $publishedBefore = null): array
     {
         if ($channelId === '') {
             return [];
         }
 
-        $search = $this->gateway->search([
+        $params = [
             'channelId' => $channelId,
             'type' => 'video',
             'order' => 'date',
             'maxResults' => $limit,
-        ]);
+        ];
+
+        if ($publishedAfter !== null) {
+            $params['publishedAfter'] = $publishedAfter->copy()->utc()->toRfc3339String();
+        }
+
+        if ($publishedBefore !== null) {
+            $params['publishedBefore'] = $publishedBefore->copy()->utc()->toRfc3339String();
+        }
+
+        $search = $this->gateway->search($params);
 
         $videoIds = collect($search['items'] ?? [])
             ->map(fn (array $item): ?string => Arr::get($item, 'id.videoId'))
@@ -188,5 +206,25 @@ class AnalyticsSummaryAction extends AbstractYouTubeAction
         return collect($payload['items'] ?? [])
             ->mapWithKeys(fn (array $item): array => [$item['id'] => $this->channelPresenter->present($item)])
             ->all();
+    }
+
+    /**
+     * @return array{from: Carbon, to: Carbon}
+     */
+    private function resolveDateRange(int $periodDays, string $dateFrom, string $dateTo): array
+    {
+        if ($dateFrom !== '' && $dateTo !== '') {
+            return [
+                'from' => Carbon::createFromFormat('Y-m-d', $dateFrom)->startOfDay(),
+                'to' => Carbon::createFromFormat('Y-m-d', $dateTo)->endOfDay(),
+            ];
+        }
+
+        $days = in_array($periodDays, [1, 3, 7], true) ? $periodDays : 7;
+
+        return [
+            'from' => now()->subDays($days - 1)->startOfDay(),
+            'to' => now()->endOfDay(),
+        ];
     }
 }

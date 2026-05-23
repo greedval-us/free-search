@@ -18,6 +18,9 @@ Route::prefix('youtube')->name('youtube.')->group(function (): void {
         Route::get('summary', [YouTubeAnalyticsController::class, 'summary'])
             ->middleware('throttle:20,1')
             ->name('summary');
+        Route::get('report', [YouTubeAnalyticsController::class, 'report'])
+            ->middleware('throttle:10,1')
+            ->name('report');
     });
 
     Route::prefix('parser')->name('parser.')->group(function (): void {

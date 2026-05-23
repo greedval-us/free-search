@@ -7,12 +7,7 @@ import IntelSearchPanel from '@/components/ui/IntelSearchPanel.vue'
 import { getRepeatQueryParams, isRepeatAutorunEnabled, readRepeatQueryInt, readRepeatQueryParam } from '@/composables/useRepeatQuery'
 import { useI18n } from '@/composables/useI18n'
 import { apiRequest } from '@/lib/api'
-import type { YouTubeSearchPayload, YouTubeVideo } from '../types'
-
-const emit = defineEmits<{
-  openAnalytics: [video: YouTubeVideo]
-  openParser: [video: YouTubeVideo]
-}>()
+import type { YouTubeCommentItem, YouTubeCommentsPayload, YouTubeSearchPayload, YouTubeVideo } from '../types'
 
 const { t } = useI18n()
 const form = ref({
@@ -37,6 +32,14 @@ const error = ref<string | null>(null)
 const result = ref<YouTubeSearchPayload | null>(null)
 const searchPanelCollapsed = ref(false)
 const showAdvanced = ref(false)
+const commentsByVideoId = ref<Record<string, {
+  open: boolean
+  loading: boolean
+  loadingMore: boolean
+  error: string | null
+  items: YouTubeCommentItem[]
+  nextPageToken: string | null
+}>>({})
 
 const canSearch = computed(() => form.value.q.trim().length > 0)
 const canUseVideoActions = (item: YouTubeVideo) => item.type === 'video'
@@ -44,6 +47,21 @@ const canUseVideoActions = (item: YouTubeVideo) => item.type === 'video'
 const numberFormat = new Intl.NumberFormat()
 const fmt = (value: number) => numberFormat.format(value ?? 0)
 const formatDate = (value: string) => (value ? new Date(value).toLocaleString() : '-')
+
+const ensureCommentState = (videoId: string) => {
+  if (!commentsByVideoId.value[videoId]) {
+    commentsByVideoId.value[videoId] = {
+      open: false,
+      loading: false,
+      loadingMore: false,
+      error: null,
+      items: [],
+      nextPageToken: null,
+    }
+  }
+
+  return commentsByVideoId.value[videoId]
+}
 
 const clampLimit = () => {
   const value = Number(form.value.limit)
@@ -91,6 +109,68 @@ const runSearch = async (append = false) => {
   }
 
   result.value = response.data
+  commentsByVideoId.value = {}
+}
+
+const loadComments = async (video: YouTubeVideo, append = false) => {
+  if (video.type !== 'video') {
+    return
+  }
+
+  const state = ensureCommentState(video.id)
+  state.error = null
+
+  if (append) {
+    if (!state.nextPageToken || state.loadingMore) {
+      return
+    }
+
+    state.loadingMore = true
+  } else {
+    if (state.loading) {
+      return
+    }
+
+    state.loading = true
+  }
+
+  const response = await apiRequest<YouTubeCommentsPayload>('/youtube/parser/comments', {
+    query: {
+      videoId: video.id,
+      limit: 20,
+      order: 'relevance',
+      pageToken: append ? state.nextPageToken : '',
+    },
+  })
+
+  if (append) {
+    state.loadingMore = false
+  } else {
+    state.loading = false
+  }
+
+  if (!response.ok) {
+    state.error = response.message ?? t('youtube.common.requestFailed')
+    return
+  }
+
+  state.items = append ? [...state.items, ...response.data.items] : response.data.items
+  state.nextPageToken = response.data.pagination.nextPageToken
+}
+
+const toggleComments = async (video: YouTubeVideo) => {
+  if (video.type !== 'video') {
+    return
+  }
+
+  const state = ensureCommentState(video.id)
+  state.open = !state.open
+
+  if (!state.open || state.items.length > 0 || state.loading) {
+    return
+  }
+
+  await loadComments(video, false)
 }
 
 onMounted(() => {
@@ -337,8 +417,61 @@ onMounted(() => {
                 <a :href="video.url" target="_blank" rel="noopener noreferrer" class="cursor-pointer rounded-full border border-input px-2 py-1 text-xs text-primary hover:bg-accent">
                   <ExternalLink class="mr-1 inline h-3 w-3" /> {{ t('youtube.common.open') }}
                 </a>
-                <button v-if="canUseVideoActions(video)" type="button" class="cursor-pointer rounded-full border border-input px-3 py-1 text-xs font-medium text-foreground hover:bg-accent" @click="emit('openAnalytics', video)">{{ t('youtube.tabs.analytics') }}</button>
-                <button v-if="canUseVideoActions(video)" type="button" class="cursor-pointer rounded-full border border-input px-3 py-1 text-xs font-medium text-foreground hover:bg-accent" @click="emit('openParser', video)">{{ t('youtube.tabs.parser') }}</button>
+                <button
+                  v-if="canUseVideoActions(video)"
+                  type="button"
+                  class="cursor-pointer rounded-full border border-input px-3 py-1 text-xs font-medium text-foreground hover:bg-accent"
+                  @click="toggleComments(video)"
+                >
+                  {{ ensureCommentState(video.id).open ? 'Скрыть комментарии' : `Комментарии (${fmt(video.comments)})` }}
+                </button>
+              </div>
+
+              <div v-if="canUseVideoActions(video) && ensureCommentState(video.id).open" class="mt-3 rounded-lg border border-border/70 bg-card/60 p-3">
+                <p v-if="ensureCommentState(video.id).loading" class="text-xs text-muted-foreground">
+                  {{ t('youtube.common.loading') }}
+                </p>
+                <p v-else-if="ensureCommentState(video.id).error" class="text-xs text-destructive">
+                  {{ ensureCommentState(video.id).error }}
+                </p>
+                <p v-else-if="ensureCommentState(video.id).items.length === 0" class="text-xs text-muted-foreground">
+                  Комментарии не найдены
+                </p>
+                <div v-else class="space-y-2">
+                  <article
+                    v-for="comment in ensureCommentState(video.id).items"
+                    :key="comment.id"
+                    class="rounded-md border border-border/70 bg-background/70 p-2"
+                  >
+                    <div class="mb-1 flex flex-wrap items-center gap-2 text-[11px] text-muted-foreground">
+                      <a
+                        v-if="comment.authorChannelUrl"
+                        :href="comment.authorChannelUrl"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        class="text-primary hover:underline"
+                      >
+                        {{ comment.author }}
+                      </a>
+                      <span v-else>{{ comment.author }}</span>
+                      <span>{{ formatDate(comment.publishedAt) }}</span>
+                      <span>👍 {{ fmt(comment.likeCount) }}</span>
+                      <span>💬 {{ fmt(comment.replyCount) }}</span>
+                    </div>
+                    <p class="text-xs leading-relaxed text-foreground">{{ comment.text }}</p>
+                  </article>
+
+                  <div v-if="ensureCommentState(video.id).nextPageToken" class="pt-1">
+                    <button
+                      type="button"
+                      :disabled="ensureCommentState(video.id).loadingMore"
+                      class="cursor-pointer rounded-md border border-input bg-background px-3 py-1 text-xs font-medium hover:bg-accent disabled:cursor-not-allowed disabled:opacity-60"
+                      @click="loadComments(video, true)"
+                    >
+                      {{ ensureCommentState(video.id).loadingMore ? t('youtube.common.loading') : t('youtube.common.loadMore') }}
+                    </button>
+                  </div>
+                </div>
               </div>
             </div>
           </div>

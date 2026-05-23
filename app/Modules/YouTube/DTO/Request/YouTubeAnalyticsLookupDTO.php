@@ -8,11 +8,13 @@ final readonly class YouTubeAnalyticsLookupDTO
         public string $mode,
         public string $videoId,
         public string $channelId,
-        public int $limit,
+        public int $periodDays,
+        public string $dateFrom,
+        public string $dateTo,
     ) {}
 
     /**
-     * @return array{mode: string, videoId: string, channelId: string, limit: int}
+     * @return array{mode: string, videoId: string, channelId: string, periodDays: int, dateFrom: string, dateTo: string}
      */
     public function toArray(): array
     {
@@ -20,7 +22,9 @@ final readonly class YouTubeAnalyticsLookupDTO
             'mode' => $this->mode,
             'videoId' => $this->videoId,
             'channelId' => $this->channelId,
-            'limit' => $this->limit,
+            'periodDays' => $this->periodDays,
+            'dateFrom' => $this->dateFrom,
+            'dateTo' => $this->dateTo,
         ];
     }
 }

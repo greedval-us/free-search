@@ -1,7 +1,7 @@
 import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFormDefinition } from './../../../wayfinder'
 /**
 * @see \App\Http\Controllers\YouTube\YouTubeAnalyticsController::summary
- * @see app/Http/Controllers/YouTube/YouTubeAnalyticsController.php:15
+ * @see app/Http/Controllers/YouTube/YouTubeAnalyticsController.php:17
  * @route '/youtube/analytics/summary'
  */
 export const summary = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -16,7 +16,7 @@ summary.definition = {
 
 /**
 * @see \App\Http\Controllers\YouTube\YouTubeAnalyticsController::summary
- * @see app/Http/Controllers/YouTube/YouTubeAnalyticsController.php:15
+ * @see app/Http/Controllers/YouTube/YouTubeAnalyticsController.php:17
  * @route '/youtube/analytics/summary'
  */
 summary.url = (options?: RouteQueryOptions) => {
@@ -25,7 +25,7 @@ summary.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\YouTube\YouTubeAnalyticsController::summary
- * @see app/Http/Controllers/YouTube/YouTubeAnalyticsController.php:15
+ * @see app/Http/Controllers/YouTube/YouTubeAnalyticsController.php:17
  * @route '/youtube/analytics/summary'
  */
 summary.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -34,7 +34,7 @@ summary.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
 })
 /**
 * @see \App\Http\Controllers\YouTube\YouTubeAnalyticsController::summary
- * @see app/Http/Controllers/YouTube/YouTubeAnalyticsController.php:15
+ * @see app/Http/Controllers/YouTube/YouTubeAnalyticsController.php:17
  * @route '/youtube/analytics/summary'
  */
 summary.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -44,7 +44,7 @@ summary.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 
     /**
 * @see \App\Http\Controllers\YouTube\YouTubeAnalyticsController::summary
- * @see app/Http/Controllers/YouTube/YouTubeAnalyticsController.php:15
+ * @see app/Http/Controllers/YouTube/YouTubeAnalyticsController.php:17
  * @route '/youtube/analytics/summary'
  */
     const summaryForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -54,7 +54,7 @@ summary.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 
             /**
 * @see \App\Http\Controllers\YouTube\YouTubeAnalyticsController::summary
- * @see app/Http/Controllers/YouTube/YouTubeAnalyticsController.php:15
+ * @see app/Http/Controllers/YouTube/YouTubeAnalyticsController.php:17
  * @route '/youtube/analytics/summary'
  */
         summaryForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -63,7 +63,7 @@ summary.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
         })
             /**
 * @see \App\Http\Controllers\YouTube\YouTubeAnalyticsController::summary
- * @see app/Http/Controllers/YouTube/YouTubeAnalyticsController.php:15
+ * @see app/Http/Controllers/YouTube/YouTubeAnalyticsController.php:17
  * @route '/youtube/analytics/summary'
  */
         summaryForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -77,8 +77,87 @@ summary.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
         })
     
     summary.form = summaryForm
+/**
+* @see \App\Http\Controllers\YouTube\YouTubeAnalyticsController::report
+ * @see app/Http/Controllers/YouTube/YouTubeAnalyticsController.php:26
+ * @route '/youtube/analytics/report'
+ */
+export const report = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+    url: report.url(options),
+    method: 'get',
+})
+
+report.definition = {
+    methods: ["get","head"],
+    url: '/youtube/analytics/report',
+} satisfies RouteDefinition<["get","head"]>
+
+/**
+* @see \App\Http\Controllers\YouTube\YouTubeAnalyticsController::report
+ * @see app/Http/Controllers/YouTube/YouTubeAnalyticsController.php:26
+ * @route '/youtube/analytics/report'
+ */
+report.url = (options?: RouteQueryOptions) => {
+    return report.definition.url + queryParams(options)
+}
+
+/**
+* @see \App\Http\Controllers\YouTube\YouTubeAnalyticsController::report
+ * @see app/Http/Controllers/YouTube/YouTubeAnalyticsController.php:26
+ * @route '/youtube/analytics/report'
+ */
+report.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+    url: report.url(options),
+    method: 'get',
+})
+/**
+* @see \App\Http\Controllers\YouTube\YouTubeAnalyticsController::report
+ * @see app/Http/Controllers/YouTube/YouTubeAnalyticsController.php:26
+ * @route '/youtube/analytics/report'
+ */
+report.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
+    url: report.url(options),
+    method: 'head',
+})
+
+    /**
+* @see \App\Http\Controllers\YouTube\YouTubeAnalyticsController::report
+ * @see app/Http/Controllers/YouTube/YouTubeAnalyticsController.php:26
+ * @route '/youtube/analytics/report'
+ */
+    const reportForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+        action: report.url(options),
+        method: 'get',
+    })
+
+            /**
+* @see \App\Http\Controllers\YouTube\YouTubeAnalyticsController::report
+ * @see app/Http/Controllers/YouTube/YouTubeAnalyticsController.php:26
+ * @route '/youtube/analytics/report'
+ */
+        reportForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+            action: report.url(options),
+            method: 'get',
+        })
+            /**
+* @see \App\Http\Controllers\YouTube\YouTubeAnalyticsController::report
+ * @see app/Http/Controllers/YouTube/YouTubeAnalyticsController.php:26
+ * @route '/youtube/analytics/report'
+ */
+        reportForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+            action: report.url({
+                        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
+                            _method: 'HEAD',
+                            ...(options?.query ?? options?.mergeQuery ?? {}),
+                        }
+                    }),
+            method: 'get',
+        })
+    
+    report.form = reportForm
 const analytics = {
     summary: Object.assign(summary, summary),
+report: Object.assign(report, report),
 }
 
 export default analytics

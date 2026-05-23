@@ -18,7 +18,7 @@ class YouTubeParserRequest extends FormRequest
         return [
             'videoId' => ['required', 'string', 'max:255'],
             'limit' => ['nullable', 'integer', 'min:1', 'max:100'],
-            'pageToken' => ['nullable', 'string', 'max:255'],
+            'pageToken' => ['nullable', 'string', 'max:2048'],
             'order' => ['nullable', Rule::in(['relevance', 'time'])],
             'searchTerms' => ['nullable', 'string', 'max:255'],
         ];

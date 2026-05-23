@@ -160,13 +160,15 @@ class RequestLogRunUrlBuilder
             ]);
         }
 
-        if ($path === '/youtube/analytics/summary') {
+        if ($path === '/youtube/analytics/summary' || $path === '/youtube/analytics/report') {
             return $this->buildUrl('/youtube', [
                 'tab' => 'analytics',
                 'mode' => $this->readString($payload, ['mode']),
                 'videoId' => $this->readString($payload, ['videoId']),
                 'channelId' => $this->readString($payload, ['channelId']),
-                'limit' => $this->readIntString($payload, 'limit'),
+                'periodDays' => $this->readIntString($payload, 'periodDays'),
+                'dateFrom' => $this->readString($payload, ['dateFrom']),
+                'dateTo' => $this->readString($payload, ['dateTo']),
                 'autorun' => '1',
             ]);
         }

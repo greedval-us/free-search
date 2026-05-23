@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { BarChart3, ChevronDown, ChevronUp, ExternalLink, LoaderCircle, Tags } from 'lucide-vue-next'
+import { BarChart3, ChevronDown, ChevronUp, Download, ExternalLink, FileText, LoaderCircle, Tags } from 'lucide-vue-next'
 import { computed, onMounted, ref } from 'vue'
 import EmptyState from '@/components/ui/EmptyState.vue'
 import HelpTooltip from '@/components/ui/HelpTooltip.vue'
@@ -11,8 +11,17 @@ import { useI18n } from '@/composables/useI18n'
 import { apiRequest } from '@/lib/api'
 import type { YouTubeAnalyticsPayload, YouTubeVideo } from '../types'
 
-const { t } = useI18n()
-const form = ref({ mode: 'channel' as 'video' | 'channel', videoId: '', channelId: '', limit: 25 })
+const { t, locale } = useI18n()
+const PERIODS = [1, 3, 7] as const
+const DAY_IN_MS = 24 * 60 * 60 * 1000
+const form = ref({
+  mode: 'channel' as 'video' | 'channel',
+  videoId: '',
+  channelId: '',
+  periodDays: 7 as 1 | 3 | 7,
+  dateFrom: '',
+  dateTo: '',
+})
 const loading = ref(false)
 const error = ref<string | null>(null)
 const result = ref<YouTubeAnalyticsPayload | null>(null)
@@ -24,28 +33,96 @@ const pct = (value: number) => `${Number(value ?? 0).toFixed(2)}%`
 const formatDate = (value: string) => (value ? new Date(value).toLocaleString() : '-')
 const compactText = (value: string, max = 220) => value.length > max ? `${value.slice(0, max).trim()}...` : value
 
-const clampLimit = () => {
-  const value = Number(form.value.limit)
-  form.value.limit = Number.isFinite(value) ? Math.min(50, Math.max(1, Math.trunc(value))) : 25
+const formatDateInput = (date: Date) => {
+  const yyyy = date.getFullYear()
+  const mm = String(date.getMonth() + 1).padStart(2, '0')
+  const dd = String(date.getDate()).padStart(2, '0')
+  return `${yyyy}-${mm}-${dd}`
+}
+
+const parseDateInput = (value: string): Date | null => {
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(value)) {
+    return null
+  }
+  const date = new Date(`${value}T00:00:00`)
+  return Number.isNaN(date.getTime()) ? null : date
+}
+
+const diffDaysInclusive = (from: string, to: string): number | null => {
+  const fromDate = parseDateInput(from)
+  const toDate = parseDateInput(to)
+  if (!fromDate || !toDate) {
+    return null
+  }
+  return Math.floor((toDate.getTime() - fromDate.getTime()) / DAY_IN_MS) + 1
+}
+
+const applyPreset = (days: 1 | 3 | 7) => {
+  form.value.periodDays = days
+  form.value.dateFrom = ''
+  form.value.dateTo = ''
 }
 
 const canRun = computed(() => form.value.mode === 'video'
   ? form.value.videoId.trim().length > 0
   : form.value.channelId.trim().length > 0)
+const canUseReportActions = computed(() => result.value !== null && canRun.value)
+const customPeriodTooLong = computed(() => {
+  if (form.value.mode !== 'channel' || form.value.dateFrom === '' || form.value.dateTo === '') {
+    return false
+  }
+  const days = diffDaysInclusive(form.value.dateFrom, form.value.dateTo)
+  return days !== null && days > 7
+})
+const dateLimits = computed(() => {
+  if (form.value.mode !== 'channel') {
+    return { fromMin: null as string | null, fromMax: null as string | null, toMin: null as string | null, toMax: null as string | null }
+  }
+
+  const today = new Date()
+  const todayStr = formatDateInput(today)
+  const fromDate = parseDateInput(form.value.dateFrom)
+  const toDate = parseDateInput(form.value.dateTo)
+
+  let fromMin: string | null = null
+  let fromMax: string | null = todayStr
+  let toMin: string | null = null
+  let toMax: string | null = todayStr
+
+  if (toDate) {
+    const minFrom = new Date(toDate.getTime() - (6 * DAY_IN_MS))
+    fromMin = formatDateInput(minFrom)
+    fromMax = formatDateInput(toDate)
+  }
+
+  if (fromDate) {
+    const maxTo = new Date(fromDate.getTime() + (6 * DAY_IN_MS))
+    toMin = formatDateInput(fromDate)
+    toMax = formatDateInput(maxTo > today ? today : maxTo)
+  }
+
+  return { fromMin, fromMax, toMin, toMax }
+})
 
 const timelineMax = computed(() => Math.max(...(result.value?.distribution.timeline ?? []).map((row) => row.views), 1))
 
 const runAnalytics = async () => {
+  if (customPeriodTooLong.value) {
+    error.value = t('youtube.analytics.customPeriodTooLong')
+    return
+  }
+
   loading.value = true
   error.value = null
-  clampLimit()
 
   const response = await apiRequest<YouTubeAnalyticsPayload>('/youtube/analytics/summary', {
     query: {
       mode: form.value.mode,
       videoId: form.value.mode === 'video' ? form.value.videoId : '',
       channelId: form.value.mode === 'channel' ? form.value.channelId : '',
-      limit: form.value.limit,
+      periodDays: form.value.mode === 'channel' ? form.value.periodDays : undefined,
+      dateFrom: form.value.mode === 'channel' ? form.value.dateFrom : '',
+      dateTo: form.value.mode === 'channel' ? form.value.dateTo : '',
     },
   })
 
@@ -88,6 +165,34 @@ const videoMetric = (video: YouTubeVideo, key: string) => {
   return fmt(video.views)
 }
 
+const reportUrl = computed(() => {
+  const query = new URLSearchParams({
+    mode: form.value.mode,
+    locale: locale.value,
+  })
+
+  if (form.value.mode === 'video') {
+    query.set('videoId', form.value.videoId.trim())
+  } else {
+    query.set('channelId', form.value.channelId.trim())
+    query.set('periodDays', String(form.value.periodDays))
+    if (form.value.dateFrom && form.value.dateTo) {
+      query.set('dateFrom', form.value.dateFrom)
+      query.set('dateTo', form.value.dateTo)
+    }
+  }
+
+  return `/youtube/analytics/report?${query.toString()}`
+})
+
+const openReport = () => {
+  window.open(reportUrl.value, '_blank', 'noopener,noreferrer')
+}
+
+const downloadReport = () => {
+  window.open(`${reportUrl.value}&download=1`, '_blank', 'noopener,noreferrer')
+}
+
 onMounted(() => {
   const params = getRepeatQueryParams()
 
@@ -103,14 +208,19 @@ onMounted(() => {
   const mode = readRepeatQueryParam(params, ['mode'])
   const videoId = readRepeatQueryParam(params, ['videoId'])
   const channelId = readRepeatQueryParam(params, ['channelId'])
-  const limit = readRepeatQueryInt(params, 'limit')
+  const periodDays = readRepeatQueryInt(params, 'periodDays')
+  const dateFrom = readRepeatQueryParam(params, ['dateFrom'])
+  const dateTo = readRepeatQueryParam(params, ['dateTo'])
 
   if (mode === 'video' || mode === 'channel') form.value.mode = mode
   if (videoId !== '') form.value.videoId = videoId
   if (channelId !== '') form.value.channelId = channelId
-  if (limit !== null) {
-    form.value.limit = limit
-    clampLimit()
+  if (periodDays === 1 || periodDays === 3 || periodDays === 7) {
+    form.value.periodDays = periodDays
+  }
+  if (dateFrom !== '' && dateTo !== '') {
+    form.value.dateFrom = dateFrom
+    form.value.dateTo = dateTo
   }
 
   if (isRepeatAutorunEnabled(params) && canRun.value) {
@@ -143,8 +253,8 @@ onMounted(() => {
       </button>
     </div>
 
-    <div v-if="!panelCollapsed" class="mt-3 space-y-3">
-      <div class="grid gap-3 md:grid-cols-2 xl:grid-cols-12">
+    <div v-if="!panelCollapsed" class="mt-3 space-y-2.5">
+      <div class="grid gap-2.5 md:grid-cols-2 xl:grid-cols-12">
         <label class="block min-w-0 xl:col-span-2">
           <span class="mb-1 block truncate text-xs font-medium text-muted-foreground">{{ t('youtube.analytics.mode') }}</span>
           <select v-model="form.mode" class="h-10 w-full rounded-md border border-input bg-background px-3 text-sm">
@@ -152,30 +262,79 @@ onMounted(() => {
             <option value="video">{{ t('youtube.options.mode.video') }}</option>
           </select>
         </label>
-        <label v-if="form.mode === 'video'" class="block min-w-0 xl:col-span-8">
+        <label v-if="form.mode === 'video'" class="block min-w-0 xl:col-span-10">
           <span class="mb-1 block truncate text-xs font-medium text-muted-foreground">{{ t('youtube.analytics.videoId') }}</span>
           <input v-model="form.videoId" type="text" class="h-10 w-full rounded-md border border-input bg-background px-3 text-sm" />
         </label>
-        <label v-else class="block min-w-0 xl:col-span-8">
+        <label v-else class="block min-w-0 xl:col-span-4">
           <span class="mb-1 block truncate text-xs font-medium text-muted-foreground">{{ t('youtube.analytics.channelId') }}</span>
           <input v-model="form.channelId" type="text" class="h-10 w-full rounded-md border border-input bg-background px-3 text-sm" :placeholder="t('youtube.analytics.channelPlaceholder')" />
         </label>
-        <label class="block min-w-0 xl:col-span-2">
-          <span class="mb-1 block truncate text-xs font-medium text-muted-foreground">{{ t('youtube.analytics.limit') }}</span>
-          <input v-model.number="form.limit" type="number" min="1" max="50" class="h-10 w-full rounded-md border border-input bg-background px-3 text-sm" @input="clampLimit" @blur="clampLimit" />
+        <div v-if="form.mode === 'channel'" class="min-w-0 xl:col-span-2">
+          <span class="mb-1 block truncate text-xs font-medium text-muted-foreground">{{ t('youtube.analytics.period') }}</span>
+          <div class="grid h-10 grid-cols-3 gap-1 rounded-md border border-input bg-background p-1">
+            <button
+              v-for="period in PERIODS"
+              :key="period"
+              type="button"
+              class="cursor-pointer rounded-md px-2 text-xs transition"
+              :class="form.periodDays === period && !form.dateFrom && !form.dateTo
+                ? 'bg-cyan-400/15 text-cyan-200'
+                : 'text-foreground hover:bg-accent'"
+              @click="applyPreset(period)"
+            >
+              {{ period }}
+            </button>
+          </div>
+        </div>
+        <label v-if="form.mode === 'channel'" class="block min-w-0 xl:col-span-2">
+          <span class="mb-1 block truncate text-xs font-medium text-muted-foreground">{{ t('youtube.analytics.dateFrom') }}</span>
+          <input v-model="form.dateFrom" type="date" :min="dateLimits.fromMin ?? undefined" :max="dateLimits.fromMax ?? undefined" class="h-10 w-full rounded-md border border-input bg-background px-3 text-sm" />
+        </label>
+        <label v-if="form.mode === 'channel'" class="block min-w-0 xl:col-span-2">
+          <span class="mb-1 block truncate text-xs font-medium text-muted-foreground">{{ t('youtube.analytics.dateTo') }}</span>
+          <input v-model="form.dateTo" type="date" :min="dateLimits.toMin ?? undefined" :max="dateLimits.toMax ?? undefined" class="h-10 w-full rounded-md border border-input bg-background px-3 text-sm" />
         </label>
       </div>
 
-      <button
-        :disabled="loading || !canRun"
-        class="h-10 cursor-pointer rounded-md bg-primary px-5 text-sm font-semibold text-primary-foreground disabled:cursor-not-allowed disabled:opacity-60"
-        @click="runAnalytics"
-      >
-        <LoaderCircle v-if="loading" class="mr-2 inline h-4 w-4 animate-spin" />
-        {{ loading ? t('youtube.common.loading') : t('youtube.analytics.submit') }}
-      </button>
+      <div class="flex flex-wrap items-end justify-between gap-2.5 rounded-md border border-border/70 bg-background/60 p-2.5">
+        <p class="text-[11px] text-muted-foreground">
+          {{ form.mode === 'channel' ? t('youtube.analytics.period') : t('youtube.analytics.videoId') }}
+        </p>
+        <div class="flex w-full flex-wrap justify-end gap-2 md:w-auto">
+          <button
+            :disabled="loading || !canRun"
+            class="h-10 cursor-pointer rounded-md bg-primary px-5 text-sm font-semibold text-primary-foreground disabled:cursor-not-allowed disabled:opacity-60"
+            @click="runAnalytics"
+          >
+            <LoaderCircle v-if="loading" class="mr-2 inline h-4 w-4 animate-spin" />
+            {{ loading ? t('youtube.common.loading') : t('youtube.analytics.submit') }}
+          </button>
+
+          <button
+            type="button"
+            :disabled="!canUseReportActions"
+            class="inline-flex h-10 cursor-pointer items-center gap-2 rounded-md bg-primary px-4 text-sm font-semibold text-primary-foreground hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-60"
+            @click="openReport"
+          >
+            <FileText class="h-4 w-4" />
+            {{ t('youtube.analytics.report') }}
+          </button>
+
+          <button
+            type="button"
+            :disabled="!canUseReportActions"
+            class="inline-flex h-10 cursor-pointer items-center gap-2 rounded-md border border-input bg-background px-4 text-sm font-medium hover:bg-accent disabled:cursor-not-allowed disabled:opacity-60"
+            @click="downloadReport"
+          >
+            <Download class="h-4 w-4" />
+            {{ t('youtube.analytics.downloadReport') }}
+          </button>
+        </div>
+      </div>
 
       <p v-if="error" class="text-sm text-destructive">{{ error }}</p>
+      <p v-else-if="customPeriodTooLong" class="text-sm text-destructive">{{ t('youtube.analytics.customPeriodTooLong') }}</p>
     </div>
   </section>
 
