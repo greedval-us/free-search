@@ -438,13 +438,38 @@
     "parser": {
       "title": "YouTube Parser",
       "collapsed": "Settings panel is collapsed",
-      "hint": "Parse top-level comments and available replies.",
+      "subtitle": "Online YouTube comments collection and export",
+      "hint": "Collect comments from the selected video and load all available replies.",
       "videoId": "Video ID",
       "query": "Query",
       "order": "Order",
-      "limit": "Limit",
-      "submit": "Parse comments",
-      "replies": "Replies"
+      "start": "Start collect",
+      "stop": "Stop",
+      "collecting": "Collecting...",
+      "download": "Download Excel",
+      "downloadJson": "Download JSON",
+      "replies": "Replies",
+      "progress": {
+        "title": "Collection progress",
+        "comments": "Comments processed",
+        "replies": "Replies processed",
+        "stage": {
+          "idle": "Idle",
+          "comments": "Collecting comments",
+          "replies": "Collecting replies",
+          "finishing": "Preparing export",
+          "completed": "Completed",
+          "failed": "Failed",
+          "stopped": "Stopped"
+        }
+      },
+      "errors": {
+        "videoRequired": "Please enter a video ID or video URL.",
+        "failed": "Parser failed."
+      },
+      "help": {
+        "overview": "YouTube parser collects comments and all available replies under the selected video, then prepares Excel and JSON exports."
+      }
     },
     "options": {
       "searchType": {

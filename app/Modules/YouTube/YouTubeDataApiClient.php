@@ -44,6 +44,15 @@ class YouTubeDataApiClient implements YouTubeGatewayInterface
         ]);
     }
 
+    public function comments(array $params): array
+    {
+        return $this->get('comments', [
+            ...$params,
+            'part' => $params['part'] ?? 'snippet',
+            'textFormat' => $params['textFormat'] ?? 'plainText',
+        ]);
+    }
+
     /**
      * @param  array<string, mixed>  $query
      * @return array<string, mixed>

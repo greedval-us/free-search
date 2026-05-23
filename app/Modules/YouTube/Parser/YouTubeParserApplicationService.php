@@ -4,11 +4,19 @@ namespace App\Modules\YouTube\Parser;
 
 use App\Modules\YouTube\Actions\Request\VideoCommentsAction;
 use App\Modules\YouTube\DTO\Request\YouTubeCommentsQueryDTO;
+use App\Modules\YouTube\DTO\Request\YouTubeParserStartDTO;
+use App\Modules\YouTube\DTO\Result\YouTubeParserRunStatusDTO;
 use App\Modules\YouTube\Parser\Contracts\YouTubeParserApplicationServiceInterface;
 
 class YouTubeParserApplicationService implements YouTubeParserApplicationServiceInterface
 {
-    public function __construct(private readonly VideoCommentsAction $videoCommentsAction) {}
+    public function __construct(
+        private readonly VideoCommentsAction $videoCommentsAction,
+        private readonly YouTubeParserRunStore $runStore,
+        private readonly YouTubeParserCollector $collector,
+        private readonly YouTubeParserRunGuard $runGuard,
+    ) {
+    }
 
     /**
      * @return array<string, mixed>
@@ -16,5 +24,109 @@ class YouTubeParserApplicationService implements YouTubeParserApplicationService
     public function comments(YouTubeCommentsQueryDTO $query): array
     {
         return $this->videoCommentsAction->handle($query);
+    }
+
+    public function start(YouTubeParserStartDTO $input): YouTubeParserRunStatusDTO
+    {
+        $run = $this->runStore->create($input->userId, $input->toContext());
+
+        return $this->presentRun($run);
+    }
+
+    public function status(int $userId, string $runId): ?YouTubeParserRunStatusDTO
+    {
+        $run = $this->runStore->mutate($userId, $runId, function (array $state): array {
+            if (($state['status'] ?? null) !== 'running') {
+                return $state;
+            }
+
+            $cursor = is_array($state['cursor'] ?? null) ? $state['cursor'] : [];
+            $nowTs = now()->timestamp;
+            $nextAdvanceAt = (int) ($cursor['nextAdvanceAt'] ?? 0);
+
+            if ($nextAdvanceAt > $nowTs) {
+                return $state;
+            }
+
+            try {
+                $state = $this->collector->advance($state);
+            } catch (\Throwable $exception) {
+                $state['status'] = 'failed';
+                $state['stage'] = 'failed';
+                $state['progress'] = 100;
+                $state['error'] = $exception->getMessage();
+
+                return $state;
+            }
+
+            if (($state['status'] ?? null) === 'running') {
+                $cursor = is_array($state['cursor'] ?? null) ? $state['cursor'] : [];
+                $cursor['nextAdvanceAt'] = $nowTs + 2;
+                $state['cursor'] = $cursor;
+            }
+
+            return $state;
+        });
+
+        return is_array($run) ? $this->presentRun($run) : null;
+    }
+
+    public function stop(int $userId, string $runId): ?YouTubeParserRunStatusDTO
+    {
+        $run = $this->runStore->mutate($userId, $runId, function (array $state): array {
+            if (($state['status'] ?? null) === 'completed') {
+                return $state;
+            }
+
+            if (!is_array($state['result'] ?? null)) {
+                $state['result'] = $this->collector->buildResultSnapshot($state);
+            }
+
+            $state['status'] = 'stopped';
+            $state['stage'] = 'stopped';
+            $state['error'] = null;
+
+            return $state;
+        });
+
+        return is_array($run) ? $this->presentRun($run) : null;
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    public function getDownloadPayload(int $userId, string $runId): array
+    {
+        $run = $this->runGuard->requireExistingRun($this->runStore->get($userId, $runId));
+
+        return $this->runGuard->requireDownloadablePayload($run);
+    }
+
+    /**
+     * @param array<string, mixed> $run
+     */
+    private function presentRun(array $run): YouTubeParserRunStatusDTO
+    {
+        $stats = is_array($run['stats'] ?? null) ? $run['stats'] : [];
+        $status = (string) ($run['status'] ?? 'running');
+        $runId = (string) ($run['runId'] ?? '');
+        $hasResult = is_array($run['result'] ?? null);
+
+        return new YouTubeParserRunStatusDTO([
+            'ok' => true,
+            'runId' => $runId,
+            'status' => $status,
+            'stage' => (string) ($run['stage'] ?? 'idle'),
+            'progress' => (int) ($run['progress'] ?? 0),
+            'processedComments' => (int) ($stats['processedComments'] ?? 0),
+            'processedReplies' => (int) ($stats['processedReplies'] ?? 0),
+            'error' => $run['error'] ?? null,
+            'downloadUrl' => in_array($status, ['completed', 'stopped'], true) && $hasResult && $runId !== ''
+                ? route('youtube.parser.download-excel', ['runId' => $runId])
+                : null,
+            'downloadJsonUrl' => in_array($status, ['completed', 'stopped'], true) && $hasResult && $runId !== ''
+                ? route('youtube.parser.download-json', ['runId' => $runId])
+                : null,
+        ]);
     }
 }

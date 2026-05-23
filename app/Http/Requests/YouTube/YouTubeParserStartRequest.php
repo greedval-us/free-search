@@ -2,11 +2,10 @@
 
 namespace App\Http\Requests\YouTube;
 
-use App\Modules\YouTube\DTO\Request\YouTubeCommentsQueryDTO;
+use App\Modules\YouTube\DTO\Request\YouTubeParserStartDTO;
 use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Validation\Rule;
 
-class YouTubeParserRequest extends FormRequest
+class YouTubeParserStartRequest extends FormRequest
 {
     public function authorize(): bool
     {
@@ -17,32 +16,17 @@ class YouTubeParserRequest extends FormRequest
     {
         return [
             'videoId' => ['required', 'string', 'max:2048'],
-            'limit' => ['nullable', 'integer', 'min:1', 'max:100'],
-            'pageToken' => ['nullable', 'string', 'max:2048'],
-            'order' => ['nullable', Rule::in(['relevance', 'time'])],
-            'searchTerms' => ['nullable', 'string', 'max:255'],
         ];
     }
 
-    public function toDTO(): YouTubeCommentsQueryDTO
+    public function toStartDTO(): YouTubeParserStartDTO
     {
         $validated = $this->validated();
 
-        return new YouTubeCommentsQueryDTO(
+        return new YouTubeParserStartDTO(
+            userId: (int) $this->user()->id,
             videoId: $this->normalizeVideoId(trim((string) $validated['videoId'])),
-            maxResults: (int) ($validated['limit'] ?? 20),
-            order: (string) ($validated['order'] ?? 'relevance'),
-            pageToken: trim((string) ($validated['pageToken'] ?? '')),
-            searchTerms: trim((string) ($validated['searchTerms'] ?? '')),
         );
-    }
-
-    /**
-     * @return array<string, mixed>
-     */
-    public function toApiParams(): array
-    {
-        return $this->toDTO()->toArray();
     }
 
     private function normalizeVideoId(string $value): string
