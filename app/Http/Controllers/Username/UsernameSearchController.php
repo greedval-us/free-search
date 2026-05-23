@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Username;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Username\UsernameSearchRequest;
-use App\Modules\Username\Application\Services\UsernameSearchService;
+use App\Modules\Username\Application\Contracts\UsernameSearchServiceInterface;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Response;
 use Illuminate\View\View;
@@ -12,7 +12,7 @@ use Illuminate\View\View;
 class UsernameSearchController extends Controller
 {
     public function __construct(
-        private readonly UsernameSearchService $searchService,
+        private readonly UsernameSearchServiceInterface $searchService,
     ) {
     }
 

@@ -2,6 +2,7 @@
 
 namespace App\Modules\SiteIntel\Application\Services;
 
+use App\Modules\SiteIntel\Application\Contracts\SiteHealthServiceInterface;
 use App\Modules\SiteIntel\Application\Contracts\SiteHealthDnsResolverInterface;
 use App\Modules\SiteIntel\Application\Contracts\SiteHealthHttpInspectorInterface;
 use App\Modules\SiteIntel\Application\Contracts\SiteHealthSslInspectorInterface;
@@ -10,7 +11,7 @@ use App\Modules\SiteIntel\Application\Services\SiteHealth\SiteHealthSecurityHead
 use Carbon\Carbon;
 use RuntimeException;
 
-final class SiteHealthService
+final class SiteHealthService implements SiteHealthServiceInterface
 {
     public function __construct(
         private readonly SiteHealthDnsResolverInterface $dnsResolver,

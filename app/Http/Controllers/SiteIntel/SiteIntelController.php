@@ -7,10 +7,10 @@ use App\Http\Requests\SiteIntel\DomainLiteLookupRequest;
 use App\Http\Requests\SiteIntel\SeoAuditRequest;
 use App\Http\Requests\SiteIntel\SiteIntelAnalyticsRequest;
 use App\Http\Requests\SiteIntel\SiteHealthCheckRequest;
-use App\Modules\SiteIntel\Application\Services\DomainLiteService;
-use App\Modules\SiteIntel\Application\Services\SeoAuditService;
-use App\Modules\SiteIntel\Application\Services\SiteHealthService;
-use App\Modules\SiteIntel\Application\Services\SiteIntelAnalyticsService;
+use App\Modules\SiteIntel\Application\Contracts\DomainLiteServiceInterface;
+use App\Modules\SiteIntel\Application\Contracts\SeoAuditServiceInterface;
+use App\Modules\SiteIntel\Application\Contracts\SiteHealthServiceInterface;
+use App\Modules\SiteIntel\Application\Contracts\SiteIntelAnalyticsServiceInterface;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Response;
 use Illuminate\View\View;
@@ -18,10 +18,10 @@ use Illuminate\View\View;
 class SiteIntelController extends Controller
 {
     public function __construct(
-        private readonly SiteHealthService $siteHealthService,
-        private readonly DomainLiteService $domainLiteService,
-        private readonly SiteIntelAnalyticsService $siteIntelAnalyticsService,
-        private readonly SeoAuditService $seoAuditService,
+        private readonly SiteHealthServiceInterface $siteHealthService,
+        private readonly DomainLiteServiceInterface $domainLiteService,
+        private readonly SiteIntelAnalyticsServiceInterface $siteIntelAnalyticsService,
+        private readonly SeoAuditServiceInterface $seoAuditService,
     ) {
     }
 

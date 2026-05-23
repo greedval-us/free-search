@@ -4,10 +4,11 @@ namespace App\Services\Dashboard;
 
 use App\Models\User;
 use App\Models\UserModulePin;
+use App\Services\Dashboard\Contracts\ModulePinServiceInterface;
 use App\Support\Dashboard\DashboardModuleRegistry;
 use Illuminate\Support\Facades\Schema;
 
-class ModulePinService
+class ModulePinService implements ModulePinServiceInterface
 {
     public function __construct(
         private readonly DashboardModuleRegistry $moduleRegistry,
@@ -55,4 +56,3 @@ class ModulePinService
             ->all();
     }
 }
-

@@ -5,7 +5,7 @@ namespace App\Http\Controllers\YouTube;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\YouTube\YouTubeParserRequest;
 use App\Http\Requests\YouTube\YouTubeParserStartRequest;
-use App\Modules\Export\Excel\ExcelWorkbookService;
+use App\Modules\Export\Excel\Contracts\ExcelWorkbookServiceInterface;
 use App\Modules\YouTube\Parser\YouTubeParserExportBuilder;
 use App\Modules\YouTube\Parser\Contracts\YouTubeParserApplicationServiceInterface;
 use App\Support\Reports\ReportFilenamePolicy;
@@ -20,7 +20,7 @@ class YouTubeParserController extends Controller
     public function __construct(
         private readonly YouTubeParserApplicationServiceInterface $service,
         private readonly YouTubeParserExportBuilder $exportBuilder,
-        private readonly ExcelWorkbookService $excelWorkbookService,
+        private readonly ExcelWorkbookServiceInterface $excelWorkbookService,
         private readonly ReportFilenamePolicy $reportFilenamePolicy,
     ) {
     }

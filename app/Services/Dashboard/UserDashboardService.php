@@ -4,10 +4,13 @@ namespace App\Services\Dashboard;
 
 use App\Models\RequestLog;
 use App\Models\User;
+use App\Services\Dashboard\Contracts\ModulePinServiceInterface;
+use App\Services\Dashboard\Contracts\SavedQueryServiceInterface;
+use App\Services\Dashboard\Contracts\UserDashboardServiceInterface;
 use App\Support\Activity\RequestLogSchemaInspector;
 use App\Support\Dashboard\DashboardModuleRegistry;
 
-class UserDashboardService
+class UserDashboardService implements UserDashboardServiceInterface
 {
     public function __construct(
         private readonly DashboardFilterNormalizer $filterNormalizer,
@@ -15,8 +18,8 @@ class UserDashboardService
         private readonly DashboardActivityFeedService $activityFeedService,
         private readonly DashboardChartService $chartService,
         private readonly DashboardModuleRegistry $moduleRegistry,
-        private readonly ModulePinService $modulePinService,
-        private readonly SavedQueryService $savedQueryService,
+        private readonly ModulePinServiceInterface $modulePinService,
+        private readonly SavedQueryServiceInterface $savedQueryService,
         private readonly RequestLogSchemaInspector $schemaInspector,
     ) {
     }
@@ -87,4 +90,3 @@ class UserDashboardService
             ->whereColumn('query_preview', '!=', 'route_name');
     }
 }
-

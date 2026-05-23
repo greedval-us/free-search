@@ -2,6 +2,7 @@
 
 namespace App\Modules\Username\Application\Services;
 
+use App\Modules\Username\Application\Contracts\UsernameSearchServiceInterface;
 use App\Modules\Username\Domain\Contracts\UsernameSourceCheckerInterface;
 use App\Modules\Username\Domain\DTO\UsernameSearchQueryDTO;
 use App\Modules\Username\Domain\DTO\UsernameSearchResultDTO;
@@ -11,7 +12,7 @@ use App\Modules\Username\Domain\Services\UsernameEntityGraphBuilder;
 use App\Modules\Username\Infrastructure\Cache\UsernameResultCache;
 use App\Modules\Username\Infrastructure\Catalog\UsernameSourceCatalog;
 
-final class UsernameSearchService
+final class UsernameSearchService implements UsernameSearchServiceInterface
 {
     public function __construct(
         private readonly UsernameSourceCatalog $sourceCatalog,

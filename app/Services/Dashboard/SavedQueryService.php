@@ -5,11 +5,12 @@ namespace App\Services\Dashboard;
 use App\Models\RequestLog;
 use App\Models\User;
 use App\Models\UserSavedQuery;
+use App\Services\Dashboard\Contracts\SavedQueryServiceInterface;
 use App\Support\Activity\RequestLogRunUrlBuilder;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Support\Facades\Schema;
 
-class SavedQueryService
+class SavedQueryService implements SavedQueryServiceInterface
 {
     public function __construct(
         private readonly RequestLogRunUrlBuilder $runUrlBuilder,

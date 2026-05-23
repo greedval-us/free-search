@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Telegram;
 
 use App\Http\Requests\Telegram\TelegramParserStartRequest;
-use App\Modules\Export\Excel\ExcelWorkbookService;
+use App\Modules\Export\Excel\Contracts\ExcelWorkbookServiceInterface;
 use App\Modules\Telegram\Parser\TelegramParserExportBuilder;
 use App\Modules\Telegram\Parser\Contracts\TelegramParserApplicationServiceInterface;
 use App\Support\Reports\ReportFilenamePolicy;
@@ -17,7 +17,7 @@ class TelegramParserController extends BaseTelegramController
     public function __construct(
         private readonly TelegramParserApplicationServiceInterface $parserApplicationService,
         private readonly TelegramParserExportBuilder $exportBuilder,
-        private readonly ExcelWorkbookService $excelWorkbookService,
+        private readonly ExcelWorkbookServiceInterface $excelWorkbookService,
         private readonly ReportFilenamePolicy $reportFilenamePolicy,
     ) {
     }
