@@ -2,6 +2,8 @@
 
 namespace App\Modules\Telegram\Parser;
 
+use App\Modules\ParserSupport\ParserRunStateMachine;
+use App\Modules\ParserSupport\ParserRunStatusPayloadBuilder;
 use App\Modules\Telegram\DTO\Request\TelegramParserStartDTO;
 use App\Modules\Telegram\DTO\Result\ParserRunStatusDTO;
 use App\Modules\Telegram\Parser\Contracts\TelegramParserApplicationServiceInterface;
@@ -11,7 +13,9 @@ class TelegramParserApplicationService implements TelegramParserApplicationServi
     public function __construct(
         private readonly TelegramParserRunStore $runStore,
         private readonly TelegramParserCollector $collector,
-        private readonly ParserRunGuard $runGuard,
+        private readonly TelegramParserRunGuard $runGuard,
+        private readonly ParserRunStateMachine $stateMachine,
+        private readonly ParserRunStatusPayloadBuilder $statusPayloadBuilder,
     ) {
     }
 
@@ -24,59 +28,30 @@ class TelegramParserApplicationService implements TelegramParserApplicationServi
 
     public function status(int $userId, string $runId): ?ParserRunStatusDTO
     {
-        $run = $this->runStore->mutate($userId, $runId, function (array $state): array {
-            if (($state['status'] ?? null) !== 'running') {
-                return $state;
-            }
-
-            $cursor = is_array($state['cursor'] ?? null) ? $state['cursor'] : [];
-            $nowTs = now()->timestamp;
-            $nextAdvanceAt = (int) ($cursor['nextAdvanceAt'] ?? 0);
-
-            if ($nextAdvanceAt > $nowTs) {
-                return $state;
-            }
-
-            try {
-                $state = $this->collector->advance($state);
-            } catch (\Throwable $exception) {
-                $state['status'] = 'failed';
-                $state['stage'] = 'failed';
-                $state['progress'] = 100;
-                $state['error'] = $exception->getMessage();
-
-                return $state;
-            }
-
-            if (($state['status'] ?? null) === 'running') {
-                $cursor = is_array($state['cursor'] ?? null) ? $state['cursor'] : [];
-                $cursor['nextAdvanceAt'] = $nowTs + 2;
-                $state['cursor'] = $cursor;
-            }
-
-            return $state;
-        });
+        $nowTs = now()->timestamp;
+        $run = $this->runStore->mutate(
+            $userId,
+            $runId,
+            fn (array $state): array => $this->stateMachine->advance(
+                $state,
+                fn (array $current): array => $this->collector->advance($current),
+                $nowTs
+            )
+        );
 
         return is_array($run) ? $this->presentRun($run) : null;
     }
 
     public function stop(int $userId, string $runId): ?ParserRunStatusDTO
     {
-        $run = $this->runStore->mutate($userId, $runId, function (array $state): array {
-            if (($state['status'] ?? null) === 'completed') {
-                return $state;
-            }
-
-            if (!is_array($state['result'] ?? null)) {
-                $state['result'] = $this->collector->buildResultSnapshot($state);
-            }
-
-            $state['status'] = 'stopped';
-            $state['stage'] = 'stopped';
-            $state['error'] = null;
-
-            return $state;
-        });
+        $run = $this->runStore->mutate(
+            $userId,
+            $runId,
+            fn (array $state): array => $this->stateMachine->stop(
+                $state,
+                fn (array $current): array => $this->collector->buildResultSnapshot($current)
+            )
+        );
 
         return is_array($run) ? $this->presentRun($run) : null;
     }
@@ -96,26 +71,16 @@ class TelegramParserApplicationService implements TelegramParserApplicationServi
      */
     private function presentRun(array $run): ParserRunStatusDTO
     {
-        $stats = is_array($run['stats'] ?? null) ? $run['stats'] : [];
-        $status = (string) ($run['status'] ?? 'running');
-        $runId = (string) ($run['runId'] ?? '');
-        $hasResult = is_array($run['result'] ?? null);
-
-        return new ParserRunStatusDTO([
-            'ok' => true,
-            'runId' => $runId,
-            'status' => $status,
-            'stage' => (string) ($run['stage'] ?? 'idle'),
-            'progress' => (int) ($run['progress'] ?? 0),
-            'processedMessages' => (int) ($stats['processedMessages'] ?? 0),
-            'processedComments' => (int) ($stats['processedComments'] ?? 0),
-            'error' => $run['error'] ?? null,
-            'downloadUrl' => in_array($status, ['completed', 'stopped'], true) && $hasResult && $runId !== ''
-                ? route('telegram.parser.download-excel', ['runId' => $runId])
-                : null,
-            'downloadJsonUrl' => in_array($status, ['completed', 'stopped'], true) && $hasResult && $runId !== ''
-                ? route('telegram.parser.download-json', ['runId' => $runId])
-                : null,
-        ]);
+        return new ParserRunStatusDTO(
+            $this->statusPayloadBuilder->build(
+                run: $run,
+                statsMap: [
+                    'processedMessages' => 'processedMessages',
+                    'processedComments' => 'processedComments',
+                ],
+                excelRoute: 'telegram.parser.download-excel',
+                jsonRoute: 'telegram.parser.download-json',
+            )
+        );
     }
 }
