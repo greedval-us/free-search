@@ -35,13 +35,16 @@ final class AppUserFormPage extends FormPage
 
                 Flex::make([
                     Text::make('Name', 'name')
-                        ->required(),
+                        ->disabled()
+                        ->onApply(static fn (mixed $data, mixed $value, mixed $field): mixed => $data),
                     Email::make('E-mail', 'email')
-                        ->required(),
+                        ->disabled()
+                        ->onApply(static fn (mixed $data, mixed $value, mixed $field): mixed => $data),
                 ]),
 
                 Select::make('Account type', 'account_type')
-                    ->required()
+                    ->disabled()
+                    ->onApply(static fn (mixed $data, mixed $value, mixed $field): mixed => $data)
                     ->options([
                         User::ACCOUNT_TYPE_USER => 'user',
                         User::ACCOUNT_TYPE_ADMIN => 'admin',
@@ -63,9 +66,9 @@ final class AppUserFormPage extends FormPage
     protected function rules(DataWrapperContract $item): array
     {
         return [
-            'name' => ['required', 'string', 'min:2', 'max:120'],
-            'email' => ['required', 'email', 'max:255'],
-            'account_type' => ['required', 'in:user,admin,moderator'],
+            'name' => ['sometimes', 'prohibited'],
+            'email' => ['sometimes', 'prohibited'],
+            'account_type' => ['sometimes', 'prohibited'],
             'telegram_id' => ['nullable', 'string', 'max:255'],
             'is_premium' => ['nullable', 'boolean'],
             'premium_expires_at' => ['nullable', 'date'],

@@ -5,8 +5,11 @@ declare(strict_types=1);
 namespace App\MoonShine\Layouts;
 
 use App\MoonShine\Resources\AppUser\AppUserResource;
+use App\MoonShine\Resources\AdminAuditLog\AdminAuditLogResource;
+use App\MoonShine\Resources\FailedJob\FailedJobResource;
 use App\MoonShine\Resources\MoonShineUser\MoonShineUserResource;
 use App\MoonShine\Resources\MoonShineUserRole\MoonShineUserRoleResource;
+use App\MoonShine\Resources\QueueJob\QueueJobResource;
 use App\MoonShine\Resources\RequestLog\RequestLogResource;
 use MoonShine\ColorManager\ColorManager;
 use MoonShine\ColorManager\Palettes\PurplePalette;
@@ -38,6 +41,13 @@ final class MoonShineLayout extends AppLayout
                 MenuItem::make(MoonShineUserRoleResource::class),
                 MenuItem::make(AppUserResource::class),
                 MenuItem::make(RequestLogResource::class),
+            ]),
+            MenuGroup::make('Operations', [
+                MenuItem::make(QueueJobResource::class),
+                MenuItem::make(FailedJobResource::class),
+            ]),
+            MenuGroup::make('Security', [
+                MenuItem::make(AdminAuditLogResource::class),
             ]),
         ];
     }
