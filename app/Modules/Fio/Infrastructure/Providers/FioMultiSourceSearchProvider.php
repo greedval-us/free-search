@@ -2,6 +2,7 @@
 
 namespace App\Modules\Fio\Infrastructure\Providers;
 
+use App\Modules\Fio\Application\Support\FioHttpConfig;
 use App\Modules\Fio\Domain\Contracts\FioPublicSearchProviderInterface;
 use App\Modules\Fio\Domain\Contracts\FioSearchDiagnosticsAwareInterface;
 use App\Modules\Fio\Domain\DTO\PublicSearchEntryDTO;
@@ -30,6 +31,7 @@ final class FioMultiSourceSearchProvider implements FioPublicSearchProviderInter
 
     public function __construct(
         private readonly FioQualifierLexicon $qualifierLexicon,
+        private readonly FioHttpConfig $httpConfig,
     ) {
     }
 
@@ -216,15 +218,15 @@ final class FioMultiSourceSearchProvider implements FioPublicSearchProviderInter
     private function fetch(string $url, array $headers = []): string
     {
         $requestHeaders = array_merge([
-            'User-Agent' => (string) config('osint.fio.http.user_agent', 'FreeSearch-FIO/2.0'),
+            'User-Agent' => $this->httpConfig->multiSourceUserAgent(),
         ], $headers);
 
         try {
             $response = Http::withHeaders($requestHeaders)
-                ->timeout(max(1, (int) config('osint.fio.http.timeout_seconds', 12)))
+                ->timeout($this->httpConfig->timeoutSeconds())
                 ->retry(
-                    max(0, (int) config('osint.fio.http.retry_attempts', 1)),
-                    max(0, (int) config('osint.fio.http.retry_sleep_milliseconds', 250))
+                    $this->httpConfig->retryAttempts(),
+                    $this->httpConfig->retrySleepMilliseconds()
                 )
                 ->get($url);
         } catch (ConnectionException) {

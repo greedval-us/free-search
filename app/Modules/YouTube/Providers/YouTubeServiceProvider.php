@@ -11,11 +11,23 @@ use App\Modules\YouTube\Parser\YouTubeParserApplicationService;
 use App\Modules\YouTube\Parser\YouTubeParserExportBuilder;
 use App\Modules\YouTube\Search\Contracts\YouTubeSearchApplicationServiceInterface;
 use App\Modules\YouTube\Search\YouTubeSearchApplicationService;
+use App\Modules\YouTube\Support\YouTubeApiConfig;
 use App\Modules\YouTube\YouTubeDataApiClient;
 use App\Support\Providers\BindingsServiceProvider;
 
 final class YouTubeServiceProvider extends BindingsServiceProvider
 {
+    public function register(): void
+    {
+        parent::register();
+
+        $this->app->singleton(YouTubeApiConfig::class, function (): YouTubeApiConfig {
+            return YouTubeApiConfig::fromArray(
+                (array) config('services.youtube', [])
+            );
+        });
+    }
+
     protected function bindings(): array
     {
         return [

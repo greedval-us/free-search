@@ -2,6 +2,7 @@
 
 namespace App\Modules\Fio\Infrastructure\Providers;
 
+use App\Modules\Fio\Application\Support\FioHttpConfig;
 use App\Modules\Fio\Domain\DTO\PublicSearchEntryDTO;
 use App\Modules\Fio\Domain\Services\FioQualifierLexicon;
 use Illuminate\Http\Client\ConnectionException;
@@ -12,6 +13,7 @@ abstract class AbstractFioHttpSearchProvider
 {
     public function __construct(
         protected readonly FioQualifierLexicon $qualifierLexicon,
+        protected readonly FioHttpConfig $httpConfig,
     ) {
     }
 
@@ -129,21 +131,21 @@ abstract class AbstractFioHttpSearchProvider
 
     private function userAgent(): string
     {
-        return (string) config('osint.fio.http.user_agent', 'FreeSearch-FIO/1.0');
+        return $this->httpConfig->baseUserAgent();
     }
 
     private function timeoutSeconds(): int
     {
-        return max(1, (int) config('osint.fio.http.timeout_seconds', 12));
+        return $this->httpConfig->timeoutSeconds();
     }
 
     private function retryAttempts(): int
     {
-        return max(0, (int) config('osint.fio.http.retry_attempts', 1));
+        return $this->httpConfig->retryAttempts();
     }
 
     private function retrySleepMilliseconds(): int
     {
-        return max(0, (int) config('osint.fio.http.retry_sleep_milliseconds', 250));
+        return $this->httpConfig->retrySleepMilliseconds();
     }
 }

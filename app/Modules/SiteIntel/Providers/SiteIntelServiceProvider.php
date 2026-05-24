@@ -16,6 +16,7 @@ use App\Modules\SiteIntel\Application\Services\DomainLiteService;
 use App\Modules\SiteIntel\Application\Services\SeoAuditService;
 use App\Modules\SiteIntel\Application\Services\SiteHealthService;
 use App\Modules\SiteIntel\Application\Services\SiteIntelAnalyticsService;
+use App\Modules\SiteIntel\Application\Support\SiteIntelConfig;
 use App\Modules\SiteIntel\Infrastructure\Clients\DomainLiteDnsResolver;
 use App\Modules\SiteIntel\Infrastructure\Clients\DomainLiteWhoisClient;
 use App\Modules\SiteIntel\Infrastructure\Clients\SeoAuditHttpFetcher;
@@ -26,6 +27,16 @@ use App\Support\Providers\BindingsServiceProvider;
 
 final class SiteIntelServiceProvider extends BindingsServiceProvider
 {
+    public function register(): void
+    {
+        parent::register();
+
+        $this->app->singleton(
+            SiteIntelConfig::class,
+            static fn (): SiteIntelConfig => SiteIntelConfig::fromArray((array) config('osint.site_intel', []))
+        );
+    }
+
     protected function bindings(): array
     {
         return [
