@@ -6,6 +6,7 @@ namespace App\MoonShine\Resources\QueueJob\Pages;
 
 use App\Models\QueueJob;
 use App\MoonShine\Resources\QueueJob\QueueJobResource;
+use App\MoonShine\Support\Concerns\ParsesQueuePayload;
 use Illuminate\Database\Eloquent\Builder;
 use MoonShine\Contracts\UI\FieldContract;
 use MoonShine\Laravel\Pages\Crud\IndexPage;
@@ -19,6 +20,8 @@ use MoonShine\UI\Fields\Text;
  */
 final class QueueJobIndexPage extends IndexPage
 {
+    use ParsesQueuePayload;
+
     /**
      * @return list<FieldContract>
      */
@@ -50,21 +53,6 @@ final class QueueJobIndexPage extends IndexPage
             QueryTag::make('Retrying', static fn (Builder $query): Builder => $query->where('attempts', '>', 0))->icon('arrow-path'),
             QueryTag::make('Ready now', static fn (Builder $query): Builder => $query->where('available_at', '<=', time()))->icon('clock'),
         ];
-    }
-
-    private static function resolveJobDisplayName(string $payload): string
-    {
-        $decoded = json_decode($payload, true);
-        if (!is_array($decoded)) {
-            return 'unknown';
-        }
-
-        $display = $decoded['displayName'] ?? $decoded['job'] ?? null;
-        if (!is_string($display) || $display === '') {
-            return 'unknown';
-        }
-
-        return $display;
     }
 
     private static function formatUnixTimestamp(int|null $value): string

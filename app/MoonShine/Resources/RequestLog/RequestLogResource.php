@@ -6,21 +6,19 @@ namespace App\MoonShine\Resources\RequestLog;
 
 use App\Models\RequestLog;
 use App\MoonShine\Resources\RequestLog\Pages\RequestLogIndexPage;
+use App\MoonShine\Resources\Shared\ReadOnlyModelResource;
 use Illuminate\Contracts\Database\Eloquent\Builder;
-use MoonShine\Laravel\Resources\ModelResource;
 use MoonShine\MenuManager\Attributes\Group;
 use MoonShine\MenuManager\Attributes\Order;
 use MoonShine\Support\Attributes\Icon;
-use MoonShine\Support\Enums\Action;
-use MoonShine\Support\ListOf;
 
 /**
- * @extends ModelResource<RequestLog, RequestLogIndexPage, null, null>
+ * @extends ReadOnlyModelResource<RequestLog, RequestLogIndexPage, null, null>
  */
 #[Icon('clock')]
 #[Group('moonshine::ui.resource.system', 'users', translatable: true)]
 #[Order(11)]
-class RequestLogResource extends ModelResource
+class RequestLogResource extends ReadOnlyModelResource
 {
     protected string $model = RequestLog::class;
 
@@ -33,17 +31,6 @@ class RequestLogResource extends ModelResource
     public function getTitle(): string
     {
         return 'User Activity';
-    }
-
-    protected function activeActions(): ListOf
-    {
-        return parent::activeActions()->except(
-            Action::CREATE,
-            Action::VIEW,
-            Action::UPDATE,
-            Action::DELETE,
-            Action::MASS_DELETE,
-        );
     }
 
     protected function pages(): array

@@ -6,19 +6,17 @@ namespace App\MoonShine\Resources\AdminAuditLog;
 
 use App\Models\AdminAuditLog;
 use App\MoonShine\Resources\AdminAuditLog\Pages\AdminAuditLogIndexPage;
+use App\MoonShine\Resources\Shared\ReadOnlyModelResource;
 use Illuminate\Contracts\Database\Eloquent\Builder;
-use MoonShine\Laravel\Resources\ModelResource;
 use MoonShine\MenuManager\Attributes\Order;
 use MoonShine\Support\Attributes\Icon;
-use MoonShine\Support\Enums\Action;
-use MoonShine\Support\ListOf;
 
 /**
- * @extends ModelResource<AdminAuditLog, AdminAuditLogIndexPage, null, null>
+ * @extends ReadOnlyModelResource<AdminAuditLog, AdminAuditLogIndexPage, null, null>
  */
 #[Icon('shield-check')]
 #[Order(40)]
-class AdminAuditLogResource extends ModelResource
+class AdminAuditLogResource extends ReadOnlyModelResource
 {
     protected string $model = AdminAuditLog::class;
 
@@ -29,17 +27,6 @@ class AdminAuditLogResource extends ModelResource
     public function getTitle(): string
     {
         return 'Admin Audit Log';
-    }
-
-    protected function activeActions(): ListOf
-    {
-        return parent::activeActions()->except(
-            Action::CREATE,
-            Action::VIEW,
-            Action::UPDATE,
-            Action::DELETE,
-            Action::MASS_DELETE,
-        );
     }
 
     protected function pages(): array

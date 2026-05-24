@@ -6,6 +6,7 @@ namespace App\MoonShine\Resources\FailedJob\Pages;
 
 use App\Models\FailedJob;
 use App\MoonShine\Resources\FailedJob\FailedJobResource;
+use App\MoonShine\Support\Concerns\ParsesQueuePayload;
 use Illuminate\Database\Eloquent\Builder;
 use MoonShine\Contracts\UI\FieldContract;
 use MoonShine\Laravel\Pages\Crud\IndexPage;
@@ -19,6 +20,8 @@ use MoonShine\UI\Fields\Text;
  */
 final class FailedJobIndexPage extends IndexPage
 {
+    use ParsesQueuePayload;
+
     /**
      * @return list<FieldContract>
      */
@@ -54,28 +57,4 @@ final class FailedJobIndexPage extends IndexPage
         ];
     }
 
-    private static function resolveJobDisplayName(string $payload): string
-    {
-        $decoded = json_decode($payload, true);
-        if (!is_array($decoded)) {
-            return 'unknown';
-        }
-
-        $display = $decoded['displayName'] ?? $decoded['job'] ?? null;
-        if (!is_string($display) || $display === '') {
-            return 'unknown';
-        }
-
-        return $display;
-    }
-
-    private static function resolveExceptionSummary(string $exception): string
-    {
-        $line = strtok($exception, "\n");
-        if ($line === false || $line === '') {
-            return 'unknown';
-        }
-
-        return mb_strimwidth($line, 0, 140, '...');
-    }
 }
