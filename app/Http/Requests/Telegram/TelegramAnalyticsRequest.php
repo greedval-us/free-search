@@ -3,13 +3,15 @@
 namespace App\Http\Requests\Telegram;
 
 use App\Http\Requests\LocalizedFormRequest;
+use App\Http\Requests\Telegram\Concerns\ResolvesTelegramConfig;
 use App\Modules\Telegram\DTO\Request\TelegramAnalyticsParamsDTO;
-use App\Modules\Telegram\Support\TelegramConfig;
 use Carbon\Carbon;
 use Illuminate\Validation\Validator;
 
 class TelegramAnalyticsRequest extends LocalizedFormRequest
 {
+    use ResolvesTelegramConfig;
+
     private const SCORE_PRIORITIES = [
         'balanced',
         'reach',
@@ -50,8 +52,8 @@ class TelegramAnalyticsRequest extends LocalizedFormRequest
             }
 
             if ($dateFrom && $dateTo) {
-                $rangeStart = Carbon::createFromFormat('Y-m-d', $dateFrom, $this->config()->timezone())->startOfDay();
-                $rangeEnd = Carbon::createFromFormat('Y-m-d', $dateTo, $this->config()->timezone())->endOfDay();
+                $rangeStart = Carbon::createFromFormat('Y-m-d', $dateFrom, $this->telegramConfig()->timezone())->startOfDay();
+                $rangeEnd = Carbon::createFromFormat('Y-m-d', $dateTo, $this->telegramConfig()->timezone())->endOfDay();
 
                 if ($rangeEnd->diffInDays($rangeStart) > ($this->customRangeMaxDays() - 1)) {
                     $validator->errors()->add(
@@ -91,7 +93,7 @@ class TelegramAnalyticsRequest extends LocalizedFormRequest
             return null;
         }
 
-        return Carbon::createFromFormat('Y-m-d', $dateFrom, $this->config()->timezone())->startOfDay();
+        return Carbon::createFromFormat('Y-m-d', $dateFrom, $this->telegramConfig()->timezone())->startOfDay();
     }
 
     public function dateTo(): ?Carbon
@@ -102,7 +104,7 @@ class TelegramAnalyticsRequest extends LocalizedFormRequest
             return null;
         }
 
-        return Carbon::createFromFormat('Y-m-d', $dateTo, $this->config()->timezone())->endOfDay();
+        return Carbon::createFromFormat('Y-m-d', $dateTo, $this->telegramConfig()->timezone())->endOfDay();
     }
 
     public function scorePriority(): string
@@ -135,21 +137,16 @@ class TelegramAnalyticsRequest extends LocalizedFormRequest
 
     private function periodMinDays(): int
     {
-        return $this->config()->analyticsPeriodMinDays();
+        return $this->telegramConfig()->analyticsPeriodMinDays();
     }
 
     private function periodMaxDays(): int
     {
-        return $this->config()->analyticsPeriodMaxDays();
+        return $this->telegramConfig()->analyticsPeriodMaxDays();
     }
 
     private function customRangeMaxDays(): int
     {
-        return $this->config()->analyticsCustomRangeMaxDays();
-    }
-
-    private function config(): TelegramConfig
-    {
-        return app(TelegramConfig::class);
+        return $this->telegramConfig()->analyticsCustomRangeMaxDays();
     }
 }

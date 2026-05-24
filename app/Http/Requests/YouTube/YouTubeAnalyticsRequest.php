@@ -3,15 +3,17 @@
 namespace App\Http\Requests\YouTube;
 
 use App\Http\Requests\LocalizedFormRequest;
+use App\Http\Requests\YouTube\Concerns\ResolvesYouTubeModuleConfig;
 use App\Modules\YouTube\DTO\Request\YouTubeAnalyticsLookupDTO;
 use App\Modules\YouTube\Support\YouTubeInputNormalizer;
-use App\Modules\YouTube\Support\YouTubeModuleConfig;
 use Illuminate\Support\Carbon;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\Validator;
 
 class YouTubeAnalyticsRequest extends LocalizedFormRequest
 {
+    use ResolvesYouTubeModuleConfig;
+
     public function authorize(): bool
     {
         return true;
@@ -23,7 +25,7 @@ class YouTubeAnalyticsRequest extends LocalizedFormRequest
             'mode' => ['nullable', Rule::in(['video', 'channel'])],
             'videoId' => ['nullable', 'string', 'max:255', 'required_without:channelId'],
             'channelId' => ['nullable', 'string', 'max:255', 'required_without:videoId'],
-            'periodDays' => ['nullable', 'integer', Rule::in($this->config()->analyticsPeriodDays())],
+            'periodDays' => ['nullable', 'integer', Rule::in($this->youtubeModuleConfig()->analyticsPeriodDays())],
             'dateFrom' => ['nullable', 'date_format:Y-m-d'],
             'dateTo' => ['nullable', 'date_format:Y-m-d'],
             'locale' => $this->localeRule(),
@@ -46,8 +48,8 @@ class YouTubeAnalyticsRequest extends LocalizedFormRequest
             }
 
             try {
-                $from = Carbon::createFromFormat('Y-m-d', $dateFrom, $this->config()->timezone())->startOfDay();
-                $to = Carbon::createFromFormat('Y-m-d', $dateTo, $this->config()->timezone())->endOfDay();
+                $from = Carbon::createFromFormat('Y-m-d', $dateFrom, $this->youtubeModuleConfig()->timezone())->startOfDay();
+                $to = Carbon::createFromFormat('Y-m-d', $dateTo, $this->youtubeModuleConfig()->timezone())->endOfDay();
             } catch (\Throwable) {
                 return;
             }
@@ -57,10 +59,10 @@ class YouTubeAnalyticsRequest extends LocalizedFormRequest
                 return;
             }
 
-            if ($from->diffInDays($to) > ($this->config()->analyticsCustomRangeMaxDays() - 1)) {
+            if ($from->diffInDays($to) > ($this->youtubeModuleConfig()->analyticsCustomRangeMaxDays() - 1)) {
                 $validator->errors()->add(
                     'dateTo',
-                    __('Custom period cannot be longer than :days days.', ['days' => $this->config()->analyticsCustomRangeMaxDays()])
+                    __('Custom period cannot be longer than :days days.', ['days' => $this->youtubeModuleConfig()->analyticsCustomRangeMaxDays()])
                 );
             }
         });
@@ -79,7 +81,7 @@ class YouTubeAnalyticsRequest extends LocalizedFormRequest
             mode: (string) ($validated['mode'] ?? (! empty($validated['channelId']) ? 'channel' : 'video')),
             videoId: $normalizedVideoId,
             channelId: trim((string) ($validated['channelId'] ?? '')),
-            periodDays: (int) ($validated['periodDays'] ?? $this->config()->analyticsDefaultPeriodDays()),
+            periodDays: (int) ($validated['periodDays'] ?? $this->youtubeModuleConfig()->analyticsDefaultPeriodDays()),
             dateFrom: $hasCustomRange ? $dateFrom : '',
             dateTo: $hasCustomRange ? $dateTo : '',
         );
@@ -98,8 +100,4 @@ class YouTubeAnalyticsRequest extends LocalizedFormRequest
         return $this->resolveLocale();
     }
 
-    private function config(): YouTubeModuleConfig
-    {
-        return app(YouTubeModuleConfig::class);
-    }
 }

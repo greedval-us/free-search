@@ -2,14 +2,16 @@
 
 namespace App\Http\Requests\Telegram;
 
+use App\Http\Requests\Telegram\Concerns\ResolvesTelegramConfig;
 use App\Modules\Telegram\DTO\Request\SearchMessagesQueryDTO;
-use App\Modules\Telegram\Support\TelegramConfig;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Carbon;
 use Illuminate\Validation\Validator;
 
 class SearchMessagesRequest extends FormRequest
 {
+    use ResolvesTelegramConfig;
+
     public function authorize(): bool
     {
         return true;
@@ -72,11 +74,11 @@ class SearchMessagesRequest extends FormRequest
         }
 
         if (!empty($validated['dateFrom'])) {
-            $filter['min_date'] = Carbon::createFromFormat('Y-m-d', $validated['dateFrom'])->startOfDay()->timestamp;
+            $filter['min_date'] = Carbon::createFromFormat('Y-m-d', $validated['dateFrom'], $this->telegramConfig()->timezone())->startOfDay()->timestamp;
         }
 
         if (!empty($validated['dateTo'])) {
-            $filter['max_date'] = Carbon::createFromFormat('Y-m-d', $validated['dateTo'])->endOfDay()->timestamp;
+            $filter['max_date'] = Carbon::createFromFormat('Y-m-d', $validated['dateTo'], $this->telegramConfig()->timezone())->endOfDay()->timestamp;
         }
 
         return $filter;
@@ -92,25 +94,13 @@ class SearchMessagesRequest extends FormRequest
         );
     }
 
-    private function isNumericAuthorFilter(string $value): bool
-    {
-        $normalized = ltrim(trim($value), '@');
-
-        return $normalized !== '' && ctype_digit($normalized);
-    }
-
     private function messagesLimitDefault(): int
     {
-        return $this->config()->searchMessagesLimitDefault();
+        return $this->telegramConfig()->searchMessagesLimitDefault();
     }
 
     private function messagesLimitMax(): int
     {
-        return $this->config()->searchMessagesLimitMax();
-    }
-
-    private function config(): TelegramConfig
-    {
-        return app(TelegramConfig::class);
+        return $this->telegramConfig()->searchMessagesLimitMax();
     }
 }

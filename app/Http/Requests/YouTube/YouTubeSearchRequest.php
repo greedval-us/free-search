@@ -2,8 +2,8 @@
 
 namespace App\Http\Requests\YouTube;
 
+use App\Http\Requests\YouTube\Concerns\ResolvesYouTubeModuleConfig;
 use App\Modules\YouTube\DTO\Request\YouTubeSearchQueryDTO;
-use App\Modules\YouTube\Support\YouTubeModuleConfig;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Carbon;
 use Illuminate\Validation\Rule;
@@ -11,6 +11,8 @@ use Illuminate\Validation\Validator;
 
 class YouTubeSearchRequest extends FormRequest
 {
+    use ResolvesYouTubeModuleConfig;
+
     public function authorize(): bool
     {
         return true;
@@ -31,7 +33,7 @@ class YouTubeSearchRequest extends FormRequest
             'videoDuration' => ['nullable', Rule::in(['any', 'short', 'medium', 'long'])],
             'videoDefinition' => ['nullable', Rule::in(['any', 'high', 'standard'])],
             'videoCaption' => ['nullable', Rule::in(['any', 'closedCaption', 'none'])],
-            'limit' => ['nullable', 'integer', 'min:1', 'max:' . $this->config()->searchLimitMax()],
+            'limit' => ['nullable', 'integer', 'min:1', 'max:' . $this->youtubeModuleConfig()->searchLimitMax()],
             'pageToken' => ['nullable', 'string', 'max:255'],
         ];
     }
@@ -55,7 +57,7 @@ class YouTubeSearchRequest extends FormRequest
         return new YouTubeSearchQueryDTO(
             query: trim((string) $validated['q']),
             type: (string) ($validated['type'] ?? 'video'),
-            maxResults: min($this->config()->searchLimitMax(), max(1, (int) ($validated['limit'] ?? $this->config()->searchLimitDefault()))),
+            maxResults: min($this->youtubeModuleConfig()->searchLimitMax(), max(1, (int) ($validated['limit'] ?? $this->youtubeModuleConfig()->searchLimitDefault()))),
             order: (string) ($validated['order'] ?? 'relevance'),
             safeSearch: (string) ($validated['safeSearch'] ?? 'moderate'),
             channelId: trim((string) ($validated['channelId'] ?? '')),
@@ -66,10 +68,10 @@ class YouTubeSearchRequest extends FormRequest
             videoDefinition: (string) ($validated['videoDefinition'] ?? 'any'),
             videoCaption: (string) ($validated['videoCaption'] ?? 'any'),
             publishedAfter: ! empty($validated['publishedAfter'])
-                ? Carbon::createFromFormat('Y-m-d', $validated['publishedAfter'], $this->config()->timezone())->startOfDay()->toRfc3339String()
+                ? Carbon::createFromFormat('Y-m-d', $validated['publishedAfter'], $this->youtubeModuleConfig()->timezone())->startOfDay()->toRfc3339String()
                 : null,
             publishedBefore: ! empty($validated['publishedBefore'])
-                ? Carbon::createFromFormat('Y-m-d', $validated['publishedBefore'], $this->config()->timezone())->endOfDay()->toRfc3339String()
+                ? Carbon::createFromFormat('Y-m-d', $validated['publishedBefore'], $this->youtubeModuleConfig()->timezone())->endOfDay()->toRfc3339String()
                 : null,
         );
     }
@@ -80,10 +82,5 @@ class YouTubeSearchRequest extends FormRequest
     public function toApiParams(): array
     {
         return $this->toDTO()->toArray();
-    }
-
-    private function config(): YouTubeModuleConfig
-    {
-        return app(YouTubeModuleConfig::class);
     }
 }

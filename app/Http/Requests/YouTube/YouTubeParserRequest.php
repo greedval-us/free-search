@@ -2,14 +2,16 @@
 
 namespace App\Http\Requests\YouTube;
 
+use App\Http\Requests\YouTube\Concerns\ResolvesYouTubeModuleConfig;
 use App\Modules\YouTube\DTO\Request\YouTubeCommentsQueryDTO;
 use App\Modules\YouTube\Support\YouTubeInputNormalizer;
-use App\Modules\YouTube\Support\YouTubeModuleConfig;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
 class YouTubeParserRequest extends FormRequest
 {
+    use ResolvesYouTubeModuleConfig;
+
     public function authorize(): bool
     {
         return true;
@@ -19,7 +21,7 @@ class YouTubeParserRequest extends FormRequest
     {
         return [
             'videoId' => ['required', 'string', 'max:2048'],
-            'limit' => ['nullable', 'integer', 'min:1', 'max:' . $this->config()->parserCommentsLimitMax()],
+            'limit' => ['nullable', 'integer', 'min:1', 'max:' . $this->youtubeModuleConfig()->parserCommentsLimitMax()],
             'pageToken' => ['nullable', 'string', 'max:2048'],
             'order' => ['nullable', Rule::in(['relevance', 'time'])],
             'searchTerms' => ['nullable', 'string', 'max:255'],
@@ -32,7 +34,7 @@ class YouTubeParserRequest extends FormRequest
 
         return new YouTubeCommentsQueryDTO(
             videoId: YouTubeInputNormalizer::normalizeVideoId(trim((string) $validated['videoId'])),
-            maxResults: (int) ($validated['limit'] ?? $this->config()->parserCommentsLimitDefault()),
+            maxResults: (int) ($validated['limit'] ?? $this->youtubeModuleConfig()->parserCommentsLimitDefault()),
             order: (string) ($validated['order'] ?? 'relevance'),
             pageToken: trim((string) ($validated['pageToken'] ?? '')),
             searchTerms: trim((string) ($validated['searchTerms'] ?? '')),
@@ -47,8 +49,4 @@ class YouTubeParserRequest extends FormRequest
         return $this->toDTO()->toArray();
     }
 
-    private function config(): YouTubeModuleConfig
-    {
-        return app(YouTubeModuleConfig::class);
-    }
 }
