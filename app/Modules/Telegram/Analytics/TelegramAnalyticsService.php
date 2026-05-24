@@ -5,6 +5,7 @@ namespace App\Modules\Telegram\Analytics;
 use App\Modules\Telegram\Core\Contracts\TelegramGatewayInterface;
 use App\Modules\Telegram\Presenters\TelegramMessagePresenter;
 use App\Modules\Telegram\DTO\Response\Info\ChannelInfoDTO;
+use App\Modules\Telegram\Support\TelegramConfig;
 use Carbon\Carbon;
 
 class TelegramAnalyticsService
@@ -13,6 +14,7 @@ class TelegramAnalyticsService
         private readonly TelegramGatewayInterface $telegramService,
         private readonly TelegramMessagePresenter $messagePresenter,
         private readonly TelegramAnalyticsSummaryBuilder $summaryBuilder,
+        private readonly TelegramConfig $config,
     ) {
     }
 
@@ -244,22 +246,22 @@ class TelegramAnalyticsService
 
     private function fetchMaxPages(): int
     {
-        return max(1, (int) config('osint.telegram.analytics.fetch.max_pages', 20));
+        return $this->config->analyticsFetchMaxPages();
     }
 
     private function fetchPageLimit(): int
     {
-        return max(1, (int) config('osint.telegram.analytics.fetch.page_limit', 100));
+        return $this->config->analyticsFetchPageLimit();
     }
 
     private function groupByHourThresholdHours(): int
     {
-        return max(1, (int) config('osint.telegram.analytics.group_by_hour_threshold_hours', 36));
+        return $this->config->analyticsGroupByHourThresholdHours();
     }
 
     private function periodMaxDays(): int
     {
-        return max(1, (int) config('osint.telegram.analytics.period_max_days', 7));
+        return $this->config->analyticsPeriodMaxDays();
     }
 
     /**
@@ -267,67 +269,6 @@ class TelegramAnalyticsService
      */
     private function scoreProfiles(): array
     {
-        $configured = config('osint.telegram.analytics.score_profiles', []);
-        if (!is_array($configured)) {
-            return $this->defaultScoreProfiles();
-        }
-
-        $defaults = $this->defaultScoreProfiles();
-        $normalized = [];
-
-        foreach ($defaults as $profile => $weights) {
-            $candidate = $configured[$profile] ?? null;
-            if (!is_array($candidate)) {
-                $normalized[$profile] = $weights;
-                continue;
-            }
-
-            $normalized[$profile] = [
-                'views' => (float) ($candidate['views'] ?? $weights['views']),
-                'forwards' => (float) ($candidate['forwards'] ?? $weights['forwards']),
-                'replies' => (float) ($candidate['replies'] ?? $weights['replies']),
-                'reactions' => (float) ($candidate['reactions'] ?? $weights['reactions']),
-                'gifts' => (float) ($candidate['gifts'] ?? $weights['gifts']),
-            ];
-        }
-
-        return $normalized;
-    }
-
-    /**
-     * @return array<string, array{views: float, forwards: float, replies: float, reactions: float, gifts: float}>
-     */
-    private function defaultScoreProfiles(): array
-    {
-        return [
-            'balanced' => [
-                'views' => 1.0,
-                'forwards' => 5.0,
-                'replies' => 8.0,
-                'reactions' => 2.0,
-                'gifts' => 10.0,
-            ],
-            'reach' => [
-                'views' => 3.0,
-                'forwards' => 4.0,
-                'replies' => 2.0,
-                'reactions' => 1.0,
-                'gifts' => 2.0,
-            ],
-            'discussion' => [
-                'views' => 1.0,
-                'forwards' => 3.0,
-                'replies' => 12.0,
-                'reactions' => 2.0,
-                'gifts' => 3.0,
-            ],
-            'virality' => [
-                'views' => 1.0,
-                'forwards' => 10.0,
-                'replies' => 6.0,
-                'reactions' => 3.0,
-                'gifts' => 5.0,
-            ],
-        ];
+        return $this->config->analyticsScoreProfiles();
     }
 }

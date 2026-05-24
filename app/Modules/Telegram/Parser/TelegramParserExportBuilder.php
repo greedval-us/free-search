@@ -4,12 +4,17 @@ namespace App\Modules\Telegram\Parser;
 
 use App\Modules\Export\Excel\SheetDefinition;
 use App\Modules\Telegram\Parser\Contracts\TelegramParserExportBuilderInterface;
+use App\Modules\Telegram\Support\TelegramConfig;
 use Carbon\Carbon;
 use PhpOffice\PhpSpreadsheet\Shared\Date as ExcelDate;
 use PhpOffice\PhpSpreadsheet\Style\NumberFormat;
 
 class TelegramParserExportBuilder implements TelegramParserExportBuilderInterface
 {
+    public function __construct(private readonly TelegramConfig $config)
+    {
+    }
+
     /**
      * @param array<string, mixed> $payload
      * @return array<int, SheetDefinition>
@@ -44,7 +49,7 @@ class TelegramParserExportBuilder implements TelegramParserExportBuilderInterfac
                 ['Is channel', (bool) ($payload['isChannel'] ?? false) ? 'yes' : 'no'],
                 ['Messages', (int) ($payload['messagesCount'] ?? 0)],
                 ['Comments', (int) ($payload['commentsCount'] ?? 0)],
-                ['Generated at', Carbon::now(config('app.timezone'))->toDateTimeString()],
+                ['Generated at', Carbon::now($this->config->timezone())->toDateTimeString()],
             ],
         );
     }
@@ -185,7 +190,7 @@ class TelegramParserExportBuilder implements TelegramParserExportBuilderInterfac
         }
 
         return ExcelDate::dateTimeToExcel(
-            Carbon::createFromTimestamp((int) $value, config('app.timezone'))
+            Carbon::createFromTimestamp((int) $value, $this->config->timezone())
         );
     }
 

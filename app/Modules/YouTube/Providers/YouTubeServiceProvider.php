@@ -12,6 +12,7 @@ use App\Modules\YouTube\Parser\YouTubeParserExportBuilder;
 use App\Modules\YouTube\Search\Contracts\YouTubeSearchApplicationServiceInterface;
 use App\Modules\YouTube\Search\YouTubeSearchApplicationService;
 use App\Modules\YouTube\Support\YouTubeApiConfig;
+use App\Modules\YouTube\Support\YouTubeModuleConfig;
 use App\Modules\YouTube\YouTubeDataApiClient;
 use App\Support\Providers\BindingsServiceProvider;
 
@@ -26,6 +27,13 @@ final class YouTubeServiceProvider extends BindingsServiceProvider
                 (array) config('services.youtube', [])
             );
         });
+
+        $this->app->singleton(
+            YouTubeModuleConfig::class,
+            static fn (): YouTubeModuleConfig => YouTubeModuleConfig::fromTimezone(
+                (string) config('app.timezone', 'UTC')
+            )
+        );
     }
 
     protected function bindings(): array

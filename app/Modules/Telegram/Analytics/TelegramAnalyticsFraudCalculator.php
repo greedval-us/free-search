@@ -2,10 +2,15 @@
 
 namespace App\Modules\Telegram\Analytics;
 
+use App\Modules\Telegram\Support\TelegramConfig;
 use Illuminate\Support\Str;
 
 class TelegramAnalyticsFraudCalculator
 {
+    public function __construct(private readonly TelegramConfig $config)
+    {
+    }
+
     /**
      * @param array<int, array{
      *     id: int,
@@ -198,7 +203,7 @@ class TelegramAnalyticsFraudCalculator
      */
     private function postRules(): array
     {
-        $rules = config('osint.telegram.analytics.fraud.post_rules', []);
+        $rules = $this->config->analyticsFraudPostRules();
 
         return is_array($rules) ? $rules : [];
     }
@@ -208,33 +213,33 @@ class TelegramAnalyticsFraudCalculator
      */
     private function triggerRules(): array
     {
-        $rules = config('osint.telegram.analytics.fraud.triggers', []);
+        $rules = $this->config->analyticsFraudTriggerRules();
 
         return is_array($rules) ? $rules : [];
     }
 
     private function suspiciousPostExcerptLength(): int
     {
-        return max(1, (int) config('osint.telegram.analytics.fraud.suspicious_post_excerpt_length', 160));
+        return $this->config->analyticsFraudSuspiciousPostExcerptLength();
     }
 
     private function suspiciousPostsLimit(): int
     {
-        return max(1, (int) config('osint.telegram.analytics.fraud.suspicious_posts_limit', 5));
+        return $this->config->analyticsFraudSuspiciousPostsLimit();
     }
 
     private function riskMaxScore(): int
     {
-        return max(1, (int) config('osint.telegram.analytics.fraud.risk_max_score', 100));
+        return $this->config->analyticsFraudRiskMaxScore();
     }
 
     private function riskMediumThreshold(): int
     {
-        return max(0, (int) config('osint.telegram.analytics.fraud.risk_medium_threshold', 30));
+        return $this->config->analyticsFraudRiskMediumThreshold();
     }
 
     private function riskHighThreshold(): int
     {
-        return max($this->riskMediumThreshold(), (int) config('osint.telegram.analytics.fraud.risk_high_threshold', 60));
+        return $this->config->analyticsFraudRiskHighThreshold();
     }
 }

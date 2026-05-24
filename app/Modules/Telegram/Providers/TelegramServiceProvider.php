@@ -13,6 +13,7 @@ use App\Modules\Telegram\Parser\TelegramParserApplicationService;
 use App\Modules\Telegram\Parser\TelegramParserExportBuilder;
 use App\Modules\Telegram\Search\Contracts\TelegramSearchApplicationServiceInterface;
 use App\Modules\Telegram\Search\TelegramSearchApplicationService;
+use App\Modules\Telegram\Support\TelegramConfig;
 use App\Modules\Telegram\Support\Contracts\TelegramMediaResponderInterface;
 use App\Modules\Telegram\Support\TelegramMediaResponder;
 use App\Modules\Telegram\TelegramService;
@@ -20,6 +21,19 @@ use App\Support\Providers\BindingsServiceProvider;
 
 final class TelegramServiceProvider extends BindingsServiceProvider
 {
+    public function register(): void
+    {
+        parent::register();
+
+        $this->app->singleton(
+            TelegramConfig::class,
+            static fn (): TelegramConfig => TelegramConfig::fromArray(
+                (array) config('osint.telegram', []),
+                (string) config('app.timezone', 'UTC')
+            )
+        );
+    }
+
     protected function bindings(): array
     {
         return [

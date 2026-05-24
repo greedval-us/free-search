@@ -2,10 +2,15 @@
 
 namespace App\Modules\Telegram\Analytics;
 
+use App\Modules\Telegram\Support\TelegramConfig;
 use Carbon\Carbon;
 
 class TelegramAnalyticsAudienceCalculator
 {
+    public function __construct(private readonly TelegramConfig $config)
+    {
+    }
+
     /**
      * @param array<string, array<string, mixed>> $authorStats
      * @param array<int, int> $hourlyActivity
@@ -84,7 +89,7 @@ class TelegramAnalyticsAudienceCalculator
             return;
         }
 
-        $hour = (int) Carbon::createFromTimestamp($timestamp, config('app.timezone'))->format('G');
+        $hour = (int) Carbon::createFromTimestamp($timestamp, $this->config->timezone())->format('G');
         if ($hour < $this->hourMin() || $hour > $this->hourMax()) {
             return;
         }
@@ -94,21 +99,21 @@ class TelegramAnalyticsAudienceCalculator
 
     private function topAuthorsShareLimit(): int
     {
-        return max(1, (int) config('osint.telegram.analytics.audience.top_authors_share_limit', 5));
+        return $this->config->analyticsAudienceTopAuthorsShareLimit();
     }
 
     private function mostActiveHoursLimit(): int
     {
-        return max(1, (int) config('osint.telegram.analytics.audience.most_active_hours_limit', 3));
+        return $this->config->analyticsAudienceMostActiveHoursLimit();
     }
 
     private function hourMin(): int
     {
-        return (int) config('osint.telegram.analytics.audience.hour_min', 0);
+        return $this->config->analyticsAudienceHourMin();
     }
 
     private function hourMax(): int
     {
-        return (int) config('osint.telegram.analytics.audience.hour_max', 23);
+        return $this->config->analyticsAudienceHourMax();
     }
 }
