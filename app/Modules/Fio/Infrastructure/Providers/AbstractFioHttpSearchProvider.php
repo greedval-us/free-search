@@ -3,6 +3,7 @@
 namespace App\Modules\Fio\Infrastructure\Providers;
 
 use App\Modules\Fio\Application\Support\FioHttpConfig;
+use App\Modules\Fio\Application\Support\FioSearchConfig;
 use App\Modules\Fio\Domain\DTO\PublicSearchEntryDTO;
 use App\Modules\Fio\Domain\Services\FioQualifierLexicon;
 use Illuminate\Http\Client\ConnectionException;
@@ -14,6 +15,7 @@ abstract class AbstractFioHttpSearchProvider
     public function __construct(
         protected readonly FioQualifierLexicon $qualifierLexicon,
         protected readonly FioHttpConfig $httpConfig,
+        protected readonly FioSearchConfig $searchConfig,
     ) {
     }
 
@@ -39,18 +41,13 @@ abstract class AbstractFioHttpSearchProvider
         $baseQuery = $this->buildQuery($fullName, $qualifier, $termsLimit);
         $variants = [$baseQuery];
 
-        $dorksEnabled = (bool) config('fio.dork_search.enabled', true);
+        $dorksEnabled = $this->searchConfig->dorkEnabled();
         if (!$dorksEnabled) {
             return $variants;
         }
 
-        $templateMap = config('fio.dork_search.templates', []);
-        if (!is_array($templateMap)) {
-            return $variants;
-        }
-
-        $templates = $templateMap[$scope] ?? [];
-        if (!is_array($templates) || $templates === []) {
+        $templates = $this->searchConfig->dorkTemplatesForScope($scope);
+        if ($templates === []) {
             return $variants;
         }
 
@@ -78,7 +75,7 @@ abstract class AbstractFioHttpSearchProvider
             $variants[] = $normalized;
         }
 
-        $maxVariants = max(1, (int) config('fio.dork_search.max_variants_per_source', 4));
+        $maxVariants = $this->searchConfig->dorkMaxVariantsPerSource();
 
         return array_slice(array_values(array_unique($variants)), 0, $maxVariants);
     }

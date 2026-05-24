@@ -3,6 +3,7 @@
 namespace App\Modules\Username\Application\Services;
 
 use App\Modules\Username\Application\Contracts\UsernameSearchServiceInterface;
+use App\Modules\Username\Application\Support\UsernameConfig;
 use App\Modules\Username\Domain\Contracts\UsernameSourceCheckerInterface;
 use App\Modules\Username\Domain\DTO\UsernameSearchQueryDTO;
 use App\Modules\Username\Domain\DTO\UsernameSearchResultDTO;
@@ -21,6 +22,7 @@ final class UsernameSearchService implements UsernameSearchServiceInterface
         private readonly UsernameConfidenceSummaryBuilder $confidenceSummaryBuilder,
         private readonly UsernameSimilarityAnalyzer $similarityAnalyzer,
         private readonly UsernameEntityGraphBuilder $entityGraphBuilder,
+        private readonly UsernameConfig $config,
     ) {
     }
 
@@ -28,7 +30,7 @@ final class UsernameSearchService implements UsernameSearchServiceInterface
     {
         $sources = $this->sourceCatalog->all();
         $username = mb_strtolower(trim($query->username));
-        $searchTtl = (int) config('username.cache.search_ttl_seconds', 300);
+        $searchTtl = $this->config->searchCacheTtlSeconds();
 
         $items = $this->resultCache->rememberSearch(
             $username,

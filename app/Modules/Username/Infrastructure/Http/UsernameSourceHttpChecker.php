@@ -2,6 +2,7 @@
 
 namespace App\Modules\Username\Infrastructure\Http;
 
+use App\Modules\Username\Application\Support\UsernameConfig;
 use App\Modules\Username\Domain\Contracts\UsernameSourceCheckerInterface;
 use App\Modules\Username\Domain\DTO\UsernameSourceCheckResultDTO;
 use App\Modules\Username\Domain\DTO\UsernameSourceDTO;
@@ -12,6 +13,10 @@ use Illuminate\Support\Facades\Http;
 
 final class UsernameSourceHttpChecker implements UsernameSourceCheckerInterface
 {
+    public function __construct(private readonly UsernameConfig $config)
+    {
+    }
+
     /**
      * @param array<int, UsernameSourceDTO> $sources
      * @return array<int, UsernameSourceCheckResultDTO>
@@ -185,18 +190,9 @@ final class UsernameSourceHttpChecker implements UsernameSourceCheckerInterface
     private function requestConfig(): array
     {
         return [
-            'connect_timeout' => (int) config(
-                'osint.username.http.connect_timeout_seconds',
-                config('username.request.connect_timeout', 6)
-            ),
-            'timeout' => (int) config(
-                'osint.username.http.timeout_seconds',
-                config('username.request.timeout', 8)
-            ),
-            'max_redirects' => (int) config(
-                'osint.username.http.max_redirects',
-                config('username.request.max_redirects', 5)
-            ),
+            'connect_timeout' => $this->config->httpConnectTimeoutSeconds(),
+            'timeout' => $this->config->httpTimeoutSeconds(),
+            'max_redirects' => $this->config->httpMaxRedirects(),
         ];
     }
 
@@ -206,14 +202,8 @@ final class UsernameSourceHttpChecker implements UsernameSourceCheckerInterface
     private function requestHeaders(): array
     {
         return [
-            'Accept' => (string) config('osint.username.http.accept', 'text/html,application/xhtml+xml'),
-            'User-Agent' => (string) config(
-                'osint.username.http.user_agent',
-                (string) config(
-                    'username.request.user_agent',
-                    'Mozilla/5.0 (compatible; UraborosOSINT/1.0; +https://localhost)'
-                )
-            ),
+            'Accept' => $this->config->httpAccept(),
+            'User-Agent' => $this->config->httpUserAgent(),
         ];
     }
 

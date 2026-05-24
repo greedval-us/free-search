@@ -2,6 +2,8 @@
 
 namespace App\Modules\Fio\Domain\Services;
 
+use App\Modules\Fio\Application\Support\FioSearchConfig;
+
 final class FioSourceReliabilityResolver
 {
     /**
@@ -9,9 +11,9 @@ final class FioSourceReliabilityResolver
      */
     private array $weights;
 
-    public function __construct()
+    public function __construct(FioSearchConfig $config)
     {
-        $configWeights = config('fio.source_reliability', []);
+        $configWeights = $config->sourceReliability();
         $this->weights = $this->normalizeWeights($configWeights);
     }
 

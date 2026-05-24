@@ -3,6 +3,7 @@
 namespace App\Modules\Fio\Infrastructure\Providers;
 
 use App\Modules\Fio\Application\Support\FioHttpConfig;
+use App\Modules\Fio\Application\Support\FioSearchConfig;
 use App\Modules\Fio\Domain\Contracts\FioPublicSearchProviderInterface;
 use App\Modules\Fio\Domain\DTO\PublicSearchEntryDTO;
 use App\Modules\Fio\Domain\Services\FioQualifierLexicon;
@@ -16,8 +17,9 @@ final class FioYahooRssSearchProvider extends AbstractFioHttpSearchProvider impl
         private readonly FioBingRssResultParser $resultParser,
         FioQualifierLexicon $qualifierLexicon,
         FioHttpConfig $httpConfig,
+        FioSearchConfig $searchConfig,
     ) {
-        parent::__construct($qualifierLexicon, $httpConfig);
+        parent::__construct($qualifierLexicon, $httpConfig, $searchConfig);
     }
 
     /**
