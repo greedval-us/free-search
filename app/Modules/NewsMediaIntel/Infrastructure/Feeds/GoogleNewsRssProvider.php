@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Modules\NewsMediaIntel\Infrastructure\Providers;
+namespace App\Modules\NewsMediaIntel\Infrastructure\Feeds;
 
 use App\Modules\NewsMediaIntel\Application\Contracts\NewsFeedProviderInterface;
 
@@ -13,4 +13,3 @@ final class GoogleNewsRssProvider extends AbstractRssNewsFeedProvider implements
         return $this->fetchRss('googlenews', $url);
     }
 }
-

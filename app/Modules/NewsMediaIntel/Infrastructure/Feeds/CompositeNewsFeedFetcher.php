@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Modules\NewsMediaIntel\Infrastructure\Providers;
+namespace App\Modules\NewsMediaIntel\Infrastructure\Feeds;
 
 use App\Modules\NewsMediaIntel\Application\Contracts\NewsFeedFetcherInterface;
 
-final class RssNewsFeedFetcher implements NewsFeedFetcherInterface
+final class CompositeNewsFeedFetcher implements NewsFeedFetcherInterface
 {
     public function __construct(
         private readonly GoogleNewsRssProvider $googleNewsRssProvider,
@@ -24,3 +24,4 @@ final class RssNewsFeedFetcher implements NewsFeedFetcherInterface
         ];
     }
 }
+

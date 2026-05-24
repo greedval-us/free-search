@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Modules\NewsMediaIntel\Infrastructure\Providers;
+namespace App\Modules\NewsMediaIntel\Infrastructure\Feeds;
 
 use App\Modules\NewsMediaIntel\Application\Contracts\NewsFeedProviderInterface;
 use App\Modules\NewsMediaIntel\Domain\DTO\NewsMentionDTO;

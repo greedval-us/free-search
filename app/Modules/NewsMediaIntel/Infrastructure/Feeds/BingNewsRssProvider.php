@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Modules\NewsMediaIntel\Infrastructure\Providers;
+namespace App\Modules\NewsMediaIntel\Infrastructure\Feeds;
 
 use App\Modules\NewsMediaIntel\Application\Contracts\NewsFeedProviderInterface;
 
@@ -13,4 +13,3 @@ final class BingNewsRssProvider extends AbstractRssNewsFeedProvider implements N
         return $this->fetchRss('bing', $url);
     }
 }
-
