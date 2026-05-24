@@ -15,25 +15,42 @@ final class AdminPanelQueryTagFactory
      */
     public function all(Closure $scope): QueryTag
     {
-        return QueryTag::make(__('admin_panel.tags.all'), $scope)
-            ->default()
-            ->icon('list-bullet');
+        return $this->make(__('admin_panel.tags.all'), $scope, 'list-bullet', true);
+    }
+
+    /**
+     * @param Closure(Builder): Builder $scope
+     */
+    public function make(string $label, Closure $scope, ?string $icon = null, bool $default = false): QueryTag
+    {
+        $tag = QueryTag::make($label, $scope);
+
+        if ($default) {
+            $tag->default();
+        }
+
+        if ($icon !== null && $icon !== '') {
+            $tag->icon($icon);
+        }
+
+        return $tag;
     }
 
     public function today(string $column): QueryTag
     {
-        return QueryTag::make(
+        return $this->make(
             __('admin_panel.tags.today'),
-            static fn (Builder $query): Builder => $query->whereDate($column, now()->toDateString())
-        )->icon('calendar-days');
+            static fn (Builder $query): Builder => $query->whereDate($column, now()->toDateString()),
+            'calendar-days'
+        );
     }
 
     public function last24Hours(string $column): QueryTag
     {
-        return QueryTag::make(
+        return $this->make(
             __('admin_panel.tags.last_24h'),
-            static fn (Builder $query): Builder => $query->where($column, '>=', now()->subDay())
-        )->icon('clock');
+            static fn (Builder $query): Builder => $query->where($column, '>=', now()->subDay()),
+            'clock'
+        );
     }
 }
-

@@ -6,21 +6,19 @@ namespace App\MoonShine\Resources\QueueJob\Pages;
 
 use App\Models\QueueJob;
 use App\MoonShine\Resources\QueueJob\QueueJobResource;
+use App\MoonShine\Resources\Shared\Pages\AdminIndexPage;
 use App\MoonShine\Support\Concerns\ParsesQueuePayload;
 use App\MoonShine\Support\Formatting\AdminPanelDateFormatter;
-use App\MoonShine\Support\QueryTags\AdminPanelQueryTagFactory;
 use Illuminate\Database\Eloquent\Builder;
 use MoonShine\Contracts\UI\FieldContract;
-use MoonShine\Laravel\Pages\Crud\IndexPage;
-use MoonShine\Laravel\QueryTags\QueryTag;
 use MoonShine\UI\Fields\ID;
 use MoonShine\UI\Fields\Number;
 use MoonShine\UI\Fields\Text;
 
 /**
- * @extends IndexPage<QueueJobResource>
+ * @extends AdminIndexPage<QueueJobResource>
  */
-final class QueueJobIndexPage extends IndexPage
+final class QueueJobIndexPage extends AdminIndexPage
 {
     use ParsesQueuePayload;
 
@@ -52,12 +50,18 @@ final class QueueJobIndexPage extends IndexPage
 
     protected function queryTags(): array
     {
-        $tags = new AdminPanelQueryTagFactory();
-
         return [
-            $tags->all(static fn (Builder $query): Builder => $query),
-            QueryTag::make(__('admin_panel.tags.retrying'), static fn (Builder $query): Builder => $query->where('attempts', '>', 0))->icon('arrow-path'),
-            QueryTag::make(__('admin_panel.tags.ready_now'), static fn (Builder $query): Builder => $query->where('available_at', '<=', time()))->icon('clock'),
+            $this->allTag(static fn (Builder $query): Builder => $query),
+            $this->customTag(
+                __('admin_panel.tags.retrying'),
+                static fn (Builder $query): Builder => $query->where('attempts', '>', 0),
+                'arrow-path',
+            ),
+            $this->customTag(
+                __('admin_panel.tags.ready_now'),
+                static fn (Builder $query): Builder => $query->where('available_at', '<=', time()),
+                'clock',
+            ),
         ];
     }
 }

@@ -63,6 +63,8 @@ return [
         'retrying' => 'Retrying',
         'ready_now' => 'Ready now',
         'last_24h' => 'Last 24h',
+        'blocked_users' => 'Blocked users',
+        'premium_users' => 'Premium users',
     ],
 
     'values' => [

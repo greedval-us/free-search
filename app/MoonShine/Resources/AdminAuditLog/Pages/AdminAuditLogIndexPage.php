@@ -5,19 +5,20 @@ declare(strict_types=1);
 namespace App\MoonShine\Resources\AdminAuditLog\Pages;
 
 use App\MoonShine\Resources\AdminAuditLog\AdminAuditLogResource;
+use App\MoonShine\Resources\Shared\Pages\AdminIndexPage;
 use App\MoonShine\Support\Formatting\AdminAuditChangeFormatter;
 use App\MoonShine\Support\Formatting\AdminPanelDateFormatter;
+use Illuminate\Database\Eloquent\Builder;
 use MoonShine\Contracts\UI\FieldContract;
-use MoonShine\Laravel\Pages\Crud\IndexPage;
 use MoonShine\UI\Fields\Date;
 use MoonShine\UI\Fields\ID;
 use MoonShine\UI\Fields\Number;
 use MoonShine\UI\Fields\Text;
 
 /**
- * @extends IndexPage<AdminAuditLogResource>
+ * @extends AdminIndexPage<AdminAuditLogResource>
  */
-final class AdminAuditLogIndexPage extends IndexPage
+final class AdminAuditLogIndexPage extends AdminIndexPage
 {
     /**
      * @return list<FieldContract>
@@ -62,6 +63,15 @@ final class AdminAuditLogIndexPage extends IndexPage
             Text::make(__('admin_panel.fields.action'), 'action'),
             Text::make(__('admin_panel.fields.target'), 'target_type'),
             Number::make(__('admin_panel.fields.target_id'), 'target_id'),
+        ];
+    }
+
+    protected function queryTags(): array
+    {
+        return [
+            $this->allTag(static fn (Builder $query): Builder => $query),
+            $this->todayTag('created_at'),
+            $this->last24HoursTag('created_at'),
         ];
     }
 

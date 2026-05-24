@@ -6,9 +6,10 @@ namespace App\MoonShine\Resources\AppUser\Pages;
 
 use App\Models\User;
 use App\MoonShine\Resources\AppUser\AppUserResource;
+use App\MoonShine\Resources\Shared\Pages\AdminIndexPage;
 use MoonShine\UI\Fields\Field;
+use Illuminate\Database\Eloquent\Builder;
 use MoonShine\Contracts\UI\FieldContract;
-use MoonShine\Laravel\Pages\Crud\IndexPage;
 use MoonShine\UI\Fields\Date;
 use MoonShine\UI\Fields\Email;
 use MoonShine\UI\Fields\ID;
@@ -17,9 +18,9 @@ use MoonShine\UI\Fields\Select;
 use MoonShine\UI\Fields\Text;
 
 /**
- * @extends IndexPage<AppUserResource>
+ * @extends AdminIndexPage<AppUserResource>
  */
-final class AppUserIndexPage extends IndexPage
+final class AppUserIndexPage extends AdminIndexPage
 {
     /**
      * @return list<FieldContract>
@@ -61,6 +62,24 @@ final class AppUserIndexPage extends IndexPage
                 1 => __('admin_panel.values.blocked'),
                 0 => __('admin_panel.values.active'),
             ]),
+        ];
+    }
+
+    protected function queryTags(): array
+    {
+        return [
+            $this->allTag(static fn (Builder $query): Builder => $query),
+            $this->customTag(
+                __('admin_panel.tags.blocked_users'),
+                static fn (Builder $query): Builder => $query->where('is_blocked', true),
+                'lock-closed',
+            ),
+            $this->customTag(
+                __('admin_panel.tags.premium_users'),
+                static fn (Builder $query): Builder => $query->where('is_premium', true),
+                'star',
+            ),
+            $this->todayTag('created_at'),
         ];
     }
 

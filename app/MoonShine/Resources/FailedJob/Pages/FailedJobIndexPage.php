@@ -6,21 +6,19 @@ namespace App\MoonShine\Resources\FailedJob\Pages;
 
 use App\Models\FailedJob;
 use App\MoonShine\Resources\FailedJob\FailedJobResource;
+use App\MoonShine\Resources\Shared\Pages\AdminIndexPage;
 use App\MoonShine\Support\Concerns\ParsesQueuePayload;
 use App\MoonShine\Support\Formatting\AdminPanelDateFormatter;
-use App\MoonShine\Support\QueryTags\AdminPanelQueryTagFactory;
 use Illuminate\Database\Eloquent\Builder;
 use MoonShine\Contracts\UI\FieldContract;
-use MoonShine\Laravel\Pages\Crud\IndexPage;
-use MoonShine\Laravel\QueryTags\QueryTag;
 use MoonShine\UI\Fields\Date;
 use MoonShine\UI\Fields\ID;
 use MoonShine\UI\Fields\Text;
 
 /**
- * @extends IndexPage<FailedJobResource>
+ * @extends AdminIndexPage<FailedJobResource>
  */
-final class FailedJobIndexPage extends IndexPage
+final class FailedJobIndexPage extends AdminIndexPage
 {
     use ParsesQueuePayload;
 
@@ -52,12 +50,10 @@ final class FailedJobIndexPage extends IndexPage
 
     protected function queryTags(): array
     {
-        $tags = new AdminPanelQueryTagFactory();
-
         return [
-            $tags->all(static fn (Builder $query): Builder => $query),
-            $tags->today('failed_at'),
-            $tags->last24Hours('failed_at'),
+            $this->allTag(static fn (Builder $query): Builder => $query),
+            $this->todayTag('failed_at'),
+            $this->last24HoursTag('failed_at'),
         ];
     }
 
