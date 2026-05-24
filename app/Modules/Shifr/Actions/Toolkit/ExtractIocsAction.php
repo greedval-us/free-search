@@ -3,13 +3,11 @@
 namespace App\Modules\Shifr\Actions\Toolkit;
 
 use App\Modules\Shifr\DTO\Toolkit\IocLookupDTO;
+use App\Modules\Shifr\DTO\Toolkit\Results\IocExtractResultDTO;
 
 final class ExtractIocsAction
 {
-    /**
-     * @return array<string, mixed>
-     */
-    public function execute(IocLookupDTO $dto): array
+    public function execute(IocLookupDTO $dto): IocExtractResultDTO
     {
         $text = $dto->input;
 
@@ -19,22 +17,22 @@ final class ExtractIocsAction
         $ips = $this->unique('/\b(?:\d{1,3}\.){3}\d{1,3}\b/', $text);
         $telegramUsernames = $this->unique('/(?<!\w)@[a-zA-Z][a-zA-Z0-9_]{3,31}\b/', $text);
 
-        return [
-            'counts' => [
+        return new IocExtractResultDTO(
+            counts: [
                 'emails' => count($emails),
                 'urls' => count($urls),
                 'domains' => count($domains),
                 'ips' => count($ips),
                 'telegramUsernames' => count($telegramUsernames),
             ],
-            'items' => [
+            items: [
                 'emails' => $emails,
                 'urls' => $urls,
                 'domains' => $domains,
                 'ips' => $ips,
                 'telegramUsernames' => $telegramUsernames,
             ],
-        ];
+        );
     }
 
     /**

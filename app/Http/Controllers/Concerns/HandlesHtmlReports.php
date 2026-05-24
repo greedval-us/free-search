@@ -2,8 +2,12 @@
 
 namespace App\Http\Controllers\Concerns;
 
+use App\Support\Reports\Contracts\ReportFilenamePolicyInterface;
+use App\Support\Reports\ReportFilenamePolicy;
+use App\Support\Reports\ReportsConfig;
 use Carbon\Carbon;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\App;
 use Illuminate\View\View;
 
 trait HandlesHtmlReports
@@ -17,8 +21,8 @@ trait HandlesHtmlReports
     {
         return array_merge([
             'report' => $report,
-            'locale' => app()->getLocale(),
-            'generatedAt' => Carbon::now(config('app.timezone'))->format($this->reportGeneratedAtFormat()),
+            'locale' => App::currentLocale(),
+            'generatedAt' => Carbon::now($this->htmlReportsConfig()->timezone())->format($this->reportGeneratedAtFormat()),
         ], $extra);
     }
 
@@ -36,7 +40,7 @@ trait HandlesHtmlReports
             return view($view, $viewData);
         }
 
-        $filename = app(\App\Support\Reports\ReportFilenamePolicy::class)->build(
+        $filename = $this->htmlReportFilenamePolicy()->build(
             prefix: $filenamePrefix,
             target: $filenameTarget,
         );
@@ -49,12 +53,24 @@ trait HandlesHtmlReports
 
     private function reportGeneratedAtFormat(): string
     {
-        return (string) config('osint.reports.generated_at_format', 'd.m.Y H:i');
+        return $this->htmlReportsConfig()->generatedAtFormat();
     }
 
     private function reportContentType(): string
     {
-        return (string) config('osint.reports.download_content_type', 'text/html; charset=UTF-8');
+        return $this->htmlReportsConfig()->downloadContentType();
+    }
+
+    private function htmlReportFilenamePolicy(): ReportFilenamePolicyInterface
+    {
+        return new ReportFilenamePolicy($this->htmlReportsConfig());
+    }
+
+    private function htmlReportsConfig(): ReportsConfig
+    {
+        return ReportsConfig::fromArray(
+            (array) config('osint.reports', []),
+            (string) config('app.timezone', 'UTC')
+        );
     }
 }
-

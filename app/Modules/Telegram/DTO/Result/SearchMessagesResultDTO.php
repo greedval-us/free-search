@@ -2,7 +2,9 @@
 
 namespace App\Modules\Telegram\DTO\Result;
 
-class SearchMessagesResultDTO
+use App\Support\Contracts\ArrayPayloadable;
+
+class SearchMessagesResultDTO implements ArrayPayloadable
 {
     /**
      * @param array<int, mixed> $items

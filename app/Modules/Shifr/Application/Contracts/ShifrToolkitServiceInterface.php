@@ -6,26 +6,18 @@ use App\Modules\Shifr\DTO\Toolkit\HashLookupDTO;
 use App\Modules\Shifr\DTO\Toolkit\IocLookupDTO;
 use App\Modules\Shifr\DTO\Toolkit\JwtLookupDTO;
 use App\Modules\Shifr\DTO\Toolkit\TransformLookupDTO;
+use App\Modules\Shifr\DTO\Toolkit\Results\HashResultDTO;
+use App\Modules\Shifr\DTO\Toolkit\Results\IocExtractResultDTO;
+use App\Modules\Shifr\DTO\Toolkit\Results\JwtInspectResultDTO;
+use App\Modules\Shifr\DTO\Toolkit\Results\TransformResultDTO;
 
 interface ShifrToolkitServiceInterface
 {
-    /**
-     * @return array<string, mixed>
-     */
-    public function hash(HashLookupDTO $dto): array;
+    public function hash(HashLookupDTO $dto): HashResultDTO;
 
-    /**
-     * @return array<string, mixed>
-     */
-    public function transform(TransformLookupDTO $dto): array;
+    public function transform(TransformLookupDTO $dto): TransformResultDTO;
 
-    /**
-     * @return array<string, mixed>
-     */
-    public function extractIocs(IocLookupDTO $dto): array;
+    public function extractIocs(IocLookupDTO $dto): IocExtractResultDTO;
 
-    /**
-     * @return array<string, mixed>
-     */
-    public function inspectJwt(JwtLookupDTO $dto): array;
+    public function inspectJwt(JwtLookupDTO $dto): JwtInspectResultDTO;
 }

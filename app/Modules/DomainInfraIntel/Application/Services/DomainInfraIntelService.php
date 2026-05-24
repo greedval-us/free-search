@@ -6,11 +6,12 @@ use App\Modules\DomainInfraIntel\Application\Contracts\AsnLookupClientInterface;
 use App\Modules\DomainInfraIntel\Application\Contracts\CertificateTransparencyClientInterface;
 use App\Modules\DomainInfraIntel\Application\Contracts\DomainIpResolverInterface;
 use App\Modules\DomainInfraIntel\Application\Contracts\DomainRdapClientInterface;
+use App\Modules\DomainInfraIntel\Application\Contracts\DomainInfraIntelServiceInterface;
 use App\Modules\DomainInfraIntel\Application\Contracts\NeighborDomainResolverInterface;
 use App\Modules\DomainInfraIntel\Domain\DTO\DomainInfraIntelResultDTO;
 use App\Modules\SiteIntel\Support\DomainNormalizer;
 
-final class DomainInfraIntelService
+final class DomainInfraIntelService implements DomainInfraIntelServiceInterface
 {
     public function __construct(
         private readonly DomainIpResolverInterface $ipResolver,
@@ -21,14 +22,11 @@ final class DomainInfraIntelService
     ) {
     }
 
-    /**
-     * @return array<string, mixed>
-     */
-    public function inspect(string $domain): array
+    public function inspect(string $domain): DomainInfraIntelResultDTO
     {
         $normalized = DomainNormalizer::normalizeDomain($domain);
         if ($normalized === null) {
-            return (new DomainInfraIntelResultDTO(
+            return new DomainInfraIntelResultDTO(
                 domain: $domain,
                 ips: [],
                 rdap: [],
@@ -36,19 +34,19 @@ final class DomainInfraIntelService
                 asn: [],
                 neighbors: [],
                 error: 'Invalid domain',
-            ))->toArray();
+            );
         }
 
         $ips = $this->ipResolver->resolve($normalized);
         $asn = $this->asnLookupClient->lookup($ips[0] ?? null);
 
-        return (new DomainInfraIntelResultDTO(
+        return new DomainInfraIntelResultDTO(
             domain: $normalized,
             ips: $ips,
             rdap: $this->rdapClient->lookup($normalized),
             crtsh: $this->certificateTransparencyClient->lookup($normalized),
             asn: $asn,
             neighbors: $this->neighborDomainResolver->resolve($ips),
-        ))->toArray();
+        );
     }
 }

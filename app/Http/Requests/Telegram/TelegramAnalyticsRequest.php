@@ -3,12 +3,15 @@
 namespace App\Http\Requests\Telegram;
 
 use App\Http\Requests\LocalizedFormRequest;
+use App\Http\Requests\Telegram\Concerns\ResolvesTelegramConfig;
 use App\Modules\Telegram\DTO\Request\TelegramAnalyticsParamsDTO;
 use Carbon\Carbon;
 use Illuminate\Validation\Validator;
 
 class TelegramAnalyticsRequest extends LocalizedFormRequest
 {
+    use ResolvesTelegramConfig;
+
     private const SCORE_PRIORITIES = [
         'balanced',
         'reach',
@@ -49,8 +52,8 @@ class TelegramAnalyticsRequest extends LocalizedFormRequest
             }
 
             if ($dateFrom && $dateTo) {
-                $rangeStart = Carbon::createFromFormat('Y-m-d', $dateFrom, config('app.timezone'))->startOfDay();
-                $rangeEnd = Carbon::createFromFormat('Y-m-d', $dateTo, config('app.timezone'))->endOfDay();
+                $rangeStart = Carbon::createFromFormat('Y-m-d', $dateFrom, $this->telegramConfig()->timezone())->startOfDay();
+                $rangeEnd = Carbon::createFromFormat('Y-m-d', $dateTo, $this->telegramConfig()->timezone())->endOfDay();
 
                 if ($rangeEnd->diffInDays($rangeStart) > ($this->customRangeMaxDays() - 1)) {
                     $validator->errors()->add(
@@ -90,7 +93,7 @@ class TelegramAnalyticsRequest extends LocalizedFormRequest
             return null;
         }
 
-        return Carbon::createFromFormat('Y-m-d', $dateFrom, config('app.timezone'))->startOfDay();
+        return Carbon::createFromFormat('Y-m-d', $dateFrom, $this->telegramConfig()->timezone())->startOfDay();
     }
 
     public function dateTo(): ?Carbon
@@ -101,7 +104,7 @@ class TelegramAnalyticsRequest extends LocalizedFormRequest
             return null;
         }
 
-        return Carbon::createFromFormat('Y-m-d', $dateTo, config('app.timezone'))->endOfDay();
+        return Carbon::createFromFormat('Y-m-d', $dateTo, $this->telegramConfig()->timezone())->endOfDay();
     }
 
     public function scorePriority(): string
@@ -134,16 +137,16 @@ class TelegramAnalyticsRequest extends LocalizedFormRequest
 
     private function periodMinDays(): int
     {
-        return max(1, (int) config('osint.telegram.analytics.period_min_days', 1));
+        return $this->telegramConfig()->analyticsPeriodMinDays();
     }
 
     private function periodMaxDays(): int
     {
-        return max($this->periodMinDays(), (int) config('osint.telegram.analytics.period_max_days', 7));
+        return $this->telegramConfig()->analyticsPeriodMaxDays();
     }
 
     private function customRangeMaxDays(): int
     {
-        return max(1, (int) config('osint.telegram.analytics.custom_range_max_days', 7));
+        return $this->telegramConfig()->analyticsCustomRangeMaxDays();
     }
 }

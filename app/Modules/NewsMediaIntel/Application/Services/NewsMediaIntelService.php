@@ -3,14 +3,16 @@
 namespace App\Modules\NewsMediaIntel\Application\Services;
 
 use App\Modules\NewsMediaIntel\Application\Contracts\NewsFeedFetcherInterface;
+use App\Modules\NewsMediaIntel\Application\Contracts\NewsMediaIntelServiceInterface;
 use App\Modules\NewsMediaIntel\Application\Services\NewsMediaIntel\NewsMentionDeduplicator;
 use App\Modules\NewsMediaIntel\Application\Services\NewsMediaIntel\NewsSentimentAnalyzer;
 use App\Modules\NewsMediaIntel\Application\Services\NewsMediaIntel\NewsTimelineBuilder;
 use App\Modules\NewsMediaIntel\Application\Services\NewsMediaIntel\NewsTopicExtractor;
+use App\Modules\NewsMediaIntel\Application\Support\NewsMediaIntelConfig;
 use App\Modules\NewsMediaIntel\Domain\DTO\NewsMediaIntelResultDTO;
 use App\Modules\NewsMediaIntel\Domain\DTO\SentimentSummaryDTO;
 
-final class NewsMediaIntelService
+final class NewsMediaIntelService implements NewsMediaIntelServiceInterface
 {
     public function __construct(
         private readonly NewsFeedFetcherInterface $newsFeedFetcher,
@@ -18,37 +20,35 @@ final class NewsMediaIntelService
         private readonly NewsTopicExtractor $topicExtractor,
         private readonly NewsTimelineBuilder $timelineBuilder,
         private readonly NewsSentimentAnalyzer $sentimentAnalyzer,
+        private readonly NewsMediaIntelConfig $config,
     ) {
     }
 
-    /**
-     * @return array<string, mixed>
-     */
-    public function monitor(string $query): array
+    public function monitor(string $query): NewsMediaIntelResultDTO
     {
         $q = trim($query);
 
         if ($q === '') {
-            return (new NewsMediaIntelResultDTO(
+            return new NewsMediaIntelResultDTO(
                 query: '',
                 mentions: [],
                 topics: [],
                 timeline: [],
                 sentiment: new SentimentSummaryDTO(positive: 0, neutral: 0, negative: 0),
-            ))->toArray();
+            );
         }
 
         $mentions = $this->newsFeedFetcher->fetchAll($q);
 
         $mentions = $this->deduplicator->deduplicate($mentions);
-        $mentions = array_slice($mentions, 0, 120);
+        $mentions = array_slice($mentions, 0, $this->config->maxMentions());
 
-        return (new NewsMediaIntelResultDTO(
+        return new NewsMediaIntelResultDTO(
             query: $q,
             mentions: $mentions,
             topics: $this->topicExtractor->extract($mentions),
             timeline: $this->timelineBuilder->build($mentions),
             sentiment: $this->sentimentAnalyzer->summarize($mentions),
-        ))->toArray();
+        );
     }
 }

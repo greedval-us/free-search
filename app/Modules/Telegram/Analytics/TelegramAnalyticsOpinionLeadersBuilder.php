@@ -2,10 +2,15 @@
 
 namespace App\Modules\Telegram\Analytics;
 
+use App\Modules\Telegram\Support\TelegramConfig;
 use Carbon\Carbon;
 
 class TelegramAnalyticsOpinionLeadersBuilder
 {
+    public function __construct(private readonly TelegramConfig $config)
+    {
+    }
+
     /**
      * @param array<string, mixed> $item
      * @return array{authorKey: string|null, authorId: int|null, authorLabel: string|null}
@@ -69,7 +74,7 @@ class TelegramAnalyticsOpinionLeadersBuilder
         $authorStats[$authorKey]['interactions'] += $interactions;
         $authorStats[$authorKey]['score'] += $leaderScore;
 
-        $day = Carbon::createFromTimestamp($timestamp, config('app.timezone'));
+        $day = Carbon::createFromTimestamp($timestamp, $this->config->timezone());
         $dayKey = $day->format('Y-m-d');
 
         if (!isset($authorDailyStats[$authorKey][$dayKey])) {

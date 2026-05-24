@@ -2,15 +2,16 @@
 
 namespace App\Modules\EmailIntel\Application\Services\EmailIntel;
 
-use App\Modules\EmailIntel\Application\Services\EmailIntelService;
+use App\Modules\EmailIntel\Application\Contracts\EmailBulkIntelServiceInterface;
+use App\Modules\EmailIntel\Application\Contracts\EmailIntelServiceInterface;
 use Throwable;
 
-final class EmailBulkIntelService
+final class EmailBulkIntelService implements EmailBulkIntelServiceInterface
 {
     public const MAX_EMAILS = 25;
 
     public function __construct(
-        private readonly EmailIntelService $emailIntelService,
+        private readonly EmailIntelServiceInterface $emailIntelService,
     ) {
     }
 

@@ -2,6 +2,7 @@
 
 namespace App\Modules\EmailIntel\Application\Services;
 
+use App\Modules\EmailIntel\Application\Contracts\EmailIntelServiceInterface;
 use App\Modules\EmailIntel\Application\Services\EmailIntel\EmailDomainIntelAssembler;
 use App\Modules\EmailIntel\Application\Services\EmailIntel\EmailEntityGraphBuilder;
 use App\Modules\EmailIntel\Application\Services\EmailIntel\EmailLocalPartAnalyzer;
@@ -13,7 +14,7 @@ use App\Modules\EmailIntel\Application\Services\EmailIntel\EmailSignalBuilder;
 use App\Modules\EmailIntel\Application\Services\EmailIntel\EmailSimilarDomainGenerator;
 use App\Modules\EmailIntel\Domain\DTO\EmailIntelResultDTO;
 
-final class EmailIntelService
+final class EmailIntelService implements EmailIntelServiceInterface
 {
     public function __construct(
         private readonly EmailDomainIntelAssembler $domainIntelAssembler,

@@ -2,7 +2,9 @@
 
 namespace App\Modules\EmailIntel\Application\Services\EmailIntel;
 
-final class DomainMailPostureService
+use App\Modules\EmailIntel\Application\Contracts\DomainMailPostureServiceInterface;
+
+final class DomainMailPostureService implements DomainMailPostureServiceInterface
 {
     public function __construct(
         private readonly EmailDomainIntelAssembler $domainIntelAssembler,

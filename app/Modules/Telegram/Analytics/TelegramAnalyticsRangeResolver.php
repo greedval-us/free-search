@@ -3,10 +3,16 @@
 namespace App\Modules\Telegram\Analytics;
 
 use App\Http\Requests\Telegram\TelegramAnalyticsRequest;
+use App\Modules\Telegram\Analytics\Contracts\TelegramAnalyticsRangeResolverInterface;
+use App\Modules\Telegram\Support\TelegramConfig;
 use Carbon\Carbon;
 
-class TelegramAnalyticsRangeResolver
+class TelegramAnalyticsRangeResolver implements TelegramAnalyticsRangeResolverInterface
 {
+    public function __construct(private readonly TelegramConfig $config)
+    {
+    }
+
     /**
      * @return array{from: Carbon, to: Carbon}
      */
@@ -19,7 +25,7 @@ class TelegramAnalyticsRangeResolver
             ];
         }
 
-        $to = Carbon::now(config('app.timezone'))->endOfDay();
+        $to = Carbon::now($this->config->timezone())->endOfDay();
         $from = $to->copy()->subDays($request->periodDays() - 1)->startOfDay();
 
         return [
@@ -70,7 +76,7 @@ class TelegramAnalyticsRangeResolver
             // Keep report previous period aligned with frontend date-only summary query.
             $previousDateFrom = $previousFromUtc->format('Y-m-d');
             $previousDateTo = $previousToUtc->format('Y-m-d');
-            $timezone = config('app.timezone');
+            $timezone = $this->config->timezone();
 
             return [
                 'from' => Carbon::createFromFormat('Y-m-d', $previousDateFrom, $timezone)->startOfDay(),
@@ -81,4 +87,3 @@ class TelegramAnalyticsRangeResolver
         }
     }
 }
-

@@ -3,11 +3,16 @@
 namespace App\Modules\SiteIntel\Infrastructure\Clients;
 
 use App\Modules\SiteIntel\Application\Contracts\SiteHealthHttpInspectorInterface;
+use App\Modules\SiteIntel\Application\Support\SiteIntelConfig;
 use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Support\Facades\Http;
 
 final class SiteHealthHttpInspector implements SiteHealthHttpInspectorInterface
 {
+    public function __construct(private readonly SiteIntelConfig $config)
+    {
+    }
+
     /**
      * @return array<string, mixed>
      */
@@ -126,27 +131,26 @@ final class SiteHealthHttpInspector implements SiteHealthHttpInspectorInterface
 
     private function userAgent(): string
     {
-        return (string) config('osint.site_intel.http.user_agent', 'FreeSearch-SiteHealth/1.0');
+        return $this->config->siteHealthUserAgent();
     }
 
     private function acceptHeader(): string
     {
-        return (string) config('osint.site_intel.http.accept', '*/*');
+        return $this->config->httpAcceptHeader();
     }
 
     private function timeoutSeconds(): int
     {
-        return max(1, (int) config('osint.site_intel.http.timeout_seconds', 10));
+        return $this->config->httpTimeoutSeconds();
     }
 
     private function maxRedirects(): int
     {
-        return max(0, (int) config('osint.site_intel.http.max_redirects', 5));
+        return $this->config->httpMaxRedirects();
     }
 
     private function verifySsl(): bool
     {
-        return (bool) config('osint.site_intel.http.verify_ssl', false);
+        return $this->config->httpVerifySsl();
     }
 }
-

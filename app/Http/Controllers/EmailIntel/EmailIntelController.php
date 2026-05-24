@@ -6,9 +6,9 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\EmailIntel\EmailIntelBulkLookupRequest;
 use App\Http\Requests\EmailIntel\EmailIntelDomainPostureRequest;
 use App\Http\Requests\EmailIntel\EmailIntelLookupRequest;
-use App\Modules\EmailIntel\Application\Services\EmailIntel\DomainMailPostureService;
-use App\Modules\EmailIntel\Application\Services\EmailIntel\EmailBulkIntelService;
-use App\Modules\EmailIntel\Application\Services\EmailIntelService;
+use App\Modules\EmailIntel\Application\Contracts\DomainMailPostureServiceInterface;
+use App\Modules\EmailIntel\Application\Contracts\EmailBulkIntelServiceInterface;
+use App\Modules\EmailIntel\Application\Contracts\EmailIntelServiceInterface;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Response;
 use Illuminate\View\View;
@@ -16,30 +16,28 @@ use Illuminate\View\View;
 class EmailIntelController extends Controller
 {
     public function __construct(
-        private readonly EmailIntelService $emailIntelService,
-        private readonly EmailBulkIntelService $bulkIntelService,
-        private readonly DomainMailPostureService $domainMailPostureService,
+        private readonly EmailIntelServiceInterface $emailIntelService,
+        private readonly EmailBulkIntelServiceInterface $bulkIntelService,
+        private readonly DomainMailPostureServiceInterface $domainMailPostureService,
     ) {
     }
 
     public function lookup(EmailIntelLookupRequest $request): JsonResponse
     {
-        $this->applyRequestLocale($request->locale());
-
-        return $this->jsonOk([
-            'data' => $this->emailIntelService->lookup($request->email())->toArray(),
-        ]);
+        return $this->localizedJsonDataFrom(
+            $request->locale(),
+            $this->emailIntelService->lookup($request->email())
+        );
     }
 
     public function report(EmailIntelLookupRequest $request): View|Response
     {
-        $this->applyRequestLocale($request->locale());
-
         $result = $this->emailIntelService->lookup($request->email());
 
-        return $this->htmlReportResponse(
+        return $this->localizedHtmlReportResponse(
+            locale: $request->locale(),
             view: 'reports.email-intel.analytics',
-            viewData: $this->reportViewData($result->toArray()),
+            report: $result->toArray(),
             download: $request->boolean('download'),
             filenamePrefix: 'email-intel',
             filenameTarget: str_replace('@', '-at-', $request->email()),
@@ -48,19 +46,17 @@ class EmailIntelController extends Controller
 
     public function bulk(EmailIntelBulkLookupRequest $request): JsonResponse
     {
-        $this->applyRequestLocale($request->locale());
-
-        return $this->jsonOk([
-            'data' => $this->bulkIntelService->lookup($request->emails()),
-        ]);
+        return $this->localizedJsonData(
+            $request->locale(),
+            $this->bulkIntelService->lookup($request->emails())
+        );
     }
 
     public function domainPosture(EmailIntelDomainPostureRequest $request): JsonResponse
     {
-        $this->applyRequestLocale($request->locale());
-
-        return $this->jsonOk([
-            'data' => $this->domainMailPostureService->inspect($request->domain()),
-        ]);
+        return $this->localizedJsonData(
+            $request->locale(),
+            $this->domainMailPostureService->inspect($request->domain())
+        );
     }
 }

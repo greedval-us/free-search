@@ -2,6 +2,9 @@
 
 namespace App\Modules\SiteIntel\Application\Services;
 
+use App\Modules\SiteIntel\Application\Contracts\SiteIntelAnalyticsServiceInterface;
+use App\Modules\SiteIntel\Application\Contracts\DomainLiteServiceInterface;
+use App\Modules\SiteIntel\Application\Contracts\SiteHealthServiceInterface;
 use App\Modules\SiteIntel\Application\Services\SiteIntelAnalytics\SiteIntelAnalyticsDomainExpiryCalculator;
 use App\Modules\SiteIntel\Application\Services\SiteIntelAnalytics\SiteIntelAnalyticsHeadersCoverageCalculator;
 use App\Modules\SiteIntel\Application\Services\SiteIntelAnalytics\SiteIntelAnalyticsOverviewBuilder;
@@ -10,11 +13,11 @@ use App\Modules\SiteIntel\Application\Services\SiteIntelAnalytics\SiteIntelAnaly
 use App\Modules\SiteIntel\Application\Services\SiteIntelAnalytics\SiteIntelAnalyticsSignalResolver;
 use Carbon\Carbon;
 
-final class SiteIntelAnalyticsService
+final class SiteIntelAnalyticsService implements SiteIntelAnalyticsServiceInterface
 {
     public function __construct(
-        private readonly SiteHealthService $siteHealthService,
-        private readonly DomainLiteService $domainLiteService,
+        private readonly SiteHealthServiceInterface $siteHealthService,
+        private readonly DomainLiteServiceInterface $domainLiteService,
         private readonly SiteIntelAnalyticsScoreCalculator $scoreCalculator,
         private readonly SiteIntelAnalyticsHeadersCoverageCalculator $headersCoverageCalculator,
         private readonly SiteIntelAnalyticsDomainExpiryCalculator $domainExpiryCalculator,

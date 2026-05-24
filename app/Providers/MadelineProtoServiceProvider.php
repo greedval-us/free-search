@@ -6,41 +6,37 @@ use danog\MadelineProto\API;
 use danog\MadelineProto\Logger;
 use danog\MadelineProto\Settings;
 use danog\MadelineProto\Settings\AppInfo;
-use Illuminate\Support\Facades\Config;
+use danog\MadelineProto\Settings\Logger as LoggerSettings;
+use App\Support\MadelineProto\MadelineProtoConfig;
 use Illuminate\Support\ServiceProvider;
 
 class MadelineProtoServiceProvider extends ServiceProvider
 {
     public function register(): void
     {
-        $this->app->singleton(API::class, function (): API {
-            $apiId   = env('TELEGRAM_API_ID');
-            $apiHash = env('TELEGRAM_API_HASH');
-
-            if (empty($apiId)) {
-                throw new \RuntimeException('TELEGRAM_API_ID is not set in .env');
-            }
-
-            if (empty($apiHash)) {
-                throw new \RuntimeException('TELEGRAM_API_HASH is not set in .env');
-            }
-
-            $sessionPath = Config::get('madelineproto.session_path', 'app/madelineproto/');
-            $sessionPath = storage_path("{$sessionPath}session.madeline");
-
-        $settings = (new Settings)
-            ->setAppInfo(
-                (new AppInfo)
-                    ->setApiId($apiId)
-                    ->setApiHash($apiHash)
+        $this->app->singleton(
+            MadelineProtoConfig::class,
+            static fn (): MadelineProtoConfig => MadelineProtoConfig::fromArray(
+                (array) config('madelineproto', [])
             )
-            ->setLogger(
-                (new \danog\MadelineProto\Settings\Logger)
-                    ->setType(Logger::FILE_LOGGER)
-                    ->setExtra(storage_path('logs/madeline.log'))
-            );
+        );
 
-            return new API($sessionPath, $settings);
+        $this->app->singleton(API::class, function (): API {
+            $config = $this->app->make(MadelineProtoConfig::class);
+
+            $settings = (new Settings)
+                ->setAppInfo(
+                    (new AppInfo)
+                        ->setApiId($config->apiId())
+                        ->setApiHash($config->apiHash())
+                )
+                ->setLogger(
+                    (new LoggerSettings)
+                        ->setType(Logger::FILE_LOGGER)
+                        ->setExtra($config->logFilePath())
+                );
+
+            return new API($config->sessionFilePath(), $settings);
         });
     }
 

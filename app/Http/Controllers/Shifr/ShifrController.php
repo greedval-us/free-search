@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Shifr;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Shifr\AbstractShifrRequest;
 use App\Http\Requests\Shifr\ShifrClassicCipherRequest;
 use App\Http\Requests\Shifr\ShifrHashRequest;
 use App\Http\Requests\Shifr\ShifrIocExtractRequest;
@@ -10,6 +11,7 @@ use App\Http\Requests\Shifr\ShifrJwtInspectRequest;
 use App\Http\Requests\Shifr\ShifrTransformRequest;
 use App\Modules\Shifr\Application\Contracts\ShifrClassicCipherServiceInterface;
 use App\Modules\Shifr\Application\Contracts\ShifrToolkitServiceInterface;
+use App\Modules\Shifr\DTO\Contracts\ShifrResultDataInterface;
 use Illuminate\Http\JsonResponse;
 
 final class ShifrController extends Controller
@@ -22,38 +24,34 @@ final class ShifrController extends Controller
 
     public function hash(ShifrHashRequest $request): JsonResponse
     {
-        $this->applyRequestLocale($request->locale());
-
-        return $this->jsonOk([
-            'data' => $this->toolkitService->hash($request->toDto()),
-        ]);
+        return $this->respondWithData(
+            $request,
+            fn () => $this->toolkitService->hash($request->toDto()),
+        );
     }
 
     public function transform(ShifrTransformRequest $request): JsonResponse
     {
-        $this->applyRequestLocale($request->locale());
-
-        return $this->jsonOk([
-            'data' => $this->toolkitService->transform($request->toDto()),
-        ]);
+        return $this->respondWithData(
+            $request,
+            fn () => $this->toolkitService->transform($request->toDto()),
+        );
     }
 
     public function extractIocs(ShifrIocExtractRequest $request): JsonResponse
     {
-        $this->applyRequestLocale($request->locale());
-
-        return $this->jsonOk([
-            'data' => $this->toolkitService->extractIocs($request->toDto()),
-        ]);
+        return $this->respondWithData(
+            $request,
+            fn () => $this->toolkitService->extractIocs($request->toDto()),
+        );
     }
 
     public function inspectJwt(ShifrJwtInspectRequest $request): JsonResponse
     {
-        $this->applyRequestLocale($request->locale());
-
-        return $this->jsonOk([
-            'data' => $this->toolkitService->inspectJwt($request->toDto()),
-        ]);
+        return $this->respondWithData(
+            $request,
+            fn () => $this->toolkitService->inspectJwt($request->toDto()),
+        );
     }
 
     public function classic(ShifrClassicCipherRequest $request): JsonResponse
@@ -66,8 +64,16 @@ final class ShifrController extends Controller
             return $this->jsonError(__('Unsupported cipher/direction pair or missing required settings.'), 422);
         }
 
-        return $this->jsonOk([
-            'data' => $result,
-        ]);
+        return $this->jsonDataFrom($result);
+    }
+
+    /**
+     * @param callable(): ShifrResultDataInterface $resolver
+     */
+    private function respondWithData(AbstractShifrRequest $request, callable $resolver): JsonResponse
+    {
+        $this->applyRequestLocale($request->locale());
+
+        return $this->jsonDataFrom($resolver());
     }
 }

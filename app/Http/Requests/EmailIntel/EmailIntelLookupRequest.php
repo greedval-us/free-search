@@ -2,15 +2,10 @@
 
 namespace App\Http\Requests\EmailIntel;
 
-use App\Http\Requests\LocalizedFormRequest;
+use App\Http\Requests\AbstractLocalizedRequest;
 
-class EmailIntelLookupRequest extends LocalizedFormRequest
+class EmailIntelLookupRequest extends AbstractLocalizedRequest
 {
-    public function authorize(): bool
-    {
-        return true;
-    }
-
     public function rules(): array
     {
         return [
@@ -22,10 +17,5 @@ class EmailIntelLookupRequest extends LocalizedFormRequest
     public function email(): string
     {
         return mb_strtolower(trim((string) $this->validated('email')));
-    }
-
-    public function locale(): string
-    {
-        return $this->resolveLocale();
     }
 }

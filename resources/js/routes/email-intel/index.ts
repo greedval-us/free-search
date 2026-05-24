@@ -79,7 +79,7 @@ lookup.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     lookup.form = lookupForm
 /**
 * @see \App\Http\Controllers\EmailIntel\EmailIntelController::bulk
- * @see app/Http/Controllers/EmailIntel/EmailIntelController.php:49
+ * @see app/Http/Controllers/EmailIntel/EmailIntelController.php:47
  * @route '/email-intel/bulk'
  */
 export const bulk = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -94,7 +94,7 @@ bulk.definition = {
 
 /**
 * @see \App\Http\Controllers\EmailIntel\EmailIntelController::bulk
- * @see app/Http/Controllers/EmailIntel/EmailIntelController.php:49
+ * @see app/Http/Controllers/EmailIntel/EmailIntelController.php:47
  * @route '/email-intel/bulk'
  */
 bulk.url = (options?: RouteQueryOptions) => {
@@ -103,7 +103,7 @@ bulk.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\EmailIntel\EmailIntelController::bulk
- * @see app/Http/Controllers/EmailIntel/EmailIntelController.php:49
+ * @see app/Http/Controllers/EmailIntel/EmailIntelController.php:47
  * @route '/email-intel/bulk'
  */
 bulk.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -112,7 +112,7 @@ bulk.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
 })
 /**
 * @see \App\Http\Controllers\EmailIntel\EmailIntelController::bulk
- * @see app/Http/Controllers/EmailIntel/EmailIntelController.php:49
+ * @see app/Http/Controllers/EmailIntel/EmailIntelController.php:47
  * @route '/email-intel/bulk'
  */
 bulk.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -122,7 +122,7 @@ bulk.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 
     /**
 * @see \App\Http\Controllers\EmailIntel\EmailIntelController::bulk
- * @see app/Http/Controllers/EmailIntel/EmailIntelController.php:49
+ * @see app/Http/Controllers/EmailIntel/EmailIntelController.php:47
  * @route '/email-intel/bulk'
  */
     const bulkForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -132,7 +132,7 @@ bulk.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 
             /**
 * @see \App\Http\Controllers\EmailIntel\EmailIntelController::bulk
- * @see app/Http/Controllers/EmailIntel/EmailIntelController.php:49
+ * @see app/Http/Controllers/EmailIntel/EmailIntelController.php:47
  * @route '/email-intel/bulk'
  */
         bulkForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -141,7 +141,7 @@ bulk.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
         })
             /**
 * @see \App\Http\Controllers\EmailIntel\EmailIntelController::bulk
- * @see app/Http/Controllers/EmailIntel/EmailIntelController.php:49
+ * @see app/Http/Controllers/EmailIntel/EmailIntelController.php:47
  * @route '/email-intel/bulk'
  */
         bulkForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -157,7 +157,7 @@ bulk.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     bulk.form = bulkForm
 /**
 * @see \App\Http\Controllers\EmailIntel\EmailIntelController::domainPosture
- * @see app/Http/Controllers/EmailIntel/EmailIntelController.php:58
+ * @see app/Http/Controllers/EmailIntel/EmailIntelController.php:55
  * @route '/email-intel/domain-posture'
  */
 export const domainPosture = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -172,7 +172,7 @@ domainPosture.definition = {
 
 /**
 * @see \App\Http\Controllers\EmailIntel\EmailIntelController::domainPosture
- * @see app/Http/Controllers/EmailIntel/EmailIntelController.php:58
+ * @see app/Http/Controllers/EmailIntel/EmailIntelController.php:55
  * @route '/email-intel/domain-posture'
  */
 domainPosture.url = (options?: RouteQueryOptions) => {
@@ -181,7 +181,7 @@ domainPosture.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\EmailIntel\EmailIntelController::domainPosture
- * @see app/Http/Controllers/EmailIntel/EmailIntelController.php:58
+ * @see app/Http/Controllers/EmailIntel/EmailIntelController.php:55
  * @route '/email-intel/domain-posture'
  */
 domainPosture.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -190,7 +190,7 @@ domainPosture.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
 })
 /**
 * @see \App\Http\Controllers\EmailIntel\EmailIntelController::domainPosture
- * @see app/Http/Controllers/EmailIntel/EmailIntelController.php:58
+ * @see app/Http/Controllers/EmailIntel/EmailIntelController.php:55
  * @route '/email-intel/domain-posture'
  */
 domainPosture.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -200,7 +200,7 @@ domainPosture.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => (
 
     /**
 * @see \App\Http\Controllers\EmailIntel\EmailIntelController::domainPosture
- * @see app/Http/Controllers/EmailIntel/EmailIntelController.php:58
+ * @see app/Http/Controllers/EmailIntel/EmailIntelController.php:55
  * @route '/email-intel/domain-posture'
  */
     const domainPostureForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -210,7 +210,7 @@ domainPosture.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => (
 
             /**
 * @see \App\Http\Controllers\EmailIntel\EmailIntelController::domainPosture
- * @see app/Http/Controllers/EmailIntel/EmailIntelController.php:58
+ * @see app/Http/Controllers/EmailIntel/EmailIntelController.php:55
  * @route '/email-intel/domain-posture'
  */
         domainPostureForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -219,7 +219,7 @@ domainPosture.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => (
         })
             /**
 * @see \App\Http\Controllers\EmailIntel\EmailIntelController::domainPosture
- * @see app/Http/Controllers/EmailIntel/EmailIntelController.php:58
+ * @see app/Http/Controllers/EmailIntel/EmailIntelController.php:55
  * @route '/email-intel/domain-posture'
  */
         domainPostureForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -235,7 +235,7 @@ domainPosture.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => (
     domainPosture.form = domainPostureForm
 /**
 * @see \App\Http\Controllers\EmailIntel\EmailIntelController::report
- * @see app/Http/Controllers/EmailIntel/EmailIntelController.php:34
+ * @see app/Http/Controllers/EmailIntel/EmailIntelController.php:33
  * @route '/email-intel/report'
  */
 export const report = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -250,7 +250,7 @@ report.definition = {
 
 /**
 * @see \App\Http\Controllers\EmailIntel\EmailIntelController::report
- * @see app/Http/Controllers/EmailIntel/EmailIntelController.php:34
+ * @see app/Http/Controllers/EmailIntel/EmailIntelController.php:33
  * @route '/email-intel/report'
  */
 report.url = (options?: RouteQueryOptions) => {
@@ -259,7 +259,7 @@ report.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\EmailIntel\EmailIntelController::report
- * @see app/Http/Controllers/EmailIntel/EmailIntelController.php:34
+ * @see app/Http/Controllers/EmailIntel/EmailIntelController.php:33
  * @route '/email-intel/report'
  */
 report.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -268,7 +268,7 @@ report.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
 })
 /**
 * @see \App\Http\Controllers\EmailIntel\EmailIntelController::report
- * @see app/Http/Controllers/EmailIntel/EmailIntelController.php:34
+ * @see app/Http/Controllers/EmailIntel/EmailIntelController.php:33
  * @route '/email-intel/report'
  */
 report.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -278,7 +278,7 @@ report.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 
     /**
 * @see \App\Http\Controllers\EmailIntel\EmailIntelController::report
- * @see app/Http/Controllers/EmailIntel/EmailIntelController.php:34
+ * @see app/Http/Controllers/EmailIntel/EmailIntelController.php:33
  * @route '/email-intel/report'
  */
     const reportForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -288,7 +288,7 @@ report.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 
             /**
 * @see \App\Http\Controllers\EmailIntel\EmailIntelController::report
- * @see app/Http/Controllers/EmailIntel/EmailIntelController.php:34
+ * @see app/Http/Controllers/EmailIntel/EmailIntelController.php:33
  * @route '/email-intel/report'
  */
         reportForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -297,7 +297,7 @@ report.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
         })
             /**
 * @see \App\Http\Controllers\EmailIntel\EmailIntelController::report
- * @see app/Http/Controllers/EmailIntel/EmailIntelController.php:34
+ * @see app/Http/Controllers/EmailIntel/EmailIntelController.php:33
  * @route '/email-intel/report'
  */
         reportForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({

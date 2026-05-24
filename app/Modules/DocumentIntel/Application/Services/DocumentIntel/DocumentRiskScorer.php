@@ -2,8 +2,14 @@
 
 namespace App\Modules\DocumentIntel\Application\Services\DocumentIntel;
 
+use App\Modules\DocumentIntel\Application\Support\DocumentIntelConfig;
+
 final class DocumentRiskScorer
 {
+    public function __construct(private readonly DocumentIntelConfig $config)
+    {
+    }
+
     /**
      * @param array<string, mixed> $document
      * @return array{score: int, level: string, reasons: array<int, string>}
@@ -20,25 +26,25 @@ final class DocumentRiskScorer
 
         $author = (string) ($document['author'] ?? '');
         if ($author !== '') {
-            $score += (int) config('osint.document_intel.risk.weights.author_exposed', 20);
+            $score += $this->config->riskWeight('author_exposed', 20);
             $reasons[] = 'author_exposed';
         }
 
         $emails = is_array($document['artifacts']['emails'] ?? null) ? $document['artifacts']['emails'] : [];
         if (count($emails) > 0) {
-            $score += (int) config('osint.document_intel.risk.weights.email_exposed', 15);
+            $score += $this->config->riskWeight('email_exposed', 15);
             $reasons[] = 'emails_exposed';
         }
 
         $paths = is_array($document['artifacts']['paths'] ?? null) ? $document['artifacts']['paths'] : [];
         if (count($paths) > 0) {
-            $score += (int) config('osint.document_intel.risk.weights.internal_paths_exposed', 25);
+            $score += $this->config->riskWeight('internal_paths_exposed', 25);
             $reasons[] = 'internal_paths_exposed';
         }
 
         $software = strtolower((string) ($document['software'] ?? ''));
         if ($software !== '' && (str_contains($software, 'office 2007') || str_contains($software, 'office 2010'))) {
-            $score += (int) config('osint.document_intel.risk.weights.legacy_software_hint', 15);
+            $score += $this->config->riskWeight('legacy_software_hint', 15);
             $reasons[] = 'legacy_software_hint';
         }
 
@@ -53,8 +59,8 @@ final class DocumentRiskScorer
 
     private function resolveLevel(int $score): string
     {
-        $high = (int) config('osint.document_intel.risk.thresholds.high', 60);
-        $medium = (int) config('osint.document_intel.risk.thresholds.medium', 30);
+        $high = $this->config->riskThresholdHigh();
+        $medium = $this->config->riskThresholdMedium();
 
         return match (true) {
             $score >= $high => 'high',

@@ -2,16 +2,11 @@
 
 namespace App\Http\Requests\DocumentIntel;
 
-use App\Http\Requests\LocalizedFormRequest;
+use App\Http\Requests\AbstractLocalizedRequest;
 use App\Modules\SiteIntel\Support\DomainNormalizer;
 
-class DocumentIntelLookupRequest extends LocalizedFormRequest
+class DocumentIntelLookupRequest extends AbstractLocalizedRequest
 {
-    public function authorize(): bool
-    {
-        return true;
-    }
-
     public function rules(): array
     {
         return [
@@ -23,11 +18,6 @@ class DocumentIntelLookupRequest extends LocalizedFormRequest
     public function searchQuery(): string
     {
         return trim((string) $this->validated('query'));
-    }
-
-    public function locale(): string
-    {
-        return $this->resolveLocale();
     }
 
     public function normalizedDomain(): ?string

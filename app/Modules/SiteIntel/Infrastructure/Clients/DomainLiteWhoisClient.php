@@ -3,9 +3,14 @@
 namespace App\Modules\SiteIntel\Infrastructure\Clients;
 
 use App\Modules\SiteIntel\Application\Contracts\DomainLiteWhoisClientInterface;
+use App\Modules\SiteIntel\Application\Support\SiteIntelConfig;
 
 final class DomainLiteWhoisClient implements DomainLiteWhoisClientInterface
 {
+    public function __construct(private readonly SiteIntelConfig $config)
+    {
+    }
+
     public function query(string $server, string $domain): ?string
     {
         $socket = @fsockopen($server, 43, $errorNumber, $errorString, $this->connectTimeoutSeconds());
@@ -36,22 +41,21 @@ final class DomainLiteWhoisClient implements DomainLiteWhoisClientInterface
 
     private function connectTimeoutSeconds(): int
     {
-        return max(1, (int) config('osint.site_intel.whois.connect_timeout_seconds', 8));
+        return $this->config->whoisConnectTimeoutSeconds();
     }
 
     private function readTimeoutSeconds(): int
     {
-        return max(1, (int) config('osint.site_intel.whois.read_timeout_seconds', 8));
+        return $this->config->whoisReadTimeoutSeconds();
     }
 
     private function readChunkSize(): int
     {
-        return max(128, (int) config('osint.site_intel.whois.read_chunk_size', 2048));
+        return $this->config->whoisReadChunkSize();
     }
 
     private function maxResponseBytes(): int
     {
-        return max(1024, (int) config('osint.site_intel.whois.max_response_bytes', 120000));
+        return $this->config->whoisMaxResponseBytes();
     }
 }
-

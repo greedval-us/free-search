@@ -3,6 +3,7 @@
 namespace App\Modules\YouTube;
 
 use App\Modules\YouTube\Core\Contracts\YouTubeGatewayInterface;
+use App\Modules\YouTube\Support\YouTubeApiConfig;
 use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Http\Client\PendingRequest;
 use Illuminate\Support\Arr;
@@ -11,6 +12,11 @@ use RuntimeException;
 
 class YouTubeDataApiClient implements YouTubeGatewayInterface
 {
+    public function __construct(
+        private readonly YouTubeApiConfig $config,
+    ) {
+    }
+
     public function search(array $params): array
     {
         return $this->get('search', [
@@ -59,7 +65,7 @@ class YouTubeDataApiClient implements YouTubeGatewayInterface
      */
     private function get(string $endpoint, array $query): array
     {
-        $key = trim((string) config('services.youtube.key', ''));
+        $key = $this->config->apiKey();
 
         if ($key === '') {
             throw new RuntimeException('YOUTUBE_DATA_API_KEY is not configured.');
@@ -86,9 +92,13 @@ class YouTubeDataApiClient implements YouTubeGatewayInterface
 
     private function http(): PendingRequest
     {
-        return Http::baseUrl(rtrim((string) config('services.youtube.base_url'), '/'))
+        return Http::baseUrl($this->config->baseUrl())
             ->acceptJson()
-            ->timeout(20)
-            ->retry(2, 250, throw: false);
+            ->timeout($this->config->timeoutSeconds())
+            ->retry(
+                $this->config->retryAttempts(),
+                $this->config->retryDelayMilliseconds(),
+                throw: false
+            );
     }
 }

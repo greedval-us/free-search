@@ -6,14 +6,14 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Dashboard\SaveQueryRequest;
 use App\Models\User;
 use App\Models\UserSavedQuery;
-use App\Services\Dashboard\SavedQueryService;
+use App\Services\Dashboard\Contracts\SavedQueryServiceInterface;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 
 class SavedQueryController extends Controller
 {
     public function __construct(
-        private readonly SavedQueryService $savedQueryService,
+        private readonly SavedQueryServiceInterface $savedQueryService,
     ) {
     }
 

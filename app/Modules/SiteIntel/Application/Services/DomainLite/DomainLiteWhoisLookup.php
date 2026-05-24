@@ -3,12 +3,14 @@
 namespace App\Modules\SiteIntel\Application\Services\DomainLite;
 
 use App\Modules\SiteIntel\Application\Contracts\DomainLiteWhoisClientInterface;
+use App\Modules\SiteIntel\Application\Support\SiteIntelConfig;
 
 final class DomainLiteWhoisLookup
 {
     public function __construct(
         private readonly DomainLiteWhoisClientInterface $whoisClient,
         private readonly DomainLiteWhoisParser $whoisParser,
+        private readonly SiteIntelConfig $config,
     ) {
     }
 
@@ -46,7 +48,7 @@ final class DomainLiteWhoisLookup
 
     private function ianaServer(): string
     {
-        return (string) config('osint.site_intel.whois.iana_server', 'whois.iana.org');
+        return $this->config->whoisIanaServer();
     }
 
     /**

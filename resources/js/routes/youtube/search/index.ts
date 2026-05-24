@@ -1,7 +1,7 @@
 import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFormDefinition } from './../../../wayfinder'
 /**
 * @see \App\Http\Controllers\YouTube\YouTubeSearchController::videos
- * @see app/Http/Controllers/YouTube/YouTubeSearchController.php:15
+ * @see app/Http/Controllers/YouTube/YouTubeSearchController.php:18
  * @route '/youtube/search/videos'
  */
 export const videos = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -16,7 +16,7 @@ videos.definition = {
 
 /**
 * @see \App\Http\Controllers\YouTube\YouTubeSearchController::videos
- * @see app/Http/Controllers/YouTube/YouTubeSearchController.php:15
+ * @see app/Http/Controllers/YouTube/YouTubeSearchController.php:18
  * @route '/youtube/search/videos'
  */
 videos.url = (options?: RouteQueryOptions) => {
@@ -25,7 +25,7 @@ videos.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\YouTube\YouTubeSearchController::videos
- * @see app/Http/Controllers/YouTube/YouTubeSearchController.php:15
+ * @see app/Http/Controllers/YouTube/YouTubeSearchController.php:18
  * @route '/youtube/search/videos'
  */
 videos.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -34,7 +34,7 @@ videos.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
 })
 /**
 * @see \App\Http\Controllers\YouTube\YouTubeSearchController::videos
- * @see app/Http/Controllers/YouTube/YouTubeSearchController.php:15
+ * @see app/Http/Controllers/YouTube/YouTubeSearchController.php:18
  * @route '/youtube/search/videos'
  */
 videos.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -44,7 +44,7 @@ videos.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 
     /**
 * @see \App\Http\Controllers\YouTube\YouTubeSearchController::videos
- * @see app/Http/Controllers/YouTube/YouTubeSearchController.php:15
+ * @see app/Http/Controllers/YouTube/YouTubeSearchController.php:18
  * @route '/youtube/search/videos'
  */
     const videosForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -54,7 +54,7 @@ videos.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 
             /**
 * @see \App\Http\Controllers\YouTube\YouTubeSearchController::videos
- * @see app/Http/Controllers/YouTube/YouTubeSearchController.php:15
+ * @see app/Http/Controllers/YouTube/YouTubeSearchController.php:18
  * @route '/youtube/search/videos'
  */
         videosForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -63,7 +63,7 @@ videos.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
         })
             /**
 * @see \App\Http\Controllers\YouTube\YouTubeSearchController::videos
- * @see app/Http/Controllers/YouTube/YouTubeSearchController.php:15
+ * @see app/Http/Controllers/YouTube/YouTubeSearchController.php:18
  * @route '/youtube/search/videos'
  */
         videosForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({

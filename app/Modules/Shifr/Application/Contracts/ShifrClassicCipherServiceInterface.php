@@ -2,13 +2,10 @@
 
 namespace App\Modules\Shifr\Application\Contracts;
 
-use App\Modules\Shifr\DTO\ClassicCipherLookupDTO;
+use App\Modules\Shifr\DTO\Classic\ClassicCipherLookupDTO;
+use App\Modules\Shifr\DTO\Contracts\ShifrResultDataInterface;
 
 interface ShifrClassicCipherServiceInterface
 {
-    /**
-     * @return array<string, mixed>|null
-     */
-    public function process(ClassicCipherLookupDTO $dto): ?array;
+    public function process(ClassicCipherLookupDTO $dto): ?ShifrResultDataInterface;
 }
-

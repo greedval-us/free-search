@@ -2,6 +2,7 @@
 
 namespace App\Modules\Telegram\Analytics;
 
+use App\Modules\Telegram\Support\TelegramConfig;
 use Carbon\Carbon;
 use Illuminate\Support\Str;
 
@@ -12,6 +13,7 @@ class TelegramAnalyticsSummaryBuilder
         private readonly TelegramAnalyticsAudienceCalculator $audienceCalculator,
         private readonly TelegramAnalyticsOpinionLeadersBuilder $opinionLeadersBuilder,
         private readonly TelegramAnalyticsFraudCalculator $fraudCalculator,
+        private readonly TelegramConfig $config,
     ) {
     }
 
@@ -376,17 +378,17 @@ class TelegramAnalyticsSummaryBuilder
         }
 
         return $groupBy === 'hour'
-            ? Carbon::createFromTimestamp($timestamp, config('app.timezone'))->format('Y-m-d H:00')
-            : Carbon::createFromTimestamp($timestamp, config('app.timezone'))->format('Y-m-d');
+            ? Carbon::createFromTimestamp($timestamp, $this->config->timezone())->format('Y-m-d H:00')
+            : Carbon::createFromTimestamp($timestamp, $this->config->timezone())->format('Y-m-d');
     }
 
     private function topPostsLimit(): int
     {
-        return max(1, (int) config('osint.telegram.analytics.top_posts_limit', 5));
+        return $this->config->analyticsTopPostsLimit();
     }
 
     private function topDistributionLimit(): int
     {
-        return max(1, (int) config('osint.telegram.analytics.top_distribution_limit', 5));
+        return $this->config->analyticsTopDistributionLimit();
     }
 }

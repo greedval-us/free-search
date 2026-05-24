@@ -1,7 +1,7 @@
 import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFormDefinition } from './../../wayfinder'
 /**
 * @see \App\Http\Controllers\Shifr\ShifrController::hash
- * @see app/Http/Controllers/Shifr/ShifrController.php:23
+ * @see app/Http/Controllers/Shifr/ShifrController.php:25
  * @route '/shifr/hash'
  */
 export const hash = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -16,7 +16,7 @@ hash.definition = {
 
 /**
 * @see \App\Http\Controllers\Shifr\ShifrController::hash
- * @see app/Http/Controllers/Shifr/ShifrController.php:23
+ * @see app/Http/Controllers/Shifr/ShifrController.php:25
  * @route '/shifr/hash'
  */
 hash.url = (options?: RouteQueryOptions) => {
@@ -25,7 +25,7 @@ hash.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\Shifr\ShifrController::hash
- * @see app/Http/Controllers/Shifr/ShifrController.php:23
+ * @see app/Http/Controllers/Shifr/ShifrController.php:25
  * @route '/shifr/hash'
  */
 hash.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -34,7 +34,7 @@ hash.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
 })
 /**
 * @see \App\Http\Controllers\Shifr\ShifrController::hash
- * @see app/Http/Controllers/Shifr/ShifrController.php:23
+ * @see app/Http/Controllers/Shifr/ShifrController.php:25
  * @route '/shifr/hash'
  */
 hash.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -44,7 +44,7 @@ hash.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 
     /**
 * @see \App\Http\Controllers\Shifr\ShifrController::hash
- * @see app/Http/Controllers/Shifr/ShifrController.php:23
+ * @see app/Http/Controllers/Shifr/ShifrController.php:25
  * @route '/shifr/hash'
  */
     const hashForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -54,7 +54,7 @@ hash.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 
             /**
 * @see \App\Http\Controllers\Shifr\ShifrController::hash
- * @see app/Http/Controllers/Shifr/ShifrController.php:23
+ * @see app/Http/Controllers/Shifr/ShifrController.php:25
  * @route '/shifr/hash'
  */
         hashForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -63,7 +63,7 @@ hash.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
         })
             /**
 * @see \App\Http\Controllers\Shifr\ShifrController::hash
- * @see app/Http/Controllers/Shifr/ShifrController.php:23
+ * @see app/Http/Controllers/Shifr/ShifrController.php:25
  * @route '/shifr/hash'
  */
         hashForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -79,7 +79,7 @@ hash.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     hash.form = hashForm
 /**
 * @see \App\Http\Controllers\Shifr\ShifrController::transform
- * @see app/Http/Controllers/Shifr/ShifrController.php:32
+ * @see app/Http/Controllers/Shifr/ShifrController.php:33
  * @route '/shifr/transform'
  */
 export const transform = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -94,7 +94,7 @@ transform.definition = {
 
 /**
 * @see \App\Http\Controllers\Shifr\ShifrController::transform
- * @see app/Http/Controllers/Shifr/ShifrController.php:32
+ * @see app/Http/Controllers/Shifr/ShifrController.php:33
  * @route '/shifr/transform'
  */
 transform.url = (options?: RouteQueryOptions) => {
@@ -103,7 +103,7 @@ transform.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\Shifr\ShifrController::transform
- * @see app/Http/Controllers/Shifr/ShifrController.php:32
+ * @see app/Http/Controllers/Shifr/ShifrController.php:33
  * @route '/shifr/transform'
  */
 transform.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -112,7 +112,7 @@ transform.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
 })
 /**
 * @see \App\Http\Controllers\Shifr\ShifrController::transform
- * @see app/Http/Controllers/Shifr/ShifrController.php:32
+ * @see app/Http/Controllers/Shifr/ShifrController.php:33
  * @route '/shifr/transform'
  */
 transform.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -122,7 +122,7 @@ transform.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 
     /**
 * @see \App\Http\Controllers\Shifr\ShifrController::transform
- * @see app/Http/Controllers/Shifr/ShifrController.php:32
+ * @see app/Http/Controllers/Shifr/ShifrController.php:33
  * @route '/shifr/transform'
  */
     const transformForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -132,7 +132,7 @@ transform.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 
             /**
 * @see \App\Http\Controllers\Shifr\ShifrController::transform
- * @see app/Http/Controllers/Shifr/ShifrController.php:32
+ * @see app/Http/Controllers/Shifr/ShifrController.php:33
  * @route '/shifr/transform'
  */
         transformForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -141,7 +141,7 @@ transform.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
         })
             /**
 * @see \App\Http\Controllers\Shifr\ShifrController::transform
- * @see app/Http/Controllers/Shifr/ShifrController.php:32
+ * @see app/Http/Controllers/Shifr/ShifrController.php:33
  * @route '/shifr/transform'
  */
         transformForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -235,7 +235,7 @@ iocExtract.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     iocExtract.form = iocExtractForm
 /**
 * @see \App\Http\Controllers\Shifr\ShifrController::jwtInspect
- * @see app/Http/Controllers/Shifr/ShifrController.php:50
+ * @see app/Http/Controllers/Shifr/ShifrController.php:49
  * @route '/shifr/jwt-inspect'
  */
 export const jwtInspect = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -250,7 +250,7 @@ jwtInspect.definition = {
 
 /**
 * @see \App\Http\Controllers\Shifr\ShifrController::jwtInspect
- * @see app/Http/Controllers/Shifr/ShifrController.php:50
+ * @see app/Http/Controllers/Shifr/ShifrController.php:49
  * @route '/shifr/jwt-inspect'
  */
 jwtInspect.url = (options?: RouteQueryOptions) => {
@@ -259,7 +259,7 @@ jwtInspect.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\Shifr\ShifrController::jwtInspect
- * @see app/Http/Controllers/Shifr/ShifrController.php:50
+ * @see app/Http/Controllers/Shifr/ShifrController.php:49
  * @route '/shifr/jwt-inspect'
  */
 jwtInspect.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -268,7 +268,7 @@ jwtInspect.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
 })
 /**
 * @see \App\Http\Controllers\Shifr\ShifrController::jwtInspect
- * @see app/Http/Controllers/Shifr/ShifrController.php:50
+ * @see app/Http/Controllers/Shifr/ShifrController.php:49
  * @route '/shifr/jwt-inspect'
  */
 jwtInspect.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -278,7 +278,7 @@ jwtInspect.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 
     /**
 * @see \App\Http\Controllers\Shifr\ShifrController::jwtInspect
- * @see app/Http/Controllers/Shifr/ShifrController.php:50
+ * @see app/Http/Controllers/Shifr/ShifrController.php:49
  * @route '/shifr/jwt-inspect'
  */
     const jwtInspectForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -288,7 +288,7 @@ jwtInspect.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 
             /**
 * @see \App\Http\Controllers\Shifr\ShifrController::jwtInspect
- * @see app/Http/Controllers/Shifr/ShifrController.php:50
+ * @see app/Http/Controllers/Shifr/ShifrController.php:49
  * @route '/shifr/jwt-inspect'
  */
         jwtInspectForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -297,7 +297,7 @@ jwtInspect.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
         })
             /**
 * @see \App\Http\Controllers\Shifr\ShifrController::jwtInspect
- * @see app/Http/Controllers/Shifr/ShifrController.php:50
+ * @see app/Http/Controllers/Shifr/ShifrController.php:49
  * @route '/shifr/jwt-inspect'
  */
         jwtInspectForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -313,7 +313,7 @@ jwtInspect.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     jwtInspect.form = jwtInspectForm
 /**
 * @see \App\Http\Controllers\Shifr\ShifrController::classic
- * @see app/Http/Controllers/Shifr/ShifrController.php:59
+ * @see app/Http/Controllers/Shifr/ShifrController.php:57
  * @route '/shifr/classic'
  */
 export const classic = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -328,7 +328,7 @@ classic.definition = {
 
 /**
 * @see \App\Http\Controllers\Shifr\ShifrController::classic
- * @see app/Http/Controllers/Shifr/ShifrController.php:59
+ * @see app/Http/Controllers/Shifr/ShifrController.php:57
  * @route '/shifr/classic'
  */
 classic.url = (options?: RouteQueryOptions) => {
@@ -337,7 +337,7 @@ classic.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\Shifr\ShifrController::classic
- * @see app/Http/Controllers/Shifr/ShifrController.php:59
+ * @see app/Http/Controllers/Shifr/ShifrController.php:57
  * @route '/shifr/classic'
  */
 classic.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -346,7 +346,7 @@ classic.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
 })
 /**
 * @see \App\Http\Controllers\Shifr\ShifrController::classic
- * @see app/Http/Controllers/Shifr/ShifrController.php:59
+ * @see app/Http/Controllers/Shifr/ShifrController.php:57
  * @route '/shifr/classic'
  */
 classic.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -356,7 +356,7 @@ classic.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 
     /**
 * @see \App\Http\Controllers\Shifr\ShifrController::classic
- * @see app/Http/Controllers/Shifr/ShifrController.php:59
+ * @see app/Http/Controllers/Shifr/ShifrController.php:57
  * @route '/shifr/classic'
  */
     const classicForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -366,7 +366,7 @@ classic.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 
             /**
 * @see \App\Http\Controllers\Shifr\ShifrController::classic
- * @see app/Http/Controllers/Shifr/ShifrController.php:59
+ * @see app/Http/Controllers/Shifr/ShifrController.php:57
  * @route '/shifr/classic'
  */
         classicForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -375,7 +375,7 @@ classic.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
         })
             /**
 * @see \App\Http\Controllers\Shifr\ShifrController::classic
- * @see app/Http/Controllers/Shifr/ShifrController.php:59
+ * @see app/Http/Controllers/Shifr/ShifrController.php:57
  * @route '/shifr/classic'
  */
         classicForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({

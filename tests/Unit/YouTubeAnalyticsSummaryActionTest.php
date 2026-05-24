@@ -78,4 +78,9 @@ class FakeYouTubeAnalyticsGateway implements YouTubeGatewayInterface
     {
         return ['items' => []];
     }
+
+    public function comments(array $params): array
+    {
+        return ['items' => []];
+    }
 }

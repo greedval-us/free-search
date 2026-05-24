@@ -3,11 +3,16 @@
 namespace App\Modules\SiteIntel\Infrastructure\Clients;
 
 use App\Modules\SiteIntel\Application\Contracts\SeoAuditHttpFetcherInterface;
+use App\Modules\SiteIntel\Application\Support\SiteIntelConfig;
 use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Support\Facades\Http;
 
 final class SeoAuditHttpFetcher implements SeoAuditHttpFetcherInterface
 {
+    public function __construct(private readonly SiteIntelConfig $config)
+    {
+    }
+
     /**
      * @return array{url: string,status: int,headers: array<string, mixed>,body: string,responseTimeMs: int,error: string|null}
      */
@@ -17,14 +22,14 @@ final class SeoAuditHttpFetcher implements SeoAuditHttpFetcherInterface
 
         try {
             $response = Http::withHeaders([
-                'User-Agent' => (string) config('osint.site_intel.http.user_agent', 'FreeSearch-SeoAudit/1.0'),
+                'User-Agent' => $this->config->seoAuditUserAgent(),
                 'Accept' => 'text/html,application/xhtml+xml,*/*;q=0.8',
             ])
                 ->withOptions([
                     'allow_redirects' => true,
-                    'verify' => (bool) config('osint.site_intel.http.verify_ssl', false),
+                    'verify' => $this->config->httpVerifySsl(),
                 ])
-                ->timeout(max(1, (int) config('osint.site_intel.http.timeout_seconds', 10)))
+                ->timeout($this->config->httpTimeoutSeconds())
                 ->get($url);
         } catch (ConnectionException $exception) {
             return [
@@ -47,4 +52,3 @@ final class SeoAuditHttpFetcher implements SeoAuditHttpFetcherInterface
         ];
     }
 }
-

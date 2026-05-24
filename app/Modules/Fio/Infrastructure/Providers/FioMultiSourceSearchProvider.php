@@ -2,6 +2,8 @@
 
 namespace App\Modules\Fio\Infrastructure\Providers;
 
+use App\Modules\Fio\Application\Support\FioHttpConfig;
+use App\Modules\Fio\Application\Support\FioSearchConfig;
 use App\Modules\Fio\Domain\Contracts\FioPublicSearchProviderInterface;
 use App\Modules\Fio\Domain\Contracts\FioSearchDiagnosticsAwareInterface;
 use App\Modules\Fio\Domain\DTO\PublicSearchEntryDTO;
@@ -30,6 +32,8 @@ final class FioMultiSourceSearchProvider implements FioPublicSearchProviderInter
 
     public function __construct(
         private readonly FioQualifierLexicon $qualifierLexicon,
+        private readonly FioHttpConfig $httpConfig,
+        private readonly FioSearchConfig $searchConfig,
     ) {
     }
 
@@ -128,7 +132,7 @@ final class FioMultiSourceSearchProvider implements FioPublicSearchProviderInter
      */
     private function enginesConfig(): array
     {
-        $configured = config('fio.network_dork_search.engines', []);
+        $configured = $this->searchConfig->networkDorkEngines();
         if (is_array($configured) && $configured !== []) {
             return array_values(array_filter($configured, static fn ($engine): bool => is_array($engine)));
         }
@@ -174,7 +178,7 @@ final class FioMultiSourceSearchProvider implements FioPublicSearchProviderInter
             ? ''
             : '(' . implode(' OR ', array_map(static fn (string $term): string => '"' . $term . '"', $qualifierTerms)) . ')';
 
-        $templates = config('fio.network_dork_search.templates', []);
+        $templates = $this->searchConfig->networkDorkTemplates();
         if (!is_array($templates) || $templates === []) {
             $templates = [
                 '{name}',
@@ -205,7 +209,7 @@ final class FioMultiSourceSearchProvider implements FioPublicSearchProviderInter
             $queries[] = $normalized;
         }
 
-        $maxQueries = max(1, (int) config('fio.network_dork_search.max_queries', 6));
+        $maxQueries = $this->searchConfig->networkDorkMaxQueries();
 
         return array_slice(array_values(array_unique($queries)), 0, $maxQueries);
     }
@@ -216,15 +220,15 @@ final class FioMultiSourceSearchProvider implements FioPublicSearchProviderInter
     private function fetch(string $url, array $headers = []): string
     {
         $requestHeaders = array_merge([
-            'User-Agent' => (string) config('osint.fio.http.user_agent', 'FreeSearch-FIO/2.0'),
+            'User-Agent' => $this->httpConfig->multiSourceUserAgent(),
         ], $headers);
 
         try {
             $response = Http::withHeaders($requestHeaders)
-                ->timeout(max(1, (int) config('osint.fio.http.timeout_seconds', 12)))
+                ->timeout($this->httpConfig->timeoutSeconds())
                 ->retry(
-                    max(0, (int) config('osint.fio.http.retry_attempts', 1)),
-                    max(0, (int) config('osint.fio.http.retry_sleep_milliseconds', 250))
+                    $this->httpConfig->retryAttempts(),
+                    $this->httpConfig->retrySleepMilliseconds()
                 )
                 ->get($url);
         } catch (ConnectionException) {

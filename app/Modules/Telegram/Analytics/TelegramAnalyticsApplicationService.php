@@ -2,10 +2,12 @@
 
 namespace App\Modules\Telegram\Analytics;
 
+use App\Modules\Telegram\Analytics\Contracts\TelegramAnalyticsApplicationServiceInterface;
+use App\Modules\Telegram\Analytics\Contracts\TelegramAnalyticsRangeResolverInterface;
 use App\Modules\Telegram\DTO\Request\TelegramAnalyticsParamsDTO;
 use App\Modules\Telegram\DTO\Result\AnalyticsReportResultDTO;
 use App\Modules\Telegram\DTO\Result\AnalyticsSummaryResultDTO;
-use App\Modules\Telegram\Analytics\Contracts\TelegramAnalyticsApplicationServiceInterface;
+use App\Modules\Telegram\Support\TelegramConfig;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Cache;
 
@@ -13,8 +15,9 @@ class TelegramAnalyticsApplicationService implements TelegramAnalyticsApplicatio
 {
     public function __construct(
         private readonly TelegramAnalyticsService $analyticsService,
-        private readonly TelegramAnalyticsRangeResolver $rangeResolver,
+        private readonly TelegramAnalyticsRangeResolverInterface $rangeResolver,
         private readonly TelegramAnalyticsSnapshotStore $snapshotStore,
+        private readonly TelegramConfig $config,
     ) {
     }
 
@@ -135,7 +138,6 @@ class TelegramAnalyticsApplicationService implements TelegramAnalyticsApplicatio
 
     private function summaryCacheTtlSeconds(): int
     {
-        return max(1, (int) config('osint.telegram.analytics.summary_cache_ttl_seconds', 60));
+        return $this->config->analyticsSummaryCacheTtlSeconds();
     }
 }
-

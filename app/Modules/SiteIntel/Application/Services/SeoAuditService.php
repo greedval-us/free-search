@@ -2,6 +2,7 @@
 
 namespace App\Modules\SiteIntel\Application\Services;
 
+use App\Modules\SiteIntel\Application\Contracts\SeoAuditServiceInterface;
 use App\Modules\SiteIntel\Application\Contracts\SeoAuditHttpFetcherInterface;
 use App\Modules\SiteIntel\Application\Services\SeoAudit\SeoAuditContentExtractor;
 use App\Modules\SiteIntel\Application\Services\SeoAudit\SeoAuditCrawlAnalyzer;
@@ -16,7 +17,7 @@ use App\Modules\SiteIntel\Application\Services\SeoAudit\SeoAuditCrawlBudgetAnaly
 use App\Modules\SiteIntel\Application\Services\SeoAudit\SeoAuditProfileResolver;
 use Carbon\Carbon;
 
-final class SeoAuditService
+final class SeoAuditService implements SeoAuditServiceInterface
 {
     public function __construct(
         private readonly SeoAuditHttpFetcherInterface $httpFetcher,

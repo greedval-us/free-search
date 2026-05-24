@@ -203,6 +203,32 @@ return [
     // Настройки поиска и извлечения метаданных документов.
     // NewsMediaIntel settings (RSS + NewsAPI).
     'news_media_intel' => [
+        'service' => [
+            'max_mentions' => (int) env('OSINT_NEWS_MEDIA_MAX_MENTIONS', 120),
+        ],
+        'fetcher' => [
+            'per_provider_limit' => (int) env('OSINT_NEWS_MEDIA_FETCHER_PER_PROVIDER_LIMIT', 40),
+            'provider_order' => array_values(array_filter(array_map(
+                static fn (string $value): string => trim($value),
+                explode(',', (string) env('OSINT_NEWS_MEDIA_FETCHER_PROVIDER_ORDER', 'newsapi,googlenews,bing'))
+            ))),
+        ],
+        'rss' => [
+            'timeout_seconds' => (int) env('OSINT_NEWS_MEDIA_RSS_TIMEOUT', 15),
+            'accept' => env('OSINT_NEWS_MEDIA_RSS_ACCEPT', 'application/rss+xml, application/xml, text/xml;q=0.9, */*;q=0.8'),
+            'bing' => [
+                'url_template' => env('OSINT_NEWS_MEDIA_RSS_BING_URL_TEMPLATE', 'https://www.bing.com/search?format=rss&q={query}'),
+            ],
+            'google' => [
+                'url_template' => env(
+                    'OSINT_NEWS_MEDIA_RSS_GOOGLE_URL_TEMPLATE',
+                    'https://news.google.com/rss/search?q={query}&hl={hl}&gl={gl}&ceid={ceid}'
+                ),
+                'hl' => env('OSINT_NEWS_MEDIA_RSS_GOOGLE_HL', 'ru'),
+                'gl' => env('OSINT_NEWS_MEDIA_RSS_GOOGLE_GL', 'RU'),
+                'ceid' => env('OSINT_NEWS_MEDIA_RSS_GOOGLE_CEID', 'RU:ru'),
+            ],
+        ],
         'newsapi' => [
             'api_key' => env('OSINT_NEWSAPI_KEY', ''),
             'base_url' => env('OSINT_NEWSAPI_BASE_URL', 'https://newsapi.org/v2/everything'),
@@ -361,5 +387,15 @@ return [
             'custom_range_max_days' => (int) env('OSINT_TELEGRAM_PARSER_CUSTOM_RANGE_MAX_DAYS', 31),
         ],
     ],
-];
 
+    // Настройки YouTube: лимиты форм, периоды аналитики, timezone-нормализация дат.
+    'youtube' => [
+        'analytics_period_days' => [1, 3, 7],
+        'analytics_default_period_days' => (int) env('OSINT_YOUTUBE_ANALYTICS_DEFAULT_PERIOD_DAYS', 7),
+        'analytics_custom_range_max_days' => (int) env('OSINT_YOUTUBE_ANALYTICS_CUSTOM_RANGE_MAX_DAYS', 7),
+        'parser_comments_limit_default' => (int) env('OSINT_YOUTUBE_PARSER_COMMENTS_LIMIT_DEFAULT', 20),
+        'parser_comments_limit_max' => (int) env('OSINT_YOUTUBE_PARSER_COMMENTS_LIMIT_MAX', 100),
+        'search_limit_default' => (int) env('OSINT_YOUTUBE_SEARCH_LIMIT_DEFAULT', 10),
+        'search_limit_max' => (int) env('OSINT_YOUTUBE_SEARCH_LIMIT_MAX', 10),
+    ],
+];

@@ -2,6 +2,8 @@
 
 namespace App\Modules\Fio\Domain\Services;
 
+use App\Modules\Fio\Application\Support\FioSearchConfig;
+
 final class FioQualifierLexicon
 {
     /**
@@ -9,9 +11,9 @@ final class FioQualifierLexicon
      */
     private array $groups;
 
-    public function __construct()
+    public function __construct(FioSearchConfig $config)
     {
-        $configGroups = config('fio.qualifier_lexicon', []);
+        $configGroups = $config->qualifierLexicon();
         $this->groups = $this->normalizeGroups($configGroups);
     }
 

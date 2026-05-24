@@ -4,14 +4,14 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\Dashboard\DashboardFiltersRequest;
 use App\Models\User;
-use App\Services\Dashboard\UserDashboardService;
+use App\Services\Dashboard\Contracts\UserDashboardServiceInterface;
 use Inertia\Inertia;
 use Inertia\Response;
 
 class DashboardController extends Controller
 {
     public function __construct(
-        private readonly UserDashboardService $dashboardService,
+        private readonly UserDashboardServiceInterface $dashboardService,
     ) {
     }
 

@@ -2,8 +2,14 @@
 
 namespace App\Modules\Username\Domain\Services;
 
+use App\Modules\Username\Application\Support\UsernameConfig;
+
 final class UsernameSimilarityVariantGenerator
 {
+    public function __construct(private readonly UsernameConfig $config)
+    {
+    }
+
     /**
      * @return array<int, array{username: string, reason: string}>
      */
@@ -17,7 +23,7 @@ final class UsernameSimilarityVariantGenerator
 
         $normalized = preg_replace('/[._-]+/u', '', $base) ?? $base;
         $segments = array_values(array_filter(preg_split('/[._-]+/u', $base) ?: []));
-        $max = (int) config('username.analytics.similarity.max_variants', 8);
+        $max = $this->config->similarityMaxVariants();
         $rules = $this->rules();
         $variants = [];
 
@@ -77,7 +83,7 @@ final class UsernameSimilarityVariantGenerator
      */
     private function rules(): array
     {
-        $rules = (array) config('username.analytics.similarity.rules', []);
+        $rules = $this->config->similarityRules();
 
         $separators = $this->normalizeStringList($rules['separators'] ?? [], []);
         $prefixes = $this->normalizeStringList($rules['prefixes'] ?? [], []);

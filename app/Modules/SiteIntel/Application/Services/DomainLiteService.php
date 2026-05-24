@@ -2,12 +2,13 @@
 
 namespace App\Modules\SiteIntel\Application\Services;
 
+use App\Modules\SiteIntel\Application\Contracts\DomainLiteServiceInterface;
 use App\Modules\SiteIntel\Application\Contracts\DomainLiteDnsResolverInterface;
 use App\Modules\SiteIntel\Application\Services\DomainLite\DomainLiteRiskScoreCalculator;
 use App\Modules\SiteIntel\Application\Services\DomainLite\DomainLiteWhoisLookup;
 use Carbon\Carbon;
 
-final class DomainLiteService
+final class DomainLiteService implements DomainLiteServiceInterface
 {
     public function __construct(
         private readonly DomainLiteDnsResolverInterface $dnsResolver,

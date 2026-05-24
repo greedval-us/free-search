@@ -2,10 +2,11 @@
 
 namespace App\Modules\Export\Excel;
 
+use App\Modules\Export\Excel\Contracts\ExcelWorkbookServiceInterface;
 use Maatwebsite\Excel\Facades\Excel;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 
-class ExcelWorkbookService
+class ExcelWorkbookService implements ExcelWorkbookServiceInterface
 {
     /**
      * @param array<int, SheetDefinition> $definitions
@@ -15,4 +16,3 @@ class ExcelWorkbookService
         return Excel::download(new WorkbookExport($definitions), $filename);
     }
 }
-

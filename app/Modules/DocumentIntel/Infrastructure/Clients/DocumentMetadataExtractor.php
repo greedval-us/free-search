@@ -4,12 +4,14 @@ namespace App\Modules\DocumentIntel\Infrastructure\Clients;
 
 use App\Modules\DocumentIntel\Application\Contracts\DocumentMetadataExtractorInterface;
 use App\Modules\DocumentIntel\Application\Services\DocumentIntel\DocumentArtifactExtractor;
+use App\Modules\DocumentIntel\Application\Support\DocumentIntelConfig;
 use Illuminate\Support\Facades\Http;
 
 final class DocumentMetadataExtractor implements DocumentMetadataExtractorInterface
 {
     public function __construct(
         private readonly DocumentArtifactExtractor $artifactExtractor,
+        private readonly DocumentIntelConfig $config,
     ) {
     }
 
@@ -176,17 +178,17 @@ final class DocumentMetadataExtractor implements DocumentMetadataExtractorInterf
 
     private function maxFileSizeBytes(): int
     {
-        return (int) config('osint.document_intel.discovery.max_file_size_bytes', 5_000_000);
+        return $this->config->discoveryMaxFileSizeBytes();
     }
 
     private function timeoutSeconds(): int
     {
-        return (int) config('osint.document_intel.http.timeout_seconds', 10);
+        return $this->config->httpTimeoutSeconds();
     }
 
     private function userAgent(): string
     {
-        return (string) config('osint.document_intel.http.user_agent', 'FreeSearch-DocumentIntel/1.0');
+        return $this->config->httpUserAgent();
     }
 
     private function extractTextForArtifacts(string $body, string $extension): string
@@ -238,4 +240,3 @@ final class DocumentMetadataExtractor implements DocumentMetadataExtractorInterf
         return trim(implode(' ', $parts));
     }
 }
-

@@ -2,17 +2,11 @@
 
 namespace App\Http\Requests\Shifr;
 
-use App\Http\Requests\LocalizedFormRequest;
 use App\Modules\Shifr\DTO\Toolkit\HashLookupDTO;
 use App\Modules\Shifr\Support\HashAlgorithms;
 
-final class ShifrHashRequest extends LocalizedFormRequest
+final class ShifrHashRequest extends AbstractShifrRequest
 {
-    public function authorize(): bool
-    {
-        return true;
-    }
-
     public function rules(): array
     {
         return [
@@ -30,10 +24,5 @@ final class ShifrHashRequest extends LocalizedFormRequest
             algorithm: (string) ($this->validated('algorithm') ?? HashAlgorithms::DEFAULT),
             hmacKey: $this->filled('hmac_key') ? (string) $this->validated('hmac_key') : null,
         );
-    }
-
-    public function locale(): string
-    {
-        return $this->resolveLocale();
     }
 }

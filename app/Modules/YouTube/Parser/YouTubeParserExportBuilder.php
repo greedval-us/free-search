@@ -3,12 +3,18 @@
 namespace App\Modules\YouTube\Parser;
 
 use App\Modules\Export\Excel\SheetDefinition;
+use App\Modules\YouTube\Parser\Contracts\YouTubeParserExportBuilderInterface;
+use App\Modules\YouTube\Support\YouTubeModuleConfig;
 use Carbon\Carbon;
 use PhpOffice\PhpSpreadsheet\Shared\Date as ExcelDate;
 use PhpOffice\PhpSpreadsheet\Style\NumberFormat;
 
-class YouTubeParserExportBuilder
+class YouTubeParserExportBuilder implements YouTubeParserExportBuilderInterface
 {
+    public function __construct(private readonly YouTubeModuleConfig $config)
+    {
+    }
+
     /**
      * @param array<string, mixed> $payload
      * @return array<int, SheetDefinition>
@@ -35,7 +41,7 @@ class YouTubeParserExportBuilder
                 ['Video ID', (string) ($payload['videoId'] ?? '')],
                 ['Comments', (int) ($payload['commentsCount'] ?? 0)],
                 ['Replies', (int) ($payload['repliesCount'] ?? 0)],
-                ['Generated at', Carbon::now(config('app.timezone'))->toDateTimeString()],
+                ['Generated at', Carbon::now($this->config->timezone())->toDateTimeString()],
             ],
         );
     }
@@ -138,7 +144,7 @@ class YouTubeParserExportBuilder
 
         try {
             return ExcelDate::dateTimeToExcel(
-                Carbon::parse($value, config('app.timezone'))
+                Carbon::parse($value, $this->config->timezone())
             );
         } catch (\Throwable) {
             return null;

@@ -5,13 +5,13 @@ namespace App\Http\Controllers\Dashboard;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Dashboard\ToggleModulePinRequest;
 use App\Models\User;
-use App\Services\Dashboard\ModulePinService;
+use App\Services\Dashboard\Contracts\ModulePinServiceInterface;
 use Illuminate\Http\RedirectResponse;
 
 class ModulePinController extends Controller
 {
     public function __construct(
-        private readonly ModulePinService $modulePinService,
+        private readonly ModulePinServiceInterface $modulePinService,
     ) {
     }
 

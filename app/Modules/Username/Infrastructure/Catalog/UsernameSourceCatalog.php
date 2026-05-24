@@ -2,17 +2,22 @@
 
 namespace App\Modules\Username\Infrastructure\Catalog;
 
+use App\Modules\Username\Application\Support\UsernameConfig;
 use App\Modules\Username\Domain\DTO\UsernameSourceDTO;
 
 final class UsernameSourceCatalog
 {
+    public function __construct(private readonly UsernameConfig $config)
+    {
+    }
+
     /**
      * @return array<int, UsernameSourceDTO>
      */
     public function all(): array
     {
         /** @var mixed $rawSources */
-        $rawSources = config('username.sources', []);
+        $rawSources = $this->config->sourceDefinitions();
 
         if (!is_array($rawSources)) {
             return [];
@@ -71,7 +76,7 @@ final class UsernameSourceCatalog
             return $explicitCategory;
         }
 
-        $mappedCategories = config('username.taxonomy.categories_by_source_key', []);
+        $mappedCategories = $this->config->categoryMapBySourceKey();
 
         if (is_array($mappedCategories)) {
             $mapped = mb_strtolower(trim((string) ($mappedCategories[$key] ?? '')));

@@ -38,5 +38,8 @@ return [
     'youtube' => [
         'key' => env('YOUTUBE_DATA_API_KEY'),
         'base_url' => env('YOUTUBE_DATA_API_BASE_URL', 'https://www.googleapis.com/youtube/v3'),
+        'timeout_seconds' => (int) env('YOUTUBE_DATA_API_TIMEOUT_SECONDS', 20),
+        'retry_attempts' => (int) env('YOUTUBE_DATA_API_RETRY_ATTEMPTS', 2),
+        'retry_delay_milliseconds' => (int) env('YOUTUBE_DATA_API_RETRY_DELAY_MILLISECONDS', 250),
     ],
 ];

@@ -2,7 +2,9 @@
 
 namespace App\Modules\EmailIntel\Domain\DTO;
 
-final readonly class EmailIntelResultDTO
+use App\Support\Contracts\ArrayPayloadable;
+
+final readonly class EmailIntelResultDTO implements ArrayPayloadable
 {
     /**
      * @param array<string, mixed> $target

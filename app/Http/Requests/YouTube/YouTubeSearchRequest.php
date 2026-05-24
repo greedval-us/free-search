@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\YouTube;
 
+use App\Http\Requests\YouTube\Concerns\ResolvesYouTubeModuleConfig;
 use App\Modules\YouTube\DTO\Request\YouTubeSearchQueryDTO;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Carbon;
@@ -10,6 +11,8 @@ use Illuminate\Validation\Validator;
 
 class YouTubeSearchRequest extends FormRequest
 {
+    use ResolvesYouTubeModuleConfig;
+
     public function authorize(): bool
     {
         return true;
@@ -30,7 +33,7 @@ class YouTubeSearchRequest extends FormRequest
             'videoDuration' => ['nullable', Rule::in(['any', 'short', 'medium', 'long'])],
             'videoDefinition' => ['nullable', Rule::in(['any', 'high', 'standard'])],
             'videoCaption' => ['nullable', Rule::in(['any', 'closedCaption', 'none'])],
-            'limit' => ['nullable', 'integer', 'min:1', 'max:10'],
+            'limit' => ['nullable', 'integer', 'min:1', 'max:' . $this->youtubeModuleConfig()->searchLimitMax()],
             'pageToken' => ['nullable', 'string', 'max:255'],
         ];
     }
@@ -54,7 +57,7 @@ class YouTubeSearchRequest extends FormRequest
         return new YouTubeSearchQueryDTO(
             query: trim((string) $validated['q']),
             type: (string) ($validated['type'] ?? 'video'),
-            maxResults: min(10, max(1, (int) ($validated['limit'] ?? 10))),
+            maxResults: min($this->youtubeModuleConfig()->searchLimitMax(), max(1, (int) ($validated['limit'] ?? $this->youtubeModuleConfig()->searchLimitDefault()))),
             order: (string) ($validated['order'] ?? 'relevance'),
             safeSearch: (string) ($validated['safeSearch'] ?? 'moderate'),
             channelId: trim((string) ($validated['channelId'] ?? '')),
@@ -65,10 +68,10 @@ class YouTubeSearchRequest extends FormRequest
             videoDefinition: (string) ($validated['videoDefinition'] ?? 'any'),
             videoCaption: (string) ($validated['videoCaption'] ?? 'any'),
             publishedAfter: ! empty($validated['publishedAfter'])
-                ? Carbon::createFromFormat('Y-m-d', $validated['publishedAfter'])->startOfDay()->toRfc3339String()
+                ? Carbon::createFromFormat('Y-m-d', $validated['publishedAfter'], $this->youtubeModuleConfig()->timezone())->startOfDay()->toRfc3339String()
                 : null,
             publishedBefore: ! empty($validated['publishedBefore'])
-                ? Carbon::createFromFormat('Y-m-d', $validated['publishedBefore'])->endOfDay()->toRfc3339String()
+                ? Carbon::createFromFormat('Y-m-d', $validated['publishedBefore'], $this->youtubeModuleConfig()->timezone())->endOfDay()->toRfc3339String()
                 : null,
         );
     }

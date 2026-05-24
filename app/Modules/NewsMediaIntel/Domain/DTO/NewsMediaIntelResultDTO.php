@@ -2,7 +2,9 @@
 
 namespace App\Modules\NewsMediaIntel\Domain\DTO;
 
-final class NewsMediaIntelResultDTO
+use App\Support\Contracts\ArrayPayloadable;
+
+final class NewsMediaIntelResultDTO implements ArrayPayloadable
 {
     /**
      * @param array<int, NewsMentionDTO> $mentions
@@ -32,4 +34,3 @@ final class NewsMediaIntelResultDTO
         ];
     }
 }
-

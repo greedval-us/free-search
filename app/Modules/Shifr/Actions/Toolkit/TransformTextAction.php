@@ -3,13 +3,11 @@
 namespace App\Modules\Shifr\Actions\Toolkit;
 
 use App\Modules\Shifr\DTO\Toolkit\TransformLookupDTO;
+use App\Modules\Shifr\DTO\Toolkit\Results\TransformResultDTO;
 
 final class TransformTextAction
 {
-    /**
-     * @return array<string, mixed>
-     */
-    public function execute(TransformLookupDTO $dto): array
+    public function execute(TransformLookupDTO $dto): TransformResultDTO
     {
         $operation = strtolower($dto->operation);
 
@@ -27,12 +25,12 @@ final class TransformTextAction
             default => $dto->input,
         };
 
-        return [
-            'operation' => $operation,
-            'inputLength' => mb_strlen($dto->input),
-            'outputLength' => mb_strlen($result),
-            'value' => $result,
-        ];
+        return new TransformResultDTO(
+            operation: $operation,
+            inputLength: mb_strlen($dto->input),
+            outputLength: mb_strlen($result),
+            value: $result,
+        );
     }
 
     private function safeBase64Decode(string $input): string

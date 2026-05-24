@@ -2,6 +2,7 @@
 
 namespace App\Modules\Username\Application\Services;
 
+use App\Modules\Username\Application\Support\UsernameConfig;
 use App\Modules\Username\Domain\Contracts\UsernameSourceCheckerInterface;
 use App\Modules\Username\Domain\DTO\UsernameSourceDTO;
 use App\Modules\Username\Domain\Services\UsernameSimilarityVariantGenerator;
@@ -13,6 +14,7 @@ final class UsernameSimilarityAnalyzer
         private readonly UsernameSourceCheckerInterface $sourceChecker,
         private readonly UsernameResultCache $resultCache,
         private readonly UsernameSimilarityVariantGenerator $variantGenerator,
+        private readonly UsernameConfig $config,
     ) {
     }
 
@@ -28,9 +30,9 @@ final class UsernameSimilarityAnalyzer
             return ['variants' => []];
         }
 
-        $priorityKeys = (array) config('username.analytics.similarity.priority_source_keys', []);
-        $maxDeepCheck = (int) config('username.analytics.similarity.deep_check_variants', 3);
-        $ttl = (int) config('username.cache.similarity_ttl_seconds', 300);
+        $priorityKeys = $this->config->similarityPrioritySourceKeys();
+        $maxDeepCheck = $this->config->similarityDeepCheckVariants();
+        $ttl = $this->config->similarityCacheTtlSeconds();
 
         $prioritySources = array_values(array_filter(
             $sources,
