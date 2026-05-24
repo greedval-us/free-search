@@ -2,6 +2,7 @@
 
 namespace App\Modules\NewsMediaIntel\Infrastructure\Feeds;
 
+use App\Modules\NewsMediaIntel\Application\Support\NewsMediaIntelConfig;
 use App\Modules\NewsMediaIntel\Domain\DTO\NewsMentionDTO;
 use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Support\Facades\Http;
@@ -9,6 +10,11 @@ use SimpleXMLElement;
 
 abstract class AbstractRssNewsFeedProvider
 {
+    public function __construct(
+        protected readonly NewsMediaIntelConfig $config,
+    ) {
+    }
+
     /**
      * @param array<string, string> $tokens
      */
@@ -28,11 +34,8 @@ abstract class AbstractRssNewsFeedProvider
      */
     protected function fetchRss(string $source, string $url): array
     {
-        $acceptHeader = (string) config(
-            'osint.news_media_intel.rss.accept',
-            'application/rss+xml, application/xml, text/xml;q=0.9, */*;q=0.8'
-        );
-        $timeoutSeconds = max(1, (int) config('osint.news_media_intel.rss.timeout_seconds', 15));
+        $acceptHeader = $this->config->rssAcceptHeader();
+        $timeoutSeconds = $this->config->rssTimeoutSeconds();
 
         try {
             $response = Http::withHeaders([

@@ -8,6 +8,7 @@ use App\Modules\NewsMediaIntel\Application\Services\NewsMediaIntel\NewsMentionDe
 use App\Modules\NewsMediaIntel\Application\Services\NewsMediaIntel\NewsSentimentAnalyzer;
 use App\Modules\NewsMediaIntel\Application\Services\NewsMediaIntel\NewsTimelineBuilder;
 use App\Modules\NewsMediaIntel\Application\Services\NewsMediaIntel\NewsTopicExtractor;
+use App\Modules\NewsMediaIntel\Application\Support\NewsMediaIntelConfig;
 use App\Modules\NewsMediaIntel\Domain\DTO\NewsMediaIntelResultDTO;
 use App\Modules\NewsMediaIntel\Domain\DTO\SentimentSummaryDTO;
 
@@ -19,6 +20,7 @@ final class NewsMediaIntelService implements NewsMediaIntelServiceInterface
         private readonly NewsTopicExtractor $topicExtractor,
         private readonly NewsTimelineBuilder $timelineBuilder,
         private readonly NewsSentimentAnalyzer $sentimentAnalyzer,
+        private readonly NewsMediaIntelConfig $config,
     ) {
     }
 
@@ -39,8 +41,7 @@ final class NewsMediaIntelService implements NewsMediaIntelServiceInterface
         $mentions = $this->newsFeedFetcher->fetchAll($q);
 
         $mentions = $this->deduplicator->deduplicate($mentions);
-        $maxMentions = max(1, (int) config('osint.news_media_intel.service.max_mentions', 120));
-        $mentions = array_slice($mentions, 0, $maxMentions);
+        $mentions = array_slice($mentions, 0, $this->config->maxMentions());
 
         return new NewsMediaIntelResultDTO(
             query: $q,

@@ -3,26 +3,32 @@
 namespace App\Modules\NewsMediaIntel\Infrastructure\Feeds;
 
 use App\Modules\NewsMediaIntel\Application\Contracts\NewsFeedProviderInterface;
+use App\Modules\NewsMediaIntel\Application\Support\NewsMediaIntelConfig;
 use App\Modules\NewsMediaIntel\Domain\DTO\NewsMentionDTO;
 use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Support\Facades\Http;
 
 final class NewsApiProvider implements NewsFeedProviderInterface
 {
+    public function __construct(
+        private readonly NewsMediaIntelConfig $config,
+    ) {
+    }
+
     /**
      * @return array<int, NewsMentionDTO>
      */
     public function fetch(string $query): array
     {
-        $apiKey = (string) config('osint.news_media_intel.newsapi.api_key', '');
+        $apiKey = $this->config->newsApiKey();
         if (trim($apiKey) === '') {
             return [];
         }
 
-        $baseUrl = (string) config('osint.news_media_intel.newsapi.base_url', 'https://newsapi.org/v2/everything');
-        $language = (string) config('osint.news_media_intel.newsapi.language', 'ru');
-        $pageSize = (int) config('osint.news_media_intel.newsapi.page_size', 30);
-        $timeoutSeconds = (int) config('osint.news_media_intel.newsapi.timeout_seconds', 15);
+        $baseUrl = $this->config->newsApiBaseUrl();
+        $language = $this->config->newsApiLanguage();
+        $pageSize = $this->config->newsApiPageSize();
+        $timeoutSeconds = $this->config->newsApiTimeoutSeconds();
 
         try {
             $response = Http::timeout($timeoutSeconds)->get($baseUrl, [

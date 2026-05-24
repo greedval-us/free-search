@@ -3,6 +3,7 @@
 namespace App\Modules\NewsMediaIntel\Infrastructure\Feeds;
 
 use App\Modules\NewsMediaIntel\Application\Contracts\NewsFeedFetcherInterface;
+use App\Modules\NewsMediaIntel\Application\Support\NewsMediaIntelConfig;
 
 final class CompositeNewsFeedFetcher implements NewsFeedFetcherInterface
 {
@@ -10,12 +11,13 @@ final class CompositeNewsFeedFetcher implements NewsFeedFetcherInterface
         private readonly GoogleNewsRssProvider $googleNewsRssProvider,
         private readonly BingNewsRssProvider $bingNewsRssProvider,
         private readonly NewsApiProvider $newsApiProvider,
+        private readonly NewsMediaIntelConfig $config,
     ) {
     }
 
     public function fetchAll(string $query): array
     {
-        $perProviderLimit = max(1, (int) config('osint.news_media_intel.fetcher.per_provider_limit', 40));
+        $perProviderLimit = $this->config->perProviderLimit();
 
         return [
             ...array_slice($this->newsApiProvider->fetch($query), 0, $perProviderLimit),
