@@ -10,7 +10,6 @@ use App\Modules\Fio\Domain\DTO\PublicSearchEntryDTO;
 use App\Modules\Fio\Domain\Services\FioQualifierLexicon;
 use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Support\Facades\Http;
-use SimpleXMLElement;
 use RuntimeException;
 use Throwable;
 
@@ -34,6 +33,8 @@ final class FioMultiSourceSearchProvider implements FioPublicSearchProviderInter
         private readonly FioQualifierLexicon $qualifierLexicon,
         private readonly FioHttpConfig $httpConfig,
         private readonly FioSearchConfig $searchConfig,
+        private readonly FioMultiSourceResponseParser $responseParser,
+        private readonly FioMultiSourceResultRanker $resultRanker,
     ) {
     }
 
@@ -54,6 +55,7 @@ final class FioMultiSourceSearchProvider implements FioPublicSearchProviderInter
 
         $engines = $this->enginesConfig();
         $dorks = $this->buildDorks($fullName, $qualifier);
+        $qualifierTerms = $this->qualifierLexicon->queryTerms($qualifier, 6);
         $collected = [];
         $lastError = null;
 
@@ -77,8 +79,8 @@ final class FioMultiSourceSearchProvider implements FioPublicSearchProviderInter
                     $queryCount++;
                     $url = str_replace('{query}', urlencode($dorkQuery), $urlTemplate);
                     $body = $this->fetch($url, is_array($engine['headers'] ?? null) ? $engine['headers'] : []);
-                    $parsed = $this->parseEngineResponse($body, $sourceKey);
-                    $relevant = $this->filterRelevantEntries($parsed, $fullName, $qualifier);
+                    $parsed = $this->responseParser->parseEngineResponse($body, $sourceKey);
+                    $relevant = $this->resultRanker->filterRelevantEntries($parsed, $fullName, $qualifierTerms);
 
                     $engineCount += count($relevant);
                     $collected = [...$collected, ...$relevant];
@@ -110,7 +112,7 @@ final class FioMultiSourceSearchProvider implements FioPublicSearchProviderInter
             }
         }
 
-        $deduplicated = $this->deduplicateAndRank($collected, $fullName, $qualifier);
+        $deduplicated = $this->resultRanker->deduplicateAndRank($collected, $fullName, $qualifierTerms);
         if (count($deduplicated) > 0) {
             return array_slice($deduplicated, 0, self::MAX_RESULTS);
         }
@@ -240,282 +242,5 @@ final class FioMultiSourceSearchProvider implements FioPublicSearchProviderInter
         }
 
         return (string) $response->body();
-    }
-
-    /**
-     * @return array<int, PublicSearchEntryDTO>
-     */
-    private function parseEngineResponse(string $body, string $source): array
-    {
-        $trimmed = ltrim($body);
-        if ($trimmed !== '' && $trimmed[0] === '<' && (str_contains($trimmed, '<rss') || str_contains($trimmed, '<feed'))) {
-            return $this->parseRssOrAtom($trimmed, $source);
-        }
-
-        return $this->parseHtml($body, $source);
-    }
-
-    /**
-     * @return array<int, PublicSearchEntryDTO>
-     */
-    private function parseRssOrAtom(string $xml, string $source): array
-    {
-        libxml_use_internal_errors(true);
-        $feed = simplexml_load_string($xml);
-        if (!$feed instanceof SimpleXMLElement) {
-            return [];
-        }
-
-        $entries = [];
-        $items = $feed->channel->item ?? [];
-        if ($items !== []) {
-            foreach ($items as $item) {
-                $title = trim((string) ($item->title ?? ''));
-                $url = $this->normalizeResultUrl((string) ($item->link ?? ''));
-                $snippet = trim(strip_tags((string) ($item->description ?? '')));
-                if ($url === '' || $title === '') {
-                    continue;
-                }
-
-                $entries[] = new PublicSearchEntryDTO($title, $snippet, $url, $this->extractDomain($url), $source);
-            }
-
-            return $entries;
-        }
-
-        foreach (($feed->entry ?? []) as $entry) {
-            $title = trim((string) ($entry->title ?? ''));
-            $url = '';
-            if (isset($entry->link)) {
-                $attrs = $entry->link->attributes();
-                $url = (string) ($attrs['href'] ?? '');
-            }
-            $url = $this->normalizeResultUrl($url);
-            $snippet = trim(strip_tags((string) ($entry->summary ?? $entry->content ?? '')));
-            if ($url === '' || $title === '') {
-                continue;
-            }
-
-            $entries[] = new PublicSearchEntryDTO($title, $snippet, $url, $this->extractDomain($url), $source);
-        }
-
-        return $entries;
-    }
-
-    /**
-     * @return array<int, PublicSearchEntryDTO>
-     */
-    private function parseHtml(string $html, string $source): array
-    {
-        preg_match_all('/<a\b[^>]*href\s*=\s*(["\'])(.*?)\1[^>]*>(.*?)<\/a>/is', $html, $matches, PREG_SET_ORDER);
-        $entries = [];
-
-        foreach ($matches as $match) {
-            $rawUrl = html_entity_decode((string) ($match[2] ?? ''), ENT_QUOTES | ENT_HTML5);
-            $url = $this->normalizeResultUrl($rawUrl);
-            $title = trim(strip_tags(html_entity_decode((string) ($match[3] ?? ''), ENT_QUOTES | ENT_HTML5)));
-
-            if ($url === '' || $title === '' || !$this->isHttpUrl($url)) {
-                continue;
-            }
-
-            $entries[] = new PublicSearchEntryDTO($title, '', $url, $this->extractDomain($url), $source);
-        }
-
-        return $entries;
-    }
-
-    /**
-     * @param  array<int, PublicSearchEntryDTO>  $entries
-     * @return array<int, PublicSearchEntryDTO>
-     */
-    private function filterRelevantEntries(array $entries, string $fullName, ?string $qualifier): array
-    {
-        $nameParts = $this->nameParts($fullName);
-        $requiredHits = count($nameParts) >= 3 ? 2 : max(1, count($nameParts));
-        $qualifierTerms = $this->qualifierLexicon->queryTerms($qualifier, 6);
-
-        return array_values(array_filter($entries, function (PublicSearchEntryDTO $entry) use ($nameParts, $requiredHits, $qualifierTerms, $fullName): bool {
-            $text = mb_strtolower(trim($entry->title . ' ' . $entry->snippet . ' ' . $entry->url));
-            $hits = 0;
-            foreach ($nameParts as $part) {
-                if ($part !== '' && str_contains($text, $part)) {
-                    $hits++;
-                }
-            }
-
-            if ($hits < $requiredHits) {
-                return false;
-            }
-
-            if ($this->isLikelyCjkNoise($text, $hits)) {
-                return false;
-            }
-
-            if ($qualifierTerms !== []) {
-                $hasQualifier = false;
-                foreach ($qualifierTerms as $term) {
-                    if (str_contains($text, mb_strtolower($term))) {
-                        $hasQualifier = true;
-                        break;
-                    }
-                }
-
-                // Do not aggressively drop social-profile matches when qualifier terms are absent there.
-                if (!$hasQualifier && !str_contains($text, mb_strtolower($fullName)) && !$this->isSocialDomain($entry->domain)) {
-                    return false;
-                }
-            }
-
-            return true;
-        }));
-    }
-
-    /**
-     * @param array<int, PublicSearchEntryDTO> $entries
-     * @return array<int, PublicSearchEntryDTO>
-     */
-    private function deduplicateAndRank(array $entries, string $fullName, ?string $qualifier): array
-    {
-        $map = [];
-        $nameParts = $this->nameParts($fullName);
-        $qualifierTerms = $this->qualifierLexicon->queryTerms($qualifier, 6);
-
-        foreach ($entries as $entry) {
-            $urlKey = mb_strtolower(trim($entry->url));
-            $titleKey = mb_strtolower(trim($entry->title));
-            $key = $urlKey !== '' ? $urlKey : $titleKey;
-
-            if ($key === '' || array_key_exists($key, $map)) {
-                continue;
-            }
-
-            $map[$key] = $entry;
-        }
-
-        $result = array_values($map);
-        usort($result, function (PublicSearchEntryDTO $a, PublicSearchEntryDTO $b) use ($nameParts, $qualifierTerms): int {
-            return $this->relevanceScore($b, $nameParts, $qualifierTerms) <=> $this->relevanceScore($a, $nameParts, $qualifierTerms);
-        });
-
-        return $result;
-    }
-
-    /**
-     * @param  array<int, string>  $nameParts
-     * @param  array<int, string>  $qualifierTerms
-     */
-    private function relevanceScore(PublicSearchEntryDTO $entry, array $nameParts, array $qualifierTerms): int
-    {
-        $text = mb_strtolower(trim($entry->title . ' ' . $entry->snippet . ' ' . $entry->url));
-        $score = 0;
-
-        foreach ($nameParts as $part) {
-            if ($part !== '' && str_contains($text, $part)) {
-                $score += 18;
-            }
-        }
-
-        foreach ($qualifierTerms as $term) {
-            if ($term !== '' && str_contains($text, mb_strtolower($term))) {
-                $score += 8;
-            }
-        }
-
-        if ($entry->source === 'googlenews') {
-            $score += 4;
-        }
-
-        if ($this->isSocialDomain($entry->domain)) {
-            $score += 12;
-        }
-
-        return $score;
-    }
-
-    /**
-     * @return array<int, string>
-     */
-    private function nameParts(string $fullName): array
-    {
-        $parts = preg_split('/\s+/u', mb_strtolower(trim($fullName))) ?: [];
-
-        return array_values(array_filter($parts, static fn (string $part): bool => mb_strlen($part) > 1));
-    }
-
-    private function normalizeResultUrl(string $url): string
-    {
-        $url = trim(html_entity_decode($url, ENT_QUOTES | ENT_HTML5));
-        if ($url === '') {
-            return '';
-        }
-
-        if (str_starts_with($url, '/l/?kh=') && str_contains($url, 'uddg=')) {
-            parse_str((string) parse_url($url, PHP_URL_QUERY), $query);
-            $decoded = urldecode((string) ($query['uddg'] ?? ''));
-            if ($decoded !== '') {
-                return $decoded;
-            }
-        }
-
-        if (!str_starts_with($url, 'http://') && !str_starts_with($url, 'https://')) {
-            return '';
-        }
-
-        return $url;
-    }
-
-    private function isHttpUrl(string $url): bool
-    {
-        return str_starts_with($url, 'http://') || str_starts_with($url, 'https://');
-    }
-
-    private function extractDomain(string $url): ?string
-    {
-        $host = (string) parse_url($url, PHP_URL_HOST);
-
-        return $host !== '' ? $host : null;
-    }
-
-    private function isSocialDomain(?string $domain): bool
-    {
-        $domain = mb_strtolower(trim((string) $domain));
-        if ($domain === '') {
-            return false;
-        }
-
-        foreach ([
-            'linkedin.com',
-            'facebook.com',
-            'vk.com',
-            'ok.ru',
-            'instagram.com',
-            'x.com',
-            'twitter.com',
-            't.me',
-            'telegram.me',
-            'youtube.com',
-            'tiktok.com',
-            'reddit.com',
-        ] as $social) {
-            if ($domain === $social || str_ends_with($domain, '.' . $social)) {
-                return true;
-            }
-        }
-
-        return false;
-    }
-
-    private function isLikelyCjkNoise(string $text, int $nameHits): bool
-    {
-        preg_match_all('/\p{Han}|\p{Hiragana}|\p{Katakana}/u', $text, $cjkMatches);
-        $cjkCount = count($cjkMatches[0] ?? []);
-        if ($cjkCount === 0) {
-            return false;
-        }
-
-        $hasCyrillicOrLatin = preg_match('/[\p{Cyrillic}\p{Latin}]/u', $text) === 1;
-
-        return $nameHits <= 1 && ($cjkCount >= 6 || !$hasCyrillicOrLatin);
     }
 }

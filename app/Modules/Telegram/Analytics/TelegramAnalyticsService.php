@@ -13,6 +13,7 @@ class TelegramAnalyticsService
     public function __construct(
         private readonly TelegramGatewayInterface $telegramService,
         private readonly TelegramMessagePresenter $messagePresenter,
+        private readonly TelegramMessageRangeLoader $messageRangeLoader,
         private readonly TelegramAnalyticsSummaryBuilder $summaryBuilder,
         private readonly TelegramConfig $config,
     ) {
@@ -36,7 +37,7 @@ class TelegramAnalyticsService
         $weights = $scoreProfile['weights'];
         $groupBy = $this->resolveGroupBy($dateFrom, $dateTo);
 
-        $messages = $this->loadMessages($chatUsername, $dateFrom, $dateTo, $keyword);
+        $messages = $this->messageRangeLoader->load($chatUsername, $dateFrom, $dateTo, $keyword);
         $items = $this->messagePresenter->presentMessages($messages, $chatUsername);
         usort($items, static fn (array $left, array $right): int => ($left['date'] ?? 0) <=> ($right['date'] ?? 0));
 
@@ -58,83 +59,6 @@ class TelegramAnalyticsService
             'score' => $scoreProfile,
             'summary' => $summary,
         ];
-    }
-
-    /**
-     * @return array<int, object>
-     */
-    private function loadMessages(string $chatUsername, Carbon $dateFrom, Carbon $dateTo, ?string $keyword = null): array
-    {
-        $messages = [];
-        $seenIds = [];
-        $seenOffsets = [];
-        $offsetId = 0;
-        $minDate = $dateFrom->timestamp;
-        $maxDate = $dateTo->timestamp;
-        $keyword = trim((string) $keyword);
-        $maxPages = $this->fetchMaxPages();
-        $pageLimit = $this->fetchPageLimit();
-
-        for ($page = 0; $page < $maxPages; $page++) {
-            $dto = $this->telegramService->getMessages([
-                'peer' => $chatUsername,
-                'q' => $keyword,
-                'limit' => $pageLimit,
-                'offset_id' => $offsetId,
-                'min_date' => $minDate,
-                'max_date' => $maxDate,
-            ]);
-
-            if ($dto === null || empty($dto->messages)) {
-                break;
-            }
-
-            $oldestReached = false;
-
-            foreach ($dto->messages as $message) {
-                $messageId = (int) ($message->id ?? 0);
-                $messageDate = (int) ($message->date ?? 0);
-
-                if ($messageId <= 0) {
-                    continue;
-                }
-
-                if ($messageDate < $minDate) {
-                    $oldestReached = true;
-                    break;
-                }
-
-                if ($messageDate > $maxDate) {
-                    continue;
-                }
-
-                if (isset($seenIds[$messageId])) {
-                    continue;
-                }
-
-                $seenIds[$messageId] = true;
-                $messages[] = $message;
-            }
-
-            if ($oldestReached) {
-                break;
-            }
-
-            $nextOffsetId = $this->messagePresenter->resolveNextOffsetId($dto->messages);
-
-            if ($nextOffsetId === null || count($dto->messages) < $pageLimit) {
-                break;
-            }
-
-            if (isset($seenOffsets[$nextOffsetId])) {
-                break;
-            }
-
-            $seenOffsets[$nextOffsetId] = true;
-            $offsetId = $nextOffsetId;
-        }
-
-        return $messages;
     }
 
     private function resolveGroupBy(Carbon $dateFrom, Carbon $dateTo): string
@@ -242,16 +166,6 @@ class TelegramAnalyticsService
         }
 
         return 'chat';
-    }
-
-    private function fetchMaxPages(): int
-    {
-        return $this->config->analyticsFetchMaxPages();
-    }
-
-    private function fetchPageLimit(): int
-    {
-        return $this->config->analyticsFetchPageLimit();
     }
 
     private function groupByHourThresholdHours(): int

@@ -4,7 +4,6 @@ namespace App\Modules\Telegram\Analytics;
 
 use App\Modules\Telegram\Support\TelegramConfig;
 use Carbon\Carbon;
-use Illuminate\Support\Str;
 
 class TelegramAnalyticsSummaryBuilder
 {
@@ -13,6 +12,7 @@ class TelegramAnalyticsSummaryBuilder
         private readonly TelegramAnalyticsAudienceCalculator $audienceCalculator,
         private readonly TelegramAnalyticsOpinionLeadersBuilder $opinionLeadersBuilder,
         private readonly TelegramAnalyticsFraudCalculator $fraudCalculator,
+        private readonly TelegramAnalyticsPostMetricsBuilder $postMetricsBuilder,
         private readonly TelegramConfig $config,
     ) {
     }
@@ -42,7 +42,7 @@ class TelegramAnalyticsSummaryBuilder
         $fraudPosts = [];
 
         foreach ($items as $item) {
-            $messageMetrics = $this->extractMessageMetrics($item);
+            $messageMetrics = $this->postMetricsBuilder->extractMessageMetrics($item);
             $timestamp = $messageMetrics['date'];
 
             $this->audienceCalculator->accumulateHourActivity($hourlyActivity, $timestamp);
@@ -73,7 +73,7 @@ class TelegramAnalyticsSummaryBuilder
                 $authorIds[$authorKey] = true;
             }
 
-            $score = $this->calculateScore(
+            $score = $this->postMetricsBuilder->calculateScore(
                 $messageMetrics['views'],
                 $messageMetrics['forwards'],
                 $messageMetrics['replies'],
@@ -94,7 +94,7 @@ class TelegramAnalyticsSummaryBuilder
                 $weights
             );
 
-            $topPosts[] = $this->buildTopPostRow($item, $messageMetrics, $score);
+            $topPosts[] = $this->postMetricsBuilder->buildTopPostRow($item, $messageMetrics, $score);
             $fraudPosts[] = [
                 'id' => (int) ($item['id'] ?? 0),
                 'date' => $messageMetrics['date'],
@@ -138,41 +138,6 @@ class TelegramAnalyticsSummaryBuilder
             'opinionLeaders' => $opinionLeaders,
             'opinionLeadersDaily' => $this->opinionLeadersBuilder->buildLeadersDaily($authorDailyStats, $opinionLeaderKeys),
             'chatUsername' => $chatUsername,
-        ];
-    }
-
-    /**
-     * @return array{
-     *     date: int,
-     *     views: int,
-     *     forwards: int,
-     *     replies: int,
-     *     reactions: int,
-     *     gifts: int,
-     *     mediaType: string,
-     *     interactions: int
-     * }
-     */
-    private function extractMessageMetrics(array $item): array
-    {
-        $reactions = 0;
-        foreach ($item['reactions'] ?? [] as $reaction) {
-            $reactions += max(0, (int) ($reaction['count'] ?? 0));
-        }
-
-        $forwards = max(0, (int) ($item['forwards'] ?? 0));
-        $replies = max(0, (int) ($item['repliesCount'] ?? 0));
-        $gifts = !empty($item['gifts']['hasGift']) ? 1 : 0;
-
-        return [
-            'date' => (int) ($item['date'] ?? 0),
-            'views' => max(0, (int) ($item['views'] ?? 0)),
-            'forwards' => $forwards,
-            'replies' => $replies,
-            'reactions' => $reactions,
-            'gifts' => $gifts,
-            'mediaType' => (string) ($item['media']['type'] ?? 'none'),
-            'interactions' => $forwards + $replies + $reactions + $gifts,
         ];
     }
 
@@ -302,51 +267,6 @@ class TelegramAnalyticsSummaryBuilder
         $timeline[$bucketKey]['gifts'] += $gifts;
         $timeline[$bucketKey]['media'] += $mediaType !== 'none' ? 1 : 0;
         $timeline[$bucketKey]['interactions'] += $forwards + $replies + $reactions + $gifts;
-    }
-
-    /**
-     * @param array{views: float, forwards: float, replies: float, reactions: float, gifts: float} $weights
-     */
-    private function calculateScore(
-        int $views,
-        int $forwards,
-        int $replies,
-        int $reactions,
-        int $gifts,
-        array $weights
-    ): float {
-        return ($views * $weights['views'])
-            + ($forwards * $weights['forwards'])
-            + ($replies * $weights['replies'])
-            + ($reactions * $weights['reactions'])
-            + ($gifts * $weights['gifts']);
-    }
-
-    /**
-     * @param array<string, mixed> $item
-     * @param array{
-     *     date: int,
-     *     views: int,
-     *     forwards: int,
-     *     replies: int,
-     *     reactions: int
-     * } $messageMetrics
-     * @return array<string, mixed>
-     */
-    private function buildTopPostRow(array $item, array $messageMetrics, float $score): array
-    {
-        return [
-            'id' => (int) ($item['id'] ?? 0),
-            'date' => $messageMetrics['date'],
-            'message' => Str::limit(trim((string) ($item['message'] ?? '')), 180),
-            'telegramUrl' => $item['telegramUrl'] ?? null,
-            'views' => $messageMetrics['views'],
-            'forwards' => $messageMetrics['forwards'],
-            'replies' => $messageMetrics['replies'],
-            'reactions' => $messageMetrics['reactions'],
-            'mediaLabel' => $item['media']['label'] ?? null,
-            'score' => round($score, 2),
-        ];
     }
 
     /**
