@@ -2,15 +2,17 @@
 
 namespace App\Modules\NewsMediaIntel\Infrastructure\Feeds;
 
-use App\Modules\NewsMediaIntel\Application\Contracts\NewsFeedProviderInterface;
+use App\Modules\NewsMediaIntel\Application\Support\NewsFeedSources;
 
-final class BingNewsRssProvider extends AbstractRssNewsFeedProvider implements NewsFeedProviderInterface
+final class BingNewsRssProvider extends AbstractTemplateRssNewsFeedProvider
 {
-    public function fetch(string $query): array
+    protected function sourceKey(): string
     {
-        $template = $this->config->bingRssUrlTemplate();
-        $url = $this->buildUrlFromTemplate($template, $query);
+        return NewsFeedSources::BING;
+    }
 
-        return $this->fetchRss('bing', $url);
+    protected function urlTemplate(): string
+    {
+        return $this->config->bingRssUrlTemplate();
     }
 }

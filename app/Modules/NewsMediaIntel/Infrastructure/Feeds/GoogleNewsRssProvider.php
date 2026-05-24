@@ -2,22 +2,33 @@
 
 namespace App\Modules\NewsMediaIntel\Infrastructure\Feeds;
 
-use App\Modules\NewsMediaIntel\Application\Contracts\NewsFeedProviderInterface;
+use App\Modules\NewsMediaIntel\Application\Support\NewsFeedSources;
 
-final class GoogleNewsRssProvider extends AbstractRssNewsFeedProvider implements NewsFeedProviderInterface
+final class GoogleNewsRssProvider extends AbstractTemplateRssNewsFeedProvider
 {
-    public function fetch(string $query): array
+    protected function sourceKey(): string
     {
-        $template = $this->config->googleRssUrlTemplate();
+        return NewsFeedSources::GOOGLE_NEWS;
+    }
+
+    protected function urlTemplate(): string
+    {
+        return $this->config->googleRssUrlTemplate();
+    }
+
+    /**
+     * @return array<string, string>
+     */
+    protected function templateTokens(): array
+    {
         $hl = $this->config->googleRssHl();
         $gl = $this->config->googleRssGl();
         $ceid = $this->config->googleRssCeid();
-        $url = $this->buildUrlFromTemplate($template, $query, [
+
+        return [
             'hl' => $hl,
             'gl' => $gl,
             'ceid' => $ceid,
-        ]);
-
-        return $this->fetchRss('googlenews', $url);
+        ];
     }
 }

@@ -220,6 +220,6 @@ final class NewsMediaIntelConfig
      */
     private static function allowedProviderKeys(): array
     {
-        return ['newsapi', 'googlenews', 'bing'];
+        return NewsFeedSources::all();
     }
 }
