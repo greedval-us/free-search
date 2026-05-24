@@ -3,9 +3,15 @@
 namespace App\Modules\Telegram\Analytics;
 
 use Carbon\Carbon;
+use Illuminate\Contracts\Session\Session;
 
 class TelegramAnalyticsSnapshotStore
 {
+    public function __construct(
+        private readonly Session $session,
+    ) {
+    }
+
     /**
      * @param array<string, mixed> $data
      */
@@ -17,7 +23,7 @@ class TelegramAnalyticsSnapshotStore
         ?string $keyword,
         array $data
     ): void {
-        session()->put(
+        $this->session->put(
             $this->summarySnapshotKey($chatUsername, $from, $to, $scorePriority, $keyword),
             $data
         );
@@ -33,7 +39,7 @@ class TelegramAnalyticsSnapshotStore
         string $scorePriority,
         ?string $keyword
     ): ?array {
-        $value = session()->get(
+        $value = $this->session->get(
             $this->summarySnapshotKey($chatUsername, $from, $to, $scorePriority, $keyword)
         );
 
@@ -45,7 +51,7 @@ class TelegramAnalyticsSnapshotStore
      */
     public function storeNamedSnapshot(string $role, array $data): void
     {
-        session()->put($this->namedSnapshotKey($role), $data);
+        $this->session->put($this->namedSnapshotKey($role), $data);
     }
 
     /**
@@ -53,7 +59,7 @@ class TelegramAnalyticsSnapshotStore
      */
     public function getNamedSnapshot(string $role): ?array
     {
-        $value = session()->get($this->namedSnapshotKey($role));
+        $value = $this->session->get($this->namedSnapshotKey($role));
 
         return is_array($value) ? $value : null;
     }
@@ -65,14 +71,16 @@ class TelegramAnalyticsSnapshotStore
         ?array $snapshot,
         string $chatUsername,
         string $scorePriority,
-        ?string $keyword
+        ?string $keyword,
+        ?Carbon $from = null,
+        ?Carbon $to = null
     ): bool {
         if (!is_array($snapshot)) {
             return false;
         }
 
-        $snapshotChat = strtolower(trim((string) data_get($snapshot, 'range.chatUsername', '')));
-        if ($snapshotChat === '' || $snapshotChat !== strtolower(trim($chatUsername))) {
+        $snapshotChat = $this->normalizeChatUsername((string) data_get($snapshot, 'range.chatUsername', ''));
+        if ($snapshotChat === '' || $snapshotChat !== $this->normalizeChatUsername($chatUsername)) {
             return false;
         }
 
@@ -81,10 +89,32 @@ class TelegramAnalyticsSnapshotStore
             return false;
         }
 
-        $snapshotKeyword = trim((string) data_get($snapshot, 'range.keyword', ''));
-        $requestKeyword = trim((string) ($keyword ?? ''));
+        $snapshotKeyword = $this->normalizeKeyword((string) data_get($snapshot, 'range.keyword', ''));
+        $requestKeyword = $this->normalizeKeyword((string) ($keyword ?? ''));
 
-        return $snapshotKeyword === $requestKeyword;
+        if ($snapshotKeyword !== $requestKeyword) {
+            return false;
+        }
+
+        if ($from === null || $to === null) {
+            return true;
+        }
+
+        $snapshotFromIso = data_get($snapshot, 'range.dateFrom');
+        $snapshotToIso = data_get($snapshot, 'range.dateTo');
+        if (!is_string($snapshotFromIso) || !is_string($snapshotToIso)) {
+            return false;
+        }
+
+        try {
+            $snapshotFrom = Carbon::parse($snapshotFromIso)->utc()->toIso8601String();
+            $snapshotTo = Carbon::parse($snapshotToIso)->utc()->toIso8601String();
+        } catch (\Throwable) {
+            return false;
+        }
+
+        return $snapshotFrom === $from->copy()->utc()->toIso8601String()
+            && $snapshotTo === $to->copy()->utc()->toIso8601String();
     }
 
     private function summarySnapshotKey(
@@ -98,7 +128,7 @@ class TelegramAnalyticsSnapshotStore
 
         return implode(':', [
             'telegram_analytics_summary',
-            strtolower(trim($chatUsername)),
+            $this->normalizeChatUsername($chatUsername),
             strtolower(trim($scorePriority)),
             $normalizedKeyword,
             $from->copy()->utc()->toIso8601String(),
@@ -110,5 +140,14 @@ class TelegramAnalyticsSnapshotStore
     {
         return 'telegram_analytics_snapshot_' . strtolower(trim($role));
     }
-}
 
+    private function normalizeChatUsername(string $chatUsername): string
+    {
+        return strtolower(trim(ltrim($chatUsername, '@')));
+    }
+
+    private function normalizeKeyword(string $keyword): string
+    {
+        return trim($keyword);
+    }
+}

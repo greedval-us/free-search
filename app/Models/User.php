@@ -12,7 +12,16 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Fortify\TwoFactorAuthenticatable;
 
-#[Fillable(['name', 'email', 'password', 'account_type', 'is_premium', 'premium_expires_at', 'telegram_id'])]
+#[Fillable([
+    'name',
+    'email',
+    'password',
+    'account_type',
+    'is_premium',
+    'premium_expires_at',
+    'telegram_id',
+    'is_blocked',
+])]
 #[Hidden(['password', 'two_factor_secret', 'two_factor_recovery_codes', 'remember_token'])]
 class User extends Authenticatable
 {
@@ -39,6 +48,7 @@ class User extends Authenticatable
             'two_factor_confirmed_at' => 'datetime',
             'is_premium' => 'boolean',
             'premium_expires_at' => 'datetime',
+            'is_blocked' => 'boolean',
         ];
     }
 
@@ -91,6 +101,14 @@ class User extends Authenticatable
     }
 
     /**
+     * Check if account is blocked.
+     */
+    public function isBlocked(): bool
+    {
+        return (bool) $this->is_blocked;
+    }
+
+    /**
      * Get the request logs for the user.
      */
     public function requestLogs(): HasMany
@@ -140,5 +158,13 @@ class User extends Authenticatable
                 $q->whereNull('premium_expires_at')
                     ->orWhere('premium_expires_at', '>', now());
             });
+    }
+
+    /**
+     * Scope a query to only include blocked users.
+     */
+    public function scopeBlocked($query)
+    {
+        return $query->where('is_blocked', true);
     }
 }

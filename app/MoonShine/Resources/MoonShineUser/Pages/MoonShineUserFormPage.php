@@ -6,7 +6,7 @@ namespace App\MoonShine\Resources\MoonShineUser\Pages;
 
 use App\MoonShine\Resources\MoonShineUser\MoonShineUserResource;
 use App\MoonShine\Resources\MoonShineUserRole\MoonShineUserRoleResource;
-use Illuminate\Contracts\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\Rules\Password as PasswordRule;
 use MoonShine\Contracts\Core\TypeCasts\DataWrapperContract;

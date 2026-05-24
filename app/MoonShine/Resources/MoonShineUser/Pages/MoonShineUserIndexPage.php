@@ -6,7 +6,7 @@ namespace App\MoonShine\Resources\MoonShineUser\Pages;
 
 use App\MoonShine\Resources\MoonShineUser\MoonShineUserResource;
 use App\MoonShine\Resources\MoonShineUserRole\MoonShineUserRoleResource;
-use Illuminate\Contracts\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Builder;
 use MoonShine\Contracts\UI\ComponentContract;
 use MoonShine\Contracts\UI\FieldContract;
 use MoonShine\Laravel\Fields\Relationships\BelongsTo;
@@ -65,7 +65,7 @@ final class MoonShineUserIndexPage extends IndexPage
                 resource: MoonShineUserRoleResource::class,
             )->valuesQuery(static fn (Builder $q) => $q->select(['id', 'name'])),
 
-            Email::make('E-mail', 'email'),
+            Email::make(__('moonshine::ui.resource.email'), 'email'),
         ];
     }
 

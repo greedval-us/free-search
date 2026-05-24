@@ -48,7 +48,9 @@ class TelegramAnalyticsApplicationService implements TelegramAnalyticsApplicatio
             $namedCurrent,
             $params->chatUsername,
             $params->scorePriority,
-            $params->keyword
+            $params->keyword,
+            $from,
+            $to
         );
 
         $data = $matchesCurrent ? $namedCurrent : null;
