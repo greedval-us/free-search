@@ -24,27 +24,27 @@ final class AdminAuditLogIndexPage extends IndexPage
     {
         return [
             ID::make()->sortable(),
-            Date::make('Date', 'created_at')
+            Date::make(__('admin_panel.fields.date'), 'created_at')
                 ->format('d.m.Y H:i:s')
                 ->sortable(),
-            Text::make('Admin', 'actor_admin_name'),
-            Text::make('Action', 'action')->sortable(),
-            Text::make('Target', 'target_type')->sortable(),
-            Number::make('Target ID', 'target_id')->sortable(),
+            Text::make(__('admin_panel.fields.admin'), 'actor_admin_name'),
+            Text::make(__('admin_panel.fields.action'), 'action')->sortable(),
+            Text::make(__('admin_panel.fields.target'), 'target_type')->sortable(),
+            Number::make(__('admin_panel.fields.target_id'), 'target_id')->sortable(),
             Number::make(
-                'Changed fields',
+                __('admin_panel.fields.changed_fields'),
                 'changes',
                 static fn (mixed $original): int => is_array($original->changes ?? null)
                     ? count($original->changes)
                     : 0
             ),
             Text::make(
-                'Changed keys',
+                __('admin_panel.fields.changed_keys'),
                 'changes',
                 static fn (mixed $original): string => self::changedKeysSummary($original->changes ?? null),
             ),
             Text::make(
-                'Change details',
+                __('admin_panel.fields.change_details'),
                 'changes',
                 static fn (mixed $original): string => self::changeDetailsSummary($original->changes ?? null),
             ),
@@ -54,17 +54,17 @@ final class AdminAuditLogIndexPage extends IndexPage
     protected function filters(): iterable
     {
         return [
-            Text::make('Admin', 'actor_admin_name'),
-            Text::make('Action', 'action'),
-            Text::make('Target', 'target_type'),
-            Number::make('Target ID', 'target_id'),
+            Text::make(__('admin_panel.fields.admin'), 'actor_admin_name'),
+            Text::make(__('admin_panel.fields.action'), 'action'),
+            Text::make(__('admin_panel.fields.target'), 'target_type'),
+            Number::make(__('admin_panel.fields.target_id'), 'target_id'),
         ];
     }
 
     private static function changedKeysSummary(mixed $changes): string
     {
         if (!is_array($changes) || $changes === []) {
-            return '-';
+            return __('admin_panel.values.not_available');
         }
 
         $keys = array_keys($changes);
@@ -75,7 +75,7 @@ final class AdminAuditLogIndexPage extends IndexPage
     private static function changeDetailsSummary(mixed $changes): string
     {
         if (!is_array($changes) || $changes === []) {
-            return '-';
+            return __('admin_panel.values.not_available');
         }
 
         $parts = [];
@@ -91,7 +91,7 @@ final class AdminAuditLogIndexPage extends IndexPage
         }
 
         if ($parts === []) {
-            return '-';
+            return __('admin_panel.values.not_available');
         }
 
         $text = implode(' | ', $parts);
@@ -102,11 +102,11 @@ final class AdminAuditLogIndexPage extends IndexPage
     private static function valueToString(mixed $value): string
     {
         if ($value === null) {
-            return 'null';
+            return __('admin_panel.values.null');
         }
 
         if (is_bool($value)) {
-            return $value ? 'true' : 'false';
+            return $value ? __('admin_panel.values.true') : __('admin_panel.values.false');
         }
 
         if (is_scalar($value)) {
@@ -115,6 +115,6 @@ final class AdminAuditLogIndexPage extends IndexPage
 
         $json = json_encode($value, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
 
-        return is_string($json) ? $json : '[complex]';
+        return is_string($json) ? $json : __('admin_panel.values.complex');
     }
 }

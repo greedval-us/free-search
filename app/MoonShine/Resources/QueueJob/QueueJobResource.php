@@ -28,7 +28,7 @@ class QueueJobResource extends ModelResource
 
     public function getTitle(): string
     {
-        return 'Queue Jobs';
+        return __('admin_panel.resources.queue_jobs');
     }
 
     protected function activeActions(): ListOf

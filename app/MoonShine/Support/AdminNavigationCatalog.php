@@ -30,14 +30,14 @@ final class AdminNavigationCatalog
                 ],
             ],
             [
-                'title' => 'Operations',
+                'title' => static fn (): string => __('admin_panel.navigation.operations'),
                 'resources' => [
                     QueueJobResource::class,
                     FailedJobResource::class,
                 ],
             ],
             [
-                'title' => 'Security',
+                'title' => static fn (): string => __('admin_panel.navigation.security'),
                 'resources' => [
                     AdminAuditLogResource::class,
                 ],

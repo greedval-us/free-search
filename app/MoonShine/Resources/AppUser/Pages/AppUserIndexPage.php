@@ -28,16 +28,16 @@ final class AppUserIndexPage extends IndexPage
     {
         return [
             ID::make()->sortable(),
-            Text::make('Name', 'name')->sortable(),
-            Email::make('E-mail', 'email')->sortable(),
-            Text::make('Type', 'account_type')->sortable(),
-            Text::make('Premium', 'is_premium', static fn (mixed $original): string => self::resolveFlag($original, 'is_premium') ? 'yes' : 'no')
+            Text::make(__('admin_panel.fields.name'), 'name')->sortable(),
+            Email::make(__('admin_panel.fields.email'), 'email')->sortable(),
+            Text::make(__('admin_panel.fields.account_type'), 'account_type')->sortable(),
+            Text::make(__('admin_panel.fields.premium'), 'is_premium', static fn (mixed $original): string => self::resolveFlag($original, 'is_premium') ? __('admin_panel.values.yes') : __('admin_panel.values.no'))
                 ->badge(static fn (mixed $value, Field $field): string => self::resolveFlag($value, 'is_premium') ? 'success' : 'gray'),
-            Text::make('Blocked', 'is_blocked', static fn (mixed $original): string => self::resolveFlag($original, 'is_blocked') ? 'blocked' : 'active')
+            Text::make(__('admin_panel.fields.blocked'), 'is_blocked', static fn (mixed $original): string => self::resolveFlag($original, 'is_blocked') ? __('admin_panel.values.blocked') : __('admin_panel.values.active'))
                 ->badge(static fn (mixed $value, Field $field): string => self::resolveFlag($value, 'is_blocked') ? 'error' : 'success'),
-            Text::make('Telegram ID', 'telegram_id'),
-            Number::make('Requests', 'request_logs_count')->sortable(),
-            Date::make('Created At', 'created_at')
+            Text::make(__('admin_panel.fields.telegram_id'), 'telegram_id'),
+            Number::make(__('admin_panel.fields.requests'), 'request_logs_count')->sortable(),
+            Date::make(__('admin_panel.fields.created_at'), 'created_at')
                 ->format('d.m.Y H:i')
                 ->sortable(),
         ];
@@ -46,20 +46,20 @@ final class AppUserIndexPage extends IndexPage
     protected function filters(): iterable
     {
         return [
-            Text::make('Name', 'name'),
-            Email::make('E-mail', 'email'),
-            Select::make('Type', 'account_type')->options([
-                User::ACCOUNT_TYPE_USER => 'user',
-                User::ACCOUNT_TYPE_ADMIN => 'admin',
-                User::ACCOUNT_TYPE_MODERATOR => 'moderator',
+            Text::make(__('admin_panel.fields.name'), 'name'),
+            Email::make(__('admin_panel.fields.email'), 'email'),
+            Select::make(__('admin_panel.fields.account_type'), 'account_type')->options([
+                User::ACCOUNT_TYPE_USER => __('admin_panel.values.user'),
+                User::ACCOUNT_TYPE_ADMIN => __('admin_panel.values.admin'),
+                User::ACCOUNT_TYPE_MODERATOR => __('admin_panel.values.moderator'),
             ]),
-            Select::make('Premium', 'is_premium')->options([
-                1 => 'yes',
-                0 => 'no',
+            Select::make(__('admin_panel.fields.premium'), 'is_premium')->options([
+                1 => __('admin_panel.values.yes'),
+                0 => __('admin_panel.values.no'),
             ]),
-            Select::make('Blocked', 'is_blocked')->options([
-                1 => 'blocked',
-                0 => 'active',
+            Select::make(__('admin_panel.fields.blocked'), 'is_blocked')->options([
+                1 => __('admin_panel.values.blocked'),
+                0 => __('admin_panel.values.active'),
             ]),
         ];
     }

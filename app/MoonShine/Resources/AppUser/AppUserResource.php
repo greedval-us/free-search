@@ -51,7 +51,7 @@ class AppUserResource extends ModelResource
 
     public function getTitle(): string
     {
-        return 'Registered Users';
+        return __('admin_panel.resources.registered_users');
     }
 
     protected function activeActions(): ListOf

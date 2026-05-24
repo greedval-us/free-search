@@ -26,7 +26,7 @@ class AdminAuditLogResource extends ReadOnlyModelResource
 
     public function getTitle(): string
     {
-        return 'Admin Audit Log';
+        return __('admin_panel.resources.admin_audit_log');
     }
 
     protected function pages(): array

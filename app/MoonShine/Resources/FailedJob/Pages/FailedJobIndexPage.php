@@ -29,31 +29,31 @@ final class FailedJobIndexPage extends IndexPage
     {
         return [
             ID::make()->sortable(),
-            Date::make('Failed At', 'failed_at')
+            Date::make(__('admin_panel.fields.failed_at'), 'failed_at')
                 ->format('d.m.Y H:i:s')
                 ->sortable(),
-            Text::make('Queue', 'queue')->sortable(),
-            Text::make('Connection', 'connection')->sortable(),
-            Text::make('Job', 'payload', static fn (FailedJob $job): string => self::resolveJobDisplayName($job->payload)),
-            Text::make('Error', 'exception', static fn (FailedJob $job): string => self::resolveExceptionSummary($job->exception)),
+            Text::make(__('admin_panel.fields.queue'), 'queue')->sortable(),
+            Text::make(__('admin_panel.fields.connection'), 'connection')->sortable(),
+            Text::make(__('admin_panel.fields.job'), 'payload', static fn (FailedJob $job): string => self::resolveJobDisplayName($job->payload)),
+            Text::make(__('admin_panel.fields.error'), 'exception', static fn (FailedJob $job): string => self::resolveExceptionSummary($job->exception)),
         ];
     }
 
     protected function filters(): iterable
     {
         return [
-            Text::make('Queue', 'queue'),
-            Text::make('Connection', 'connection'),
-            Text::make('UUID', 'uuid'),
+            Text::make(__('admin_panel.fields.queue'), 'queue'),
+            Text::make(__('admin_panel.fields.connection'), 'connection'),
+            Text::make(__('admin_panel.fields.uuid'), 'uuid'),
         ];
     }
 
     protected function queryTags(): array
     {
         return [
-            QueryTag::make('All', static fn (Builder $query): Builder => $query)->default()->icon('list-bullet'),
-            QueryTag::make('Today', static fn (Builder $query): Builder => $query->whereDate('failed_at', now()->toDateString()))->icon('calendar-days'),
-            QueryTag::make('Last 24h', static fn (Builder $query): Builder => $query->where('failed_at', '>=', now()->subDay()))->icon('clock'),
+            QueryTag::make(__('admin_panel.tags.all'), static fn (Builder $query): Builder => $query)->default()->icon('list-bullet'),
+            QueryTag::make(__('admin_panel.tags.today'), static fn (Builder $query): Builder => $query->whereDate('failed_at', now()->toDateString()))->icon('calendar-days'),
+            QueryTag::make(__('admin_panel.tags.last_24h'), static fn (Builder $query): Builder => $query->where('failed_at', '>=', now()->subDay()))->icon('clock'),
         ];
     }
 

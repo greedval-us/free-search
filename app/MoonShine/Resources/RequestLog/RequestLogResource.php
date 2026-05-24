@@ -30,7 +30,7 @@ class RequestLogResource extends ReadOnlyModelResource
 
     public function getTitle(): string
     {
-        return 'User Activity';
+        return __('admin_panel.resources.user_activity');
     }
 
     protected function pages(): array

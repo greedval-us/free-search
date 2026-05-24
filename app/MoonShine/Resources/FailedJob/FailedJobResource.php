@@ -28,7 +28,7 @@ class FailedJobResource extends ModelResource
 
     public function getTitle(): string
     {
-        return 'Failed Jobs';
+        return __('admin_panel.resources.failed_jobs');
     }
 
     protected function activeActions(): ListOf

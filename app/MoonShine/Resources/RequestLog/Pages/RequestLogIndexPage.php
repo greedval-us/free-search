@@ -31,27 +31,27 @@ final class RequestLogIndexPage extends IndexPage
     {
         return [
             ID::make()->sortable(),
-            Date::make('Date', 'created_at')
+            Date::make(__('admin_panel.fields.date'), 'created_at')
                 ->format('d.m.Y H:i:s')
                 ->sortable(),
             BelongsTo::make(
-                'User',
+                __('admin_panel.fields.user'),
                 'user',
                 formatted: static fn (?User $model): string => $model?->email ?? '-',
                 resource: AppUserResource::class,
             ),
-            Text::make('Method', 'method')->sortable(),
-            Number::make('Status', 'status_code')
+            Text::make(__('admin_panel.fields.method'), 'method')->sortable(),
+            Number::make(__('admin_panel.fields.status'), 'status_code')
                 ->sortable()
                 ->badge(static fn (mixed $value, Field $field): string => self::statusBadgeColor((int) $value)),
-            Number::make('Response ms', 'response_time')
+            Number::make(__('admin_panel.fields.response_ms'), 'response_time')
                 ->sortable()
                 ->badge(static fn (mixed $value, Field $field): string => self::responseTimeBadgeColor((float) $value)),
-            Text::make('Module', 'module_key')->sortable(),
-            Text::make('Action', 'action_key')->sortable(),
-            Text::make('Query', 'query_preview'),
-            Text::make('Path', 'path'),
-            Text::make('Route', 'route_name'),
+            Text::make(__('admin_panel.fields.module'), 'module_key')->sortable(),
+            Text::make(__('admin_panel.fields.action'), 'action_key')->sortable(),
+            Text::make(__('admin_panel.fields.query'), 'query_preview'),
+            Text::make(__('admin_panel.fields.path'), 'path'),
+            Text::make(__('admin_panel.fields.route'), 'route_name'),
         ];
     }
 
@@ -59,32 +59,32 @@ final class RequestLogIndexPage extends IndexPage
     {
         return [
             BelongsTo::make(
-                'User',
+                __('admin_panel.fields.user'),
                 'user',
                 formatted: static fn (User $model): string => $model->email,
                 resource: AppUserResource::class,
             )->valuesQuery(static fn (Builder $q): Builder => $q->select(['id', 'email'])),
-            Select::make('Method', 'method')->options([
+            Select::make(__('admin_panel.fields.method'), 'method')->options([
                 'GET' => 'GET',
                 'POST' => 'POST',
                 'PUT' => 'PUT',
                 'PATCH' => 'PATCH',
                 'DELETE' => 'DELETE',
             ]),
-            Text::make('Module', 'module_key'),
-            Text::make('Action', 'action_key'),
-            Number::make('Status', 'status_code'),
+            Text::make(__('admin_panel.fields.module'), 'module_key'),
+            Text::make(__('admin_panel.fields.action'), 'action_key'),
+            Number::make(__('admin_panel.fields.status'), 'status_code'),
         ];
     }
 
     protected function queryTags(): array
     {
         return [
-            QueryTag::make('All', static fn (Builder $query): Builder => $query)->default()->icon('list-bullet'),
-            QueryTag::make('Errors 4xx', static fn (Builder $query): Builder => $query->whereBetween('status_code', [400, 499]))->icon('exclamation-triangle'),
-            QueryTag::make('Errors 5xx', static fn (Builder $query): Builder => $query->whereBetween('status_code', [500, 599]))->icon('x-circle'),
-            QueryTag::make('Slow > 1500ms', static fn (Builder $query): Builder => $query->where('response_time', '>', 1500))->icon('clock'),
-            QueryTag::make('Today', static fn (Builder $query): Builder => $query->whereDate('created_at', now()->toDateString()))->icon('calendar-days'),
+            QueryTag::make(__('admin_panel.tags.all'), static fn (Builder $query): Builder => $query)->default()->icon('list-bullet'),
+            QueryTag::make(__('admin_panel.tags.errors_4xx'), static fn (Builder $query): Builder => $query->whereBetween('status_code', [400, 499]))->icon('exclamation-triangle'),
+            QueryTag::make(__('admin_panel.tags.errors_5xx'), static fn (Builder $query): Builder => $query->whereBetween('status_code', [500, 599]))->icon('x-circle'),
+            QueryTag::make(__('admin_panel.tags.slow_1500'), static fn (Builder $query): Builder => $query->where('response_time', '>', 1500))->icon('clock'),
+            QueryTag::make(__('admin_panel.tags.today'), static fn (Builder $query): Builder => $query->whereDate('created_at', now()->toDateString()))->icon('calendar-days'),
         ];
     }
 

@@ -34,31 +34,31 @@ final class AppUserFormPage extends FormPage
                 ID::make(),
 
                 Flex::make([
-                    Text::make('Name', 'name')
+                    Text::make(__('admin_panel.fields.name'), 'name')
                         ->disabled()
                         ->onApply(static fn (mixed $data, mixed $value, mixed $field): mixed => $data),
-                    Email::make('E-mail', 'email')
+                    Email::make(__('admin_panel.fields.email'), 'email')
                         ->disabled()
                         ->onApply(static fn (mixed $data, mixed $value, mixed $field): mixed => $data),
                 ]),
 
-                Select::make('Account type', 'account_type')
+                Select::make(__('admin_panel.fields.account_type'), 'account_type')
                     ->disabled()
                     ->onApply(static fn (mixed $data, mixed $value, mixed $field): mixed => $data)
                     ->options([
-                        User::ACCOUNT_TYPE_USER => 'user',
-                        User::ACCOUNT_TYPE_ADMIN => 'admin',
-                        User::ACCOUNT_TYPE_MODERATOR => 'moderator',
+                        User::ACCOUNT_TYPE_USER => __('admin_panel.values.user'),
+                        User::ACCOUNT_TYPE_ADMIN => __('admin_panel.values.admin'),
+                        User::ACCOUNT_TYPE_MODERATOR => __('admin_panel.values.moderator'),
                     ]),
 
-                Text::make('Telegram ID', 'telegram_id')->nullable(),
+                Text::make(__('admin_panel.fields.telegram_id'), 'telegram_id')->nullable(),
 
-                Switcher::make('Premium enabled', 'is_premium'),
-                Date::make('Premium expires at', 'premium_expires_at')
+                Switcher::make(__('admin_panel.fields.premium_enabled'), 'is_premium'),
+                Date::make(__('admin_panel.fields.premium_expires_at'), 'premium_expires_at')
                     ->withTime()
                     ->nullable(),
 
-                Switcher::make('Blocked', 'is_blocked'),
+                Switcher::make(__('admin_panel.fields.blocked'), 'is_blocked'),
             ]),
         ];
     }

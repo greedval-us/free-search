@@ -29,29 +29,29 @@ final class QueueJobIndexPage extends IndexPage
     {
         return [
             ID::make()->sortable(),
-            Text::make('Queue', 'queue')->sortable(),
-            Number::make('Attempts', 'attempts')->sortable(),
-            Text::make('Created At', 'created_at', static fn (QueueJob $job): string => self::formatUnixTimestamp($job->created_at)),
-            Text::make('Available At', 'available_at', static fn (QueueJob $job): string => self::formatUnixTimestamp($job->available_at)),
-            Text::make('Reserved At', 'reserved_at', static fn (QueueJob $job): string => self::formatUnixTimestamp($job->reserved_at)),
-            Text::make('Job', 'payload', static fn (QueueJob $job): string => self::resolveJobDisplayName($job->payload)),
+            Text::make(__('admin_panel.fields.queue'), 'queue')->sortable(),
+            Number::make(__('admin_panel.fields.attempts'), 'attempts')->sortable(),
+            Text::make(__('admin_panel.fields.created_at'), 'created_at', static fn (QueueJob $job): string => self::formatUnixTimestamp($job->created_at)),
+            Text::make(__('admin_panel.fields.available_at'), 'available_at', static fn (QueueJob $job): string => self::formatUnixTimestamp($job->available_at)),
+            Text::make(__('admin_panel.fields.reserved_at'), 'reserved_at', static fn (QueueJob $job): string => self::formatUnixTimestamp($job->reserved_at)),
+            Text::make(__('admin_panel.fields.job'), 'payload', static fn (QueueJob $job): string => self::resolveJobDisplayName($job->payload)),
         ];
     }
 
     protected function filters(): iterable
     {
         return [
-            Text::make('Queue', 'queue'),
-            Number::make('Attempts', 'attempts'),
+            Text::make(__('admin_panel.fields.queue'), 'queue'),
+            Number::make(__('admin_panel.fields.attempts'), 'attempts'),
         ];
     }
 
     protected function queryTags(): array
     {
         return [
-            QueryTag::make('All', static fn (Builder $query): Builder => $query)->default()->icon('list-bullet'),
-            QueryTag::make('Retrying', static fn (Builder $query): Builder => $query->where('attempts', '>', 0))->icon('arrow-path'),
-            QueryTag::make('Ready now', static fn (Builder $query): Builder => $query->where('available_at', '<=', time()))->icon('clock'),
+            QueryTag::make(__('admin_panel.tags.all'), static fn (Builder $query): Builder => $query)->default()->icon('list-bullet'),
+            QueryTag::make(__('admin_panel.tags.retrying'), static fn (Builder $query): Builder => $query->where('attempts', '>', 0))->icon('arrow-path'),
+            QueryTag::make(__('admin_panel.tags.ready_now'), static fn (Builder $query): Builder => $query->where('available_at', '<=', time()))->icon('clock'),
         ];
     }
 
