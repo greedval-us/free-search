@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\MoonShine\Resources\AppUser;
 
 use App\Models\User;
+use App\MoonShine\Resources\AppUser\Pages\AppUserFormPage;
 use App\MoonShine\Resources\AppUser\Pages\AppUserIndexPage;
 use Illuminate\Contracts\Database\Eloquent\Builder;
 use MoonShine\Laravel\Resources\ModelResource;
@@ -15,7 +16,7 @@ use MoonShine\Support\Enums\Action;
 use MoonShine\Support\ListOf;
 
 /**
- * @extends ModelResource<User, AppUserIndexPage, null, null>
+ * @extends ModelResource<User, AppUserIndexPage, AppUserFormPage, null>
  */
 #[Icon('users')]
 #[Group('moonshine::ui.resource.system', 'users', translatable: true)]
@@ -38,7 +39,6 @@ class AppUserResource extends ModelResource
         return parent::activeActions()->except(
             Action::CREATE,
             Action::VIEW,
-            Action::UPDATE,
             Action::DELETE,
             Action::MASS_DELETE,
         );
@@ -48,6 +48,7 @@ class AppUserResource extends ModelResource
     {
         return [
             AppUserIndexPage::class,
+            AppUserFormPage::class,
         ];
     }
 
@@ -59,6 +60,8 @@ class AppUserResource extends ModelResource
             'email',
             'account_type',
             'telegram_id',
+            'is_blocked',
+            'is_premium',
         ];
     }
 
