@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Concerns;
 
 use App\Support\Reports\Contracts\ReportFilenamePolicyInterface;
+use App\Support\Reports\ReportsConfig;
 use Carbon\Carbon;
 use Illuminate\Http\Response;
 use Illuminate\View\View;
@@ -19,7 +20,7 @@ trait HandlesHtmlReports
         return array_merge([
             'report' => $report,
             'locale' => app()->getLocale(),
-            'generatedAt' => Carbon::now(config('app.timezone'))->format($this->reportGeneratedAtFormat()),
+            'generatedAt' => Carbon::now($this->reportsConfig()->timezone())->format($this->reportGeneratedAtFormat()),
         ], $extra);
     }
 
@@ -50,11 +51,16 @@ trait HandlesHtmlReports
 
     private function reportGeneratedAtFormat(): string
     {
-        return (string) config('osint.reports.generated_at_format', 'd.m.Y H:i');
+        return $this->reportsConfig()->generatedAtFormat();
     }
 
     private function reportContentType(): string
     {
-        return (string) config('osint.reports.download_content_type', 'text/html; charset=UTF-8');
+        return $this->reportsConfig()->downloadContentType();
+    }
+
+    private function reportsConfig(): ReportsConfig
+    {
+        return app(ReportsConfig::class);
     }
 }

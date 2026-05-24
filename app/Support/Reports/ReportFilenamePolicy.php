@@ -7,6 +7,10 @@ use Carbon\CarbonInterface;
 
 final class ReportFilenamePolicy implements ReportFilenamePolicyInterface
 {
+    public function __construct(private readonly ReportsConfig $config)
+    {
+    }
+
     public function build(string $prefix, string $target, ?CarbonInterface $now = null): string
     {
         return $this->buildWithExtension($prefix, $target, 'html', $now);
@@ -19,7 +23,7 @@ final class ReportFilenamePolicy implements ReportFilenamePolicyInterface
         ?CarbonInterface $now = null,
     ): string
     {
-        $timestamp = ($now ?? now(config('app.timezone')))->format($this->timestampFormat());
+        $timestamp = ($now ?? now($this->config->timezone()))->format($this->timestampFormat());
 
         return sprintf(
             '%s-%s-%s.%s',
@@ -46,7 +50,7 @@ final class ReportFilenamePolicy implements ReportFilenamePolicyInterface
 
     private function timestampFormat(): string
     {
-        return (string) config('osint.reports.filename_timestamp_format', 'Ymd-His');
+        return $this->config->filenameTimestampFormat();
     }
 
     private function sanitizeExtension(string $value): string
