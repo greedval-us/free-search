@@ -78,5 +78,6 @@ return [
         'true' => 'true',
         'false' => 'false',
         'complex' => '[complex]',
+        'unknown' => 'unknown',
     ],
 ];

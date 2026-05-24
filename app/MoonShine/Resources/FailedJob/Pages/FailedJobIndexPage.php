@@ -7,6 +7,8 @@ namespace App\MoonShine\Resources\FailedJob\Pages;
 use App\Models\FailedJob;
 use App\MoonShine\Resources\FailedJob\FailedJobResource;
 use App\MoonShine\Support\Concerns\ParsesQueuePayload;
+use App\MoonShine\Support\Formatting\AdminPanelDateFormatter;
+use App\MoonShine\Support\QueryTags\AdminPanelQueryTagFactory;
 use Illuminate\Database\Eloquent\Builder;
 use MoonShine\Contracts\UI\FieldContract;
 use MoonShine\Laravel\Pages\Crud\IndexPage;
@@ -30,7 +32,7 @@ final class FailedJobIndexPage extends IndexPage
         return [
             ID::make()->sortable(),
             Date::make(__('admin_panel.fields.failed_at'), 'failed_at')
-                ->format('d.m.Y H:i:s')
+                ->format(AdminPanelDateFormatter::DATE_TIME_FORMAT)
                 ->sortable(),
             Text::make(__('admin_panel.fields.queue'), 'queue')->sortable(),
             Text::make(__('admin_panel.fields.connection'), 'connection')->sortable(),
@@ -50,10 +52,12 @@ final class FailedJobIndexPage extends IndexPage
 
     protected function queryTags(): array
     {
+        $tags = new AdminPanelQueryTagFactory();
+
         return [
-            QueryTag::make(__('admin_panel.tags.all'), static fn (Builder $query): Builder => $query)->default()->icon('list-bullet'),
-            QueryTag::make(__('admin_panel.tags.today'), static fn (Builder $query): Builder => $query->whereDate('failed_at', now()->toDateString()))->icon('calendar-days'),
-            QueryTag::make(__('admin_panel.tags.last_24h'), static fn (Builder $query): Builder => $query->where('failed_at', '>=', now()->subDay()))->icon('clock'),
+            $tags->all(static fn (Builder $query): Builder => $query),
+            $tags->today('failed_at'),
+            $tags->last24Hours('failed_at'),
         ];
     }
 

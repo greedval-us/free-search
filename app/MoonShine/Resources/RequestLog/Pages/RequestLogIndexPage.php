@@ -7,6 +7,9 @@ namespace App\MoonShine\Resources\RequestLog\Pages;
 use App\Models\User;
 use App\MoonShine\Resources\AppUser\AppUserResource;
 use App\MoonShine\Resources\RequestLog\RequestLogResource;
+use App\MoonShine\Support\Formatting\AdminPanelDateFormatter;
+use App\MoonShine\Support\Formatting\RequestLogBadgeResolver;
+use App\MoonShine\Support\QueryTags\AdminPanelQueryTagFactory;
 use Illuminate\Database\Eloquent\Builder;
 use MoonShine\Contracts\UI\FieldContract;
 use MoonShine\Laravel\Fields\Relationships\BelongsTo;
@@ -29,10 +32,12 @@ final class RequestLogIndexPage extends IndexPage
      */
     protected function fields(): iterable
     {
+        $badgeResolver = new RequestLogBadgeResolver();
+
         return [
             ID::make()->sortable(),
             Date::make(__('admin_panel.fields.date'), 'created_at')
-                ->format('d.m.Y H:i:s')
+                ->format(AdminPanelDateFormatter::DATE_TIME_FORMAT)
                 ->sortable(),
             BelongsTo::make(
                 __('admin_panel.fields.user'),
@@ -43,10 +48,10 @@ final class RequestLogIndexPage extends IndexPage
             Text::make(__('admin_panel.fields.method'), 'method')->sortable(),
             Number::make(__('admin_panel.fields.status'), 'status_code')
                 ->sortable()
-                ->badge(static fn (mixed $value, Field $field): string => self::statusBadgeColor((int) $value)),
+                ->badge(static fn (mixed $value, Field $field): string => $badgeResolver->statusColor((int) $value)),
             Number::make(__('admin_panel.fields.response_ms'), 'response_time')
                 ->sortable()
-                ->badge(static fn (mixed $value, Field $field): string => self::responseTimeBadgeColor((float) $value)),
+                ->badge(static fn (mixed $value, Field $field): string => $badgeResolver->responseTimeColor((float) $value)),
             Text::make(__('admin_panel.fields.module'), 'module_key')->sortable(),
             Text::make(__('admin_panel.fields.action'), 'action_key')->sortable(),
             Text::make(__('admin_panel.fields.query'), 'query_preview'),
@@ -79,46 +84,14 @@ final class RequestLogIndexPage extends IndexPage
 
     protected function queryTags(): array
     {
+        $tags = new AdminPanelQueryTagFactory();
+
         return [
-            QueryTag::make(__('admin_panel.tags.all'), static fn (Builder $query): Builder => $query)->default()->icon('list-bullet'),
+            $tags->all(static fn (Builder $query): Builder => $query),
             QueryTag::make(__('admin_panel.tags.errors_4xx'), static fn (Builder $query): Builder => $query->whereBetween('status_code', [400, 499]))->icon('exclamation-triangle'),
             QueryTag::make(__('admin_panel.tags.errors_5xx'), static fn (Builder $query): Builder => $query->whereBetween('status_code', [500, 599]))->icon('x-circle'),
             QueryTag::make(__('admin_panel.tags.slow_1500'), static fn (Builder $query): Builder => $query->where('response_time', '>', 1500))->icon('clock'),
-            QueryTag::make(__('admin_panel.tags.today'), static fn (Builder $query): Builder => $query->whereDate('created_at', now()->toDateString()))->icon('calendar-days'),
+            $tags->today('created_at'),
         ];
-    }
-
-    private static function statusBadgeColor(int $statusCode): string
-    {
-        if ($statusCode >= 500) {
-            return 'error';
-        }
-
-        if ($statusCode >= 400) {
-            return 'warning';
-        }
-
-        if ($statusCode >= 200 && $statusCode < 400) {
-            return 'success';
-        }
-
-        return 'gray';
-    }
-
-    private static function responseTimeBadgeColor(float $responseTime): string
-    {
-        if ($responseTime >= 3000) {
-            return 'error';
-        }
-
-        if ($responseTime >= 1500) {
-            return 'warning';
-        }
-
-        if ($responseTime > 0) {
-            return 'success';
-        }
-
-        return 'gray';
     }
 }

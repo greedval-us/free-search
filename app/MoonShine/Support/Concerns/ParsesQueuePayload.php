@@ -10,12 +10,12 @@ trait ParsesQueuePayload
     {
         $decoded = json_decode($payload, true);
         if (!is_array($decoded)) {
-            return 'unknown';
+            return __('admin_panel.values.unknown');
         }
 
         $display = $decoded['displayName'] ?? $decoded['job'] ?? null;
         if (!is_string($display) || $display === '') {
-            return 'unknown';
+            return __('admin_panel.values.unknown');
         }
 
         return $display;
@@ -25,7 +25,7 @@ trait ParsesQueuePayload
     {
         $line = strtok($exception, "\n");
         if ($line === false || $line === '') {
-            return 'unknown';
+            return __('admin_panel.values.unknown');
         }
 
         return mb_strimwidth($line, 0, 140, '...');
