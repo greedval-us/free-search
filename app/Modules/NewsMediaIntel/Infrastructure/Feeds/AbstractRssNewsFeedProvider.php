@@ -10,14 +10,34 @@ use SimpleXMLElement;
 abstract class AbstractRssNewsFeedProvider
 {
     /**
+     * @param array<string, string> $tokens
+     */
+    protected function buildUrlFromTemplate(string $template, string $query, array $tokens = []): string
+    {
+        $replacements = ['{query}' => urlencode($query)];
+
+        foreach ($tokens as $key => $value) {
+            $replacements['{' . $key . '}'] = urlencode($value);
+        }
+
+        return strtr($template, $replacements);
+    }
+
+    /**
      * @return array<int, NewsMentionDTO>
      */
     protected function fetchRss(string $source, string $url): array
     {
+        $acceptHeader = (string) config(
+            'osint.news_media_intel.rss.accept',
+            'application/rss+xml, application/xml, text/xml;q=0.9, */*;q=0.8'
+        );
+        $timeoutSeconds = max(1, (int) config('osint.news_media_intel.rss.timeout_seconds', 15));
+
         try {
             $response = Http::withHeaders([
-                'Accept' => 'application/rss+xml, application/xml, text/xml;q=0.9, */*;q=0.8',
-            ])->timeout(15)->get($url);
+                'Accept' => $acceptHeader,
+            ])->timeout($timeoutSeconds)->get($url);
         } catch (ConnectionException) {
             return [];
         }

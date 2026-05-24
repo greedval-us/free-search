@@ -39,7 +39,8 @@ final class NewsMediaIntelService implements NewsMediaIntelServiceInterface
         $mentions = $this->newsFeedFetcher->fetchAll($q);
 
         $mentions = $this->deduplicator->deduplicate($mentions);
-        $mentions = array_slice($mentions, 0, 120);
+        $maxMentions = max(1, (int) config('osint.news_media_intel.service.max_mentions', 120));
+        $mentions = array_slice($mentions, 0, $maxMentions);
 
         return new NewsMediaIntelResultDTO(
             query: $q,

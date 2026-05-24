@@ -15,7 +15,7 @@ final class CompositeNewsFeedFetcher implements NewsFeedFetcherInterface
 
     public function fetchAll(string $query): array
     {
-        $perProviderLimit = 40;
+        $perProviderLimit = max(1, (int) config('osint.news_media_intel.fetcher.per_provider_limit', 40));
 
         return [
             ...array_slice($this->newsApiProvider->fetch($query), 0, $perProviderLimit),
@@ -24,4 +24,3 @@ final class CompositeNewsFeedFetcher implements NewsFeedFetcherInterface
         ];
     }
 }
-
