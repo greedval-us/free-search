@@ -4,6 +4,8 @@ namespace App\Http\Requests\YouTube;
 
 use App\Http\Requests\LocalizedFormRequest;
 use App\Modules\YouTube\DTO\Request\YouTubeAnalyticsLookupDTO;
+use App\Modules\YouTube\Support\YouTubeInputNormalizer;
+use App\Modules\YouTube\Support\YouTubeModuleConfig;
 use Illuminate\Support\Carbon;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\Validator;
@@ -21,7 +23,7 @@ class YouTubeAnalyticsRequest extends LocalizedFormRequest
             'mode' => ['nullable', Rule::in(['video', 'channel'])],
             'videoId' => ['nullable', 'string', 'max:255', 'required_without:channelId'],
             'channelId' => ['nullable', 'string', 'max:255', 'required_without:videoId'],
-            'periodDays' => ['nullable', 'integer', Rule::in([1, 3, 7])],
+            'periodDays' => ['nullable', 'integer', Rule::in($this->config()->analyticsPeriodDays())],
             'dateFrom' => ['nullable', 'date_format:Y-m-d'],
             'dateTo' => ['nullable', 'date_format:Y-m-d'],
             'locale' => $this->localeRule(),
@@ -44,8 +46,8 @@ class YouTubeAnalyticsRequest extends LocalizedFormRequest
             }
 
             try {
-                $from = Carbon::createFromFormat('Y-m-d', $dateFrom)->startOfDay();
-                $to = Carbon::createFromFormat('Y-m-d', $dateTo)->endOfDay();
+                $from = Carbon::createFromFormat('Y-m-d', $dateFrom, $this->config()->timezone())->startOfDay();
+                $to = Carbon::createFromFormat('Y-m-d', $dateTo, $this->config()->timezone())->endOfDay();
             } catch (\Throwable) {
                 return;
             }
@@ -55,8 +57,11 @@ class YouTubeAnalyticsRequest extends LocalizedFormRequest
                 return;
             }
 
-            if ($from->diffInDays($to) > 6) {
-                $validator->errors()->add('dateTo', __('Custom period cannot be longer than 7 days.'));
+            if ($from->diffInDays($to) > ($this->config()->analyticsCustomRangeMaxDays() - 1)) {
+                $validator->errors()->add(
+                    'dateTo',
+                    __('Custom period cannot be longer than :days days.', ['days' => $this->config()->analyticsCustomRangeMaxDays()])
+                );
             }
         });
     }
@@ -65,7 +70,7 @@ class YouTubeAnalyticsRequest extends LocalizedFormRequest
     {
         $validated = $this->validated();
         $rawVideoInput = trim((string) ($validated['videoId'] ?? ''));
-        $normalizedVideoId = $this->normalizeVideoId($rawVideoInput);
+        $normalizedVideoId = YouTubeInputNormalizer::normalizeVideoId($rawVideoInput);
         $dateFrom = trim((string) ($validated['dateFrom'] ?? ''));
         $dateTo = trim((string) ($validated['dateTo'] ?? ''));
         $hasCustomRange = $dateFrom !== '' && $dateTo !== '';
@@ -74,7 +79,7 @@ class YouTubeAnalyticsRequest extends LocalizedFormRequest
             mode: (string) ($validated['mode'] ?? (! empty($validated['channelId']) ? 'channel' : 'video')),
             videoId: $normalizedVideoId,
             channelId: trim((string) ($validated['channelId'] ?? '')),
-            periodDays: (int) ($validated['periodDays'] ?? 7),
+            periodDays: (int) ($validated['periodDays'] ?? $this->config()->analyticsDefaultPeriodDays()),
             dateFrom: $hasCustomRange ? $dateFrom : '',
             dateTo: $hasCustomRange ? $dateTo : '',
         );
@@ -93,45 +98,8 @@ class YouTubeAnalyticsRequest extends LocalizedFormRequest
         return $this->resolveLocale();
     }
 
-    private function normalizeVideoId(string $value): string
+    private function config(): YouTubeModuleConfig
     {
-        if ($value === '') {
-            return '';
-        }
-
-        if (!str_contains($value, '://') && !str_contains($value, 'youtube.com') && !str_contains($value, 'youtu.be')) {
-            return $value;
-        }
-
-        $parts = parse_url($value);
-
-        if (!is_array($parts)) {
-            return $value;
-        }
-
-        $host = strtolower((string) ($parts['host'] ?? ''));
-        $path = trim((string) ($parts['path'] ?? ''), '/');
-        parse_str((string) ($parts['query'] ?? ''), $query);
-
-        if (str_contains($host, 'youtu.be') && $path !== '') {
-            return $path;
-        }
-
-        if (str_contains($host, 'youtube.com')) {
-            $watchId = trim((string) ($query['v'] ?? ''));
-            if ($watchId !== '') {
-                return $watchId;
-            }
-
-            if (str_starts_with($path, 'shorts/')) {
-                return trim(substr($path, strlen('shorts/')));
-            }
-
-            if (str_starts_with($path, 'embed/')) {
-                return trim(substr($path, strlen('embed/')));
-            }
-        }
-
-        return $value;
+        return app(YouTubeModuleConfig::class);
     }
 }

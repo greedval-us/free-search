@@ -14,8 +14,11 @@ final class TelegramConfig
         $audience = self::arrayAt($analytics, ['audience']);
         $fraud = self::arrayAt($analytics, ['fraud']);
         $scoreProfiles = self::arrayAt($analytics, ['score_profiles']);
+        $search = self::arrayAt($config, ['search']);
+        $parser = self::arrayAt($config, ['parser']);
 
         $riskMedium = max(0, self::intValue($fraud, ['risk_medium_threshold'], 30));
+        $periodMinDays = max(1, self::intValue($analytics, ['period_min_days'], 1));
 
         return new self(
             timezone: trim($timezone) !== '' ? $timezone : 'UTC',
@@ -23,7 +26,9 @@ final class TelegramConfig
             analyticsFetchMaxPages: max(1, self::intValue($fetch, ['max_pages'], 20)),
             analyticsFetchPageLimit: max(1, self::intValue($fetch, ['page_limit'], 100)),
             analyticsGroupByHourThresholdHours: max(1, self::intValue($analytics, ['group_by_hour_threshold_hours'], 36)),
-            analyticsPeriodMaxDays: max(1, self::intValue($analytics, ['period_max_days'], 7)),
+            analyticsPeriodMinDays: $periodMinDays,
+            analyticsPeriodMaxDays: max($periodMinDays, self::intValue($analytics, ['period_max_days'], 7)),
+            analyticsCustomRangeMaxDays: max(1, self::intValue($analytics, ['custom_range_max_days'], 7)),
             analyticsTopPostsLimit: max(1, self::intValue($analytics, ['top_posts_limit'], 5)),
             analyticsTopDistributionLimit: max(1, self::intValue($analytics, ['top_distribution_limit'], 5)),
             analyticsAudienceTopAuthorsShareLimit: max(1, self::intValue($audience, ['top_authors_share_limit'], 5)),
@@ -38,6 +43,11 @@ final class TelegramConfig
             analyticsFraudRiskMediumThreshold: $riskMedium,
             analyticsFraudRiskHighThreshold: max($riskMedium, self::intValue($fraud, ['risk_high_threshold'], 60)),
             analyticsScoreProfiles: self::normalizeScoreProfiles($scoreProfiles),
+            searchMessagesLimitDefault: max(1, self::intValue($search, ['messages_limit_default'], 20)),
+            searchMessagesLimitMax: max(1, self::intValue($search, ['messages_limit_max'], 100)),
+            searchCommentsLimitDefault: max(1, self::intValue($search, ['comments_limit_default'], 20)),
+            searchCommentsLimitMax: max(1, self::intValue($search, ['comments_limit_max'], 50)),
+            parserCustomRangeMaxDays: max(1, self::intValue($parser, ['custom_range_max_days'], 31)),
         );
     }
 
@@ -52,7 +62,9 @@ final class TelegramConfig
         private readonly int $analyticsFetchMaxPages,
         private readonly int $analyticsFetchPageLimit,
         private readonly int $analyticsGroupByHourThresholdHours,
+        private readonly int $analyticsPeriodMinDays,
         private readonly int $analyticsPeriodMaxDays,
+        private readonly int $analyticsCustomRangeMaxDays,
         private readonly int $analyticsTopPostsLimit,
         private readonly int $analyticsTopDistributionLimit,
         private readonly int $analyticsAudienceTopAuthorsShareLimit,
@@ -67,6 +79,11 @@ final class TelegramConfig
         private readonly int $analyticsFraudRiskMediumThreshold,
         private readonly int $analyticsFraudRiskHighThreshold,
         private readonly array $analyticsScoreProfiles,
+        private readonly int $searchMessagesLimitDefault,
+        private readonly int $searchMessagesLimitMax,
+        private readonly int $searchCommentsLimitDefault,
+        private readonly int $searchCommentsLimitMax,
+        private readonly int $parserCustomRangeMaxDays,
     ) {
     }
 
@@ -98,6 +115,16 @@ final class TelegramConfig
     public function analyticsPeriodMaxDays(): int
     {
         return $this->analyticsPeriodMaxDays;
+    }
+
+    public function analyticsPeriodMinDays(): int
+    {
+        return $this->analyticsPeriodMinDays;
+    }
+
+    public function analyticsCustomRangeMaxDays(): int
+    {
+        return $this->analyticsCustomRangeMaxDays;
     }
 
     public function analyticsTopPostsLimit(): int
@@ -177,6 +204,31 @@ final class TelegramConfig
     public function analyticsScoreProfiles(): array
     {
         return $this->analyticsScoreProfiles;
+    }
+
+    public function searchMessagesLimitDefault(): int
+    {
+        return $this->searchMessagesLimitDefault;
+    }
+
+    public function searchMessagesLimitMax(): int
+    {
+        return max($this->searchMessagesLimitDefault, $this->searchMessagesLimitMax);
+    }
+
+    public function searchCommentsLimitDefault(): int
+    {
+        return $this->searchCommentsLimitDefault;
+    }
+
+    public function searchCommentsLimitMax(): int
+    {
+        return max($this->searchCommentsLimitDefault, $this->searchCommentsLimitMax);
+    }
+
+    public function parserCustomRangeMaxDays(): int
+    {
+        return $this->parserCustomRangeMaxDays;
     }
 
     /**

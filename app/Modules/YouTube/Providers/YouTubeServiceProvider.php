@@ -30,7 +30,8 @@ final class YouTubeServiceProvider extends BindingsServiceProvider
 
         $this->app->singleton(
             YouTubeModuleConfig::class,
-            static fn (): YouTubeModuleConfig => YouTubeModuleConfig::fromTimezone(
+            static fn (): YouTubeModuleConfig => YouTubeModuleConfig::fromArray(
+                (array) config('osint.youtube', []),
                 (string) config('app.timezone', 'UTC')
             )
         );

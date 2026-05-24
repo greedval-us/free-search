@@ -3,6 +3,7 @@
 namespace App\Http\Requests\Telegram;
 
 use App\Modules\Telegram\DTO\Request\SearchCommentsQueryDTO;
+use App\Modules\Telegram\Support\TelegramConfig;
 use Illuminate\Foundation\Http\FormRequest;
 
 class SearchCommentsRequest extends FormRequest
@@ -54,11 +55,16 @@ class SearchCommentsRequest extends FormRequest
 
     private function commentsLimitDefault(): int
     {
-        return max(1, (int) config('osint.telegram.search.comments_limit_default', 20));
+        return $this->config()->searchCommentsLimitDefault();
     }
 
     private function commentsLimitMax(): int
     {
-        return max($this->commentsLimitDefault(), (int) config('osint.telegram.search.comments_limit_max', 50));
+        return $this->config()->searchCommentsLimitMax();
+    }
+
+    private function config(): TelegramConfig
+    {
+        return app(TelegramConfig::class);
     }
 }

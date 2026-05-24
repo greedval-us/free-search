@@ -3,6 +3,7 @@
 namespace App\Http\Requests\Telegram;
 
 use App\Modules\Telegram\DTO\Request\SearchMessagesQueryDTO;
+use App\Modules\Telegram\Support\TelegramConfig;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Carbon;
 use Illuminate\Validation\Validator;
@@ -100,11 +101,16 @@ class SearchMessagesRequest extends FormRequest
 
     private function messagesLimitDefault(): int
     {
-        return max(1, (int) config('osint.telegram.search.messages_limit_default', 20));
+        return $this->config()->searchMessagesLimitDefault();
     }
 
     private function messagesLimitMax(): int
     {
-        return max($this->messagesLimitDefault(), (int) config('osint.telegram.search.messages_limit_max', 100));
+        return $this->config()->searchMessagesLimitMax();
+    }
+
+    private function config(): TelegramConfig
+    {
+        return app(TelegramConfig::class);
     }
 }

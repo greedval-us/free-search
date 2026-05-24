@@ -3,6 +3,7 @@
 namespace App\Http\Requests\Telegram;
 
 use App\Modules\Telegram\DTO\Request\TelegramParserStartDTO;
+use App\Modules\Telegram\Support\TelegramConfig;
 use Carbon\Carbon;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Validator;
@@ -53,8 +54,8 @@ class TelegramParserStartRequest extends FormRequest
                 return;
             }
 
-            $from = Carbon::createFromFormat('Y-m-d', $dateFrom, config('app.timezone'))->startOfDay();
-            $to = Carbon::createFromFormat('Y-m-d', $dateTo, config('app.timezone'))->endOfDay();
+            $from = Carbon::createFromFormat('Y-m-d', $dateFrom, $this->config()->timezone())->startOfDay();
+            $to = Carbon::createFromFormat('Y-m-d', $dateTo, $this->config()->timezone())->endOfDay();
 
             if ($to->diffInDays($from) > ($this->customRangeMaxDays() - 1)) {
                 $validator->errors()->add(
@@ -100,7 +101,7 @@ class TelegramParserStartRequest extends FormRequest
             ];
         }
 
-        $timezone = config('app.timezone');
+        $timezone = $this->config()->timezone();
         $period = $this->period();
 
         if ($period === 'custom') {
@@ -145,6 +146,11 @@ class TelegramParserStartRequest extends FormRequest
 
     private function customRangeMaxDays(): int
     {
-        return max(1, (int) config('osint.telegram.parser.custom_range_max_days', 31));
+        return $this->config()->parserCustomRangeMaxDays();
+    }
+
+    private function config(): TelegramConfig
+    {
+        return app(TelegramConfig::class);
     }
 }
