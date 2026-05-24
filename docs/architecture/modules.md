@@ -1,55 +1,101 @@
 # Module Architecture Standard
 
-## Goals
-- Keep domain logic isolated from framework and transport.
-- Make modules easy to test, replace, and evolve independently.
-- Keep config, contracts, and infrastructure explicit.
+Этот документ определяет минимальный архитектурный стандарт для модулей проекта.
 
-## Recommended Structure
-For each module under `app/Modules/<ModuleName>`:
+## Цели
+
+- Упростить поддержку и безопасный рефакторинг.
+- Снизить связность между слоями.
+- Сделать добавление новых модулей предсказуемым для команды.
+
+## Базовая структура модуля
+
+Каждый модуль в `app/Modules/<ModuleName>` должен стремиться к такой структуре:
 
 1. `Application/`
-- Use-cases and orchestration services.
-- Public interfaces for app-layer use.
+- use-cases, orchestration, application services
+- контракты прикладного уровня
 
 2. `Domain/`
-- Pure business rules, entities/value objects, domain services.
-- No Laravel or HTTP dependencies.
+- чистые бизнес-правила
+- value objects / domain services / enums / domain DTO (если уместно)
+- без зависимостей на Laravel facades и HTTP
 
 3. `Infrastructure/`
-- External clients, gateways, parsers, persistence adapters.
-- Implements contracts from `Application`/`Domain`.
+- адаптеры внешних API, парсеры, HTTP-клиенты, storage-specific реализации
+- реализации интерфейсов из `Application/Domain`
 
 4. `DTO/`
-- Request/response data contracts crossing boundaries.
+- явные контракты входных/выходных данных между слоями
 
 5. `Providers/`
-- Module service provider and bindings registration.
+- регистрация bindings и module-level singletons
 
-## Layer Rules
-1. Controllers must be thin: validate input and call application services.
-2. `FormRequest` handles validation/normalization only.
-3. Application services orchestrate; heavy calculations should be delegated to focused collaborators.
-4. Infrastructure must not leak into controllers directly.
-5. Shared helpers go to `app/Support/*` only when truly cross-module.
+## Правила зависимостей
 
-## Dependency Direction
-1. `Http` -> `Application` -> `Domain`
-2. `Infrastructure` depends on contracts, then bound in providers.
-3. `Domain` never depends on Laravel facades.
+Допустимое направление:
+- `Http -> Application -> Domain`
+- `Infrastructure -> (Application|Domain) contracts`
 
-## Configuration Rules
-1. Keep feature config in dedicated section files (for example `config/osint/*.php`).
-2. Map raw config arrays into typed config objects at module boundaries.
-3. Avoid reading `env()` outside config files.
+Недопустимо:
+- `Domain -> Http`
+- `Domain -> Laravel facades`
+- контроллеры, которые напрямую дергают инфраструктурные клиенты
 
-## Testing Baseline
-1. Unit tests for domain services and calculators.
-2. Feature tests for main HTTP flows and auth/security rules.
-3. Contract tests for infrastructure adapters (API clients/parsers).
+## Правила для HTTP-слоя
 
-## Naming
-1. Interfaces end with `Interface`.
-2. Config objects end with `Config`.
-3. Orchestration services use `...Service` or `...ApplicationService`.
+- `FormRequest` делает только валидацию/нормализацию input.
+- `Controller` должен быть тонким: принять request, вызвать application service, вернуть response.
+- Бизнес-условия и вычисления не должны жить в controller/request.
 
+## Конфигурация
+
+- `env()` используется только в `config/*.php`.
+- Для сложных секций конфигурации используйте typed config objects.
+- Нормализация массивов config выполняется фабриками/normalizers, а не в каждом потребителе.
+
+Рекомендованный паттерн:
+- `SomeConfigFactory` собирает `SomeConfig` (value object).
+- Потребители зависят от `SomeConfig`, а не от raw `config()` массивов.
+
+## Принципы рефакторинга больших классов
+
+Если класс растет и смешивает несколько обязанностей:
+
+1. Выделить метрики/калькуляции в отдельный helper/service.
+2. Выделить парсинг/маппинг в отдельный parser/mapper.
+3. Оставить в исходном классе orchestration.
+4. Добавить или обновить тесты до/после изменения.
+
+## Naming conventions
+
+- Интерфейсы: `*Interface`
+- Value/config object: `*Config`
+- Фабрика/нормализатор: `*Factory` / `*Normalizer`
+- Application orchestration: `*ApplicationService` или `*Service`
+- Infrastructure adapters: `*Provider`, `*Client`, `*Gateway`, `*Parser`
+
+## Definition of Done для нового модуля
+
+1. Есть контракт прикладного сервиса.
+2. HTTP-слой тонкий, бизнес-логика вынесена.
+3. Инфраструктурные зависимости спрятаны за интерфейсами.
+4. Конфиг подключен через `config/*` и typed config object.
+5. Есть минимум:
+- unit-тесты на ключевые вычисления
+- feature-тест на основной пользовательский сценарий
+
+## Anti-patterns (избегать)
+
+- God-class, который и загружает данные, и парсит, и считает score, и форматирует output.
+- Скрытая логика в глобальных helper-цепочках без типизации.
+- Дублирование normalization логики в нескольких местах.
+- Валидация в одном месте, а повторная неявная в другом без причины.
+
+## Быстрый чеклист при ревью
+
+1. Класс отвечает за одну роль?
+2. Зависимости направлены “вниз” по слоям?
+3. Есть ли дублирование логики нормализации/парсинга?
+4. Можно ли заменить инфраструктурный адаптер через интерфейс?
+5. Покрыт ли критичный сценарий тестом?
