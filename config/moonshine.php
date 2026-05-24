@@ -105,9 +105,10 @@ return [
     ],
 
     // Localizations
-    'locale' => 'en',
+    'locale' => env('APP_LOCALE', 'en'),
     'locale_key' => ChangeLocale::KEY,
     'locales' => [
-        // en
+        'en' => 'English',
+        'ru' => 'Русский',
     ],
 ];

@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\MoonShine\Support;
 
+use App\Models\FailedJob;
+use App\Models\QueueJob;
 use App\Models\RequestLog;
 use App\Models\User;
 use Carbon\CarbonImmutable;
@@ -69,6 +71,22 @@ final class AdminControlAnalyticsService
             'errors_5xx_24h' => RequestLog::query()
                 ->where('created_at', '>=', $dayAgo)
                 ->whereBetween('status_code', [500, 599])
+                ->count(),
+            'queue_jobs_total' => QueueJob::query()->count(),
+            'queue_jobs_ready' => QueueJob::query()
+                ->where('available_at', '<=', $now->timestamp)
+                ->where(static function ($query): void {
+                    $query->whereNull('reserved_at')
+                        ->orWhere('reserved_at', 0);
+                })
+                ->count(),
+            'queue_jobs_in_progress' => QueueJob::query()
+                ->whereNotNull('reserved_at')
+                ->where('reserved_at', '>', 0)
+                ->count(),
+            'failed_jobs_total' => FailedJob::query()->count(),
+            'failed_jobs_24h' => FailedJob::query()
+                ->where('failed_at', '>=', $dayAgo)
                 ->count(),
             'modules_used_30d' => RequestLog::query()
                 ->where('created_at', '>=', $monthAgo)
