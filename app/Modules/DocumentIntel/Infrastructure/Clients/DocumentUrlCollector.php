@@ -3,10 +3,15 @@
 namespace App\Modules\DocumentIntel\Infrastructure\Clients;
 
 use App\Modules\DocumentIntel\Application\Contracts\DocumentUrlCollectorInterface;
+use App\Modules\DocumentIntel\Application\Support\DocumentIntelConfig;
 use Illuminate\Support\Facades\Http;
 
 final class DocumentUrlCollector implements DocumentUrlCollectorInterface
 {
+    public function __construct(private readonly DocumentIntelConfig $config)
+    {
+    }
+
     /**
      * @return array<int, string>
      */
@@ -127,22 +132,21 @@ final class DocumentUrlCollector implements DocumentUrlCollectorInterface
      */
     private function allowedExtensions(): array
     {
-        return (array) config('osint.document_intel.discovery.extensions', ['pdf', 'docx', 'xlsx', 'pptx']);
+        return $this->config->discoveryExtensions();
     }
 
     private function maxDocuments(): int
     {
-        return (int) config('osint.document_intel.discovery.max_documents', 20);
+        return $this->config->discoveryMaxDocuments();
     }
 
     private function timeoutSeconds(): int
     {
-        return (int) config('osint.document_intel.http.timeout_seconds', 10);
+        return $this->config->httpTimeoutSeconds();
     }
 
     private function userAgent(): string
     {
-        return (string) config('osint.document_intel.http.user_agent', 'FreeSearch-DocumentIntel/1.0');
+        return $this->config->httpUserAgent();
     }
 }
-

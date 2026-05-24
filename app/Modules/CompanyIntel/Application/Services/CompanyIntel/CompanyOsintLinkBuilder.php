@@ -2,8 +2,14 @@
 
 namespace App\Modules\CompanyIntel\Application\Services\CompanyIntel;
 
+use App\Modules\CompanyIntel\Application\Support\CompanyIntelConfig;
+
 final class CompanyOsintLinkBuilder
 {
+    public function __construct(private readonly CompanyIntelConfig $config)
+    {
+    }
+
     /**
      * @return array<int, array{label: string, url: string}>
      */
@@ -49,7 +55,7 @@ final class CompanyOsintLinkBuilder
      */
     private function globalLinkTemplates(): array
     {
-        return (array) config('osint.company_intel.links.global', []);
+        return $this->config->globalLinkTemplates();
     }
 
     /**
@@ -57,6 +63,6 @@ final class CompanyOsintLinkBuilder
      */
     private function domainLinkTemplates(): array
     {
-        return (array) config('osint.company_intel.links.domain', []);
+        return $this->config->domainLinkTemplates();
     }
 }

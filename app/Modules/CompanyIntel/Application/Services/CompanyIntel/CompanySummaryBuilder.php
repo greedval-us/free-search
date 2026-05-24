@@ -2,8 +2,14 @@
 
 namespace App\Modules\CompanyIntel\Application\Services\CompanyIntel;
 
+use App\Modules\CompanyIntel\Application\Support\CompanyIntelConfig;
+
 final class CompanySummaryBuilder
 {
+    public function __construct(private readonly CompanyIntelConfig $config)
+    {
+    }
+
     /**
      * @param array<string, mixed>|null $dns
      * @param array<string, mixed>|null $whois
@@ -174,11 +180,10 @@ final class CompanySummaryBuilder
      */
     private function resolveRiskScore(array $signals): int
     {
-        $weights = (array) config('osint.company_intel.risk.weights', []);
         $score = 0;
 
         foreach (array_values(array_unique($signals)) as $signal) {
-            $weight = (int) ($weights[$signal] ?? 10);
+            $weight = $this->config->riskWeight($signal, 10);
             $score += max(0, $weight);
         }
 
@@ -187,8 +192,8 @@ final class CompanySummaryBuilder
 
     private function resolveRiskLevel(int $riskScore): string
     {
-        $highThreshold = (int) config('osint.company_intel.risk.score_for_high', 60);
-        $mediumThreshold = (int) config('osint.company_intel.risk.score_for_medium', 30);
+        $highThreshold = $this->config->riskScoreForHigh();
+        $mediumThreshold = $this->config->riskScoreForMedium();
 
         return match (true) {
             $riskScore >= $highThreshold => 'high',

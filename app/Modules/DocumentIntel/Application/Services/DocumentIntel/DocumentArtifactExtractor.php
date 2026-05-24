@@ -2,8 +2,14 @@
 
 namespace App\Modules\DocumentIntel\Application\Services\DocumentIntel;
 
+use App\Modules\DocumentIntel\Application\Support\DocumentIntelConfig;
+
 final class DocumentArtifactExtractor
 {
+    public function __construct(private readonly DocumentIntelConfig $config)
+    {
+    }
+
     /**
      * @return array{emails: array<int, string>, usernames: array<int, string>, paths: array<int, string>}
      */
@@ -59,7 +65,7 @@ final class DocumentArtifactExtractor
      */
     private function limitUnique(array $values): array
     {
-        $maxItems = (int) config('osint.document_intel.extraction.max_items_per_type', 15);
+        $maxItems = $this->config->extractionMaxItemsPerType();
 
         return array_slice(array_values(array_unique($values)), 0, max(1, $maxItems));
     }
