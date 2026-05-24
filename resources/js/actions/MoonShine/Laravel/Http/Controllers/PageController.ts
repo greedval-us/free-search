@@ -199,11 +199,6 @@ PageControllerc2660645df8cfaaf90c88f73f7e8ae43.head = (args: { resourceUri: stri
     
     PageControllerc2660645df8cfaaf90c88f73f7e8ae43.form = PageControllerc2660645df8cfaaf90c88f73f7e8ae43Form
 
-/**
-* Multiple routes resolve to \MoonShine\Laravel\Http\Controllers\PageController::PageController, so this export is a
-* dictionary keyed by URI rather than a callable. Call a specific route with `PageController['<uri>'](...)`,
-* or import the route by name from your generated `routes/` directory.
-*/
 const PageController = {
     '/admin/page/{pageUri}': PageController45eb6a090c78a5d26be1c96001452797,
     '/admin/resource/{resourceUri}/{pageUri}/{resourceItem?}': PageControllerc2660645df8cfaaf90c88f73f7e8ae43,
