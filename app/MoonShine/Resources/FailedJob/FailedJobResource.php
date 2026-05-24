@@ -59,6 +59,10 @@ class FailedJobResource extends ModelResource
 
     protected function modifyQueryBuilder(Builder $builder): Builder
     {
-        return $builder->orderByDesc('failed_at');
+        if (!$this->hasQueryParam('sort')) {
+            $builder->orderByDesc('failed_at');
+        }
+
+        return $builder;
     }
 }

@@ -58,6 +58,10 @@ class QueueJobResource extends ModelResource
 
     protected function modifyQueryBuilder(Builder $builder): Builder
     {
-        return $builder->orderByDesc('id');
+        if (!$this->hasQueryParam('sort')) {
+            $builder->orderByDesc('id');
+        }
+
+        return $builder;
     }
 }

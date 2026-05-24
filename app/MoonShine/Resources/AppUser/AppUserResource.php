@@ -87,9 +87,13 @@ class AppUserResource extends ModelResource
 
     protected function modifyQueryBuilder(Builder $builder): Builder
     {
-        return $builder
-            ->withCount('requestLogs')
-            ->orderByDesc('created_at');
+        $builder->withCount('requestLogs');
+
+        if (!$this->hasQueryParam('sort')) {
+            $builder->orderByDesc('created_at');
+        }
+
+        return $builder;
     }
 
     protected function beforeUpdating(DataWrapperContract $item): DataWrapperContract

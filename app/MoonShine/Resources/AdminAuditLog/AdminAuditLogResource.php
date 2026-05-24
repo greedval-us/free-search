@@ -49,6 +49,10 @@ class AdminAuditLogResource extends ReadOnlyModelResource
 
     protected function modifyQueryBuilder(Builder $builder): Builder
     {
-        return $builder->orderByDesc('created_at');
+        if (!$this->hasQueryParam('sort')) {
+            $builder->orderByDesc('created_at');
+        }
+
+        return $builder;
     }
 }
