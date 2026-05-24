@@ -12,6 +12,7 @@ final class NewsMediaIntelConfig
         return new self(
             maxMentions: max(1, self::intValue($config, ['service', 'max_mentions'], 120)),
             perProviderLimit: max(1, self::intValue($config, ['fetcher', 'per_provider_limit'], 40)),
+            providerOrder: self::resolveProviderOrder($config),
             rssTimeoutSeconds: max(1, self::intValue($config, ['rss', 'timeout_seconds'], 15)),
             rssAcceptHeader: self::stringValue(
                 $config,
@@ -42,6 +43,8 @@ final class NewsMediaIntelConfig
     public function __construct(
         private readonly int $maxMentions,
         private readonly int $perProviderLimit,
+        /** @var array<int, string> */
+        private readonly array $providerOrder,
         private readonly int $rssTimeoutSeconds,
         private readonly string $rssAcceptHeader,
         private readonly string $bingRssUrlTemplate,
@@ -65,6 +68,14 @@ final class NewsMediaIntelConfig
     public function perProviderLimit(): int
     {
         return $this->perProviderLimit;
+    }
+
+    /**
+     * @return array<int, string>
+     */
+    public function providerOrder(): array
+    {
+        return $this->providerOrder;
     }
 
     public function rssTimeoutSeconds(): int
@@ -166,5 +177,49 @@ final class NewsMediaIntelConfig
         }
 
         return $cursor;
+    }
+
+    /**
+     * @param array<string, mixed> $config
+     * @return array<int, string>
+     */
+    private static function resolveProviderOrder(array $config): array
+    {
+        $default = self::allowedProviderKeys();
+        $raw = self::valueByPath($config, ['fetcher', 'provider_order']);
+        if (!is_array($raw)) {
+            return $default;
+        }
+
+        $allowed = array_fill_keys(self::allowedProviderKeys(), true);
+        $items = [];
+        foreach ($raw as $item) {
+            if (!is_string($item)) {
+                continue;
+            }
+
+            $key = strtolower(trim($item));
+            if ($key === '') {
+                continue;
+            }
+
+            if (!array_key_exists($key, $allowed)) {
+                continue;
+            }
+
+            $items[] = $key;
+        }
+
+        $items = array_values(array_unique($items));
+
+        return $items !== [] ? $items : $default;
+    }
+
+    /**
+     * @return array<int, string>
+     */
+    private static function allowedProviderKeys(): array
+    {
+        return ['newsapi', 'googlenews', 'bing'];
     }
 }

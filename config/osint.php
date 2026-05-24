@@ -208,6 +208,10 @@ return [
         ],
         'fetcher' => [
             'per_provider_limit' => (int) env('OSINT_NEWS_MEDIA_FETCHER_PER_PROVIDER_LIMIT', 40),
+            'provider_order' => array_values(array_filter(array_map(
+                static fn (string $value): string => trim($value),
+                explode(',', (string) env('OSINT_NEWS_MEDIA_FETCHER_PROVIDER_ORDER', 'newsapi,googlenews,bing'))
+            ))),
         ],
         'rss' => [
             'timeout_seconds' => (int) env('OSINT_NEWS_MEDIA_RSS_TIMEOUT', 15),

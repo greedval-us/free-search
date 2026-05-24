@@ -18,11 +18,25 @@ final class CompositeNewsFeedFetcher implements NewsFeedFetcherInterface
     public function fetchAll(string $query): array
     {
         $perProviderLimit = $this->config->perProviderLimit();
-
-        return [
-            ...array_slice($this->newsApiProvider->fetch($query), 0, $perProviderLimit),
-            ...array_slice($this->googleNewsRssProvider->fetch($query), 0, $perProviderLimit),
-            ...array_slice($this->bingNewsRssProvider->fetch($query), 0, $perProviderLimit),
+        $providers = [
+            'newsapi' => fn (): array => $this->newsApiProvider->fetch($query),
+            'googlenews' => fn (): array => $this->googleNewsRssProvider->fetch($query),
+            'bing' => fn (): array => $this->bingNewsRssProvider->fetch($query),
         ];
+        $result = [];
+
+        foreach ($this->config->providerOrder() as $providerKey) {
+            $loader = $providers[$providerKey] ?? null;
+            if (!is_callable($loader)) {
+                continue;
+            }
+
+            $result = [
+                ...$result,
+                ...array_slice($loader(), 0, $perProviderLimit),
+            ];
+        }
+
+        return $result;
     }
 }
