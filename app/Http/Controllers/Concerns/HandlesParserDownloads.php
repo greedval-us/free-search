@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\Concerns;
 
 use App\Support\Reports\Contracts\ReportFilenamePolicyInterface;
+use App\Support\Reports\ReportFilenamePolicy;
+use App\Support\Reports\ReportsConfig;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
 trait HandlesParserDownloads
@@ -29,10 +31,23 @@ trait HandlesParserDownloads
         string $target,
         string $extension
     ): string {
-        return app(ReportFilenamePolicyInterface::class)->buildWithExtension(
+        return $this->parserFilenamePolicy()->buildWithExtension(
             prefix: $prefix,
             target: $target,
             extension: $extension,
+        );
+    }
+
+    private function parserFilenamePolicy(): ReportFilenamePolicyInterface
+    {
+        return new ReportFilenamePolicy($this->parserReportsConfig());
+    }
+
+    private function parserReportsConfig(): ReportsConfig
+    {
+        return ReportsConfig::fromArray(
+            (array) config('osint.reports', []),
+            (string) config('app.timezone', 'UTC')
         );
     }
 }

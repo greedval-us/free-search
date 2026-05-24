@@ -3,9 +3,11 @@
 namespace App\Http\Controllers\Concerns;
 
 use App\Support\Reports\Contracts\ReportFilenamePolicyInterface;
+use App\Support\Reports\ReportFilenamePolicy;
 use App\Support\Reports\ReportsConfig;
 use Carbon\Carbon;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\App;
 use Illuminate\View\View;
 
 trait HandlesHtmlReports
@@ -19,8 +21,8 @@ trait HandlesHtmlReports
     {
         return array_merge([
             'report' => $report,
-            'locale' => app()->getLocale(),
-            'generatedAt' => Carbon::now($this->reportsConfig()->timezone())->format($this->reportGeneratedAtFormat()),
+            'locale' => App::currentLocale(),
+            'generatedAt' => Carbon::now($this->htmlReportsConfig()->timezone())->format($this->reportGeneratedAtFormat()),
         ], $extra);
     }
 
@@ -38,7 +40,7 @@ trait HandlesHtmlReports
             return view($view, $viewData);
         }
 
-        $filename = app(ReportFilenamePolicyInterface::class)->build(
+        $filename = $this->htmlReportFilenamePolicy()->build(
             prefix: $filenamePrefix,
             target: $filenameTarget,
         );
@@ -51,16 +53,24 @@ trait HandlesHtmlReports
 
     private function reportGeneratedAtFormat(): string
     {
-        return $this->reportsConfig()->generatedAtFormat();
+        return $this->htmlReportsConfig()->generatedAtFormat();
     }
 
     private function reportContentType(): string
     {
-        return $this->reportsConfig()->downloadContentType();
+        return $this->htmlReportsConfig()->downloadContentType();
     }
 
-    private function reportsConfig(): ReportsConfig
+    private function htmlReportFilenamePolicy(): ReportFilenamePolicyInterface
     {
-        return app(ReportsConfig::class);
+        return new ReportFilenamePolicy($this->htmlReportsConfig());
+    }
+
+    private function htmlReportsConfig(): ReportsConfig
+    {
+        return ReportsConfig::fromArray(
+            (array) config('osint.reports', []),
+            (string) config('app.timezone', 'UTC')
+        );
     }
 }

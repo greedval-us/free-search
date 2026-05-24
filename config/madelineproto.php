@@ -1,7 +1,8 @@
 <?php
 
 return [
-    // Путь к файлу(ам) сессии MadelineProto внутри storage/app/private.
-    // Используется для авторизации Telegram API и повторного использования сессии.
-    'session_path' => 'app/private/session/',
+    'api_id' => env('TELEGRAM_API_ID'),
+    'api_hash' => env('TELEGRAM_API_HASH'),
+    'session_path' => env('MADELINEPROTO_SESSION_PATH', 'app/private/session/'),
+    'log_path' => env('MADELINEPROTO_LOG_PATH', 'logs/madeline.log'),
 ];

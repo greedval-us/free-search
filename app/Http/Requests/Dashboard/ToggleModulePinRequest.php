@@ -30,10 +30,6 @@ class ToggleModulePinRequest extends FormRequest
 
     private function moduleRegistry(): DashboardModuleRegistry
     {
-        /** @var DashboardModuleRegistry $registry */
-        $registry = app(DashboardModuleRegistry::class);
-
-        return $registry;
+        return new DashboardModuleRegistry();
     }
 }
-

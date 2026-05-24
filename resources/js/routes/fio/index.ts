@@ -1,7 +1,7 @@
 import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFormDefinition } from './../../wayfinder'
 /**
 * @see \App\Http\Controllers\Fio\FioLookupController::lookup
- * @see app/Http/Controllers/Fio/FioLookupController.php:18
+ * @see app/Http/Controllers/Fio/FioLookupController.php:21
  * @route '/fio/lookup'
  */
 export const lookup = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -16,7 +16,7 @@ lookup.definition = {
 
 /**
 * @see \App\Http\Controllers\Fio\FioLookupController::lookup
- * @see app/Http/Controllers/Fio/FioLookupController.php:18
+ * @see app/Http/Controllers/Fio/FioLookupController.php:21
  * @route '/fio/lookup'
  */
 lookup.url = (options?: RouteQueryOptions) => {
@@ -25,7 +25,7 @@ lookup.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\Fio\FioLookupController::lookup
- * @see app/Http/Controllers/Fio/FioLookupController.php:18
+ * @see app/Http/Controllers/Fio/FioLookupController.php:21
  * @route '/fio/lookup'
  */
 lookup.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -34,7 +34,7 @@ lookup.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
 })
 /**
 * @see \App\Http\Controllers\Fio\FioLookupController::lookup
- * @see app/Http/Controllers/Fio/FioLookupController.php:18
+ * @see app/Http/Controllers/Fio/FioLookupController.php:21
  * @route '/fio/lookup'
  */
 lookup.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -44,7 +44,7 @@ lookup.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 
     /**
 * @see \App\Http\Controllers\Fio\FioLookupController::lookup
- * @see app/Http/Controllers/Fio/FioLookupController.php:18
+ * @see app/Http/Controllers/Fio/FioLookupController.php:21
  * @route '/fio/lookup'
  */
     const lookupForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -54,7 +54,7 @@ lookup.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 
             /**
 * @see \App\Http\Controllers\Fio\FioLookupController::lookup
- * @see app/Http/Controllers/Fio/FioLookupController.php:18
+ * @see app/Http/Controllers/Fio/FioLookupController.php:21
  * @route '/fio/lookup'
  */
         lookupForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -63,7 +63,7 @@ lookup.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
         })
             /**
 * @see \App\Http\Controllers\Fio\FioLookupController::lookup
- * @see app/Http/Controllers/Fio/FioLookupController.php:18
+ * @see app/Http/Controllers/Fio/FioLookupController.php:21
  * @route '/fio/lookup'
  */
         lookupForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({

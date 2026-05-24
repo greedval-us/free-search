@@ -3,6 +3,7 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Support\Facades\App;
 
 abstract class LocalizedFormRequest extends FormRequest
 {
@@ -23,9 +24,8 @@ abstract class LocalizedFormRequest extends FormRequest
 
     protected function resolveLocale(): string
     {
-        $locale = strtolower(trim((string) ($this->validated('locale') ?? app()->getLocale())));
+        $locale = strtolower(trim((string) ($this->validated('locale') ?? App::currentLocale())));
 
         return in_array($locale, self::SUPPORTED_LOCALES, true) ? $locale : self::DEFAULT_LOCALE;
     }
 }
-

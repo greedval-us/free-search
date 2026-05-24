@@ -8,6 +8,12 @@ trait ResolvesYouTubeModuleConfig
 {
     private function youtubeModuleConfig(): YouTubeModuleConfig
     {
-        return app(YouTubeModuleConfig::class);
+        /** @var YouTubeModuleConfig|null $config */
+        static $config = null;
+
+        return $config ??= YouTubeModuleConfig::fromArray(
+            (array) config('osint.youtube', []),
+            (string) config('app.timezone', 'UTC')
+        );
     }
 }

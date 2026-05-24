@@ -8,6 +8,12 @@ trait ResolvesTelegramConfig
 {
     private function telegramConfig(): TelegramConfig
     {
-        return app(TelegramConfig::class);
+        /** @var TelegramConfig|null $config */
+        static $config = null;
+
+        return $config ??= TelegramConfig::fromArray(
+            (array) config('osint.telegram', []),
+            (string) config('app.timezone', 'UTC')
+        );
     }
 }
