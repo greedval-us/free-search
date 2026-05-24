@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 use App\MoonShine\Layouts\MoonShineLayout;
 use App\Http\Middleware\RestrictMoonShineAccess;
+use App\Http\Middleware\ThrottleMoonShineLoginAttempts;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
 use Illuminate\Cookie\Middleware\EncryptCookies;
 use Illuminate\Foundation\Http\Middleware\ConvertEmptyStringsToNull;
@@ -63,6 +64,7 @@ return [
         VerifyCsrfToken::class,
         SubstituteBindings::class,
         ChangeLocale::class,
+        ThrottleMoonShineLoginAttempts::class,
         RestrictMoonShineAccess::class,
     ],
 
