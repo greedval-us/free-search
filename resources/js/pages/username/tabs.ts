@@ -1,5 +1,5 @@
-import { BarChart3, Search } from 'lucide-vue-next';
 import type { Component } from 'vue';
+import { MODULE_TAB_ICONS } from '@/lib/navigation/tab-icons';
 import UsernameAnalyticsTab from './tabs/UsernameAnalyticsTab.vue';
 import UsernameSearchTab from './tabs/UsernameSearchTab.vue';
 import type { UsernameTabValue } from './types';
@@ -15,13 +15,13 @@ export const USERNAME_TABS: readonly UsernameTabDefinition[] = [
     {
         key: 'search',
         labelKey: 'username.tabs.search',
-        icon: Search,
+        icon: MODULE_TAB_ICONS.search,
         component: UsernameSearchTab,
     },
     {
         key: 'analytics',
         labelKey: 'username.tabs.analytics',
-        icon: BarChart3,
+        icon: MODULE_TAB_ICONS.analytics,
         component: UsernameAnalyticsTab,
     },
 ] as const;

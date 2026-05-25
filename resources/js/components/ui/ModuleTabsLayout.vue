@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { Component } from 'vue';
 import { useI18n } from '@/composables/useI18n';
+import IntelModuleLayout from './IntelModuleLayout.vue';
 
 export type ModuleTabDefinition = {
     key: string;
@@ -22,7 +23,7 @@ const { t } = useI18n();
 </script>
 
 <template>
-    <div class="flex h-full min-h-0 flex-1 flex-col gap-4 overflow-hidden rounded-xl p-4">
+    <IntelModuleLayout>
         <div class="flex flex-wrap items-center justify-center gap-1 rounded-lg border border-border/70 bg-card/70 p-1 shadow-sm backdrop-blur">
             <button
                 v-for="tab in tabs"
@@ -43,5 +44,5 @@ const { t } = useI18n();
         </div>
 
         <slot />
-    </div>
+    </IntelModuleLayout>
 </template>

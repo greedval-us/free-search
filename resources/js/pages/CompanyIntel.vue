@@ -1,8 +1,9 @@
 ﻿<script setup lang="ts">
 import { Head } from '@inertiajs/vue3';
 import { Building2 } from 'lucide-vue-next';
-import { computed, onMounted, reactive, ref } from 'vue';
+import { computed, onMounted, ref } from 'vue';
 import EmptyState from '@/components/ui/EmptyState.vue';
+import IntelModuleLayout from '@/components/ui/IntelModuleLayout.vue';
 import IntelResultPanel from '@/components/ui/IntelResultPanel.vue';
 import IntelSearchForm from '@/components/ui/IntelSearchForm.vue';
 import IntelSearchPanel from '@/components/ui/IntelSearchPanel.vue';
@@ -11,12 +12,12 @@ import PageHeader from '@/components/ui/PageHeader.vue';
 import RiskBadge from '@/components/ui/RiskBadge.vue';
 import SectionCard from '@/components/ui/SectionCard.vue';
 import { useI18n } from '@/composables/useI18n';
+import { useIntelLookup } from '@/composables/useIntelLookup';
 import {
     getRepeatQueryParams,
     isRepeatAutorunEnabled,
     readRepeatQueryParam,
 } from '@/composables/useRepeatQuery';
-import { apiRequest } from '@/lib/api';
 
 defineOptions({
     layout: {
@@ -74,15 +75,16 @@ type CompanyIntelResult = {
 const { t, locale } = useI18n();
 const pageTitle = computed(() => t('companyIntel.headTitle'));
 
-const form = reactive({
-    query: '',
-});
-
-const loading = ref(false);
-const error = ref<string | null>(null);
-const result = ref<CompanyIntelResult | null>(null);
-
-const canLookup = computed(() => form.query.trim().length >= 2);
+const query = ref('');
+const { loading, error, result, canSearch, lookup } =
+    useIntelLookup<CompanyIntelResult>(query, {
+        endpoint: '/company-intel/lookup',
+        minLength: 2,
+        queryKey: 'query',
+        locale,
+        requiredError: t('companyIntel.errors.queryRequired'),
+        fallbackError: t('companyIntel.errors.lookupFailed'),
+    });
 
 const formatDateTime = (value: string | null) => {
     if (!value) {
@@ -136,47 +138,6 @@ const strengthLabel = (value: string) => {
     return translated === key ? value : translated;
 };
 
-const lookup = async () => {
-    if (!canLookup.value) {
-        error.value = t('companyIntel.errors.queryRequired');
-
-        return;
-    }
-
-    loading.value = true;
-    error.value = null;
-    result.value = null;
-
-    try {
-        const apiResult = await apiRequest<CompanyIntelResult>(
-            '/company-intel/lookup',
-            {
-                method: 'GET',
-                query: {
-                    query: form.query.trim(),
-                    locale: locale.value,
-                },
-            }
-        );
-
-        if (!apiResult.ok) {
-            error.value =
-                apiResult.message || t('companyIntel.errors.lookupFailed');
-
-            return;
-        }
-
-        result.value = apiResult.data;
-    } catch (exception) {
-        error.value =
-            exception instanceof Error
-                ? exception.message
-                : t('companyIntel.errors.lookupFailed');
-    } finally {
-        loading.value = false;
-    }
-};
-
 onMounted(() => {
     const params = getRepeatQueryParams();
 
@@ -187,10 +148,10 @@ onMounted(() => {
     const value = readRepeatQueryParam(params, ['query']);
 
     if (value !== '') {
-        form.query = value;
+        query.value = value;
     }
 
-    if (isRepeatAutorunEnabled(params) && canLookup.value) {
+    if (isRepeatAutorunEnabled(params) && canSearch.value) {
         void lookup();
     }
 });
@@ -199,9 +160,7 @@ onMounted(() => {
 <template>
     <Head :title="pageTitle" />
 
-    <div
-        class="flex h-full min-h-0 flex-1 flex-col gap-4 overflow-hidden rounded-xl p-4"
-    >
+    <IntelModuleLayout>
         <IntelSearchPanel>
             <div class="flex items-center justify-between gap-3">
                 <PageHeader
@@ -214,13 +173,13 @@ onMounted(() => {
             </div>
 
             <IntelSearchForm
-                v-model="form.query"
+                v-model="query"
                 :label="t('companyIntel.query')"
                 :placeholder="t('companyIntel.placeholder')"
                 :button-text="t('companyIntel.search')"
                 :loading-text="t('companyIntel.searching')"
                 :loading="loading"
-                :disabled="!canLookup"
+                :disabled="!canSearch"
                 :error="error"
                 @submit="lookup"
             />
@@ -420,5 +379,5 @@ onMounted(() => {
                 </SectionCard>
             </div>
         </IntelResultPanel>
-    </div>
+    </IntelModuleLayout>
 </template>

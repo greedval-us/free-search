@@ -3,6 +3,7 @@ import { Head } from '@inertiajs/vue3';
 import { Newspaper } from 'lucide-vue-next';
 import { computed, onMounted, ref } from 'vue';
 import EmptyState from '@/components/ui/EmptyState.vue';
+import IntelModuleLayout from '@/components/ui/IntelModuleLayout.vue';
 import IntelResultPanel from '@/components/ui/IntelResultPanel.vue';
 import IntelSearchForm from '@/components/ui/IntelSearchForm.vue';
 import IntelSearchPanel from '@/components/ui/IntelSearchPanel.vue';
@@ -141,9 +142,7 @@ onMounted(() => {
 <template>
     <Head :title="pageTitle" />
 
-    <div
-        class="flex h-full min-h-0 flex-1 flex-col gap-4 overflow-hidden rounded-xl p-4"
-    >
+    <IntelModuleLayout>
         <IntelSearchPanel>
             <PageHeader
                 :icon="Newspaper"
@@ -302,5 +301,5 @@ onMounted(() => {
                 </SectionCard>
             </div>
         </IntelResultPanel>
-    </div>
+    </IntelModuleLayout>
 </template>

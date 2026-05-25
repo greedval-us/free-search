@@ -3,6 +3,7 @@ import { Head } from '@inertiajs/vue3';
 import { LoaderCircle, Search } from 'lucide-vue-next';
 import { computed, onMounted } from 'vue';
 import EmptyState from '@/components/ui/EmptyState.vue';
+import IntelModuleLayout from '@/components/ui/IntelModuleLayout.vue';
 import IntelResultPanel from '@/components/ui/IntelResultPanel.vue';
 import IntelSearchPanel from '@/components/ui/IntelSearchPanel.vue';
 import PageHeader from '@/components/ui/PageHeader.vue';
@@ -61,9 +62,7 @@ onMounted(() => {
 <template>
     <Head :title="pageTitle" />
 
-    <div
-        class="flex h-full min-h-0 flex-1 flex-col gap-4 overflow-hidden rounded-xl p-4"
-    >
+    <IntelModuleLayout>
         <IntelSearchPanel>
             <div class="flex items-center justify-between gap-3">
                 <PageHeader
@@ -128,5 +127,5 @@ onMounted(() => {
             <EmptyState v-if="!result" :text="t('fio.lookup.empty')" />
             <FioResultView v-else :result="result" />
         </IntelResultPanel>
-    </div>
+    </IntelModuleLayout>
 </template>
