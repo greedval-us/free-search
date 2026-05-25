@@ -1,13 +1,4 @@
 ﻿<script setup lang="ts">
-import {
-    BarChart3,
-    ChevronDown,
-    ChevronUp,
-    Download,
-    FileText,
-    RefreshCw,
-    Settings,
-} from 'lucide-vue-next';
 import { onMounted } from 'vue';
 import HelpTooltip from '@/components/ui/HelpTooltip.vue';
 import {
@@ -17,7 +8,10 @@ import {
     readRepeatQueryParam,
 } from '@/composables/useRepeatQuery';
 import { useTelegramAnalyticsTab } from '../composables/useTelegramAnalyticsTab';
+import TelegramAnalyticsControlPanel from './analytics/components/TelegramAnalyticsControlPanel.vue';
 import TelegramAnalyticsEmptyState from './analytics/components/TelegramAnalyticsEmptyState.vue';
+import TelegramAnalyticsFraudSignals from './analytics/components/TelegramAnalyticsFraudSignals.vue';
+import TelegramAnalyticsGroupProfile from './analytics/components/TelegramAnalyticsGroupProfile.vue';
 import TelegramAnalyticsStatCards from './analytics/components/TelegramAnalyticsStatCards.vue';
 import TelegramAnalyticsTopPosts from './analytics/components/TelegramAnalyticsTopPosts.vue';
 
@@ -43,10 +37,8 @@ const {
     canLoadAnalytics,
     canUseReportActions,
     groupInfo,
-    groupTypeLabel,
     mediaLabel,
     formatNumber,
-    formatDate,
     timeline,
     chartWidth,
     chartHeight,
@@ -67,10 +59,6 @@ const {
     audience,
     audienceCards,
     fraudSignals,
-    fraudRiskLevelLabel,
-    fraudRiskBadgeClass,
-    fraudTriggerLabel,
-    fraudReasonLabel,
     opinionLeaders,
     hasOpinionLeaders,
     leaderScoreWidth,
@@ -160,199 +148,26 @@ onMounted(() => {
 
 <template>
     <section class="intel-panel-strong sticky top-0 z-10 shrink-0">
-        <div class="flex items-center justify-between gap-3">
-            <div class="space-y-1">
-                <div class="flex items-center gap-2 text-sm font-semibold">
-                    <BarChart3 class="h-4 w-4 text-cyan-400" />
-                    <span>{{ t('telegram.analytics.title') }}</span>
-                    <HelpTooltip
-                        :label="t('telegram.help.label')"
-                        :text="t('telegram.analytics.help.overview')"
-                    />
-                </div>
-                <p class="text-xs text-muted-foreground">
-                    {{
-                        analyticsPanelCollapsed
-                            ? t('telegram.analytics.collapsed')
-                            : t('telegram.analytics.subtitle')
-                    }}
-                </p>
-            </div>
-
-            <button
-                type="button"
-                class="inline-flex h-9 w-9 cursor-pointer items-center justify-center rounded-full border border-input text-sm text-foreground transition hover:bg-accent"
-                @click="analyticsPanelCollapsed = !analyticsPanelCollapsed"
-            >
-                <ChevronDown v-if="analyticsPanelCollapsed" class="h-4 w-4" />
-                <ChevronUp v-else class="h-4 w-4" />
-            </button>
-        </div>
-
-        <div v-if="!analyticsPanelCollapsed" class="mt-3 space-y-3">
-            <div class="grid gap-3 md:grid-cols-2 xl:grid-cols-12">
-                <label class="block min-w-0 xl:col-span-3">
-                    <span
-                        class="mb-1 block truncate text-xs font-medium text-muted-foreground"
-                        >{{ t('telegram.analytics.filters.channel') }}</span
-                    >
-                    <input
-                        v-model="form.chatUsername"
-                        type="text"
-                        class="h-10 w-full rounded-md border border-input bg-background px-3 text-sm"
-                        placeholder="durov"
-                    />
-                </label>
-
-                <label class="block min-w-0 xl:col-span-3">
-                    <span
-                        class="mb-1 block truncate text-xs font-medium text-muted-foreground"
-                        >{{ t('telegram.search.keyword') }}</span
-                    >
-                    <input
-                        v-model="form.keyword"
-                        type="text"
-                        class="h-10 w-full rounded-md border border-input bg-background px-3 text-sm"
-                        :placeholder="t('telegram.search.placeholderKeyword')"
-                    />
-                </label>
-
-                <div class="min-w-0 xl:col-span-2">
-                    <span
-                        class="mb-1 block truncate text-xs font-medium text-muted-foreground"
-                        >{{ t('telegram.analytics.filters.period') }}</span
-                    >
-                    <div
-                        class="grid h-10 grid-cols-3 gap-1 rounded-md border border-input bg-background p-1"
-                    >
-                        <button
-                            v-for="period in PERIODS"
-                            :key="period"
-                            type="button"
-                            class="cursor-pointer rounded-md px-2 text-xs transition"
-                            :class="
-                                form.periodDays === period &&
-                                !form.dateFrom &&
-                                !form.dateTo
-                                    ? 'bg-cyan-400/15 text-cyan-200'
-                                    : 'text-foreground hover:bg-accent'
-                            "
-                            @click="applyPreset(period)"
-                        >
-                            {{ period }}
-                        </button>
-                    </div>
-                </div>
-
-                <label class="block min-w-0 xl:col-span-2">
-                    <span
-                        class="mb-1 block truncate text-xs font-medium text-muted-foreground"
-                        >{{ t('telegram.analytics.filters.from') }}</span
-                    >
-                    <input
-                        v-model="form.dateFrom"
-                        type="date"
-                        :min="dateLimits.fromMin ?? undefined"
-                        :max="dateLimits.fromMax ?? undefined"
-                        class="h-10 w-full rounded-md border border-input bg-background px-3 text-sm"
-                    />
-                </label>
-
-                <label class="block min-w-0 xl:col-span-2">
-                    <span
-                        class="mb-1 block truncate text-xs font-medium text-muted-foreground"
-                        >{{ t('telegram.analytics.filters.to') }}</span
-                    >
-                    <input
-                        v-model="form.dateTo"
-                        type="date"
-                        :min="dateLimits.toMin ?? undefined"
-                        :max="dateLimits.toMax ?? undefined"
-                        class="h-10 w-full rounded-md border border-input bg-background px-3 text-sm"
-                    />
-                </label>
-            </div>
-
-            <div
-                class="flex flex-wrap items-end justify-between gap-3 rounded-md border border-border/70 bg-background/60 p-2.5"
-            >
-                <div class="min-w-0 flex-1">
-                    <p
-                        class="text-[11px] font-semibold tracking-wide text-muted-foreground uppercase"
-                    >
-                        {{ t('telegram.analytics.priority.title') }}
-                    </p>
-                    <div class="mt-1 flex flex-wrap gap-1">
-                        <button
-                            v-for="priority in PRIORITIES"
-                            :key="priority"
-                            type="button"
-                            class="h-8 cursor-pointer rounded-md border px-2.5 text-xs font-medium transition"
-                            :class="
-                                form.scorePriority === priority
-                                    ? 'border-cyan-400/50 bg-cyan-400/15 text-cyan-200'
-                                    : 'border-input bg-background text-foreground hover:bg-accent'
-                            "
-                            @click="setPriority(priority)"
-                        >
-                            {{ priorityLabel(priority) }}
-                        </button>
-                    </div>
-                </div>
-
-                <div class="flex w-full flex-wrap justify-end gap-2 md:w-auto">
-                    <button
-                        type="button"
-                        class="inline-flex h-10 cursor-pointer items-center gap-2 rounded-md border border-slate-700 bg-slate-900/80 px-3 text-sm text-slate-200 transition hover:border-cyan-300/40 hover:text-cyan-100"
-                        :class="{
-                            'border-cyan-400/50 bg-cyan-400/20 text-cyan-300':
-                                !analyticsPanelCollapsed,
-                        }"
-                        @click="analyticsPanelCollapsed = true"
-                    >
-                        <Settings class="h-4 w-4" />
-                        {{ t('telegram.analytics.hideSettings') }}
-                    </button>
-
-                    <button
-                        type="button"
-                        :disabled="loading || !canLoadAnalytics"
-                        class="inline-flex h-10 cursor-pointer items-center gap-2 rounded-md border border-input bg-background px-4 text-sm font-medium hover:bg-accent disabled:cursor-not-allowed disabled:opacity-60"
-                        @click="loadAnalytics"
-                    >
-                        <RefreshCw
-                            class="h-4 w-4"
-                            :class="{ 'animate-spin': loading }"
-                        />
-                        {{
-                            loading
-                                ? t('telegram.analytics.loading')
-                                : t('telegram.analytics.refresh')
-                        }}
-                    </button>
-
-                    <button
-                        type="button"
-                        :disabled="!canUseReportActions"
-                        class="inline-flex h-10 cursor-pointer items-center gap-2 rounded-md bg-primary px-4 text-sm font-semibold text-primary-foreground hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-60"
-                        @click="openReport"
-                    >
-                        <FileText class="h-4 w-4" />
-                        {{ t('telegram.analytics.report') }}
-                    </button>
-
-                    <button
-                        type="button"
-                        :disabled="!canUseReportActions"
-                        class="inline-flex h-10 cursor-pointer items-center gap-2 rounded-md border border-input bg-background px-4 text-sm font-medium hover:bg-accent disabled:cursor-not-allowed disabled:opacity-60"
-                        @click="downloadReport"
-                    >
-                        <Download class="h-4 w-4" />
-                        {{ t('telegram.analytics.downloadReport') }}
-                    </button>
-                </div>
-            </div>
-        </div>
+        <TelegramAnalyticsControlPanel
+            v-model:collapsed="analyticsPanelCollapsed"
+            v-model:chat-username="form.chatUsername"
+            v-model:keyword="form.keyword"
+            v-model:date-from="form.dateFrom"
+            v-model:date-to="form.dateTo"
+            :periods="PERIODS"
+            :priorities="PRIORITIES"
+            :period-days="form.periodDays"
+            :score-priority="form.scorePriority"
+            :date-limits="dateLimits"
+            :loading="loading"
+            :can-load-analytics="canLoadAnalytics"
+            :can-use-report-actions="canUseReportActions"
+            @apply-preset="applyPreset"
+            @set-priority="setPriority"
+            @load="loadAnalytics"
+            @open-report="openReport"
+            @download-report="downloadReport"
+        />
 
         <div
             class="mt-3 flex flex-wrap items-center gap-2 text-xs text-muted-foreground"
@@ -416,214 +231,18 @@ onMounted(() => {
         </div>
 
         <template v-else-if="payload">
-            <article v-if="groupInfo" class="intel-panel-strong">
-                <div class="flex flex-wrap items-start justify-between gap-3">
-                    <div class="min-w-0">
-                        <h3 class="truncate text-sm font-semibold">
-                            {{ groupInfo.title || payload.range.chatUsername }}
-                        </h3>
-                        <p class="mt-1 text-xs text-muted-foreground">
-                            {{ t('telegram.analytics.group.type') }}:
-                            {{ groupTypeLabel(groupInfo.type) }}
-                        </p>
-                    </div>
-                    <div class="flex flex-wrap gap-2 text-xs">
-                        <span
-                            v-if="groupInfo.username"
-                            class="rounded-full border border-border px-2 py-1"
-                        >
-                            @{{ groupInfo.username }}
-                        </span>
-                        <span
-                            class="rounded-full border border-border px-2 py-1"
-                        >
-                            {{ t('telegram.analytics.group.participants') }}:
-                            {{
-                                groupInfo.participantsCount === null
-                                    ? '-'
-                                    : formatNumber(groupInfo.participantsCount)
-                            }}
-                        </span>
-                        <span
-                            v-if="groupInfo.onlineCount !== null"
-                            class="rounded-full border border-border px-2 py-1"
-                        >
-                            {{ t('telegram.analytics.group.online') }}:
-                            {{ formatNumber(groupInfo.onlineCount) }}
-                        </span>
-                        <span
-                            v-if="groupInfo.verified"
-                            class="rounded-full border border-emerald-500/40 bg-emerald-500/10 px-2 py-1 text-emerald-300"
-                        >
-                            {{ t('telegram.analytics.group.verified') }}
-                        </span>
-                    </div>
-                </div>
-
-                <p
-                    v-if="groupInfo.description"
-                    class="mt-3 line-clamp-3 text-sm text-muted-foreground"
-                >
-                    {{ groupInfo.description }}
-                </p>
-
-                <div
-                    class="mt-3 flex flex-wrap gap-2 text-xs text-muted-foreground"
-                >
-                    <span
-                        v-if="groupInfo.createdAt"
-                        class="rounded-full border border-border px-2 py-1"
-                    >
-                        {{ t('telegram.analytics.group.createdAt') }}:
-                        {{ formatDate(groupInfo.createdAt) }}
-                    </span>
-                    <span
-                        v-if="groupInfo.canViewStats"
-                        class="rounded-full border border-border px-2 py-1"
-                    >
-                        {{ t('telegram.analytics.group.statsAvailable') }}
-                    </span>
-                    <span
-                        v-if="groupInfo.linkedChatId"
-                        class="rounded-full border border-border px-2 py-1"
-                    >
-                        {{ t('telegram.analytics.group.linkedChatId') }}:
-                        {{ formatNumber(groupInfo.linkedChatId) }}
-                    </span>
-                    <span
-                        v-if="groupInfo.restricted"
-                        class="rounded-full border border-amber-500/40 bg-amber-500/10 px-2 py-1 text-amber-300"
-                    >
-                        {{ t('telegram.analytics.group.restricted') }}
-                    </span>
-                    <span
-                        v-if="groupInfo.scam"
-                        class="rounded-full border border-red-500/40 bg-red-500/10 px-2 py-1 text-red-300"
-                    >
-                        {{ t('telegram.analytics.group.scam') }}
-                    </span>
-                </div>
-            </article>
+            <TelegramAnalyticsGroupProfile
+                v-if="groupInfo"
+                :group="groupInfo"
+                :chat-username="payload.range.chatUsername"
+            />
 
             <TelegramAnalyticsStatCards :cards="statCards" />
 
-            <article v-if="fraudSignals" class="intel-panel-strong">
-                <div class="flex flex-wrap items-start justify-between gap-3">
-                    <div>
-                        <div class="flex items-center gap-2">
-                            <h3 class="text-sm font-semibold">
-                                {{ t('telegram.analytics.fraud.title') }}
-                            </h3>
-                            <HelpTooltip
-                                :label="t('telegram.analytics.help.label')"
-                                :text="t('telegram.analytics.help.antiFraud')"
-                                width-class="w-64"
-                                align="right"
-                            />
-                        </div>
-                        <p class="text-xs text-muted-foreground">
-                            {{ t('telegram.analytics.fraud.hint') }}
-                        </p>
-                    </div>
-                    <div class="flex items-center gap-2 text-xs">
-                        <span
-                            class="rounded-full border border-border px-2 py-1"
-                        >
-                            {{ t('telegram.analytics.fraud.riskScore') }}:
-                            {{ formatNumber(fraudSignals.riskScore) }}
-                        </span>
-                        <span
-                            class="rounded-full border px-2 py-1"
-                            :class="fraudRiskBadgeClass"
-                        >
-                            {{ t('telegram.analytics.fraud.riskLevel') }}:
-                            {{ fraudRiskLevelLabel }}
-                        </span>
-                    </div>
-                </div>
-
-                <div
-                    class="mt-4 grid gap-4 xl:grid-cols-[minmax(0,1fr)_minmax(0,1fr)]"
-                >
-                    <div
-                        class="rounded-lg border border-border/70 bg-background/70 p-3"
-                    >
-                        <p
-                            class="text-xs font-semibold tracking-wide text-muted-foreground uppercase"
-                        >
-                            {{ t('telegram.analytics.fraud.triggers') }}
-                        </p>
-                        <div class="mt-2 space-y-2">
-                            <article
-                                v-for="trigger in fraudSignals.triggers"
-                                :key="`fraud-trigger-${trigger.key}`"
-                                class="rounded-md border border-border/70 bg-background/80 p-2 text-xs"
-                            >
-                                <p class="font-semibold">
-                                    {{ fraudTriggerLabel(trigger.key) }}
-                                </p>
-                                <p class="mt-1 text-muted-foreground">
-                                    +{{ trigger.score }} ·
-                                    {{ formatNumber(trigger.value) }} /
-                                    {{ formatNumber(trigger.threshold) }}
-                                </p>
-                            </article>
-                            <p
-                                v-if="fraudSignals.triggers.length === 0"
-                                class="text-xs text-muted-foreground"
-                            >
-                                {{ t('telegram.analytics.fraud.noTriggers') }}
-                            </p>
-                        </div>
-                    </div>
-
-                    <div
-                        class="rounded-lg border border-border/70 bg-background/70 p-3"
-                    >
-                        <p
-                            class="text-xs font-semibold tracking-wide text-muted-foreground uppercase"
-                        >
-                            {{ t('telegram.analytics.fraud.suspiciousPosts') }}:
-                            {{
-                                formatNumber(fraudSignals.suspiciousPostsCount)
-                            }}
-                        </p>
-                        <div class="mt-2 space-y-2">
-                            <article
-                                v-for="post in fraudSignals.suspiciousPosts"
-                                :key="`fraud-post-${post.id}`"
-                                class="rounded-md border border-border/70 bg-background/80 p-2 text-xs"
-                            >
-                                <p class="font-semibold">
-                                    #{{ post.id }} · {{ formatDate(post.date) }}
-                                </p>
-                                <p
-                                    class="mt-1 line-clamp-2 text-muted-foreground"
-                                >
-                                    {{
-                                        post.message ||
-                                        t('telegram.analytics.emptyPost')
-                                    }}
-                                </p>
-                                <p class="mt-1 text-muted-foreground">
-                                    {{
-                                        t('telegram.analytics.fraud.riskScore')
-                                    }}: {{ formatNumber(post.riskScore) }}
-                                </p>
-                                <p class="mt-1 text-muted-foreground">
-                                    {{
-                                        post.reasons
-                                            .map((reason) =>
-                                                fraudReasonLabel(reason)
-                                            )
-                                            .join(' · ')
-                                    }}
-                                </p>
-                            </article>
-                        </div>
-                    </div>
-                </div>
-            </article>
+            <TelegramAnalyticsFraudSignals
+                v-if="fraudSignals"
+                :signals="fraudSignals"
+            />
 
             <div class="grid gap-4 xl:grid-cols-2">
                 <article class="intel-panel-strong">

@@ -3,8 +3,17 @@ import { apiRequest } from '@/lib/api';
 import type { TelegramAnalyticsSummary } from '../types';
 
 type TranslateFn = (key: string) => string;
-type AnalyticsPeriod = 1 | 3 | 7;
-type ScorePriority = 'balanced' | 'reach' | 'discussion' | 'virality';
+export type AnalyticsPeriod = 1 | 3 | 7;
+export type ScorePriority = 'balanced' | 'reach' | 'discussion' | 'virality';
+
+export type TelegramAnalyticsForm = {
+    chatUsername: string;
+    keyword: string;
+    periodDays: AnalyticsPeriod;
+    dateFrom: string;
+    dateTo: string;
+    scorePriority: ScorePriority;
+};
 
 const PERIODS: readonly AnalyticsPeriod[] = [1, 3, 7];
 const PRIORITIES: readonly ScorePriority[] = [
@@ -69,7 +78,7 @@ const diffDays = (from: string, to: string): number | null => {
 };
 
 export const useTelegramAnalytics = (t: TranslateFn) => {
-    const form = reactive({
+    const form = reactive<TelegramAnalyticsForm>({
         chatUsername: 'durov',
         keyword: '',
         periodDays: 7 as AnalyticsPeriod,

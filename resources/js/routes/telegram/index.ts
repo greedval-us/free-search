@@ -1,107 +1,150 @@
-import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFormDefinition, applyUrlDefaults } from './../../wayfinder'
-import search from './search'
-import analytics from './analytics'
-import parser from './parser'
+import {
+    queryParams,
+    type RouteQueryOptions,
+    type RouteDefinition,
+    type RouteFormDefinition,
+    applyUrlDefaults,
+} from './../../wayfinder';
+import search from './search';
+import analytics from './analytics';
+import parser from './parser';
 /**
-* @see \App\Http\Controllers\Telegram\TelegramSearchController::media
+ * @see \App\Http\Controllers\Telegram\TelegramSearchController::media
  * @see app/Http/Controllers/Telegram/TelegramSearchController.php:31
  * @route '/telegram/media/{chatUsername}/{messageId}'
  */
-export const media = (args: { chatUsername: string | number, messageId: string | number } | [chatUsername: string | number, messageId: string | number ], options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+export const media = (
+    args:
+        | { chatUsername: string | number; messageId: string | number }
+        | [chatUsername: string | number, messageId: string | number],
+    options?: RouteQueryOptions
+): RouteDefinition<'get'> => ({
     url: media.url(args, options),
     method: 'get',
-})
+});
 
 media.definition = {
-    methods: ["get","head"],
+    methods: ['get', 'head'],
     url: '/telegram/media/{chatUsername}/{messageId}',
-} satisfies RouteDefinition<["get","head"]>
+} satisfies RouteDefinition<['get', 'head']>;
 
 /**
-* @see \App\Http\Controllers\Telegram\TelegramSearchController::media
+ * @see \App\Http\Controllers\Telegram\TelegramSearchController::media
  * @see app/Http/Controllers/Telegram/TelegramSearchController.php:31
  * @route '/telegram/media/{chatUsername}/{messageId}'
  */
-media.url = (args: { chatUsername: string | number, messageId: string | number } | [chatUsername: string | number, messageId: string | number ], options?: RouteQueryOptions) => {
+media.url = (
+    args:
+        | { chatUsername: string | number; messageId: string | number }
+        | [chatUsername: string | number, messageId: string | number],
+    options?: RouteQueryOptions
+) => {
     if (Array.isArray(args)) {
         args = {
-                    chatUsername: args[0],
-                    messageId: args[1],
-                }
+            chatUsername: args[0],
+            messageId: args[1],
+        };
     }
 
-    args = applyUrlDefaults(args)
+    args = applyUrlDefaults(args);
 
     const parsedArgs = {
-                        chatUsername: args.chatUsername,
-                                messageId: args.messageId,
-                }
+        chatUsername: args.chatUsername,
+        messageId: args.messageId,
+    };
 
-    return media.definition.url
+    return (
+        media.definition.url
             .replace('{chatUsername}', parsedArgs.chatUsername.toString())
             .replace('{messageId}', parsedArgs.messageId.toString())
             .replace(/\/+$/, '') + queryParams(options)
-}
+    );
+};
 
 /**
-* @see \App\Http\Controllers\Telegram\TelegramSearchController::media
+ * @see \App\Http\Controllers\Telegram\TelegramSearchController::media
  * @see app/Http/Controllers/Telegram/TelegramSearchController.php:31
  * @route '/telegram/media/{chatUsername}/{messageId}'
  */
-media.get = (args: { chatUsername: string | number, messageId: string | number } | [chatUsername: string | number, messageId: string | number ], options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+media.get = (
+    args:
+        | { chatUsername: string | number; messageId: string | number }
+        | [chatUsername: string | number, messageId: string | number],
+    options?: RouteQueryOptions
+): RouteDefinition<'get'> => ({
     url: media.url(args, options),
     method: 'get',
-})
+});
 /**
-* @see \App\Http\Controllers\Telegram\TelegramSearchController::media
+ * @see \App\Http\Controllers\Telegram\TelegramSearchController::media
  * @see app/Http/Controllers/Telegram/TelegramSearchController.php:31
  * @route '/telegram/media/{chatUsername}/{messageId}'
  */
-media.head = (args: { chatUsername: string | number, messageId: string | number } | [chatUsername: string | number, messageId: string | number ], options?: RouteQueryOptions): RouteDefinition<'head'> => ({
+media.head = (
+    args:
+        | { chatUsername: string | number; messageId: string | number }
+        | [chatUsername: string | number, messageId: string | number],
+    options?: RouteQueryOptions
+): RouteDefinition<'head'> => ({
     url: media.url(args, options),
     method: 'head',
-})
+});
 
-    /**
-* @see \App\Http\Controllers\Telegram\TelegramSearchController::media
+/**
+ * @see \App\Http\Controllers\Telegram\TelegramSearchController::media
  * @see app/Http/Controllers/Telegram/TelegramSearchController.php:31
  * @route '/telegram/media/{chatUsername}/{messageId}'
  */
-    const mediaForm = (args: { chatUsername: string | number, messageId: string | number } | [chatUsername: string | number, messageId: string | number ], options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
-        action: media.url(args, options),
-        method: 'get',
-    })
+const mediaForm = (
+    args:
+        | { chatUsername: string | number; messageId: string | number }
+        | [chatUsername: string | number, messageId: string | number],
+    options?: RouteQueryOptions
+): RouteFormDefinition<'get'> => ({
+    action: media.url(args, options),
+    method: 'get',
+});
 
-            /**
-* @see \App\Http\Controllers\Telegram\TelegramSearchController::media
+/**
+ * @see \App\Http\Controllers\Telegram\TelegramSearchController::media
  * @see app/Http/Controllers/Telegram/TelegramSearchController.php:31
  * @route '/telegram/media/{chatUsername}/{messageId}'
  */
-        mediaForm.get = (args: { chatUsername: string | number, messageId: string | number } | [chatUsername: string | number, messageId: string | number ], options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
-            action: media.url(args, options),
-            method: 'get',
-        })
-            /**
-* @see \App\Http\Controllers\Telegram\TelegramSearchController::media
+mediaForm.get = (
+    args:
+        | { chatUsername: string | number; messageId: string | number }
+        | [chatUsername: string | number, messageId: string | number],
+    options?: RouteQueryOptions
+): RouteFormDefinition<'get'> => ({
+    action: media.url(args, options),
+    method: 'get',
+});
+/**
+ * @see \App\Http\Controllers\Telegram\TelegramSearchController::media
  * @see app/Http/Controllers/Telegram/TelegramSearchController.php:31
  * @route '/telegram/media/{chatUsername}/{messageId}'
  */
-        mediaForm.head = (args: { chatUsername: string | number, messageId: string | number } | [chatUsername: string | number, messageId: string | number ], options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
-            action: media.url(args, {
-                        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
-                            _method: 'HEAD',
-                            ...(options?.query ?? options?.mergeQuery ?? {}),
-                        }
-                    }),
-            method: 'get',
-        })
-    
-    media.form = mediaForm
+mediaForm.head = (
+    args:
+        | { chatUsername: string | number; messageId: string | number }
+        | [chatUsername: string | number, messageId: string | number],
+    options?: RouteQueryOptions
+): RouteFormDefinition<'get'> => ({
+    action: media.url(args, {
+        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
+            _method: 'HEAD',
+            ...(options?.query ?? options?.mergeQuery ?? {}),
+        },
+    }),
+    method: 'get',
+});
+
+media.form = mediaForm;
 const telegram = {
     search: Object.assign(search, search),
-media: Object.assign(media, media),
-analytics: Object.assign(analytics, analytics),
-parser: Object.assign(parser, parser),
-}
+    media: Object.assign(media, media),
+    analytics: Object.assign(analytics, analytics),
+    parser: Object.assign(parser, parser),
+};
 
-export default telegram
+export default telegram;

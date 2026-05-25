@@ -1,6 +1,9 @@
-import ModuleWikiController from './ModuleWikiController'
+import ModuleWikiController from './ModuleWikiController';
 const Wiki = {
-    ModuleWikiController: Object.assign(ModuleWikiController, ModuleWikiController),
-}
+    ModuleWikiController: Object.assign(
+        ModuleWikiController,
+        ModuleWikiController
+    ),
+};
 
-export default Wiki
+export default Wiki;

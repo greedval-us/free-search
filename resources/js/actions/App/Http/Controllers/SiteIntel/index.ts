@@ -1,6 +1,9 @@
-import SiteIntelController from './SiteIntelController'
+import SiteIntelController from './SiteIntelController';
 const SiteIntel = {
-    SiteIntelController: Object.assign(SiteIntelController, SiteIntelController),
-}
+    SiteIntelController: Object.assign(
+        SiteIntelController,
+        SiteIntelController
+    ),
+};
 
-export default SiteIntel
+export default SiteIntel;

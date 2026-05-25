@@ -1,61 +1,72 @@
-import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFormDefinition } from './../../../wayfinder'
+import {
+    queryParams,
+    type RouteQueryOptions,
+    type RouteDefinition,
+    type RouteFormDefinition,
+} from './../../../wayfinder';
 /**
-* @see \App\Http\Controllers\Dashboard\ModulePinController::toggle
+ * @see \App\Http\Controllers\Dashboard\ModulePinController::toggle
  * @see app/Http/Controllers/Dashboard/ModulePinController.php:18
  * @route '/dashboard/module-pins/toggle'
  */
-export const toggle = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
+export const toggle = (
+    options?: RouteQueryOptions
+): RouteDefinition<'post'> => ({
     url: toggle.url(options),
     method: 'post',
-})
+});
 
 toggle.definition = {
-    methods: ["post"],
+    methods: ['post'],
     url: '/dashboard/module-pins/toggle',
-} satisfies RouteDefinition<["post"]>
+} satisfies RouteDefinition<['post']>;
 
 /**
-* @see \App\Http\Controllers\Dashboard\ModulePinController::toggle
+ * @see \App\Http\Controllers\Dashboard\ModulePinController::toggle
  * @see app/Http/Controllers/Dashboard/ModulePinController.php:18
  * @route '/dashboard/module-pins/toggle'
  */
 toggle.url = (options?: RouteQueryOptions) => {
-    return toggle.definition.url + queryParams(options)
-}
+    return toggle.definition.url + queryParams(options);
+};
 
 /**
-* @see \App\Http\Controllers\Dashboard\ModulePinController::toggle
+ * @see \App\Http\Controllers\Dashboard\ModulePinController::toggle
  * @see app/Http/Controllers/Dashboard/ModulePinController.php:18
  * @route '/dashboard/module-pins/toggle'
  */
 toggle.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
     url: toggle.url(options),
     method: 'post',
-})
+});
 
-    /**
-* @see \App\Http\Controllers\Dashboard\ModulePinController::toggle
+/**
+ * @see \App\Http\Controllers\Dashboard\ModulePinController::toggle
  * @see app/Http/Controllers/Dashboard/ModulePinController.php:18
  * @route '/dashboard/module-pins/toggle'
  */
-    const toggleForm = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
-        action: toggle.url(options),
-        method: 'post',
-    })
+const toggleForm = (
+    options?: RouteQueryOptions
+): RouteFormDefinition<'post'> => ({
+    action: toggle.url(options),
+    method: 'post',
+});
 
-            /**
-* @see \App\Http\Controllers\Dashboard\ModulePinController::toggle
+/**
+ * @see \App\Http\Controllers\Dashboard\ModulePinController::toggle
  * @see app/Http/Controllers/Dashboard/ModulePinController.php:18
  * @route '/dashboard/module-pins/toggle'
  */
-        toggleForm.post = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
-            action: toggle.url(options),
-            method: 'post',
-        })
-    
-    toggle.form = toggleForm
+toggleForm.post = (
+    options?: RouteQueryOptions
+): RouteFormDefinition<'post'> => ({
+    action: toggle.url(options),
+    method: 'post',
+});
+
+toggle.form = toggleForm;
 const modulePins = {
     toggle: Object.assign(toggle, toggle),
-}
+};
 
-export default modulePins
+export default modulePins;

@@ -1,6 +1,9 @@
-import FioLookupController from './FioLookupController'
+import FioLookupController from './FioLookupController';
 const Fio = {
-    FioLookupController: Object.assign(FioLookupController, FioLookupController),
-}
+    FioLookupController: Object.assign(
+        FioLookupController,
+        FioLookupController
+    ),
+};
 
-export default Fio
+export default Fio;

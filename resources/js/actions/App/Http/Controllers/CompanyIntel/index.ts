@@ -1,6 +1,9 @@
-import CompanyIntelController from './CompanyIntelController'
+import CompanyIntelController from './CompanyIntelController';
 const CompanyIntel = {
-    CompanyIntelController: Object.assign(CompanyIntelController, CompanyIntelController),
-}
+    CompanyIntelController: Object.assign(
+        CompanyIntelController,
+        CompanyIntelController
+    ),
+};
 
-export default CompanyIntel
+export default CompanyIntel;
