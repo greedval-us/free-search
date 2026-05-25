@@ -272,7 +272,81 @@ const ruModules: ModuleDoc[] = [
     },
 ];
 
-const modules = computed(() => ruModules);
+const enModules: ModuleDoc[] = [
+    {
+        route: '/telegram',
+        title: 'Telegram',
+        purpose: 'Operational collection and analytics for Telegram channels.',
+        scenarios: [
+            'Information field monitoring',
+            'Activity anomaly detection',
+            'Evidence timeline collection',
+        ],
+        params: [
+            { name: 'chatUsername', description: 'Channel/chat name.', why: 'Defines the data source.', example: 'durov' },
+            { name: 'keyword', description: 'Keyword or phrase.', why: 'Narrows the sample and reduces noise.', example: 'sanctions' },
+            { name: 'fromUsername/authorId', description: 'Author filter.', why: 'Needed for specific author analysis.', example: '123456789' },
+            { name: 'dateFrom/dateTo', description: 'Analysis period.', why: 'Limits data to the required interval.', example: '2026-05-01 .. 2026-05-07' },
+            { name: 'limit', description: 'Message limit.', why: 'Balances speed and completeness.', example: '20' },
+        ],
+        outputs: ['Search results', 'Analytics metrics', 'Exportable reports'],
+        streams: [
+            { name: 'Search', items: ['Messages: text/date/author/views/forwards/replies', 'Media data', 'Reactions and gifts', 'Paginated comments'] },
+            { name: 'Analytics', items: ['Period KPIs', 'Channel/group profile', 'Anti-fraud: risk/triggers/reasons', 'Charts/top posts/opinion leaders', 'Open/download report'] },
+            { name: 'Parser', items: ['Run and status states', 'Progress and processing counters', 'Period and keyword collection modes', 'Excel and JSON exports'] },
+        ],
+    },
+    {
+        route: '/youtube',
+        title: 'YouTube',
+        purpose: 'Search, analytics, and comment collection for YouTube videos and channels.',
+        scenarios: ['Video agenda monitoring', 'Channel and engagement analytics', 'Comment collection for further validation'],
+        params: [
+            { name: 'q', description: 'Search query.', why: 'Defines topic/video/channel/playlist.', example: 'osint tutorial' },
+            { name: 'type', description: 'Result type: video, channel, playlist.', why: 'Limits output to the required entity.', example: 'video' },
+            { name: 'channelId', description: 'YouTube channel ID.', why: 'Limits search/analytics to a specific channel.', example: 'UC_x5XG1OV2P6uZZ5FSM9Ttw' },
+            { name: 'videoId', description: 'Video ID or URL.', why: 'Used for video analytics and comments.', example: 'dQw4w9WgXcQ' },
+            { name: 'publishedAfter/publishedBefore', description: 'Publication period for search.', why: 'Filters results by time window.', example: '2026-05-01 .. 2026-05-07' },
+            { name: 'dateFrom/dateTo or periodDays', description: 'Channel analytics period.', why: 'Sets the metrics timeline window.', example: '7' },
+            { name: 'limit/pageToken', description: 'Limit and pagination token.', why: 'Controls output volume and next pages.', example: '10' },
+        ],
+        outputs: ['Videos/channels/playlists from search', 'Video/channel analytics summary', 'Comments and replies', 'HTML report and Excel/JSON exports'],
+        streams: [
+            { name: 'Search', items: ['YouTube Data API results: title/description/channel/date/preview', 'Video metrics: views/likes/comments/engagement rate', 'Filters: region/language/safe search/duration/quality/captions', 'Pagination via nextPageToken'] },
+            { name: 'Analytics', items: ['Modes: video and channel', 'Aggregated metrics: views/likes/comments/avg/median', 'Distributions by time/duration/quality/captions', 'Leaders by views/likes/comments/engagement', 'Downloadable HTML report'] },
+            { name: 'Parser', items: ['Comments and replies by videoId', 'Sorting by relevance/time and comment search', 'Background run/status/stop/progress', 'Excel and JSON exports'] },
+        ],
+    },
+    {
+        route: '/site-intel',
+        title: 'Site Intel',
+        purpose: 'Technical intelligence for website and domain.',
+        scenarios: ['Availability and security checks', 'SEO audit', 'Domain analytics'],
+        params: [{ name: 'target/domain', description: 'URL or domain.', why: 'Analysis target.', example: 'example.com' }],
+        outputs: ['DNS/SSL/headers', 'WHOIS/DNS summaries', 'SEO findings'],
+        streams: [{ name: 'Modes', items: ['Site health', 'Domain lite', 'Analytics', 'SEO audit'] }],
+    },
+    {
+        route: '/news-media-intel',
+        title: 'News & Media Intel',
+        purpose: 'Public media mention monitoring.',
+        scenarios: ['Reputation watch', 'Event tracking'],
+        params: [{ name: 'query', description: 'Topic/person/brand.', why: 'Monitoring target.', example: 'war' }],
+        outputs: ['Mentions feed', 'Sentiment', 'Timeline'],
+        streams: [{ name: 'Lookup', items: ['Mentions feed', 'Topic summary', 'Sentiment', 'Timeline'] }],
+    },
+    {
+        route: '/shifr',
+        title: 'Shifr',
+        purpose: 'Technical toolbox for transformations.',
+        scenarios: ['Hash/decode', 'IOC extraction', 'JWT and classic ciphers'],
+        params: [{ name: 'tab/input', description: 'Mode and input.', why: 'Defines operation behavior.', example: 'hash + text' }],
+        outputs: ['Structured operation result'],
+        streams: [{ name: 'Modes', items: ['Hash/HMAC', 'Transform', 'IOC', 'Classic', 'JWT'] }],
+    },
+];
+
+const modules = computed(() => (isRu.value ? ruModules : enModules));
 
 const ui = computed(() => ({
     title: isRu.value ? 'Вики модулей' : 'Modules Wiki',
