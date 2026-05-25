@@ -1,16 +1,12 @@
 import {
     AtSign,
     BookOpenText,
-    Building2,
-    FileSearch,
     Fingerprint,
-    Globe,
     LayoutGrid,
     MailSearch,
     Newspaper,
     Radar,
     Send,
-    User,
     Youtube,
 } from 'lucide-vue-next';
 import { dashboard } from '@/routes';
@@ -62,24 +58,6 @@ const moduleNavDefinitions: readonly ModuleNavDefinition[] = [
         icon: Radar,
     },
     {
-        key: 'fio',
-        labelKey: 'navigation.fio',
-        href: '/fio',
-        icon: User,
-    },
-    {
-        key: 'company-intel',
-        labelKey: 'navigation.companyIntel',
-        href: '/company-intel',
-        icon: Building2,
-    },
-    {
-        key: 'document-intel',
-        labelKey: 'navigation.documentIntel',
-        href: '/document-intel',
-        icon: FileSearch,
-    },
-    {
         key: 'email-intel',
         labelKey: 'navigation.emailIntel',
         href: '/email-intel',
@@ -90,12 +68,6 @@ const moduleNavDefinitions: readonly ModuleNavDefinition[] = [
         labelKey: 'navigation.newsMediaIntel',
         href: '/news-media-intel',
         icon: Newspaper,
-    },
-    {
-        key: 'domain-infra-intel',
-        labelKey: 'navigation.domainInfraIntel',
-        href: '/domain-infra-intel',
-        icon: Globe,
     },
     {
         key: 'shifr',

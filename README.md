@@ -20,13 +20,9 @@ Free Search - модульная OSINT-платформа на Laravel + Inertia
 - Telegram OSINT (поиск, парсер, аналитика)
 - Username intelligence
 - Site intelligence (`site-health`, `seo-audit`, `domain-lite`)
-- Company intelligence
-- Document intelligence
 - Email intelligence
-- Domain infrastructure intelligence
 - News/media intelligence
 - YouTube search/parser/analytics
-- FIO
 - Shifr toolkit
 
 ## Архитектурные принципы

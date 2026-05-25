@@ -35,7 +35,7 @@ const copy = computed(() => {
                 },
                 {
                     title: 'Модульная архитектура для OSINT',
-                    text: 'Telegram, Company Intel, Site Intel, Document Intel, Username, FIO и Email в одном продукте.',
+                    text: 'Telegram, Site Intel, Username, Email и News & Media в одном продукте.',
                 },
                 {
                     title: 'Профессиональная подача результатов',
@@ -47,16 +47,8 @@ const copy = computed(() => {
                 'Готовые рабочие сценарии для практической разведки',
             modules: [
                 {
-                    title: 'Company Intel',
-                    text: 'Репутация, доменные сигналы, OSINT-переходы по бренду и инфраструктуре.',
-                },
-                {
                     title: 'Site Intel',
                     text: 'WHOIS/DNS/SSL/заголовки безопасности и технические риски сайта.',
-                },
-                {
-                    title: 'Document Intel',
-                    text: 'Поиск открытых документов, метаданные и признаки утечек.',
                 },
                 {
                     title: 'Telegram Analytics',
@@ -65,6 +57,10 @@ const copy = computed(() => {
                 {
                     title: 'Username & Email Intel',
                     text: 'Проверка следов на платформах, сигналы совпадений и риск-профиль.',
+                },
+                {
+                    title: 'News & Media Intel',
+                    text: 'Мониторинг упоминаний, темы, тональность и таймлайн.',
                 },
                 {
                     title: 'Dashboard',
@@ -105,8 +101,8 @@ const copy = computed(() => {
                 text: 'Search, pivots, risk signals, and recommendations in one UX flow without manual data stitching.',
             },
             {
-                title: 'Modular OSINT architecture',
-                text: 'Telegram, Company Intel, Site Intel, Document Intel, Username, FIO, and Email in one product.',
+                    title: 'Modular OSINT architecture',
+                    text: 'Telegram, Site Intel, Username, Email, and News & Media in one product.',
             },
             {
                 title: 'Professional result delivery',
@@ -118,16 +114,8 @@ const copy = computed(() => {
             'Ready-to-use workflows for practical intelligence operations',
         modules: [
             {
-                title: 'Company Intel',
-                text: 'Reputation, domain signals, and OSINT pivots across brand and infrastructure.',
-            },
-            {
                 title: 'Site Intel',
                 text: 'WHOIS/DNS/SSL/security-header analysis and technical risk posture.',
-            },
-            {
-                title: 'Document Intel',
-                text: 'Public document discovery, metadata extraction, and exposure indicators.',
             },
             {
                 title: 'Telegram Analytics',
@@ -136,6 +124,10 @@ const copy = computed(() => {
             {
                 title: 'Username & Email Intel',
                 text: 'Cross-platform traces, confidence signals, and risk profiling.',
+            },
+            {
+                title: 'News & Media Intel',
+                text: 'Mentions monitoring with topic extraction, sentiment and timeline.',
             },
             {
                 title: 'Dashboard',

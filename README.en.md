@@ -20,13 +20,9 @@ The main goal is to deliver useful analytics quickly while keeping architecture 
 - Telegram OSINT (search, parser, analytics)
 - Username intelligence
 - Site intelligence (`site-health`, `seo-audit`, `domain-lite`)
-- Company intelligence
-- Document intelligence
 - Email intelligence
-- Domain infrastructure intelligence
 - News/media intelligence
 - YouTube search/parser/analytics
-- FIO
 - Shifr toolkit
 
 ## Architecture Principles

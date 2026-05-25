@@ -106,7 +106,6 @@ const props = withDefaults(
             },
             available_modules: [
                 'username',
-                'fio',
                 'site-intel',
                 'email-intel',
                 'telegram',
@@ -134,7 +133,6 @@ const quickActions = computed(() => {
             url: '/username',
             is_pinned: false,
         },
-        { key: 'fio', count: 0, last_at: null, url: '/fio', is_pinned: false },
         {
             key: 'site-intel',
             count: 0,
