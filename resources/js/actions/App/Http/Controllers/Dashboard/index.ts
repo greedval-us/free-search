@@ -1,14 +1,8 @@
-import SavedQueryController from './SavedQueryController';
-import ModulePinController from './ModulePinController';
+import SavedQueryController from './SavedQueryController'
+import ModulePinController from './ModulePinController'
 const Dashboard = {
-    SavedQueryController: Object.assign(
-        SavedQueryController,
-        SavedQueryController
-    ),
-    ModulePinController: Object.assign(
-        ModulePinController,
-        ModulePinController
-    ),
-};
+    SavedQueryController: Object.assign(SavedQueryController, SavedQueryController),
+ModulePinController: Object.assign(ModulePinController, ModulePinController),
+}
 
-export default Dashboard;
+export default Dashboard

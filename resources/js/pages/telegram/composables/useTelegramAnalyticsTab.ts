@@ -393,16 +393,6 @@ export const useTelegramAnalyticsTab = () => {
         () => payload.value?.summary.opinionLeadersDaily ?? []
     );
     const hasOpinionLeaders = computed(() => opinionLeaders.value.length > 1);
-    const leaderMaxScore = computed(() =>
-        Math.max(1, ...opinionLeaders.value.map((item) => item.score))
-    );
-    const leaderMaxInteractions = computed(() =>
-        Math.max(1, ...opinionLeaders.value.map((item) => item.interactions))
-    );
-    const leaderScoreWidth = (score: number): string =>
-        `${Math.max(4, (score / leaderMaxScore.value) * 100)}%`;
-    const leaderInteractionsWidth = (interactions: number): string =>
-        `${Math.max(4, (interactions / leaderMaxInteractions.value) * 100)}%`;
     const leaderChartWidth = 920;
     const leaderChartHeight = 280;
     const leaderChartPadding = {
@@ -760,12 +750,7 @@ export const useTelegramAnalyticsTab = () => {
         fraudTriggerLabel,
         fraudReasonLabel,
         opinionLeaders,
-        opinionLeadersDaily,
         hasOpinionLeaders,
-        leaderMaxScore,
-        leaderMaxInteractions,
-        leaderScoreWidth,
-        leaderInteractionsWidth,
         leaderChartWidth,
         leaderChartHeight,
         leaderChartPadding,
@@ -775,7 +760,6 @@ export const useTelegramAnalyticsTab = () => {
         leaderColorPalette,
         visibleLeaderSeries,
         leaderX,
-        opinionLeadersDailyByDay,
         leaderDayAxis,
         leaderSeries,
         displayedLeaderSeries,

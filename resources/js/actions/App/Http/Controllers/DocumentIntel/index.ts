@@ -1,9 +1,6 @@
-import DocumentIntelController from './DocumentIntelController';
+import DocumentIntelController from './DocumentIntelController'
 const DocumentIntel = {
-    DocumentIntelController: Object.assign(
-        DocumentIntelController,
-        DocumentIntelController
-    ),
-};
+    DocumentIntelController: Object.assign(DocumentIntelController, DocumentIntelController),
+}
 
-export default DocumentIntel;
+export default DocumentIntel

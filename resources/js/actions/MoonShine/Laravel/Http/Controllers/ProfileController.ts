@@ -1,70 +1,59 @@
-import {
-    queryParams,
-    type RouteQueryOptions,
-    type RouteDefinition,
-    type RouteFormDefinition,
-} from './../../../../../wayfinder';
+import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFormDefinition } from './../../../../../wayfinder'
 /**
- * @see \MoonShine\Laravel\Http\Controllers\ProfileController::store
+* @see \MoonShine\Laravel\Http\Controllers\ProfileController::store
  * @see vendor/moonshine/moonshine/src/Laravel/src/Http/Controllers/ProfileController.php:24
  * @route '/admin/profile'
  */
-export const store = (
-    options?: RouteQueryOptions
-): RouteDefinition<'post'> => ({
+export const store = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
     url: store.url(options),
     method: 'post',
-});
+})
 
 store.definition = {
-    methods: ['post'],
+    methods: ["post"],
     url: '/admin/profile',
-} satisfies RouteDefinition<['post']>;
+} satisfies RouteDefinition<["post"]>
 
 /**
- * @see \MoonShine\Laravel\Http\Controllers\ProfileController::store
+* @see \MoonShine\Laravel\Http\Controllers\ProfileController::store
  * @see vendor/moonshine/moonshine/src/Laravel/src/Http/Controllers/ProfileController.php:24
  * @route '/admin/profile'
  */
 store.url = (options?: RouteQueryOptions) => {
-    return store.definition.url + queryParams(options);
-};
+    return store.definition.url + queryParams(options)
+}
 
 /**
- * @see \MoonShine\Laravel\Http\Controllers\ProfileController::store
+* @see \MoonShine\Laravel\Http\Controllers\ProfileController::store
  * @see vendor/moonshine/moonshine/src/Laravel/src/Http/Controllers/ProfileController.php:24
  * @route '/admin/profile'
  */
 store.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
     url: store.url(options),
     method: 'post',
-});
+})
 
-/**
- * @see \MoonShine\Laravel\Http\Controllers\ProfileController::store
+    /**
+* @see \MoonShine\Laravel\Http\Controllers\ProfileController::store
  * @see vendor/moonshine/moonshine/src/Laravel/src/Http/Controllers/ProfileController.php:24
  * @route '/admin/profile'
  */
-const storeForm = (
-    options?: RouteQueryOptions
-): RouteFormDefinition<'post'> => ({
-    action: store.url(options),
-    method: 'post',
-});
+    const storeForm = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+        action: store.url(options),
+        method: 'post',
+    })
 
-/**
- * @see \MoonShine\Laravel\Http\Controllers\ProfileController::store
+            /**
+* @see \MoonShine\Laravel\Http\Controllers\ProfileController::store
  * @see vendor/moonshine/moonshine/src/Laravel/src/Http/Controllers/ProfileController.php:24
  * @route '/admin/profile'
  */
-storeForm.post = (
-    options?: RouteQueryOptions
-): RouteFormDefinition<'post'> => ({
-    action: store.url(options),
-    method: 'post',
-});
+        storeForm.post = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+            action: store.url(options),
+            method: 'post',
+        })
+    
+    store.form = storeForm
+const ProfileController = { store }
 
-store.form = storeForm;
-const ProfileController = { store };
-
-export default ProfileController;
+export default ProfileController

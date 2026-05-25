@@ -1,9 +1,6 @@
-import UsernameSearchController from './UsernameSearchController';
+import UsernameSearchController from './UsernameSearchController'
 const Username = {
-    UsernameSearchController: Object.assign(
-        UsernameSearchController,
-        UsernameSearchController
-    ),
-};
+    UsernameSearchController: Object.assign(UsernameSearchController, UsernameSearchController),
+}
 
-export default Username;
+export default Username

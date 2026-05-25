@@ -1,9 +1,6 @@
-import EmailIntelController from './EmailIntelController';
+import EmailIntelController from './EmailIntelController'
 const EmailIntel = {
-    EmailIntelController: Object.assign(
-        EmailIntelController,
-        EmailIntelController
-    ),
-};
+    EmailIntelController: Object.assign(EmailIntelController, EmailIntelController),
+}
 
-export default EmailIntel;
+export default EmailIntel

@@ -1,9 +1,6 @@
-import DomainInfraIntelController from './DomainInfraIntelController';
+import DomainInfraIntelController from './DomainInfraIntelController'
 const DomainInfraIntel = {
-    DomainInfraIntelController: Object.assign(
-        DomainInfraIntelController,
-        DomainInfraIntelController
-    ),
-};
+    DomainInfraIntelController: Object.assign(DomainInfraIntelController, DomainInfraIntelController),
+}
 
-export default DomainInfraIntel;
+export default DomainInfraIntel

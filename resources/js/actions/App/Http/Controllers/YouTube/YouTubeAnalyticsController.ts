@@ -1,179 +1,160 @@
-import {
-    queryParams,
-    type RouteQueryOptions,
-    type RouteDefinition,
-    type RouteFormDefinition,
-} from './../../../../../wayfinder';
+import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFormDefinition } from './../../../../../wayfinder'
 /**
- * @see \App\Http\Controllers\YouTube\YouTubeAnalyticsController::summary
+* @see \App\Http\Controllers\YouTube\YouTubeAnalyticsController::summary
  * @see app/Http/Controllers/YouTube/YouTubeAnalyticsController.php:20
  * @route '/youtube/analytics/summary'
  */
-export const summary = (
-    options?: RouteQueryOptions
-): RouteDefinition<'get'> => ({
+export const summary = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: summary.url(options),
     method: 'get',
-});
+})
 
 summary.definition = {
-    methods: ['get', 'head'],
+    methods: ["get","head"],
     url: '/youtube/analytics/summary',
-} satisfies RouteDefinition<['get', 'head']>;
+} satisfies RouteDefinition<["get","head"]>
 
 /**
- * @see \App\Http\Controllers\YouTube\YouTubeAnalyticsController::summary
+* @see \App\Http\Controllers\YouTube\YouTubeAnalyticsController::summary
  * @see app/Http/Controllers/YouTube/YouTubeAnalyticsController.php:20
  * @route '/youtube/analytics/summary'
  */
 summary.url = (options?: RouteQueryOptions) => {
-    return summary.definition.url + queryParams(options);
-};
+    return summary.definition.url + queryParams(options)
+}
 
 /**
- * @see \App\Http\Controllers\YouTube\YouTubeAnalyticsController::summary
+* @see \App\Http\Controllers\YouTube\YouTubeAnalyticsController::summary
  * @see app/Http/Controllers/YouTube/YouTubeAnalyticsController.php:20
  * @route '/youtube/analytics/summary'
  */
 summary.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: summary.url(options),
     method: 'get',
-});
+})
 /**
- * @see \App\Http\Controllers\YouTube\YouTubeAnalyticsController::summary
+* @see \App\Http\Controllers\YouTube\YouTubeAnalyticsController::summary
  * @see app/Http/Controllers/YouTube/YouTubeAnalyticsController.php:20
  * @route '/youtube/analytics/summary'
  */
 summary.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     url: summary.url(options),
     method: 'head',
-});
+})
 
-/**
- * @see \App\Http\Controllers\YouTube\YouTubeAnalyticsController::summary
+    /**
+* @see \App\Http\Controllers\YouTube\YouTubeAnalyticsController::summary
  * @see app/Http/Controllers/YouTube/YouTubeAnalyticsController.php:20
  * @route '/youtube/analytics/summary'
  */
-const summaryForm = (
-    options?: RouteQueryOptions
-): RouteFormDefinition<'get'> => ({
-    action: summary.url(options),
-    method: 'get',
-});
+    const summaryForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+        action: summary.url(options),
+        method: 'get',
+    })
 
-/**
- * @see \App\Http\Controllers\YouTube\YouTubeAnalyticsController::summary
+            /**
+* @see \App\Http\Controllers\YouTube\YouTubeAnalyticsController::summary
  * @see app/Http/Controllers/YouTube/YouTubeAnalyticsController.php:20
  * @route '/youtube/analytics/summary'
  */
-summaryForm.get = (
-    options?: RouteQueryOptions
-): RouteFormDefinition<'get'> => ({
-    action: summary.url(options),
-    method: 'get',
-});
-/**
- * @see \App\Http\Controllers\YouTube\YouTubeAnalyticsController::summary
+        summaryForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+            action: summary.url(options),
+            method: 'get',
+        })
+            /**
+* @see \App\Http\Controllers\YouTube\YouTubeAnalyticsController::summary
  * @see app/Http/Controllers/YouTube/YouTubeAnalyticsController.php:20
  * @route '/youtube/analytics/summary'
  */
-summaryForm.head = (
-    options?: RouteQueryOptions
-): RouteFormDefinition<'get'> => ({
-    action: summary.url({
-        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
-            _method: 'HEAD',
-            ...(options?.query ?? options?.mergeQuery ?? {}),
-        },
-    }),
-    method: 'get',
-});
-
-summary.form = summaryForm;
+        summaryForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+            action: summary.url({
+                        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
+                            _method: 'HEAD',
+                            ...(options?.query ?? options?.mergeQuery ?? {}),
+                        }
+                    }),
+            method: 'get',
+        })
+    
+    summary.form = summaryForm
 /**
- * @see \App\Http\Controllers\YouTube\YouTubeAnalyticsController::report
+* @see \App\Http\Controllers\YouTube\YouTubeAnalyticsController::report
  * @see app/Http/Controllers/YouTube/YouTubeAnalyticsController.php:31
  * @route '/youtube/analytics/report'
  */
-export const report = (
-    options?: RouteQueryOptions
-): RouteDefinition<'get'> => ({
+export const report = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: report.url(options),
     method: 'get',
-});
+})
 
 report.definition = {
-    methods: ['get', 'head'],
+    methods: ["get","head"],
     url: '/youtube/analytics/report',
-} satisfies RouteDefinition<['get', 'head']>;
+} satisfies RouteDefinition<["get","head"]>
 
 /**
- * @see \App\Http\Controllers\YouTube\YouTubeAnalyticsController::report
+* @see \App\Http\Controllers\YouTube\YouTubeAnalyticsController::report
  * @see app/Http/Controllers/YouTube/YouTubeAnalyticsController.php:31
  * @route '/youtube/analytics/report'
  */
 report.url = (options?: RouteQueryOptions) => {
-    return report.definition.url + queryParams(options);
-};
+    return report.definition.url + queryParams(options)
+}
 
 /**
- * @see \App\Http\Controllers\YouTube\YouTubeAnalyticsController::report
+* @see \App\Http\Controllers\YouTube\YouTubeAnalyticsController::report
  * @see app/Http/Controllers/YouTube/YouTubeAnalyticsController.php:31
  * @route '/youtube/analytics/report'
  */
 report.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: report.url(options),
     method: 'get',
-});
+})
 /**
- * @see \App\Http\Controllers\YouTube\YouTubeAnalyticsController::report
+* @see \App\Http\Controllers\YouTube\YouTubeAnalyticsController::report
  * @see app/Http/Controllers/YouTube/YouTubeAnalyticsController.php:31
  * @route '/youtube/analytics/report'
  */
 report.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     url: report.url(options),
     method: 'head',
-});
+})
 
-/**
- * @see \App\Http\Controllers\YouTube\YouTubeAnalyticsController::report
+    /**
+* @see \App\Http\Controllers\YouTube\YouTubeAnalyticsController::report
  * @see app/Http/Controllers/YouTube/YouTubeAnalyticsController.php:31
  * @route '/youtube/analytics/report'
  */
-const reportForm = (
-    options?: RouteQueryOptions
-): RouteFormDefinition<'get'> => ({
-    action: report.url(options),
-    method: 'get',
-});
+    const reportForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+        action: report.url(options),
+        method: 'get',
+    })
 
-/**
- * @see \App\Http\Controllers\YouTube\YouTubeAnalyticsController::report
+            /**
+* @see \App\Http\Controllers\YouTube\YouTubeAnalyticsController::report
  * @see app/Http/Controllers/YouTube/YouTubeAnalyticsController.php:31
  * @route '/youtube/analytics/report'
  */
-reportForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
-    action: report.url(options),
-    method: 'get',
-});
-/**
- * @see \App\Http\Controllers\YouTube\YouTubeAnalyticsController::report
+        reportForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+            action: report.url(options),
+            method: 'get',
+        })
+            /**
+* @see \App\Http\Controllers\YouTube\YouTubeAnalyticsController::report
  * @see app/Http/Controllers/YouTube/YouTubeAnalyticsController.php:31
  * @route '/youtube/analytics/report'
  */
-reportForm.head = (
-    options?: RouteQueryOptions
-): RouteFormDefinition<'get'> => ({
-    action: report.url({
-        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
-            _method: 'HEAD',
-            ...(options?.query ?? options?.mergeQuery ?? {}),
-        },
-    }),
-    method: 'get',
-});
+        reportForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+            action: report.url({
+                        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
+                            _method: 'HEAD',
+                            ...(options?.query ?? options?.mergeQuery ?? {}),
+                        }
+                    }),
+            method: 'get',
+        })
+    
+    report.form = reportForm
+const YouTubeAnalyticsController = { summary, report }
 
-report.form = reportForm;
-const YouTubeAnalyticsController = { summary, report };
-
-export default YouTubeAnalyticsController;
+export default YouTubeAnalyticsController

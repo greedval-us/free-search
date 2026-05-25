@@ -1,6 +1,6 @@
-import Http from './Http';
+import Http from './Http'
 const Laravel = {
     Http: Object.assign(Http, Http),
-};
+}
 
-export default Laravel;
+export default Laravel
