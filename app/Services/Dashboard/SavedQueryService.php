@@ -8,7 +8,6 @@ use App\Models\UserSavedQuery;
 use App\Services\Dashboard\Contracts\SavedQueryServiceInterface;
 use App\Support\Activity\RequestLogRunUrlBuilder;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
-use Illuminate\Support\Facades\Schema;
 
 class SavedQueryService implements SavedQueryServiceInterface
 {
@@ -22,10 +21,6 @@ class SavedQueryService implements SavedQueryServiceInterface
      */
     public function saveFromRequestLog(User $user, int $requestLogId): void
     {
-        if (!Schema::hasTable('request_logs') || !Schema::hasTable('user_saved_queries')) {
-            return;
-        }
-
         $log = RequestLog::query()
             ->where('id', $requestLogId)
             ->where('user_id', $user->id)
@@ -93,10 +88,6 @@ class SavedQueryService implements SavedQueryServiceInterface
      */
     public function listForUser(User $user, int $limit = 40): array
     {
-        if (!Schema::hasTable('user_saved_queries')) {
-            return [];
-        }
-
         return UserSavedQuery::query()
             ->where('user_id', $user->id)
             ->latest('created_at')
