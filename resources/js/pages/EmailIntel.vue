@@ -20,13 +20,10 @@ import {
     isRepeatAutorunEnabled,
     readRepeatQueryParam,
 } from '@/composables/useRepeatQuery';
-import { apiRequest } from '@/lib/api';
 import EmailEntityGraph from './email-intel/components/EmailEntityGraph.vue';
+import { useDomainMailPosture } from './email-intel/composables/useDomainMailPosture';
+import { useEmailBulkLookup } from './email-intel/composables/useEmailBulkLookup';
 import { useEmailIntelLookup } from './email-intel/composables/useEmailIntelLookup';
-import type {
-    DomainMailPostureResult,
-    EmailBulkIntelResult,
-} from './email-intel/types';
 
 type EmailIntelTabValue = 'search' | 'analytics' | 'bulk' | 'domain';
 
@@ -55,15 +52,27 @@ defineOptions({
 const { t, locale } = useI18n();
 const searchLookup = useEmailIntelLookup(t, locale);
 const analyticsLookup = useEmailIntelLookup(t, locale);
+const bulkLookupState = useEmailBulkLookup(t, locale);
+const domainLookupState = useDomainMailPosture(t, locale);
 const activeTab = ref<EmailIntelTabValue>('search');
-const bulkEmails = ref('');
-const bulkLoading = ref(false);
-const bulkError = ref<string | null>(null);
-const bulkResult = ref<EmailBulkIntelResult | null>(null);
-const domainForm = ref('');
-const domainLoading = ref(false);
-const domainError = ref<string | null>(null);
-const domainResult = ref<DomainMailPostureResult | null>(null);
+const {
+    canLookup: canBulkLookup,
+    emails: bulkEmails,
+    error: bulkError,
+    loading: bulkLoading,
+    lookup: bulkLookup,
+    reset: resetBulk,
+    result: bulkResult,
+} = bulkLookupState;
+const {
+    canLookup: canDomainLookup,
+    domain: domainForm,
+    error: domainError,
+    loading: domainLoading,
+    lookup: domainLookup,
+    reset: resetDomain,
+    result: domainResult,
+} = domainLookupState;
 
 const pageTitle = computed(() => t('emailIntel.headTitle'));
 const panelTitle = computed(() => {
@@ -105,11 +114,6 @@ const error = computed(() => activeLookup.value.error.value);
 const result = computed(() => activeLookup.value.result.value);
 const canLookup = computed(() => activeLookup.value.canLookup.value);
 const analyticsResult = computed(() => analyticsLookup.result.value);
-const canBulkLookup = computed(() => bulkEmails.value.trim().length > 0);
-const canDomainLookup = computed(() =>
-    /^(?!-)(?:[a-z0-9-]{1,63}\.)+[a-z]{2,63}$/i.test(domainForm.value.trim())
-);
-
 const formatDateTime = (value: string): string =>
     new Date(value).toLocaleString();
 
@@ -143,20 +147,6 @@ const reportUrl = computed(() => {
 
 const lookup = () => activeLookup.value.lookup();
 
-const resetBulk = () => {
-    bulkEmails.value = '';
-    bulkError.value = null;
-    bulkResult.value = null;
-    bulkLoading.value = false;
-};
-
-const resetDomain = () => {
-    domainForm.value = '';
-    domainError.value = null;
-    domainResult.value = null;
-    domainLoading.value = false;
-};
-
 const switchTab = (tab: EmailIntelTabValue) => {
     if (activeTab.value === tab) {
         return;
@@ -167,88 +157,6 @@ const switchTab = (tab: EmailIntelTabValue) => {
     analyticsLookup.reset();
     resetBulk();
     resetDomain();
-};
-
-const bulkLookup = async () => {
-    if (!canBulkLookup.value) {
-        bulkError.value = t('emailIntel.errors.emailRequired');
-
-        return;
-    }
-
-    bulkLoading.value = true;
-    bulkError.value = null;
-    bulkResult.value = null;
-
-    try {
-        const apiResult = await apiRequest<EmailBulkIntelResult>(
-            '/email-intel/bulk',
-            {
-                method: 'GET',
-                query: {
-                    emails: bulkEmails.value,
-                    locale: locale.value,
-                },
-            }
-        );
-
-        if (!apiResult.ok) {
-            bulkError.value =
-                apiResult.message ?? t('emailIntel.errors.lookupFailed');
-
-            return;
-        }
-
-        bulkResult.value = apiResult.data;
-    } catch (exception) {
-        bulkError.value =
-            exception instanceof Error
-                ? exception.message
-                : t('emailIntel.errors.lookupFailed');
-    } finally {
-        bulkLoading.value = false;
-    }
-};
-
-const domainLookup = async () => {
-    if (!canDomainLookup.value) {
-        domainError.value = t('emailIntel.errors.domainRequired');
-
-        return;
-    }
-
-    domainLoading.value = true;
-    domainError.value = null;
-    domainResult.value = null;
-
-    try {
-        const apiResult = await apiRequest<DomainMailPostureResult>(
-            '/email-intel/domain-posture',
-            {
-                method: 'GET',
-                query: {
-                    domain: domainForm.value.trim(),
-                    locale: locale.value,
-                },
-            }
-        );
-
-        if (!apiResult.ok) {
-            domainError.value =
-                apiResult.message ?? t('emailIntel.errors.lookupFailed');
-
-            return;
-        }
-
-        domainResult.value = apiResult.data;
-    } catch (exception) {
-        domainError.value =
-            exception instanceof Error
-                ? exception.message
-                : t('emailIntel.errors.lookupFailed');
-    } finally {
-        domainLoading.value = false;
-    }
 };
 
 const openReport = () => {

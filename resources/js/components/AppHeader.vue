@@ -1,15 +1,6 @@
 <script setup lang="ts">
 import { Link, usePage } from '@inertiajs/vue3';
-import {
-    AtSign,
-    BookOpen,
-    Folder,
-    LayoutGrid,
-    Menu,
-    Search,
-    Send,
-    Youtube,
-} from 'lucide-vue-next';
+import { BookOpen, Folder, Menu, Search } from 'lucide-vue-next';
 import { computed } from 'vue';
 import AppLogo from '@/components/AppLogo.vue';
 import AppLogoIcon from '@/components/AppLogoIcon.vue';
@@ -44,6 +35,7 @@ import UserMenuContent from '@/components/UserMenuContent.vue';
 import { useCurrentUrl } from '@/composables/useCurrentUrl';
 import { useI18n } from '@/composables/useI18n';
 import { getInitials } from '@/composables/useInitials';
+import { buildHeaderNavItems } from '@/lib/navigation/modules';
 import { toUrl } from '@/lib/utils';
 import { dashboard } from '@/routes';
 import type { BreadcrumbItem, NavItem } from '@/types';
@@ -63,28 +55,7 @@ const { t } = useI18n();
 
 const activeItemStyles = 'bg-cyan-500/15 text-cyan-700 dark:text-cyan-100';
 
-const mainNavItems = computed<NavItem[]>(() => [
-    {
-        title: t('navigation.dashboard'),
-        href: dashboard(),
-        icon: LayoutGrid,
-    },
-    {
-        title: t('navigation.telegram'),
-        href: '/telegram',
-        icon: Send,
-    },
-    {
-        title: t('navigation.youtube'),
-        href: '/youtube',
-        icon: Youtube,
-    },
-    {
-        title: t('navigation.username'),
-        href: '/username',
-        icon: AtSign,
-    },
-]);
+const mainNavItems = computed<NavItem[]>(() => buildHeaderNavItems(t));
 
 const rightNavItems = computed<NavItem[]>(() => [
     {
