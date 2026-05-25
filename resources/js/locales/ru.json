@@ -523,119 +523,6 @@
             "requestFailed": "Ошибка запроса"
         }
     },
-    "username": {
-        "headTitle": "Username",
-        "tabs": {
-            "search": "Поиск",
-            "analytics": "Аналитика"
-        },
-        "search": {
-            "title": "OSINT-поиск Username",
-            "description": "Проверка username по открытым платформам.",
-            "label": "Username",
-            "placeholder": "например, john_doe",
-            "find": "Проверить",
-            "searching": "Проверяем...",
-            "help": {
-                "overview": "Проверяет публичные площадки в реальном времени на наличие username и возвращает OSINT-результаты по группам."
-            }
-        },
-        "results": {
-            "title": "Результаты",
-            "checkedAt": "Проверено в",
-            "checked": "Платформ проверено",
-            "found": "Найдено",
-            "notFound": "Не найдено",
-            "unknown": "Неизвестно",
-            "region": "Регион",
-            "primaryUsers": "Основной объём пользователей",
-            "category": "Категория",
-            "domain": "Домен",
-            "confidence": "Достоверность",
-            "openProfile": "Открыть профиль",
-            "empty": "Выполните проверку username, чтобы увидеть совпадения."
-        },
-        "status": {
-            "found": "Найдено",
-            "notFound": "Не найдено",
-            "unknown": "Неизвестно"
-        },
-        "filters": {
-            "status": "Показывать статусы",
-            "categories": "Показывать категории"
-        },
-        "categories": {
-            "general": "Общее",
-            "social": "Соцсети",
-            "messenger": "Мессенджеры",
-            "forums": "Форумы",
-            "video": "Видео",
-            "creator": "Креаторы",
-            "developer": "Разработка",
-            "music": "Музыка",
-            "professional": "Профсети",
-            "blogs": "Блоги",
-            "security": "Безопасность",
-            "startup": "Стартапы",
-            "streaming": "Стриминг"
-        },
-        "analytics": {
-            "tabTitle": "Аналитика Username",
-            "tabDescription": "Онлайн-показатели достоверности, похожих ников и payload графа.",
-            "empty": "Выполните поиск username, чтобы построить аналитику.",
-            "confidenceAverage": "Средняя достоверность",
-            "confidenceHigh": "Высокая достоверность",
-            "confidenceMedium": "Средняя достоверность",
-            "confidenceLow": "Низкая достоверность",
-            "localDiffTitle": "Локальный diff с прошлой проверкой",
-            "newlyFound": "Новообнаружено",
-            "becameNotFound": "Стало не найдено",
-            "becameUnknown": "Стало неизвестно",
-            "similarityTitle": "Похожие username",
-            "noSimilarity": "Варианты отсутствуют.",
-            "graphTitle": "Payload графа связей",
-            "graphCanvasTitle": "Граф взаимосвязей",
-            "report": "Открыть отчёт",
-            "downloadReport": "Скачать отчёт",
-            "graphNodes": "Узлы",
-            "graphEdges": "Связи",
-            "graphDomains": "Домены",
-            "graphCategories": "Категории",
-            "similarityReason": {
-                "separator": "вариация разделителя",
-                "normalized": "убраны разделители",
-                "prefix": "вариация с префиксом",
-                "suffix": "вариация с суффиксом",
-                "numeric_suffix": "числовой суффикс",
-                "leet": "leet-замена",
-                "typo_transpose": "перестановка букв",
-                "typo_omit": "пропуск буквы",
-                "typo_double": "дублирование буквы",
-                "typo_keyboard": "опечатка соседней клавиши",
-                "transliteration": "транслитерация",
-                "romanization": "вариант романизации"
-            },
-            "help": {
-                "similarity": "Сгенерированные варианты username проверяются на приоритетных платформах для оценки пересечений и риска подмены.",
-                "graph": "Сводка сущностей и связей по живым результатам, включая регионы, категории и домены профилей.",
-                "graphCanvas": "Интерактивный граф: нажмите на узел для подсветки связей, перетаскивайте элементы, используйте колесо мыши для масштабирования.",
-                "overview": "Аналитика проверки username в реальном времени: confidence, похожие варианты и граф связей."
-            }
-        },
-        "errors": {
-            "usernameRequired": "Введите username минимум из 2 символов.",
-            "searchFailed": "Не удалось выполнить поиск username."
-        },
-        "regions": {
-            "cis": "СНГ",
-            "europe": "Европа",
-            "americas": "Америка",
-            "global": "Глобально"
-        },
-        "help": {
-            "label": "Что это значит?"
-        }
-    },
     "siteIntel": {
         "headTitle": "Site Intel",
         "tabs": {
@@ -1078,159 +965,6 @@
             "filterModeAny": "Любое условие"
         }
     },
-    "emailIntel": {
-        "headTitle": "Email Intel",
-        "help": {
-            "label": "Что это за данные?",
-            "overview": "Проверяет email в онлайн-режиме: DNS домена, MX-записи, SPF/DMARC, признаки почтового профиля и локальные риск-сигналы. Результат возвращается в текущем ответе и не сохраняется.",
-            "riskScore": "Риск-скор строится из технических сигналов: нет MX, нет SPF/DMARC, домен не резолвится, одноразовая почта и признаки общего/ролевого ящика.",
-            "target": "Нормализованные данные цели. SHA-256 помогает сравнивать один и тот же адрес в выгрузках без раскрытия исходного email.",
-            "profile": "Признаки почтового профиля считаются локально: популярные бесплатные провайдеры, одноразовые домены, ролевые ящики и Gravatar hash.",
-            "signals": "Сигналы объясняют, почему изменился скор. Это индикаторы для аналитической проверки, а не доказательство вредоносности.",
-            "dns": "DNS собирается онлайн из публичных записей. MX показывает маршрутизацию почты; SPF и DMARC описывают защиту от подмены отправителя.",
-            "provider": "Провайдер определяется по MX-хостам и шаблонам домена. Это вероятностная подсказка, а не платный lookup.",
-            "localPart": "Анализ локальной части смотрит на имя ящика до @: ролевые адреса, plus-addressing, годы, разделители и случайно выглядящие строки.",
-            "spf": "SPF-разбор извлекает механизмы, include и финальную all-политику. Строгий -all сильнее всего; +all рискованен.",
-            "dmarc": "DMARC-разбор извлекает policy, адреса отчётности и alignment-подсказки. reject сильнее всего, quarantine умеренный, none только мониторинг.",
-            "searchLinks": "Pivot-ссылки открывают публичный поиск в новой вкладке. Платформа не получает и не сохраняет внешние результаты.",
-            "graph": "Граф сущностей связывает email с доменом, локальной частью, провайдером, MX-хостами, SPF include, DMARC report destinations, Gravatar hash и сработавшими сигналами.",
-            "recommendations": "Рекомендации строятся из текущих технических сигналов и показывают, какие действия сильнее всего улучшат posture.",
-            "riskBreakdown": "Показывает, какие сигналы добавили баллы к риску. Информационные и положительные сигналы не увеличивают риск."
-        },
-        "lookup": {
-            "title": "Email Intelligence",
-            "description": "Онлайн-проверка email через DNS и локальные эвристики без сохранения результатов.",
-            "email": "Email",
-            "placeholder": "name@example.com",
-            "check": "Проверить",
-            "checking": "Проверяем...",
-            "empty": "Введите email, чтобы начать анализ.",
-            "checkedAt": "Проверено",
-            "riskScore": "Риск-скор",
-            "riskLevel": "Уровень риска",
-            "mxRecords": "MX-записи",
-            "emailSecurity": "Защита почты",
-            "target": "Цель",
-            "domain": "Домен",
-            "localPart": "Локальная часть",
-            "profile": "Профиль",
-            "freeProvider": "Бесплатный провайдер",
-            "disposable": "Одноразовая почта",
-            "roleAccount": "Ролевой ящик",
-            "signals": "Сигналы",
-            "dns": "DNS"
-        },
-        "riskLevel": {
-            "clean": "Чисто",
-            "low": "Низкий",
-            "medium": "Средний",
-            "high": "Высокий"
-        },
-        "signal": {
-            "missing_mx": "У домена нет MX-записей.",
-            "domain_not_resolving": "У домена нет A/AAAA-записей.",
-            "missing_spf": "SPF-запись отсутствует.",
-            "missing_dmarc": "DMARC-запись отсутствует.",
-            "disposable_provider": "Домен найден в локальном списке одноразовой почты.",
-            "role_account": "Локальная часть похожа на общий или ролевой ящик.",
-            "free_provider": "Домен относится к популярным бесплатным почтовым провайдерам.",
-            "baseline_ok": "Сильных технических риск-сигналов не обнаружено.",
-            "weak_spf": "SPF-политика есть, но она недостаточно строгая.",
-            "open_spf": "SPF-политика разрешает всех отправителей.",
-            "monitoring_dmarc": "DMARC работает только в режиме мониторинга.",
-            "random_local_part": "Локальная часть выглядит случайной или машинно-сгенерированной.",
-            "external_dmarc_reporting": "DMARC-отчеты отправляются на внешний домен."
-        },
-        "errors": {
-            "emailRequired": "Введите корректный email.",
-            "lookupFailed": "Не удалось выполнить проверку email.",
-            "domainRequired": "Введите корректный домен."
-        },
-        "tabs": {
-            "search": "Поиск",
-            "analytics": "Аналитика",
-            "bulk": "Bulk",
-            "domain": "Домен"
-        },
-        "analytics": {
-            "title": "Email аналитика",
-            "description": "Глубокий онлайн-анализ защиты почты, инфраструктуры, pivot-ссылок и графа сущностей.",
-            "overallScore": "Общий скор",
-            "mailSecurity": "Защита почты",
-            "domainHealth": "Здоровье домена",
-            "identityConfidence": "Уверенность идентичности",
-            "provider": "Провайдер почты",
-            "type": "Тип",
-            "confidence": "Уверенность",
-            "localPart": "Анализ локальной части",
-            "length": "Длина",
-            "entropy": "Энтропия",
-            "tokens": "Токены",
-            "plusAddressing": "Plus-addressing",
-            "looksRandom": "Похоже на случайную строку",
-            "spf": "SPF-разбор",
-            "dmarc": "DMARC-разбор",
-            "strictness": "Строгость",
-            "policy": "Политика",
-            "strength": "Сила",
-            "searchLinks": "OSINT pivot-ссылки",
-            "graph": "Граф сущностей",
-            "recommendations": "Рекомендации",
-            "priority": "Приоритет",
-            "impact": "Эффект",
-            "webSnapshot": "Web snapshot домена",
-            "durationMs": "Время (мс)",
-            "similarDomains": "Похожие домены",
-            "report": "Открыть отчёт",
-            "downloadReport": "Скачать отчёт",
-            "riskBreakdown": "Расшифровка риска",
-            "dmarcReports": "DMARC отчеты",
-            "spfIncludes": "SPF include первого уровня",
-            "resolved": "Найдено",
-            "external": "Внешний домен",
-            "deliverability": "Доставляемость",
-            "deliverabilityHints": "Подсказки доставляемости"
-        },
-        "recommendation": {
-            "configure_mx": "Настроить MX-записи домена.",
-            "harden_spf": "Усилить SPF и избегать разрешающих all-механизмов.",
-            "enforce_dmarc": "Перевести DMARC к quarantine или reject после мониторинга.",
-            "review_disposable": "Вручную проверить использование одноразовой почты.",
-            "verify_role_account": "Проверить, ожидаем ли этот общий/ролевой ящик.",
-            "maintain_posture": "Текущая почтовая конфигурация выглядит здоровой; продолжайте мониторинг.",
-            "review_dmarc_reporting": "Проверьте, что внешние DMARC-адреса отчетности ожидаемы и авторизованы."
-        },
-        "similarDomainReason": {
-            "tld_variant": "вариант TLD",
-            "separator_variant": "вариант разделителя",
-            "compact_variant": "слитный вариант",
-            "lookalike_variant": "похожий символ"
-        },
-        "bulk": {
-            "title": "Bulk Email Intel",
-            "description": "Массовая онлайн-проверка до 25 email без сохранения результатов.",
-            "emails": "Email-адреса",
-            "placeholder": "one@example.com\ntwo@example.com",
-            "check": "Проверить список",
-            "email": "Email"
-        },
-        "domain": {
-            "title": "Domain Mail Posture",
-            "description": "Анализ почтовой готовности домена без конкретного email.",
-            "domain": "Домен",
-            "placeholder": "example.com",
-            "check": "Проверить домен"
-        },
-        "deliverability": {
-            "mx_ready": "Есть MX-записи для приема почты.",
-            "spf_present": "SPF-запись присутствует.",
-            "spf_strict": "SPF использует строгую политику -all.",
-            "dmarc_present": "DMARC-запись присутствует.",
-            "dmarc_enforced": "DMARC включен в режиме quarantine или reject.",
-            "domain_resolves": "Домен резолвится в A/AAAA.",
-            "web_available": "Сайт домена отвечает по HTTPS."
-        }
-    },
     "newsMediaIntel": {
         "headTitle": "News & Media Intel",
         "title": "News / Media Intel",
@@ -1307,9 +1041,7 @@
             "empty": "История запросов пока пустая. Запустите первый поиск."
         },
         "modules": {
-            "username": "Поиск по юзернейму",
             "site-intel": "Аналитика сайта",
-            "email-intel": "Аналитика email",
             "news-media-intel": "Новости и медиа",
             "telegram": "Аналитика Telegram",
             "youtube": "YouTube",
@@ -1356,9 +1088,7 @@
         "dashboard": "Панель",
         "telegram": "Телеграм",
         "youtube": "YouTube",
-        "username": "Юзернейм",
         "siteIntel": "Аналитика сайта",
-        "emailIntel": "Анализ Email",
         "newsMediaIntel": "Новости и медиа",
         "shifr": "Шифр",
         "modulesWiki": "Вики модулей",
@@ -1730,4 +1460,3 @@
         }
     }
 }
-

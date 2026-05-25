@@ -105,9 +105,7 @@ const props = withDefaults(
                 date_to: '',
             },
             available_modules: [
-                'username',
                 'site-intel',
-                'email-intel',
                 'telegram',
                 'youtube',
                 'shifr',
@@ -127,24 +125,10 @@ const quickActions = computed(() => {
 
     return [
         {
-            key: 'username',
-            count: 0,
-            last_at: null,
-            url: '/username',
-            is_pinned: false,
-        },
-        {
             key: 'site-intel',
             count: 0,
             last_at: null,
             url: '/site-intel',
-            is_pinned: false,
-        },
-        {
-            key: 'email-intel',
-            count: 0,
-            last_at: null,
-            url: '/email-intel',
             is_pinned: false,
         },
         {

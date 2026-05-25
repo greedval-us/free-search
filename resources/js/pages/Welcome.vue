@@ -35,7 +35,7 @@ const copy = computed(() => {
                 },
                 {
                     title: 'Модульная архитектура для OSINT',
-                    text: 'Telegram, Site Intel, Username, Email и News & Media в одном продукте.',
+                    text: 'Telegram, Site Intel, YouTube и News & Media в одном продукте.',
                 },
                 {
                     title: 'Профессиональная подача результатов',
@@ -55,8 +55,8 @@ const copy = computed(() => {
                     text: 'Аналитика каналов, anti-fraud сигналы, отчеты и экспорт.',
                 },
                 {
-                    title: 'Username & Email Intel',
-                    text: 'Проверка следов на платформах, сигналы совпадений и риск-профиль.',
+                    title: 'YouTube Intelligence',
+                    text: 'Поиск, аналитика и мониторинг публичных видеоданных и каналов.',
                 },
                 {
                     title: 'News & Media Intel',
@@ -101,8 +101,8 @@ const copy = computed(() => {
                 text: 'Search, pivots, risk signals, and recommendations in one UX flow without manual data stitching.',
             },
             {
-                    title: 'Modular OSINT architecture',
-                    text: 'Telegram, Site Intel, Username, Email, and News & Media in one product.',
+                title: 'Modular OSINT architecture',
+                text: 'Telegram, Site Intel, YouTube, and News & Media in one product.',
             },
             {
                 title: 'Professional result delivery',
@@ -122,8 +122,8 @@ const copy = computed(() => {
                 text: 'Channel analytics, anti-fraud signals, reporting, and export.',
             },
             {
-                title: 'Username & Email Intel',
-                text: 'Cross-platform traces, confidence signals, and risk profiling.',
+                title: 'YouTube Intelligence',
+                text: 'Search, analytics, and monitoring for public video and channel data.',
             },
             {
                 title: 'News & Media Intel',

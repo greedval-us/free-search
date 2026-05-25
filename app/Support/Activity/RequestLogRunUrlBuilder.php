@@ -34,22 +34,6 @@ class RequestLogRunUrlBuilder
      */
     private function buildModuleUrl(string $path, array $payload): ?string
     {
-        if ($path === '/username/search') {
-            return $this->buildUrl('/username', [
-                'tab' => 'search',
-                'username' => $this->readString($payload, ['username']),
-                'autorun' => '1',
-            ]);
-        }
-
-        if ($path === '/username/report') {
-            return $this->buildUrl('/username', [
-                'tab' => 'analytics',
-                'username' => $this->readString($payload, ['username']),
-                'autorun' => '1',
-            ]);
-        }
-
         if ($path === '/site-intel/site-health') {
             return $this->buildUrl('/site-intel', [
                 'tab' => 'siteHealth',
@@ -70,38 +54,6 @@ class RequestLogRunUrlBuilder
             return $this->buildUrl('/site-intel', [
                 'tab' => 'analytics',
                 'target' => $this->readString($payload, ['target']),
-                'autorun' => '1',
-            ]);
-        }
-
-        if ($path === '/email-intel/lookup') {
-            return $this->buildUrl('/email-intel', [
-                'tab' => 'search',
-                'email' => $this->readString($payload, ['email']),
-                'autorun' => '1',
-            ]);
-        }
-
-        if ($path === '/email-intel/bulk') {
-            return $this->buildUrl('/email-intel', [
-                'tab' => 'bulk',
-                'emails' => $this->readString($payload, ['emails']),
-                'autorun' => '1',
-            ]);
-        }
-
-        if ($path === '/email-intel/domain-posture') {
-            return $this->buildUrl('/email-intel', [
-                'tab' => 'domain',
-                'domain' => $this->readString($payload, ['domain']),
-                'autorun' => '1',
-            ]);
-        }
-
-        if ($path === '/email-intel/report') {
-            return $this->buildUrl('/email-intel', [
-                'tab' => 'analytics',
-                'email' => $this->readString($payload, ['email']),
                 'autorun' => '1',
             ]);
         }

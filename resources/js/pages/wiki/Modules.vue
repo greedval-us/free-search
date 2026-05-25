@@ -194,53 +194,6 @@ const ruModules: ModuleDoc[] = [
         ],
     },
     {
-        route: '/username',
-        title: 'Username',
-        purpose: 'Поиск цифровых следов по username.',
-        scenarios: [
-            'Проверка псевдонима',
-            'Проверка имперсонации',
-            'Кросс-платформенный pivot',
-        ],
-        params: [
-            {
-                name: 'username',
-                description: 'Искомый username.',
-                why: 'Основная сущность поиска.',
-                example: 'greedval',
-            },
-            {
-                name: 'autorun',
-                description: 'Автозапуск запроса.',
-                why: 'Ускоряет повторные проверки.',
-                example: '1',
-            },
-        ],
-        outputs: [
-            'Статусы найдено/не найдено',
-            'Confidence-сигналы',
-            'Граф сущностей',
-        ],
-        streams: [
-            {
-                name: 'Поиск',
-                items: [
-                    'Статусы по платформам',
-                    'Ссылки на найденные профили',
-                    'Категории и регионы платформ',
-                ],
-            },
-            {
-                name: 'Аналитика',
-                items: [
-                    'Распределение confidence',
-                    'Похожие варианты username',
-                    'Entity graph (nodes/edges)',
-                ],
-            },
-        ],
-    },
-    {
         route: '/site-intel',
         title: 'Site Intel',
         purpose: 'Техническая разведка сайта и домена.',
@@ -268,24 +221,6 @@ const ruModules: ModuleDoc[] = [
                     'SEO-аудит',
                 ],
             },
-        ],
-    },
-    {
-        route: '/email-intel',
-        title: 'Email Intel',
-        purpose: 'Digital trace checks for email identities.',
-        scenarios: ['Contact validation', 'Risk review'],
-        params: [
-            {
-                name: 'email',
-                description: 'Email address.',
-                why: 'Primary entity.',
-                example: 'name@example.com',
-            },
-        ],
-        outputs: ['Address/domain signals'],
-        streams: [
-            { name: 'Modes', items: ['Search', 'Analytics', 'Bulk', 'Domain'] },
         ],
     },
     {
@@ -337,7 +272,7 @@ const ruModules: ModuleDoc[] = [
     },
 ];
 
-const modules = computed(() => (isRu.value ? ruModules : enModules));
+const modules = computed(() => ruModules);
 
 const ui = computed(() => ({
     title: isRu.value ? 'Вики модулей' : 'Modules Wiki',

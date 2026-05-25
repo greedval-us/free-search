@@ -1,9 +1,7 @@
 import {
-    AtSign,
     BookOpenText,
     Fingerprint,
     LayoutGrid,
-    MailSearch,
     Newspaper,
     Radar,
     Send,
@@ -45,23 +43,10 @@ const moduleNavDefinitions: readonly ModuleNavDefinition[] = [
         showInHeader: true,
     },
     {
-        key: 'username',
-        labelKey: 'navigation.username',
-        href: '/username',
-        icon: AtSign,
-        showInHeader: true,
-    },
-    {
         key: 'site-intel',
         labelKey: 'navigation.siteIntel',
         href: '/site-intel',
         icon: Radar,
-    },
-    {
-        key: 'email-intel',
-        labelKey: 'navigation.emailIntel',
-        href: '/email-intel',
-        icon: MailSearch,
     },
     {
         key: 'news-media-intel',

@@ -20,9 +20,7 @@ Route::middleware(['auth', 'verified'])->group(function (): void {
         ->name('dashboard.module-pins.toggle');
 
     require __DIR__.'/web/telegram.php';
-    require __DIR__.'/web/username.php';
     require __DIR__.'/web/site-intel.php';
-    require __DIR__.'/web/email-intel.php';
     require __DIR__.'/web/news-media-intel.php';
     require __DIR__.'/web/shifr.php';
     require __DIR__.'/web/youtube.php';

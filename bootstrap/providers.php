@@ -6,21 +6,17 @@ use App\Providers\FortifyServiceProvider;
 use App\Providers\MadelineProtoServiceProvider;
 use App\Providers\MoonShineServiceProvider;
 use App\Providers\SupportServiceProvider;
-use App\Modules\EmailIntel\Providers\EmailIntelServiceProvider;
 use App\Modules\Export\Providers\ExportServiceProvider;
 use App\Modules\NewsMediaIntel\Providers\NewsMediaIntelServiceProvider;
 use App\Modules\Shifr\Providers\ShifrServiceProvider;
 use App\Modules\SiteIntel\Providers\SiteIntelServiceProvider;
 use App\Modules\Telegram\Providers\TelegramServiceProvider;
-use App\Modules\Username\Providers\UsernameServiceProvider;
 use App\Modules\YouTube\Providers\YouTubeServiceProvider;
 
 return [
     AppServiceProvider::class,
     SupportServiceProvider::class,
     DashboardServiceProvider::class,
-    UsernameServiceProvider::class,
-    EmailIntelServiceProvider::class,
     ExportServiceProvider::class,
     SiteIntelServiceProvider::class,
     NewsMediaIntelServiceProvider::class,
