@@ -40,7 +40,9 @@ const toggleLocale = () => {
 </script>
 
 <template>
-    <div class="mx-4 mt-4 rounded-2xl border border-sidebar-border/80 bg-card/70 px-4 py-6 shadow-xl backdrop-blur sm:mx-6 sm:mt-6">
+    <div
+        class="mx-4 mt-4 rounded-2xl border border-sidebar-border/80 bg-card/70 px-4 py-6 shadow-xl backdrop-blur sm:mx-6 sm:mt-6"
+    >
         <Heading
             :title="t('settings.title')"
             :description="t('settings.description')"
@@ -58,7 +60,10 @@ const toggleLocale = () => {
                         variant="ghost"
                         :class="[
                             'w-full justify-start text-muted-foreground hover:text-foreground',
-                            { 'bg-primary/15 text-primary': isCurrentOrParentUrl(item.href) },
+                            {
+                                'bg-primary/15 text-primary':
+                                    isCurrentOrParentUrl(item.href),
+                            },
                         ]"
                         as-child
                     >

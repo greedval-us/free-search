@@ -1,4 +1,4 @@
-<script setup lang="ts">
+﻿<script setup lang="ts">
 import { Activity } from 'lucide-vue-next';
 import { computed, onMounted } from 'vue';
 import HelpTooltip from '@/components/ui/HelpTooltip.vue';
@@ -6,7 +6,11 @@ import IntelResultPanel from '@/components/ui/IntelResultPanel.vue';
 import IntelSearchForm from '@/components/ui/IntelSearchForm.vue';
 import IntelSearchPanel from '@/components/ui/IntelSearchPanel.vue';
 import { useI18n } from '@/composables/useI18n';
-import { getRepeatQueryParams, isRepeatAutorunEnabled, readRepeatQueryParam } from '@/composables/useRepeatQuery';
+import {
+    getRepeatQueryParams,
+    isRepeatAutorunEnabled,
+    readRepeatQueryParam,
+} from '@/composables/useRepeatQuery';
 import { useSiteHealth } from '../composables/useSiteHealth';
 
 const { t } = useI18n();
@@ -80,7 +84,10 @@ onMounted(() => {
                 <div class="flex items-center gap-2 text-sm font-semibold">
                     <Activity class="h-4 w-4 text-cyan-400" />
                     <span>{{ t('siteIntel.siteHealth.title') }}</span>
-                    <HelpTooltip :label="t('siteIntel.help.label')" :text="t('siteIntel.siteHealth.help.overview')" />
+                    <HelpTooltip
+                        :label="t('siteIntel.help.label')"
+                        :text="t('siteIntel.siteHealth.help.overview')"
+                    />
                 </div>
                 <p class="text-xs text-muted-foreground">
                     {{ t('siteIntel.siteHealth.description') }}
@@ -106,69 +113,160 @@ onMounted(() => {
             {{ t('siteIntel.siteHealth.empty') }}
         </div>
 
-        <div v-else class="telegram-scroll min-h-0 flex-1 overflow-y-auto space-y-3 pr-1">
+        <div
+            v-else
+            class="intel-scroll min-h-0 flex-1 space-y-3 overflow-y-auto pr-1"
+        >
             <div class="grid gap-2 sm:grid-cols-2 xl:grid-cols-4">
-                <div class="rounded-lg border border-border/70 bg-background/60 p-3">
-                    <p class="text-xs text-muted-foreground">{{ t('siteIntel.common.checkedAt') }}</p>
-                    <p class="mt-1 text-sm font-semibold">{{ formatDateTime(result.checkedAt) }}</p>
+                <div
+                    class="rounded-lg border border-border/70 bg-background/60 p-3"
+                >
+                    <p class="text-xs text-muted-foreground">
+                        {{ t('siteIntel.common.checkedAt') }}
+                    </p>
+                    <p class="mt-1 text-sm font-semibold">
+                        {{ formatDateTime(result.checkedAt) }}
+                    </p>
                 </div>
-                <div class="rounded-lg border border-border/70 bg-background/60 p-3">
-                    <p class="text-xs text-muted-foreground">{{ t('siteIntel.siteHealth.finalStatus') }}</p>
-                    <p class="mt-1 text-xl font-semibold">{{ result.http.finalStatus || '-' }}</p>
+                <div
+                    class="rounded-lg border border-border/70 bg-background/60 p-3"
+                >
+                    <p class="text-xs text-muted-foreground">
+                        {{ t('siteIntel.siteHealth.finalStatus') }}
+                    </p>
+                    <p class="mt-1 text-xl font-semibold">
+                        {{ result.http.finalStatus || '-' }}
+                    </p>
                 </div>
-                <div class="rounded-lg border border-border/70 bg-background/60 p-3">
-                    <p class="text-xs text-muted-foreground">{{ t('siteIntel.siteHealth.redirects') }}</p>
-                    <p class="mt-1 text-xl font-semibold">{{ result.http.totalRedirects }}</p>
+                <div
+                    class="rounded-lg border border-border/70 bg-background/60 p-3"
+                >
+                    <p class="text-xs text-muted-foreground">
+                        {{ t('siteIntel.siteHealth.redirects') }}
+                    </p>
+                    <p class="mt-1 text-xl font-semibold">
+                        {{ result.http.totalRedirects }}
+                    </p>
                 </div>
                 <div class="rounded-lg border p-3" :class="scoreBadgeClass">
                     <p class="text-xs">{{ t('siteIntel.siteHealth.score') }}</p>
-                    <p class="mt-1 text-xl font-semibold">{{ result.score.value }}</p>
-                </div>
-            </div>
-
-            <div class="rounded-lg border border-border/70 bg-background/60 p-3 text-xs">
-                <p class="font-semibold">{{ t('siteIntel.siteHealth.finalUrl') }}</p>
-                <p class="mt-1 break-all text-muted-foreground">{{ result.http.finalUrl }}</p>
-            </div>
-
-            <div class="rounded-lg border border-border/70 bg-background/60 p-3 text-xs">
-                <div class="mb-2 flex items-center gap-2">
-                    <p class="font-semibold">{{ t('siteIntel.siteHealth.dns') }}</p>
-                    <HelpTooltip :label="t('siteIntel.help.label')" :text="t('siteIntel.siteHealth.help.dns')" />
-                </div>
-                <p>{{ t('siteIntel.siteHealth.aRecords') }}: {{ result.dns.a.join(', ') || '-' }}</p>
-                <p class="mt-1">{{ t('siteIntel.siteHealth.aaaaRecords') }}: {{ result.dns.aaaa.join(', ') || '-' }}</p>
-            </div>
-
-            <div class="rounded-lg border border-border/70 bg-background/60 p-3 text-xs">
-                <div class="mb-2 flex items-center gap-2">
-                    <p class="font-semibold">{{ t('siteIntel.siteHealth.ssl') }}</p>
-                    <HelpTooltip :label="t('siteIntel.help.label')" :text="t('siteIntel.siteHealth.help.ssl')" />
-                </div>
-                <p>{{ t('siteIntel.siteHealth.sslAvailable') }}: {{ result.ssl.available ? t('siteIntel.common.yes') : t('siteIntel.common.no') }}</p>
-                <p class="mt-1">{{ t('siteIntel.siteHealth.sslIssuer') }}: {{ result.ssl.issuer || '-' }}</p>
-                <p class="mt-1">{{ t('siteIntel.siteHealth.sslSubject') }}: {{ result.ssl.subject || '-' }}</p>
-                <p class="mt-1">{{ t('siteIntel.siteHealth.sslValidTo') }}: {{ formatDateTime(result.ssl.validTo) }}</p>
-            </div>
-
-            <div class="rounded-lg border border-border/70 bg-background/60 p-3 text-xs">
-                <div class="mb-2 flex items-center gap-2">
-                    <p class="font-semibold">{{ t('siteIntel.siteHealth.securityHeaders') }}</p>
-                    <HelpTooltip :label="t('siteIntel.help.label')" :text="t('siteIntel.siteHealth.help.securityHeaders')" />
-                </div>
-                <div class="space-y-1">
-                    <p v-for="(headerInfo, headerName) in result.headers" :key="headerName">
-                        <span class="font-medium">{{ headerLabel(headerName) }}</span>:
-                        <span v-if="headerInfo.present" class="text-emerald-300">{{ t('siteIntel.common.present') }}</span>
-                        <span v-else class="text-rose-300">{{ t('siteIntel.common.missing') }}</span>
+                    <p class="mt-1 text-xl font-semibold">
+                        {{ result.score.value }}
                     </p>
                 </div>
             </div>
 
-            <div class="rounded-lg border border-border/70 bg-background/60 p-3 text-xs">
+            <div
+                class="rounded-lg border border-border/70 bg-background/60 p-3 text-xs"
+            >
+                <p class="font-semibold">
+                    {{ t('siteIntel.siteHealth.finalUrl') }}
+                </p>
+                <p class="mt-1 break-all text-muted-foreground">
+                    {{ result.http.finalUrl }}
+                </p>
+            </div>
+
+            <div
+                class="rounded-lg border border-border/70 bg-background/60 p-3 text-xs"
+            >
                 <div class="mb-2 flex items-center gap-2">
-                    <p class="font-semibold">{{ t('siteIntel.siteHealth.httpChain') }}</p>
-                    <HelpTooltip :label="t('siteIntel.help.label')" :text="t('siteIntel.siteHealth.help.httpChain')" />
+                    <p class="font-semibold">
+                        {{ t('siteIntel.siteHealth.dns') }}
+                    </p>
+                    <HelpTooltip
+                        :label="t('siteIntel.help.label')"
+                        :text="t('siteIntel.siteHealth.help.dns')"
+                    />
+                </div>
+                <p>
+                    {{ t('siteIntel.siteHealth.aRecords') }}:
+                    {{ result.dns.a.join(', ') || '-' }}
+                </p>
+                <p class="mt-1">
+                    {{ t('siteIntel.siteHealth.aaaaRecords') }}:
+                    {{ result.dns.aaaa.join(', ') || '-' }}
+                </p>
+            </div>
+
+            <div
+                class="rounded-lg border border-border/70 bg-background/60 p-3 text-xs"
+            >
+                <div class="mb-2 flex items-center gap-2">
+                    <p class="font-semibold">
+                        {{ t('siteIntel.siteHealth.ssl') }}
+                    </p>
+                    <HelpTooltip
+                        :label="t('siteIntel.help.label')"
+                        :text="t('siteIntel.siteHealth.help.ssl')"
+                    />
+                </div>
+                <p>
+                    {{ t('siteIntel.siteHealth.sslAvailable') }}:
+                    {{
+                        result.ssl.available
+                            ? t('siteIntel.common.yes')
+                            : t('siteIntel.common.no')
+                    }}
+                </p>
+                <p class="mt-1">
+                    {{ t('siteIntel.siteHealth.sslIssuer') }}:
+                    {{ result.ssl.issuer || '-' }}
+                </p>
+                <p class="mt-1">
+                    {{ t('siteIntel.siteHealth.sslSubject') }}:
+                    {{ result.ssl.subject || '-' }}
+                </p>
+                <p class="mt-1">
+                    {{ t('siteIntel.siteHealth.sslValidTo') }}:
+                    {{ formatDateTime(result.ssl.validTo) }}
+                </p>
+            </div>
+
+            <div
+                class="rounded-lg border border-border/70 bg-background/60 p-3 text-xs"
+            >
+                <div class="mb-2 flex items-center gap-2">
+                    <p class="font-semibold">
+                        {{ t('siteIntel.siteHealth.securityHeaders') }}
+                    </p>
+                    <HelpTooltip
+                        :label="t('siteIntel.help.label')"
+                        :text="t('siteIntel.siteHealth.help.securityHeaders')"
+                    />
+                </div>
+                <div class="space-y-1">
+                    <p
+                        v-for="(headerInfo, headerName) in result.headers"
+                        :key="headerName"
+                    >
+                        <span class="font-medium">{{
+                            headerLabel(headerName)
+                        }}</span
+                        >:
+                        <span
+                            v-if="headerInfo.present"
+                            class="text-emerald-300"
+                            >{{ t('siteIntel.common.present') }}</span
+                        >
+                        <span v-else class="text-rose-300">{{
+                            t('siteIntel.common.missing')
+                        }}</span>
+                    </p>
+                </div>
+            </div>
+
+            <div
+                class="rounded-lg border border-border/70 bg-background/60 p-3 text-xs"
+            >
+                <div class="mb-2 flex items-center gap-2">
+                    <p class="font-semibold">
+                        {{ t('siteIntel.siteHealth.httpChain') }}
+                    </p>
+                    <HelpTooltip
+                        :label="t('siteIntel.help.label')"
+                        :text="t('siteIntel.siteHealth.help.httpChain')"
+                    />
                 </div>
                 <div class="space-y-2">
                     <div
@@ -176,27 +274,44 @@ onMounted(() => {
                         :key="`${step.url}-${index}`"
                         class="rounded-md border border-border/50 bg-background/40 p-2"
                     >
-                        <p class="break-all font-medium">{{ step.url }}</p>
+                        <p class="font-medium break-all">{{ step.url }}</p>
                         <p class="mt-1 text-muted-foreground">
-                            HTTP: {{ step.status || '-' }}, {{ t('siteIntel.siteHealth.responseTime') }}: {{ step.responseTimeMs }} ms
+                            HTTP: {{ step.status || '-' }},
+                            {{ t('siteIntel.siteHealth.responseTime') }}:
+                            {{ step.responseTimeMs }} ms
                         </p>
-                        <p v-if="step.location" class="mt-1 break-all text-muted-foreground">
-                            {{ t('siteIntel.siteHealth.location') }}: {{ step.location }}
+                        <p
+                            v-if="step.location"
+                            class="mt-1 break-all text-muted-foreground"
+                        >
+                            {{ t('siteIntel.siteHealth.location') }}:
+                            {{ step.location }}
                         </p>
                     </div>
                 </div>
             </div>
 
-            <div class="rounded-lg border border-border/70 bg-background/60 p-3 text-xs">
-                <p class="mb-2 font-semibold">{{ t('siteIntel.siteHealth.healthSignals') }}</p>
-                <p v-if="result.score.signals.length === 0" class="text-emerald-300">{{ t('siteIntel.siteHealth.noHealthSignals') }}</p>
-                <ul v-else class="list-disc space-y-1 pl-4 text-muted-foreground">
-                    <li v-for="signal in result.score.signals" :key="signal">{{ signalLabel(signal) }}</li>
+            <div
+                class="rounded-lg border border-border/70 bg-background/60 p-3 text-xs"
+            >
+                <p class="mb-2 font-semibold">
+                    {{ t('siteIntel.siteHealth.healthSignals') }}
+                </p>
+                <p
+                    v-if="result.score.signals.length === 0"
+                    class="text-emerald-300"
+                >
+                    {{ t('siteIntel.siteHealth.noHealthSignals') }}
+                </p>
+                <ul
+                    v-else
+                    class="list-disc space-y-1 pl-4 text-muted-foreground"
+                >
+                    <li v-for="signal in result.score.signals" :key="signal">
+                        {{ signalLabel(signal) }}
+                    </li>
                 </ul>
             </div>
         </div>
     </IntelResultPanel>
 </template>
-
-
-

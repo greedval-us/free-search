@@ -15,7 +15,9 @@ const { t } = useI18n();
 const formatNumber = (value: number | null | undefined) => {
     const numeric = Number(value);
 
-    return new Intl.NumberFormat().format(Number.isFinite(numeric) ? numeric : 0);
+    return new Intl.NumberFormat().format(
+        Number.isFinite(numeric) ? numeric : 0
+    );
 };
 </script>
 
@@ -26,14 +28,22 @@ const formatNumber = (value: number | null | undefined) => {
             :key="card.label"
             class="intel-panel-strong"
         >
-            <p class="text-xs uppercase tracking-wide text-muted-foreground">{{ card.label }}</p>
-            <p class="mt-2 text-2xl font-semibold">
-                {{ typeof card.value === 'number' ? formatNumber(card.value) : card.value }}
+            <p class="text-xs tracking-wide text-muted-foreground uppercase">
+                {{ card.label }}
             </p>
-            <p v-if="card.delta !== null" class="mt-1 text-xs text-muted-foreground">
+            <p class="mt-2 text-2xl font-semibold">
+                {{
+                    typeof card.value === 'number'
+                        ? formatNumber(card.value)
+                        : card.value
+                }}
+            </p>
+            <p
+                v-if="card.delta !== null"
+                class="mt-1 text-xs text-muted-foreground"
+            >
                 {{ t('telegram.analytics.vsPrevious') }}: {{ card.delta }}
             </p>
         </article>
     </div>
 </template>
-

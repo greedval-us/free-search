@@ -32,7 +32,9 @@ defineOptions({
     >
         <div class="grid gap-6">
             <div class="grid gap-2">
-                <Label for="name" class="text-slate-200">{{ t('auth.register.name') }}</Label>
+                <Label for="name" class="text-slate-200">{{
+                    t('auth.register.name')
+                }}</Label>
                 <Input
                     id="name"
                     type="text"
@@ -48,7 +50,9 @@ defineOptions({
             </div>
 
             <div class="grid gap-2">
-                <Label for="email" class="text-slate-200">{{ t('auth.register.email') }}</Label>
+                <Label for="email" class="text-slate-200">{{
+                    t('auth.register.email')
+                }}</Label>
                 <Input
                     id="email"
                     type="email"
@@ -63,7 +67,9 @@ defineOptions({
             </div>
 
             <div class="grid gap-2">
-                <Label for="password" class="text-slate-200">{{ t('auth.register.password') }}</Label>
+                <Label for="password" class="text-slate-200">{{
+                    t('auth.register.password')
+                }}</Label>
                 <PasswordInput
                     id="password"
                     required
@@ -77,7 +83,9 @@ defineOptions({
             </div>
 
             <div class="grid gap-2">
-                <Label for="password_confirmation" class="text-slate-200">{{ t('auth.register.confirmPassword') }}</Label>
+                <Label for="password_confirmation" class="text-slate-200">{{
+                    t('auth.register.confirmPassword')
+                }}</Label>
                 <PasswordInput
                     id="password_confirmation"
                     required

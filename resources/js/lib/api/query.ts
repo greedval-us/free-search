@@ -1,4 +1,6 @@
-export const buildQueryString = (query?: Record<string, string | number | boolean | null | undefined>) => {
+export const buildQueryString = (
+    query?: Record<string, string | number | boolean | null | undefined>
+) => {
     if (!query) {
         return '';
     }
@@ -17,4 +19,3 @@ export const buildQueryString = (query?: Record<string, string | number | boolea
 
     return serialized ? `?${serialized}` : '';
 };
-

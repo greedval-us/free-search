@@ -1,6 +1,15 @@
 <script setup lang="ts">
 import { Link, usePage } from '@inertiajs/vue3';
-import { AtSign, BookOpen, Folder, LayoutGrid, Menu, Search, Send, Youtube } from 'lucide-vue-next';
+import {
+    AtSign,
+    BookOpen,
+    Folder,
+    LayoutGrid,
+    Menu,
+    Search,
+    Send,
+    Youtube,
+} from 'lucide-vue-next';
 import { computed } from 'vue';
 import AppLogo from '@/components/AppLogo.vue';
 import AppLogoIcon from '@/components/AppLogoIcon.vue';
@@ -93,7 +102,9 @@ const rightNavItems = computed<NavItem[]>(() => [
 
 <template>
     <div>
-        <div class="border-b border-sidebar-border/80 bg-background/80 backdrop-blur">
+        <div
+            class="border-b border-sidebar-border/80 bg-background/80 backdrop-blur"
+        >
             <div class="mx-auto flex h-16 items-center px-4 md:max-w-7xl">
                 <!-- Mobile Menu -->
                 <div class="lg:hidden">
@@ -107,8 +118,13 @@ const rightNavItems = computed<NavItem[]>(() => [
                                 <Menu class="h-5 w-5" />
                             </Button>
                         </SheetTrigger>
-                            <SheetContent side="left" class="w-[300px] border-sidebar-border bg-card/95 p-6 text-foreground">
-                            <SheetTitle class="sr-only">{{ t('navigation.menu') }}</SheetTitle>
+                        <SheetContent
+                            side="left"
+                            class="w-[300px] border-sidebar-border bg-card/95 p-6 text-foreground"
+                        >
+                            <SheetTitle class="sr-only">{{
+                                t('navigation.menu')
+                            }}</SheetTitle>
                             <SheetHeader class="flex justify-start text-left">
                                 <AppLogoIcon
                                     class="size-6 fill-current text-primary"
@@ -126,7 +142,7 @@ const rightNavItems = computed<NavItem[]>(() => [
                                         :class="
                                             whenCurrentUrl(
                                                 item.href,
-                                                activeItemStyles,
+                                                activeItemStyles
                                             )
                                         "
                                     >
@@ -180,7 +196,7 @@ const rightNavItems = computed<NavItem[]>(() => [
                                         navigationMenuTriggerStyle(),
                                         whenCurrentUrl(
                                             item.href,
-                                            activeItemStyles,
+                                            activeItemStyles
                                         ),
                                         'h-9 cursor-pointer px-3',
                                     ]"

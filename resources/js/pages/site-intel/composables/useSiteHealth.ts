@@ -27,22 +27,30 @@ export const useSiteHealth = (t: TranslateFn) => {
         result.value = null;
 
         try {
-            const apiResult = await apiRequest<SiteHealthResult>('/site-intel/site-health', {
-                method: 'GET',
-                query: {
-                    target: form.target.trim(),
-                },
-            });
+            const apiResult = await apiRequest<SiteHealthResult>(
+                '/site-intel/site-health',
+                {
+                    method: 'GET',
+                    query: {
+                        target: form.target.trim(),
+                    },
+                }
+            );
 
             if (!apiResult.ok) {
-                error.value = apiResult.message ?? t('siteIntel.siteHealth.errors.checkFailed');
+                error.value =
+                    apiResult.message ??
+                    t('siteIntel.siteHealth.errors.checkFailed');
 
                 return;
             }
 
             result.value = apiResult.data;
         } catch (exception) {
-            error.value = exception instanceof Error ? exception.message : t('siteIntel.siteHealth.errors.checkFailed');
+            error.value =
+                exception instanceof Error
+                    ? exception.message
+                    : t('siteIntel.siteHealth.errors.checkFailed');
         } finally {
             loading.value = false;
         }

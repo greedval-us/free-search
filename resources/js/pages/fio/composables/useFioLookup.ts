@@ -33,20 +33,27 @@ export const useFioLookup = (t: TranslateFn, locale: Ref<'en' | 'ru'>) => {
                 method: 'GET',
                 query: {
                     full_name: form.fullName.trim(),
-                    qualifier: form.qualifier.trim().length > 0 ? form.qualifier.trim() : undefined,
+                    qualifier:
+                        form.qualifier.trim().length > 0
+                            ? form.qualifier.trim()
+                            : undefined,
                     locale: locale.value,
                 },
             });
 
             if (!apiResult.ok) {
-                error.value = apiResult.message ?? t('fio.lookup.errors.lookupFailed');
+                error.value =
+                    apiResult.message ?? t('fio.lookup.errors.lookupFailed');
 
                 return;
             }
 
             result.value = apiResult.data;
         } catch (exception) {
-            error.value = exception instanceof Error ? exception.message : t('fio.lookup.errors.lookupFailed');
+            error.value =
+                exception instanceof Error
+                    ? exception.message
+                    : t('fio.lookup.errors.lookupFailed');
         } finally {
             loading.value = false;
         }

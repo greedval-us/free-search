@@ -14,62 +14,63 @@ let cy: cytoscape.Core | null = null;
 
 const nodeColor = (node: EmailIntelGraphNode): string => {
     if (node.type === 'email') {
-return '#06b6d4';
-}
+        return '#06b6d4';
+    }
 
     if (node.type === 'domain') {
-return '#f97316';
-}
+        return '#f97316';
+    }
 
     if (node.type === 'provider') {
-return '#8b5cf6';
-}
+        return '#8b5cf6';
+    }
 
     if (node.type === 'mx_host') {
-return '#14b8a6';
-}
+        return '#14b8a6';
+    }
 
     if (node.type === 'spf_include') {
-return '#22c55e';
-}
+        return '#22c55e';
+    }
 
     if (node.type.includes('dmarc')) {
-return '#eab308';
-}
+        return '#eab308';
+    }
 
     if (node.type === 'risk_signal') {
-return node.level === 'high' ? '#f43f5e' : '#f59e0b';
-}
+        return node.level === 'high' ? '#f43f5e' : '#f59e0b';
+    }
 
     return '#64748b';
 };
 
 const edgeColor = (edge: EmailIntelGraphEdge): string => {
     if (edge.kind === 'triggered') {
-return '#f43f5e';
-}
+        return '#f43f5e';
+    }
 
     if (edge.kind === 'authorizes_sender') {
-return '#22c55e';
-}
+        return '#22c55e';
+    }
 
     if (edge.kind === 'reports_to') {
-return '#eab308';
-}
+        return '#eab308';
+    }
 
     if (edge.kind === 'routes_mail_to') {
-return '#14b8a6';
-}
+        return '#14b8a6';
+    }
 
     return '#64748b';
 };
 
-const shortLabel = (label: string): string => (label.length <= 18 ? label : `${label.slice(0, 17)}...`);
+const shortLabel = (label: string): string =>
+    label.length <= 18 ? label : `${label.slice(0, 17)}...`;
 
 const renderGraph = () => {
     if (!root.value) {
-return;
-}
+        return;
+    }
 
     if (cy) {
         cy.destroy();
@@ -80,12 +81,24 @@ return;
         container: root.value,
         elements: [
             ...props.nodes.map((node) => ({
-                data: { id: node.id, label: shortLabel(node.label), type: node.type },
-                style: { 'background-color': nodeColor(node), label: shortLabel(node.label) },
+                data: {
+                    id: node.id,
+                    label: shortLabel(node.label),
+                    type: node.type,
+                },
+                style: {
+                    'background-color': nodeColor(node),
+                    label: shortLabel(node.label),
+                },
                 classes: node.type,
             })),
             ...props.edges.map((edge, index) => ({
-                data: { id: `edge-${index}`, source: edge.source, target: edge.target, kind: edge.kind },
+                data: {
+                    id: `edge-${index}`,
+                    source: edge.source,
+                    target: edge.target,
+                    kind: edge.kind,
+                },
                 style: {
                     'line-color': edgeColor(edge),
                     'target-arrow-color': edgeColor(edge),
@@ -147,8 +160,8 @@ return;
 
     cy.on('tap', 'node', (event) => {
         if (!cy) {
-return;
-}
+            return;
+        }
 
         const node = event.target;
         cy.elements().addClass('dimmed');
@@ -176,6 +189,9 @@ onBeforeUnmount(() => {
 
 <template>
     <div class="rounded-lg border border-border/70 bg-background/60 p-3">
-        <div ref="root" class="h-[34rem] w-full rounded-md border border-border/70 bg-slate-950/80" />
+        <div
+            ref="root"
+            class="h-[34rem] w-full rounded-md border border-border/70 bg-slate-950/80"
+        />
     </div>
 </template>

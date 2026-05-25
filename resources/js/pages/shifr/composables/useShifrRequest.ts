@@ -1,60 +1,66 @@
-import { computed, ref  } from 'vue';
-import type {Ref} from 'vue';
+import { computed, ref } from 'vue';
+import type { Ref } from 'vue';
 import { apiRequest } from '@/lib/api';
 
 export interface ShifrRequestState {
-  loading: Ref<boolean>;
-  error: Ref<string | null>;
-  result: Ref<Record<string, unknown> | null>;
-  canRun: Ref<boolean>;
-  run: (params: URLSearchParams) => Promise<void>;
-  reset: () => void;
+    loading: Ref<boolean>;
+    error: Ref<string | null>;
+    result: Ref<Record<string, unknown> | null>;
+    canRun: Ref<boolean>;
+    run: (params: URLSearchParams) => Promise<void>;
+    reset: () => void;
 }
 
 export const useShifrRequest = (
-  endpoint: string,
-  requestFailedMessage: () => string,
-  hasInput: Ref<boolean>,
+    endpoint: string,
+    requestFailedMessage: () => string,
+    hasInput: Ref<boolean>
 ): ShifrRequestState => {
-  const loading = ref(false);
-  const error = ref<string | null>(null);
-  const result = ref<Record<string, unknown> | null>(null);
+    const loading = ref(false);
+    const error = ref<string | null>(null);
+    const result = ref<Record<string, unknown> | null>(null);
 
-  const canRun = computed(() => hasInput.value && !loading.value);
+    const canRun = computed(() => hasInput.value && !loading.value);
 
-  const reset = (): void => {
-    error.value = null;
-    result.value = null;
-  };
+    const reset = (): void => {
+        error.value = null;
+        result.value = null;
+    };
 
-  const run = async (params: URLSearchParams): Promise<void> => {
-    if (!canRun.value) {
-      return;
-    }
+    const run = async (params: URLSearchParams): Promise<void> => {
+        if (!canRun.value) {
+            return;
+        }
 
-    loading.value = true;
-    reset();
+        loading.value = true;
+        reset();
 
-    try {
-      const query = Object.fromEntries(params.entries());
-      const apiResult = await apiRequest<Record<string, unknown>>(endpoint, {
-        method: 'GET',
-        query,
-      });
+        try {
+            const query = Object.fromEntries(params.entries());
+            const apiResult = await apiRequest<Record<string, unknown>>(
+                endpoint,
+                {
+                    method: 'GET',
+                    query,
+                }
+            );
 
-      if (!apiResult.ok) {
-        error.value = apiResult.message ?? requestFailedMessage();
+            if (!apiResult.ok) {
+                error.value = apiResult.message ?? requestFailedMessage();
 
-        return;
-      }
+                return;
+            }
 
-      result.value = apiResult.data;
-    } catch (exception) {
-      error.value = exception instanceof Error ? exception.message : requestFailedMessage();
-    } finally {
-      loading.value = false;
-    }
-  };
+            result.value = apiResult.data;
+        } catch (exception) {
+            error.value =
+                exception instanceof Error
+                    ? exception.message
+                    : requestFailedMessage();
+        } finally {
+            loading.value = false;
+        }
+    };
 
-  return { loading, error, result, canRun, run, reset };
+    return { loading, error, result, canRun, run, reset };
 };

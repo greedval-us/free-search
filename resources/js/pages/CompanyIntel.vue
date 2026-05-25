@@ -1,4 +1,4 @@
-<script setup lang="ts">
+﻿<script setup lang="ts">
 import { Head } from '@inertiajs/vue3';
 import { Building2 } from 'lucide-vue-next';
 import { computed, onMounted, reactive, ref } from 'vue';
@@ -10,9 +10,13 @@ import MetricCard from '@/components/ui/MetricCard.vue';
 import PageHeader from '@/components/ui/PageHeader.vue';
 import RiskBadge from '@/components/ui/RiskBadge.vue';
 import SectionCard from '@/components/ui/SectionCard.vue';
-import { getRepeatQueryParams, isRepeatAutorunEnabled, readRepeatQueryParam } from '@/composables/useRepeatQuery';
-import { apiRequest } from '@/lib/api';
 import { useI18n } from '@/composables/useI18n';
+import {
+    getRepeatQueryParams,
+    isRepeatAutorunEnabled,
+    readRepeatQueryParam,
+} from '@/composables/useRepeatQuery';
+import { apiRequest } from '@/lib/api';
 
 defineOptions({
     layout: {
@@ -120,7 +124,9 @@ const riskExplanationLabel = (value: string | undefined) => {
     const key = `companyIntel.riskExplanation.${value ?? 'risk_unknown_missing_domain'}`;
     const translated = t(key);
 
-    return translated === key ? (value ?? 'risk_unknown_missing_domain') : translated;
+    return translated === key
+        ? (value ?? 'risk_unknown_missing_domain')
+        : translated;
 };
 
 const strengthLabel = (value: string) => {
@@ -142,23 +148,30 @@ const lookup = async () => {
     result.value = null;
 
     try {
-        const apiResult = await apiRequest<CompanyIntelResult>('/company-intel/lookup', {
-            method: 'GET',
-            query: {
-                query: form.query.trim(),
-                locale: locale.value,
-            },
-        });
+        const apiResult = await apiRequest<CompanyIntelResult>(
+            '/company-intel/lookup',
+            {
+                method: 'GET',
+                query: {
+                    query: form.query.trim(),
+                    locale: locale.value,
+                },
+            }
+        );
 
         if (!apiResult.ok) {
-            error.value = apiResult.message || t('companyIntel.errors.lookupFailed');
+            error.value =
+                apiResult.message || t('companyIntel.errors.lookupFailed');
 
             return;
         }
 
         result.value = apiResult.data;
     } catch (exception) {
-        error.value = exception instanceof Error ? exception.message : t('companyIntel.errors.lookupFailed');
+        error.value =
+            exception instanceof Error
+                ? exception.message
+                : t('companyIntel.errors.lookupFailed');
     } finally {
         loading.value = false;
     }
@@ -186,10 +199,18 @@ onMounted(() => {
 <template>
     <Head :title="pageTitle" />
 
-    <div class="flex h-full min-h-0 flex-1 flex-col gap-4 overflow-hidden rounded-xl p-4">
+    <div
+        class="flex h-full min-h-0 flex-1 flex-col gap-4 overflow-hidden rounded-xl p-4"
+    >
         <IntelSearchPanel>
             <div class="flex items-center justify-between gap-3">
-                <PageHeader :icon="Building2" :title="t('companyIntel.title')" :description="t('companyIntel.description')" :help-label="t('companyIntel.help.label')" :help-text="t('companyIntel.help.overview')" />
+                <PageHeader
+                    :icon="Building2"
+                    :title="t('companyIntel.title')"
+                    :description="t('companyIntel.description')"
+                    :help-label="t('companyIntel.help.label')"
+                    :help-text="t('companyIntel.help.overview')"
+                />
             </div>
 
             <IntelSearchForm
@@ -208,55 +229,182 @@ onMounted(() => {
         <IntelResultPanel>
             <EmptyState v-if="!result" :text="t('companyIntel.empty')" />
 
-            <div v-else class="telegram-scroll min-h-0 flex-1 overflow-y-auto space-y-3 pr-1">
+            <div
+                v-else
+                class="intel-scroll min-h-0 flex-1 space-y-3 overflow-y-auto pr-1"
+            >
                 <div class="grid gap-2 sm:grid-cols-2 xl:grid-cols-4">
-                    <MetricCard :title="t('companyIntel.checkedAt')" :value="formatDateTime(result.checkedAt)" />
-                    <MetricCard :title="t('companyIntel.detectedDomain')" :value="result.domain ?? '-'" />
-                    <RiskBadge :label="t('companyIntel.riskScore')" :level="result.summary.riskLevel" :score="result.summary.riskScore">
+                    <MetricCard
+                        :title="t('companyIntel.checkedAt')"
+                        :value="formatDateTime(result.checkedAt)"
+                    />
+                    <MetricCard
+                        :title="t('companyIntel.detectedDomain')"
+                        :value="result.domain ?? '-'"
+                    />
+                    <RiskBadge
+                        :label="t('companyIntel.riskScore')"
+                        :level="result.summary.riskLevel"
+                        :score="result.summary.riskScore"
+                    >
                         {{ riskLabel(result.summary.riskLevel) }}
                     </RiskBadge>
-                    <MetricCard :title="t('companyIntel.signalCount')" :value="result.summary.signals.length" />
+                    <MetricCard
+                        :title="t('companyIntel.signalCount')"
+                        :value="result.summary.signals.length"
+                    />
                 </div>
 
                 <SectionCard :title="t('companyIntel.riskScore')">
-                    <p class="text-muted-foreground">{{ riskExplanationLabel(result.summary.riskExplanation) }}</p>
+                    <p class="text-muted-foreground">
+                        {{
+                            riskExplanationLabel(result.summary.riskExplanation)
+                        }}
+                    </p>
                 </SectionCard>
 
                 <SectionCard :title="t('companyIntel.signals')">
-                    <p v-if="result.summary.signals.length === 0" class="text-emerald-300">{{ t('companyIntel.noSignals') }}</p>
-                    <ul v-else class="list-disc space-y-1 pl-4 text-muted-foreground">
-                        <li v-for="signal in result.summary.signals" :key="signal">{{ signalLabel(signal) }}</li>
+                    <p
+                        v-if="result.summary.signals.length === 0"
+                        class="text-emerald-300"
+                    >
+                        {{ t('companyIntel.noSignals') }}
+                    </p>
+                    <ul
+                        v-else
+                        class="list-disc space-y-1 pl-4 text-muted-foreground"
+                    >
+                        <li
+                            v-for="signal in result.summary.signals"
+                            :key="signal"
+                        >
+                            {{ signalLabel(signal) }}
+                        </li>
                     </ul>
                 </SectionCard>
 
                 <SectionCard :title="t('companyIntel.strengths')">
-                    <p v-if="result.summary.strengths.length === 0" class="text-muted-foreground">-</p>
-                    <ul v-else class="list-disc space-y-1 pl-4 text-muted-foreground">
-                        <li v-for="strength in result.summary.strengths" :key="strength">{{ strengthLabel(strength) }}</li>
+                    <p
+                        v-if="result.summary.strengths.length === 0"
+                        class="text-muted-foreground"
+                    >
+                        -
+                    </p>
+                    <ul
+                        v-else
+                        class="list-disc space-y-1 pl-4 text-muted-foreground"
+                    >
+                        <li
+                            v-for="strength in result.summary.strengths"
+                            :key="strength"
+                        >
+                            {{ strengthLabel(strength) }}
+                        </li>
                     </ul>
                 </SectionCard>
 
-                <div v-if="result.domainIntel.available" class="rounded-lg border border-border/70 bg-background/60 p-3 text-xs space-y-1">
-                    <p class="mb-2 font-semibold">{{ t('companyIntel.domainIntel') }}</p>
-                    <p>{{ t('companyIntel.labels.dns') }}: A {{ result.domainIntel.dns?.aCount ?? 0 }}, NS {{ result.domainIntel.dns?.nsCount ?? 0 }}, MX {{ result.domainIntel.dns?.mxCount ?? 0 }}</p>
-                    <p>TXT {{ result.domainIntel.dns?.txtCount ?? 0 }}, CAA {{ result.domainIntel.dns?.caaCount ?? 0 }}, DNSSEC {{ result.domainIntel.dns?.dnssecEnabled ? t('common.yes') : t('common.no') }}</p>
-                    <p>{{ t('companyIntel.labels.mailSecurity') }}: SPF {{ result.domainIntel.dns?.hasSpf ? t('common.yes') : t('common.no') }} ({{ result.domainIntel.dns?.spfStrict ? t('common.yes') : t('common.no') }} strict), DMARC {{ result.domainIntel.dns?.hasDmarc ? t('common.yes') : t('common.no') }} (p={{ result.domainIntel.dns?.dmarcPolicy ?? '-' }})</p>
-                    <p>{{ t('companyIntel.labels.whois') }}: {{ result.domainIntel.whois?.available ? t('companyIntel.available') : t('companyIntel.unavailable') }}</p>
-                    <p>{{ t('companyIntel.registrar') }}: {{ result.domainIntel.whois?.registrar ?? '-' }}</p>
-                    <p>{{ t('companyIntel.country') }}: {{ result.domainIntel.whois?.country ?? '-' }}</p>
-                    <p>{{ t('companyIntel.createdAt') }}: {{ formatDateTime(result.domainIntel.whois?.createdAt ?? null) }}</p>
-                    <p>{{ t('companyIntel.expiresAt') }}: {{ formatDateTime(result.domainIntel.whois?.expiresAt ?? null) }}</p>
-                    <p>{{ t('companyIntel.domainAgeDays') }}: {{ result.domainIntel.whois?.domainAgeDays ?? '-' }}</p>
-                    <p>{{ t('companyIntel.daysToExpiry') }}: {{ result.domainIntel.whois?.daysToExpiry ?? '-' }}</p>
+                <div
+                    v-if="result.domainIntel.available"
+                    class="space-y-1 rounded-lg border border-border/70 bg-background/60 p-3 text-xs"
+                >
+                    <p class="mb-2 font-semibold">
+                        {{ t('companyIntel.domainIntel') }}
+                    </p>
+                    <p>
+                        {{ t('companyIntel.labels.dns') }}: A
+                        {{ result.domainIntel.dns?.aCount ?? 0 }}, NS
+                        {{ result.domainIntel.dns?.nsCount ?? 0 }}, MX
+                        {{ result.domainIntel.dns?.mxCount ?? 0 }}
+                    </p>
+                    <p>
+                        TXT {{ result.domainIntel.dns?.txtCount ?? 0 }}, CAA
+                        {{ result.domainIntel.dns?.caaCount ?? 0 }}, DNSSEC
+                        {{
+                            result.domainIntel.dns?.dnssecEnabled
+                                ? t('common.yes')
+                                : t('common.no')
+                        }}
+                    </p>
+                    <p>
+                        {{ t('companyIntel.labels.mailSecurity') }}: SPF
+                        {{
+                            result.domainIntel.dns?.hasSpf
+                                ? t('common.yes')
+                                : t('common.no')
+                        }}
+                        ({{
+                            result.domainIntel.dns?.spfStrict
+                                ? t('common.yes')
+                                : t('common.no')
+                        }}
+                        strict), DMARC
+                        {{
+                            result.domainIntel.dns?.hasDmarc
+                                ? t('common.yes')
+                                : t('common.no')
+                        }}
+                        (p={{ result.domainIntel.dns?.dmarcPolicy ?? '-' }})
+                    </p>
+                    <p>
+                        {{ t('companyIntel.labels.whois') }}:
+                        {{
+                            result.domainIntel.whois?.available
+                                ? t('companyIntel.available')
+                                : t('companyIntel.unavailable')
+                        }}
+                    </p>
+                    <p>
+                        {{ t('companyIntel.registrar') }}:
+                        {{ result.domainIntel.whois?.registrar ?? '-' }}
+                    </p>
+                    <p>
+                        {{ t('companyIntel.country') }}:
+                        {{ result.domainIntel.whois?.country ?? '-' }}
+                    </p>
+                    <p>
+                        {{ t('companyIntel.createdAt') }}:
+                        {{
+                            formatDateTime(
+                                result.domainIntel.whois?.createdAt ?? null
+                            )
+                        }}
+                    </p>
+                    <p>
+                        {{ t('companyIntel.expiresAt') }}:
+                        {{
+                            formatDateTime(
+                                result.domainIntel.whois?.expiresAt ?? null
+                            )
+                        }}
+                    </p>
+                    <p>
+                        {{ t('companyIntel.domainAgeDays') }}:
+                        {{ result.domainIntel.whois?.domainAgeDays ?? '-' }}
+                    </p>
+                    <p>
+                        {{ t('companyIntel.daysToExpiry') }}:
+                        {{ result.domainIntel.whois?.daysToExpiry ?? '-' }}
+                    </p>
                 </div>
 
                 <SectionCard :title="t('companyIntel.recommendations')">
-                    <ul class="mb-3 list-disc space-y-1 pl-4 text-muted-foreground">
-                        <li v-for="recommendation in result.summary.recommendations" :key="recommendation">{{ recommendationLabel(recommendation) }}</li>
+                    <ul
+                        class="mb-3 list-disc space-y-1 pl-4 text-muted-foreground"
+                    >
+                        <li
+                            v-for="recommendation in result.summary
+                                .recommendations"
+                            :key="recommendation"
+                        >
+                            {{ recommendationLabel(recommendation) }}
+                        </li>
                     </ul>
                 </SectionCard>
 
-                <SectionCard :title="t('companyIntel.osintLinks')" :description="t('companyIntel.help.links')">
+                <SectionCard
+                    :title="t('companyIntel.osintLinks')"
+                    :description="t('companyIntel.help.links')"
+                >
                     <div class="space-y-1">
                         <a
                             v-for="link in result.osintLinks"

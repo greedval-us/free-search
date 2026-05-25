@@ -9,16 +9,16 @@ export type UseCurrentUrlReturn = {
     isCurrentUrl: (
         urlToCheck: NonNullable<InertiaLinkProps['href']>,
         currentUrl?: string,
-        startsWith?: boolean,
+        startsWith?: boolean
     ) => boolean;
     isCurrentOrParentUrl: (
         urlToCheck: NonNullable<InertiaLinkProps['href']>,
-        currentUrl?: string,
+        currentUrl?: string
     ) => boolean;
     whenCurrentUrl: <T, F = null>(
         urlToCheck: NonNullable<InertiaLinkProps['href']>,
         ifTrue: T,
-        ifFalse?: F,
+        ifFalse?: F
     ) => T | F;
 };
 
@@ -29,15 +29,15 @@ const currentUrlReactive = computed(
             page.url,
             typeof window !== 'undefined'
                 ? window.location.origin
-                : 'http://localhost',
-        ).pathname,
+                : 'http://localhost'
+        ).pathname
 );
 
 export function useCurrentUrl(): UseCurrentUrlReturn {
     function isCurrentUrl(
         urlToCheck: NonNullable<InertiaLinkProps['href']>,
         currentUrl?: string,
-        startsWith: boolean = false,
+        startsWith: boolean = false
     ) {
         const urlToCompare = currentUrl ?? currentUrlReactive.value;
         const urlString = toUrl(urlToCheck);
@@ -60,7 +60,7 @@ export function useCurrentUrl(): UseCurrentUrlReturn {
 
     function isCurrentOrParentUrl(
         urlToCheck: NonNullable<InertiaLinkProps['href']>,
-        currentUrl?: string,
+        currentUrl?: string
     ) {
         return isCurrentUrl(urlToCheck, currentUrl, true);
     }
@@ -68,7 +68,7 @@ export function useCurrentUrl(): UseCurrentUrlReturn {
     function whenCurrentUrl(
         urlToCheck: NonNullable<InertiaLinkProps['href']>,
         ifTrue: any,
-        ifFalse: any = null,
+        ifFalse: any = null
     ) {
         return isCurrentUrl(urlToCheck) ? ifTrue : ifFalse;
     }

@@ -60,7 +60,10 @@ const { t } = useI18n();
             </div>
 
             <div class="flex items-center gap-4">
-                <Button :disabled="processing" data-test="update-profile-button">
+                <Button
+                    :disabled="processing"
+                    data-test="update-profile-button"
+                >
                     {{ t('settings.profilePage.save') }}
                 </Button>
 

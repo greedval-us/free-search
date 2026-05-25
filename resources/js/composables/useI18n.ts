@@ -8,7 +8,8 @@ type Messages = Record<string, unknown>;
 const dictionaries: Record<Locale, Messages> = { en, ru };
 const LOCALE_STORAGE_KEY = 'locale';
 
-const isLocale = (value: unknown): value is Locale => value === 'en' || value === 'ru';
+const isLocale = (value: unknown): value is Locale =>
+    value === 'en' || value === 'ru';
 
 const detectLocale = (): Locale => {
     if (typeof window !== 'undefined') {
@@ -38,7 +39,11 @@ if (typeof document !== 'undefined') {
 
 const getNestedValue = (dictionary: Messages, key: string): string | null => {
     const value = key.split('.').reduce<unknown>((accumulator, segment) => {
-        if (accumulator && typeof accumulator === 'object' && segment in accumulator) {
+        if (
+            accumulator &&
+            typeof accumulator === 'object' &&
+            segment in accumulator
+        ) {
             return (accumulator as Record<string, unknown>)[segment];
         }
 

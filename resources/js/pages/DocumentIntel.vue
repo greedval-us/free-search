@@ -1,4 +1,4 @@
-<script setup lang="ts">
+﻿<script setup lang="ts">
 import { Head } from '@inertiajs/vue3';
 import { FileSearch } from 'lucide-vue-next';
 import { computed, onMounted, reactive, ref } from 'vue';
@@ -9,9 +9,13 @@ import IntelSearchPanel from '@/components/ui/IntelSearchPanel.vue';
 import MetricCard from '@/components/ui/MetricCard.vue';
 import PageHeader from '@/components/ui/PageHeader.vue';
 import SectionCard from '@/components/ui/SectionCard.vue';
-import { getRepeatQueryParams, isRepeatAutorunEnabled, readRepeatQueryParam } from '@/composables/useRepeatQuery';
-import { apiRequest } from '@/lib/api';
 import { useI18n } from '@/composables/useI18n';
+import {
+    getRepeatQueryParams,
+    isRepeatAutorunEnabled,
+    readRepeatQueryParam,
+} from '@/composables/useRepeatQuery';
+import { apiRequest } from '@/lib/api';
 
 defineOptions({
     layout: {
@@ -68,8 +72,18 @@ type DocumentIntelResult = {
     }>;
     domainIntel: {
         available: boolean;
-        dns: null | { aCount: number; mxCount: number; hasSpf: boolean; hasDmarc: boolean };
-        whois: null | { available: boolean; registrar: string | null; createdAt: string | null; expiresAt: string | null };
+        dns: null | {
+            aCount: number;
+            mxCount: number;
+            hasSpf: boolean;
+            hasDmarc: boolean;
+        };
+        whois: null | {
+            available: boolean;
+            registrar: string | null;
+            createdAt: string | null;
+            expiresAt: string | null;
+        };
     };
 };
 
@@ -84,7 +98,9 @@ const result = ref<DocumentIntelResult | null>(null);
 const canLookup = computed(() => form.query.trim().length >= 2);
 
 const formatDateTime = (value: string | null) => {
-    if (!value) return '-';
+    if (!value) {
+        return '-';
+    }
 
     return new Date(value).toLocaleString();
 };
@@ -163,23 +179,30 @@ const lookup = async () => {
     result.value = null;
 
     try {
-        const apiResult = await apiRequest<DocumentIntelResult>('/document-intel/lookup', {
-            method: 'GET',
-            query: {
-                query: form.query.trim(),
-                locale: locale.value,
-            },
-        });
+        const apiResult = await apiRequest<DocumentIntelResult>(
+            '/document-intel/lookup',
+            {
+                method: 'GET',
+                query: {
+                    query: form.query.trim(),
+                    locale: locale.value,
+                },
+            }
+        );
 
         if (!apiResult.ok) {
-            error.value = apiResult.message || t('documentIntel.errors.lookupFailed');
+            error.value =
+                apiResult.message || t('documentIntel.errors.lookupFailed');
 
             return;
         }
 
         result.value = apiResult.data;
     } catch (exception) {
-        error.value = exception instanceof Error ? exception.message : t('documentIntel.errors.lookupFailed');
+        error.value =
+            exception instanceof Error
+                ? exception.message
+                : t('documentIntel.errors.lookupFailed');
     } finally {
         loading.value = false;
     }
@@ -207,10 +230,18 @@ onMounted(() => {
 <template>
     <Head :title="pageTitle" />
 
-    <div class="flex h-full min-h-0 flex-1 flex-col gap-4 overflow-hidden rounded-xl p-4">
+    <div
+        class="flex h-full min-h-0 flex-1 flex-col gap-4 overflow-hidden rounded-xl p-4"
+    >
         <IntelSearchPanel>
             <div class="flex items-center justify-between gap-3">
-                <PageHeader :icon="FileSearch" :title="t('documentIntel.title')" :description="t('documentIntel.description')" :help-label="t('documentIntel.help.label')" :help-text="t('documentIntel.help.overview')" />
+                <PageHeader
+                    :icon="FileSearch"
+                    :title="t('documentIntel.title')"
+                    :description="t('documentIntel.description')"
+                    :help-label="t('documentIntel.help.label')"
+                    :help-text="t('documentIntel.help.overview')"
+                />
             </div>
 
             <IntelSearchForm
@@ -229,104 +260,335 @@ onMounted(() => {
         <IntelResultPanel>
             <EmptyState v-if="!result" :text="t('documentIntel.empty')" />
 
-            <div v-else class="telegram-scroll min-h-0 flex-1 overflow-y-auto space-y-3 pr-1">
+            <div
+                v-else
+                class="intel-scroll min-h-0 flex-1 space-y-3 overflow-y-auto pr-1"
+            >
                 <div class="grid gap-2 sm:grid-cols-2 xl:grid-cols-4">
-                    <MetricCard :title="t('documentIntel.checkedAt')" :value="formatDateTime(result.checkedAt)" />
-                    <MetricCard :title="t('documentIntel.detectedDomain')" :value="result.domain ?? '-'" />
-                    <MetricCard :title="t('documentIntel.signalCount')" :value="result.signals.length" />
-                    <MetricCard :title="t('documentIntel.pivotCount')" :value="result.documentPivots.length" />
+                    <MetricCard
+                        :title="t('documentIntel.checkedAt')"
+                        :value="formatDateTime(result.checkedAt)"
+                    />
+                    <MetricCard
+                        :title="t('documentIntel.detectedDomain')"
+                        :value="result.domain ?? '-'"
+                    />
+                    <MetricCard
+                        :title="t('documentIntel.signalCount')"
+                        :value="result.signals.length"
+                    />
+                    <MetricCard
+                        :title="t('documentIntel.pivotCount')"
+                        :value="result.documentPivots.length"
+                    />
                 </div>
 
                 <SectionCard :title="t('documentIntel.signals')">
                     <ul class="list-disc space-y-1 pl-4 text-muted-foreground">
-                        <li v-for="signal in result.signals" :key="signal">{{ signalLabel(signal) }}</li>
+                        <li v-for="signal in result.signals" :key="signal">
+                            {{ signalLabel(signal) }}
+                        </li>
                     </ul>
                 </SectionCard>
 
                 <SectionCard :title="t('documentIntel.recommendations')">
                     <ul class="list-disc space-y-1 pl-4 text-muted-foreground">
-                        <li v-for="recommendation in result.recommendations" :key="recommendation">{{ recommendationLabel(recommendation) }}</li>
+                        <li
+                            v-for="recommendation in result.recommendations"
+                            :key="recommendation"
+                        >
+                            {{ recommendationLabel(recommendation) }}
+                        </li>
                     </ul>
                 </SectionCard>
 
-                <div v-if="result.domainIntel.available" class="rounded-lg border border-border/70 bg-background/60 p-3 text-xs space-y-1">
-                    <p class="mb-2 font-semibold">{{ t('documentIntel.domainIntel') }}</p>
-                    <p>DNS: A {{ result.domainIntel.dns?.aCount ?? 0 }}, MX {{ result.domainIntel.dns?.mxCount ?? 0 }}</p>
-                    <p>SPF: {{ result.domainIntel.dns?.hasSpf ? t('common.yes') : t('common.no') }}, DMARC: {{ result.domainIntel.dns?.hasDmarc ? t('common.yes') : t('common.no') }}</p>
-                    <p>WHOIS: {{ result.domainIntel.whois?.available ? t('documentIntel.available') : t('documentIntel.unavailable') }}</p>
-                    <p>{{ t('documentIntel.registrar') }}: {{ result.domainIntel.whois?.registrar ?? '-' }}</p>
-                    <p>{{ t('documentIntel.createdAt') }}: {{ formatDateTime(result.domainIntel.whois?.createdAt ?? null) }}</p>
-                    <p>{{ t('documentIntel.expiresAt') }}: {{ formatDateTime(result.domainIntel.whois?.expiresAt ?? null) }}</p>
+                <div
+                    v-if="result.domainIntel.available"
+                    class="space-y-1 rounded-lg border border-border/70 bg-background/60 p-3 text-xs"
+                >
+                    <p class="mb-2 font-semibold">
+                        {{ t('documentIntel.domainIntel') }}
+                    </p>
+                    <p>
+                        DNS: A {{ result.domainIntel.dns?.aCount ?? 0 }}, MX
+                        {{ result.domainIntel.dns?.mxCount ?? 0 }}
+                    </p>
+                    <p>
+                        SPF:
+                        {{
+                            result.domainIntel.dns?.hasSpf
+                                ? t('common.yes')
+                                : t('common.no')
+                        }}, DMARC:
+                        {{
+                            result.domainIntel.dns?.hasDmarc
+                                ? t('common.yes')
+                                : t('common.no')
+                        }}
+                    </p>
+                    <p>
+                        WHOIS:
+                        {{
+                            result.domainIntel.whois?.available
+                                ? t('documentIntel.available')
+                                : t('documentIntel.unavailable')
+                        }}
+                    </p>
+                    <p>
+                        {{ t('documentIntel.registrar') }}:
+                        {{ result.domainIntel.whois?.registrar ?? '-' }}
+                    </p>
+                    <p>
+                        {{ t('documentIntel.createdAt') }}:
+                        {{
+                            formatDateTime(
+                                result.domainIntel.whois?.createdAt ?? null
+                            )
+                        }}
+                    </p>
+                    <p>
+                        {{ t('documentIntel.expiresAt') }}:
+                        {{
+                            formatDateTime(
+                                result.domainIntel.whois?.expiresAt ?? null
+                            )
+                        }}
+                    </p>
                 </div>
 
-                <SectionCard :title="t('documentIntel.pivots')" :description="t('documentIntel.help.pivots')">
+                <SectionCard
+                    :title="t('documentIntel.pivots')"
+                    :description="t('documentIntel.help.pivots')"
+                >
                     <div class="space-y-1">
-                        <a v-for="pivot in result.documentPivots" :key="pivot.url" class="block break-words text-cyan-300 hover:underline" :href="pivot.url" target="_blank" rel="noopener noreferrer">{{ linkLabel(pivot.label) }}</a>
+                        <a
+                            v-for="pivot in result.documentPivots"
+                            :key="pivot.url"
+                            class="block break-words text-cyan-300 hover:underline"
+                            :href="pivot.url"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            >{{ linkLabel(pivot.label) }}</a
+                        >
                     </div>
                 </SectionCard>
 
-                <div class="rounded-lg border border-border/70 bg-background/60 p-3 text-xs">
-                    <p class="mb-2 font-semibold">{{ t('documentIntel.documents.title') }}</p>
+                <div
+                    class="rounded-lg border border-border/70 bg-background/60 p-3 text-xs"
+                >
+                    <p class="mb-2 font-semibold">
+                        {{ t('documentIntel.documents.title') }}
+                    </p>
                     <div class="grid gap-2 sm:grid-cols-2 xl:grid-cols-5">
-                        <div class="rounded border border-border/60 bg-background/40 p-2">
-                            <p class="text-muted-foreground">{{ t('documentIntel.documents.total') }}</p>
-                            <p class="mt-1 text-sm font-semibold">{{ result.documentsSummary.total }}</p>
+                        <div
+                            class="rounded border border-border/60 bg-background/40 p-2"
+                        >
+                            <p class="text-muted-foreground">
+                                {{ t('documentIntel.documents.total') }}
+                            </p>
+                            <p class="mt-1 text-sm font-semibold">
+                                {{ result.documentsSummary.total }}
+                            </p>
                         </div>
-                        <div class="rounded border border-border/60 bg-background/40 p-2">
-                            <p class="text-muted-foreground">{{ t('documentIntel.documents.failed') }}</p>
-                            <p class="mt-1 text-sm font-semibold">{{ result.documentsSummary.failed }}</p>
+                        <div
+                            class="rounded border border-border/60 bg-background/40 p-2"
+                        >
+                            <p class="text-muted-foreground">
+                                {{ t('documentIntel.documents.failed') }}
+                            </p>
+                            <p class="mt-1 text-sm font-semibold">
+                                {{ result.documentsSummary.failed }}
+                            </p>
                         </div>
-                        <div class="rounded border border-border/60 bg-background/40 p-2">
-                            <p class="text-muted-foreground">{{ t('documentIntel.documents.withAuthor') }}</p>
-                            <p class="mt-1 text-sm font-semibold">{{ result.documentsSummary.withAuthor }}</p>
+                        <div
+                            class="rounded border border-border/60 bg-background/40 p-2"
+                        >
+                            <p class="text-muted-foreground">
+                                {{ t('documentIntel.documents.withAuthor') }}
+                            </p>
+                            <p class="mt-1 text-sm font-semibold">
+                                {{ result.documentsSummary.withAuthor }}
+                            </p>
                         </div>
-                        <div class="rounded border border-border/60 bg-background/40 p-2">
-                            <p class="text-muted-foreground">{{ t('documentIntel.documents.withSoftware') }}</p>
-                            <p class="mt-1 text-sm font-semibold">{{ result.documentsSummary.withSoftware }}</p>
+                        <div
+                            class="rounded border border-border/60 bg-background/40 p-2"
+                        >
+                            <p class="text-muted-foreground">
+                                {{ t('documentIntel.documents.withSoftware') }}
+                            </p>
+                            <p class="mt-1 text-sm font-semibold">
+                                {{ result.documentsSummary.withSoftware }}
+                            </p>
                         </div>
-                        <div class="rounded border border-border/60 bg-background/40 p-2">
-                            <p class="text-muted-foreground">{{ t('documentIntel.documents.withDates') }}</p>
-                            <p class="mt-1 text-sm font-semibold">{{ result.documentsSummary.withDates }}</p>
+                        <div
+                            class="rounded border border-border/60 bg-background/40 p-2"
+                        >
+                            <p class="text-muted-foreground">
+                                {{ t('documentIntel.documents.withDates') }}
+                            </p>
+                            <p class="mt-1 text-sm font-semibold">
+                                {{ result.documentsSummary.withDates }}
+                            </p>
                         </div>
                     </div>
-                    <div class="mt-3 flex flex-wrap gap-2 text-[11px] text-muted-foreground">
-                        <span v-for="type in result.documentsSummary.types" :key="type.extension" class="rounded border border-border/60 px-2 py-0.5">
+                    <div
+                        class="mt-3 flex flex-wrap gap-2 text-[11px] text-muted-foreground"
+                    >
+                        <span
+                            v-for="type in result.documentsSummary.types"
+                            :key="type.extension"
+                            class="rounded border border-border/60 px-2 py-0.5"
+                        >
                             {{ type.extension.toUpperCase() }}: {{ type.count }}
                         </span>
                     </div>
-                    <div class="mt-3 rounded border border-border/60 bg-background/40 p-2">
-                        <p>{{ t('documentIntel.documents.riskAverage') }}: <span class="font-semibold">{{ result.documentsSummary.risk.averageScore }}</span></p>
-                        <p>{{ t('documentIntel.documents.riskLevel') }}: <span class="font-semibold">{{ riskLabel(result.documentsSummary.risk.level) }}</span></p>
-                        <p class="mt-1">{{ t('documentIntel.documents.topRiskReasons') }}:</p>
+                    <div
+                        class="mt-3 rounded border border-border/60 bg-background/40 p-2"
+                    >
+                        <p>
+                            {{ t('documentIntel.documents.riskAverage') }}:
+                            <span class="font-semibold">{{
+                                result.documentsSummary.risk.averageScore
+                            }}</span>
+                        </p>
+                        <p>
+                            {{ t('documentIntel.documents.riskLevel') }}:
+                            <span class="font-semibold">{{
+                                riskLabel(result.documentsSummary.risk.level)
+                            }}</span>
+                        </p>
+                        <p class="mt-1">
+                            {{ t('documentIntel.documents.topRiskReasons') }}:
+                        </p>
                         <ul class="list-disc pl-4 text-muted-foreground">
-                            <li v-for="row in result.documentsSummary.risk.topReasons" :key="row.key">{{ riskReasonLabel(row.key) }} ({{ row.count }})</li>
+                            <li
+                                v-for="row in result.documentsSummary.risk
+                                    .topReasons"
+                                :key="row.key"
+                            >
+                                {{ riskReasonLabel(row.key) }} ({{ row.count }})
+                            </li>
                         </ul>
                     </div>
                 </div>
 
-                <div class="rounded-lg border border-border/70 bg-background/60 p-3 text-xs">
-                    <p class="mb-2 font-semibold">{{ t('documentIntel.documents.list') }}</p>
-                    <p v-if="result.documents.length === 0" class="text-muted-foreground">{{ t('documentIntel.documents.empty') }}</p>
+                <div
+                    class="rounded-lg border border-border/70 bg-background/60 p-3 text-xs"
+                >
+                    <p class="mb-2 font-semibold">
+                        {{ t('documentIntel.documents.list') }}
+                    </p>
+                    <p
+                        v-if="result.documents.length === 0"
+                        class="text-muted-foreground"
+                    >
+                        {{ t('documentIntel.documents.empty') }}
+                    </p>
                     <div v-else class="space-y-2">
-                        <article v-for="(doc, idx) in result.documents" :key="`${doc.url}-${idx}`" class="rounded border border-border/60 bg-background/40 p-2">
-                            <a :href="doc.url" target="_blank" rel="noopener noreferrer" class="block break-words text-cyan-300 hover:underline">{{ doc.url }}</a>
-                            <div class="mt-1 grid gap-1 sm:grid-cols-2 xl:grid-cols-4 text-muted-foreground">
-                                <p>{{ t('documentIntel.documents.extension') }}: {{ doc.extension || '-' }}</p>
-                                <p>{{ t('documentIntel.documents.size') }}: {{ formatBytes(doc.sizeBytes) }}</p>
-                                <p>{{ t('documentIntel.documents.author') }}: {{ doc.author || '-' }}</p>
-                                <p>{{ t('documentIntel.documents.software') }}: {{ doc.software || '-' }}</p>
-                                <p>{{ t('documentIntel.documents.createdAt') }}: {{ doc.createdAt || '-' }}</p>
-                                <p>{{ t('documentIntel.documents.modifiedAt') }}: {{ doc.modifiedAt || '-' }}</p>
-                                <p>{{ t('documentIntel.documents.lastModified') }}: {{ doc.lastModified || '-' }}</p>
-                                <p>{{ t('documentIntel.documents.error') }}: {{ documentErrorLabel(doc.error) }}</p>
-                                <p>{{ t('documentIntel.documents.riskScore') }}: {{ doc.risk.score }}</p>
-                                <p>{{ t('documentIntel.documents.riskLevel') }}: {{ riskLabel(doc.risk.level) }}</p>
+                        <article
+                            v-for="(doc, idx) in result.documents"
+                            :key="`${doc.url}-${idx}`"
+                            class="rounded border border-border/60 bg-background/40 p-2"
+                        >
+                            <a
+                                :href="doc.url"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                class="block break-words text-cyan-300 hover:underline"
+                                >{{ doc.url }}</a
+                            >
+                            <div
+                                class="mt-1 grid gap-1 text-muted-foreground sm:grid-cols-2 xl:grid-cols-4"
+                            >
+                                <p>
+                                    {{
+                                        t('documentIntel.documents.extension')
+                                    }}: {{ doc.extension || '-' }}
+                                </p>
+                                <p>
+                                    {{ t('documentIntel.documents.size') }}:
+                                    {{ formatBytes(doc.sizeBytes) }}
+                                </p>
+                                <p>
+                                    {{ t('documentIntel.documents.author') }}:
+                                    {{ doc.author || '-' }}
+                                </p>
+                                <p>
+                                    {{ t('documentIntel.documents.software') }}:
+                                    {{ doc.software || '-' }}
+                                </p>
+                                <p>
+                                    {{
+                                        t('documentIntel.documents.createdAt')
+                                    }}: {{ doc.createdAt || '-' }}
+                                </p>
+                                <p>
+                                    {{
+                                        t('documentIntel.documents.modifiedAt')
+                                    }}: {{ doc.modifiedAt || '-' }}
+                                </p>
+                                <p>
+                                    {{
+                                        t(
+                                            'documentIntel.documents.lastModified'
+                                        )
+                                    }}: {{ doc.lastModified || '-' }}
+                                </p>
+                                <p>
+                                    {{ t('documentIntel.documents.error') }}:
+                                    {{ documentErrorLabel(doc.error) }}
+                                </p>
+                                <p>
+                                    {{
+                                        t('documentIntel.documents.riskScore')
+                                    }}: {{ doc.risk.score }}
+                                </p>
+                                <p>
+                                    {{
+                                        t('documentIntel.documents.riskLevel')
+                                    }}: {{ riskLabel(doc.risk.level) }}
+                                </p>
                             </div>
                             <div class="mt-2 text-muted-foreground">
-                                <p>{{ t('documentIntel.documents.exposedEmails') }}: {{ doc.artifacts.emails.join(', ') || '-' }}</p>
-                                <p>{{ t('documentIntel.documents.exposedUsernames') }}: {{ doc.artifacts.usernames.join(', ') || '-' }}</p>
-                                <p>{{ t('documentIntel.documents.exposedPaths') }}: {{ doc.artifacts.paths.join(', ') || '-' }}</p>
-                                <p>{{ t('documentIntel.documents.riskReasons') }}: {{ doc.risk.reasons.map(riskReasonLabel).join(', ') || '-' }}</p>
+                                <p>
+                                    {{
+                                        t(
+                                            'documentIntel.documents.exposedEmails'
+                                        )
+                                    }}:
+                                    {{ doc.artifacts.emails.join(', ') || '-' }}
+                                </p>
+                                <p>
+                                    {{
+                                        t(
+                                            'documentIntel.documents.exposedUsernames'
+                                        )
+                                    }}:
+                                    {{
+                                        doc.artifacts.usernames.join(', ') ||
+                                        '-'
+                                    }}
+                                </p>
+                                <p>
+                                    {{
+                                        t(
+                                            'documentIntel.documents.exposedPaths'
+                                        )
+                                    }}:
+                                    {{ doc.artifacts.paths.join(', ') || '-' }}
+                                </p>
+                                <p>
+                                    {{
+                                        t(
+                                            'documentIntel.documents.riskReasons'
+                                        )
+                                    }}:
+                                    {{
+                                        doc.risk.reasons
+                                            .map(riskReasonLabel)
+                                            .join(', ') || '-'
+                                    }}
+                                </p>
                             </div>
                         </article>
                     </div>

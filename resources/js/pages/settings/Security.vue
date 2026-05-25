@@ -72,7 +72,9 @@ onUnmounted(() => clearTwoFactorAuthData());
             v-slot="{ errors, processing, recentlySuccessful }"
         >
             <div class="grid gap-2">
-                <Label for="current_password">{{ t('settings.securityPage.currentPassword') }}</Label>
+                <Label for="current_password">{{
+                    t('settings.securityPage.currentPassword')
+                }}</Label>
                 <PasswordInput
                     id="current_password"
                     name="current_password"
@@ -84,7 +86,9 @@ onUnmounted(() => clearTwoFactorAuthData());
             </div>
 
             <div class="grid gap-2">
-                <Label for="password">{{ t('settings.securityPage.newPassword') }}</Label>
+                <Label for="password">{{
+                    t('settings.securityPage.newPassword')
+                }}</Label>
                 <PasswordInput
                     id="password"
                     name="password"
@@ -96,7 +100,9 @@ onUnmounted(() => clearTwoFactorAuthData());
             </div>
 
             <div class="grid gap-2">
-                <Label for="password_confirmation">{{ t('settings.securityPage.confirmPassword') }}</Label>
+                <Label for="password_confirmation">{{
+                    t('settings.securityPage.confirmPassword')
+                }}</Label>
                 <PasswordInput
                     id="password_confirmation"
                     name="password_confirmation"
@@ -149,7 +155,9 @@ onUnmounted(() => clearTwoFactorAuthData());
 
             <div>
                 <Button v-if="hasSetupData" @click="showSetupModal = true">
-                    <ShieldCheck />{{ t('settings.securityPage.twoFactorContinueSetup') }}
+                    <ShieldCheck />{{
+                        t('settings.securityPage.twoFactorContinueSetup')
+                    }}
                 </Button>
                 <Form
                     v-else

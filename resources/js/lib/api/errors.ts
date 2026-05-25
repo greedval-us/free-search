@@ -23,7 +23,9 @@ export class ApiError extends Error {
 const isObject = (value: unknown): value is Record<string, unknown> =>
     typeof value === 'object' && value !== null;
 
-export const parseApiEnvelope = <TData>(value: unknown): ApiEnvelope<TData> | null => {
+export const parseApiEnvelope = <TData>(
+    value: unknown
+): ApiEnvelope<TData> | null => {
     if (!isObject(value) || typeof value.ok !== 'boolean') {
         return null;
     }
@@ -47,4 +49,3 @@ export const normalizeErrorPayload = (input: {
     meta: input.meta,
     cause: input.cause,
 });
-

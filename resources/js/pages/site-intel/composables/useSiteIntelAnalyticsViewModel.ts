@@ -15,7 +15,7 @@ export type ChartBar = {
 
 export const useSiteIntelAnalyticsViewModel = (
     result: Ref<SiteIntelAnalyticsResult | null>,
-    t: TranslateFn,
+    t: TranslateFn
 ) => {
     const scoreBadgeClass = computed(() => {
         const level = result.value?.overview.score.level;
@@ -68,7 +68,10 @@ export const useSiteIntelAnalyticsViewModel = (
 
         const overall = result.value.overview.score.value;
         const health = result.value.overview.healthScore;
-        const domainSafety = Math.max(0, 100 - result.value.overview.domainRiskScore);
+        const domainSafety = Math.max(
+            0,
+            100 - result.value.overview.domainRiskScore
+        );
         const headers = result.value.overview.headersCoverage.percent;
 
         return [
@@ -129,7 +132,10 @@ export const useSiteIntelAnalyticsViewModel = (
         }
 
         const chain = result.value.siteHealth.http.chain;
-        const maxLatency = Math.max(1, ...chain.map((step) => step.responseTimeMs));
+        const maxLatency = Math.max(
+            1,
+            ...chain.map((step) => step.responseTimeMs)
+        );
 
         return chain.map((step, index) => ({
             label: `#${index + 1} - ${step.status || '-'}`,
@@ -238,7 +244,10 @@ export const useSiteIntelAnalyticsViewModel = (
             return 0;
         }
 
-        return result.value.siteHealth.http.chain.reduce((sum, step) => sum + step.responseTimeMs, 0);
+        return result.value.siteHealth.http.chain.reduce(
+            (sum, step) => sum + step.responseTimeMs,
+            0
+        );
     });
 
     return {

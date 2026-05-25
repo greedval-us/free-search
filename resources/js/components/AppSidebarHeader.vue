@@ -13,7 +13,7 @@ withDefaults(
     }>(),
     {
         breadcrumbs: () => [],
-    },
+    }
 );
 
 const toggleLocale = () => {

@@ -5,7 +5,10 @@ import type { EmailIntelResult } from '../types';
 
 type TranslateFn = (key: string) => string;
 
-export const useEmailIntelLookup = (t: TranslateFn, locale: Ref<'en' | 'ru'>) => {
+export const useEmailIntelLookup = (
+    t: TranslateFn,
+    locale: Ref<'en' | 'ru'>
+) => {
     const form = reactive({
         email: '',
     });
@@ -14,7 +17,9 @@ export const useEmailIntelLookup = (t: TranslateFn, locale: Ref<'en' | 'ru'>) =>
     const error = ref<string | null>(null);
     const result = ref<EmailIntelResult | null>(null);
 
-    const canLookup = computed(() => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email.trim()));
+    const canLookup = computed(() =>
+        /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email.trim())
+    );
 
     const reset = () => {
         form.email = '';
@@ -35,23 +40,30 @@ export const useEmailIntelLookup = (t: TranslateFn, locale: Ref<'en' | 'ru'>) =>
         result.value = null;
 
         try {
-            const apiResult = await apiRequest<EmailIntelResult>('/email-intel/lookup', {
-                method: 'GET',
-                query: {
-                    email: form.email.trim(),
-                    locale: locale.value,
-                },
-            });
+            const apiResult = await apiRequest<EmailIntelResult>(
+                '/email-intel/lookup',
+                {
+                    method: 'GET',
+                    query: {
+                        email: form.email.trim(),
+                        locale: locale.value,
+                    },
+                }
+            );
 
             if (!apiResult.ok) {
-                error.value = apiResult.message ?? t('emailIntel.errors.lookupFailed');
+                error.value =
+                    apiResult.message ?? t('emailIntel.errors.lookupFailed');
 
                 return;
             }
 
             result.value = apiResult.data;
         } catch (exception) {
-            error.value = exception instanceof Error ? exception.message : t('emailIntel.errors.lookupFailed');
+            error.value =
+                exception instanceof Error
+                    ? exception.message
+                    : t('emailIntel.errors.lookupFailed');
         } finally {
             loading.value = false;
         }

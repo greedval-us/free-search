@@ -1,4 +1,4 @@
-<script setup lang="ts">
+﻿<script setup lang="ts">
 import { Head } from '@inertiajs/vue3';
 import { computed } from 'vue';
 import { useI18n } from '@/composables/useI18n';
@@ -858,7 +858,7 @@ defineOptions({
 
         <section class="intel-panel p-3 sm:p-4">
             <div
-                class="telegram-scroll max-h-[72vh] overflow-y-auto pr-1 [scrollbar-gutter:stable] sm:pr-2"
+                class="intel-scroll max-h-[72vh] overflow-y-auto pr-1 [scrollbar-gutter:stable] sm:pr-2"
             >
                 <div class="grid grid-cols-1 gap-4 lg:grid-cols-2">
                     <article

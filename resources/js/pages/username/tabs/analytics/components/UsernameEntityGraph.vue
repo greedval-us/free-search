@@ -2,7 +2,10 @@
 import cytoscape from 'cytoscape';
 import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue';
 import { useI18n } from '@/composables/useI18n';
-import type { UsernameGraphEdge, UsernameGraphNode } from '@/pages/username/types';
+import type {
+    UsernameGraphEdge,
+    UsernameGraphNode,
+} from '@/pages/username/types';
 
 type Props = {
     nodes: UsernameGraphNode[];
@@ -17,52 +20,52 @@ let cy: cytoscape.Core | null = null;
 
 const nodeColor = (node: UsernameGraphNode): string => {
     if (node.type === 'username') {
-return '#06b6d4';
-}
+        return '#06b6d4';
+    }
 
     if (node.type === 'region') {
-return '#8b5cf6';
-}
+        return '#8b5cf6';
+    }
 
     if (node.type === 'category') {
-return '#14b8a6';
-}
+        return '#14b8a6';
+    }
 
     if (node.type === 'domain') {
-return '#f97316';
-}
+        return '#f97316';
+    }
 
     if (node.status === 'found') {
-return '#10b981';
-}
+        return '#10b981';
+    }
 
     if (node.status === 'not_found') {
-return '#64748b';
-}
+        return '#64748b';
+    }
 
     return '#f59e0b';
 };
 
 const edgeColor = (edge: UsernameGraphEdge): string => {
     if (edge.kind === 'region') {
-return '#475569';
-}
+        return '#475569';
+    }
 
     if (edge.kind === 'category') {
-return '#0f766e';
-}
+        return '#0f766e';
+    }
 
     if (edge.kind === 'domain') {
-return '#9a3412';
-}
+        return '#9a3412';
+    }
 
     if (edge.status === 'found') {
-return '#10b981';
-}
+        return '#10b981';
+    }
 
     if (edge.status === 'not_found') {
-return '#64748b';
-}
+        return '#64748b';
+    }
 
     return '#f59e0b';
 };
@@ -77,39 +80,43 @@ const shortLabel = (label: string): string => {
     return `${clean.slice(0, 15)}...`;
 };
 
-const normalizeCategoryKey = (value: string): string => value.trim().toLowerCase().replace(/[\s-]+/g, '_');
+const normalizeCategoryKey = (value: string): string =>
+    value
+        .trim()
+        .toLowerCase()
+        .replace(/[\s-]+/g, '_');
 
 const translatedNodeLabel = (node: UsernameGraphNode): string => {
     const clean = node.label.trim();
     const normalized = clean.toLowerCase();
 
     if (normalized === 'username' || normalized === 'user') {
-return t('username.search.label');
-}
+        return t('username.search.label');
+    }
 
     if (normalized === 'found') {
-return t('username.status.found');
-}
+        return t('username.status.found');
+    }
 
     if (normalized === 'not_found' || normalized === 'not found') {
-return t('username.status.notFound');
-}
+        return t('username.status.notFound');
+    }
 
     if (normalized === 'unknown') {
-return t('username.status.unknown');
-}
+        return t('username.status.unknown');
+    }
 
     if (normalized === 'region') {
-return t('username.results.region');
-}
+        return t('username.results.region');
+    }
 
     if (normalized === 'category') {
-return t('username.results.category');
-}
+        return t('username.results.category');
+    }
 
     if (normalized === 'domain') {
-return t('username.results.domain');
-}
+        return t('username.results.domain');
+    }
 
     if (node.type === 'category') {
         const categoryKey = `username.categories.${normalizeCategoryKey(clean)}`;
@@ -174,8 +181,8 @@ const buildElements = () => {
 
 const renderGraph = () => {
     if (!root.value) {
-return;
-}
+        return;
+    }
 
     if (cy) {
         cy.destroy();
@@ -281,8 +288,8 @@ return;
         const node = event.target;
 
         if (!cy) {
-return;
-}
+            return;
+        }
 
         cy.elements().addClass('dimmed');
         node.removeClass('dimmed');
@@ -292,8 +299,8 @@ return;
 
     cy.on('tap', (event) => {
         if (!cy) {
-return;
-}
+            return;
+        }
 
         if (event.target === cy) {
             cy.elements().removeClass('dimmed');
@@ -328,7 +335,9 @@ onBeforeUnmount(() => {
             class="h-[34rem] w-full rounded-md border border-border/70 bg-slate-950/80"
         />
 
-        <div class="mt-3 flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
+        <div
+            class="mt-3 flex flex-wrap items-center gap-2 text-xs text-muted-foreground"
+        >
             <span
                 v-for="item in legendItems"
                 :key="item.label"

@@ -85,7 +85,8 @@ const render = () => {
     }
 
     const visibleEdges = props.edges.filter(
-        (edge) => visibleNodeMap.has(edge.source) && visibleNodeMap.has(edge.target),
+        (edge) =>
+            visibleNodeMap.has(edge.source) && visibleNodeMap.has(edge.target)
     );
 
     cy = cytoscape({
@@ -220,7 +221,7 @@ watch(
     () => {
         render();
     },
-    { deep: true },
+    { deep: true }
 );
 
 onBeforeUnmount(() => {
@@ -233,6 +234,9 @@ onBeforeUnmount(() => {
 
 <template>
     <div class="rounded-lg border border-border/70 bg-background/60 p-3">
-        <div ref="root" class="h-[26rem] w-full rounded-md border border-border/70 bg-slate-950/80" />
+        <div
+            ref="root"
+            class="h-[26rem] w-full rounded-md border border-border/70 bg-slate-950/80"
+        />
     </div>
 </template>

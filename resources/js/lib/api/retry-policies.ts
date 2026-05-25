@@ -108,7 +108,9 @@ const getRuntimeEndpointRetryRules = (): EndpointRetryRule[] => {
         .filter((rule) => typeof rule.path === 'string' && rule.path.length > 0)
         .map((rule) => ({
             path: rule.path,
-            methods: Array.isArray(rule.methods) ? (rule.methods as HttpMethod[]) : undefined,
+            methods: Array.isArray(rule.methods)
+                ? (rule.methods as HttpMethod[])
+                : undefined,
             policy: fromRuntimePolicy(rule.policy),
         }));
 };
@@ -133,7 +135,10 @@ export const resolveDefaultRetryPolicy = (): RetryPolicy | undefined => {
     return fromRuntimePolicy(runtimeDefault);
 };
 
-export const resolveEndpointRetryPolicy = (url: string, method: HttpMethod): RetryPolicy | undefined => {
+export const resolveEndpointRetryPolicy = (
+    url: string,
+    method: HttpMethod
+): RetryPolicy | undefined => {
     for (const rule of getAllEndpointRetryRules()) {
         const methodMatched = !rule.methods || rule.methods.includes(method);
         const pathMatched = url.includes(rule.path);

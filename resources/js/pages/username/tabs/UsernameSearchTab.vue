@@ -1,4 +1,4 @@
-<script setup lang="ts">
+﻿<script setup lang="ts">
 import { Search } from 'lucide-vue-next';
 import { computed, onMounted, reactive, watch } from 'vue';
 import HelpTooltip from '@/components/ui/HelpTooltip.vue';
@@ -6,13 +6,18 @@ import IntelResultPanel from '@/components/ui/IntelResultPanel.vue';
 import IntelSearchForm from '@/components/ui/IntelSearchForm.vue';
 import IntelSearchPanel from '@/components/ui/IntelSearchPanel.vue';
 import { useI18n } from '@/composables/useI18n';
-import { getRepeatQueryParams, isRepeatAutorunEnabled, readRepeatQueryParam } from '@/composables/useRepeatQuery';
+import {
+    getRepeatQueryParams,
+    isRepeatAutorunEnabled,
+    readRepeatQueryParam,
+} from '@/composables/useRepeatQuery';
 import { useUsernameSearch } from '../composables/useUsernameSearch';
 import type { UsernameSearchStatus } from '../types';
 
 const { t } = useI18n();
 
-const { form, loading, error, items, checkedAt, summary, canSearch, search } = useUsernameSearch(t);
+const { form, loading, error, items, checkedAt, summary, canSearch, search } =
+    useUsernameSearch(t);
 
 const statusClassMap: Record<UsernameSearchStatus, string> = {
     found: 'border-emerald-500/40 bg-emerald-500/10 text-emerald-300',
@@ -50,7 +55,9 @@ const statusFilters = reactive<Record<UsernameSearchStatus, boolean>>({
 const categoryFilters = reactive<Record<string, boolean>>({});
 
 const availableCategories = computed(() =>
-    [...new Set(items.value.map((item) => item.category || 'general'))].sort((a, b) => a.localeCompare(b))
+    [...new Set(items.value.map((item) => item.category || 'general'))].sort(
+        (a, b) => a.localeCompare(b)
+    )
 );
 
 watch(
@@ -72,7 +79,11 @@ watch(
 );
 
 const filteredItems = computed(() =>
-    items.value.filter((item) => statusFilters[item.status] && Boolean(categoryFilters[item.category || 'general']))
+    items.value.filter(
+        (item) =>
+            statusFilters[item.status] &&
+            Boolean(categoryFilters[item.category || 'general'])
+    )
 );
 
 const groupedItems = computed(() => {
@@ -149,7 +160,10 @@ onMounted(() => {
                 <div class="flex items-center gap-2 text-sm font-semibold">
                     <Search class="h-4 w-4 text-cyan-400" />
                     <span>{{ t('username.search.title') }}</span>
-                    <HelpTooltip :label="t('username.help.label')" :text="t('username.search.help.overview')" />
+                    <HelpTooltip
+                        :label="t('username.help.label')"
+                        :text="t('username.search.help.overview')"
+                    />
                 </div>
                 <p class="text-xs text-muted-foreground">
                     {{ t('username.search.description') }}
@@ -172,64 +186,121 @@ onMounted(() => {
 
     <IntelResultPanel>
         <div class="mb-3 flex flex-wrap items-center justify-between gap-2">
-            <h2 class="text-sm font-semibold">{{ t('username.results.title') }}</h2>
-            <p v-if="checkedAtText" class="text-xs text-muted-foreground">{{ t('username.results.checkedAt') }}: {{ checkedAtText }}</p>
+            <h2 class="text-sm font-semibold">
+                {{ t('username.results.title') }}
+            </h2>
+            <p v-if="checkedAtText" class="text-xs text-muted-foreground">
+                {{ t('username.results.checkedAt') }}: {{ checkedAtText }}
+            </p>
         </div>
 
-        <div v-if="summary" class="mb-3 grid gap-2 sm:grid-cols-2 xl:grid-cols-4">
-            <div class="rounded-lg border border-border/70 bg-background/60 p-3">
-                <p class="text-xs text-muted-foreground">{{ t('username.results.checked') }}</p>
+        <div
+            v-if="summary"
+            class="mb-3 grid gap-2 sm:grid-cols-2 xl:grid-cols-4"
+        >
+            <div
+                class="rounded-lg border border-border/70 bg-background/60 p-3"
+            >
+                <p class="text-xs text-muted-foreground">
+                    {{ t('username.results.checked') }}
+                </p>
                 <p class="mt-1 text-xl font-semibold">{{ summary.checked }}</p>
             </div>
-            <div class="rounded-lg border border-emerald-500/30 bg-emerald-500/5 p-3">
-                <p class="text-xs text-muted-foreground">{{ t('username.results.found') }}</p>
-                <p class="mt-1 text-xl font-semibold text-emerald-300">{{ summary.found }}</p>
+            <div
+                class="rounded-lg border border-emerald-500/30 bg-emerald-500/5 p-3"
+            >
+                <p class="text-xs text-muted-foreground">
+                    {{ t('username.results.found') }}
+                </p>
+                <p class="mt-1 text-xl font-semibold text-emerald-300">
+                    {{ summary.found }}
+                </p>
             </div>
-            <div class="rounded-lg border border-slate-500/30 bg-slate-500/5 p-3">
-                <p class="text-xs text-muted-foreground">{{ t('username.results.notFound') }}</p>
-                <p class="mt-1 text-xl font-semibold text-slate-300">{{ summary.notFound }}</p>
+            <div
+                class="rounded-lg border border-slate-500/30 bg-slate-500/5 p-3"
+            >
+                <p class="text-xs text-muted-foreground">
+                    {{ t('username.results.notFound') }}
+                </p>
+                <p class="mt-1 text-xl font-semibold text-slate-300">
+                    {{ summary.notFound }}
+                </p>
             </div>
-            <div class="rounded-lg border border-amber-500/30 bg-amber-500/5 p-3">
-                <p class="text-xs text-muted-foreground">{{ t('username.results.unknown') }}</p>
-                <p class="mt-1 text-xl font-semibold text-amber-300">{{ summary.unknown }}</p>
+            <div
+                class="rounded-lg border border-amber-500/30 bg-amber-500/5 p-3"
+            >
+                <p class="text-xs text-muted-foreground">
+                    {{ t('username.results.unknown') }}
+                </p>
+                <p class="mt-1 text-xl font-semibold text-amber-300">
+                    {{ summary.unknown }}
+                </p>
             </div>
         </div>
 
-
         <div class="mb-3 flex flex-wrap items-center gap-2">
-            <span class="text-xs text-muted-foreground">{{ t('username.filters.status') }}:</span>
+            <span class="text-xs text-muted-foreground"
+                >{{ t('username.filters.status') }}:</span
+            >
 
-            <label class="inline-flex cursor-pointer items-center gap-2 rounded-full border border-emerald-500/30 bg-emerald-500/10 px-3 py-1 text-xs">
-                <input v-model="statusFilters.found" type="checkbox" class="h-3.5 w-3.5" />
+            <label
+                class="inline-flex cursor-pointer items-center gap-2 rounded-full border border-emerald-500/30 bg-emerald-500/10 px-3 py-1 text-xs"
+            >
+                <input
+                    v-model="statusFilters.found"
+                    type="checkbox"
+                    class="h-3.5 w-3.5"
+                />
                 <span>{{ t('username.status.found') }}</span>
             </label>
 
-            <label class="inline-flex cursor-pointer items-center gap-2 rounded-full border border-slate-500/30 bg-slate-500/10 px-3 py-1 text-xs">
-                <input v-model="statusFilters.not_found" type="checkbox" class="h-3.5 w-3.5" />
+            <label
+                class="inline-flex cursor-pointer items-center gap-2 rounded-full border border-slate-500/30 bg-slate-500/10 px-3 py-1 text-xs"
+            >
+                <input
+                    v-model="statusFilters.not_found"
+                    type="checkbox"
+                    class="h-3.5 w-3.5"
+                />
                 <span>{{ t('username.status.notFound') }}</span>
             </label>
 
-            <label class="inline-flex cursor-pointer items-center gap-2 rounded-full border border-amber-500/30 bg-amber-500/10 px-3 py-1 text-xs">
-                <input v-model="statusFilters.unknown" type="checkbox" class="h-3.5 w-3.5" />
+            <label
+                class="inline-flex cursor-pointer items-center gap-2 rounded-full border border-amber-500/30 bg-amber-500/10 px-3 py-1 text-xs"
+            >
+                <input
+                    v-model="statusFilters.unknown"
+                    type="checkbox"
+                    class="h-3.5 w-3.5"
+                />
                 <span>{{ t('username.status.unknown') }}</span>
             </label>
         </div>
 
         <div class="mb-3 flex flex-wrap items-center gap-2">
-            <span class="text-xs text-muted-foreground">{{ t('username.filters.categories') }}:</span>
+            <span class="text-xs text-muted-foreground"
+                >{{ t('username.filters.categories') }}:</span
+            >
 
             <label
                 v-for="category in availableCategories"
                 :key="category"
                 class="inline-flex cursor-pointer items-center gap-2 rounded-full border border-cyan-500/30 bg-cyan-500/10 px-3 py-1 text-xs"
             >
-                <input v-model="categoryFilters[category]" type="checkbox" class="h-3.5 w-3.5" />
+                <input
+                    v-model="categoryFilters[category]"
+                    type="checkbox"
+                    class="h-3.5 w-3.5"
+                />
                 <span>{{ categoryLabel(category) }}</span>
             </label>
         </div>
 
-        <div class="telegram-scroll min-h-0 flex-1 overflow-y-auto pr-1">
-            <div v-if="!loading && filteredItems.length === 0" class="intel-empty">
+        <div class="intel-scroll min-h-0 flex-1 overflow-y-auto pr-1">
+            <div
+                v-if="!loading && filteredItems.length === 0"
+                class="intel-empty"
+            >
                 {{ t('username.results.empty') }}
             </div>
 
@@ -240,10 +311,14 @@ onMounted(() => {
                     class="space-y-2"
                 >
                     <div class="flex items-center justify-between">
-                        <h3 class="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+                        <h3
+                            class="text-xs font-semibold tracking-wide text-muted-foreground uppercase"
+                        >
                             {{ group.title }}
                         </h3>
-                        <span class="text-xs text-muted-foreground">{{ group.items.length }}</span>
+                        <span class="text-xs text-muted-foreground">{{
+                            group.items.length
+                        }}</span>
                     </div>
 
                     <article
@@ -251,10 +326,16 @@ onMounted(() => {
                         :key="item.key"
                         class="rounded-lg border border-border/80 bg-background/70 p-3"
                     >
-                        <div class="flex flex-wrap items-start justify-between gap-3">
+                        <div
+                            class="flex flex-wrap items-start justify-between gap-3"
+                        >
                             <div>
-                                <p class="text-sm font-semibold">{{ item.name }}</p>
-                                <p class="mt-1 text-xs text-muted-foreground">{{ item.profileUrl }}</p>
+                                <p class="text-sm font-semibold">
+                                    {{ item.name }}
+                                </p>
+                                <p class="mt-1 text-xs text-muted-foreground">
+                                    {{ item.profileUrl }}
+                                </p>
                             </div>
 
                             <span
@@ -265,13 +346,34 @@ onMounted(() => {
                             </span>
                         </div>
 
-                        <div class="mt-2 flex flex-wrap items-center gap-3 text-xs text-muted-foreground">
-                            <span>{{ t('username.results.region') }}: {{ t(`username.regions.${item.regionGroup}`) }}</span>
-                            <span>{{ t('username.results.primaryUsers') }}: {{ primaryUsersLabel(item.primaryUsersRegion) }}</span>
-                            <span>{{ t('username.results.category') }}: {{ categoryLabel(item.category) }}</span>
-                            <span v-if="item.profileDomain">{{ t('username.results.domain') }}: {{ item.profileDomain }}</span>
+                        <div
+                            class="mt-2 flex flex-wrap items-center gap-3 text-xs text-muted-foreground"
+                        >
+                            <span
+                                >{{ t('username.results.region') }}:
+                                {{
+                                    t(`username.regions.${item.regionGroup}`)
+                                }}</span
+                            >
+                            <span
+                                >{{ t('username.results.primaryUsers') }}:
+                                {{
+                                    primaryUsersLabel(item.primaryUsersRegion)
+                                }}</span
+                            >
+                            <span
+                                >{{ t('username.results.category') }}:
+                                {{ categoryLabel(item.category) }}</span
+                            >
+                            <span v-if="item.profileDomain"
+                                >{{ t('username.results.domain') }}:
+                                {{ item.profileDomain }}</span
+                            >
                             <span>HTTP: {{ item.httpStatus ?? '-' }}</span>
-                            <span>{{ t('username.results.confidence') }}: {{ item.confidence }}%</span>
+                            <span
+                                >{{ t('username.results.confidence') }}:
+                                {{ item.confidence }}%</span
+                            >
                             <span v-if="item.error">{{ item.error }}</span>
                             <a
                                 :href="item.profileUrl"
@@ -288,5 +390,3 @@ onMounted(() => {
         </div>
     </IntelResultPanel>
 </template>
-
-

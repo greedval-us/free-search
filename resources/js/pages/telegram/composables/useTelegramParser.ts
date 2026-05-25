@@ -2,7 +2,14 @@ import { computed, onBeforeUnmount, onMounted, reactive, ref } from 'vue';
 import { apiRequest } from '@/lib/api';
 
 type ParserPeriod = 'day' | 'week' | 'month' | 'custom';
-type ParserStage = 'idle' | 'messages' | 'comments' | 'finishing' | 'completed' | 'failed' | 'stopped';
+type ParserStage =
+    | 'idle'
+    | 'messages'
+    | 'comments'
+    | 'finishing'
+    | 'completed'
+    | 'failed'
+    | 'stopped';
 type ParserStatus = 'running' | 'completed' | 'failed' | 'stopped';
 type TranslateFn = (key: string) => string;
 type ParserStatusResponse = {
@@ -28,7 +35,9 @@ const parseDate = (value: string): Date | null => {
         return null;
     }
 
-    return new Date(Date.UTC(Number(match[1]), Number(match[2]) - 1, Number(match[3])));
+    return new Date(
+        Date.UTC(Number(match[1]), Number(match[2]) - 1, Number(match[3]))
+    );
 };
 
 const diffDays = (from: string, to: string): number | null => {
@@ -66,7 +75,9 @@ export const useTelegramParser = (t: TranslateFn) => {
 
     const keywordActive = computed(() => form.keyword.trim().length > 0);
     const customPeriod = computed(() => form.period === 'custom');
-    const canStart = computed(() => form.chatUsername.trim().length > 0 && !loading.value);
+    const canStart = computed(
+        () => form.chatUsername.trim().length > 0 && !loading.value
+    );
 
     const resetState = () => {
         runId.value = null;
@@ -95,16 +106,23 @@ export const useTelegramParser = (t: TranslateFn) => {
         const activeRunId = runId.value;
 
         if (activeRunId) {
-            apiRequest<ParserStatusResponse>(`/telegram/parser/stop/${activeRunId}`, {
-                method: 'POST',
-                headers: {
-                    'X-CSRF-TOKEN': document.querySelector<HTMLMetaElement>('meta[name="csrf-token"]')?.content ?? '',
-                },
-            })
+            apiRequest<ParserStatusResponse>(
+                `/telegram/parser/stop/${activeRunId}`,
+                {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRF-TOKEN':
+                            document.querySelector<HTMLMetaElement>(
+                                'meta[name="csrf-token"]'
+                            )?.content ?? '',
+                    },
+                }
+            )
                 .then((response) => {
                     if (!response.ok || response.data.runId !== runId.value) {
                         return;
                     }
+
                     const payload = response.data;
 
                     stage.value = payload.stage;
@@ -130,12 +148,18 @@ export const useTelegramParser = (t: TranslateFn) => {
         const activeRunId = runId.value;
 
         if (activeRunId) {
-            apiRequest<ParserStatusResponse>(`/telegram/parser/stop/${activeRunId}`, {
-                method: 'POST',
-                headers: {
-                    'X-CSRF-TOKEN': document.querySelector<HTMLMetaElement>('meta[name="csrf-token"]')?.content ?? '',
-                },
-            }).catch(() => undefined);
+            apiRequest<ParserStatusResponse>(
+                `/telegram/parser/stop/${activeRunId}`,
+                {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRF-TOKEN':
+                            document.querySelector<HTMLMetaElement>(
+                                'meta[name="csrf-token"]'
+                            )?.content ?? '',
+                    },
+                }
+            ).catch(() => undefined);
         }
     };
 
@@ -174,24 +198,33 @@ export const useTelegramParser = (t: TranslateFn) => {
         progress.value = 1;
 
         try {
-            const response = await apiRequest<ParserStatusResponse>('/telegram/parser/start', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRF-TOKEN': document.querySelector<HTMLMetaElement>('meta[name="csrf-token"]')?.content ?? '',
-                },
-                body: {
-                    chatUsername: form.chatUsername.trim(),
-                    keyword: form.keyword.trim(),
-                    period: form.period,
-                    dateFrom: form.dateFrom,
-                    dateTo: form.dateTo,
-                },
-            });
+            const response = await apiRequest<ParserStatusResponse>(
+                '/telegram/parser/start',
+                {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN':
+                            document.querySelector<HTMLMetaElement>(
+                                'meta[name="csrf-token"]'
+                            )?.content ?? '',
+                    },
+                    body: {
+                        chatUsername: form.chatUsername.trim(),
+                        keyword: form.keyword.trim(),
+                        period: form.period,
+                        dateFrom: form.dateFrom,
+                        dateTo: form.dateTo,
+                    },
+                }
+            );
 
             if (!response.ok || !response.data.runId) {
-                throw new Error(response.message ?? t('telegram.parser.errors.failed'));
+                throw new Error(
+                    response.message ?? t('telegram.parser.errors.failed')
+                );
             }
+
             const payload = response.data;
 
             runId.value = payload.runId;
@@ -210,13 +243,21 @@ export const useTelegramParser = (t: TranslateFn) => {
                 pollRequestInFlight.value = true;
 
                 try {
-                    const statusResponse = await apiRequest<ParserStatusResponse>(`/telegram/parser/status/${runId.value}`, {
-                        method: 'GET',
-                    });
+                    const statusResponse =
+                        await apiRequest<ParserStatusResponse>(
+                            `/telegram/parser/status/${runId.value}`,
+                            {
+                                method: 'GET',
+                            }
+                        );
 
                     if (!statusResponse.ok) {
-                        throw new Error(statusResponse.message ?? t('telegram.parser.errors.failed'));
+                        throw new Error(
+                            statusResponse.message ??
+                                t('telegram.parser.errors.failed')
+                        );
                     }
+
                     const statusPayload = statusResponse.data;
 
                     stage.value = statusPayload.stage;
@@ -234,7 +275,10 @@ export const useTelegramParser = (t: TranslateFn) => {
                         return;
                     }
 
-                    if (statusPayload.status === 'failed' || statusPayload.status === 'stopped') {
+                    if (
+                        statusPayload.status === 'failed' ||
+                        statusPayload.status === 'stopped'
+                    ) {
                         downloadUrl.value = statusPayload.downloadUrl;
                         downloadJsonUrl.value = statusPayload.downloadJsonUrl;
                         loading.value = false;
@@ -244,7 +288,10 @@ export const useTelegramParser = (t: TranslateFn) => {
                     }
                 } catch (pollError) {
                     loading.value = false;
-                    error.value = pollError instanceof Error ? pollError.message : t('telegram.parser.errors.failed');
+                    error.value =
+                        pollError instanceof Error
+                            ? pollError.message
+                            : t('telegram.parser.errors.failed');
                     stopSilently();
 
                     return;
@@ -262,7 +309,10 @@ export const useTelegramParser = (t: TranslateFn) => {
             }, POLL_INTERVAL_MS);
         } catch (exception) {
             stage.value = 'failed';
-            error.value = exception instanceof Error ? exception.message : t('telegram.parser.errors.failed');
+            error.value =
+                exception instanceof Error
+                    ? exception.message
+                    : t('telegram.parser.errors.failed');
         } finally {
             if (stage.value === 'failed') {
                 loading.value = false;
@@ -272,16 +322,16 @@ export const useTelegramParser = (t: TranslateFn) => {
 
     const download = () => {
         if (!downloadUrl.value) {
-return;
-}
+            return;
+        }
 
         window.location.href = downloadUrl.value;
     };
 
     const downloadJson = () => {
         if (!downloadJsonUrl.value) {
-return;
-}
+            return;
+        }
 
         window.location.href = downloadJsonUrl.value;
     };
@@ -298,7 +348,10 @@ return;
             keepalive: true,
             headers: {
                 Accept: 'application/json',
-                'X-CSRF-TOKEN': document.querySelector<HTMLMetaElement>('meta[name="csrf-token"]')?.content ?? '',
+                'X-CSRF-TOKEN':
+                    document.querySelector<HTMLMetaElement>(
+                        'meta[name="csrf-token"]'
+                    )?.content ?? '',
             },
         }).catch(() => undefined);
     };

@@ -1,2084 +1,2084 @@
 {
-  "telegram": {
-    "headTitle": "Telegram",
-    "help": {
-      "label": "What is this data?"
-    },
-    "search": {
-      "title": "Telegram Search",
-      "collapsed": "Search panel is collapsed",
-      "filters": "Message search filters and parameters",
-      "channelUsername": "Channel username",
-      "keyword": "Keyword",
-      "authorId": "Author ID",
-      "placeholderKeyword": "security",
-      "placeholderAuthor": "@username or id",
-      "showAdvanced": "Show filters",
-      "hideAdvanced": "Hide filters",
-      "find": "Analyze",
-      "searching": "Analyzing...",
-      "limit": "Limit",
-      "dateFrom": "Date from",
-      "dateTo": "Date to",
-      "mediaType": "Media type",
-      "mediaAny": "Any",
-      "mediaNone": "No media",
-      "mediaPhoto": "Photo",
-      "mediaVideo": "Video",
-      "mediaDocument": "Document",
-      "mediaAudio": "Audio",
-      "mediaLink": "Link",
-      "mediaOther": "Other",
-      "minViews": "Min views",
-      "minForwards": "Min forwards",
-      "advancedAriaShow": "Show additional filters",
-      "advancedAriaHide": "Hide additional filters",
-      "help": {
-        "overview": "Operational Telegram search for analysts: filter by channel, author, keyword, and date to isolate relevant evidence quickly."
-      }
-    },
-    "messages": {
-      "title": "Messages",
-      "shown": "Shown",
-      "empty": "Run a search to view messages.",
-      "date": "Date",
-      "authorId": "Author ID",
-      "views": "Views",
-      "forwards": "Forwards",
-      "replies": "Replies",
-      "media": "Media",
-      "giftYes": "Gift: yes",
-      "noText": "[No text]",
-      "openInTelegram": "Open in Telegram",
-      "showMedia": "Media",
-      "hideMedia": "Hide media",
-      "unsupportedMedia": "Inline preview is not supported for this media type.",
-      "openFile": "Open file",
-      "loadMore": "Show more",
-      "loadingMore": "Loading..."
-    },
-    "comments": {
-      "toggleHide": "Hide comments",
-      "toggleShow": "Comments",
-      "title": "Comments",
-      "loading": "Loading comments...",
-      "notFound": "Comments not found.",
-      "author": "Author",
-      "date": "Date",
-      "loadMore": "Show more comments",
-      "loadingMore": "Loading next batch..."
-    },
-    "popover": {
-      "reactionIds": "IDs for reaction",
-      "giftIds": "IDs for gift",
-      "id": "id"
-    },
-    "mediaTypes": {
-      "photo": "Photo",
-      "video": "Video",
-      "document": "Document",
-      "audio": "Audio",
-      "geo": "Geo",
-      "poll": "Poll",
-      "contact": "Contact",
-      "link_preview": "Link",
-      "other": "Media",
-      "none": "None"
-    },
-    "errors": {
-      "channelRequired": "Please enter the channel username first.",
-      "searchFailed": "Unable to complete analysis. Please retry in a moment.",
-      "unknownSearchError": "Unexpected response received. Please retry the analysis.",
-      "commentsFailed": "Failed to load comments."
-    },
-    "tabs": {
-      "search": "Search",
-      "analytics": "Analytics",
-      "parser": "Parser"
-    },
-    "parser": {
-      "title": "Telegram Parser",
-      "description": "This section is prepared for parser workflows. We will add sources, rules, and scheduled collection here.",
-      "status": "Stub: in development",
-      "subtitle": "Online Telegram data collection and export",
-      "collapsed": "Settings collapsed",
-      "start": "Start collect",
-      "stop": "Stop",
-      "collecting": "Collecting...",
-      "download": "Download Excel",
-      "downloadJson": "Download JSON",
-      "keywordHint": "Keyword is set, date range is ignored and all matching messages are collected.",
-      "periods": {
-        "day": "Last day",
-        "week": "Last week",
-        "month": "Last month",
-        "custom": "Custom"
-      },
-      "filters": {
-        "channel": "Channel username",
-        "keyword": "Keyword (optional)",
-        "period": "Period",
-        "from": "Date from",
-        "to": "Date to"
-      },
-      "progress": {
-        "title": "Collection progress",
-        "messages": "Messages processed",
-        "comments": "Comments processed",
-        "stage": {
-          "idle": "Idle",
-          "messages": "Collecting messages",
-          "comments": "Collecting comments",
-          "finishing": "Preparing export",
-          "completed": "Completed",
-          "failed": "Failed",
-          "stopped": "Stopped"
-        }
-      },
-      "help": {
-        "overview": "Controlled online collection workflow for Telegram messages and comments with export-ready outputs and minimal storage footprint."
-      },
-      "errors": {
-        "customBothDates": "Please specify both custom period dates.",
-        "customInvalid": "Custom period is invalid.",
-        "customTooLong": "Custom period cannot exceed one month.",
-        "failed": "Parser failed."
-      }
-    },
-    "analytics": {
-      "title": "Telegram Analytics",
-      "subtitle": "Analyze channel activity for the last 1 to 7 days.",
-      "collapsed": "Settings panel is collapsed.",
-      "loading": "Loading analytics...",
-      "refresh": "Refresh",
-      "report": "Open report",
-      "downloadReport": "Download report",
-      "vsPrevious": "vs previous period",
-      "hideSettings": "Hide settings",
-      "score": "Score",
-      "openTelegram": "Open in Telegram",
-      "emptyPost": "No post text",
-      "periods": {
-        "1": "Last 1 day",
-        "3": "Last 3 days",
-        "7": "Last 7 days"
-      },
-      "filters": {
-        "channel": "Channel username",
-        "period": "Period",
-        "from": "From",
-        "to": "To"
-      },
-      "group": {
-        "type": "Type",
-        "participants": "Participants",
-        "online": "Online",
-        "verified": "Verified",
-        "createdAt": "Created",
-        "statsAvailable": "Statistics available",
-        "linkedChatId": "Linked chat ID",
-        "restricted": "Restricted",
-        "scam": "Scam",
-        "types": {
-          "channel": "Channel",
-          "group": "Group",
-          "forum": "Forum",
-          "gigagroup": "Gigagroup",
-          "chat": "Chat"
-        }
-      },
-      "fraud": {
-        "title": "Anti-Fraud",
-        "hint": "Risk signals based on suspicious engagement patterns.",
-        "riskScore": "Risk score",
-        "riskLevel": "Risk level",
-        "suspiciousPosts": "Suspicious posts",
-        "triggers": "Triggers",
-        "noTriggers": "No strong fraud signals detected.",
-        "level": {
-          "low": "Low",
-          "medium": "Medium",
-          "high": "High"
+    "telegram": {
+        "headTitle": "Telegram",
+        "help": {
+            "label": "What is this data?"
         },
-        "trigger": {
-          "zero_view_interactions": "Interactions without views",
-          "author_concentration": "High author concentration",
-          "time_burst": "Time burst concentration",
-          "reaction_ratio_cluster": "Cluster with high reaction ratio",
-          "suspicious_posts_cluster": "Cluster of suspicious posts"
+        "search": {
+            "title": "Telegram Search",
+            "collapsed": "Search panel is collapsed",
+            "filters": "Message search filters and parameters",
+            "channelUsername": "Channel username",
+            "keyword": "Keyword",
+            "authorId": "Author ID",
+            "placeholderKeyword": "security",
+            "placeholderAuthor": "@username or id",
+            "showAdvanced": "Show filters",
+            "hideAdvanced": "Hide filters",
+            "find": "Analyze",
+            "searching": "Analyzing...",
+            "limit": "Limit",
+            "dateFrom": "Date from",
+            "dateTo": "Date to",
+            "mediaType": "Media type",
+            "mediaAny": "Any",
+            "mediaNone": "No media",
+            "mediaPhoto": "Photo",
+            "mediaVideo": "Video",
+            "mediaDocument": "Document",
+            "mediaAudio": "Audio",
+            "mediaLink": "Link",
+            "mediaOther": "Other",
+            "minViews": "Min views",
+            "minForwards": "Min forwards",
+            "advancedAriaShow": "Show additional filters",
+            "advancedAriaHide": "Hide additional filters",
+            "help": {
+                "overview": "Operational Telegram search for analysts: filter by channel, author, keyword, and date to isolate relevant evidence quickly."
+            }
         },
-        "reason": {
-          "interactions_without_views": "Interactions without views",
-          "high_reaction_ratio": "Abnormally high reaction ratio",
-          "high_forward_ratio": "Abnormally high forward ratio",
-          "gifts_with_low_views": "Gifts with low views",
-          "high_interactions_low_views": "High interactions with low views"
-        }
-      },
-      "priority": {
-        "title": "What's more important",
-        "formula": "Applied formula",
-        "balanced": "Balanced",
-        "reach": "Reach",
-        "discussion": "Discussion",
-        "virality": "Virality"
-      },
-      "help": {
-        "label": "What is this data?",
-        "overview": "Executive-friendly Telegram analytics with trends, engagement signals, and anti-fraud context for rapid decision-making.",
-        "formula": "Post score formula. Variables: V = views, F = forwards, R = replies, Re = reactions, G = gifts. Calculation: score = V*wV + F*wF + R*wR + Re*wRe + G*wG.",
-        "antiFraud": "Anti-Fraud score (0-100) aggregates suspicious engagement patterns and trigger clusters to prioritize review workload.",
-        "funnel": "Shows the step-by-step conversion from all posts to posts with meaningful engagement.",
-        "audience": "Shows author structure: concentration, recurring contributors, and peak activity hours.",
-        "activity": "Shows period dynamics by bucket: number of posts, views, and interactions.",
-        "distribution": "Shows which media formats and reactions dominate in the selected period.",
-        "opinionLeaders": "Shows top authors by impact score and engagement, with trends by day.",
-        "topPosts": "Shows the highest-impact posts ranked by weighted score."
-      },
-      "empty": {
-        "title": "Pick a channel and period",
-        "description": "The analytics module aggregates live Telegram messages and renders charts, totals, and top posts for the selected period."
-      },
-      "errors": {
-        "channelRequired": "Please enter a channel username.",
-        "loadFailed": "Could not load analytics.",
-        "rangeTooLong": "The custom date range cannot exceed 7 days."
-      },
-      "stats": {
-        "messages": "Messages",
-        "messagesShort": "posts",
-        "views": "Views",
-        "forwards": "Forwards",
-        "replies": "Replies",
-        "reactions": "Reactions",
-        "gifts": "Gifts",
-        "mediaPosts": "Posts with media",
-        "avgViewsPerPost": "Avg. views / post",
-        "avgInteractionsPerPost": "Avg. interactions / post",
-        "uniqueAuthors": "Unique authors",
-        "activeAuthors": "Active authors",
-        "singleMessageAuthors": "Single-message authors",
-        "returningAuthors": "Returning authors",
-        "topAuthorShare": "Top author share",
-        "top5AuthorsShare": "Top 5 authors share",
-        "concentrationIndex": "Concentration index"
-      },
-      "charts": {
-        "activity": "Activity trend",
-        "activityHint": "Messages, views, and interactions across the chosen range.",
-        "funnel": "Engagement funnel",
-        "funnelHint": "Message flow from publication to engagement signals.",
-        "funnelMessages": "Published messages",
-        "funnelViewed": "Messages with views",
-        "funnelInteracted": "Messages with interactions",
-        "funnelReacted": "Messages with reactions",
-        "fromPrevious": "Conversion vs previous stage",
-        "fromStart": "Conversion vs first stage",
-        "audience": "Audience structure",
-        "audienceHint": "Author activity and concentration for the selected period.",
-        "mostActiveHours": "Most active hours",
-        "distribution": "Content mix",
-        "distributionHint": "Top media types and reaction groups.",
-        "media": "Media types",
-        "reactions": "Reactions",
-        "messages": "Messages",
-        "views": "Views",
-        "interactions": "Interactions",
-        "opinionLeaders": "Opinion leaders",
-        "opinionLeadersHint": "Top authors by impact, based on score and interactions.",
-        "opinionLeadersBreakdown": "Leaders breakdown",
-        "opinionLeadersByDay": "Leaders by day",
-        "opinionLeadersByDayHint": "Daily activity of opinion leaders within the selected range.",
-        "author": "Author",
-        "topPosts": "Top posts",
-        "topPostsHint": "Posts ranked by an engagement score."
-      }
-    }
-  },
-  "youtube": {
-    "headTitle": "YouTube",
-    "help": {
-      "label": "What is this data?"
-    },
-    "tabs": {
-      "search": "Search",
-      "analytics": "Analytics",
-      "parser": "Parser"
-    },
-    "search": {
-      "title": "YouTube Search",
-      "collapsed": "Search panel is collapsed",
-      "filters": "Video search filters and parameters",
-      "resultTitle": "Videos",
-      "shown": "Shown",
-      "hint": "Search public videos, channels, and playlists with YouTube Data API v3. Only public data returned by the official API is available.",
-      "query": "Query",
-      "type": "Search type",
-      "channelFilter": "Channel filter",
-      "channelPlaceholder": "optional: UC..., @handle, or username",
-      "order": "Order",
-      "limit": "Limit",
-      "publishedAfter": "Published after",
-      "publishedBefore": "Published before",
-      "regionCode": "Region",
-      "relevanceLanguage": "Language",
-      "safeSearch": "Safe search",
-      "videoDuration": "Duration",
-      "videoDefinition": "Quality",
-      "videoCaption": "Captions",
-      "advancedAriaShow": "Show advanced filters",
-      "advancedAriaHide": "Hide advanced filters",
-      "publicDataHint": "API v3 public search supports videos, channels, and playlists by keyword; optionally filter by channel, dates, region, language, and video-specific attributes.",
-      "placeholder": "for example: osint tools",
-      "submit": "Search",
-      "empty": "Run a search to view videos."
-    },
-    "analytics": {
-      "title": "YouTube Analytics",
-      "collapsed": "Settings panel is collapsed",
-      "hint": "Analyze channel activity for the last 1-7 days.",
-      "mode": "Mode",
-      "videoId": "Video ID",
-      "channelId": "Channel",
-      "channelPlaceholder": "UC..., @handle, or username",
-      "period": "Publication period (days)",
-      "dateFrom": "Date from",
-      "dateTo": "Date to",
-      "customPeriodTooLong": "Custom period cannot be longer than 7 days.",
-      "submit": "Analyze",
-      "refresh": "Refresh",
-      "report": "Open report",
-      "downloadReport": "Download report",
-      "empty": {
-        "title": "YouTube Analytics",
-        "description": "Select a video or channel and click Refresh to build a report from public YouTube API data."
-      },
-      "channelProfile": "Channel profile",
-      "videoProfile": "Video profile",
-      "createdAt": "Created",
-      "country": "Country",
-      "topVideos": "Top videos",
-      "insights": "Quick insights",
-      "timeline": "Publishing timeline",
-      "distribution": "Distributions",
-      "duration": "Duration",
-      "quality": "Quality",
-      "captions": "Captions",
-      "withCaptions": "With captions",
-      "withoutCaptions": "Without captions",
-      "tags": "Tags and topics",
-      "noTags": "No tags found in public data.",
-      "durationLabels": {
-        "short": "Short",
-        "medium": "Medium",
-        "long": "Long"
-      },
-      "help": {
-        "label": "?",
-        "fields": {
-          "mode": "Analysis mode: single video or channel.",
-          "videoId": "YouTube video ID or video URL. Used for single-video analytics.",
-          "channelId": "Channel ID, @handle, or username. Used to build analytics for recent channel publications.",
-          "period": "Quick period presets: last 1, 3, or 7 days.",
-          "dateFrom": "Start date for a custom period. Works together with “Date to”.",
-          "dateTo": "End date for a custom period. Maximum range is 7 days."
+        "messages": {
+            "title": "Messages",
+            "shown": "Shown",
+            "empty": "Run a search to view messages.",
+            "date": "Date",
+            "authorId": "Author ID",
+            "views": "Views",
+            "forwards": "Forwards",
+            "replies": "Replies",
+            "media": "Media",
+            "giftYes": "Gift: yes",
+            "noText": "[No text]",
+            "openInTelegram": "Open in Telegram",
+            "showMedia": "Media",
+            "hideMedia": "Hide media",
+            "unsupportedMedia": "Inline preview is not supported for this media type.",
+            "openFile": "Open file",
+            "loadMore": "Show more",
+            "loadingMore": "Loading..."
         },
-        "insights": "Quick interpretation of the current dataset: focus video, top video by views, engagement, and dominant duration.",
-        "timeline": "Interactive day-by-day dynamics: hover to see exact values for views, likes, and comments.",
-        "distribution": "Content mix by duration, quality, and captions. Bars show relative share inside the current dataset.",
-        "leaders": "Leaderboards are ranked by the selected metric: views, likes, comments, and engagement."
-      },
-      "insightsLabels": {
-        "focus_video": "Focus video",
-        "top_video": "Top video by views",
-        "engagement": "Engagement rate",
-        "duration_mix": "Dominant duration"
-      },
-      "leaders": {
-        "views": "Leaders by views",
-        "likes": "Leaders by likes",
-        "comments": "Leaders by comments",
-        "engagement": "Leaders by engagement"
-      },
-      "metrics": {
-        "videos": "Videos",
-        "views": "Views",
-        "likes": "Likes",
-        "comments": "Comments",
-        "avgViews": "Avg views",
-        "avgLikes": "Avg likes",
-        "avgComments": "Avg comments",
-        "medianViews": "Median views",
-        "engagement": "ER",
-        "commentRate": "Comment rate",
-        "subscribers": "Subscribers",
-        "channelViews": "Channel views"
-      },
-      "metricHints": {
-        "videos": "Number of videos included in the analyzed dataset.",
-        "views": "Total views across all videos in the dataset.",
-        "likes": "Total likes across all videos in the dataset.",
-        "comments": "Total comments across all videos in the dataset.",
-        "avgViews": "Average views per video in the dataset.",
-        "engagement": "Engagement Rate: (likes + comments) divided by views, in percent.",
-        "subscribers": "Current channel subscriber count (if available in the public API).",
-        "channelViews": "Total channel views from the public API.",
-        "medianViews": "Median views: the middle value, less sensitive to outliers.",
-        "commentRate": "Comments-to-views ratio, in percent."
-      }
-    },
-    "comments": {
-      "toggleShow": "Comments",
-      "toggleHide": "Hide comments",
-      "empty": "No comments found",
-      "toggleShowReplies": "Show replies",
-      "toggleHideReplies": "Hide replies",
-      "repliesPartialHint": "Only a subset of replies available via the public YouTube API is shown."
-    },
-    "parser": {
-      "title": "YouTube Parser",
-      "collapsed": "Settings panel is collapsed",
-      "subtitle": "Online YouTube comments collection and export",
-      "hint": "Collect comments from the selected video and load all available replies.",
-      "videoId": "Video ID",
-      "query": "Query",
-      "order": "Order",
-      "start": "Start collect",
-      "stop": "Stop",
-      "collecting": "Collecting...",
-      "download": "Download Excel",
-      "downloadJson": "Download JSON",
-      "replies": "Replies",
-      "progress": {
-        "title": "Collection progress",
-        "comments": "Comments processed",
-        "replies": "Replies processed",
-        "stage": {
-          "idle": "Idle",
-          "comments": "Collecting comments",
-          "replies": "Collecting replies",
-          "finishing": "Preparing export",
-          "completed": "Completed",
-          "failed": "Failed",
-          "stopped": "Stopped"
+        "comments": {
+            "toggleHide": "Hide comments",
+            "toggleShow": "Comments",
+            "title": "Comments",
+            "loading": "Loading comments...",
+            "notFound": "Comments not found.",
+            "author": "Author",
+            "date": "Date",
+            "loadMore": "Show more comments",
+            "loadingMore": "Loading next batch..."
+        },
+        "popover": {
+            "reactionIds": "IDs for reaction",
+            "giftIds": "IDs for gift",
+            "id": "id"
+        },
+        "mediaTypes": {
+            "photo": "Photo",
+            "video": "Video",
+            "document": "Document",
+            "audio": "Audio",
+            "geo": "Geo",
+            "poll": "Poll",
+            "contact": "Contact",
+            "link_preview": "Link",
+            "other": "Media",
+            "none": "None"
+        },
+        "errors": {
+            "channelRequired": "Please enter the channel username first.",
+            "searchFailed": "Unable to complete analysis. Please retry in a moment.",
+            "unknownSearchError": "Unexpected response received. Please retry the analysis.",
+            "commentsFailed": "Failed to load comments."
+        },
+        "tabs": {
+            "search": "Search",
+            "analytics": "Analytics",
+            "parser": "Parser"
+        },
+        "parser": {
+            "title": "Telegram Parser",
+            "description": "This section is prepared for parser workflows. We will add sources, rules, and scheduled collection here.",
+            "status": "Stub: in development",
+            "subtitle": "Online Telegram data collection and export",
+            "collapsed": "Settings collapsed",
+            "start": "Start collect",
+            "stop": "Stop",
+            "collecting": "Collecting...",
+            "download": "Download Excel",
+            "downloadJson": "Download JSON",
+            "keywordHint": "Keyword is set, date range is ignored and all matching messages are collected.",
+            "periods": {
+                "day": "Last day",
+                "week": "Last week",
+                "month": "Last month",
+                "custom": "Custom"
+            },
+            "filters": {
+                "channel": "Channel username",
+                "keyword": "Keyword (optional)",
+                "period": "Period",
+                "from": "Date from",
+                "to": "Date to"
+            },
+            "progress": {
+                "title": "Collection progress",
+                "messages": "Messages processed",
+                "comments": "Comments processed",
+                "stage": {
+                    "idle": "Idle",
+                    "messages": "Collecting messages",
+                    "comments": "Collecting comments",
+                    "finishing": "Preparing export",
+                    "completed": "Completed",
+                    "failed": "Failed",
+                    "stopped": "Stopped"
+                }
+            },
+            "help": {
+                "overview": "Controlled online collection workflow for Telegram messages and comments with export-ready outputs and minimal storage footprint."
+            },
+            "errors": {
+                "customBothDates": "Please specify both custom period dates.",
+                "customInvalid": "Custom period is invalid.",
+                "customTooLong": "Custom period cannot exceed one month.",
+                "failed": "Parser failed."
+            }
+        },
+        "analytics": {
+            "title": "Telegram Analytics",
+            "subtitle": "Analyze channel activity for the last 1 to 7 days.",
+            "collapsed": "Settings panel is collapsed.",
+            "loading": "Loading analytics...",
+            "refresh": "Refresh",
+            "report": "Open report",
+            "downloadReport": "Download report",
+            "vsPrevious": "vs previous period",
+            "hideSettings": "Hide settings",
+            "score": "Score",
+            "openTelegram": "Open in Telegram",
+            "emptyPost": "No post text",
+            "periods": {
+                "1": "Last 1 day",
+                "3": "Last 3 days",
+                "7": "Last 7 days"
+            },
+            "filters": {
+                "channel": "Channel username",
+                "period": "Period",
+                "from": "From",
+                "to": "To"
+            },
+            "group": {
+                "type": "Type",
+                "participants": "Participants",
+                "online": "Online",
+                "verified": "Verified",
+                "createdAt": "Created",
+                "statsAvailable": "Statistics available",
+                "linkedChatId": "Linked chat ID",
+                "restricted": "Restricted",
+                "scam": "Scam",
+                "types": {
+                    "channel": "Channel",
+                    "group": "Group",
+                    "forum": "Forum",
+                    "gigagroup": "Gigagroup",
+                    "chat": "Chat"
+                }
+            },
+            "fraud": {
+                "title": "Anti-Fraud",
+                "hint": "Risk signals based on suspicious engagement patterns.",
+                "riskScore": "Risk score",
+                "riskLevel": "Risk level",
+                "suspiciousPosts": "Suspicious posts",
+                "triggers": "Triggers",
+                "noTriggers": "No strong fraud signals detected.",
+                "level": {
+                    "low": "Low",
+                    "medium": "Medium",
+                    "high": "High"
+                },
+                "trigger": {
+                    "zero_view_interactions": "Interactions without views",
+                    "author_concentration": "High author concentration",
+                    "time_burst": "Time burst concentration",
+                    "reaction_ratio_cluster": "Cluster with high reaction ratio",
+                    "suspicious_posts_cluster": "Cluster of suspicious posts"
+                },
+                "reason": {
+                    "interactions_without_views": "Interactions without views",
+                    "high_reaction_ratio": "Abnormally high reaction ratio",
+                    "high_forward_ratio": "Abnormally high forward ratio",
+                    "gifts_with_low_views": "Gifts with low views",
+                    "high_interactions_low_views": "High interactions with low views"
+                }
+            },
+            "priority": {
+                "title": "What's more important",
+                "formula": "Applied formula",
+                "balanced": "Balanced",
+                "reach": "Reach",
+                "discussion": "Discussion",
+                "virality": "Virality"
+            },
+            "help": {
+                "label": "What is this data?",
+                "overview": "Executive-friendly Telegram analytics with trends, engagement signals, and anti-fraud context for rapid decision-making.",
+                "formula": "Post score formula. Variables: V = views, F = forwards, R = replies, Re = reactions, G = gifts. Calculation: score = V*wV + F*wF + R*wR + Re*wRe + G*wG.",
+                "antiFraud": "Anti-Fraud score (0-100) aggregates suspicious engagement patterns and trigger clusters to prioritize review workload.",
+                "funnel": "Shows the step-by-step conversion from all posts to posts with meaningful engagement.",
+                "audience": "Shows author structure: concentration, recurring contributors, and peak activity hours.",
+                "activity": "Shows period dynamics by bucket: number of posts, views, and interactions.",
+                "distribution": "Shows which media formats and reactions dominate in the selected period.",
+                "opinionLeaders": "Shows top authors by impact score and engagement, with trends by day.",
+                "topPosts": "Shows the highest-impact posts ranked by weighted score."
+            },
+            "empty": {
+                "title": "Pick a channel and period",
+                "description": "The analytics module aggregates live Telegram messages and renders charts, totals, and top posts for the selected period."
+            },
+            "errors": {
+                "channelRequired": "Please enter a channel username.",
+                "loadFailed": "Could not load analytics.",
+                "rangeTooLong": "The custom date range cannot exceed 7 days."
+            },
+            "stats": {
+                "messages": "Messages",
+                "messagesShort": "posts",
+                "views": "Views",
+                "forwards": "Forwards",
+                "replies": "Replies",
+                "reactions": "Reactions",
+                "gifts": "Gifts",
+                "mediaPosts": "Posts with media",
+                "avgViewsPerPost": "Avg. views / post",
+                "avgInteractionsPerPost": "Avg. interactions / post",
+                "uniqueAuthors": "Unique authors",
+                "activeAuthors": "Active authors",
+                "singleMessageAuthors": "Single-message authors",
+                "returningAuthors": "Returning authors",
+                "topAuthorShare": "Top author share",
+                "top5AuthorsShare": "Top 5 authors share",
+                "concentrationIndex": "Concentration index"
+            },
+            "charts": {
+                "activity": "Activity trend",
+                "activityHint": "Messages, views, and interactions across the chosen range.",
+                "funnel": "Engagement funnel",
+                "funnelHint": "Message flow from publication to engagement signals.",
+                "funnelMessages": "Published messages",
+                "funnelViewed": "Messages with views",
+                "funnelInteracted": "Messages with interactions",
+                "funnelReacted": "Messages with reactions",
+                "fromPrevious": "Conversion vs previous stage",
+                "fromStart": "Conversion vs first stage",
+                "audience": "Audience structure",
+                "audienceHint": "Author activity and concentration for the selected period.",
+                "mostActiveHours": "Most active hours",
+                "distribution": "Content mix",
+                "distributionHint": "Top media types and reaction groups.",
+                "media": "Media types",
+                "reactions": "Reactions",
+                "messages": "Messages",
+                "views": "Views",
+                "interactions": "Interactions",
+                "opinionLeaders": "Opinion leaders",
+                "opinionLeadersHint": "Top authors by impact, based on score and interactions.",
+                "opinionLeadersBreakdown": "Leaders breakdown",
+                "opinionLeadersByDay": "Leaders by day",
+                "opinionLeadersByDayHint": "Daily activity of opinion leaders within the selected range.",
+                "author": "Author",
+                "topPosts": "Top posts",
+                "topPostsHint": "Posts ranked by an engagement score."
+            }
         }
-      },
-      "errors": {
-        "videoRequired": "Please enter a video ID or video URL.",
-        "failed": "Parser failed."
-      },
-      "help": {
-        "overview": "YouTube parser collects comments and all available replies under the selected video, then prepares Excel and JSON exports."
-      }
     },
-    "options": {
-      "searchType": {
-        "video": "Videos",
-        "channel": "Channels",
-        "playlist": "Playlists"
-      },
-      "searchOrder": {
-        "relevance": "Most relevant",
-        "date": "Newest first",
-        "viewCount": "Most viewed",
-        "rating": "Highest rated",
-        "title": "Title"
-      },
-      "safeSearch": {
-        "moderate": "Moderate",
-        "none": "No filter",
-        "strict": "Strict"
-      },
-      "videoDuration": {
-        "any": "Any",
-        "short": "Under 4 minutes",
-        "medium": "4-20 minutes",
-        "long": "Over 20 minutes"
-      },
-      "videoDefinition": {
-        "any": "Any",
-        "high": "HD",
-        "standard": "SD"
-      },
-      "videoCaption": {
-        "any": "Any",
-        "closedCaption": "With captions",
-        "none": "No captions"
-      },
-      "mode": {
-        "video": "Video",
-        "channel": "Channel"
-      },
-      "parserOrder": {
-        "relevance": "Relevance",
-        "time": "Newest first"
-      }
+    "youtube": {
+        "headTitle": "YouTube",
+        "help": {
+            "label": "What is this data?"
+        },
+        "tabs": {
+            "search": "Search",
+            "analytics": "Analytics",
+            "parser": "Parser"
+        },
+        "search": {
+            "title": "YouTube Search",
+            "collapsed": "Search panel is collapsed",
+            "filters": "Video search filters and parameters",
+            "resultTitle": "Videos",
+            "shown": "Shown",
+            "hint": "Search public videos, channels, and playlists with YouTube Data API v3. Only public data returned by the official API is available.",
+            "query": "Query",
+            "type": "Search type",
+            "channelFilter": "Channel filter",
+            "channelPlaceholder": "optional: UC..., @handle, or username",
+            "order": "Order",
+            "limit": "Limit",
+            "publishedAfter": "Published after",
+            "publishedBefore": "Published before",
+            "regionCode": "Region",
+            "relevanceLanguage": "Language",
+            "safeSearch": "Safe search",
+            "videoDuration": "Duration",
+            "videoDefinition": "Quality",
+            "videoCaption": "Captions",
+            "advancedAriaShow": "Show advanced filters",
+            "advancedAriaHide": "Hide advanced filters",
+            "publicDataHint": "API v3 public search supports videos, channels, and playlists by keyword; optionally filter by channel, dates, region, language, and video-specific attributes.",
+            "placeholder": "for example: osint tools",
+            "submit": "Search",
+            "empty": "Run a search to view videos."
+        },
+        "analytics": {
+            "title": "YouTube Analytics",
+            "collapsed": "Settings panel is collapsed",
+            "hint": "Analyze channel activity for the last 1-7 days.",
+            "mode": "Mode",
+            "videoId": "Video ID",
+            "channelId": "Channel",
+            "channelPlaceholder": "UC..., @handle, or username",
+            "period": "Publication period (days)",
+            "dateFrom": "Date from",
+            "dateTo": "Date to",
+            "customPeriodTooLong": "Custom period cannot be longer than 7 days.",
+            "submit": "Analyze",
+            "refresh": "Refresh",
+            "report": "Open report",
+            "downloadReport": "Download report",
+            "empty": {
+                "title": "YouTube Analytics",
+                "description": "Select a video or channel and click Refresh to build a report from public YouTube API data."
+            },
+            "channelProfile": "Channel profile",
+            "videoProfile": "Video profile",
+            "createdAt": "Created",
+            "country": "Country",
+            "topVideos": "Top videos",
+            "insights": "Quick insights",
+            "timeline": "Publishing timeline",
+            "distribution": "Distributions",
+            "duration": "Duration",
+            "quality": "Quality",
+            "captions": "Captions",
+            "withCaptions": "With captions",
+            "withoutCaptions": "Without captions",
+            "tags": "Tags and topics",
+            "noTags": "No tags found in public data.",
+            "durationLabels": {
+                "short": "Short",
+                "medium": "Medium",
+                "long": "Long"
+            },
+            "help": {
+                "label": "?",
+                "fields": {
+                    "mode": "Analysis mode: single video or channel.",
+                    "videoId": "YouTube video ID or video URL. Used for single-video analytics.",
+                    "channelId": "Channel ID, @handle, or username. Used to build analytics for recent channel publications.",
+                    "period": "Quick period presets: last 1, 3, or 7 days.",
+                    "dateFrom": "Start date for a custom period. Works together with “Date to”.",
+                    "dateTo": "End date for a custom period. Maximum range is 7 days."
+                },
+                "insights": "Quick interpretation of the current dataset: focus video, top video by views, engagement, and dominant duration.",
+                "timeline": "Interactive day-by-day dynamics: hover to see exact values for views, likes, and comments.",
+                "distribution": "Content mix by duration, quality, and captions. Bars show relative share inside the current dataset.",
+                "leaders": "Leaderboards are ranked by the selected metric: views, likes, comments, and engagement."
+            },
+            "insightsLabels": {
+                "focus_video": "Focus video",
+                "top_video": "Top video by views",
+                "engagement": "Engagement rate",
+                "duration_mix": "Dominant duration"
+            },
+            "leaders": {
+                "views": "Leaders by views",
+                "likes": "Leaders by likes",
+                "comments": "Leaders by comments",
+                "engagement": "Leaders by engagement"
+            },
+            "metrics": {
+                "videos": "Videos",
+                "views": "Views",
+                "likes": "Likes",
+                "comments": "Comments",
+                "avgViews": "Avg views",
+                "avgLikes": "Avg likes",
+                "avgComments": "Avg comments",
+                "medianViews": "Median views",
+                "engagement": "ER",
+                "commentRate": "Comment rate",
+                "subscribers": "Subscribers",
+                "channelViews": "Channel views"
+            },
+            "metricHints": {
+                "videos": "Number of videos included in the analyzed dataset.",
+                "views": "Total views across all videos in the dataset.",
+                "likes": "Total likes across all videos in the dataset.",
+                "comments": "Total comments across all videos in the dataset.",
+                "avgViews": "Average views per video in the dataset.",
+                "engagement": "Engagement Rate: (likes + comments) divided by views, in percent.",
+                "subscribers": "Current channel subscriber count (if available in the public API).",
+                "channelViews": "Total channel views from the public API.",
+                "medianViews": "Median views: the middle value, less sensitive to outliers.",
+                "commentRate": "Comments-to-views ratio, in percent."
+            }
+        },
+        "comments": {
+            "toggleShow": "Comments",
+            "toggleHide": "Hide comments",
+            "empty": "No comments found",
+            "toggleShowReplies": "Show replies",
+            "toggleHideReplies": "Hide replies",
+            "repliesPartialHint": "Only a subset of replies available via the public YouTube API is shown."
+        },
+        "parser": {
+            "title": "YouTube Parser",
+            "collapsed": "Settings panel is collapsed",
+            "subtitle": "Online YouTube comments collection and export",
+            "hint": "Collect comments from the selected video and load all available replies.",
+            "videoId": "Video ID",
+            "query": "Query",
+            "order": "Order",
+            "start": "Start collect",
+            "stop": "Stop",
+            "collecting": "Collecting...",
+            "download": "Download Excel",
+            "downloadJson": "Download JSON",
+            "replies": "Replies",
+            "progress": {
+                "title": "Collection progress",
+                "comments": "Comments processed",
+                "replies": "Replies processed",
+                "stage": {
+                    "idle": "Idle",
+                    "comments": "Collecting comments",
+                    "replies": "Collecting replies",
+                    "finishing": "Preparing export",
+                    "completed": "Completed",
+                    "failed": "Failed",
+                    "stopped": "Stopped"
+                }
+            },
+            "errors": {
+                "videoRequired": "Please enter a video ID or video URL.",
+                "failed": "Parser failed."
+            },
+            "help": {
+                "overview": "YouTube parser collects comments and all available replies under the selected video, then prepares Excel and JSON exports."
+            }
+        },
+        "options": {
+            "searchType": {
+                "video": "Videos",
+                "channel": "Channels",
+                "playlist": "Playlists"
+            },
+            "searchOrder": {
+                "relevance": "Most relevant",
+                "date": "Newest first",
+                "viewCount": "Most viewed",
+                "rating": "Highest rated",
+                "title": "Title"
+            },
+            "safeSearch": {
+                "moderate": "Moderate",
+                "none": "No filter",
+                "strict": "Strict"
+            },
+            "videoDuration": {
+                "any": "Any",
+                "short": "Under 4 minutes",
+                "medium": "4-20 minutes",
+                "long": "Over 20 minutes"
+            },
+            "videoDefinition": {
+                "any": "Any",
+                "high": "HD",
+                "standard": "SD"
+            },
+            "videoCaption": {
+                "any": "Any",
+                "closedCaption": "With captions",
+                "none": "No captions"
+            },
+            "mode": {
+                "video": "Video",
+                "channel": "Channel"
+            },
+            "parserOrder": {
+                "relevance": "Relevance",
+                "time": "Newest first"
+            }
+        },
+        "common": {
+            "loading": "Loading...",
+            "empty": "No data yet",
+            "published": "Published",
+            "open": "Open",
+            "loadMore": "Load more",
+            "requestFailed": "Request failed"
+        }
     },
-    "common": {
-      "loading": "Loading...",
-      "empty": "No data yet",
-      "published": "Published",
-      "open": "Open",
-      "loadMore": "Load more",
-      "requestFailed": "Request failed"
-    }
-  },
-  "username": {
-    "headTitle": "Username",
-    "help": {
-      "label": "What is this data?"
+    "username": {
+        "headTitle": "Username",
+        "help": {
+            "label": "What is this data?"
+        },
+        "tabs": {
+            "search": "Search",
+            "analytics": "Analytics"
+        },
+        "search": {
+            "title": "Username OSINT Search",
+            "description": "Check username availability and traces across open platforms.",
+            "label": "Username",
+            "placeholder": "e.g. john_doe",
+            "find": "Check",
+            "searching": "Checking...",
+            "help": {
+                "overview": "Checks public platforms in real time for username presence and returns grouped OSINT results."
+            }
+        },
+        "results": {
+            "title": "Results",
+            "checkedAt": "Checked at",
+            "checked": "Platforms checked",
+            "found": "Found",
+            "notFound": "Not found",
+            "unknown": "Unknown",
+            "region": "Region",
+            "primaryUsers": "Primary users",
+            "category": "Category",
+            "domain": "Domain",
+            "confidence": "Confidence",
+            "openProfile": "Open profile",
+            "empty": "Run a username check to view platform matches."
+        },
+        "status": {
+            "found": "Found",
+            "notFound": "Not found",
+            "unknown": "Unknown"
+        },
+        "filters": {
+            "status": "Show statuses",
+            "categories": "Show categories"
+        },
+        "categories": {
+            "general": "General",
+            "social": "Social",
+            "messenger": "Messenger",
+            "forums": "Forums",
+            "video": "Video",
+            "creator": "Creator economy",
+            "developer": "Developer",
+            "music": "Music",
+            "professional": "Professional",
+            "blogs": "Blogs",
+            "security": "Security",
+            "startup": "Startup",
+            "streaming": "Streaming"
+        },
+        "analytics": {
+            "tabTitle": "Username Analytics",
+            "tabDescription": "Confidence, similarity variants and graph payload in live mode.",
+            "empty": "Run a username check to build analytics.",
+            "confidenceAverage": "Avg confidence",
+            "confidenceHigh": "High confidence",
+            "confidenceMedium": "Medium confidence",
+            "confidenceLow": "Low confidence",
+            "localDiffTitle": "Local diff vs previous check",
+            "newlyFound": "Newly found",
+            "becameNotFound": "Became not found",
+            "becameUnknown": "Became unknown",
+            "similarityTitle": "Similarity variants",
+            "noSimilarity": "No variants available.",
+            "graphTitle": "Entity graph payload",
+            "graphCanvasTitle": "Relationship graph",
+            "report": "Open report",
+            "downloadReport": "Download report",
+            "graphNodes": "Nodes",
+            "graphEdges": "Edges",
+            "graphDomains": "Domains",
+            "graphCategories": "Categories",
+            "similarityReason": {
+                "separator": "separator variation",
+                "normalized": "separator removed",
+                "prefix": "prefix variation",
+                "suffix": "suffix variation",
+                "numeric_suffix": "numeric suffix",
+                "leet": "leet substitution",
+                "typo_transpose": "transposed letters",
+                "typo_omit": "missing letter",
+                "typo_double": "double letter",
+                "typo_keyboard": "keyboard-near typo",
+                "transliteration": "transliteration",
+                "romanization": "romanization variation"
+            },
+            "help": {
+                "overview": "Real-time analytics for username checks: confidence, similarity variants and relationship graph.",
+                "similarity": "Generated username variants are checked on priority platforms to estimate collision and impersonation risk.",
+                "graph": "Graph summary from live results, including platform regions, categories and profile domains.",
+                "graphCanvas": "Interactive graph: click a node to highlight connected entities, drag to rearrange, and use wheel to zoom."
+            }
+        },
+        "errors": {
+            "usernameRequired": "Enter a username with at least 2 characters.",
+            "searchFailed": "Could not complete username search."
+        },
+        "regions": {
+            "cis": "CIS",
+            "europe": "Europe",
+            "americas": "Americas",
+            "global": "Global"
+        }
     },
-    "tabs": {
-      "search": "Search",
-      "analytics": "Analytics"
+    "siteIntel": {
+        "headTitle": "Site Intel",
+        "tabs": {
+            "siteHealth": "Site Health",
+            "domainLite": "Domain Lite",
+            "analytics": "Analytics",
+            "seoAudit": "SEO Audit"
+        },
+        "common": {
+            "checkedAt": "Checked at",
+            "yes": "Yes",
+            "no": "No",
+            "present": "present",
+            "missing": "missing",
+            "available": "Available",
+            "unavailable": "Unavailable"
+        },
+        "help": {
+            "label": "What is this data?"
+        },
+        "siteHealth": {
+            "title": "Site Health",
+            "description": "Production-style health check for public web assets: DNS, SSL, redirects, status, and baseline hardening controls.",
+            "target": "URL or domain",
+            "placeholder": "example.com or https://example.com",
+            "check": "Analyze",
+            "checking": "Analyzing...",
+            "empty": "Run a check to view site health details.",
+            "finalStatus": "Final status",
+            "redirects": "Redirects",
+            "score": "Health score",
+            "finalUrl": "Final URL",
+            "dns": "DNS records",
+            "aRecords": "A records",
+            "aaaaRecords": "AAAA records",
+            "ssl": "SSL certificate",
+            "sslAvailable": "SSL available",
+            "sslIssuer": "Issuer",
+            "sslSubject": "Subject",
+            "sslValidTo": "Valid to",
+            "securityHeaders": "Security headers",
+            "httpChain": "HTTP chain",
+            "responseTime": "Response time",
+            "location": "Location",
+            "healthSignals": "Health signals",
+            "noHealthSignals": "No strong health issues detected.",
+            "header": {
+                "strict_transport_security": "HSTS",
+                "content_security_policy": "CSP",
+                "x_frame_options": "X-Frame-Options",
+                "x_content_type_options": "X-Content-Type-Options",
+                "referrer_policy": "Referrer-Policy",
+                "permissions_policy": "Permissions-Policy"
+            },
+            "help": {
+                "overview": "Quickly assess external site trust and resilience using technical signals that matter for risk triage and monitoring.",
+                "dns": "A/AAAA records show whether the domain resolves for IPv4 and IPv6.",
+                "ssl": "Certificate details and validity period for HTTPS endpoint.",
+                "securityHeaders": "Checks baseline hardening headers that reduce browser-side attack surface.",
+                "httpChain": "Every request step before reaching final URL, including redirects and response time."
+            },
+            "signal": {
+                "no_dns_records": "No DNS A/AAAA records",
+                "unreachable": "Target is unreachable",
+                "http_error_status": "Final HTTP status is an error",
+                "final_url_not_https": "Final URL is not HTTPS",
+                "too_many_redirects": "Too many redirects",
+                "ssl_unavailable": "SSL is unavailable",
+                "ssl_expired": "SSL certificate is expired",
+                "ssl_expiring_soon": "SSL certificate expires soon",
+                "missing_strict_transport_security": "Missing HSTS",
+                "missing_content_security_policy": "Missing CSP",
+                "missing_x_frame_options": "Missing X-Frame-Options",
+                "missing_x_content_type_options": "Missing X-Content-Type-Options",
+                "missing_referrer_policy": "Missing Referrer-Policy",
+                "missing_permissions_policy": "Missing Permissions-Policy"
+            },
+            "errors": {
+                "targetRequired": "Enter URL or domain.",
+                "checkFailed": "Unable to complete analysis. Please retry in a moment."
+            }
+        },
+        "domainLite": {
+            "title": "Domain Lite",
+            "description": "Concise domain intelligence baseline: WHOIS and DNS posture with practical risk scoring for fast triage.",
+            "whois": "WHOIS",
+            "domain": "Domain",
+            "placeholder": "example.com",
+            "check": "Analyze",
+            "checking": "Analyzing...",
+            "empty": "Run lookup to view domain summary.",
+            "mxCount": "MX records",
+            "riskScore": "Risk score",
+            "riskScoreHint": "0-29 low risk, 30-59 medium, 60-100 high. Higher score means higher risk.",
+            "dnsSummary": "DNS summary",
+            "aRecords": "A records",
+            "aaaaRecords": "AAAA records",
+            "nsRecords": "NS records",
+            "mxRecords": "MX records",
+            "spf": "SPF",
+            "dmarc": "DMARC",
+            "whoisServer": "WHOIS server",
+            "createdAt": "Created at",
+            "updatedAt": "Updated at",
+            "expiresAt": "Expires at",
+            "domainAgeDays": "Domain age (days)",
+            "daysToExpiry": "Days to expiry",
+            "registrar": "Registrar",
+            "country": "Country",
+            "emailSecurity": "Email security posture",
+            "spfPolicy": "SPF all qualifier",
+            "spfIncludeCount": "SPF include count",
+            "dmarcPolicy": "DMARC policy",
+            "dmarcPct": "DMARC enforcement pct",
+            "dnssec": "DNSSEC",
+            "riskSignals": "Risk signals",
+            "noRiskSignals": "No strong risk signals.",
+            "riskBreakdown": "Why this risk score",
+            "noRiskBreakdown": "No negative signals contributed to the score.",
+            "riskImpactPoints": "Impact points",
+            "whoisSample": "WHOIS sample",
+            "help": {
+                "overview": "Use Domain Lite to validate ownership, lifecycle, and mail-security posture before deeper investigation.",
+                "dns": "DNS block includes infrastructure and email records (A/AAAA/NS/MX/SPF/DMARC).",
+                "whois": "WHOIS provides registration metadata: registrar and domain lifecycle dates.",
+                "risk": "Risk score increases when DNS/WHOIS has weak or missing data."
+            },
+            "signal": {
+                "no_a_or_aaaa_records": "No A/AAAA records",
+                "no_ns_records": "No NS records",
+                "no_mx_records": "No MX records",
+                "missing_spf": "SPF record is missing",
+                "weak_spf_policy": "SPF policy is too permissive (+all/?all)",
+                "soft_spf_policy": "SPF uses softfail (~all)",
+                "spf_too_many_includes": "SPF has too many include mechanisms",
+                "missing_dmarc": "DMARC record is missing",
+                "dmarc_monitoring_only": "DMARC policy is monitoring only (p=none)",
+                "dmarc_partial_enforcement": "DMARC is partially enforced (pct < 100)",
+                "dnssec_missing": "DNSSEC is not enabled",
+                "whois_unavailable": "WHOIS is unavailable",
+                "new_domain_30_days": "Domain age is less than 30 days",
+                "new_domain_90_days": "Domain age is less than 90 days",
+                "domain_expired": "Domain is expired",
+                "domain_expires_soon": "Domain expires in 30 days",
+                "domain_expires_in_90_days": "Domain expires in 90 days"
+            },
+            "errors": {
+                "domainRequired": "Enter domain.",
+                "lookupFailed": "Unable to complete analysis. Please retry in a moment."
+            }
+        },
+        "analytics": {
+            "title": "Site Intel Analytics",
+            "description": "Combined analytics for site health and domain risk in one snapshot.",
+            "target": "URL or domain",
+            "placeholder": "example.com or https://example.com",
+            "analyze": "Analyze",
+            "analyzing": "Analyzing...",
+            "empty": "Run analytics to view combined summary.",
+            "overallScore": "Overall score",
+            "healthScore": "Site Health score",
+            "domainRiskScore": "Domain risk score",
+            "domainSafetyScore": "Domain safety score (higher is better)",
+            "targetSummary": "Analysis target",
+            "url": "URL",
+            "domain": "Domain",
+            "headersCoverage": "Security headers coverage",
+            "redirects": "Redirects",
+            "daysToDomainExpiry": "Days to domain expiry",
+            "dnsStats": "DNS stats",
+            "riskSignals": "Risk signals",
+            "noRiskSignals": "No strong risk signals detected.",
+            "strengthSignals": "Strength signals",
+            "noStrengthSignals": "No strong positive signals detected.",
+            "recommendations": "Recommendations",
+            "scoreBreakdownTitle": "Score breakdown",
+            "signalBalanceTitle": "Signal balance",
+            "dnsProfileTitle": "DNS profile",
+            "httpLatencyTitle": "HTTP latency chain (ms)",
+            "additionalSnapshotMetrics": "Additional snapshot metrics",
+            "snapshotHttpFinalStatus": "HTTP final status",
+            "snapshotTotalResponseTime": "Total response time",
+            "snapshotSslDaysRemaining": "SSL days remaining",
+            "snapshotWhois": "WHOIS",
+            "snapshotDomainAge": "Domain age",
+            "snapshotEmailSecurity": "Email security",
+            "snapshotWhoisRegistrar": "WHOIS registrar",
+            "snapshotWhoisCountry": "WHOIS country",
+            "snapshotDays": "days",
+            "recommendationMaintain": "maintain",
+            "scoreUnit": "score",
+            "report": "Open report",
+            "downloadReport": "Download report",
+            "help": {
+                "overview": "Combines Site Health and Domain Lite into one score, risk signals, and recommendations.",
+                "scoreBreakdown": "Shows how the snapshot looks across core dimensions: overall, health, domain safety, and security header coverage.",
+                "signalBalance": "Compares the count of risk and strength signals detected in this snapshot.",
+                "dnsProfile": "Displays relative DNS record availability (A/AAAA/NS/MX/TXT/CAA) for quick infrastructure sanity checks.",
+                "httpLatency": "Visualizes response time per HTTP chain step. Spikes may indicate redirect overhead or unstable endpoints.",
+                "snapshotMetrics": "Compact operational metadata from this run: SSL horizon, WHOIS availability, domain age, and email-security readiness.",
+                "riskSignals": "Potentially harmful conditions aggregated from Site Health and Domain Lite.",
+                "strengthSignals": "Positive indicators that improve confidence in target stability and security posture.",
+                "recommendations": "Prioritized actions derived from detected signals. Impact is an approximate score uplift estimate."
+            },
+            "errors": {
+                "targetRequired": "Enter URL or domain.",
+                "analyzeFailed": "Could not complete analytics."
+            },
+            "recommendation": {
+                "improve_security_headers": "Improve security headers (CSP, HSTS, X-Frame-Options, etc.).",
+                "enforce_https": "Enforce HTTPS and proper redirects.",
+                "renew_ssl_certificate": "Renew or reissue SSL certificate.",
+                "configure_email_security": "Configure SPF and DMARC for domain email security.",
+                "review_dns_configuration": "Review DNS configuration (A/AAAA/NS/MX records).",
+                "renew_domain_early": "Renew domain early to avoid expiration risks.",
+                "check_whois_visibility": "Check WHOIS visibility and correctness.",
+                "maintain_current_posture": "Current posture looks healthy; keep it maintained."
+            },
+            "signal": {
+                "risk": {
+                    "no_dns_records": "No DNS A/AAAA records",
+                    "unreachable": "Target is unreachable",
+                    "http_error_status": "Final HTTP status is an error",
+                    "final_url_not_https": "Final URL is not HTTPS",
+                    "too_many_redirects": "Too many redirects",
+                    "ssl_unavailable": "SSL unavailable",
+                    "ssl_expired": "SSL certificate expired",
+                    "ssl_expiring_soon": "SSL certificate expires soon",
+                    "no_a_or_aaaa_records": "No A/AAAA records",
+                    "no_ns_records": "No NS records",
+                    "no_mx_records": "No MX records",
+                    "missing_spf": "SPF record missing",
+                    "weak_spf_policy": "SPF policy is too permissive (+all/?all)",
+                    "soft_spf_policy": "SPF uses softfail (~all)",
+                    "spf_too_many_includes": "SPF has too many include mechanisms",
+                    "missing_dmarc": "DMARC record missing",
+                    "dmarc_monitoring_only": "DMARC is monitoring only (p=none)",
+                    "dmarc_partial_enforcement": "DMARC is partially enforced (pct < 100)",
+                    "dnssec_missing": "DNSSEC is not enabled",
+                    "whois_unavailable": "WHOIS unavailable",
+                    "new_domain_30_days": "Domain age is less than 30 days",
+                    "new_domain_90_days": "Domain age is less than 90 days",
+                    "domain_expired": "Domain expired",
+                    "domain_expires_soon": "Domain expires within 30 days",
+                    "domain_expires_in_90_days": "Domain expires within 90 days"
+                },
+                "strength": {
+                    "https_enforced": "HTTPS is enforced on final URL",
+                    "ssl_valid": "SSL certificate is valid and not expiring soon",
+                    "spf_present": "SPF record is configured",
+                    "dmarc_present": "DMARC record is configured",
+                    "whois_available": "WHOIS data is available",
+                    "headers_coverage_good": "Good security header coverage"
+                }
+            }
+        },
+        "seoAudit": {
+            "title": "SEO Audit",
+            "description": "Checks indexability, meta tags, robots/sitemap, links and technical SEO signals.",
+            "target": "URL or domain",
+            "placeholder": "example.com or https://example.com/page",
+            "analyze": "Analyze",
+            "analyzing": "Analyzing...",
+            "empty": "Run SEO audit to see technical issues and prioritized recommendations.",
+            "score": "SEO score",
+            "httpStatus": "HTTP status",
+            "ttfb": "TTFB (approx)",
+            "targetSummary": "Analysis target",
+            "finalUrl": "Final URL",
+            "host": "Host",
+            "metaTitle": "Meta tags",
+            "titleLength": "Title length",
+            "descriptionLength": "Description length",
+            "canonical": "Canonical",
+            "metaRobots": "Meta robots",
+            "indexabilityTitle": "Indexability",
+            "indexable": "Indexable",
+            "xRobotsTag": "X-Robots-Tag",
+            "reason": "Reason",
+            "headingsTitle": "Headings",
+            "linksTitle": "Links",
+            "internalLinks": "Internal",
+            "externalLinks": "External",
+            "nofollowLinks": "Nofollow",
+            "performanceTitle": "Performance",
+            "pageSize": "Page size",
+            "resourcesCount": "Resources",
+            "crawlFilesTitle": "Crawling files",
+            "robotsTxt": "robots.txt",
+            "sitemapXml": "sitemap.xml",
+            "sitemapEntries": "Sitemap entries",
+            "securityTitle": "Security",
+            "mixedContent": "Mixed content",
+            "recommendationsTitle": "Priority recommendations",
+            "detectedSignals": "Detected signals",
+            "priority": {
+                "critical": "CRITICAL",
+                "medium": "MEDIUM",
+                "low": "LOW"
+            },
+            "help": {
+                "overview": "Quick SEO snapshot of crawlability, indexability, metadata quality, performance and security.",
+                "meta": "Checks core snippets for search results: title, description, canonical and robots directives.",
+                "indexability": "Combines meta robots and X-Robots-Tag to estimate whether the page can be indexed.",
+                "performance": "Approximate page weight and response timing from a single request, useful for quick triage.",
+                "crawlFiles": "robots.txt and sitemap.xml availability helps search bots discover and crawl pages correctly.",
+                "recommendations": "Ordered checklist of fixes by urgency to improve crawlability and SEO quality.",
+                "platformType": "Use manual type when auditing large platforms. Auto works for most sites, but explicit type gives more stable scoring.",
+                "scoreProfile": "Scoring profile controls weights and thresholds. Different site classes are evaluated by different SEO expectations.",
+                "technicalFlags": "Quick checks for responsive viewport, pagination signals, and soft-404 patterns.",
+                "contentQuality": "Content density and quality signals: word count, text-to-HTML ratio, and thin-content heuristics.",
+                "accessibility": "SEO-related accessibility checks: missing alt attributes, heading order and basic semantic issues.",
+                "linkGraph": "Internal/external outlinks and orphan-page risk based on discovered linking patterns.",
+                "international": "Hreflang consistency, x-default presence and language cluster coverage across crawled pages.",
+                "crawlBudget": "Bot-hit and status distribution signals from available logs. If logs are not connected, this section is limited."
+            },
+            "errors": {
+                "targetRequired": "Enter URL or domain.",
+                "analyzeFailed": "Could not complete SEO audit."
+            },
+            "signal": {
+                "title_length_out_of_range": "Title length is outside recommended range",
+                "description_length_out_of_range": "Description length is outside recommended range",
+                "invalid_h1_count": "H1 count should be exactly 1",
+                "not_indexable": "Page is marked as non-indexable",
+                "robots_missing": "robots.txt is missing or inaccessible",
+                "sitemap_missing": "sitemap.xml is missing or inaccessible",
+                "slow_response": "Server response is slow",
+                "heavy_page": "Page size is heavy",
+                "https_missing": "HTTPS is not enforced",
+                "mixed_content": "Mixed content detected",
+                "duplicate_titles": "Duplicate titles detected across crawled pages",
+                "missing_canonical": "Some crawled pages have no canonical",
+                "hreflang_conflicts": "Hreflang conflicts detected",
+                "sitemap_non_200_urls": "Sitemap contains URLs returning non-200 status",
+                "missing_mobile_viewport": "Missing responsive viewport meta tag",
+                "soft_404_detected": "Soft 404 detected on a 200 page",
+                "render_blocking_resources": "Too many render-blocking CSS/JS resources",
+                "pagination_signals_incomplete": "Pagination rel prev/next signals are incomplete",
+                "empty_anchor_links": "Empty anchor texts detected",
+                "images_missing_alt": "Images without alt attributes found",
+                "thin_content_detected": "Thin content detected",
+                "low_text_to_html_ratio": "Low text-to-HTML ratio",
+                "low_internal_linking": "Low internal linking detected",
+                "html_structure_issues": "HTML structure issues detected",
+                "hreflang_missing_reciprocal": "Hreflang reciprocal links are missing",
+                "hreflang_missing_x_default": "Missing x-default hreflang on translated pages",
+                "crawl_budget_no_bot_hits": "No bot hits detected in logs for the period",
+                "crawl_budget_bot_5xx": "Bots encountered 5xx errors"
+            },
+            "recommendation": {
+                "enable_indexing": "Allow indexing: remove noindex from meta robots / X-Robots-Tag.",
+                "enable_https": "Switch the page to HTTPS.",
+                "improve_title_length": "Optimize title length to 15-65 characters.",
+                "improve_description_length": "Optimize description length to 50-170 characters.",
+                "fix_h1_count": "Keep exactly one H1 on the page.",
+                "add_robots_txt": "Add robots.txt with correct crawler directives.",
+                "add_sitemap": "Add sitemap.xml and declare it in robots.txt.",
+                "improve_ttfb": "Reduce server response time (TTFB).",
+                "reduce_page_size": "Reduce HTML/resources page size.",
+                "remove_mixed_content": "Remove mixed content: all resources should load over HTTPS.",
+                "maintain_current_setup": "No critical issues found. Maintain current optimization quality.",
+                "deduplicate_titles": "Deduplicate page titles across crawled pages.",
+                "set_canonical_on_all_pages": "Set canonical tag on every indexable page.",
+                "fix_hreflang_self_reference": "Add self-referencing hreflang for translated pages.",
+                "fix_sitemap_non_200_urls": "Remove or fix sitemap URLs returning non-200 responses.",
+                "add_viewport_meta": "Add responsive viewport meta (width=device-width, initial-scale=1).",
+                "fix_soft_404": "Return proper 404/410 status for not-found content pages.",
+                "reduce_render_blocking": "Reduce render-blocking CSS/JS and defer non-critical scripts.",
+                "fix_pagination_rel_links": "Add consistent rel prev/next signals for paginated pages.",
+                "fix_empty_anchor_text": "Replace empty/generic anchor texts with descriptive link text.",
+                "add_image_alt_attributes": "Add alt attributes to informative images.",
+                "expand_thin_content": "Expand thin content with useful topic-relevant text.",
+                "improve_text_html_ratio": "Reduce boilerplate markup and improve meaningful text ratio.",
+                "improve_internal_linking": "Add internal links to reduce orphan-page risk.",
+                "fix_html_structure": "Fix core HTML structure issues (doctype/head/body/heading hierarchy).",
+                "fix_hreflang_reciprocal_links": "Ensure hreflang links are reciprocal between translated pages.",
+                "add_hreflang_x_default": "Add x-default hreflang for international page sets.",
+                "verify_bot_access_in_logs": "Verify that search bots can access the site and logs are collected.",
+                "reduce_bot_5xx_errors": "Investigate and reduce 5xx responses seen by bots."
+            },
+            "crawlLimit": "Crawl limit",
+            "report": "Open report",
+            "downloadReport": "Download report",
+            "crawlTitle": "Crawl insights",
+            "crawlScanned": "Scanned pages",
+            "crawlPagesWithHreflang": "Pages with hreflang",
+            "canonicalAuditTitle": "Canonical audit",
+            "canonicalMissing": "Missing canonical",
+            "canonicalCrossDomain": "Cross-domain canonical",
+            "canonicalInvalid": "Invalid canonical",
+            "sitemapAuditTitle": "Sitemap URL audit",
+            "sitemapSampled": "Sampled URLs",
+            "sitemapNon200": "Non-200 URLs",
+            "renderBlocking": "Render-blocking resources",
+            "technicalFlags": "Technical flags",
+            "mobileFriendly": "Mobile friendly",
+            "pagination": "Pagination detected",
+            "soft404": "Soft 404",
+            "robotsWildcard": "Wildcard user-agent group",
+            "robotsCrawlDelay": "Crawl-delay present",
+            "contentQualityTitle": "Content quality",
+            "accessibilityTitle": "Accessibility",
+            "linkGraphTitle": "Link graph",
+            "wordCount": "Word count",
+            "textHtmlRatio": "Text/HTML ratio",
+            "thinContent": "Thin content",
+            "imagesWithoutAlt": "Images without alt",
+            "headingOrderBroken": "Heading order broken",
+            "htmlIssues": "HTML issues",
+            "internalOutlinks": "Internal outlinks",
+            "externalOutlinks": "External outlinks",
+            "orphanRisk": "Orphan risk",
+            "internationalTitle": "International SEO",
+            "hreflangPages": "Pages with hreflang",
+            "hreflangMissingXDefault": "Missing x-default",
+            "hreflangMissingReciprocal": "Missing reciprocal hreflang",
+            "hreflangClusters": "Language clusters",
+            "crawlBudgetTitle": "Crawl budget",
+            "crawlBudgetSource": "Data source",
+            "crawlBudgetBotHits": "Bot hits (7d)",
+            "scoreProfile": "Scoring profile",
+            "profile": {
+                "generic": "Generic",
+                "media-platform": "Media Platform",
+                "content-site": "Content Site",
+                "storefront": "Storefront"
+            },
+            "platformType": "Platform type",
+            "platformAuto": "Auto detect",
+            "filterNon200Only": "Only non-200",
+            "filterNoindexOnly": "Only noindex",
+            "filterOrphanOnly": "Only orphan-risk",
+            "legendIndexable": "Indexable",
+            "legendNoindex": "Noindex",
+            "legendNon200": "Non-200 status",
+            "legendOrphan": "Orphan-risk",
+            "filterMode": "Mode",
+            "filterModeAll": "Match all",
+            "filterModeAny": "Match any"
+        }
     },
-    "search": {
-      "title": "Username OSINT Search",
-      "description": "Check username availability and traces across open platforms.",
-      "label": "Username",
-      "placeholder": "e.g. john_doe",
-      "find": "Check",
-      "searching": "Checking...",
-      "help": {
-        "overview": "Checks public platforms in real time for username presence and returns grouped OSINT results."
-      }
+    "fio": {
+        "headTitle": "FIO",
+        "lookup": {
+            "title": "Full Name Lookup",
+            "description": "Online search of public name mentions with region and age clustering.",
+            "fullName": "Full name / FIO",
+            "qualifier": "Role qualifier",
+            "qualifierPlaceholder": "e.g. manager, military",
+            "placeholder": "e.g. Ivan Ivanov",
+            "search": "Search",
+            "searching": "Searching...",
+            "empty": "Enter a full name to start lookup.",
+            "checkedAt": "Checked at",
+            "matches": "Public matches",
+            "domains": "Unique domains",
+            "topRegion": "Top region",
+            "medianAge": "Median age",
+            "averageConfidence": "Average confidence",
+            "average": "Average",
+            "qualifierMatches": "Qualifier matches",
+            "qualifierTerms": "Qualifier terms used",
+            "regionClusters": "Region clusters",
+            "ageClusters": "Age clusters",
+            "sourceReliability": "Source reliability",
+            "attemptedSources": "Attempted sources",
+            "sourceErrors": "Source errors",
+            "noErrors": "No source errors",
+            "ok": "ok",
+            "failed": "failed",
+            "durationMs": "duration (ms)",
+            "noClusters": "No clusters yet.",
+            "publicMatches": "Public matches list",
+            "noMatches": "No public matches found.",
+            "confidence": "Confidence",
+            "region": "Region",
+            "age": "Age",
+            "ageBucket": "Age bucket",
+            "domain": "Domain",
+            "source": "Source",
+            "reliability": "Reliability",
+            "qualifierMatched": "Qualifier matched",
+            "yes": "Yes",
+            "no": "No",
+            "providers": "Providers used",
+            "errors": {
+                "fullNameRequired": "Enter full name.",
+                "lookupFailed": "Could not complete full-name lookup."
+            }
+        },
+        "region": {
+            "cis": "CIS",
+            "europe": "Europe",
+            "americas": "Americas",
+            "asia": "Asia",
+            "mena": "MENA",
+            "unknown": "Unknown"
+        },
+        "age": {
+            "under_18": "Under 18",
+            "18_24": "18-24",
+            "25_34": "25-34",
+            "35_44": "35-44",
+            "45_54": "45-54",
+            "55_plus": "55+",
+            "unknown": "Unknown"
+        }
     },
-    "results": {
-      "title": "Results",
-      "checkedAt": "Checked at",
-      "checked": "Platforms checked",
-      "found": "Found",
-      "notFound": "Not found",
-      "unknown": "Unknown",
-      "region": "Region",
-      "primaryUsers": "Primary users",
-      "category": "Category",
-      "domain": "Domain",
-      "confidence": "Confidence",
-      "openProfile": "Open profile",
-      "empty": "Run a username check to view platform matches."
+    "emailIntel": {
+        "headTitle": "Email Intel",
+        "help": {
+            "label": "What is this data?",
+            "overview": "Checks an email address in live mode: domain DNS, MX records, SPF/DMARC, mailbox profile hints and local risk signals. Results are returned in the current response and are not stored.",
+            "riskScore": "Risk score is built from technical signals: missing MX, missing SPF/DMARC, non-resolving domain, disposable provider and role-account hints.",
+            "target": "Normalized target data. SHA-256 helps compare the same address across exported reports without exposing the raw email.",
+            "profile": "Mailbox profile hints are local heuristics: common free providers, disposable domains, role/shared inboxes and Gravatar hash.",
+            "signals": "Signals explain why the score changed. They are indicators for analyst review, not proof of malicious activity.",
+            "dns": "DNS data is collected live from public records. MX shows mail routing; SPF and DMARC describe anti-spoofing posture.",
+            "provider": "Provider fingerprint is inferred from MX hosts and domain patterns. It is a confidence hint, not a paid provider lookup.",
+            "localPart": "Local-part analysis looks at the mailbox name before @: role accounts, plus addressing, year patterns, separators and random-looking strings.",
+            "spf": "SPF parsing extracts mechanisms, includes and the final all policy. Strict -all is strongest; +all is risky.",
+            "dmarc": "DMARC parsing extracts policy, reporting addresses and alignment hints. reject is strongest, quarantine is moderate, none is monitoring-only.",
+            "searchLinks": "Pivot links open public search pages in a new tab. The platform does not fetch or store those external results.",
+            "graph": "Entity graph connects the email to its domain, local part, provider, MX hosts, SPF includes, DMARC report destinations, Gravatar hash and triggered signals.",
+            "recommendations": "Recommendations are generated from the current technical signals and estimate which fixes would improve the posture most.",
+            "riskBreakdown": "Shows which signals added points to the risk score. Informational and positive signals do not increase risk."
+        },
+        "tabs": {
+            "search": "Search",
+            "analytics": "Analytics",
+            "bulk": "Bulk",
+            "domain": "Domain"
+        },
+        "lookup": {
+            "title": "Email Intelligence",
+            "description": "Live email checks via DNS and local heuristics, without storing results.",
+            "email": "Email",
+            "placeholder": "name@example.com",
+            "check": "Check",
+            "checking": "Checking...",
+            "empty": "Enter an email address to start analysis.",
+            "checkedAt": "Checked at",
+            "riskScore": "Risk score",
+            "riskLevel": "Risk level",
+            "mxRecords": "MX records",
+            "emailSecurity": "Email security",
+            "target": "Target",
+            "domain": "Domain",
+            "localPart": "Local part",
+            "profile": "Profile",
+            "freeProvider": "Free provider",
+            "disposable": "Disposable",
+            "roleAccount": "Role account",
+            "signals": "Signals",
+            "dns": "DNS"
+        },
+        "analytics": {
+            "title": "Email Analytics",
+            "description": "Deep live analysis for mail security, infrastructure, pivots and entity graph.",
+            "overallScore": "Overall score",
+            "mailSecurity": "Mail security",
+            "domainHealth": "Domain health",
+            "identityConfidence": "Identity confidence",
+            "provider": "Provider fingerprint",
+            "type": "Type",
+            "confidence": "Confidence",
+            "localPart": "Local-part analysis",
+            "length": "Length",
+            "entropy": "Entropy",
+            "tokens": "Tokens",
+            "plusAddressing": "Plus addressing",
+            "looksRandom": "Looks random",
+            "spf": "SPF breakdown",
+            "dmarc": "DMARC breakdown",
+            "strictness": "Strictness",
+            "policy": "Policy",
+            "strength": "Strength",
+            "searchLinks": "OSINT pivot links",
+            "graph": "Entity graph",
+            "recommendations": "Recommendations",
+            "priority": "Priority",
+            "impact": "Impact",
+            "webSnapshot": "Domain web snapshot",
+            "durationMs": "Duration (ms)",
+            "similarDomains": "Similar domains",
+            "report": "Open report",
+            "downloadReport": "Download report",
+            "riskBreakdown": "Risk breakdown",
+            "dmarcReports": "DMARC reports",
+            "spfIncludes": "First-level SPF includes",
+            "resolved": "Resolved",
+            "external": "External domain",
+            "deliverability": "Deliverability",
+            "deliverabilityHints": "Deliverability hints"
+        },
+        "riskLevel": {
+            "clean": "Clean",
+            "low": "Low",
+            "medium": "Medium",
+            "high": "High"
+        },
+        "signal": {
+            "missing_mx": "Domain has no MX records.",
+            "domain_not_resolving": "Domain has no A/AAAA records.",
+            "missing_spf": "SPF record is missing.",
+            "weak_spf": "SPF policy is present but not strict.",
+            "open_spf": "SPF policy allows all senders.",
+            "missing_dmarc": "DMARC record is missing.",
+            "monitoring_dmarc": "DMARC is in monitoring mode only.",
+            "disposable_provider": "Domain matches a local disposable-mail list.",
+            "role_account": "Local part looks like a role/shared inbox.",
+            "random_local_part": "Local part looks random or machine-generated.",
+            "free_provider": "Domain is a common free mailbox provider.",
+            "baseline_ok": "No strong technical risk signals detected.",
+            "external_dmarc_reporting": "DMARC reports are sent to an external domain."
+        },
+        "recommendation": {
+            "configure_mx": "Configure MX records for the domain.",
+            "harden_spf": "Harden SPF policy and avoid permissive all mechanisms.",
+            "enforce_dmarc": "Move DMARC toward quarantine or reject after monitoring.",
+            "review_disposable": "Review disposable mailbox usage manually.",
+            "verify_role_account": "Verify whether this role/shared mailbox is expected.",
+            "maintain_posture": "Current mail posture looks healthy; keep monitoring it.",
+            "review_dmarc_reporting": "Review whether external DMARC reporting destinations are expected and authorized."
+        },
+        "similarDomainReason": {
+            "tld_variant": "TLD variant",
+            "separator_variant": "separator variant",
+            "compact_variant": "compact variant",
+            "lookalike_variant": "lookalike variant"
+        },
+        "errors": {
+            "emailRequired": "Enter a valid email address.",
+            "lookupFailed": "Could not complete email lookup.",
+            "domainRequired": "Enter a valid domain."
+        },
+        "bulk": {
+            "title": "Bulk Email Intel",
+            "description": "Run live checks for up to 25 emails without storing results.",
+            "emails": "Email addresses",
+            "placeholder": "one@example.com\ntwo@example.com",
+            "check": "Check list",
+            "email": "Email"
+        },
+        "domain": {
+            "title": "Domain Mail Posture",
+            "description": "Analyze mail readiness for a domain without a specific mailbox.",
+            "domain": "Domain",
+            "placeholder": "example.com",
+            "check": "Check domain"
+        },
+        "deliverability": {
+            "mx_ready": "Domain has MX records for receiving mail.",
+            "spf_present": "SPF record is present.",
+            "spf_strict": "SPF uses a strict -all policy.",
+            "dmarc_present": "DMARC record is present.",
+            "dmarc_enforced": "DMARC is enforced with quarantine or reject.",
+            "domain_resolves": "Domain resolves to A/AAAA records.",
+            "web_available": "Domain website responds over HTTPS."
+        }
     },
-    "status": {
-      "found": "Found",
-      "notFound": "Not found",
-      "unknown": "Unknown"
-    },
-    "filters": {
-      "status": "Show statuses",
-      "categories": "Show categories"
-    },
-    "categories": {
-      "general": "General",
-      "social": "Social",
-      "messenger": "Messenger",
-      "forums": "Forums",
-      "video": "Video",
-      "creator": "Creator economy",
-      "developer": "Developer",
-      "music": "Music",
-      "professional": "Professional",
-      "blogs": "Blogs",
-      "security": "Security",
-      "startup": "Startup",
-      "streaming": "Streaming"
-    },
-    "analytics": {
-      "tabTitle": "Username Analytics",
-      "tabDescription": "Confidence, similarity variants and graph payload in live mode.",
-      "empty": "Run a username check to build analytics.",
-      "confidenceAverage": "Avg confidence",
-      "confidenceHigh": "High confidence",
-      "confidenceMedium": "Medium confidence",
-      "confidenceLow": "Low confidence",
-      "localDiffTitle": "Local diff vs previous check",
-      "newlyFound": "Newly found",
-      "becameNotFound": "Became not found",
-      "becameUnknown": "Became unknown",
-      "similarityTitle": "Similarity variants",
-      "noSimilarity": "No variants available.",
-      "graphTitle": "Entity graph payload",
-      "graphCanvasTitle": "Relationship graph",
-      "report": "Open report",
-      "downloadReport": "Download report",
-      "graphNodes": "Nodes",
-      "graphEdges": "Edges",
-      "graphDomains": "Domains",
-      "graphCategories": "Categories",
-      "similarityReason": {
-        "separator": "separator variation",
-        "normalized": "separator removed",
-        "prefix": "prefix variation",
-        "suffix": "suffix variation",
-        "numeric_suffix": "numeric suffix",
-        "leet": "leet substitution",
-        "typo_transpose": "transposed letters",
-        "typo_omit": "missing letter",
-        "typo_double": "double letter",
-        "typo_keyboard": "keyboard-near typo",
-        "transliteration": "transliteration",
-        "romanization": "romanization variation"
-      },
-      "help": {
-        "overview": "Real-time analytics for username checks: confidence, similarity variants and relationship graph.",
-        "similarity": "Generated username variants are checked on priority platforms to estimate collision and impersonation risk.",
-        "graph": "Graph summary from live results, including platform regions, categories and profile domains.",
-        "graphCanvas": "Interactive graph: click a node to highlight connected entities, drag to rearrange, and use wheel to zoom."
-      }
-    },
-    "errors": {
-      "usernameRequired": "Enter a username with at least 2 characters.",
-      "searchFailed": "Could not complete username search."
-    },
-    "regions": {
-      "cis": "CIS",
-      "europe": "Europe",
-      "americas": "Americas",
-      "global": "Global"
-    }
-  },
-  "siteIntel": {
-    "headTitle": "Site Intel",
-    "tabs": {
-      "siteHealth": "Site Health",
-      "domainLite": "Domain Lite",
-      "analytics": "Analytics",
-      "seoAudit": "SEO Audit"
-    },
-    "common": {
-      "checkedAt": "Checked at",
-      "yes": "Yes",
-      "no": "No",
-      "present": "present",
-      "missing": "missing",
-      "available": "Available",
-      "unavailable": "Unavailable"
-    },
-    "help": {
-      "label": "What is this data?"
-    },
-    "siteHealth": {
-      "title": "Site Health",
-      "description": "Production-style health check for public web assets: DNS, SSL, redirects, status, and baseline hardening controls.",
-      "target": "URL or domain",
-      "placeholder": "example.com or https://example.com",
-      "check": "Analyze",
-      "checking": "Analyzing...",
-      "empty": "Run a check to view site health details.",
-      "finalStatus": "Final status",
-      "redirects": "Redirects",
-      "score": "Health score",
-      "finalUrl": "Final URL",
-      "dns": "DNS records",
-      "aRecords": "A records",
-      "aaaaRecords": "AAAA records",
-      "ssl": "SSL certificate",
-      "sslAvailable": "SSL available",
-      "sslIssuer": "Issuer",
-      "sslSubject": "Subject",
-      "sslValidTo": "Valid to",
-      "securityHeaders": "Security headers",
-      "httpChain": "HTTP chain",
-      "responseTime": "Response time",
-      "location": "Location",
-      "healthSignals": "Health signals",
-      "noHealthSignals": "No strong health issues detected.",
-      "header": {
-        "strict_transport_security": "HSTS",
-        "content_security_policy": "CSP",
-        "x_frame_options": "X-Frame-Options",
-        "x_content_type_options": "X-Content-Type-Options",
-        "referrer_policy": "Referrer-Policy",
-        "permissions_policy": "Permissions-Policy"
-      },
-      "help": {
-        "overview": "Quickly assess external site trust and resilience using technical signals that matter for risk triage and monitoring.",
-        "dns": "A/AAAA records show whether the domain resolves for IPv4 and IPv6.",
-        "ssl": "Certificate details and validity period for HTTPS endpoint.",
-        "securityHeaders": "Checks baseline hardening headers that reduce browser-side attack surface.",
-        "httpChain": "Every request step before reaching final URL, including redirects and response time."
-      },
-      "signal": {
-        "no_dns_records": "No DNS A/AAAA records",
-        "unreachable": "Target is unreachable",
-        "http_error_status": "Final HTTP status is an error",
-        "final_url_not_https": "Final URL is not HTTPS",
-        "too_many_redirects": "Too many redirects",
-        "ssl_unavailable": "SSL is unavailable",
-        "ssl_expired": "SSL certificate is expired",
-        "ssl_expiring_soon": "SSL certificate expires soon",
-        "missing_strict_transport_security": "Missing HSTS",
-        "missing_content_security_policy": "Missing CSP",
-        "missing_x_frame_options": "Missing X-Frame-Options",
-        "missing_x_content_type_options": "Missing X-Content-Type-Options",
-        "missing_referrer_policy": "Missing Referrer-Policy",
-        "missing_permissions_policy": "Missing Permissions-Policy"
-      },
-      "errors": {
-        "targetRequired": "Enter URL or domain.",
-        "checkFailed": "Unable to complete analysis. Please retry in a moment."
-      }
-    },
-    "domainLite": {
-      "title": "Domain Lite",
-      "description": "Concise domain intelligence baseline: WHOIS and DNS posture with practical risk scoring for fast triage.",
-      "whois": "WHOIS",
-      "domain": "Domain",
-      "placeholder": "example.com",
-      "check": "Analyze",
-      "checking": "Analyzing...",
-      "empty": "Run lookup to view domain summary.",
-      "mxCount": "MX records",
-      "riskScore": "Risk score",
-      "riskScoreHint": "0-29 low risk, 30-59 medium, 60-100 high. Higher score means higher risk.",
-      "dnsSummary": "DNS summary",
-      "aRecords": "A records",
-      "aaaaRecords": "AAAA records",
-      "nsRecords": "NS records",
-      "mxRecords": "MX records",
-      "spf": "SPF",
-      "dmarc": "DMARC",
-      "whoisServer": "WHOIS server",
-      "createdAt": "Created at",
-      "updatedAt": "Updated at",
-      "expiresAt": "Expires at",
-      "domainAgeDays": "Domain age (days)",
-      "daysToExpiry": "Days to expiry",
-      "registrar": "Registrar",
-      "country": "Country",
-      "emailSecurity": "Email security posture",
-      "spfPolicy": "SPF all qualifier",
-      "spfIncludeCount": "SPF include count",
-      "dmarcPolicy": "DMARC policy",
-      "dmarcPct": "DMARC enforcement pct",
-      "dnssec": "DNSSEC",
-      "riskSignals": "Risk signals",
-      "noRiskSignals": "No strong risk signals.",
-      "riskBreakdown": "Why this risk score",
-      "noRiskBreakdown": "No negative signals contributed to the score.",
-      "riskImpactPoints": "Impact points",
-      "whoisSample": "WHOIS sample",
-      "help": {
-        "overview": "Use Domain Lite to validate ownership, lifecycle, and mail-security posture before deeper investigation.",
-        "dns": "DNS block includes infrastructure and email records (A/AAAA/NS/MX/SPF/DMARC).",
-        "whois": "WHOIS provides registration metadata: registrar and domain lifecycle dates.",
-        "risk": "Risk score increases when DNS/WHOIS has weak or missing data."
-      },
-      "signal": {
-        "no_a_or_aaaa_records": "No A/AAAA records",
-        "no_ns_records": "No NS records",
-        "no_mx_records": "No MX records",
-        "missing_spf": "SPF record is missing",
-        "weak_spf_policy": "SPF policy is too permissive (+all/?all)",
-        "soft_spf_policy": "SPF uses softfail (~all)",
-        "spf_too_many_includes": "SPF has too many include mechanisms",
-        "missing_dmarc": "DMARC record is missing",
-        "dmarc_monitoring_only": "DMARC policy is monitoring only (p=none)",
-        "dmarc_partial_enforcement": "DMARC is partially enforced (pct < 100)",
-        "dnssec_missing": "DNSSEC is not enabled",
-        "whois_unavailable": "WHOIS is unavailable",
-        "new_domain_30_days": "Domain age is less than 30 days",
-        "new_domain_90_days": "Domain age is less than 90 days",
-        "domain_expired": "Domain is expired",
-        "domain_expires_soon": "Domain expires in 30 days",
-        "domain_expires_in_90_days": "Domain expires in 90 days"
-      },
-      "errors": {
-        "domainRequired": "Enter domain.",
-        "lookupFailed": "Unable to complete analysis. Please retry in a moment."
-      }
-    },
-    "analytics": {
-      "title": "Site Intel Analytics",
-      "description": "Combined analytics for site health and domain risk in one snapshot.",
-      "target": "URL or domain",
-      "placeholder": "example.com or https://example.com",
-      "analyze": "Analyze",
-      "analyzing": "Analyzing...",
-      "empty": "Run analytics to view combined summary.",
-      "overallScore": "Overall score",
-      "healthScore": "Site Health score",
-      "domainRiskScore": "Domain risk score",
-      "domainSafetyScore": "Domain safety score (higher is better)",
-      "targetSummary": "Analysis target",
-      "url": "URL",
-      "domain": "Domain",
-      "headersCoverage": "Security headers coverage",
-      "redirects": "Redirects",
-      "daysToDomainExpiry": "Days to domain expiry",
-      "dnsStats": "DNS stats",
-      "riskSignals": "Risk signals",
-      "noRiskSignals": "No strong risk signals detected.",
-      "strengthSignals": "Strength signals",
-      "noStrengthSignals": "No strong positive signals detected.",
-      "recommendations": "Recommendations",
-      "scoreBreakdownTitle": "Score breakdown",
-      "signalBalanceTitle": "Signal balance",
-      "dnsProfileTitle": "DNS profile",
-      "httpLatencyTitle": "HTTP latency chain (ms)",
-      "additionalSnapshotMetrics": "Additional snapshot metrics",
-      "snapshotHttpFinalStatus": "HTTP final status",
-      "snapshotTotalResponseTime": "Total response time",
-      "snapshotSslDaysRemaining": "SSL days remaining",
-      "snapshotWhois": "WHOIS",
-      "snapshotDomainAge": "Domain age",
-      "snapshotEmailSecurity": "Email security",
-      "snapshotWhoisRegistrar": "WHOIS registrar",
-      "snapshotWhoisCountry": "WHOIS country",
-      "snapshotDays": "days",
-      "recommendationMaintain": "maintain",
-      "scoreUnit": "score",
-      "report": "Open report",
-      "downloadReport": "Download report",
-      "help": {
-        "overview": "Combines Site Health and Domain Lite into one score, risk signals, and recommendations.",
-        "scoreBreakdown": "Shows how the snapshot looks across core dimensions: overall, health, domain safety, and security header coverage.",
-        "signalBalance": "Compares the count of risk and strength signals detected in this snapshot.",
-        "dnsProfile": "Displays relative DNS record availability (A/AAAA/NS/MX/TXT/CAA) for quick infrastructure sanity checks.",
-        "httpLatency": "Visualizes response time per HTTP chain step. Spikes may indicate redirect overhead or unstable endpoints.",
-        "snapshotMetrics": "Compact operational metadata from this run: SSL horizon, WHOIS availability, domain age, and email-security readiness.",
-        "riskSignals": "Potentially harmful conditions aggregated from Site Health and Domain Lite.",
-        "strengthSignals": "Positive indicators that improve confidence in target stability and security posture.",
-        "recommendations": "Prioritized actions derived from detected signals. Impact is an approximate score uplift estimate."
-      },
-      "errors": {
-        "targetRequired": "Enter URL or domain.",
-        "analyzeFailed": "Could not complete analytics."
-      },
-      "recommendation": {
-        "improve_security_headers": "Improve security headers (CSP, HSTS, X-Frame-Options, etc.).",
-        "enforce_https": "Enforce HTTPS and proper redirects.",
-        "renew_ssl_certificate": "Renew or reissue SSL certificate.",
-        "configure_email_security": "Configure SPF and DMARC for domain email security.",
-        "review_dns_configuration": "Review DNS configuration (A/AAAA/NS/MX records).",
-        "renew_domain_early": "Renew domain early to avoid expiration risks.",
-        "check_whois_visibility": "Check WHOIS visibility and correctness.",
-        "maintain_current_posture": "Current posture looks healthy; keep it maintained."
-      },
-      "signal": {
-        "risk": {
-          "no_dns_records": "No DNS A/AAAA records",
-          "unreachable": "Target is unreachable",
-          "http_error_status": "Final HTTP status is an error",
-          "final_url_not_https": "Final URL is not HTTPS",
-          "too_many_redirects": "Too many redirects",
-          "ssl_unavailable": "SSL unavailable",
-          "ssl_expired": "SSL certificate expired",
-          "ssl_expiring_soon": "SSL certificate expires soon",
-          "no_a_or_aaaa_records": "No A/AAAA records",
-          "no_ns_records": "No NS records",
-          "no_mx_records": "No MX records",
-          "missing_spf": "SPF record missing",
-          "weak_spf_policy": "SPF policy is too permissive (+all/?all)",
-          "soft_spf_policy": "SPF uses softfail (~all)",
-          "spf_too_many_includes": "SPF has too many include mechanisms",
-          "missing_dmarc": "DMARC record missing",
-          "dmarc_monitoring_only": "DMARC is monitoring only (p=none)",
-          "dmarc_partial_enforcement": "DMARC is partially enforced (pct < 100)",
-          "dnssec_missing": "DNSSEC is not enabled",
-          "whois_unavailable": "WHOIS unavailable",
-          "new_domain_30_days": "Domain age is less than 30 days",
-          "new_domain_90_days": "Domain age is less than 90 days",
-          "domain_expired": "Domain expired",
-          "domain_expires_soon": "Domain expires within 30 days",
-          "domain_expires_in_90_days": "Domain expires within 90 days"
+    "companyIntel": {
+        "headTitle": "Company Intel",
+        "title": "Company Intel",
+        "description": "Commercial OSINT snapshot for company profiling: domain posture, trust signals, and reputation pivots from public sources.",
+        "query": "Company name or domain",
+        "placeholder": "example.com or Acme Corp",
+        "search": "Analyze",
+        "searching": "Analyzing...",
+        "empty": "Run company profiling to view technical trust signals, risk context, and OSINT pivots.",
+        "checkedAt": "Checked at",
+        "detectedDomain": "Detected domain",
+        "riskScore": "Risk level",
+        "signalCount": "Signals",
+        "signals": "Risk signals",
+        "noSignals": "No strong risk signals.",
+        "strengths": "Positive signals",
+        "recommendations": "Recommendations",
+        "domainIntel": "Domain intelligence",
+        "osintLinks": "OSINT intelligence pivots",
+        "labels": {
+            "dns": "DNS",
+            "mailSecurity": "Mail security",
+            "whois": "WHOIS"
+        },
+        "links": {
+            "news_search": "News search",
+            "reddit_mentions": "Reddit mentions",
+            "github_search": "GitHub org/code",
+            "job_signals": "Job signals",
+            "linkedin_search": "LinkedIn company search",
+            "opencorporates_search": "OpenCorporates search",
+            "wikidata_search": "Wikidata search",
+            "glassdoor_search": "Glassdoor signals",
+            "crunchbase_search": "Crunchbase profile search",
+            "x_mentions": "X (Twitter) mentions",
+            "youtube_mentions": "YouTube mentions",
+            "medium_mentions": "Medium mentions",
+            "paste_leaks_search": "Paste/leak search",
+            "patents_search": "Patent search",
+            "crtsh_history": "Certificate history (crt.sh)",
+            "urlhaus_lookup": "URLhaus domain lookup",
+            "phishtank_lookup": "PhishTank lookup",
+            "viewdns_whois": "WHOIS in ViewDNS",
+            "wayback_archive": "Wayback snapshots",
+            "securitytrails_dns": "SecurityTrails DNS history",
+            "dnstwister": "Typo domains (dnstwister)",
+            "talos_reputation": "Cisco Talos reputation",
+            "virustotal_domain": "VirusTotal domain report",
+            "urlscan_domain": "urlscan domain view",
+            "otx_domain": "AlienVault OTX domain",
+            "threatcrowd_domain": "ThreatCrowd domain graph",
+            "hibp_breaches_domain": "HIBP domain breaches",
+            "builtwith_profile": "BuiltWith technology profile",
+            "dnslytics_domain": "DNSlytics intelligence",
+            "netcraft_report": "Netcraft site report"
+        },
+        "help": {
+            "label": "What is this data?",
+            "overview": "Build a fast company intelligence baseline: verify domain trust, review risk signals, and pivot into open-source investigations.",
+            "links": "Use pivots for deeper verification across registries, archives, social traces, and threat-intelligence datasets."
         },
         "strength": {
-          "https_enforced": "HTTPS is enforced on final URL",
-          "ssl_valid": "SSL certificate is valid and not expiring soon",
-          "spf_present": "SPF record is configured",
-          "dmarc_present": "DMARC record is configured",
-          "whois_available": "WHOIS data is available",
-          "headers_coverage_good": "Good security header coverage"
+            "dns_resolution_ok": "Domain resolves in DNS",
+            "spf_present": "SPF is configured",
+            "dmarc_present": "DMARC is configured",
+            "whois_available": "WHOIS data is available",
+            "mx_present": "MX records are present",
+            "ns_redundancy_ok": "Name server redundancy looks healthy",
+            "caa_present": "CAA records are present",
+            "dnssec_enabled": "DNSSEC is enabled",
+            "spf_strict": "SPF policy is strict",
+            "dmarc_enforced": "DMARC policy is enforced",
+            "domain_age_mature": "Domain age is mature",
+            "domain_not_expiring_soon": "Domain is not expiring soon"
+        },
+        "recommendation": {
+            "specify_official_domain": "Specify an official company domain for deeper technical intelligence.",
+            "verify_company_domain_or_dns": "Verify that the domain is correct and DNS is configured properly.",
+            "configure_spf": "Configure SPF policy for company mail domain.",
+            "configure_dmarc": "Configure DMARC policy and move toward enforcement.",
+            "check_whois_visibility": "Review WHOIS visibility or RDAP availability for the domain.",
+            "maintain_monitoring": "Current posture looks stable; continue regular monitoring.",
+            "configure_mx_records": "Configure MX records for reliable mail receiving.",
+            "improve_dns_redundancy": "Use at least two name servers for DNS resilience.",
+            "configure_caa": "Add CAA records to restrict certificate issuance.",
+            "consider_dnssec": "Consider enabling DNSSEC to protect DNS integrity.",
+            "tighten_spf_policy": "Strengthen SPF policy (prefer -all after validation).",
+            "enforce_dmarc_policy": "Move DMARC policy to quarantine/reject for enforcement.",
+            "monitor_new_domain_risk": "Track this domain more closely while it is still new.",
+            "renew_domain_immediately": "Renew the domain immediately to restore trust and continuity.",
+            "renew_domain_soon": "Renew the domain soon to avoid disruption and abuse risk.",
+            "verify_identity_through_additional_sources": "Correlate ownership via registries, legal records, and official profiles."
+        },
+        "riskExplanation": {
+            "risk_unknown_missing_domain": "Risk cannot be assessed precisely until an official domain is identified.",
+            "risk_low_no_critical_signals": "No critical technical issues were detected from the available public data.",
+            "risk_low_minor_signals": "Only minor technical issues were detected; baseline posture looks acceptable.",
+            "risk_medium_several_signals": "Several security or hygiene signals require attention and verification.",
+            "risk_high_multiple_critical_signals": "Multiple critical signals were detected. Verify ownership, DNS, and mail security urgently."
+        },
+        "available": "Available",
+        "unavailable": "Unavailable",
+        "registrar": "Registrar",
+        "country": "Country",
+        "createdAt": "Created at",
+        "expiresAt": "Expires at",
+        "domainAgeDays": "Domain age (days)",
+        "daysToExpiry": "Days to expiry",
+        "risk": {
+            "unknown": "Unknown",
+            "low": "Low",
+            "medium": "Medium",
+            "high": "High"
+        },
+        "signal": {
+            "domain_not_detected": "Domain was not detected in query",
+            "no_dns_resolution": "No DNS resolution",
+            "missing_spf": "SPF missing",
+            "missing_dmarc": "DMARC missing",
+            "whois_unavailable": "WHOIS unavailable",
+            "missing_mx": "MX records missing",
+            "weak_ns_redundancy": "Weak DNS redundancy (too few NS records)",
+            "missing_caa": "CAA records missing",
+            "dnssec_not_enabled": "DNSSEC not enabled",
+            "spf_not_strict": "SPF policy is not strict",
+            "dmarc_not_enforced": "DMARC policy is not enforced",
+            "young_domain": "Domain is relatively new",
+            "domain_expired": "Domain is expired",
+            "domain_expiring_soon": "Domain expires soon",
+            "whois_privacy_redacted": "WHOIS ownership appears privacy-redacted"
+        },
+        "errors": {
+            "queryRequired": "Enter a company name or domain.",
+            "lookupFailed": "Unable to complete analysis. Please retry in a moment."
         }
-      }
     },
-    "seoAudit": {
-      "title": "SEO Audit",
-      "description": "Checks indexability, meta tags, robots/sitemap, links and technical SEO signals.",
-      "target": "URL or domain",
-      "placeholder": "example.com or https://example.com/page",
-      "analyze": "Analyze",
-      "analyzing": "Analyzing...",
-      "empty": "Run SEO audit to see technical issues and prioritized recommendations.",
-      "score": "SEO score",
-      "httpStatus": "HTTP status",
-      "ttfb": "TTFB (approx)",
-      "targetSummary": "Analysis target",
-      "finalUrl": "Final URL",
-      "host": "Host",
-      "metaTitle": "Meta tags",
-      "titleLength": "Title length",
-      "descriptionLength": "Description length",
-      "canonical": "Canonical",
-      "metaRobots": "Meta robots",
-      "indexabilityTitle": "Indexability",
-      "indexable": "Indexable",
-      "xRobotsTag": "X-Robots-Tag",
-      "reason": "Reason",
-      "headingsTitle": "Headings",
-      "linksTitle": "Links",
-      "internalLinks": "Internal",
-      "externalLinks": "External",
-      "nofollowLinks": "Nofollow",
-      "performanceTitle": "Performance",
-      "pageSize": "Page size",
-      "resourcesCount": "Resources",
-      "crawlFilesTitle": "Crawling files",
-      "robotsTxt": "robots.txt",
-      "sitemapXml": "sitemap.xml",
-      "sitemapEntries": "Sitemap entries",
-      "securityTitle": "Security",
-      "mixedContent": "Mixed content",
-      "recommendationsTitle": "Priority recommendations",
-      "detectedSignals": "Detected signals",
-      "priority": {
-        "critical": "CRITICAL",
-        "medium": "MEDIUM",
-        "low": "LOW"
-      },
-      "help": {
-        "overview": "Quick SEO snapshot of crawlability, indexability, metadata quality, performance and security.",
-        "meta": "Checks core snippets for search results: title, description, canonical and robots directives.",
-        "indexability": "Combines meta robots and X-Robots-Tag to estimate whether the page can be indexed.",
-        "performance": "Approximate page weight and response timing from a single request, useful for quick triage.",
-        "crawlFiles": "robots.txt and sitemap.xml availability helps search bots discover and crawl pages correctly.",
-        "recommendations": "Ordered checklist of fixes by urgency to improve crawlability and SEO quality.",
-        "platformType": "Use manual type when auditing large platforms. Auto works for most sites, but explicit type gives more stable scoring.",
-        "scoreProfile": "Scoring profile controls weights and thresholds. Different site classes are evaluated by different SEO expectations.",
-        "technicalFlags": "Quick checks for responsive viewport, pagination signals, and soft-404 patterns.",
-        "contentQuality": "Content density and quality signals: word count, text-to-HTML ratio, and thin-content heuristics.",
-        "accessibility": "SEO-related accessibility checks: missing alt attributes, heading order and basic semantic issues.",
-        "linkGraph": "Internal/external outlinks and orphan-page risk based on discovered linking patterns.",
-        "international": "Hreflang consistency, x-default presence and language cluster coverage across crawled pages.",
-        "crawlBudget": "Bot-hit and status distribution signals from available logs. If logs are not connected, this section is limited."
-      },
-      "errors": {
-        "targetRequired": "Enter URL or domain.",
-        "analyzeFailed": "Could not complete SEO audit."
-      },
-      "signal": {
-        "title_length_out_of_range": "Title length is outside recommended range",
-        "description_length_out_of_range": "Description length is outside recommended range",
-        "invalid_h1_count": "H1 count should be exactly 1",
-        "not_indexable": "Page is marked as non-indexable",
-        "robots_missing": "robots.txt is missing or inaccessible",
-        "sitemap_missing": "sitemap.xml is missing or inaccessible",
-        "slow_response": "Server response is slow",
-        "heavy_page": "Page size is heavy",
-        "https_missing": "HTTPS is not enforced",
-        "mixed_content": "Mixed content detected",
-        "duplicate_titles": "Duplicate titles detected across crawled pages",
-        "missing_canonical": "Some crawled pages have no canonical",
-        "hreflang_conflicts": "Hreflang conflicts detected",
-        "sitemap_non_200_urls": "Sitemap contains URLs returning non-200 status",
-        "missing_mobile_viewport": "Missing responsive viewport meta tag",
-        "soft_404_detected": "Soft 404 detected on a 200 page",
-        "render_blocking_resources": "Too many render-blocking CSS/JS resources",
-        "pagination_signals_incomplete": "Pagination rel prev/next signals are incomplete",
-        "empty_anchor_links": "Empty anchor texts detected",
-        "images_missing_alt": "Images without alt attributes found",
-        "thin_content_detected": "Thin content detected",
-        "low_text_to_html_ratio": "Low text-to-HTML ratio",
-        "low_internal_linking": "Low internal linking detected",
-        "html_structure_issues": "HTML structure issues detected",
-        "hreflang_missing_reciprocal": "Hreflang reciprocal links are missing",
-        "hreflang_missing_x_default": "Missing x-default hreflang on translated pages",
-        "crawl_budget_no_bot_hits": "No bot hits detected in logs for the period",
-        "crawl_budget_bot_5xx": "Bots encountered 5xx errors"
-      },
-      "recommendation": {
-        "enable_indexing": "Allow indexing: remove noindex from meta robots / X-Robots-Tag.",
-        "enable_https": "Switch the page to HTTPS.",
-        "improve_title_length": "Optimize title length to 15-65 characters.",
-        "improve_description_length": "Optimize description length to 50-170 characters.",
-        "fix_h1_count": "Keep exactly one H1 on the page.",
-        "add_robots_txt": "Add robots.txt with correct crawler directives.",
-        "add_sitemap": "Add sitemap.xml and declare it in robots.txt.",
-        "improve_ttfb": "Reduce server response time (TTFB).",
-        "reduce_page_size": "Reduce HTML/resources page size.",
-        "remove_mixed_content": "Remove mixed content: all resources should load over HTTPS.",
-        "maintain_current_setup": "No critical issues found. Maintain current optimization quality.",
-        "deduplicate_titles": "Deduplicate page titles across crawled pages.",
-        "set_canonical_on_all_pages": "Set canonical tag on every indexable page.",
-        "fix_hreflang_self_reference": "Add self-referencing hreflang for translated pages.",
-        "fix_sitemap_non_200_urls": "Remove or fix sitemap URLs returning non-200 responses.",
-        "add_viewport_meta": "Add responsive viewport meta (width=device-width, initial-scale=1).",
-        "fix_soft_404": "Return proper 404/410 status for not-found content pages.",
-        "reduce_render_blocking": "Reduce render-blocking CSS/JS and defer non-critical scripts.",
-        "fix_pagination_rel_links": "Add consistent rel prev/next signals for paginated pages.",
-        "fix_empty_anchor_text": "Replace empty/generic anchor texts with descriptive link text.",
-        "add_image_alt_attributes": "Add alt attributes to informative images.",
-        "expand_thin_content": "Expand thin content with useful topic-relevant text.",
-        "improve_text_html_ratio": "Reduce boilerplate markup and improve meaningful text ratio.",
-        "improve_internal_linking": "Add internal links to reduce orphan-page risk.",
-        "fix_html_structure": "Fix core HTML structure issues (doctype/head/body/heading hierarchy).",
-        "fix_hreflang_reciprocal_links": "Ensure hreflang links are reciprocal between translated pages.",
-        "add_hreflang_x_default": "Add x-default hreflang for international page sets.",
-        "verify_bot_access_in_logs": "Verify that search bots can access the site and logs are collected.",
-        "reduce_bot_5xx_errors": "Investigate and reduce 5xx responses seen by bots."
-      },
-      "crawlLimit": "Crawl limit",
-      "report": "Open report",
-      "downloadReport": "Download report",
-      "crawlTitle": "Crawl insights",
-      "crawlScanned": "Scanned pages",
-      "crawlPagesWithHreflang": "Pages with hreflang",
-      "canonicalAuditTitle": "Canonical audit",
-      "canonicalMissing": "Missing canonical",
-      "canonicalCrossDomain": "Cross-domain canonical",
-      "canonicalInvalid": "Invalid canonical",
-      "sitemapAuditTitle": "Sitemap URL audit",
-      "sitemapSampled": "Sampled URLs",
-      "sitemapNon200": "Non-200 URLs",
-      "renderBlocking": "Render-blocking resources",
-      "technicalFlags": "Technical flags",
-      "mobileFriendly": "Mobile friendly",
-      "pagination": "Pagination detected",
-      "soft404": "Soft 404",
-      "robotsWildcard": "Wildcard user-agent group",
-      "robotsCrawlDelay": "Crawl-delay present",
-      "contentQualityTitle": "Content quality",
-      "accessibilityTitle": "Accessibility",
-      "linkGraphTitle": "Link graph",
-      "wordCount": "Word count",
-      "textHtmlRatio": "Text/HTML ratio",
-      "thinContent": "Thin content",
-      "imagesWithoutAlt": "Images without alt",
-      "headingOrderBroken": "Heading order broken",
-      "htmlIssues": "HTML issues",
-      "internalOutlinks": "Internal outlinks",
-      "externalOutlinks": "External outlinks",
-      "orphanRisk": "Orphan risk",
-      "internationalTitle": "International SEO",
-      "hreflangPages": "Pages with hreflang",
-      "hreflangMissingXDefault": "Missing x-default",
-      "hreflangMissingReciprocal": "Missing reciprocal hreflang",
-      "hreflangClusters": "Language clusters",
-      "crawlBudgetTitle": "Crawl budget",
-      "crawlBudgetSource": "Data source",
-      "crawlBudgetBotHits": "Bot hits (7d)",
-      "scoreProfile": "Scoring profile",
-      "profile": {
-        "generic": "Generic",
-        "media-platform": "Media Platform",
-        "content-site": "Content Site",
-        "storefront": "Storefront"
-      },
-      "platformType": "Platform type",
-      "platformAuto": "Auto detect",
-      "filterNon200Only": "Only non-200",
-      "filterNoindexOnly": "Only noindex",
-      "filterOrphanOnly": "Only orphan-risk",
-      "legendIndexable": "Indexable",
-      "legendNoindex": "Noindex",
-      "legendNon200": "Non-200 status",
-      "legendOrphan": "Orphan-risk",
-      "filterMode": "Mode",
-      "filterModeAll": "Match all",
-      "filterModeAny": "Match any"
-    }
-  },
-  "fio": {
-    "headTitle": "FIO",
-    "lookup": {
-      "title": "Full Name Lookup",
-      "description": "Online search of public name mentions with region and age clustering.",
-      "fullName": "Full name / FIO",
-      "qualifier": "Role qualifier",
-      "qualifierPlaceholder": "e.g. manager, military",
-      "placeholder": "e.g. Ivan Ivanov",
-      "search": "Search",
-      "searching": "Searching...",
-      "empty": "Enter a full name to start lookup.",
-      "checkedAt": "Checked at",
-      "matches": "Public matches",
-      "domains": "Unique domains",
-      "topRegion": "Top region",
-      "medianAge": "Median age",
-      "averageConfidence": "Average confidence",
-      "average": "Average",
-      "qualifierMatches": "Qualifier matches",
-      "qualifierTerms": "Qualifier terms used",
-      "regionClusters": "Region clusters",
-      "ageClusters": "Age clusters",
-      "sourceReliability": "Source reliability",
-      "attemptedSources": "Attempted sources",
-      "sourceErrors": "Source errors",
-      "noErrors": "No source errors",
-      "ok": "ok",
-      "failed": "failed",
-      "durationMs": "duration (ms)",
-      "noClusters": "No clusters yet.",
-      "publicMatches": "Public matches list",
-      "noMatches": "No public matches found.",
-      "confidence": "Confidence",
-      "region": "Region",
-      "age": "Age",
-      "ageBucket": "Age bucket",
-      "domain": "Domain",
-      "source": "Source",
-      "reliability": "Reliability",
-      "qualifierMatched": "Qualifier matched",
-      "yes": "Yes",
-      "no": "No",
-      "providers": "Providers used",
-      "errors": {
-        "fullNameRequired": "Enter full name.",
-        "lookupFailed": "Could not complete full-name lookup."
-      }
+    "documentIntel": {
+        "headTitle": "Document Intel",
+        "title": "Document Intel",
+        "description": "Document exposure intelligence from public sources: discover indexed files, metadata risks, and investigation pivots.",
+        "query": "Domain or company",
+        "placeholder": "example.com or Acme Corp",
+        "search": "Analyze",
+        "searching": "Analyzing...",
+        "empty": "Run document intelligence to inspect indexed documents, metadata exposure, and related risk indicators.",
+        "checkedAt": "Checked at",
+        "detectedDomain": "Detected domain",
+        "signalCount": "Signals",
+        "pivotCount": "Pivots",
+        "signals": "Signals",
+        "recommendations": "Recommendations",
+        "domainIntel": "Domain intelligence",
+        "pivots": "Document intelligence pivots",
+        "available": "Available",
+        "unavailable": "Unavailable",
+        "registrar": "Registrar",
+        "createdAt": "Created at",
+        "expiresAt": "Expires at",
+        "help": {
+            "label": "What is this data?",
+            "overview": "Identify publicly exposed documents and metadata traces that can leak internal details, identities, or infrastructure clues.",
+            "pivots": "Use these pivots to discover file footprints, archive history, and possible exposure surfaces before deep review."
+        },
+        "signal": {
+            "domain_not_detected": "Domain was not detected in query",
+            "no_dns_resolution": "No DNS resolution",
+            "missing_spf": "SPF missing",
+            "missing_dmarc": "DMARC missing",
+            "whois_unavailable": "WHOIS unavailable",
+            "baseline_ok": "No strong technical issues detected"
+        },
+        "recommendation": {
+            "specify_company_domain": "Specify official domain for precise document intelligence.",
+            "validate_domain_and_dns": "Validate domain spelling and DNS configuration.",
+            "configure_spf": "Configure SPF policy for company domain.",
+            "configure_dmarc": "Configure DMARC policy for company domain.",
+            "check_whois_visibility": "Review WHOIS/RDAP visibility.",
+            "start_document_collection": "Start collecting indexed documents by file types (PDF, DOCX, XLSX, PPTX).",
+            "review_document_metadata": "Review metadata of discovered documents for names, software, and internal paths."
+        },
+        "links": {
+            "pdf_search": "PDF search",
+            "docx_search": "DOCX search",
+            "xlsx_search": "XLSX search",
+            "pptx_search": "PPTX search",
+            "robots_txt": "robots.txt",
+            "sitemap_xml": "sitemap.xml",
+            "wayback_docs": "Wayback snapshots",
+            "github_leaks": "GitHub leak keywords"
+        },
+        "documents": {
+            "title": "Discovered documents",
+            "total": "Total",
+            "failed": "Failed to parse",
+            "withAuthor": "With author",
+            "withSoftware": "With software",
+            "withDates": "With dates",
+            "list": "Document metadata",
+            "empty": "No documents discovered automatically.",
+            "extension": "Type",
+            "size": "Size",
+            "author": "Author",
+            "software": "Software",
+            "createdAt": "Created",
+            "modifiedAt": "Modified",
+            "lastModified": "HTTP Last-Modified",
+            "error": "Error",
+            "riskAverage": "Average risk score",
+            "riskScore": "Risk score",
+            "riskLevel": "Risk level",
+            "riskReasons": "Risk reasons",
+            "topRiskReasons": "Top risk reasons",
+            "exposedEmails": "Exposed emails",
+            "exposedUsernames": "Exposed usernames",
+            "exposedPaths": "Exposed internal paths"
+        },
+        "risk": {
+            "low": "Low",
+            "medium": "Medium",
+            "high": "High"
+        },
+        "riskReason": {
+            "doc_access_issue": "Access or fetch issue",
+            "author_exposed": "Author metadata exposed",
+            "emails_exposed": "Emails found in content",
+            "internal_paths_exposed": "Internal paths found",
+            "legacy_software_hint": "Legacy software metadata hint"
+        },
+        "error": {
+            "network_error": "Network error",
+            "file_too_large": "File exceeds max size",
+            "http_403": "Access denied (403)",
+            "http_404": "Not found (404)"
+        },
+        "errors": {
+            "queryRequired": "Enter domain or company name.",
+            "lookupFailed": "Unable to complete analysis. Please retry in a moment."
+        }
     },
-    "region": {
-      "cis": "CIS",
-      "europe": "Europe",
-      "americas": "Americas",
-      "asia": "Asia",
-      "mena": "MENA",
-      "unknown": "Unknown"
+    "domainInfraIntel": {
+        "headTitle": "Domain & Infra Intel",
+        "title": "Domain & Infra Intel",
+        "description": "RDAP, ASN, certificate transparency and neighbor context.",
+        "empty": "Enter domain to inspect infrastructure posture.",
+        "form": {
+            "domain": "Domain",
+            "placeholder": "example.com",
+            "search": "Inspect",
+            "searching": "Inspecting..."
+        },
+        "summary": {
+            "domain": "Domain",
+            "ips": "IPs",
+            "asn": "ASN",
+            "org": "Organization"
+        },
+        "rdap": {
+            "title": "RDAP / NS / Neighbors",
+            "statuses": "Statuses",
+            "nameservers": "Nameservers",
+            "neighbors": "Neighbors"
+        },
+        "certs": {
+            "title": "Certificate Transparency",
+            "none": "No certificate records found.",
+            "issuer": "Issuer"
+        },
+        "errors": {
+            "domainRequired": "Enter domain (minimum 3 characters).",
+            "lookupFailed": "Unable to complete domain infrastructure lookup."
+        },
+        "help": {
+            "label": "About block",
+            "overview": "Domain and infrastructure intelligence combines DNS resolution, RDAP, ASN attribution, reverse host pivots and certificate transparency for quick technical context.",
+            "rdap": "RDAP statuses and nameservers help assess domain lifecycle and delegation posture. Neighbor domains come from reverse DNS of resolved IPs.",
+            "certs": "Certificate transparency shows where domain names appeared in issued certificates and helps reveal subdomains or infrastructure reuse."
+        }
     },
-    "age": {
-      "under_18": "Under 18",
-      "18_24": "18-24",
-      "25_34": "25-34",
-      "35_44": "35-44",
-      "45_54": "45-54",
-      "55_plus": "55+",
-      "unknown": "Unknown"
-    }
-  },
-  "emailIntel": {
-    "headTitle": "Email Intel",
-    "help": {
-      "label": "What is this data?",
-      "overview": "Checks an email address in live mode: domain DNS, MX records, SPF/DMARC, mailbox profile hints and local risk signals. Results are returned in the current response and are not stored.",
-      "riskScore": "Risk score is built from technical signals: missing MX, missing SPF/DMARC, non-resolving domain, disposable provider and role-account hints.",
-      "target": "Normalized target data. SHA-256 helps compare the same address across exported reports without exposing the raw email.",
-      "profile": "Mailbox profile hints are local heuristics: common free providers, disposable domains, role/shared inboxes and Gravatar hash.",
-      "signals": "Signals explain why the score changed. They are indicators for analyst review, not proof of malicious activity.",
-      "dns": "DNS data is collected live from public records. MX shows mail routing; SPF and DMARC describe anti-spoofing posture.",
-      "provider": "Provider fingerprint is inferred from MX hosts and domain patterns. It is a confidence hint, not a paid provider lookup.",
-      "localPart": "Local-part analysis looks at the mailbox name before @: role accounts, plus addressing, year patterns, separators and random-looking strings.",
-      "spf": "SPF parsing extracts mechanisms, includes and the final all policy. Strict -all is strongest; +all is risky.",
-      "dmarc": "DMARC parsing extracts policy, reporting addresses and alignment hints. reject is strongest, quarantine is moderate, none is monitoring-only.",
-      "searchLinks": "Pivot links open public search pages in a new tab. The platform does not fetch or store those external results.",
-      "graph": "Entity graph connects the email to its domain, local part, provider, MX hosts, SPF includes, DMARC report destinations, Gravatar hash and triggered signals.",
-      "recommendations": "Recommendations are generated from the current technical signals and estimate which fixes would improve the posture most.",
-      "riskBreakdown": "Shows which signals added points to the risk score. Informational and positive signals do not increase risk."
+    "newsMediaIntel": {
+        "headTitle": "News & Media Intel",
+        "title": "News / Media Intel",
+        "description": "Mentions monitoring with topic extraction, sentiment and timeline.",
+        "empty": "Enter query to monitor mentions.",
+        "form": {
+            "query": "Query",
+            "placeholder": "person or company",
+            "search": "Monitor",
+            "searching": "Monitoring..."
+        },
+        "summary": {
+            "mentions": "Mentions",
+            "positive": "Positive",
+            "neutral": "Neutral",
+            "negative": "Negative"
+        },
+        "topics": {
+            "title": "Top topics"
+        },
+        "timeline": {
+            "title": "Timeline",
+            "none": "No timeline points yet."
+        },
+        "mentions": {
+            "title": "Mentions",
+            "none": "No mentions found."
+        },
+        "sources": {
+            "googlenews": "Google News",
+            "bing": "Bing News",
+            "newsapi": "NewsAPI"
+        },
+        "errors": {
+            "queryRequired": "Enter query (minimum 2 characters).",
+            "lookupFailed": "Unable to complete news/media lookup."
+        },
+        "help": {
+            "label": "About block",
+            "overview": "News and media monitoring aggregates mentions from public feeds, then builds topics, timeline and sentiment snapshot.",
+            "topics": "Topics are extracted from titles and snippets with stop-word filtering. They are heuristic indicators, not a linguistic model.",
+            "timeline": "Timeline groups mention counts by publication date to highlight spikes and event windows.",
+            "mentions": "Mentions are deduplicated by URL. Long headlines and links are wrapped to stay inside the card."
+        }
     },
-    "tabs": {
-      "search": "Search",
-      "analytics": "Analytics",
-      "bulk": "Bulk",
-      "domain": "Domain"
+    "dashboard": {
+        "meta": {
+            "title": "Dashboard"
+        },
+        "header": {
+            "kicker": "User dashboard",
+            "title": "Your activity hub",
+            "subtitle": "Track real search queries, recent actions, and quickly return to your modules.",
+            "badge": "Search history is saved automatically"
+        },
+        "summary": {
+            "total": "All queries",
+            "last7": "Last 7 days",
+            "last30": "Last 30 days",
+            "activeDays": "Active days"
+        },
+        "sections": {
+            "favorite": "Favorite module",
+            "topModules": "Top modules",
+            "weekly": "Weekly activity",
+            "recentQueries": "Recent queries",
+            "quickActions": "Quick actions",
+            "insights": "Insights",
+            "savedQueries": "Saved queries"
+        },
+        "favorite": {
+            "usedPrefix": "Used",
+            "usedSuffix": "times",
+            "empty": "No query history yet. Run your first search."
+        },
+        "modules": {
+            "username": "Username search",
+            "fio": "FIO search",
+            "site-intel": "Site intelligence",
+            "company-intel": "Company intelligence",
+            "email-intel": "Email intelligence",
+            "domain-infra-intel": "Domain and infrastructure intelligence",
+            "news-media-intel": "News and media intelligence",
+            "document-intel": "Document intelligence",
+            "telegram": "Telegram analytics",
+            "youtube": "YouTube",
+            "shifr": "Cipher toolkit",
+            "default": "Search module",
+            "lastUsed": "Last used",
+            "open": "Open module",
+            "empty": "No module activity yet."
+        },
+        "weekly": {
+            "empty": "No weekly data yet."
+        },
+        "recent": {
+            "empty": "No queries yet.",
+            "runAgain": "Run again",
+            "save": "Save query"
+        },
+        "insights": {
+            "topDay": "Most active day",
+            "lastQuery": "Last query",
+            "favorite": "Favorite module"
+        },
+        "saved": {
+            "empty": "No saved queries yet.",
+            "run": "Run query",
+            "delete": "Delete"
+        },
+        "filters": {
+            "allModules": "All modules",
+            "queryPlaceholder": "Search by query text",
+            "period7": "7 days",
+            "period30": "30 days",
+            "period90": "90 days",
+            "apply": "Apply filters",
+            "reset": "Reset"
+        },
+        "common": {
+            "na": "n/a"
+        }
     },
-    "lookup": {
-      "title": "Email Intelligence",
-      "description": "Live email checks via DNS and local heuristics, without storing results.",
-      "email": "Email",
-      "placeholder": "name@example.com",
-      "check": "Check",
-      "checking": "Checking...",
-      "empty": "Enter an email address to start analysis.",
-      "checkedAt": "Checked at",
-      "riskScore": "Risk score",
-      "riskLevel": "Risk level",
-      "mxRecords": "MX records",
-      "emailSecurity": "Email security",
-      "target": "Target",
-      "domain": "Domain",
-      "localPart": "Local part",
-      "profile": "Profile",
-      "freeProvider": "Free provider",
-      "disposable": "Disposable",
-      "roleAccount": "Role account",
-      "signals": "Signals",
-      "dns": "DNS"
-    },
-    "analytics": {
-      "title": "Email Analytics",
-      "description": "Deep live analysis for mail security, infrastructure, pivots and entity graph.",
-      "overallScore": "Overall score",
-      "mailSecurity": "Mail security",
-      "domainHealth": "Domain health",
-      "identityConfidence": "Identity confidence",
-      "provider": "Provider fingerprint",
-      "type": "Type",
-      "confidence": "Confidence",
-      "localPart": "Local-part analysis",
-      "length": "Length",
-      "entropy": "Entropy",
-      "tokens": "Tokens",
-      "plusAddressing": "Plus addressing",
-      "looksRandom": "Looks random",
-      "spf": "SPF breakdown",
-      "dmarc": "DMARC breakdown",
-      "strictness": "Strictness",
-      "policy": "Policy",
-      "strength": "Strength",
-      "searchLinks": "OSINT pivot links",
-      "graph": "Entity graph",
-      "recommendations": "Recommendations",
-      "priority": "Priority",
-      "impact": "Impact",
-      "webSnapshot": "Domain web snapshot",
-      "durationMs": "Duration (ms)",
-      "similarDomains": "Similar domains",
-      "report": "Open report",
-      "downloadReport": "Download report",
-      "riskBreakdown": "Risk breakdown",
-      "dmarcReports": "DMARC reports",
-      "spfIncludes": "First-level SPF includes",
-      "resolved": "Resolved",
-      "external": "External domain",
-      "deliverability": "Deliverability",
-      "deliverabilityHints": "Deliverability hints"
-    },
-    "riskLevel": {
-      "clean": "Clean",
-      "low": "Low",
-      "medium": "Medium",
-      "high": "High"
-    },
-    "signal": {
-      "missing_mx": "Domain has no MX records.",
-      "domain_not_resolving": "Domain has no A/AAAA records.",
-      "missing_spf": "SPF record is missing.",
-      "weak_spf": "SPF policy is present but not strict.",
-      "open_spf": "SPF policy allows all senders.",
-      "missing_dmarc": "DMARC record is missing.",
-      "monitoring_dmarc": "DMARC is in monitoring mode only.",
-      "disposable_provider": "Domain matches a local disposable-mail list.",
-      "role_account": "Local part looks like a role/shared inbox.",
-      "random_local_part": "Local part looks random or machine-generated.",
-      "free_provider": "Domain is a common free mailbox provider.",
-      "baseline_ok": "No strong technical risk signals detected.",
-      "external_dmarc_reporting": "DMARC reports are sent to an external domain."
-    },
-    "recommendation": {
-      "configure_mx": "Configure MX records for the domain.",
-      "harden_spf": "Harden SPF policy and avoid permissive all mechanisms.",
-      "enforce_dmarc": "Move DMARC toward quarantine or reject after monitoring.",
-      "review_disposable": "Review disposable mailbox usage manually.",
-      "verify_role_account": "Verify whether this role/shared mailbox is expected.",
-      "maintain_posture": "Current mail posture looks healthy; keep monitoring it.",
-      "review_dmarc_reporting": "Review whether external DMARC reporting destinations are expected and authorized."
-    },
-    "similarDomainReason": {
-      "tld_variant": "TLD variant",
-      "separator_variant": "separator variant",
-      "compact_variant": "compact variant",
-      "lookalike_variant": "lookalike variant"
-    },
-    "errors": {
-      "emailRequired": "Enter a valid email address.",
-      "lookupFailed": "Could not complete email lookup.",
-      "domainRequired": "Enter a valid domain."
-    },
-    "bulk": {
-      "title": "Bulk Email Intel",
-      "description": "Run live checks for up to 25 emails without storing results.",
-      "emails": "Email addresses",
-      "placeholder": "one@example.com\ntwo@example.com",
-      "check": "Check list",
-      "email": "Email"
-    },
-    "domain": {
-      "title": "Domain Mail Posture",
-      "description": "Analyze mail readiness for a domain without a specific mailbox.",
-      "domain": "Domain",
-      "placeholder": "example.com",
-      "check": "Check domain"
-    },
-    "deliverability": {
-      "mx_ready": "Domain has MX records for receiving mail.",
-      "spf_present": "SPF record is present.",
-      "spf_strict": "SPF uses a strict -all policy.",
-      "dmarc_present": "DMARC record is present.",
-      "dmarc_enforced": "DMARC is enforced with quarantine or reject.",
-      "domain_resolves": "Domain resolves to A/AAAA records.",
-      "web_available": "Domain website responds over HTTPS."
-    }
-  },
-  "companyIntel": {
-    "headTitle": "Company Intel",
-    "title": "Company Intel",
-    "description": "Commercial OSINT snapshot for company profiling: domain posture, trust signals, and reputation pivots from public sources.",
-    "query": "Company name or domain",
-    "placeholder": "example.com or Acme Corp",
-    "search": "Analyze",
-    "searching": "Analyzing...",
-    "empty": "Run company profiling to view technical trust signals, risk context, and OSINT pivots.",
-    "checkedAt": "Checked at",
-    "detectedDomain": "Detected domain",
-    "riskScore": "Risk level",
-    "signalCount": "Signals",
-    "signals": "Risk signals",
-    "noSignals": "No strong risk signals.",
-    "strengths": "Positive signals",
-    "recommendations": "Recommendations",
-    "domainIntel": "Domain intelligence",
-    "osintLinks": "OSINT intelligence pivots",
-    "labels": {
-      "dns": "DNS",
-      "mailSecurity": "Mail security",
-      "whois": "WHOIS"
-    },
-    "links": {
-      "news_search": "News search",
-      "reddit_mentions": "Reddit mentions",
-      "github_search": "GitHub org/code",
-      "job_signals": "Job signals",
-      "linkedin_search": "LinkedIn company search",
-      "opencorporates_search": "OpenCorporates search",
-      "wikidata_search": "Wikidata search",
-      "glassdoor_search": "Glassdoor signals",
-      "crunchbase_search": "Crunchbase profile search",
-      "x_mentions": "X (Twitter) mentions",
-      "youtube_mentions": "YouTube mentions",
-      "medium_mentions": "Medium mentions",
-      "paste_leaks_search": "Paste/leak search",
-      "patents_search": "Patent search",
-      "crtsh_history": "Certificate history (crt.sh)",
-      "urlhaus_lookup": "URLhaus domain lookup",
-      "phishtank_lookup": "PhishTank lookup",
-      "viewdns_whois": "WHOIS in ViewDNS",
-      "wayback_archive": "Wayback snapshots",
-      "securitytrails_dns": "SecurityTrails DNS history",
-      "dnstwister": "Typo domains (dnstwister)",
-      "talos_reputation": "Cisco Talos reputation",
-      "virustotal_domain": "VirusTotal domain report",
-      "urlscan_domain": "urlscan domain view",
-      "otx_domain": "AlienVault OTX domain",
-      "threatcrowd_domain": "ThreatCrowd domain graph",
-      "hibp_breaches_domain": "HIBP domain breaches",
-      "builtwith_profile": "BuiltWith technology profile",
-      "dnslytics_domain": "DNSlytics intelligence",
-      "netcraft_report": "Netcraft site report"
-    },
-    "help": {
-      "label": "What is this data?",
-      "overview": "Build a fast company intelligence baseline: verify domain trust, review risk signals, and pivot into open-source investigations.",
-      "links": "Use pivots for deeper verification across registries, archives, social traces, and threat-intelligence datasets."
-    },
-    "strength": {
-      "dns_resolution_ok": "Domain resolves in DNS",
-      "spf_present": "SPF is configured",
-      "dmarc_present": "DMARC is configured",
-      "whois_available": "WHOIS data is available",
-      "mx_present": "MX records are present",
-      "ns_redundancy_ok": "Name server redundancy looks healthy",
-      "caa_present": "CAA records are present",
-      "dnssec_enabled": "DNSSEC is enabled",
-      "spf_strict": "SPF policy is strict",
-      "dmarc_enforced": "DMARC policy is enforced",
-      "domain_age_mature": "Domain age is mature",
-      "domain_not_expiring_soon": "Domain is not expiring soon"
-    },
-    "recommendation": {
-      "specify_official_domain": "Specify an official company domain for deeper technical intelligence.",
-      "verify_company_domain_or_dns": "Verify that the domain is correct and DNS is configured properly.",
-      "configure_spf": "Configure SPF policy for company mail domain.",
-      "configure_dmarc": "Configure DMARC policy and move toward enforcement.",
-      "check_whois_visibility": "Review WHOIS visibility or RDAP availability for the domain.",
-      "maintain_monitoring": "Current posture looks stable; continue regular monitoring.",
-      "configure_mx_records": "Configure MX records for reliable mail receiving.",
-      "improve_dns_redundancy": "Use at least two name servers for DNS resilience.",
-      "configure_caa": "Add CAA records to restrict certificate issuance.",
-      "consider_dnssec": "Consider enabling DNSSEC to protect DNS integrity.",
-      "tighten_spf_policy": "Strengthen SPF policy (prefer -all after validation).",
-      "enforce_dmarc_policy": "Move DMARC policy to quarantine/reject for enforcement.",
-      "monitor_new_domain_risk": "Track this domain more closely while it is still new.",
-      "renew_domain_immediately": "Renew the domain immediately to restore trust and continuity.",
-      "renew_domain_soon": "Renew the domain soon to avoid disruption and abuse risk.",
-      "verify_identity_through_additional_sources": "Correlate ownership via registries, legal records, and official profiles."
-    },
-    "riskExplanation": {
-      "risk_unknown_missing_domain": "Risk cannot be assessed precisely until an official domain is identified.",
-      "risk_low_no_critical_signals": "No critical technical issues were detected from the available public data.",
-      "risk_low_minor_signals": "Only minor technical issues were detected; baseline posture looks acceptable.",
-      "risk_medium_several_signals": "Several security or hygiene signals require attention and verification.",
-      "risk_high_multiple_critical_signals": "Multiple critical signals were detected. Verify ownership, DNS, and mail security urgently."
-    },
-    "available": "Available",
-    "unavailable": "Unavailable",
-    "registrar": "Registrar",
-    "country": "Country",
-    "createdAt": "Created at",
-    "expiresAt": "Expires at",
-    "domainAgeDays": "Domain age (days)",
-    "daysToExpiry": "Days to expiry",
-    "risk": {
-      "unknown": "Unknown",
-      "low": "Low",
-      "medium": "Medium",
-      "high": "High"
-    },
-    "signal": {
-      "domain_not_detected": "Domain was not detected in query",
-      "no_dns_resolution": "No DNS resolution",
-      "missing_spf": "SPF missing",
-      "missing_dmarc": "DMARC missing",
-      "whois_unavailable": "WHOIS unavailable",
-      "missing_mx": "MX records missing",
-      "weak_ns_redundancy": "Weak DNS redundancy (too few NS records)",
-      "missing_caa": "CAA records missing",
-      "dnssec_not_enabled": "DNSSEC not enabled",
-      "spf_not_strict": "SPF policy is not strict",
-      "dmarc_not_enforced": "DMARC policy is not enforced",
-      "young_domain": "Domain is relatively new",
-      "domain_expired": "Domain is expired",
-      "domain_expiring_soon": "Domain expires soon",
-      "whois_privacy_redacted": "WHOIS ownership appears privacy-redacted"
-    },
-    "errors": {
-      "queryRequired": "Enter a company name or domain.",
-      "lookupFailed": "Unable to complete analysis. Please retry in a moment."
-    }
-  },
-  "documentIntel": {
-    "headTitle": "Document Intel",
-    "title": "Document Intel",
-    "description": "Document exposure intelligence from public sources: discover indexed files, metadata risks, and investigation pivots.",
-    "query": "Domain or company",
-    "placeholder": "example.com or Acme Corp",
-    "search": "Analyze",
-    "searching": "Analyzing...",
-    "empty": "Run document intelligence to inspect indexed documents, metadata exposure, and related risk indicators.",
-    "checkedAt": "Checked at",
-    "detectedDomain": "Detected domain",
-    "signalCount": "Signals",
-    "pivotCount": "Pivots",
-    "signals": "Signals",
-    "recommendations": "Recommendations",
-    "domainIntel": "Domain intelligence",
-    "pivots": "Document intelligence pivots",
-    "available": "Available",
-    "unavailable": "Unavailable",
-    "registrar": "Registrar",
-    "createdAt": "Created at",
-    "expiresAt": "Expires at",
-    "help": {
-      "label": "What is this data?",
-      "overview": "Identify publicly exposed documents and metadata traces that can leak internal details, identities, or infrastructure clues.",
-      "pivots": "Use these pivots to discover file footprints, archive history, and possible exposure surfaces before deep review."
-    },
-    "signal": {
-      "domain_not_detected": "Domain was not detected in query",
-      "no_dns_resolution": "No DNS resolution",
-      "missing_spf": "SPF missing",
-      "missing_dmarc": "DMARC missing",
-      "whois_unavailable": "WHOIS unavailable",
-      "baseline_ok": "No strong technical issues detected"
-    },
-    "recommendation": {
-      "specify_company_domain": "Specify official domain for precise document intelligence.",
-      "validate_domain_and_dns": "Validate domain spelling and DNS configuration.",
-      "configure_spf": "Configure SPF policy for company domain.",
-      "configure_dmarc": "Configure DMARC policy for company domain.",
-      "check_whois_visibility": "Review WHOIS/RDAP visibility.",
-      "start_document_collection": "Start collecting indexed documents by file types (PDF, DOCX, XLSX, PPTX).",
-      "review_document_metadata": "Review metadata of discovered documents for names, software, and internal paths."
-    },
-    "links": {
-      "pdf_search": "PDF search",
-      "docx_search": "DOCX search",
-      "xlsx_search": "XLSX search",
-      "pptx_search": "PPTX search",
-      "robots_txt": "robots.txt",
-      "sitemap_xml": "sitemap.xml",
-      "wayback_docs": "Wayback snapshots",
-      "github_leaks": "GitHub leak keywords"
-    },
-    "documents": {
-      "title": "Discovered documents",
-      "total": "Total",
-      "failed": "Failed to parse",
-      "withAuthor": "With author",
-      "withSoftware": "With software",
-      "withDates": "With dates",
-      "list": "Document metadata",
-      "empty": "No documents discovered automatically.",
-      "extension": "Type",
-      "size": "Size",
-      "author": "Author",
-      "software": "Software",
-      "createdAt": "Created",
-      "modifiedAt": "Modified",
-      "lastModified": "HTTP Last-Modified",
-      "error": "Error",
-      "riskAverage": "Average risk score",
-      "riskScore": "Risk score",
-      "riskLevel": "Risk level",
-      "riskReasons": "Risk reasons",
-      "topRiskReasons": "Top risk reasons",
-      "exposedEmails": "Exposed emails",
-      "exposedUsernames": "Exposed usernames",
-      "exposedPaths": "Exposed internal paths"
-    },
-    "risk": {
-      "low": "Low",
-      "medium": "Medium",
-      "high": "High"
-    },
-    "riskReason": {
-      "doc_access_issue": "Access or fetch issue",
-      "author_exposed": "Author metadata exposed",
-      "emails_exposed": "Emails found in content",
-      "internal_paths_exposed": "Internal paths found",
-      "legacy_software_hint": "Legacy software metadata hint"
-    },
-    "error": {
-      "network_error": "Network error",
-      "file_too_large": "File exceeds max size",
-      "http_403": "Access denied (403)",
-      "http_404": "Not found (404)"
-    },
-    "errors": {
-      "queryRequired": "Enter domain or company name.",
-      "lookupFailed": "Unable to complete analysis. Please retry in a moment."
-    }
-  },
-  "domainInfraIntel": {
-    "headTitle": "Domain & Infra Intel",
-    "title": "Domain & Infra Intel",
-    "description": "RDAP, ASN, certificate transparency and neighbor context.",
-    "empty": "Enter domain to inspect infrastructure posture.",
-    "form": {
-      "domain": "Domain",
-      "placeholder": "example.com",
-      "search": "Inspect",
-      "searching": "Inspecting..."
-    },
-    "summary": {
-      "domain": "Domain",
-      "ips": "IPs",
-      "asn": "ASN",
-      "org": "Organization"
-    },
-    "rdap": {
-      "title": "RDAP / NS / Neighbors",
-      "statuses": "Statuses",
-      "nameservers": "Nameservers",
-      "neighbors": "Neighbors"
-    },
-    "certs": {
-      "title": "Certificate Transparency",
-      "none": "No certificate records found.",
-      "issuer": "Issuer"
-    },
-    "errors": {
-      "domainRequired": "Enter domain (minimum 3 characters).",
-      "lookupFailed": "Unable to complete domain infrastructure lookup."
-    },
-    "help": {
-      "label": "About block",
-      "overview": "Domain and infrastructure intelligence combines DNS resolution, RDAP, ASN attribution, reverse host pivots and certificate transparency for quick technical context.",
-      "rdap": "RDAP statuses and nameservers help assess domain lifecycle and delegation posture. Neighbor domains come from reverse DNS of resolved IPs.",
-      "certs": "Certificate transparency shows where domain names appeared in issued certificates and helps reveal subdomains or infrastructure reuse."
-    }
-  },
-  "newsMediaIntel": {
-    "headTitle": "News & Media Intel",
-    "title": "News / Media Intel",
-    "description": "Mentions monitoring with topic extraction, sentiment and timeline.",
-    "empty": "Enter query to monitor mentions.",
-    "form": {
-      "query": "Query",
-      "placeholder": "person or company",
-      "search": "Monitor",
-      "searching": "Monitoring..."
-    },
-    "summary": {
-      "mentions": "Mentions",
-      "positive": "Positive",
-      "neutral": "Neutral",
-      "negative": "Negative"
-    },
-    "topics": {
-      "title": "Top topics"
-    },
-    "timeline": {
-      "title": "Timeline",
-      "none": "No timeline points yet."
-    },
-    "mentions": {
-      "title": "Mentions",
-      "none": "No mentions found."
-    },
-    "sources": {
-      "googlenews": "Google News",
-      "bing": "Bing News",
-      "newsapi": "NewsAPI"
-    },
-    "errors": {
-      "queryRequired": "Enter query (minimum 2 characters).",
-      "lookupFailed": "Unable to complete news/media lookup."
-    },
-    "help": {
-      "label": "About block",
-      "overview": "News and media monitoring aggregates mentions from public feeds, then builds topics, timeline and sentiment snapshot.",
-      "topics": "Topics are extracted from titles and snippets with stop-word filtering. They are heuristic indicators, not a linguistic model.",
-      "timeline": "Timeline groups mention counts by publication date to highlight spikes and event windows.",
-      "mentions": "Mentions are deduplicated by URL. Long headlines and links are wrapped to stay inside the card."
-    }
-  },
-  "dashboard": {
-    "meta": {
-      "title": "Dashboard"
-    },
-    "header": {
-      "kicker": "User dashboard",
-      "title": "Your activity hub",
-      "subtitle": "Track real search queries, recent actions, and quickly return to your modules.",
-      "badge": "Search history is saved automatically"
-    },
-    "summary": {
-      "total": "All queries",
-      "last7": "Last 7 days",
-      "last30": "Last 30 days",
-      "activeDays": "Active days"
-    },
-    "sections": {
-      "favorite": "Favorite module",
-      "topModules": "Top modules",
-      "weekly": "Weekly activity",
-      "recentQueries": "Recent queries",
-      "quickActions": "Quick actions",
-      "insights": "Insights",
-      "savedQueries": "Saved queries"
-    },
-    "favorite": {
-      "usedPrefix": "Used",
-      "usedSuffix": "times",
-      "empty": "No query history yet. Run your first search."
-    },
-    "modules": {
-      "username": "Username search",
-      "fio": "FIO search",
-      "site-intel": "Site intelligence",
-      "company-intel": "Company intelligence",
-      "email-intel": "Email intelligence",
-      "domain-infra-intel": "Domain and infrastructure intelligence",
-      "news-media-intel": "News and media intelligence",
-      "document-intel": "Document intelligence",
-      "telegram": "Telegram analytics",
-      "youtube": "YouTube",
-      "shifr": "Cipher toolkit",
-      "default": "Search module",
-      "lastUsed": "Last used",
-      "open": "Open module",
-      "empty": "No module activity yet."
-    },
-    "weekly": {
-      "empty": "No weekly data yet."
-    },
-    "recent": {
-      "empty": "No queries yet.",
-      "runAgain": "Run again",
-      "save": "Save query"
-    },
-    "insights": {
-      "topDay": "Most active day",
-      "lastQuery": "Last query",
-      "favorite": "Favorite module"
-    },
-    "saved": {
-      "empty": "No saved queries yet.",
-      "run": "Run query",
-      "delete": "Delete"
-    },
-    "filters": {
-      "allModules": "All modules",
-      "queryPlaceholder": "Search by query text",
-      "period7": "7 days",
-      "period30": "30 days",
-      "period90": "90 days",
-      "apply": "Apply filters",
-      "reset": "Reset"
+    "navigation": {
+        "platform": "Platform",
+        "menu": "Navigation menu",
+        "dashboard": "Dashboard",
+        "telegram": "Telegram",
+        "youtube": "YouTube",
+        "username": "Username",
+        "siteIntel": "Site Intel",
+        "fio": "FIO",
+        "emailIntel": "Email Intel",
+        "domainInfraIntel": "Domain & Infra Intel",
+        "newsMediaIntel": "News & Media Intel",
+        "companyIntel": "Company Intel",
+        "documentIntel": "Document Intel",
+        "shifr": "Cipher",
+        "repository": "Repository",
+        "documentation": "Documentation"
     },
     "common": {
-      "na": "n/a"
-    }
-  },
-  "navigation": {
-    "platform": "Platform",
-    "menu": "Navigation menu",
-    "dashboard": "Dashboard",
-    "telegram": "Telegram",
-    "youtube": "YouTube",
-    "username": "Username",
-    "siteIntel": "Site Intel",
-    "fio": "FIO",
-    "emailIntel": "Email Intel",
-    "domainInfraIntel": "Domain & Infra Intel",
-    "newsMediaIntel": "News & Media Intel",
-    "companyIntel": "Company Intel",
-    "documentIntel": "Document Intel",
-    "shifr": "Cipher",
-    "repository": "Repository",
-    "documentation": "Documentation"
-  },
-  "common": {
-    "language": "Language",
-    "toggleSidebar": "Toggle sidebar",
-    "sidebar": "Sidebar",
-    "mobileSidebarDescription": "Displays the mobile sidebar.",
-    "close": "Close",
-    "more": "More",
-    "ok": "OK",
-    "fail": "FAIL",
-    "saved": "Saved.",
-    "cancel": "Cancel",
-    "yes": "Yes",
-    "no": "No"
-  },
-  "userMenu": {
-    "settings": "Settings",
-    "logout": "Log out"
-  },
-  "settings": {
-    "title": "Settings",
-    "description": "Manage your profile and account settings",
-    "profile": "Profile",
-    "security": "Security",
-    "appearance": "Appearance",
-    "profilePage": {
-      "title": "Profile settings",
-      "heading": "Profile information",
-      "headingDescription": "Update your name",
-      "name": "Name",
-      "email": "Email address",
-      "namePlaceholder": "Full name",
-      "emailPlaceholder": "Email address",
-      "emailUnverified": "Your email address is unverified.",
-      "resendVerification": "Click here to resend the verification email.",
-      "verificationSent": "A new verification link has been sent to your email address.",
-      "save": "Save"
-    },
-    "securityPage": {
-      "title": "Security settings",
-      "updatePassword": "Update password",
-      "updatePasswordDescription": "Ensure your account is using a long, random password to stay secure",
-      "currentPassword": "Current password",
-      "newPassword": "New password",
-      "confirmPassword": "Confirm password",
-      "savePassword": "Save password",
-      "twoFactorTitle": "Two-factor authentication",
-      "twoFactorDescription": "Manage your two-factor authentication settings",
-      "twoFactorEnableHint": "When you enable two-factor authentication, you will be prompted for a secure pin during login. This pin can be retrieved from a TOTP-supported application on your phone.",
-      "twoFactorContinueSetup": "Continue setup",
-      "twoFactorEnable": "Enable 2FA",
-      "twoFactorEnabledHint": "You will be prompted for a secure, random pin during login, which you can retrieve from the TOTP-supported application on your phone.",
-      "twoFactorDisable": "Disable 2FA",
-      "twoFactorSetup": {
-        "enabledTitle": "Two-factor authentication enabled",
-        "enabledDescription": "Your account is protected with two-factor authentication.",
-        "verifyTitle": "Verify authentication code",
-        "verifyDescription": "Enter the 6-digit code from your authenticator app to finish setup.",
-        "enableTitle": "Enable two-factor authentication",
-        "enableDescription": "Scan the QR code with your authenticator app, then continue.",
+        "language": "Language",
+        "toggleSidebar": "Toggle sidebar",
+        "sidebar": "Sidebar",
+        "mobileSidebarDescription": "Displays the mobile sidebar.",
         "close": "Close",
-        "continue": "Continue",
-        "orManual": "or, enter the code manually",
-        "back": "Back",
-        "confirm": "Confirm"
-      },
-      "twoFactorRecovery": {
-        "title": "2FA recovery codes",
-        "description": "Recovery codes let you regain access if you lose your 2FA device. Store them in a secure password manager.",
-        "hide": "Hide recovery codes",
-        "view": "View recovery codes",
-        "regenerate": "Regenerate codes",
-        "footerPrefix": "Each recovery code can be used once to access your account and will be removed after use. If you need more, click ",
-        "footerSuffix": " above."
-      },
-      "twoFactorErrors": {
-        "fetchQrCode": "Failed to fetch QR code.",
-        "fetchSetupKey": "Failed to fetch a setup key.",
-        "fetchRecoveryCodes": "Failed to fetch recovery codes."
-      }
+        "more": "More",
+        "ok": "OK",
+        "fail": "FAIL",
+        "saved": "Saved.",
+        "cancel": "Cancel",
+        "yes": "Yes",
+        "no": "No"
     },
-    "appearancePage": {
-      "title": "Appearance settings",
-      "heading": "Appearance settings",
-      "headingDescription": "Update your account's appearance settings"
+    "userMenu": {
+        "settings": "Settings",
+        "logout": "Log out"
     },
-    "deleteAccount": {
-      "title": "Delete account",
-      "description": "Delete your account and all of its resources",
-      "warning": "Warning",
-      "warningDescription": "Please proceed with caution, this cannot be undone.",
-      "button": "Delete account",
-      "confirmTitle": "Are you sure you want to delete your account?",
-      "confirmDescription": "Once your account is deleted, all of its resources and data will also be permanently deleted. Please enter your password to confirm you would like to permanently delete your account.",
-      "password": "Password",
-      "confirmButton": "Delete account"
+    "settings": {
+        "title": "Settings",
+        "description": "Manage your profile and account settings",
+        "profile": "Profile",
+        "security": "Security",
+        "appearance": "Appearance",
+        "profilePage": {
+            "title": "Profile settings",
+            "heading": "Profile information",
+            "headingDescription": "Update your name",
+            "name": "Name",
+            "email": "Email address",
+            "namePlaceholder": "Full name",
+            "emailPlaceholder": "Email address",
+            "emailUnverified": "Your email address is unverified.",
+            "resendVerification": "Click here to resend the verification email.",
+            "verificationSent": "A new verification link has been sent to your email address.",
+            "save": "Save"
+        },
+        "securityPage": {
+            "title": "Security settings",
+            "updatePassword": "Update password",
+            "updatePasswordDescription": "Ensure your account is using a long, random password to stay secure",
+            "currentPassword": "Current password",
+            "newPassword": "New password",
+            "confirmPassword": "Confirm password",
+            "savePassword": "Save password",
+            "twoFactorTitle": "Two-factor authentication",
+            "twoFactorDescription": "Manage your two-factor authentication settings",
+            "twoFactorEnableHint": "When you enable two-factor authentication, you will be prompted for a secure pin during login. This pin can be retrieved from a TOTP-supported application on your phone.",
+            "twoFactorContinueSetup": "Continue setup",
+            "twoFactorEnable": "Enable 2FA",
+            "twoFactorEnabledHint": "You will be prompted for a secure, random pin during login, which you can retrieve from the TOTP-supported application on your phone.",
+            "twoFactorDisable": "Disable 2FA",
+            "twoFactorSetup": {
+                "enabledTitle": "Two-factor authentication enabled",
+                "enabledDescription": "Your account is protected with two-factor authentication.",
+                "verifyTitle": "Verify authentication code",
+                "verifyDescription": "Enter the 6-digit code from your authenticator app to finish setup.",
+                "enableTitle": "Enable two-factor authentication",
+                "enableDescription": "Scan the QR code with your authenticator app, then continue.",
+                "close": "Close",
+                "continue": "Continue",
+                "orManual": "or, enter the code manually",
+                "back": "Back",
+                "confirm": "Confirm"
+            },
+            "twoFactorRecovery": {
+                "title": "2FA recovery codes",
+                "description": "Recovery codes let you regain access if you lose your 2FA device. Store them in a secure password manager.",
+                "hide": "Hide recovery codes",
+                "view": "View recovery codes",
+                "regenerate": "Regenerate codes",
+                "footerPrefix": "Each recovery code can be used once to access your account and will be removed after use. If you need more, click ",
+                "footerSuffix": " above."
+            },
+            "twoFactorErrors": {
+                "fetchQrCode": "Failed to fetch QR code.",
+                "fetchSetupKey": "Failed to fetch a setup key.",
+                "fetchRecoveryCodes": "Failed to fetch recovery codes."
+            }
+        },
+        "appearancePage": {
+            "title": "Appearance settings",
+            "heading": "Appearance settings",
+            "headingDescription": "Update your account's appearance settings"
+        },
+        "deleteAccount": {
+            "title": "Delete account",
+            "description": "Delete your account and all of its resources",
+            "warning": "Warning",
+            "warningDescription": "Please proceed with caution, this cannot be undone.",
+            "button": "Delete account",
+            "confirmTitle": "Are you sure you want to delete your account?",
+            "confirmDescription": "Once your account is deleted, all of its resources and data will also be permanently deleted. Please enter your password to confirm you would like to permanently delete your account.",
+            "password": "Password",
+            "confirmButton": "Delete account"
+        }
+    },
+    "welcome": {
+        "headTitle": "Uraboros | OSINT Intelligence Platform",
+        "platformTitle": "Uraboros Intelligence Platform",
+        "dashboard": "Dashboard",
+        "signIn": "Sign in",
+        "register": "Register",
+        "pill": "OSINT ? Analytics ? Investigations",
+        "heroTitle": "Commercial-grade OSINT workspace for analysts and investigation teams",
+        "heroDescription": "Run search, verification, and analysis in one platform: move from first signal to report-ready findings without fragmented tooling.",
+        "openDashboard": "Open Workspace",
+        "getStarted": "Start Investigation",
+        "createAccount": "Create Workspace Account",
+        "features": {
+            "monitoringTitle": "Unified operational workflow",
+            "monitoringText": "Reduce analyst overhead with one interface for collection, validation, and intelligence pivots.",
+            "osintTitle": "Cross-source OSINT pivots",
+            "osintText": "Link entities, infrastructure, and public traces across threat, archive, and reputation sources.",
+            "dashboardsTitle": "Executive-ready output",
+            "dashboardsText": "Deliver structured insights with clear risk narratives and audit-friendly context."
+        }
+    },
+    "auth": {
+        "login": {
+            "title": "Sign in",
+            "description": "Use your account to access Telegram analytics dashboard",
+            "email": "Email",
+            "emailPlaceholder": "email@example.com",
+            "password": "Password",
+            "passwordPlaceholder": "Enter password",
+            "remember": "Remember me",
+            "forgotPassword": "Forgot password?",
+            "submit": "Sign in",
+            "noAccount": "No account yet?",
+            "createOne": "Create one"
+        },
+        "register": {
+            "title": "Create account",
+            "description": "Register to start monitoring and analytics workflows",
+            "name": "Name",
+            "namePlaceholder": "Full name",
+            "email": "Email",
+            "emailPlaceholder": "email@example.com",
+            "password": "Password",
+            "passwordPlaceholder": "Create password",
+            "confirmPassword": "Confirm password",
+            "submit": "Create account",
+            "hasAccount": "Already have an account?",
+            "signIn": "Sign in"
+        },
+        "forgotPassword": {
+            "title": "Password recovery",
+            "description": "Enter your email and we will send a reset link",
+            "email": "Email",
+            "emailPlaceholder": "email@example.com",
+            "submit": "Send reset link",
+            "backTo": "Or return to",
+            "signIn": "sign in"
+        },
+        "resetPassword": {
+            "title": "Reset password",
+            "description": "Please enter your new password below",
+            "email": "Email",
+            "password": "Password",
+            "passwordPlaceholder": "Password",
+            "confirmPassword": "Confirm password",
+            "confirmPasswordPlaceholder": "Confirm password",
+            "submit": "Reset password"
+        },
+        "confirmPassword": {
+            "title": "Confirm your password",
+            "description": "This is a secure area of the application. Please confirm your password before continuing.",
+            "password": "Password",
+            "submit": "Confirm password"
+        },
+        "verifyEmail": {
+            "title": "Verify email",
+            "description": "Please verify your email address by clicking on the link we just emailed to you.",
+            "statusMessage": "A new verification link has been sent to the email address you provided during registration.",
+            "submit": "Resend verification email",
+            "logout": "Log out"
+        },
+        "twoFactor": {
+            "title": "Two-factor authentication",
+            "orYouCan": "or you can",
+            "authCode": {
+                "title": "Authentication code",
+                "description": "Enter the authentication code provided by your authenticator application.",
+                "buttonText": "login using a recovery code",
+                "submit": "Continue"
+            },
+            "recoveryCode": {
+                "title": "Recovery code",
+                "description": "Please confirm access to your account by entering one of your emergency recovery codes.",
+                "buttonText": "login using an authentication code",
+                "submit": "Continue",
+                "placeholder": "Enter recovery code"
+            }
+        }
+    },
+    "shifr": {
+        "headTitle": "Shifr OSINT Toolkit",
+        "tabs": {
+            "hash": "Hash / HMAC",
+            "transform": "Encode / Decode",
+            "ioc": "IOC Extract",
+            "classic": "Classic ciphers",
+            "jwt": "JWT Inspector"
+        },
+        "descriptions": {
+            "hash": "Generate digest or HMAC to verify integrity and compare artifacts.",
+            "transform": "Convert artifacts between Base64, Hex and URL formats for analysis.",
+            "ioc": "Extract emails, domains, URLs, IPs and Telegram usernames from raw text.",
+            "classic": "Classical and configurable ciphers for quick OSINT experiments and artifact transformation.",
+            "jwt": "Decode JWT header/payload, check timing claims and optionally verify HS signature."
+        },
+        "input": {
+            "label": "Input",
+            "placeholder": "Paste text, token, URL or mixed artifact here"
+        },
+        "hash": {
+            "algorithm": "Algorithm",
+            "hmacKey": "HMAC key (optional)"
+        },
+        "transform": {
+            "operation": "Operation",
+            "base64Encode": "Base64 Encode",
+            "base64Decode": "Base64 Decode",
+            "hexEncode": "Hex Encode",
+            "hexDecode": "Hex Decode",
+            "urlEncode": "URL Encode",
+            "urlDecode": "URL Decode",
+            "base64UrlEncode": "Base64URL Encode",
+            "base64UrlDecode": "Base64URL Decode",
+            "htmlEncode": "HTML Encode",
+            "htmlDecode": "HTML Decode"
+        },
+        "actions": {
+            "run": "Run",
+            "running": "Running...",
+            "reset": "Reset result"
+        },
+        "result": {
+            "title": "Result",
+            "empty": "Enter text to start analysis.",
+            "readable": "Readable",
+            "json": "JSON",
+            "fields": {
+                "algorithm": "Algorithm",
+                "mode": "Mode",
+                "value": "Value",
+                "inputLength": "Input length",
+                "outputLength": "Output length",
+                "analysis": "Analysis",
+                "counts": "Counts",
+                "items": "Items",
+                "possibleAlgorithm": "Possible algorithm",
+                "isHex": "Hex format",
+                "length": "Length",
+                "emails": "Emails",
+                "urls": "URLs",
+                "domains": "Domains",
+                "ips": "IP addresses",
+                "telegramUsernames": "Telegram usernames",
+                "operation": "Operation",
+                "original": "Original text",
+                "result": "Result text",
+                "shift": "Shift",
+                "validFormat": "Valid format",
+                "header": "Header",
+                "payload": "Payload",
+                "timeChecks": "Time checks",
+                "signature": "Signature",
+                "present": "Present",
+                "verified": "Verified",
+                "verificationReason": "Verification note",
+                "issuedAt": "Issued at",
+                "notBefore": "Not before",
+                "expiresAt": "Expires at",
+                "isExpired": "Expired",
+                "isActive": "Active",
+                "now": "Current timestamp",
+                "error": "Error",
+                "key": "Key",
+                "rails": "Rails"
+            }
+        },
+        "help": {
+            "input": "Paste any artifact for quick OSINT transformations: hash, decode, and IOC extraction.",
+            "result": "Result is returned in structured JSON so it is easy to copy to reports or reuse in pivots."
+        },
+        "errors": {
+            "requestFailed": "Request failed."
+        },
+        "classic": {
+            "cipher": "Cipher",
+            "direction": "Direction",
+            "encrypt": "Encrypt",
+            "decrypt": "Decrypt",
+            "shift": "Shift (for Caesar)",
+            "caesar": "Caesar",
+            "atbash": "Atbash",
+            "rot13": "ROT13",
+            "rot47": "ROT47",
+            "transform": "Transform",
+            "rot5": "ROT5",
+            "vigenere": "Vigenere",
+            "railFence": "Rail Fence",
+            "key": "Key",
+            "rails": "Rails",
+            "xor": "XOR",
+            "affine": "Affine",
+            "xorKey": "XOR key",
+            "affineA": "Affine A",
+            "affineB": "Affine B",
+            "playfair": "Playfair",
+            "columnar": "Columnar",
+            "playfairKey": "Playfair key",
+            "columnKey": "Column key",
+            "morse": "Morse",
+            "morseSeparator": "Word separator"
+        },
+        "hints": {
+            "hash": {
+                "hashMode": "Hash mode: use when you need a digest/fingerprint of text for comparison.",
+                "hmacMode": "HMAC mode: use when you need a keyed signature check (integrity with secret key)."
+            },
+            "transform": {
+                "default": "Select an operation to convert between common formats.",
+                "base64Encode": "Useful for packing binary/text into portable ASCII.",
+                "base64Decode": "Use when artifact looks like Base64 text and you need the original content.",
+                "base64UrlEncode": "JWT-safe Base64 variant for URLs and tokens.",
+                "base64UrlDecode": "Decode JWT-safe Base64URL payloads.",
+                "hexEncode": "Convert text/binary to hexadecimal representation.",
+                "hexDecode": "Decode hexadecimal strings back to text/binary.",
+                "urlEncode": "Escape text for safe URL query/path usage.",
+                "urlDecode": "Decode percent-encoded URL fragments.",
+                "htmlEncode": "Escape HTML-sensitive characters to prevent markup interpretation.",
+                "htmlDecode": "Decode HTML entities back to readable characters."
+            },
+            "classic": {
+                "caesar": "Classical shift cipher. Best for simple obfuscation/CTF-style artifacts.",
+                "atbash": "Mirror substitution cipher. Same operation for encode/decode.",
+                "rot13": "Fixed shift for latin/cyrillic letters. Often used for light obfuscation.",
+                "rot47": "ASCII printable rotation. Useful for mixed punctuation payloads.",
+                "rot5": "Digit-only rotation by +5. Useful for numeric obfuscation.",
+                "vigenere": "Polyalphabetic cipher with keyword. Supports latin and cyrillic letters in key and text.",
+                "railFence": "Transposition cipher with zig-zag rails. Configure number of rails.",
+                "xor": "XOR cipher with key. Encrypt outputs Base64; decrypt expects Base64 input.",
+                "affine": "Affine substitution cipher for latin letters. A must be coprime with 26.",
+                "playfair": "Digraph substitution cipher. Works on latin letters; J is merged into I.",
+                "columnar": "Columnar transposition with a keyword that defines column order.",
+                "morse": "Morse encode/decode for latin, cyrillic, digits and common punctuation."
+            },
+            "ioc": {
+                "extract": "Extracts emails, domains, URLs, IPs and Telegram usernames using pattern matching. Review results manually for false positives."
+            },
+            "jwt": {
+                "inspect": "Parses token structure and claims. If secret is set and alg is HS256/384/512, signature verification is attempted."
+            }
+        },
+        "jwt": {
+            "token": "JWT token",
+            "tokenPlaceholder": "Paste JWT here: header.payload.signature",
+            "secret": "Secret (optional for HS verify)",
+            "secretPlaceholder": "Optional shared secret"
+        }
     }
-  },
-  "welcome": {
-    "headTitle": "Uraboros | OSINT Intelligence Platform",
-    "platformTitle": "Uraboros Intelligence Platform",
-    "dashboard": "Dashboard",
-    "signIn": "Sign in",
-    "register": "Register",
-    "pill": "OSINT ? Analytics ? Investigations",
-    "heroTitle": "Commercial-grade OSINT workspace for analysts and investigation teams",
-    "heroDescription": "Run search, verification, and analysis in one platform: move from first signal to report-ready findings without fragmented tooling.",
-    "openDashboard": "Open Workspace",
-    "getStarted": "Start Investigation",
-    "createAccount": "Create Workspace Account",
-    "features": {
-      "monitoringTitle": "Unified operational workflow",
-      "monitoringText": "Reduce analyst overhead with one interface for collection, validation, and intelligence pivots.",
-      "osintTitle": "Cross-source OSINT pivots",
-      "osintText": "Link entities, infrastructure, and public traces across threat, archive, and reputation sources.",
-      "dashboardsTitle": "Executive-ready output",
-      "dashboardsText": "Deliver structured insights with clear risk narratives and audit-friendly context."
-    }
-  },
-  "auth": {
-    "login": {
-      "title": "Sign in",
-      "description": "Use your account to access Telegram analytics dashboard",
-      "email": "Email",
-      "emailPlaceholder": "email@example.com",
-      "password": "Password",
-      "passwordPlaceholder": "Enter password",
-      "remember": "Remember me",
-      "forgotPassword": "Forgot password?",
-      "submit": "Sign in",
-      "noAccount": "No account yet?",
-      "createOne": "Create one"
-    },
-    "register": {
-      "title": "Create account",
-      "description": "Register to start monitoring and analytics workflows",
-      "name": "Name",
-      "namePlaceholder": "Full name",
-      "email": "Email",
-      "emailPlaceholder": "email@example.com",
-      "password": "Password",
-      "passwordPlaceholder": "Create password",
-      "confirmPassword": "Confirm password",
-      "submit": "Create account",
-      "hasAccount": "Already have an account?",
-      "signIn": "Sign in"
-    },
-    "forgotPassword": {
-      "title": "Password recovery",
-      "description": "Enter your email and we will send a reset link",
-      "email": "Email",
-      "emailPlaceholder": "email@example.com",
-      "submit": "Send reset link",
-      "backTo": "Or return to",
-      "signIn": "sign in"
-    },
-    "resetPassword": {
-      "title": "Reset password",
-      "description": "Please enter your new password below",
-      "email": "Email",
-      "password": "Password",
-      "passwordPlaceholder": "Password",
-      "confirmPassword": "Confirm password",
-      "confirmPasswordPlaceholder": "Confirm password",
-      "submit": "Reset password"
-    },
-    "confirmPassword": {
-      "title": "Confirm your password",
-      "description": "This is a secure area of the application. Please confirm your password before continuing.",
-      "password": "Password",
-      "submit": "Confirm password"
-    },
-    "verifyEmail": {
-      "title": "Verify email",
-      "description": "Please verify your email address by clicking on the link we just emailed to you.",
-      "statusMessage": "A new verification link has been sent to the email address you provided during registration.",
-      "submit": "Resend verification email",
-      "logout": "Log out"
-    },
-    "twoFactor": {
-      "title": "Two-factor authentication",
-      "orYouCan": "or you can",
-      "authCode": {
-        "title": "Authentication code",
-        "description": "Enter the authentication code provided by your authenticator application.",
-        "buttonText": "login using a recovery code",
-        "submit": "Continue"
-      },
-      "recoveryCode": {
-        "title": "Recovery code",
-        "description": "Please confirm access to your account by entering one of your emergency recovery codes.",
-        "buttonText": "login using an authentication code",
-        "submit": "Continue",
-        "placeholder": "Enter recovery code"
-      }
-    }
-  },
-  "shifr": {
-    "headTitle": "Shifr OSINT Toolkit",
-    "tabs": {
-      "hash": "Hash / HMAC",
-      "transform": "Encode / Decode",
-      "ioc": "IOC Extract",
-      "classic": "Classic ciphers",
-      "jwt": "JWT Inspector"
-    },
-    "descriptions": {
-      "hash": "Generate digest or HMAC to verify integrity and compare artifacts.",
-      "transform": "Convert artifacts between Base64, Hex and URL formats for analysis.",
-      "ioc": "Extract emails, domains, URLs, IPs and Telegram usernames from raw text.",
-      "classic": "Classical and configurable ciphers for quick OSINT experiments and artifact transformation.",
-      "jwt": "Decode JWT header/payload, check timing claims and optionally verify HS signature."
-    },
-    "input": {
-      "label": "Input",
-      "placeholder": "Paste text, token, URL or mixed artifact here"
-    },
-    "hash": {
-      "algorithm": "Algorithm",
-      "hmacKey": "HMAC key (optional)"
-    },
-    "transform": {
-      "operation": "Operation",
-      "base64Encode": "Base64 Encode",
-      "base64Decode": "Base64 Decode",
-      "hexEncode": "Hex Encode",
-      "hexDecode": "Hex Decode",
-      "urlEncode": "URL Encode",
-      "urlDecode": "URL Decode",
-      "base64UrlEncode": "Base64URL Encode",
-      "base64UrlDecode": "Base64URL Decode",
-      "htmlEncode": "HTML Encode",
-      "htmlDecode": "HTML Decode"
-    },
-    "actions": {
-      "run": "Run",
-      "running": "Running...",
-      "reset": "Reset result"
-    },
-    "result": {
-      "title": "Result",
-      "empty": "Enter text to start analysis.",
-      "readable": "Readable",
-      "json": "JSON",
-      "fields": {
-        "algorithm": "Algorithm",
-        "mode": "Mode",
-        "value": "Value",
-        "inputLength": "Input length",
-        "outputLength": "Output length",
-        "analysis": "Analysis",
-        "counts": "Counts",
-        "items": "Items",
-        "possibleAlgorithm": "Possible algorithm",
-        "isHex": "Hex format",
-        "length": "Length",
-        "emails": "Emails",
-        "urls": "URLs",
-        "domains": "Domains",
-        "ips": "IP addresses",
-        "telegramUsernames": "Telegram usernames",
-        "operation": "Operation",
-        "original": "Original text",
-        "result": "Result text",
-        "shift": "Shift",
-        "validFormat": "Valid format",
-        "header": "Header",
-        "payload": "Payload",
-        "timeChecks": "Time checks",
-        "signature": "Signature",
-        "present": "Present",
-        "verified": "Verified",
-        "verificationReason": "Verification note",
-        "issuedAt": "Issued at",
-        "notBefore": "Not before",
-        "expiresAt": "Expires at",
-        "isExpired": "Expired",
-        "isActive": "Active",
-        "now": "Current timestamp",
-        "error": "Error",
-        "key": "Key",
-        "rails": "Rails"
-      }
-    },
-    "help": {
-      "input": "Paste any artifact for quick OSINT transformations: hash, decode, and IOC extraction.",
-      "result": "Result is returned in structured JSON so it is easy to copy to reports or reuse in pivots."
-    },
-    "errors": {
-      "requestFailed": "Request failed."
-    },
-    "classic": {
-      "cipher": "Cipher",
-      "direction": "Direction",
-      "encrypt": "Encrypt",
-      "decrypt": "Decrypt",
-      "shift": "Shift (for Caesar)",
-      "caesar": "Caesar",
-      "atbash": "Atbash",
-      "rot13": "ROT13",
-      "rot47": "ROT47",
-      "transform": "Transform",
-      "rot5": "ROT5",
-      "vigenere": "Vigenere",
-      "railFence": "Rail Fence",
-      "key": "Key",
-      "rails": "Rails",
-      "xor": "XOR",
-      "affine": "Affine",
-      "xorKey": "XOR key",
-      "affineA": "Affine A",
-      "affineB": "Affine B",
-      "playfair": "Playfair",
-      "columnar": "Columnar",
-      "playfairKey": "Playfair key",
-      "columnKey": "Column key",
-      "morse": "Morse",
-      "morseSeparator": "Word separator"
-    },
-    "hints": {
-      "hash": {
-        "hashMode": "Hash mode: use when you need a digest/fingerprint of text for comparison.",
-        "hmacMode": "HMAC mode: use when you need a keyed signature check (integrity with secret key)."
-      },
-      "transform": {
-        "default": "Select an operation to convert between common formats.",
-        "base64Encode": "Useful for packing binary/text into portable ASCII.",
-        "base64Decode": "Use when artifact looks like Base64 text and you need the original content.",
-        "base64UrlEncode": "JWT-safe Base64 variant for URLs and tokens.",
-        "base64UrlDecode": "Decode JWT-safe Base64URL payloads.",
-        "hexEncode": "Convert text/binary to hexadecimal representation.",
-        "hexDecode": "Decode hexadecimal strings back to text/binary.",
-        "urlEncode": "Escape text for safe URL query/path usage.",
-        "urlDecode": "Decode percent-encoded URL fragments.",
-        "htmlEncode": "Escape HTML-sensitive characters to prevent markup interpretation.",
-        "htmlDecode": "Decode HTML entities back to readable characters."
-      },
-      "classic": {
-        "caesar": "Classical shift cipher. Best for simple obfuscation/CTF-style artifacts.",
-        "atbash": "Mirror substitution cipher. Same operation for encode/decode.",
-        "rot13": "Fixed shift for latin/cyrillic letters. Often used for light obfuscation.",
-        "rot47": "ASCII printable rotation. Useful for mixed punctuation payloads.",
-        "rot5": "Digit-only rotation by +5. Useful for numeric obfuscation.",
-        "vigenere": "Polyalphabetic cipher with keyword. Supports latin and cyrillic letters in key and text.",
-        "railFence": "Transposition cipher with zig-zag rails. Configure number of rails.",
-        "xor": "XOR cipher with key. Encrypt outputs Base64; decrypt expects Base64 input.",
-        "affine": "Affine substitution cipher for latin letters. A must be coprime with 26.",
-        "playfair": "Digraph substitution cipher. Works on latin letters; J is merged into I.",
-        "columnar": "Columnar transposition with a keyword that defines column order.",
-        "morse": "Morse encode/decode for latin, cyrillic, digits and common punctuation."
-      },
-      "ioc": {
-        "extract": "Extracts emails, domains, URLs, IPs and Telegram usernames using pattern matching. Review results manually for false positives."
-      },
-      "jwt": {
-        "inspect": "Parses token structure and claims. If secret is set and alg is HS256/384/512, signature verification is attempted."
-      }
-    },
-    "jwt": {
-      "token": "JWT token",
-      "tokenPlaceholder": "Paste JWT here: header.payload.signature",
-      "secret": "Secret (optional for HS verify)",
-      "secretPlaceholder": "Optional shared secret"
-    }
-  }
 }

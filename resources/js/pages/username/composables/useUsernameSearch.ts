@@ -25,11 +25,14 @@ export const useUsernameSearch = (t: TranslateFn) => {
 
     const canSearch = computed(() => form.username.trim().length >= 2);
 
-    const normalizedUsername = computed(() => form.username.trim().replace(/^@+/, ''));
+    const normalizedUsername = computed(() =>
+        form.username.trim().replace(/^@+/, '')
+    );
 
     const reportUrl = (download = false) => {
         const locale =
-            typeof document !== 'undefined' && document.documentElement.lang.toLowerCase().startsWith('ru')
+            typeof document !== 'undefined' &&
+            document.documentElement.lang.toLowerCase().startsWith('ru')
                 ? 'ru'
                 : 'en';
         const query = new URLSearchParams({
@@ -60,15 +63,19 @@ export const useUsernameSearch = (t: TranslateFn) => {
         localDiff.value = null;
 
         try {
-            const apiResult = await apiRequest<UsernameSearchResponse>('/username/search', {
-                method: 'GET',
-                query: {
-                    username: normalizedUsername.value,
-                },
-            });
+            const apiResult = await apiRequest<UsernameSearchResponse>(
+                '/username/search',
+                {
+                    method: 'GET',
+                    query: {
+                        username: normalizedUsername.value,
+                    },
+                }
+            );
 
             if (!apiResult.ok) {
-                error.value = apiResult.message ?? t('username.errors.searchFailed');
+                error.value =
+                    apiResult.message ?? t('username.errors.searchFailed');
 
                 return;
             }
@@ -78,9 +85,15 @@ export const useUsernameSearch = (t: TranslateFn) => {
             checkedAt.value = payload.checkedAt ?? null;
             summary.value = payload.summary ?? null;
             analytics.value = payload.analytics ?? null;
-            localDiff.value = computeLocalDiff(normalizedUsername.value, payload.items ?? []);
+            localDiff.value = computeLocalDiff(
+                normalizedUsername.value,
+                payload.items ?? []
+            );
         } catch (exception) {
-            error.value = exception instanceof Error ? exception.message : t('username.errors.searchFailed');
+            error.value =
+                exception instanceof Error
+                    ? exception.message
+                    : t('username.errors.searchFailed');
         } finally {
             loading.value = false;
         }
@@ -103,7 +116,10 @@ export const useUsernameSearch = (t: TranslateFn) => {
     };
 
     const canUseReportActions = computed(
-        () => !loading.value && normalizedUsername.value.length >= 2 && analytics.value !== null
+        () =>
+            !loading.value &&
+            normalizedUsername.value.length >= 2 &&
+            analytics.value !== null
     );
 
     return {
@@ -151,7 +167,9 @@ const computeLocalDiff = (
     }
 
     const raw = window.localStorage.getItem(key);
-    const previousMap = raw ? (JSON.parse(raw) as Record<string, { name: string; status: string }>) : null;
+    const previousMap = raw
+        ? (JSON.parse(raw) as Record<string, { name: string; status: string }>)
+        : null;
 
     const diff = {
         hasPrevious: Boolean(previousMap),

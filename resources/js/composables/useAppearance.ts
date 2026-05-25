@@ -17,13 +17,13 @@ export function updateTheme(value: Appearance): void {
 
     if (value === 'system') {
         const mediaQueryList = window.matchMedia(
-            '(prefers-color-scheme: dark)',
+            '(prefers-color-scheme: dark)'
         );
         const systemTheme = mediaQueryList.matches ? 'dark' : 'light';
 
         document.documentElement.classList.toggle(
             'dark',
-            systemTheme === 'dark',
+            systemTheme === 'dark'
         );
     } else {
         document.documentElement.classList.toggle('dark', value === 'dark');
@@ -88,7 +88,7 @@ const appearance = ref<Appearance>('system');
 export function useAppearance(): UseAppearanceReturn {
     onMounted(() => {
         const savedAppearance = localStorage.getItem(
-            'appearance',
+            'appearance'
         ) as Appearance | null;
 
         if (savedAppearance) {
