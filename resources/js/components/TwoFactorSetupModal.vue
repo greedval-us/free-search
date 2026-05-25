@@ -49,7 +49,9 @@ const modalConfig = computed<TwoFactorConfigContent>(() => {
     if (props.twoFactorEnabled) {
         return {
             title: t('settings.securityPage.twoFactorSetup.enabledTitle'),
-            description: t('settings.securityPage.twoFactorSetup.enabledDescription'),
+            description: t(
+                'settings.securityPage.twoFactorSetup.enabledDescription'
+            ),
             buttonText: t('settings.securityPage.twoFactorSetup.close'),
         };
     }
@@ -57,14 +59,18 @@ const modalConfig = computed<TwoFactorConfigContent>(() => {
     if (showVerificationStep.value) {
         return {
             title: t('settings.securityPage.twoFactorSetup.verifyTitle'),
-            description: t('settings.securityPage.twoFactorSetup.verifyDescription'),
+            description: t(
+                'settings.securityPage.twoFactorSetup.verifyDescription'
+            ),
             buttonText: t('settings.securityPage.twoFactorSetup.continue'),
         };
     }
 
     return {
         title: t('settings.securityPage.twoFactorSetup.enableTitle'),
-        description: t('settings.securityPage.twoFactorSetup.enableDescription'),
+        description: t(
+            'settings.securityPage.twoFactorSetup.enableDescription'
+        ),
         buttonText: t('settings.securityPage.twoFactorSetup.continue'),
     };
 });
@@ -105,7 +111,7 @@ watch(
         if (!qrCodeSvg.value) {
             await fetchSetupData();
         }
-    },
+    }
 );
 </script>
 
@@ -196,9 +202,11 @@ watch(
                             <div
                                 class="absolute inset-0 top-1/2 h-px w-full bg-border"
                             />
-                            <span class="relative bg-card px-2 py-1"
-                                >{{ t('settings.securityPage.twoFactorSetup.orManual') }}</span
-                            >
+                            <span class="relative bg-card px-2 py-1">{{
+                                t(
+                                    'settings.securityPage.twoFactorSetup.orManual'
+                                )
+                            }}</span>
                         </div>
 
                         <div
@@ -278,14 +286,22 @@ watch(
                                     @click="showVerificationStep = false"
                                     :disabled="processing"
                                 >
-                                    {{ t('settings.securityPage.twoFactorSetup.back') }}
+                                    {{
+                                        t(
+                                            'settings.securityPage.twoFactorSetup.back'
+                                        )
+                                    }}
                                 </Button>
                                 <Button
                                     type="submit"
                                     class="w-auto flex-1"
                                     :disabled="processing || code.length < 6"
                                 >
-                                    {{ t('settings.securityPage.twoFactorSetup.confirm') }}
+                                    {{
+                                        t(
+                                            'settings.securityPage.twoFactorSetup.confirm'
+                                        )
+                                    }}
                                 </Button>
                             </div>
                         </div>

@@ -1,7 +1,12 @@
 import { nextTick, reactive, ref } from 'vue';
 import TelegramSearchController from '@/actions/App/Http/Controllers/Telegram/TelegramSearchController';
 import { apiRequest } from '@/lib/api';
-import type { CommentsResponse, CommentState, SearchItem, SearchResponse } from '../types';
+import type {
+    CommentsResponse,
+    CommentState,
+    SearchItem,
+    SearchResponse,
+} from '../types';
 
 type TranslateFn = (key: string) => string;
 
@@ -41,15 +46,20 @@ export const useTelegramSearch = (t: TranslateFn) => {
             return;
         }
 
-        form.limit = Math.min(LIMIT_MAX, Math.max(LIMIT_MIN, Math.trunc(value)));
+        form.limit = Math.min(
+            LIMIT_MAX,
+            Math.max(LIMIT_MIN, Math.trunc(value))
+        );
     };
 
-    const normalizedChatUsername = () => form.chatUsername.trim().replace(/^@+/, '');
+    const normalizedChatUsername = () =>
+        form.chatUsername.trim().replace(/^@+/, '');
 
     const getMediaUrl = (postId: number) =>
         TelegramSearchController.media([normalizedChatUsername(), postId]).url;
 
-    const isMediaOpen = (postId: number) => Boolean(mediaOpenByPost.value[postId]);
+    const isMediaOpen = (postId: number) =>
+        Boolean(mediaOpenByPost.value[postId]);
 
     const toggleMedia = (postId: number) => {
         mediaOpenByPost.value[postId] = !isMediaOpen(postId);
@@ -88,7 +98,10 @@ export const useTelegramSearch = (t: TranslateFn) => {
                         fromUsername: form.fromUsername.trim(),
                         dateFrom: form.dateFrom,
                         dateTo: form.dateTo,
-                        limit: Math.min(LIMIT_MAX, Math.max(LIMIT_MIN, form.limit)),
+                        limit: Math.min(
+                            LIMIT_MAX,
+                            Math.max(LIMIT_MIN, form.limit)
+                        ),
                         offsetId: append ? (nextOffsetId.value ?? 0) : 0,
                     },
                 }).url,
@@ -96,10 +109,12 @@ export const useTelegramSearch = (t: TranslateFn) => {
             );
 
             if (!apiResult.ok) {
-                error.value = apiResult.message ?? t('telegram.errors.searchFailed');
+                error.value =
+                    apiResult.message ?? t('telegram.errors.searchFailed');
 
                 return;
             }
+
             const payload = apiResult.data;
 
             const incoming = payload.items ?? [];
@@ -120,7 +135,10 @@ export const useTelegramSearch = (t: TranslateFn) => {
             nextOffsetId.value = payload.pagination.nextOffsetId;
             hasMore.value = payload.pagination.hasMore;
         } catch (exception) {
-            error.value = exception instanceof Error ? exception.message : t('telegram.errors.unknownSearchError');
+            error.value =
+                exception instanceof Error
+                    ? exception.message
+                    : t('telegram.errors.unknownSearchError');
         } finally {
             loading.value = false;
             loadingMore.value = false;
@@ -144,16 +162,35 @@ export const useTelegramSearch = (t: TranslateFn) => {
         return commentsByPost.value[postId];
     };
 
-    const getSenderPopoverKey = (postId: number, kind: 'reaction' | 'gift', itemKey: string) =>
-        `${postId}:${kind}:${itemKey}`;
+    const getSenderPopoverKey = (
+        postId: number,
+        kind: 'reaction' | 'gift',
+        itemKey: string
+    ) => `${postId}:${kind}:${itemKey}`;
 
-    const isSenderPopoverOpen = (postId: number, kind: 'reaction' | 'gift', itemKey: string) =>
-        Boolean(senderPopoverOpenByKey.value[getSenderPopoverKey(postId, kind, itemKey)]);
+    const isSenderPopoverOpen = (
+        postId: number,
+        kind: 'reaction' | 'gift',
+        itemKey: string
+    ) =>
+        Boolean(
+            senderPopoverOpenByKey.value[
+                getSenderPopoverKey(postId, kind, itemKey)
+            ]
+        );
 
-    const toggleSenderPopover = (postId: number, kind: 'reaction' | 'gift', itemKey: string) => {
+    const toggleSenderPopover = (
+        postId: number,
+        kind: 'reaction' | 'gift',
+        itemKey: string
+    ) => {
         const targetKey = getSenderPopoverKey(postId, kind, itemKey);
 
-        senderPopoverOpenByKey.value = isSenderPopoverOpen(postId, kind, itemKey)
+        senderPopoverOpenByKey.value = isSenderPopoverOpen(
+            postId,
+            kind,
+            itemKey
+        )
             ? {}
             : { [targetKey]: true };
     };
@@ -164,7 +201,8 @@ export const useTelegramSearch = (t: TranslateFn) => {
     ) => {
         const container = messagesContainerRef.value;
         const selector = `[data-post-id="${postId}"]`;
-        const postElement = container?.querySelector<HTMLElement>(selector) ?? null;
+        const postElement =
+            container?.querySelector<HTMLElement>(selector) ?? null;
         const beforeTop = postElement?.getBoundingClientRect().top ?? null;
 
         await action();
@@ -201,8 +239,11 @@ export const useTelegramSearch = (t: TranslateFn) => {
                     }).url,
                     { method: 'GET' }
                 );
+
                 if (!apiResult.ok) {
-                    state.error = apiResult.message ?? t('telegram.errors.commentsFailed');
+                    state.error =
+                        apiResult.message ??
+                        t('telegram.errors.commentsFailed');
 
                     if (!append) {
                         state.items = [];
@@ -214,6 +255,7 @@ export const useTelegramSearch = (t: TranslateFn) => {
 
                     return;
                 }
+
                 const payload = apiResult.data;
 
                 const incoming = payload.items ?? [];
@@ -230,12 +272,17 @@ export const useTelegramSearch = (t: TranslateFn) => {
                     state.items = incoming;
                 }
 
-                state.total = Number(payload?.pagination?.total ?? state.items.length);
+                state.total = Number(
+                    payload?.pagination?.total ?? state.items.length
+                );
                 state.hasMore = Boolean(payload?.pagination?.hasMore);
                 state.nextOffsetId = payload?.pagination?.nextOffsetId ?? null;
                 state.loaded = true;
             } catch (exception) {
-                state.error = exception instanceof Error ? exception.message : t('telegram.errors.commentsFailed');
+                state.error =
+                    exception instanceof Error
+                        ? exception.message
+                        : t('telegram.errors.commentsFailed');
 
                 if (!append) {
                     state.items = [];
@@ -262,7 +309,10 @@ export const useTelegramSearch = (t: TranslateFn) => {
         }
     };
 
-    const commentsToggleLabel = (postId: number, repliesCount: number | null) => {
+    const commentsToggleLabel = (
+        postId: number,
+        repliesCount: number | null
+    ) => {
         if (getCommentState(postId).open) {
             return t('telegram.comments.toggleHide');
         }

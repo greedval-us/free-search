@@ -23,7 +23,6 @@ class RequestQueryPreviewResolver
         'channel_id',
         'full_name',
         'keyword',
-        'fio',
         'channel',
         'channelUsername',
         'chatUsername',

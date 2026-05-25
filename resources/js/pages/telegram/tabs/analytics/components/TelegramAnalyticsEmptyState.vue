@@ -18,7 +18,9 @@ const { t } = useI18n();
         class="flex min-h-[50vh] flex-col items-center justify-center rounded-xl border border-dashed border-sidebar-border/80 bg-card/70 p-8 text-center shadow-xl backdrop-blur"
     >
         <BarChart3 class="mb-4 h-14 w-14 text-muted-foreground" />
-        <h3 class="text-lg font-semibold">{{ t('telegram.analytics.empty.title') }}</h3>
+        <h3 class="text-lg font-semibold">
+            {{ t('telegram.analytics.empty.title') }}
+        </h3>
         <p class="mt-2 max-w-2xl text-sm text-muted-foreground">
             {{ t('telegram.analytics.empty.description') }}
         </p>
@@ -33,4 +35,3 @@ const { t } = useI18n();
         </button>
     </div>
 </template>
-

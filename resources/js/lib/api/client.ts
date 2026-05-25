@@ -1,14 +1,20 @@
 import { ApiError, normalizeErrorPayload, parseApiEnvelope } from './errors';
 import { buildQueryString } from './query';
-import { resolveDefaultRetryPolicy, resolveEndpointRetryPolicy } from './retry-policies';
 import { getBackoffDelay, sleep, toRetryPolicy } from './retry';
+import {
+    resolveDefaultRetryPolicy,
+    resolveEndpointRetryPolicy,
+} from './retry-policies';
 import type { ApiResult, RequestOptions } from './types';
 
 const DEFAULT_HEADERS: HeadersInit = {
     Accept: 'application/json',
 };
 
-const withJsonBody = (headers: HeadersInit | undefined, body: unknown): HeadersInit => {
+const withJsonBody = (
+    headers: HeadersInit | undefined,
+    body: unknown
+): HeadersInit => {
     if (body === undefined || body === null) {
         return headers ?? DEFAULT_HEADERS;
     }
@@ -20,19 +26,25 @@ const withJsonBody = (headers: HeadersInit | undefined, body: unknown): HeadersI
     };
 };
 
-const isRetriableStatus = (status: number, retriableStatuses: number[]) => retriableStatuses.includes(status);
+const isRetriableStatus = (status: number, retriableStatuses: number[]) =>
+    retriableStatuses.includes(status);
 
 export const apiRequest = async <TData = unknown>(
     url: string,
-    options: RequestOptions = {},
+    options: RequestOptions = {}
 ): Promise<ApiResult<TData>> => {
     const method = options.method ?? 'GET';
     const retryPolicy = toRetryPolicy(
-        options.retry ?? resolveEndpointRetryPolicy(url, method) ?? resolveDefaultRetryPolicy(),
+        options.retry ??
+            resolveEndpointRetryPolicy(url, method) ??
+            resolveDefaultRetryPolicy()
     );
     const requestUrl = `${url}${buildQueryString(options.query)}`;
     const headers = withJsonBody(options.headers, options.body);
-    const body = options.body !== undefined && options.body !== null ? JSON.stringify(options.body) : undefined;
+    const body =
+        options.body !== undefined && options.body !== null
+            ? JSON.stringify(options.body)
+            : undefined;
 
     let lastError: unknown = null;
 
@@ -52,7 +64,10 @@ export const apiRequest = async <TData = unknown>(
             if (response.ok && envelope?.ok) {
                 return {
                     ok: true,
-                    data: (envelope.data !== undefined ? envelope.data : (rawPayload as TData)),
+                    data:
+                        envelope.data !== undefined
+                            ? envelope.data
+                            : (rawPayload as TData),
                     message: envelope.message,
                     meta: envelope.meta,
                 };
@@ -66,8 +81,15 @@ export const apiRequest = async <TData = unknown>(
                 meta: envelope?.meta,
             });
 
-            if (attempt < retryPolicy.attempts && isRetriableStatus(response.status, retryPolicy.retryOnStatuses)) {
-                const delay = getBackoffDelay(attempt, retryPolicy.baseDelayMs, retryPolicy.maxDelayMs);
+            if (
+                attempt < retryPolicy.attempts &&
+                isRetriableStatus(response.status, retryPolicy.retryOnStatuses)
+            ) {
+                const delay = getBackoffDelay(
+                    attempt,
+                    retryPolicy.baseDelayMs,
+                    retryPolicy.maxDelayMs
+                );
                 await sleep(delay);
                 continue;
             }
@@ -76,8 +98,15 @@ export const apiRequest = async <TData = unknown>(
         } catch (error) {
             lastError = error;
 
-            if (attempt < retryPolicy.attempts && retryPolicy.retryOnNetworkError) {
-                const delay = getBackoffDelay(attempt, retryPolicy.baseDelayMs, retryPolicy.maxDelayMs);
+            if (
+                attempt < retryPolicy.attempts &&
+                retryPolicy.retryOnNetworkError
+            ) {
+                const delay = getBackoffDelay(
+                    attempt,
+                    retryPolicy.baseDelayMs,
+                    retryPolicy.maxDelayMs
+                );
                 await sleep(delay);
                 continue;
             }
@@ -85,14 +114,17 @@ export const apiRequest = async <TData = unknown>(
     }
 
     return normalizeErrorPayload({
-        message: lastError instanceof Error ? lastError.message : 'Network request failed.',
+        message:
+            lastError instanceof Error
+                ? lastError.message
+                : 'Network request failed.',
         cause: lastError,
     });
 };
 
 export const apiRequestOrThrow = async <TData = unknown>(
     url: string,
-    options: RequestOptions = {},
+    options: RequestOptions = {}
 ): Promise<TData> => {
     const result = await apiRequest<TData>(url, options);
 

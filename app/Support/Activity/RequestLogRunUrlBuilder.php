@@ -34,30 +34,6 @@ class RequestLogRunUrlBuilder
      */
     private function buildModuleUrl(string $path, array $payload): ?string
     {
-        if ($path === '/username/search') {
-            return $this->buildUrl('/username', [
-                'tab' => 'search',
-                'username' => $this->readString($payload, ['username']),
-                'autorun' => '1',
-            ]);
-        }
-
-        if ($path === '/username/report') {
-            return $this->buildUrl('/username', [
-                'tab' => 'analytics',
-                'username' => $this->readString($payload, ['username']),
-                'autorun' => '1',
-            ]);
-        }
-
-        if ($path === '/fio/lookup') {
-            return $this->buildUrl('/fio', [
-                'full_name' => $this->readString($payload, ['full_name', 'fullName']),
-                'qualifier' => $this->readString($payload, ['qualifier']),
-                'autorun' => '1',
-            ]);
-        }
-
         if ($path === '/site-intel/site-health') {
             return $this->buildUrl('/site-intel', [
                 'tab' => 'siteHealth',
@@ -78,38 +54,6 @@ class RequestLogRunUrlBuilder
             return $this->buildUrl('/site-intel', [
                 'tab' => 'analytics',
                 'target' => $this->readString($payload, ['target']),
-                'autorun' => '1',
-            ]);
-        }
-
-        if ($path === '/email-intel/lookup') {
-            return $this->buildUrl('/email-intel', [
-                'tab' => 'search',
-                'email' => $this->readString($payload, ['email']),
-                'autorun' => '1',
-            ]);
-        }
-
-        if ($path === '/email-intel/bulk') {
-            return $this->buildUrl('/email-intel', [
-                'tab' => 'bulk',
-                'emails' => $this->readString($payload, ['emails']),
-                'autorun' => '1',
-            ]);
-        }
-
-        if ($path === '/email-intel/domain-posture') {
-            return $this->buildUrl('/email-intel', [
-                'tab' => 'domain',
-                'domain' => $this->readString($payload, ['domain']),
-                'autorun' => '1',
-            ]);
-        }
-
-        if ($path === '/email-intel/report') {
-            return $this->buildUrl('/email-intel', [
-                'tab' => 'analytics',
-                'email' => $this->readString($payload, ['email']),
                 'autorun' => '1',
             ]);
         }
@@ -180,34 +124,6 @@ class RequestLogRunUrlBuilder
                 'order' => $this->readString($payload, ['order']),
                 'searchTerms' => $this->readString($payload, ['searchTerms']),
                 'limit' => $this->readIntString($payload, 'limit'),
-                'autorun' => '1',
-            ]);
-        }
-
-        if ($path === '/news-media-intel/lookup') {
-            return $this->buildUrl('/news-media-intel', [
-                'query' => $this->readString($payload, ['query']),
-                'autorun' => '1',
-            ]);
-        }
-
-        if ($path === '/domain-infra-intel/lookup') {
-            return $this->buildUrl('/domain-infra-intel', [
-                'domain' => $this->readString($payload, ['domain']),
-                'autorun' => '1',
-            ]);
-        }
-
-        if ($path === '/document-intel/lookup') {
-            return $this->buildUrl('/document-intel', [
-                'query' => $this->readString($payload, ['query']),
-                'autorun' => '1',
-            ]);
-        }
-
-        if ($path === '/company-intel/lookup') {
-            return $this->buildUrl('/company-intel', [
-                'query' => $this->readString($payload, ['query']),
                 'autorun' => '1',
             ]);
         }

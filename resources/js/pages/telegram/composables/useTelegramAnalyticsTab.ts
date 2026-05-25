@@ -28,10 +28,15 @@ export const useTelegramAnalyticsTab = () => {
         downloadReport,
     } = useTelegramAnalytics(t);
 
-    const priorityLabel = (priority: string) => t(`telegram.analytics.priority.${priority}`);
+    const priorityLabel = (priority: string) =>
+        t(`telegram.analytics.priority.${priority}`);
     const analyticsPanelCollapsed = ref(false);
-    const canLoadAnalytics = computed(() => form.chatUsername.trim().length > 0);
-    const canUseReportActions = computed(() => !loading.value && !comparisonLoading.value && !!payload.value);
+    const canLoadAnalytics = computed(
+        () => form.chatUsername.trim().length > 0
+    );
+    const canUseReportActions = computed(
+        () => !loading.value && !comparisonLoading.value && !!payload.value
+    );
     const groupInfo = computed(() => payload.value?.groupInfo ?? null);
     const groupTypeLabel = (type: string): string => {
         const map: Record<string, string> = {
@@ -65,10 +70,15 @@ export const useTelegramAnalyticsTab = () => {
     const formatNumber = (value: number | null | undefined) => {
         const numeric = Number(value);
 
-        return new Intl.NumberFormat().format(Number.isFinite(numeric) ? numeric : 0);
+        return new Intl.NumberFormat().format(
+            Number.isFinite(numeric) ? numeric : 0
+        );
     };
 
-    const formatDelta = (current: number, previous: number | null): string | null => {
+    const formatDelta = (
+        current: number,
+        previous: number | null
+    ): string | null => {
         if (previous === null || previous === undefined) {
             return null;
         }
@@ -116,12 +126,14 @@ export const useTelegramAnalyticsTab = () => {
         interactions: true,
     });
 
-    const trendSeries = computed<Array<{
-        key: TrendSeriesKey;
-        label: string;
-        color: string;
-        values: number[];
-    }>>(() => {
+    const trendSeries = computed<
+        Array<{
+            key: TrendSeriesKey;
+            label: string;
+            color: string;
+            values: number[];
+        }>
+    >(() => {
         const buckets = timeline.value;
 
         return [
@@ -147,15 +159,15 @@ export const useTelegramAnalyticsTab = () => {
     });
 
     const displayedTrendSeries = computed(() =>
-        trendSeries.value.filter((series) => visibleSeries.value[series.key]),
+        trendSeries.value.filter((series) => visibleSeries.value[series.key])
     );
 
     const chartMax = computed(() =>
         Math.max(
             trendMax.value,
             ...displayedTrendSeries.value.flatMap((series) => series.values),
-            1,
-        ),
+            1
+        )
     );
 
     const points = (values: number[]) => {
@@ -164,13 +176,17 @@ export const useTelegramAnalyticsTab = () => {
         }
 
         const max = chartMax.value;
-        const step = values.length > 1 ? chartInnerWidth / (values.length - 1) : 0;
+        const step =
+            values.length > 1 ? chartInnerWidth / (values.length - 1) : 0;
 
         return values
             .map((value, index) => {
                 const x = padding.left + step * index;
                 const normalized = max > 0 ? value / max : 0;
-                const y = padding.top + chartInnerHeight - normalized * chartInnerHeight;
+                const y =
+                    padding.top +
+                    chartInnerHeight -
+                    normalized * chartInnerHeight;
 
                 return `${index === 0 ? 'M' : 'L'} ${x.toFixed(2)} ${y.toFixed(2)}`;
             })
@@ -179,12 +195,14 @@ export const useTelegramAnalyticsTab = () => {
 
     const pointDots = (values: number[]) => {
         const max = chartMax.value;
-        const step = values.length > 1 ? chartInnerWidth / (values.length - 1) : 0;
+        const step =
+            values.length > 1 ? chartInnerWidth / (values.length - 1) : 0;
 
         return values.map((value, index) => {
             const x = padding.left + step * index;
             const normalized = max > 0 ? value / max : 0;
-            const y = padding.top + chartInnerHeight - normalized * chartInnerHeight;
+            const y =
+                padding.top + chartInnerHeight - normalized * chartInnerHeight;
 
             return {
                 cx: x,
@@ -206,7 +224,10 @@ export const useTelegramAnalyticsTab = () => {
             {
                 label: t('telegram.analytics.stats.messages'),
                 value: summary.messages,
-                delta: formatDelta(summary.messages, previous?.messages ?? null),
+                delta: formatDelta(
+                    summary.messages,
+                    previous?.messages ?? null
+                ),
             },
             {
                 label: t('telegram.analytics.stats.views'),
@@ -216,7 +237,10 @@ export const useTelegramAnalyticsTab = () => {
             {
                 label: t('telegram.analytics.stats.forwards'),
                 value: summary.forwards,
-                delta: formatDelta(summary.forwards, previous?.forwards ?? null),
+                delta: formatDelta(
+                    summary.forwards,
+                    previous?.forwards ?? null
+                ),
             },
             {
                 label: t('telegram.analytics.stats.replies'),
@@ -226,41 +250,71 @@ export const useTelegramAnalyticsTab = () => {
             {
                 label: t('telegram.analytics.stats.reactions'),
                 value: summary.reactions,
-                delta: formatDelta(summary.reactions, previous?.reactions ?? null),
+                delta: formatDelta(
+                    summary.reactions,
+                    previous?.reactions ?? null
+                ),
             },
             {
                 label: t('telegram.analytics.stats.mediaPosts'),
                 value: summary.mediaPosts,
-                delta: formatDelta(summary.mediaPosts, previous?.mediaPosts ?? null),
+                delta: formatDelta(
+                    summary.mediaPosts,
+                    previous?.mediaPosts ?? null
+                ),
             },
             {
                 label: t('telegram.analytics.stats.avgViewsPerPost'),
                 value: summary.avgViewsPerPost,
-                delta: formatDelta(summary.avgViewsPerPost, previous?.avgViewsPerPost ?? null),
+                delta: formatDelta(
+                    summary.avgViewsPerPost,
+                    previous?.avgViewsPerPost ?? null
+                ),
             },
             {
                 label: t('telegram.analytics.stats.avgInteractionsPerPost'),
                 value: summary.avgInteractionsPerPost,
-                delta: formatDelta(summary.avgInteractionsPerPost, previous?.avgInteractionsPerPost ?? null),
+                delta: formatDelta(
+                    summary.avgInteractionsPerPost,
+                    previous?.avgInteractionsPerPost ?? null
+                ),
             },
             {
                 label: t('telegram.analytics.stats.uniqueAuthors'),
                 value: summary.uniqueAuthors,
-                delta: formatDelta(summary.uniqueAuthors, previous?.uniqueAuthors ?? null),
+                delta: formatDelta(
+                    summary.uniqueAuthors,
+                    previous?.uniqueAuthors ?? null
+                ),
             },
         ];
     });
 
     const maxDistribution = computed(() => {
-        const mediaMax = Math.max(...(payload.value?.summary.topMedia ?? []).map((item) => item.count), 1);
-        const reactionMax = Math.max(...(payload.value?.summary.topReactions ?? []).map((item) => item.count), 1);
+        const mediaMax = Math.max(
+            ...(payload.value?.summary.topMedia ?? []).map(
+                (item) => item.count
+            ),
+            1
+        );
+        const reactionMax = Math.max(
+            ...(payload.value?.summary.topReactions ?? []).map(
+                (item) => item.count
+            ),
+            1
+        );
 
         return Math.max(mediaMax, reactionMax, 1);
     });
 
-    const funnelStages = computed(() => payload.value?.summary.funnel?.stages ?? []);
-    const funnelMax = computed(() => Math.max(1, ...funnelStages.value.map((stage) => stage.value)));
-    const funnelWidth = (value: number): string => `${Math.max(4, (value / funnelMax.value) * 100)}%`;
+    const funnelStages = computed(
+        () => payload.value?.summary.funnel?.stages ?? []
+    );
+    const funnelMax = computed(() =>
+        Math.max(1, ...funnelStages.value.map((stage) => stage.value))
+    );
+    const funnelWidth = (value: number): string =>
+        `${Math.max(4, (value / funnelMax.value) * 100)}%`;
     const funnelStageLabel = (key: string): string => {
         const map: Record<string, string> = {
             messages: t('telegram.analytics.charts.funnelMessages'),
@@ -306,8 +360,14 @@ export const useTelegramAnalyticsTab = () => {
         ];
     });
 
-    const fraudSignals = computed(() => payload.value?.summary.fraudSignals ?? null);
-    const fraudRiskLevelLabel = computed(() => t(`telegram.analytics.fraud.level.${fraudSignals.value?.riskLevel ?? 'low'}`));
+    const fraudSignals = computed(
+        () => payload.value?.summary.fraudSignals ?? null
+    );
+    const fraudRiskLevelLabel = computed(() =>
+        t(
+            `telegram.analytics.fraud.level.${fraudSignals.value?.riskLevel ?? 'low'}`
+        )
+    );
     const fraudRiskBadgeClass = computed(() => {
         const level = fraudSignals.value?.riskLevel;
 
@@ -321,17 +381,18 @@ export const useTelegramAnalyticsTab = () => {
 
         return 'border-emerald-500/40 bg-emerald-500/10 text-emerald-300';
     });
-    const fraudTriggerLabel = (key: string): string => t(`telegram.analytics.fraud.trigger.${key}`);
-    const fraudReasonLabel = (key: string): string => t(`telegram.analytics.fraud.reason.${key}`);
+    const fraudTriggerLabel = (key: string): string =>
+        t(`telegram.analytics.fraud.trigger.${key}`);
+    const fraudReasonLabel = (key: string): string =>
+        t(`telegram.analytics.fraud.reason.${key}`);
 
-    const opinionLeaders = computed(() => payload.value?.summary.opinionLeaders ?? []);
-    const opinionLeadersDaily = computed(() => payload.value?.summary.opinionLeadersDaily ?? []);
+    const opinionLeaders = computed(
+        () => payload.value?.summary.opinionLeaders ?? []
+    );
+    const opinionLeadersDaily = computed(
+        () => payload.value?.summary.opinionLeadersDaily ?? []
+    );
     const hasOpinionLeaders = computed(() => opinionLeaders.value.length > 1);
-    const leaderMaxScore = computed(() => Math.max(1, ...opinionLeaders.value.map((item) => item.score)));
-    const leaderMaxInteractions = computed(() => Math.max(1, ...opinionLeaders.value.map((item) => item.interactions)));
-    const leaderScoreWidth = (score: number): string => `${Math.max(4, (score / leaderMaxScore.value) * 100)}%`;
-    const leaderInteractionsWidth = (interactions: number): string =>
-        `${Math.max(4, (interactions / leaderMaxInteractions.value) * 100)}%`;
     const leaderChartWidth = 920;
     const leaderChartHeight = 280;
     const leaderChartPadding = {
@@ -340,10 +401,21 @@ export const useTelegramAnalyticsTab = () => {
         bottom: 58,
         left: 20,
     };
-    const leaderChartInnerWidth = leaderChartWidth - leaderChartPadding.left - leaderChartPadding.right;
-    const leaderChartInnerHeight = leaderChartHeight - leaderChartPadding.top - leaderChartPadding.bottom;
+    const leaderChartInnerWidth =
+        leaderChartWidth - leaderChartPadding.left - leaderChartPadding.right;
+    const leaderChartInnerHeight =
+        leaderChartHeight - leaderChartPadding.top - leaderChartPadding.bottom;
     const leaderHoveredIndex = ref<number | null>(null);
-    const leaderColorPalette = ['#38bdf8', '#22c55e', '#f97316', '#eab308', '#ec4899', '#a78bfa', '#14b8a6', '#ef4444'];
+    const leaderColorPalette = [
+        '#38bdf8',
+        '#22c55e',
+        '#f97316',
+        '#eab308',
+        '#ec4899',
+        '#a78bfa',
+        '#14b8a6',
+        '#ef4444',
+    ];
     const visibleLeaderSeries = ref<Record<string, boolean>>({});
 
     const leaderX = (index: number): number => {
@@ -383,10 +455,12 @@ export const useTelegramAnalyticsTab = () => {
         return groups;
     });
 
-    const leaderDayAxis = computed(() => opinionLeadersDailyByDay.value.map((group) => ({
-        dayKey: group.dayKey,
-        dayLabel: group.dayLabel,
-    })));
+    const leaderDayAxis = computed(() =>
+        opinionLeadersDailyByDay.value.map((group) => ({
+            dayKey: group.dayKey,
+            dayLabel: group.dayLabel,
+        }))
+    );
 
     const leaderSeries = computed(() =>
         opinionLeaders.value.map((leader, index) => {
@@ -400,22 +474,33 @@ export const useTelegramAnalyticsTab = () => {
                 valuesByDay.set(row.dayKey, Number(row.score) || 0);
             }
 
-            const label = (leader.authorLabel || `ID ${leader.authorId ?? '-'}`).trim();
+            const label = (
+                leader.authorLabel || `ID ${leader.authorId ?? '-'}`
+            ).trim();
 
             return {
                 key: leader.authorKey,
                 label,
                 color: leaderColorPalette[index % leaderColorPalette.length],
-                values: leaderDayAxis.value.map((day) => valuesByDay.get(day.dayKey) ?? 0),
+                values: leaderDayAxis.value.map(
+                    (day) => valuesByDay.get(day.dayKey) ?? 0
+                ),
             };
-        }),
+        })
     );
 
     const displayedLeaderSeries = computed(() =>
-        leaderSeries.value.filter((series) => visibleLeaderSeries.value[series.key] !== false),
+        leaderSeries.value.filter(
+            (series) => visibleLeaderSeries.value[series.key] !== false
+        )
     );
 
-    const leaderChartMax = computed(() => Math.max(1, ...displayedLeaderSeries.value.flatMap((series) => series.values)));
+    const leaderChartMax = computed(() =>
+        Math.max(
+            1,
+            ...displayedLeaderSeries.value.flatMap((series) => series.values)
+        )
+    );
     const leaderHoverEntries = computed(() => {
         if (leaderHoveredIndex.value === null) {
             return [];
@@ -431,7 +516,9 @@ export const useTelegramAnalyticsTab = () => {
             .sort((left, right) => right.value - left.value);
     });
     const leaderHoverCardWidth = 250;
-    const leaderHoverCardHeight = computed(() => 36 + leaderHoverEntries.value.length * 16);
+    const leaderHoverCardHeight = computed(
+        () => 36 + leaderHoverEntries.value.length * 16
+    );
     const leaderHoverCardX = computed(() => {
         if (leaderHoveredIndex.value === null) {
             return leaderChartPadding.left;
@@ -439,7 +526,15 @@ export const useTelegramAnalyticsTab = () => {
 
         const x = leaderX(leaderHoveredIndex.value) - leaderHoverCardWidth / 2;
 
-        return Math.max(leaderChartPadding.left, Math.min(x, leaderChartWidth - leaderChartPadding.right - leaderHoverCardWidth));
+        return Math.max(
+            leaderChartPadding.left,
+            Math.min(
+                x,
+                leaderChartWidth -
+                    leaderChartPadding.right -
+                    leaderHoverCardWidth
+            )
+        );
     });
     const leaderHoverDayLabel = computed(() => {
         if (leaderHoveredIndex.value === null) {
@@ -449,7 +544,9 @@ export const useTelegramAnalyticsTab = () => {
         return leaderDayAxis.value[leaderHoveredIndex.value]?.dayLabel ?? '';
     });
     const leaderHoverX = computed(() =>
-        leaderHoveredIndex.value === null ? leaderChartPadding.left : leaderX(leaderHoveredIndex.value),
+        leaderHoveredIndex.value === null
+            ? leaderChartPadding.left
+            : leaderX(leaderHoveredIndex.value)
     );
 
     const leaderPoints = (values: number[]): string => {
@@ -460,8 +557,12 @@ export const useTelegramAnalyticsTab = () => {
         return values
             .map((value, index) => {
                 const x = leaderX(index);
-                const normalized = leaderChartMax.value > 0 ? value / leaderChartMax.value : 0;
-                const y = leaderChartPadding.top + leaderChartInnerHeight - normalized * leaderChartInnerHeight;
+                const normalized =
+                    leaderChartMax.value > 0 ? value / leaderChartMax.value : 0;
+                const y =
+                    leaderChartPadding.top +
+                    leaderChartInnerHeight -
+                    normalized * leaderChartInnerHeight;
 
                 return `${index === 0 ? 'M' : 'L'} ${x.toFixed(2)} ${y.toFixed(2)}`;
             })
@@ -471,8 +572,12 @@ export const useTelegramAnalyticsTab = () => {
     const leaderDots = (values: number[]) =>
         values.map((value, index) => {
             const x = leaderX(index);
-            const normalized = leaderChartMax.value > 0 ? value / leaderChartMax.value : 0;
-            const y = leaderChartPadding.top + leaderChartInnerHeight - normalized * leaderChartInnerHeight;
+            const normalized =
+                leaderChartMax.value > 0 ? value / leaderChartMax.value : 0;
+            const y =
+                leaderChartPadding.top +
+                leaderChartInnerHeight -
+                normalized * leaderChartInnerHeight;
 
             return { x, y, value };
         });
@@ -484,7 +589,9 @@ export const useTelegramAnalyticsTab = () => {
             return;
         }
 
-        const activeCount = leaderSeries.value.filter((series) => visibleLeaderSeries.value[series.key] !== false).length;
+        const activeCount = leaderSeries.value.filter(
+            (series) => visibleLeaderSeries.value[series.key] !== false
+        ).length;
 
         if (activeCount <= 1) {
             return;
@@ -551,7 +658,10 @@ export const useTelegramAnalyticsTab = () => {
 
         const x = xForIndex(hoveredIndex.value) - hoverCardWidth / 2;
 
-        return Math.max(padding.left, Math.min(x, chartWidth - padding.right - hoverCardWidth));
+        return Math.max(
+            padding.left,
+            Math.min(x, chartWidth - padding.right - hoverCardWidth)
+        );
     });
 
     const hoverCardY = padding.top + 10;
@@ -573,7 +683,9 @@ export const useTelegramAnalyticsTab = () => {
             return;
         }
 
-        const activeCount = Object.values(visibleSeries.value).filter(Boolean).length;
+        const activeCount = Object.values(visibleSeries.value).filter(
+            Boolean
+        ).length;
 
         if (activeCount <= 1) {
             return;
@@ -638,12 +750,7 @@ export const useTelegramAnalyticsTab = () => {
         fraudTriggerLabel,
         fraudReasonLabel,
         opinionLeaders,
-        opinionLeadersDaily,
         hasOpinionLeaders,
-        leaderMaxScore,
-        leaderMaxInteractions,
-        leaderScoreWidth,
-        leaderInteractionsWidth,
         leaderChartWidth,
         leaderChartHeight,
         leaderChartPadding,
@@ -653,7 +760,6 @@ export const useTelegramAnalyticsTab = () => {
         leaderColorPalette,
         visibleLeaderSeries,
         leaderX,
-        opinionLeadersDailyByDay,
         leaderDayAxis,
         leaderSeries,
         displayedLeaderSeries,

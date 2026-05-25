@@ -4,7 +4,7 @@ Free Search is a modular OSINT platform built with Laravel + Inertia + Vue, with
 
 ## What This Project Is
 
-The platform collects and structures open-source signals from Telegram, web/news, email/domain, username footprints, and related OSINT directions.  
+The platform collects and structures open-source signals from Telegram, web/news, site intelligence, and related OSINT directions.  
 The main goal is to deliver useful analytics quickly while keeping architecture extensible and maintainable.
 
 ## Tech Stack
@@ -18,15 +18,10 @@ The main goal is to deliver useful analytics quickly while keeping architecture 
 ## Core Modules
 
 - Telegram OSINT (search, parser, analytics)
-- Username intelligence
 - Site intelligence (`site-health`, `seo-audit`, `domain-lite`)
-- Company intelligence
-- Document intelligence
 - Email intelligence
-- Domain infrastructure intelligence
 - News/media intelligence
 - YouTube search/parser/analytics
-- FIO
 - Shifr toolkit
 
 ## Architecture Principles

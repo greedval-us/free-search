@@ -8,13 +8,7 @@ class DashboardModuleRegistry
      * @var array<string, string>
      */
     private const MODULE_URLS = [
-        'username' => '/username',
-        'fio' => '/fio',
         'site-intel' => '/site-intel',
-        'company-intel' => '/company-intel',
-        'document-intel' => '/document-intel',
-        'email-intel' => '/email-intel',
-        'domain-infra-intel' => '/domain-infra-intel',
         'news-media-intel' => '/news-media-intel',
         'telegram' => '/telegram',
         'shifr' => '/shifr',

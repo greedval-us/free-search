@@ -27,22 +27,30 @@ export const useDomainLite = (t: TranslateFn) => {
         result.value = null;
 
         try {
-            const apiResult = await apiRequest<DomainLiteResult>('/site-intel/domain-lite', {
-                method: 'GET',
-                query: {
-                    domain: form.domain.trim(),
-                },
-            });
+            const apiResult = await apiRequest<DomainLiteResult>(
+                '/site-intel/domain-lite',
+                {
+                    method: 'GET',
+                    query: {
+                        domain: form.domain.trim(),
+                    },
+                }
+            );
 
             if (!apiResult.ok) {
-                error.value = apiResult.message ?? t('siteIntel.domainLite.errors.lookupFailed');
+                error.value =
+                    apiResult.message ??
+                    t('siteIntel.domainLite.errors.lookupFailed');
 
                 return;
             }
 
             result.value = apiResult.data;
         } catch (exception) {
-            error.value = exception instanceof Error ? exception.message : t('siteIntel.domainLite.errors.lookupFailed');
+            error.value =
+                exception instanceof Error
+                    ? exception.message
+                    : t('siteIntel.domainLite.errors.lookupFailed');
         } finally {
             loading.value = false;
         }

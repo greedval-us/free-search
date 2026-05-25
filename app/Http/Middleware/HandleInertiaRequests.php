@@ -43,7 +43,6 @@ class HandleInertiaRequests extends Middleware
                     'id',
                     'name',
                     'email',
-                    'username',
                     'email_verified_at',
                     'account_type',
                     'premium_until',

@@ -1,58 +1,26 @@
 <script setup lang="ts">
-import { Head } from '@inertiajs/vue3'
-import { computed, onMounted, ref } from 'vue'
-import { getRepeatQueryParams, readRepeatQueryParam } from '@/composables/useRepeatQuery'
-import { useI18n } from '@/composables/useI18n'
-import { YOUTUBE_TABS } from './youtube/tabs'
-import type { YouTubeTabValue } from './youtube/types'
+import { Head } from '@inertiajs/vue3';
+import { computed } from 'vue';
+import ModuleTabsLayout from '@/components/ui/ModuleTabsLayout.vue';
+import { useI18n } from '@/composables/useI18n';
+import { useRepeatTab } from '@/composables/useRepeatTab';
+import { YOUTUBE_TABS } from './youtube/tabs';
 
 defineOptions({
-  layout: {
-    breadcrumbs: [{ title: 'YouTube', href: '/youtube' }],
-  },
-})
+    layout: {
+        breadcrumbs: [{ title: 'YouTube', href: '/youtube' }],
+    },
+});
 
-const { t } = useI18n()
-const activeTab = ref<YouTubeTabValue>('search')
-const activeTabDefinition = computed(() => YOUTUBE_TABS.find((tab) => tab.key === activeTab.value) ?? YOUTUBE_TABS[0])
-
-onMounted(() => {
-  const params = getRepeatQueryParams()
-
-  if (!params) {
-    return
-  }
-
-  const tab = readRepeatQueryParam(params, ['tab'])
-
-  if (tab === 'search' || tab === 'analytics' || tab === 'parser') {
-    activeTab.value = tab
-  }
-})
+const { t } = useI18n();
+const { activeTab, activeTabDefinition } = useRepeatTab(YOUTUBE_TABS, 'search');
+const pageTitle = computed(() => t('youtube.headTitle'));
 </script>
 
 <template>
-  <Head :title="t('youtube.headTitle')" />
+    <Head :title="pageTitle" />
 
-  <div class="flex h-full min-h-0 flex-1 flex-col gap-4 overflow-hidden rounded-xl p-4">
-    <div class="flex items-center justify-center gap-1 rounded-lg bg-slate-800/80 p-1">
-      <button
-        v-for="tab in YOUTUBE_TABS"
-        :key="tab.key"
-        type="button"
-        @click="activeTab = tab.key"
-        :class="[
-          'flex items-center rounded-md px-3 py-1.5 text-xs font-medium transition-all',
-          activeTab === tab.key
-            ? 'bg-slate-700/80 text-cyan-300 shadow-sm'
-            : 'text-slate-400 hover:bg-slate-700/50 hover:text-slate-200',
-        ]"
-      >
-        <component :is="tab.icon" class="mr-1.5 h-3.5 w-3.5" />
-        {{ t(tab.labelKey) }}
-      </button>
-    </div>
-
-    <component :is="activeTabDefinition.component" />
-  </div>
+    <ModuleTabsLayout v-model:active-tab="activeTab" :tabs="YOUTUBE_TABS">
+        <component :is="activeTabDefinition.component" />
+    </ModuleTabsLayout>
 </template>

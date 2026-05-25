@@ -30,22 +30,30 @@ export const useSiteIntelAnalytics = (t: TranslateFn) => {
         result.value = null;
 
         try {
-            const apiResult = await apiRequest<SiteIntelAnalyticsResult>('/site-intel/analytics', {
-                method: 'GET',
-                query: {
-                    target: form.target.trim(),
-                },
-            });
+            const apiResult = await apiRequest<SiteIntelAnalyticsResult>(
+                '/site-intel/analytics',
+                {
+                    method: 'GET',
+                    query: {
+                        target: form.target.trim(),
+                    },
+                }
+            );
 
             if (!apiResult.ok) {
-                error.value = apiResult.message ?? t('siteIntel.analytics.errors.analyzeFailed');
+                error.value =
+                    apiResult.message ??
+                    t('siteIntel.analytics.errors.analyzeFailed');
 
                 return;
             }
 
             result.value = apiResult.data;
         } catch (exception) {
-            error.value = exception instanceof Error ? exception.message : t('siteIntel.analytics.errors.analyzeFailed');
+            error.value =
+                exception instanceof Error
+                    ? exception.message
+                    : t('siteIntel.analytics.errors.analyzeFailed');
         } finally {
             loading.value = false;
         }
@@ -53,7 +61,8 @@ export const useSiteIntelAnalytics = (t: TranslateFn) => {
 
     const reportUrl = (download = false) => {
         const locale =
-            typeof document !== 'undefined' && document.documentElement.lang.toLowerCase().startsWith('ru')
+            typeof document !== 'undefined' &&
+            document.documentElement.lang.toLowerCase().startsWith('ru')
                 ? 'ru'
                 : 'en';
         const target = result.value?.target.url || form.target.trim();

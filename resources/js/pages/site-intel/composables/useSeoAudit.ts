@@ -16,7 +16,9 @@ export const useSeoAudit = (t: TranslateFn) => {
     const result = ref<SiteIntelSeoAuditResult | null>(null);
 
     const canAnalyze = computed(() => form.target.trim().length >= 3);
-    const canUseReportActions = computed(() => !loading.value && result.value !== null);
+    const canUseReportActions = computed(
+        () => !loading.value && result.value !== null
+    );
 
     const analyze = async () => {
         if (!canAnalyze.value) {
@@ -30,24 +32,32 @@ export const useSeoAudit = (t: TranslateFn) => {
         result.value = null;
 
         try {
-            const apiResult = await apiRequest<SiteIntelSeoAuditResult>('/site-intel/seo-audit', {
-                method: 'GET',
-                query: {
-                    target: form.target.trim(),
-                    crawl_limit: String(form.crawlLimit),
-                    platform_type: form.platformType,
-                },
-            });
+            const apiResult = await apiRequest<SiteIntelSeoAuditResult>(
+                '/site-intel/seo-audit',
+                {
+                    method: 'GET',
+                    query: {
+                        target: form.target.trim(),
+                        crawl_limit: String(form.crawlLimit),
+                        platform_type: form.platformType,
+                    },
+                }
+            );
 
             if (!apiResult.ok) {
-                error.value = apiResult.message ?? t('siteIntel.seoAudit.errors.analyzeFailed');
+                error.value =
+                    apiResult.message ??
+                    t('siteIntel.seoAudit.errors.analyzeFailed');
 
                 return;
             }
 
             result.value = apiResult.data;
         } catch (exception) {
-            error.value = exception instanceof Error ? exception.message : t('siteIntel.seoAudit.errors.analyzeFailed');
+            error.value =
+                exception instanceof Error
+                    ? exception.message
+                    : t('siteIntel.seoAudit.errors.analyzeFailed');
         } finally {
             loading.value = false;
         }
@@ -72,7 +82,8 @@ const reportUrl = (
     download = false
 ) => {
     const locale =
-        typeof document !== 'undefined' && document.documentElement.lang.toLowerCase().startsWith('ru')
+        typeof document !== 'undefined' &&
+        document.documentElement.lang.toLowerCase().startsWith('ru')
             ? 'ru'
             : 'en';
     const target = result?.target.finalUrl || form.target.trim();
@@ -90,15 +101,25 @@ const reportUrl = (
     return `/site-intel/seo-report?${query.toString()}`;
 };
 
-const openReport = (form: { target: string; crawlLimit: number; platformType: string }, result: SiteIntelSeoAuditResult | null) => {
+const openReport = (
+    form: { target: string; crawlLimit: number; platformType: string },
+    result: SiteIntelSeoAuditResult | null
+) => {
     if (typeof window === 'undefined') {
         return;
     }
 
-    window.open(reportUrl(form, result, false), '_blank', 'noopener,noreferrer');
+    window.open(
+        reportUrl(form, result, false),
+        '_blank',
+        'noopener,noreferrer'
+    );
 };
 
-const downloadReport = (form: { target: string; crawlLimit: number; platformType: string }, result: SiteIntelSeoAuditResult | null) => {
+const downloadReport = (
+    form: { target: string; crawlLimit: number; platformType: string },
+    result: SiteIntelSeoAuditResult | null
+) => {
     if (typeof window === 'undefined') {
         return;
     }

@@ -37,7 +37,9 @@ defineProps<{
     <div class="space-y-6">
         <Form v-bind="email.form()" v-slot="{ errors, processing }">
             <div class="grid gap-2">
-                <Label for="email" class="text-slate-200">{{ t('auth.forgotPassword.email') }}</Label>
+                <Label for="email" class="text-slate-200">{{
+                    t('auth.forgotPassword.email')
+                }}</Label>
                 <Input
                     id="email"
                     type="email"
@@ -64,7 +66,11 @@ defineProps<{
 
         <div class="space-x-1 text-center text-sm text-slate-300">
             <span>{{ t('auth.forgotPassword.backTo') }}</span>
-            <TextLink :href="login()" class="text-cyan-300 hover:text-cyan-200">{{ t('auth.forgotPassword.signIn') }}</TextLink>
+            <TextLink
+                :href="login()"
+                class="text-cyan-300 hover:text-cyan-200"
+                >{{ t('auth.forgotPassword.signIn') }}</TextLink
+            >
         </div>
     </div>
 </template>

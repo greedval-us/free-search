@@ -44,7 +44,9 @@ onMounted(async () => {
     <Card class="w-full">
         <CardHeader>
             <CardTitle class="flex gap-3">
-                <LockKeyhole class="size-4" />{{ t('settings.securityPage.twoFactorRecovery.title') }}
+                <LockKeyhole class="size-4" />{{
+                    t('settings.securityPage.twoFactorRecovery.title')
+                }}
             </CardTitle>
             <CardDescription>
                 {{ t('settings.securityPage.twoFactorRecovery.description') }}
@@ -80,7 +82,11 @@ onMounted(async () => {
                         :disabled="processing"
                     >
                         <RefreshCw />
-                        {{ t('settings.securityPage.twoFactorRecovery.regenerate') }}
+                        {{
+                            t(
+                                'settings.securityPage.twoFactorRecovery.regenerate'
+                            )
+                        }}
                     </Button>
                 </Form>
             </div>
@@ -116,11 +122,23 @@ onMounted(async () => {
                         </div>
                     </div>
                     <p class="text-xs text-muted-foreground select-none">
-                        {{ t('settings.securityPage.twoFactorRecovery.footerPrefix') }}
+                        {{
+                            t(
+                                'settings.securityPage.twoFactorRecovery.footerPrefix'
+                            )
+                        }}
                         <span class="font-bold">
-                            {{ t('settings.securityPage.twoFactorRecovery.regenerate') }}
+                            {{
+                                t(
+                                    'settings.securityPage.twoFactorRecovery.regenerate'
+                                )
+                            }}
                         </span>
-                        {{ t('settings.securityPage.twoFactorRecovery.footerSuffix') }}
+                        {{
+                            t(
+                                'settings.securityPage.twoFactorRecovery.footerSuffix'
+                            )
+                        }}
                     </p>
                 </div>
             </div>

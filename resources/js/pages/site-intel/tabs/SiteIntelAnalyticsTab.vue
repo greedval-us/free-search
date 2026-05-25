@@ -1,4 +1,4 @@
-<script setup lang="ts">
+﻿<script setup lang="ts">
 import { BarChart3, Download, FileText } from 'lucide-vue-next';
 import { onMounted } from 'vue';
 import HelpTooltip from '@/components/ui/HelpTooltip.vue';
@@ -6,13 +6,27 @@ import IntelResultPanel from '@/components/ui/IntelResultPanel.vue';
 import IntelSearchForm from '@/components/ui/IntelSearchForm.vue';
 import IntelSearchPanel from '@/components/ui/IntelSearchPanel.vue';
 import { useI18n } from '@/composables/useI18n';
-import { getRepeatQueryParams, isRepeatAutorunEnabled, readRepeatQueryParam } from '@/composables/useRepeatQuery';
+import {
+    getRepeatQueryParams,
+    isRepeatAutorunEnabled,
+    readRepeatQueryParam,
+} from '@/composables/useRepeatQuery';
 import { useSiteIntelAnalytics } from '../composables/useSiteIntelAnalytics';
 import { useSiteIntelAnalyticsViewModel } from '../composables/useSiteIntelAnalyticsViewModel';
 import SiteIntelMetricBars from './components/SiteIntelMetricBars.vue';
 
 const { t } = useI18n();
-const { form, loading, error, result, canAnalyze, canUseReportActions, analyze, openReport, downloadReport } = useSiteIntelAnalytics(t);
+const {
+    form,
+    loading,
+    error,
+    result,
+    canAnalyze,
+    canUseReportActions,
+    analyze,
+    openReport,
+    downloadReport,
+} = useSiteIntelAnalytics(t);
 const {
     scoreBadgeClass,
     formatDateTime,
@@ -60,9 +74,14 @@ onMounted(() => {
                 <div class="flex items-center gap-2 text-sm font-semibold">
                     <BarChart3 class="h-4 w-4 text-cyan-400" />
                     <span>{{ t('siteIntel.analytics.title') }}</span>
-                    <HelpTooltip :label="t('siteIntel.help.label')" :text="t('siteIntel.analytics.help.overview')" />
+                    <HelpTooltip
+                        :label="t('siteIntel.help.label')"
+                        :text="t('siteIntel.analytics.help.overview')"
+                    />
                 </div>
-                <p class="text-xs text-muted-foreground">{{ t('siteIntel.analytics.description') }}</p>
+                <p class="text-xs text-muted-foreground">
+                    {{ t('siteIntel.analytics.description') }}
+                </p>
             </div>
         </div>
 
@@ -106,53 +125,119 @@ onMounted(() => {
             {{ t('siteIntel.analytics.empty') }}
         </div>
 
-        <div v-else class="telegram-scroll min-h-0 flex-1 overflow-y-auto space-y-3 pr-1">
+        <div
+            v-else
+            class="intel-scroll min-h-0 flex-1 space-y-3 overflow-y-auto pr-1"
+        >
             <div class="grid gap-2 sm:grid-cols-2 xl:grid-cols-4">
                 <div class="rounded-lg border p-3" :class="scoreBadgeClass">
-                    <p class="text-xs">{{ t('siteIntel.analytics.overallScore') }}</p>
-                    <p class="mt-1 text-xl font-semibold">{{ result.overview.score.value }}</p>
+                    <p class="text-xs">
+                        {{ t('siteIntel.analytics.overallScore') }}
+                    </p>
+                    <p class="mt-1 text-xl font-semibold">
+                        {{ result.overview.score.value }}
+                    </p>
                 </div>
-                <div class="rounded-lg border border-border/70 bg-background/60 p-3">
-                    <p class="text-xs text-muted-foreground">{{ t('siteIntel.analytics.healthScore') }}</p>
-                    <p class="mt-1 text-xl font-semibold">{{ result.overview.healthScore }}</p>
+                <div
+                    class="rounded-lg border border-border/70 bg-background/60 p-3"
+                >
+                    <p class="text-xs text-muted-foreground">
+                        {{ t('siteIntel.analytics.healthScore') }}
+                    </p>
+                    <p class="mt-1 text-xl font-semibold">
+                        {{ result.overview.healthScore }}
+                    </p>
                 </div>
-                <div class="rounded-lg border border-border/70 bg-background/60 p-3">
-                    <p class="text-xs text-muted-foreground">{{ t('siteIntel.analytics.domainRiskScore') }}</p>
-                    <p class="mt-1 text-xl font-semibold">{{ result.overview.domainRiskScore }}</p>
+                <div
+                    class="rounded-lg border border-border/70 bg-background/60 p-3"
+                >
+                    <p class="text-xs text-muted-foreground">
+                        {{ t('siteIntel.analytics.domainRiskScore') }}
+                    </p>
+                    <p class="mt-1 text-xl font-semibold">
+                        {{ result.overview.domainRiskScore }}
+                    </p>
                 </div>
-                <div class="rounded-lg border border-border/70 bg-background/60 p-3">
-                    <p class="text-xs text-muted-foreground">{{ t('siteIntel.common.checkedAt') }}</p>
-                    <p class="mt-1 text-sm font-semibold">{{ formatDateTime(result.checkedAt) }}</p>
+                <div
+                    class="rounded-lg border border-border/70 bg-background/60 p-3"
+                >
+                    <p class="text-xs text-muted-foreground">
+                        {{ t('siteIntel.common.checkedAt') }}
+                    </p>
+                    <p class="mt-1 text-sm font-semibold">
+                        {{ formatDateTime(result.checkedAt) }}
+                    </p>
                 </div>
             </div>
 
-            <div class="rounded-lg border border-border/70 bg-background/60 p-3 text-xs">
-                <p class="font-semibold">{{ t('siteIntel.analytics.targetSummary') }}</p>
-                <p class="mt-1">{{ t('siteIntel.analytics.url') }}: <span class="break-all text-muted-foreground">{{ result.target.url }}</span></p>
-                <p class="mt-1">{{ t('siteIntel.analytics.domain') }}: <span class="text-muted-foreground">{{ result.target.domain }}</span></p>
+            <div
+                class="rounded-lg border border-border/70 bg-background/60 p-3 text-xs"
+            >
+                <p class="font-semibold">
+                    {{ t('siteIntel.analytics.targetSummary') }}
+                </p>
+                <p class="mt-1">
+                    {{ t('siteIntel.analytics.url') }}:
+                    <span class="break-all text-muted-foreground">{{
+                        result.target.url
+                    }}</span>
+                </p>
+                <p class="mt-1">
+                    {{ t('siteIntel.analytics.domain') }}:
+                    <span class="text-muted-foreground">{{
+                        result.target.domain
+                    }}</span>
+                </p>
             </div>
 
             <div class="grid gap-2 xl:grid-cols-3">
-                <div class="rounded-lg border border-border/70 bg-background/60 p-3 text-xs">
-                    <p class="font-semibold">{{ t('siteIntel.analytics.headersCoverage') }}</p>
+                <div
+                    class="rounded-lg border border-border/70 bg-background/60 p-3 text-xs"
+                >
+                    <p class="font-semibold">
+                        {{ t('siteIntel.analytics.headersCoverage') }}
+                    </p>
                     <p class="mt-1 text-muted-foreground">
-                        {{ result.overview.headersCoverage.present }}/{{ result.overview.headersCoverage.total }}
+                        {{ result.overview.headersCoverage.present }}/{{
+                            result.overview.headersCoverage.total
+                        }}
                         ({{ result.overview.headersCoverage.percent }}%)
                     </p>
                 </div>
-                <div class="rounded-lg border border-border/70 bg-background/60 p-3 text-xs">
-                    <p class="font-semibold">{{ t('siteIntel.analytics.redirects') }}</p>
-                    <p class="mt-1 text-muted-foreground">{{ result.overview.redirects }}</p>
+                <div
+                    class="rounded-lg border border-border/70 bg-background/60 p-3 text-xs"
+                >
+                    <p class="font-semibold">
+                        {{ t('siteIntel.analytics.redirects') }}
+                    </p>
+                    <p class="mt-1 text-muted-foreground">
+                        {{ result.overview.redirects }}
+                    </p>
                 </div>
-                <div class="rounded-lg border border-border/70 bg-background/60 p-3 text-xs">
-                    <p class="font-semibold">{{ t('siteIntel.analytics.daysToDomainExpiry') }}</p>
-                    <p class="mt-1 text-muted-foreground">{{ result.overview.daysToDomainExpiry ?? '-' }}</p>
+                <div
+                    class="rounded-lg border border-border/70 bg-background/60 p-3 text-xs"
+                >
+                    <p class="font-semibold">
+                        {{ t('siteIntel.analytics.daysToDomainExpiry') }}
+                    </p>
+                    <p class="mt-1 text-muted-foreground">
+                        {{ result.overview.daysToDomainExpiry ?? '-' }}
+                    </p>
                 </div>
             </div>
 
-            <div class="rounded-lg border border-border/70 bg-background/60 p-3 text-xs">
-                <p class="mb-2 font-semibold">{{ t('siteIntel.analytics.dnsStats') }}</p>
-                <p>A: {{ result.overview.dnsStats.a }}, AAAA: {{ result.overview.dnsStats.aaaa }}, NS: {{ result.overview.dnsStats.ns }}, MX: {{ result.overview.dnsStats.mx }}</p>
+            <div
+                class="rounded-lg border border-border/70 bg-background/60 p-3 text-xs"
+            >
+                <p class="mb-2 font-semibold">
+                    {{ t('siteIntel.analytics.dnsStats') }}
+                </p>
+                <p>
+                    A: {{ result.overview.dnsStats.a }}, AAAA:
+                    {{ result.overview.dnsStats.aaaa }}, NS:
+                    {{ result.overview.dnsStats.ns }}, MX:
+                    {{ result.overview.dnsStats.mx }}
+                </p>
             </div>
 
             <div class="grid gap-2 xl:grid-cols-2">
@@ -186,60 +271,181 @@ onMounted(() => {
                 />
             </div>
 
-            <div class="rounded-lg border border-border/70 bg-background/60 p-3 text-xs">
+            <div
+                class="rounded-lg border border-border/70 bg-background/60 p-3 text-xs"
+            >
                 <div class="mb-2 flex items-center gap-2">
-                    <p class="font-semibold">{{ t('siteIntel.analytics.additionalSnapshotMetrics') }}</p>
-                    <HelpTooltip :label="t('siteIntel.help.label')" :text="t('siteIntel.analytics.help.snapshotMetrics')" />
+                    <p class="font-semibold">
+                        {{ t('siteIntel.analytics.additionalSnapshotMetrics') }}
+                    </p>
+                    <HelpTooltip
+                        :label="t('siteIntel.help.label')"
+                        :text="t('siteIntel.analytics.help.snapshotMetrics')"
+                    />
                 </div>
                 <div class="grid gap-2 sm:grid-cols-2 xl:grid-cols-4">
-                    <p>{{ t('siteIntel.analytics.snapshotHttpFinalStatus') }}: <span class="text-muted-foreground">{{ result.siteHealth.http.finalStatus || '-' }}</span></p>
-                    <p>{{ t('siteIntel.analytics.snapshotTotalResponseTime') }}: <span class="text-muted-foreground">{{ totalResponseTimeMs }} ms</span></p>
-                    <p>{{ t('siteIntel.analytics.snapshotSslDaysRemaining') }}: <span class="text-muted-foreground">{{ result.siteHealth.ssl.daysRemaining ?? '-' }}</span></p>
-                    <p>{{ t('siteIntel.analytics.snapshotWhois') }}: <span class="text-muted-foreground">{{ result.domainLite.whois.available ? t('siteIntel.common.available') : t('siteIntel.common.unavailable') }}</span></p>
-                    <p>{{ t('siteIntel.analytics.snapshotDomainAge') }}: <span class="text-muted-foreground">{{ domainAgeDays ?? '-' }} {{ t('siteIntel.analytics.snapshotDays') }}</span></p>
-                    <p>{{ t('siteIntel.analytics.snapshotEmailSecurity') }}: <span class="text-muted-foreground">{{ emailSecurityScore }}/2 (SPF + DMARC)</span></p>
-                    <p>{{ t('siteIntel.analytics.snapshotWhoisRegistrar') }}: <span class="text-muted-foreground">{{ result.domainLite.whois.registrar || '-' }}</span></p>
-                    <p>{{ t('siteIntel.analytics.snapshotWhoisCountry') }}: <span class="text-muted-foreground">{{ result.domainLite.whois.country || '-' }}</span></p>
+                    <p>
+                        {{ t('siteIntel.analytics.snapshotHttpFinalStatus') }}:
+                        <span class="text-muted-foreground">{{
+                            result.siteHealth.http.finalStatus || '-'
+                        }}</span>
+                    </p>
+                    <p>
+                        {{
+                            t('siteIntel.analytics.snapshotTotalResponseTime')
+                        }}:
+                        <span class="text-muted-foreground"
+                            >{{ totalResponseTimeMs }} ms</span
+                        >
+                    </p>
+                    <p>
+                        {{ t('siteIntel.analytics.snapshotSslDaysRemaining') }}:
+                        <span class="text-muted-foreground">{{
+                            result.siteHealth.ssl.daysRemaining ?? '-'
+                        }}</span>
+                    </p>
+                    <p>
+                        {{ t('siteIntel.analytics.snapshotWhois') }}:
+                        <span class="text-muted-foreground">{{
+                            result.domainLite.whois.available
+                                ? t('siteIntel.common.available')
+                                : t('siteIntel.common.unavailable')
+                        }}</span>
+                    </p>
+                    <p>
+                        {{ t('siteIntel.analytics.snapshotDomainAge') }}:
+                        <span class="text-muted-foreground"
+                            >{{ domainAgeDays ?? '-' }}
+                            {{ t('siteIntel.analytics.snapshotDays') }}</span
+                        >
+                    </p>
+                    <p>
+                        {{ t('siteIntel.analytics.snapshotEmailSecurity') }}:
+                        <span class="text-muted-foreground"
+                            >{{ emailSecurityScore }}/2 (SPF + DMARC)</span
+                        >
+                    </p>
+                    <p>
+                        {{ t('siteIntel.analytics.snapshotWhoisRegistrar') }}:
+                        <span class="text-muted-foreground">{{
+                            result.domainLite.whois.registrar || '-'
+                        }}</span>
+                    </p>
+                    <p>
+                        {{ t('siteIntel.analytics.snapshotWhoisCountry') }}:
+                        <span class="text-muted-foreground">{{
+                            result.domainLite.whois.country || '-'
+                        }}</span>
+                    </p>
                 </div>
             </div>
 
             <div class="grid gap-2 xl:grid-cols-2">
-                <div class="rounded-lg border border-border/70 bg-background/60 p-3 text-xs">
+                <div
+                    class="rounded-lg border border-border/70 bg-background/60 p-3 text-xs"
+                >
                     <div class="mb-2 flex items-center gap-2">
-                        <p class="font-semibold">{{ t('siteIntel.analytics.riskSignals') }}</p>
-                        <HelpTooltip :label="t('siteIntel.help.label')" :text="t('siteIntel.analytics.help.riskSignals')" />
+                        <p class="font-semibold">
+                            {{ t('siteIntel.analytics.riskSignals') }}
+                        </p>
+                        <HelpTooltip
+                            :label="t('siteIntel.help.label')"
+                            :text="t('siteIntel.analytics.help.riskSignals')"
+                        />
                     </div>
-                    <p v-if="result.overview.signals.risks.length === 0" class="text-emerald-300">{{ t('siteIntel.analytics.noRiskSignals') }}</p>
-                    <ul v-else class="list-disc space-y-1 pl-4 text-muted-foreground">
-                        <li v-for="signal in result.overview.signals.risks" :key="signal">{{ signalLabel(signal, 'risk') }}</li>
+                    <p
+                        v-if="result.overview.signals.risks.length === 0"
+                        class="text-emerald-300"
+                    >
+                        {{ t('siteIntel.analytics.noRiskSignals') }}
+                    </p>
+                    <ul
+                        v-else
+                        class="list-disc space-y-1 pl-4 text-muted-foreground"
+                    >
+                        <li
+                            v-for="signal in result.overview.signals.risks"
+                            :key="signal"
+                        >
+                            {{ signalLabel(signal, 'risk') }}
+                        </li>
                     </ul>
                 </div>
 
-                <div class="rounded-lg border border-border/70 bg-background/60 p-3 text-xs">
+                <div
+                    class="rounded-lg border border-border/70 bg-background/60 p-3 text-xs"
+                >
                     <div class="mb-2 flex items-center gap-2">
-                        <p class="font-semibold">{{ t('siteIntel.analytics.strengthSignals') }}</p>
-                        <HelpTooltip :label="t('siteIntel.help.label')" :text="t('siteIntel.analytics.help.strengthSignals')" />
+                        <p class="font-semibold">
+                            {{ t('siteIntel.analytics.strengthSignals') }}
+                        </p>
+                        <HelpTooltip
+                            :label="t('siteIntel.help.label')"
+                            :text="
+                                t('siteIntel.analytics.help.strengthSignals')
+                            "
+                        />
                     </div>
-                    <p v-if="result.overview.signals.strengths.length === 0" class="text-muted-foreground">{{ t('siteIntel.analytics.noStrengthSignals') }}</p>
-                    <ul v-else class="list-disc space-y-1 pl-4 text-muted-foreground">
-                        <li v-for="signal in result.overview.signals.strengths" :key="signal">{{ signalLabel(signal, 'strength') }}</li>
+                    <p
+                        v-if="result.overview.signals.strengths.length === 0"
+                        class="text-muted-foreground"
+                    >
+                        {{ t('siteIntel.analytics.noStrengthSignals') }}
+                    </p>
+                    <ul
+                        v-else
+                        class="list-disc space-y-1 pl-4 text-muted-foreground"
+                    >
+                        <li
+                            v-for="signal in result.overview.signals.strengths"
+                            :key="signal"
+                        >
+                            {{ signalLabel(signal, 'strength') }}
+                        </li>
                     </ul>
                 </div>
             </div>
 
-            <div class="rounded-lg border border-border/70 bg-background/60 p-3 text-xs">
+            <div
+                class="rounded-lg border border-border/70 bg-background/60 p-3 text-xs"
+            >
                 <div class="mb-2 flex items-center gap-2">
-                    <p class="font-semibold">{{ t('siteIntel.analytics.recommendations') }}</p>
-                    <HelpTooltip :label="t('siteIntel.help.label')" :text="t('siteIntel.analytics.help.recommendations')" />
+                    <p class="font-semibold">
+                        {{ t('siteIntel.analytics.recommendations') }}
+                    </p>
+                    <HelpTooltip
+                        :label="t('siteIntel.help.label')"
+                        :text="t('siteIntel.analytics.help.recommendations')"
+                    />
                 </div>
                 <ul class="space-y-2 text-muted-foreground">
-                    <li v-for="item in recommendationsWithImpact" :key="item.key" class="rounded border border-border/60 p-2">
-                        <div class="mb-1 flex items-center justify-between gap-2">
+                    <li
+                        v-for="item in recommendationsWithImpact"
+                        :key="item.key"
+                        class="rounded border border-border/60 p-2"
+                    >
+                        <div
+                            class="mb-1 flex items-center justify-between gap-2"
+                        >
                             <span class="text-[11px]">{{ item.label }}</span>
-                            <span class="text-[11px] text-emerald-300">{{ item.impact > 0 ? `~ +${item.impact} ${t('siteIntel.analytics.scoreUnit')}` : t('siteIntel.analytics.recommendationMaintain') }}</span>
+                            <span class="text-[11px] text-emerald-300">{{
+                                item.impact > 0
+                                    ? `~ +${item.impact} ${t('siteIntel.analytics.scoreUnit')}`
+                                    : t(
+                                          'siteIntel.analytics.recommendationMaintain'
+                                      )
+                            }}</span>
                         </div>
-                        <div v-if="item.impact > 0" class="h-2 rounded bg-muted/50">
-                            <div class="h-2 rounded bg-emerald-400/80 transition-all duration-300" :style="{ width: `${clampPercent(item.impact * 5)}%` }" />
+                        <div
+                            v-if="item.impact > 0"
+                            class="h-2 rounded bg-muted/50"
+                        >
+                            <div
+                                class="h-2 rounded bg-emerald-400/80 transition-all duration-300"
+                                :style="{
+                                    width: `${clampPercent(item.impact * 5)}%`,
+                                }"
+                            />
                         </div>
                     </li>
                 </ul>
@@ -247,6 +453,3 @@ onMounted(() => {
         </div>
     </IntelResultPanel>
 </template>
-
-
-

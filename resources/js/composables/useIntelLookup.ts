@@ -1,4 +1,5 @@
-import { computed, ref, type Ref } from 'vue';
+import { computed, ref } from 'vue';
+import type { Ref } from 'vue';
 import { apiRequest } from '@/lib/api';
 
 type UseIntelLookupOptions = {
@@ -10,16 +11,22 @@ type UseIntelLookupOptions = {
     fallbackError: string;
 };
 
-export function useIntelLookup<T>(input: Ref<string>, options: UseIntelLookupOptions) {
+export function useIntelLookup<T>(
+    input: Ref<string>,
+    options: UseIntelLookupOptions
+) {
     const loading = ref(false);
     const error = ref<string | null>(null);
     const result = ref<T | null>(null);
 
-    const canSearch = computed(() => input.value.trim().length >= options.minLength);
+    const canSearch = computed(
+        () => input.value.trim().length >= options.minLength
+    );
 
     const lookup = async () => {
         if (!canSearch.value) {
             error.value = options.requiredError;
+
             return;
         }
 
@@ -38,6 +45,7 @@ export function useIntelLookup<T>(input: Ref<string>, options: UseIntelLookupOpt
         if (!res.ok) {
             error.value = res.message ?? options.fallbackError;
             loading.value = false;
+
             return;
         }
 
@@ -53,4 +61,3 @@ export function useIntelLookup<T>(input: Ref<string>, options: UseIntelLookupOpt
         lookup,
     };
 }
-

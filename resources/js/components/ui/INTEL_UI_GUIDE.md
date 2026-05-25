@@ -1,4 +1,4 @@
-# Intel UI Guide
+﻿# Intel UI Guide
 
 Короткий гайд по переиспользуемым компонентам UI для модулей разведки/аналитики.
 
@@ -77,7 +77,7 @@
 
     <IntelResultPanel>
       <EmptyState v-if="!result" :text="t('...empty')" />
-      <div v-else class="telegram-scroll min-h-0 flex-1 overflow-y-auto space-y-3 pr-1">
+      <div v-else class="intel-scroll min-h-0 flex-1 overflow-y-auto space-y-3 pr-1">
         <!-- метрики и секции -->
       </div>
     </IntelResultPanel>

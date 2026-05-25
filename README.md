@@ -4,7 +4,7 @@ Free Search - модульная OSINT-платформа на Laravel + Inertia
 
 ## Что это за проект
 
-Платформа собирает и структурирует сигналы из открытых источников: Telegram, web, news, email/domain, username-профили и другие направления OSINT.  
+Платформа собирает и структурирует сигналы из открытых источников: Telegram, web, news, site intelligence и другие направления OSINT.  
 Ключевая цель проекта: быстро давать пользователю полезную аналитику, сохраняя расширяемую архитектуру и предсказуемую поддержку кода.
 
 ## Технологический стек
@@ -18,15 +18,10 @@ Free Search - модульная OSINT-платформа на Laravel + Inertia
 ## Основные модули
 
 - Telegram OSINT (поиск, парсер, аналитика)
-- Username intelligence
 - Site intelligence (`site-health`, `seo-audit`, `domain-lite`)
-- Company intelligence
-- Document intelligence
 - Email intelligence
-- Domain infrastructure intelligence
 - News/media intelligence
 - YouTube search/parser/analytics
-- FIO
 - Shifr toolkit
 
 ## Архитектурные принципы

@@ -3,11 +3,25 @@ import { apiRequest } from '@/lib/api';
 import type { TelegramAnalyticsSummary } from '../types';
 
 type TranslateFn = (key: string) => string;
-type AnalyticsPeriod = 1 | 3 | 7;
-type ScorePriority = 'balanced' | 'reach' | 'discussion' | 'virality';
+export type AnalyticsPeriod = 1 | 3 | 7;
+export type ScorePriority = 'balanced' | 'reach' | 'discussion' | 'virality';
+
+export type TelegramAnalyticsForm = {
+    chatUsername: string;
+    keyword: string;
+    periodDays: AnalyticsPeriod;
+    dateFrom: string;
+    dateTo: string;
+    scorePriority: ScorePriority;
+};
 
 const PERIODS: readonly AnalyticsPeriod[] = [1, 3, 7];
-const PRIORITIES: readonly ScorePriority[] = ['balanced', 'reach', 'discussion', 'virality'];
+const PRIORITIES: readonly ScorePriority[] = [
+    'balanced',
+    'reach',
+    'discussion',
+    'virality',
+];
 const DAY_IN_MS = 24 * 60 * 60 * 1000;
 
 const parseDate = (value: string): Date | null => {
@@ -64,7 +78,7 @@ const diffDays = (from: string, to: string): number | null => {
 };
 
 export const useTelegramAnalytics = (t: TranslateFn) => {
-    const form = reactive({
+    const form = reactive<TelegramAnalyticsForm>({
         chatUsername: 'durov',
         keyword: '',
         periodDays: 7 as AnalyticsPeriod,
@@ -87,7 +101,8 @@ export const useTelegramAnalytics = (t: TranslateFn) => {
         return t(`telegram.analytics.periods.${form.periodDays}`);
     });
 
-    const normalizedChatUsername = () => form.chatUsername.trim().replace(/^@+/, '');
+    const normalizedChatUsername = () =>
+        form.chatUsername.trim().replace(/^@+/, '');
     const normalizedKeyword = () => form.keyword.trim();
     const dateLimits = computed(() => ({
         fromMin: form.dateTo ? shiftDate(form.dateTo, -6) : null,
@@ -98,7 +113,8 @@ export const useTelegramAnalytics = (t: TranslateFn) => {
 
     const buildQuery = () => {
         const locale =
-            typeof document !== 'undefined' && document.documentElement.lang.toLowerCase().startsWith('ru')
+            typeof document !== 'undefined' &&
+            document.documentElement.lang.toLowerCase().startsWith('ru')
                 ? 'ru'
                 : 'en';
         const query = new URLSearchParams({
@@ -123,7 +139,8 @@ export const useTelegramAnalytics = (t: TranslateFn) => {
 
     const buildQueryForRange = (dateFrom: string, dateTo: string) => {
         const locale =
-            typeof document !== 'undefined' && document.documentElement.lang.toLowerCase().startsWith('ru')
+            typeof document !== 'undefined' &&
+            document.documentElement.lang.toLowerCase().startsWith('ru')
                 ? 'ru'
                 : 'en';
         const query = new URLSearchParams({
@@ -149,19 +166,24 @@ export const useTelegramAnalytics = (t: TranslateFn) => {
     };
     const reportUrl = (download = false) => {
         const locale =
-            typeof document !== 'undefined' && document.documentElement.lang.toLowerCase().startsWith('ru')
+            typeof document !== 'undefined' &&
+            document.documentElement.lang.toLowerCase().startsWith('ru')
                 ? 'ru'
                 : 'en';
         const snapshot = payload.value;
         const query = new URLSearchParams({
-            chatUsername: snapshot?.range.chatUsername ?? normalizedChatUsername(),
+            chatUsername:
+                snapshot?.range.chatUsername ?? normalizedChatUsername(),
             scorePriority: snapshot?.score.priority ?? form.scorePriority,
             locale,
         });
 
         const snapshotKeyword = snapshot?.range.keyword?.trim();
         const formKeyword = normalizedKeyword();
-        const keyword = snapshotKeyword && snapshotKeyword.length > 0 ? snapshotKeyword : formKeyword;
+        const keyword =
+            snapshotKeyword && snapshotKeyword.length > 0
+                ? snapshotKeyword
+                : formKeyword;
 
         if (keyword) {
             query.set('keyword', keyword);
@@ -194,7 +216,9 @@ export const useTelegramAnalytics = (t: TranslateFn) => {
     };
 
     const setPriority = (priority: ScorePriority) => {
-        form.scorePriority = PRIORITIES.includes(priority) ? priority : 'balanced';
+        form.scorePriority = PRIORITIES.includes(priority)
+            ? priority
+            : 'balanced';
     };
 
     const loadAnalytics = async () => {
@@ -220,12 +244,17 @@ export const useTelegramAnalytics = (t: TranslateFn) => {
         previousPayload.value = null;
 
         try {
-            const apiResult = await apiRequest<TelegramAnalyticsSummary>(summaryUrl(), {
-                method: 'GET',
-            });
+            const apiResult = await apiRequest<TelegramAnalyticsSummary>(
+                summaryUrl(),
+                {
+                    method: 'GET',
+                }
+            );
 
             if (!apiResult.ok) {
-                error.value = apiResult.message ?? t('telegram.analytics.errors.loadFailed');
+                error.value =
+                    apiResult.message ??
+                    t('telegram.analytics.errors.loadFailed');
                 payload.value = null;
 
                 return;
@@ -236,9 +265,15 @@ export const useTelegramAnalytics = (t: TranslateFn) => {
             const currentFrom = new Date(payload.value.range.dateFrom);
             const currentTo = new Date(payload.value.range.dateTo);
 
-            if (!Number.isNaN(currentFrom.getTime()) && !Number.isNaN(currentTo.getTime())) {
+            if (
+                !Number.isNaN(currentFrom.getTime()) &&
+                !Number.isNaN(currentTo.getTime())
+            ) {
                 comparisonLoading.value = true;
-                const spanMs = Math.max(0, currentTo.getTime() - currentFrom.getTime());
+                const spanMs = Math.max(
+                    0,
+                    currentTo.getTime() - currentFrom.getTime()
+                );
                 const previousTo = new Date(currentFrom.getTime() - 1000);
                 const previousFrom = new Date(previousTo.getTime() - spanMs);
                 const previousQuery = buildQueryForRange(
@@ -248,10 +283,16 @@ export const useTelegramAnalytics = (t: TranslateFn) => {
 
                 try {
                     previousQuery.set('snapshotRole', 'previous');
-                    const previousResult = await apiRequest<TelegramAnalyticsSummary>('/telegram/analytics/summary', {
-                        method: 'GET',
-                        query: Object.fromEntries(previousQuery.entries()),
-                    });
+                    const previousResult =
+                        await apiRequest<TelegramAnalyticsSummary>(
+                            '/telegram/analytics/summary',
+                            {
+                                method: 'GET',
+                                query: Object.fromEntries(
+                                    previousQuery.entries()
+                                ),
+                            }
+                        );
 
                     if (previousResult.ok) {
                         previousPayload.value = previousResult.data;
@@ -263,7 +304,10 @@ export const useTelegramAnalytics = (t: TranslateFn) => {
                 }
             }
         } catch (exception) {
-            error.value = exception instanceof Error ? exception.message : t('telegram.analytics.errors.loadFailed');
+            error.value =
+                exception instanceof Error
+                    ? exception.message
+                    : t('telegram.analytics.errors.loadFailed');
             payload.value = null;
         } finally {
             loading.value = false;
@@ -292,13 +336,23 @@ export const useTelegramAnalytics = (t: TranslateFn) => {
         return Math.max(
             1,
             ...buckets.map((bucket) =>
-                Math.max(bucket.messages, bucket.views, bucket.replies, bucket.reactions, bucket.interactions)
+                Math.max(
+                    bucket.messages,
+                    bucket.views,
+                    bucket.replies,
+                    bucket.reactions,
+                    bucket.interactions
+                )
             )
         );
     });
 
-    const totalMessages = computed(() => payload.value?.summary.totals.messages ?? 0);
-    const activePriority = computed<ScorePriority>(() => payload.value?.score.priority ?? form.scorePriority);
+    const totalMessages = computed(
+        () => payload.value?.summary.totals.messages ?? 0
+    );
+    const activePriority = computed<ScorePriority>(
+        () => payload.value?.score.priority ?? form.scorePriority
+    );
 
     return {
         PERIODS,

@@ -25,7 +25,7 @@ const qrCodeSvg = ref<string | null>(null);
 const recoveryCodesList = ref<string[]>([]);
 
 const hasSetupData = computed<boolean>(
-    () => qrCodeSvg.value !== null && manualSetupKey.value !== null,
+    () => qrCodeSvg.value !== null && manualSetupKey.value !== null
 );
 
 export const useTwoFactorAuth = (): UseTwoFactorAuthReturn => {
@@ -41,7 +41,9 @@ export const useTwoFactorAuth = (): UseTwoFactorAuthReturn => {
 
             qrCodeSvg.value = svg;
         } catch {
-            errors.value.push(t('settings.securityPage.twoFactorErrors.fetchQrCode'));
+            errors.value.push(
+                t('settings.securityPage.twoFactorErrors.fetchQrCode')
+            );
             qrCodeSvg.value = null;
         }
     };
@@ -54,7 +56,9 @@ export const useTwoFactorAuth = (): UseTwoFactorAuthReturn => {
 
             manualSetupKey.value = key;
         } catch {
-            errors.value.push(t('settings.securityPage.twoFactorErrors.fetchSetupKey'));
+            errors.value.push(
+                t('settings.securityPage.twoFactorErrors.fetchSetupKey')
+            );
             manualSetupKey.value = null;
         }
     };
@@ -79,11 +83,11 @@ export const useTwoFactorAuth = (): UseTwoFactorAuthReturn => {
         try {
             clearErrors();
             recoveryCodesList.value = (await http.submit(
-                recoveryCodes(),
+                recoveryCodes()
             )) as string[];
         } catch {
             errors.value.push(
-                t('settings.securityPage.twoFactorErrors.fetchRecoveryCodes'),
+                t('settings.securityPage.twoFactorErrors.fetchRecoveryCodes')
             );
             recoveryCodesList.value = [];
         }

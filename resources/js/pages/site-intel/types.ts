@@ -1,4 +1,8 @@
-export type SiteIntelTabValue = 'siteHealth' | 'domainLite' | 'analytics' | 'seoAudit';
+export type SiteIntelTabValue =
+    | 'siteHealth'
+    | 'domainLite'
+    | 'analytics'
+    | 'seoAudit';
 
 export type SiteHealthResult = {
     target: {
@@ -257,7 +261,11 @@ export type SiteIntelSeoAuditResult = {
     international: {
         clusters: Array<{ langs: string; count: number }>;
         missingXDefault: string[];
-        missingReciprocal: Array<{ source: string; target: string; lang: string }>;
+        missingReciprocal: Array<{
+            source: string;
+            target: string;
+            lang: string;
+        }>;
         pagesWithHreflang: number;
     };
     crawlBudget: {
@@ -293,7 +301,11 @@ export type SiteIntelSeoAuditResult = {
         }>;
         duplicates: {
             titles: Array<{ value: string; count: number; urls: string[] }>;
-            descriptions: Array<{ value: string; count: number; urls: string[] }>;
+            descriptions: Array<{
+                value: string;
+                count: number;
+                urls: string[];
+            }>;
             h1: Array<{ value: string; count: number; urls: string[] }>;
         };
         canonicalAudit: {
@@ -305,7 +317,11 @@ export type SiteIntelSeoAuditResult = {
         hreflangAudit: {
             pagesWithHreflang: number;
             pagesWithoutSelfReference: string[];
-            duplicateLangTags: Array<{ url: string; lang: string; count: number }>;
+            duplicateLangTags: Array<{
+                url: string;
+                lang: string;
+                count: number;
+            }>;
         };
         linkGraph: {
             nodes: Array<{

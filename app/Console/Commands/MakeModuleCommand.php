@@ -8,7 +8,7 @@ use Illuminate\Support\Str;
 
 class MakeModuleCommand extends Command
 {
-    protected $signature = 'app:make-module {name : Module name, e.g. CompanyIntel} {--force : Overwrite existing files}';
+    protected $signature = 'app:make-module {name : Module name, e.g. SiteIntel} {--force : Overwrite existing files}';
 
     protected $description = 'Create a module with standard layered architecture: Domain -> Application -> Infrastructure -> UI';
 
@@ -335,4 +335,3 @@ Route::post('{$moduleSlug}', {$moduleName}Controller::class)
 PHP;
     }
 }
-

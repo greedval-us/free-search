@@ -45,17 +45,20 @@ const rawTextAllowList = new Set([
 
 const readJsonFile = async (filePath) => {
   const content = await fs.readFile(filePath, 'utf8');
+
   return JSON.parse(content);
 };
 
 const flattenObject = (obj, prefix = '', acc = new Map()) => {
   if (typeof obj !== 'object' || obj === null || Array.isArray(obj)) {
     acc.set(prefix, obj);
+
     return acc;
   }
 
   for (const [key, value] of Object.entries(obj)) {
     const fullKey = prefix ? `${prefix}.${key}` : key;
+
     if (typeof value === 'object' && value !== null && !Array.isArray(value)) {
       flattenObject(value, fullKey, acc);
     } else {
@@ -95,6 +98,7 @@ const findUsedI18nKeys = (content) => {
   const regex = /(?:\bt|\$t)\(\s*['"]([A-Za-z0-9_.-]+)['"]\s*[\),]/g;
 
   let match;
+
   while ((match = regex.exec(content)) !== null) {
     keys.push(match[1]);
   }
@@ -108,6 +112,7 @@ const isNoiseToken = (value) => {
   }
 
   const normalized = value.trim();
+
   if (!normalized) {
     return true;
   }
@@ -180,6 +185,7 @@ const findTemplateRawTextViolations = (filePath, content) => {
     }
 
     let textMatch;
+
     while ((textMatch = textPattern.exec(line)) !== null) {
       const raw = textMatch[0].slice(1, -1).trim();
 
@@ -203,6 +209,7 @@ const findTemplateRawTextViolations = (filePath, content) => {
     }
 
     let attrMatch;
+
     while ((attrMatch = mustLocalizeAttrPattern.exec(line)) !== null) {
       const attrValue = attrMatch[1].trim();
 
@@ -304,6 +311,7 @@ const run = async () => {
     const content = await fs.readFile(filePath, 'utf8');
 
     const usedKeys = findUsedI18nKeys(content);
+
     for (const key of usedKeys) {
       if (!knownKeys.has(key)) {
         issues.push(`[i18n-key-missing] ${relativePath}: missing key "${key}" in locales`);
@@ -323,9 +331,11 @@ const run = async () => {
 
   if (issues.length > 0) {
     console.error('\n[i18n-pipeline] Failed with issues:\n');
+
     for (const issue of issues) {
       console.error(`- ${issue}`);
     }
+
     console.error(`\nTotal issues: ${issues.length}\n`);
     process.exit(1);
   }

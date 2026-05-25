@@ -170,22 +170,67 @@
     body {
         @apply bg-background text-foreground;
         background-image:
-            radial-gradient(circle at 50% -10%, rgba(8, 145, 178, 0.18), transparent 42%),
-            radial-gradient(circle at 0% 100%, rgba(16, 185, 129, 0.1), transparent 36%),
-            radial-gradient(circle at 100% 35%, rgba(59, 130, 246, 0.12), transparent 38%),
-            linear-gradient(to right, rgba(148, 163, 184, 0.14) 1px, transparent 1px),
-            linear-gradient(to bottom, rgba(148, 163, 184, 0.14) 1px, transparent 1px);
-        background-size: auto, auto, auto, 40px 40px, 40px 40px;
+            radial-gradient(
+                circle at 50% -10%,
+                rgba(8, 145, 178, 0.18),
+                transparent 42%
+            ),
+            radial-gradient(
+                circle at 0% 100%,
+                rgba(16, 185, 129, 0.1),
+                transparent 36%
+            ),
+            radial-gradient(
+                circle at 100% 35%,
+                rgba(59, 130, 246, 0.12),
+                transparent 38%
+            ),
+            linear-gradient(
+                to right,
+                rgba(148, 163, 184, 0.14) 1px,
+                transparent 1px
+            ),
+            linear-gradient(
+                to bottom,
+                rgba(148, 163, 184, 0.14) 1px,
+                transparent 1px
+            );
+        background-size:
+            auto,
+            auto,
+            auto,
+            40px 40px,
+            40px 40px;
         background-attachment: fixed;
     }
 
     .dark body {
         background-image:
-            radial-gradient(circle at 50% -10%, rgba(34, 211, 238, 0.3), transparent 38%),
-            radial-gradient(circle at 0% 100%, rgba(16, 185, 129, 0.14), transparent 34%),
-            radial-gradient(circle at 100% 35%, rgba(99, 102, 241, 0.2), transparent 36%),
-            linear-gradient(to right, rgba(148, 163, 184, 0.12) 1px, transparent 1px),
-            linear-gradient(to bottom, rgba(148, 163, 184, 0.12) 1px, transparent 1px);
+            radial-gradient(
+                circle at 50% -10%,
+                rgba(34, 211, 238, 0.3),
+                transparent 38%
+            ),
+            radial-gradient(
+                circle at 0% 100%,
+                rgba(16, 185, 129, 0.14),
+                transparent 34%
+            ),
+            radial-gradient(
+                circle at 100% 35%,
+                rgba(99, 102, 241, 0.2),
+                transparent 36%
+            ),
+            linear-gradient(
+                to right,
+                rgba(148, 163, 184, 0.12) 1px,
+                transparent 1px
+            ),
+            linear-gradient(
+                to bottom,
+                rgba(148, 163, 184, 0.12) 1px,
+                transparent 1px
+            );
     }
 
     body.dashboard-scroll-lock {
@@ -226,20 +271,25 @@
         @apply rounded-md border border-dashed border-border p-6 text-center text-sm text-muted-foreground;
     }
 
+    .intel-scroll,
     .telegram-scroll {
         scrollbar-width: thin;
-        scrollbar-color: color-mix(in oklab, var(--primary) 62%, transparent) transparent;
+        scrollbar-color: color-mix(in oklab, var(--primary) 62%, transparent)
+            transparent;
     }
 
+    .intel-scroll::-webkit-scrollbar,
     .telegram-scroll::-webkit-scrollbar {
         width: 10px;
     }
 
+    .intel-scroll::-webkit-scrollbar-track,
     .telegram-scroll::-webkit-scrollbar-track {
         background: color-mix(in oklab, var(--sidebar) 55%, transparent);
         border-radius: 999px;
     }
 
+    .intel-scroll::-webkit-scrollbar-thumb,
     .telegram-scroll::-webkit-scrollbar-thumb {
         background: linear-gradient(
             180deg,
@@ -250,6 +300,7 @@
         border: 2px solid color-mix(in oklab, var(--sidebar) 55%, transparent);
     }
 
+    .intel-scroll::-webkit-scrollbar-thumb:hover,
     .telegram-scroll::-webkit-scrollbar-thumb:hover {
         background: linear-gradient(
             180deg,

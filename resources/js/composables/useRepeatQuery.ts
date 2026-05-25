@@ -14,7 +14,10 @@ export const getRepeatQueryParams = (): URLSearchParams | null => {
     return new URLSearchParams(window.location.search);
 };
 
-export const readRepeatQueryParam = (params: URLSearchParams, keys: string[]): string => {
+export const readRepeatQueryParam = (
+    params: URLSearchParams,
+    keys: string[]
+): string => {
     for (const key of keys) {
         const value = decodeParam(params.get(key));
 
@@ -26,7 +29,10 @@ export const readRepeatQueryParam = (params: URLSearchParams, keys: string[]): s
     return '';
 };
 
-export const readRepeatQueryInt = (params: URLSearchParams, key: string): number | null => {
+export const readRepeatQueryInt = (
+    params: URLSearchParams,
+    key: string
+): number | null => {
     const value = decodeParam(params.get(key));
 
     if (!/^\d+$/.test(value)) {
@@ -44,4 +50,3 @@ export const readRepeatQueryInt = (params: URLSearchParams, key: string): number
 
 export const isRepeatAutorunEnabled = (params: URLSearchParams): boolean =>
     readRepeatQueryParam(params, ['autorun']) === '1';
-

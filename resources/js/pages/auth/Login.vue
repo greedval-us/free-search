@@ -47,7 +47,9 @@ defineProps<{
     >
         <div class="grid gap-6">
             <div class="grid gap-2">
-                <Label for="email" class="text-slate-200">{{ t('auth.login.email') }}</Label>
+                <Label for="email" class="text-slate-200">{{
+                    t('auth.login.email')
+                }}</Label>
                 <Input
                     id="email"
                     type="email"
@@ -64,7 +66,9 @@ defineProps<{
 
             <div class="grid gap-2">
                 <div class="flex items-center justify-between">
-                    <Label for="password" class="text-slate-200">{{ t('auth.login.password') }}</Label>
+                    <Label for="password" class="text-slate-200">{{
+                        t('auth.login.password')
+                    }}</Label>
                     <TextLink
                         v-if="canResetPassword"
                         :href="request()"
@@ -87,7 +91,10 @@ defineProps<{
             </div>
 
             <div class="flex items-center justify-between">
-                <Label for="remember" class="flex items-center space-x-3 text-slate-300">
+                <Label
+                    for="remember"
+                    class="flex items-center space-x-3 text-slate-300"
+                >
                     <Checkbox id="remember" name="remember" :tabindex="3" />
                     <span>{{ t('auth.login.remember') }}</span>
                 </Label>
@@ -105,12 +112,14 @@ defineProps<{
             </Button>
         </div>
 
-        <div
-            class="text-center text-sm text-slate-300"
-            v-if="canRegister"
-        >
+        <div class="text-center text-sm text-slate-300" v-if="canRegister">
             {{ t('auth.login.noAccount') }}
-            <TextLink :href="register()" :tabindex="5" class="text-cyan-300 hover:text-cyan-200">{{ t('auth.login.createOne') }}</TextLink>
+            <TextLink
+                :href="register()"
+                :tabindex="5"
+                class="text-cyan-300 hover:text-cyan-200"
+                >{{ t('auth.login.createOne') }}</TextLink
+            >
         </div>
     </Form>
 </template>
