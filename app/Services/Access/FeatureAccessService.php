@@ -15,9 +15,17 @@ final class FeatureAccessService implements FeatureAccessServiceInterface
     public function consume(User $user, string $routeName): FeatureAccessDecision
     {
         $policy = $this->routePolicy($routeName);
-        $feature = $policy['feature'];
-        $counts = $policy['counts'];
 
+        return $this->decide($user, $policy['feature'], $policy['counts'], true);
+    }
+
+    public function inspect(User $user, string $feature): FeatureAccessDecision
+    {
+        return $this->decide($user, $feature, false, false);
+    }
+
+    private function decide(User $user, string $feature, bool $counts, bool $consume): FeatureAccessDecision
+    {
         if ($this->shouldBypass($user)) {
             return new FeatureAccessDecision(
                 allowed: true,
@@ -43,7 +51,7 @@ final class FeatureAccessService implements FeatureAccessServiceInterface
             );
         }
 
-        if (! $counts) {
+        if (! $counts || ! $consume) {
             return new FeatureAccessDecision(
                 allowed: true,
                 feature: $feature,

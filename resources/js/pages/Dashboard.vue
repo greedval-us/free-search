@@ -1,9 +1,10 @@
 ﻿<script setup lang="ts">
-import { Head, Link, router, useForm } from '@inertiajs/vue3';
+import { Head, Link, router, useForm, usePage } from '@inertiajs/vue3';
 import {
     BarChart3,
     BookmarkPlus,
     Compass,
+    CreditCard,
     Flame,
     History,
     Pin,
@@ -104,17 +105,14 @@ const props = withDefaults(
                 date_from: '',
                 date_to: '',
             },
-            available_modules: [
-                'site-intel',
-                'telegram',
-                'youtube',
-                'shifr',
-            ],
+            available_modules: ['site-intel', 'telegram', 'youtube', 'shifr'],
         }),
     }
 );
 
 const { t, locale } = useI18n();
+const page = usePage();
+const access = computed(() => page.props.auth.access);
 const chartMax = Math.max(...props.dashboard.chart.map((x) => x.count), 1);
 const BODY_SCROLL_LOCK_CLASS = 'dashboard-scroll-lock';
 
@@ -171,6 +169,16 @@ const topDay = computed(() => {
 const lastQuery = computed(() => {
     return props.dashboard.activity_feed[0] ?? null;
 });
+
+const quotaLabel = (feature: string): string => {
+    const quota = access.value.features[feature];
+
+    if (!quota || quota.limit === 0) {
+        return t('dashboard.plan.unavailable');
+    }
+
+    return `${quota.remaining}/${quota.limit}`;
+};
 
 const moduleLabel = (key: string): string => {
     const translationKey = `dashboard.modules.${key}`;
@@ -376,6 +384,50 @@ onBeforeUnmount(() => {
                         {{ dashboard.summary.active_days_last_30_days }}
                     </p>
                 </article>
+            </section>
+
+            <section class="intel-panel">
+                <div class="flex flex-wrap items-center justify-between gap-3">
+                    <div>
+                        <p
+                            class="text-xs tracking-wide text-muted-foreground uppercase"
+                        >
+                            {{ t('dashboard.plan.title') }}
+                        </p>
+                        <h2 class="mt-1 text-lg font-semibold uppercase">
+                            {{ access.plan }}
+                        </h2>
+                    </div>
+                    <Link
+                        href="/settings/billing"
+                        class="inline-flex h-9 items-center gap-2 rounded-md border border-sidebar-border/70 bg-background/50 px-3 text-sm transition hover:border-primary/40 hover:bg-background/80"
+                    >
+                        <CreditCard class="h-4 w-4" />
+                        {{ t('dashboard.plan.manage') }}
+                    </Link>
+                </div>
+                <div class="mt-3 grid gap-2 sm:grid-cols-2">
+                    <div
+                        class="rounded-md border border-sidebar-border/70 bg-background/40 p-3"
+                    >
+                        <p class="text-xs text-muted-foreground">
+                            {{ t('dashboard.plan.analytics') }}
+                        </p>
+                        <p class="mt-1 text-xl font-semibold">
+                            {{ quotaLabel('analytics') }}
+                        </p>
+                    </div>
+                    <div
+                        class="rounded-md border border-sidebar-border/70 bg-background/40 p-3"
+                    >
+                        <p class="text-xs text-muted-foreground">
+                            {{ t('dashboard.plan.parser') }}
+                        </p>
+                        <p class="mt-1 text-xl font-semibold">
+                            {{ quotaLabel('parser') }}
+                        </p>
+                    </div>
+                </div>
             </section>
 
             <section class="grid gap-4 xl:grid-cols-2">

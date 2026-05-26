@@ -9,8 +9,27 @@ export type User = {
     [key: string]: unknown;
 };
 
+export type FeatureAccess = {
+    limit: number;
+    used: number;
+    remaining: number;
+    allowed: boolean;
+};
+
+export type AccountAccess = {
+    plan: string;
+    subscription: {
+        plan: string;
+        status: string;
+        starts_at: string | null;
+        ends_at: string | null;
+    } | null;
+    features: Record<string, FeatureAccess>;
+};
+
 export type Auth = {
     user: User;
+    access: AccountAccess;
 };
 
 export type TwoFactorConfigContent = {

@@ -5,7 +5,9 @@ use App\Http\Controllers\YouTube\YouTubeParserController;
 use App\Http\Controllers\YouTube\YouTubeSearchController;
 use Illuminate\Support\Facades\Route;
 
-Route::inertia('youtube', 'YouTube')->name('youtube');
+Route::inertia('youtube', 'YouTube')
+    ->middleware('feature.access')
+    ->name('youtube');
 
 Route::prefix('youtube')->name('youtube.')->group(function (): void {
     Route::prefix('search')->name('search.')->group(function (): void {

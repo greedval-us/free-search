@@ -5,7 +5,9 @@ use App\Http\Controllers\Telegram\TelegramParserController;
 use App\Http\Controllers\Telegram\TelegramSearchController;
 use Illuminate\Support\Facades\Route;
 
-Route::inertia('telegram', 'Telegram')->name('telegram');
+Route::inertia('telegram', 'Telegram')
+    ->middleware('feature.access')
+    ->name('telegram');
 
 Route::prefix('telegram')->name('telegram.')->group(function (): void {
     Route::prefix('search')->name('search.')->group(function (): void {

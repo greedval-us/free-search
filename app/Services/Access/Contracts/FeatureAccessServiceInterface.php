@@ -8,4 +8,6 @@ use App\Services\Access\DTO\FeatureAccessDecision;
 interface FeatureAccessServiceInterface
 {
     public function consume(User $user, string $routeName): FeatureAccessDecision;
+
+    public function inspect(User $user, string $feature): FeatureAccessDecision;
 }

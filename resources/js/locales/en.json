@@ -1020,6 +1020,13 @@
             "subtitle": "Track real search queries, recent actions, and quickly return to your modules.",
             "badge": "Search history is saved automatically"
         },
+        "plan": {
+            "title": "Your plan",
+            "manage": "Manage plan",
+            "analytics": "Analytics left today",
+            "parser": "Parser left today",
+            "unavailable": "Unavailable"
+        },
         "summary": {
             "total": "All queries",
             "last7": "Last 7 days",
@@ -1119,6 +1126,7 @@
         "profile": "Profile",
         "security": "Security",
         "appearance": "Appearance",
+        "billing": "Plan & billing",
         "profilePage": {
             "title": "Profile settings",
             "heading": "Profile information",
@@ -1179,6 +1187,21 @@
             "title": "Appearance settings",
             "heading": "Appearance settings",
             "headingDescription": "Update your account's appearance settings"
+        },
+        "billingPage": {
+            "title": "Plan & billing",
+            "heading": "Plan & billing",
+            "description": "Review your current plan, remaining daily quotas, and available upgrades.",
+            "currentPlan": "Current plan",
+            "validUntil": "Valid until",
+            "noExpiry": "No active paid subscription",
+            "analyticsQuota": "Analytics quota left today",
+            "parserQuota": "Parser quota left today",
+            "unavailable": "Unavailable",
+            "active": "Active",
+            "analytics": "Analytics requests per day",
+            "parser": "Parser requests per day",
+            "backDashboard": "Back to dashboard"
         },
         "deleteAccount": {
             "title": "Delete account",

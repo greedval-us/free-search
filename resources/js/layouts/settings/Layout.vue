@@ -27,6 +27,10 @@ const sidebarNavItems = computed<NavItem[]>(() => [
         title: t('settings.appearance'),
         href: editAppearance(),
     },
+    {
+        title: t('settings.billing'),
+        href: '/settings/billing',
+    },
 ]);
 
 const { isCurrentOrParentUrl } = useCurrentUrl();
