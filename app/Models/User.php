@@ -3,11 +3,13 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
+use App\Support\Access\AccountPlan;
 use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Hidden;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Fortify\TwoFactorAuthenticatable;
@@ -32,8 +34,16 @@ class User extends Authenticatable
      * Account types.
      */
     public const ACCOUNT_TYPE_USER = 'user';
+
     public const ACCOUNT_TYPE_ADMIN = 'admin';
+
     public const ACCOUNT_TYPE_MODERATOR = 'moderator';
+
+    public const SUBSCRIPTION_PLAN_FREE = 'free';
+
+    public const SUBSCRIPTION_PLAN_PLUS = 'plus';
+
+    public const SUBSCRIPTION_PLAN_PRO = 'pro';
 
     /**
      * The attributes that should be cast.
@@ -73,7 +83,7 @@ class User extends Authenticatable
      */
     public function hasPremiumAccess(): bool
     {
-        if (!$this->is_premium) {
+        if (! $this->is_premium) {
             return false;
         }
 
@@ -89,7 +99,7 @@ class User extends Authenticatable
      */
     public function isPremiumExpired(): bool
     {
-        if (!$this->is_premium) {
+        if (! $this->is_premium) {
             return true;
         }
 
@@ -130,6 +140,29 @@ class User extends Authenticatable
     public function modulePins(): HasMany
     {
         return $this->hasMany(UserModulePin::class);
+    }
+
+    public function subscriptions(): HasMany
+    {
+        return $this->hasMany(UserSubscription::class);
+    }
+
+    public function activeSubscription(): HasOne
+    {
+        return $this->hasOne(UserSubscription::class)
+            ->where('status', UserSubscription::STATUS_ACTIVE)
+            ->where('starts_at', '<=', now())
+            ->where('ends_at', '>', now())
+            ->latestOfMany('ends_at');
+    }
+
+    public function currentPlan(): AccountPlan
+    {
+        $subscription = $this->relationLoaded('activeSubscription')
+            ? $this->activeSubscription
+            : $this->activeSubscription()->first();
+
+        return AccountPlan::fromNullable($subscription?->plan);
     }
 
     /**

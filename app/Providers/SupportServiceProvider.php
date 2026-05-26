@@ -2,10 +2,12 @@
 
 namespace App\Providers;
 
+use App\Services\Access\Contracts\FeatureAccessServiceInterface;
+use App\Services\Access\FeatureAccessService;
 use App\Support\Providers\BindingsServiceProvider;
 use App\Support\Reports\Contracts\ReportFilenamePolicyInterface;
-use App\Support\Reports\ReportsConfig;
 use App\Support\Reports\ReportFilenamePolicy;
+use App\Support\Reports\ReportsConfig;
 
 final class SupportServiceProvider extends BindingsServiceProvider
 {
@@ -25,6 +27,7 @@ final class SupportServiceProvider extends BindingsServiceProvider
     protected function bindings(): array
     {
         return [
+            FeatureAccessServiceInterface::class => FeatureAccessService::class,
             ReportFilenamePolicyInterface::class => ReportFilenamePolicy::class,
         ];
     }

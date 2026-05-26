@@ -1,8 +1,9 @@
 <?php
 
+use App\Http\Middleware\EnsureFeatureAccess;
+use App\Http\Middleware\EnsureUserIsNotBlocked;
 use App\Http\Middleware\HandleAppearance;
 use App\Http\Middleware\HandleInertiaRequests;
-use App\Http\Middleware\EnsureUserIsNotBlocked;
 use App\Http\Middleware\LogUserActivity;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
@@ -17,6 +18,10 @@ return Application::configure(basePath: dirname(__DIR__))
     )
     ->withMiddleware(function (Middleware $middleware): void {
         $middleware->encryptCookies(except: ['appearance', 'sidebar_state']);
+
+        $middleware->alias([
+            'feature.access' => EnsureFeatureAccess::class,
+        ]);
 
         $middleware->web(append: [
             HandleAppearance::class,
