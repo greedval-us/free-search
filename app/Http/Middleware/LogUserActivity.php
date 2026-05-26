@@ -18,13 +18,12 @@ class LogUserActivity
         private readonly RequestPayloadSanitizer $payloadSanitizer,
         private readonly RequestQueryPreviewResolver $queryPreviewResolver,
         private readonly RequestLogSchemaInspector $schemaInspector,
-    ) {
-    }
+    ) {}
 
     /**
      * Handle an incoming request.
      *
-     * @param Closure(Request): Response $next
+     * @param  Closure(Request): Response  $next
      */
     public function handle(Request $request, Closure $next): Response
     {
@@ -38,12 +37,16 @@ class LogUserActivity
 
     private function storeUserActivity(Request $request, Response $response, float $startedAt): void
     {
+        if ($request->attributes->getBoolean('feature_access_denied')) {
+            return;
+        }
+
         if ($request->user() === null) {
             return;
         }
 
         $routeName = $request->route()?->getName();
-        if (!is_string($routeName) || $routeName === '') {
+        if (! is_string($routeName) || $routeName === '') {
             return;
         }
 
@@ -91,7 +94,7 @@ class LogUserActivity
 
     private function resolveActionKey(string $routeName): ?string
     {
-        if (!str_contains($routeName, '.')) {
+        if (! str_contains($routeName, '.')) {
             return null;
         }
 
