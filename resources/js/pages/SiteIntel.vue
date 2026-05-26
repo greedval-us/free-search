@@ -20,7 +20,7 @@ defineOptions({
 const { t } = useI18n();
 const { activeTab, activeTabDefinition } = useRepeatTab(
     SITE_INTEL_TABS,
-    'analytics'
+    'siteHealth'
 );
 
 const pageTitle = computed(() => t('siteIntel.headTitle'));
