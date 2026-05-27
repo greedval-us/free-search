@@ -9,5 +9,5 @@ interface FeatureAccessServiceInterface
 {
     public function consume(User $user, string $routeName): FeatureAccessDecision;
 
-    public function inspect(User $user, string $feature): FeatureAccessDecision;
+    public function inspect(User $user, string $resource): FeatureAccessDecision;
 }

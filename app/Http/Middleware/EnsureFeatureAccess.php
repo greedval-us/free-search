@@ -24,13 +24,13 @@ final class EnsureFeatureAccess
             return $next($request);
         }
 
-        $feature = $this->requestedPageFeature($routeName, $request);
-        if ($feature === null && ! $this->isProtectedRoute($routeName)) {
+        $resource = $this->requestedPageResource($routeName, $request);
+        if ($resource === null && ! $this->isProtectedRoute($routeName)) {
             return $next($request);
         }
 
-        $decision = $feature !== null
-            ? $this->featureAccessService->inspect($user, $feature)
+        $decision = $resource !== null
+            ? $this->featureAccessService->inspect($user, $resource)
             : $this->featureAccessService->consume($user, $routeName);
 
         if ($decision->allowed) {
@@ -55,15 +55,22 @@ final class EnsureFeatureAccess
         ]);
     }
 
-    private function requestedPageFeature(string $routeName, Request $request): ?string
+    private function requestedPageResource(string $routeName, Request $request): ?string
     {
         if (! in_array($routeName, ['telegram', 'youtube', 'site-intel'], true)) {
             return null;
         }
 
         $tab = (string) $request->query('tab', '');
+        if ($routeName === 'site-intel' && $tab === 'seoAudit') {
+            return 'site-intel.seo-audit';
+        }
 
-        return in_array($tab, ['analytics', 'parser'], true) ? $tab : null;
+        if (! in_array($tab, ['analytics', 'parser'], true)) {
+            return null;
+        }
+
+        return "{$routeName}.{$tab}";
     }
 
     private function isProtectedRoute(string $routeName): bool

@@ -7,6 +7,7 @@ use App\Models\User;
 use App\Models\UserSubscription;
 use App\Support\Access\AccountPlan;
 use Carbon\CarbonImmutable;
+use Illuminate\Support\Arr;
 
 final class AccountAccessSummaryService
 {
@@ -47,12 +48,18 @@ final class AccountAccessSummaryService
     {
         $plans = config('access.plans', []);
         $planLimits = is_array($plans) ? ($plans[$plan->value] ?? []) : [];
-        $features = ['analytics', 'parser'];
+        $features = $this->summaryFeatures();
         $result = [];
 
-        foreach ($features as $feature) {
-            $limit = max(0, (int) ($planLimits[$feature] ?? 0));
-            $used = max(0, (int) ($usage[$feature] ?? 0));
+        foreach ($features as $feature => $quotaKey) {
+            $limit = max(0, (int) (
+                $planLimits[$feature]
+                ?? Arr::get($planLimits, $feature)
+                ?? $planLimits[$quotaKey]
+                ?? Arr::get($planLimits, $quotaKey)
+                ?? 0
+            ));
+            $used = max(0, (int) ($usage[$quotaKey] ?? 0));
 
             $result[$feature] = [
                 'limit' => $limit,
@@ -63,6 +70,32 @@ final class AccountAccessSummaryService
         }
 
         return $result;
+    }
+
+    /**
+     * @return array<string, string>
+     */
+    private function summaryFeatures(): array
+    {
+        $features = [
+            'analytics' => 'analytics',
+            'parser' => 'parser',
+        ];
+
+        $resources = config('access.resources', []);
+        if (! is_array($resources)) {
+            return $features;
+        }
+
+        foreach ($resources as $resource => $config) {
+            if (! is_array($config)) {
+                continue;
+            }
+
+            $features[(string) $resource] = (string) ($config['quota_key'] ?? $resource);
+        }
+
+        return $features;
     }
 
     /**

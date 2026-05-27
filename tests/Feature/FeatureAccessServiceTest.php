@@ -7,6 +7,7 @@ use App\Models\User;
 use App\Models\UserSubscription;
 use App\Services\Access\Contracts\FeatureAccessServiceInterface;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Config;
 use Tests\TestCase;
 
 class FeatureAccessServiceTest extends TestCase
@@ -32,10 +33,44 @@ class FeatureAccessServiceTest extends TestCase
         $decision = $this->service()->consume($user, 'telegram.analytics.summary');
 
         $this->assertTrue($decision->allowed);
+        $this->assertSame('telegram.analytics', $decision->feature);
         $this->assertSame('plus', $decision->plan);
         $this->assertSame(10, $decision->limit);
         $this->assertSame(1, $decision->used);
         $this->assertSame(1, $this->usage($user, 'analytics'));
+    }
+
+    public function test_site_intel_seo_audit_uses_analytics_quota_pool(): void
+    {
+        $user = User::factory()->create();
+        $this->subscribe($user, User::SUBSCRIPTION_PLAN_PLUS);
+
+        $decision = $this->service()->consume($user, 'site-intel.seo-audit');
+
+        $this->assertTrue($decision->allowed);
+        $this->assertSame('site-intel.seo-audit', $decision->feature);
+        $this->assertSame(10, $decision->limit);
+        $this->assertSame(1, $this->usage($user, 'analytics'));
+        $this->assertSame(0, $this->usage($user, 'site-intel.seo-audit'));
+    }
+
+    public function test_module_specific_quota_override_can_be_configured(): void
+    {
+        Config::set('access.plans.plus.youtube.analytics', 2);
+        Config::set('access.resources.youtube.analytics.quota_key', 'youtube.analytics');
+
+        $user = User::factory()->create();
+        $this->subscribe($user, User::SUBSCRIPTION_PLAN_PLUS);
+
+        $this->assertTrue($this->service()->consume($user, 'youtube.analytics.summary')->allowed);
+        $this->assertTrue($this->service()->consume($user, 'youtube.analytics.summary')->allowed);
+
+        $decision = $this->service()->consume($user, 'youtube.analytics.summary');
+
+        $this->assertFalse($decision->allowed);
+        $this->assertSame(2, $decision->limit);
+        $this->assertSame(2, $this->usage($user, 'youtube.analytics'));
+        $this->assertSame(0, $this->usage($user, 'analytics'));
     }
 
     public function test_plus_subscription_stops_after_daily_parser_limit(): void

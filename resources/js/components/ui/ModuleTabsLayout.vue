@@ -9,9 +9,10 @@ export type ModuleTabDefinition = {
     labelKey: string;
     icon: Component;
     component?: Component;
+    accessKey?: string;
 };
 
-defineProps<{
+const props = defineProps<{
     tabs: readonly ModuleTabDefinition[];
     activeTab: string;
 }>();
@@ -24,11 +25,13 @@ const { t } = useI18n();
 const page = usePage();
 
 const selectTab = (tab: string): void => {
-    const access = page.props.auth?.access?.features?.[tab];
+    const definition = props.tabs.find((item) => item.key === tab);
+    const accessKey = definition?.accessKey ?? tab;
+    const access = page.props.auth?.access?.features?.[accessKey];
 
     if (access && !access.allowed) {
         const reason = access.limit > 0 ? 'quota' : 'plan';
-        router.visit(`/settings/billing?feature=${tab}&reason=${reason}`);
+        router.visit(`/settings/billing?feature=${accessKey}&reason=${reason}`);
         return;
     }
 

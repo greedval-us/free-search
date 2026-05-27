@@ -2,8 +2,10 @@
 
 namespace Tests\Feature;
 
+use App\Models\FeatureUsageDaily;
 use App\Models\RequestLog;
 use App\Models\User;
+use App\Models\UserSubscription;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -32,7 +34,7 @@ class FeatureAccessMiddlewareTest extends TestCase
             ->get(route('site-intel.analytics', ['target' => 'example.com']));
 
         $response->assertRedirect(route('billing.edit', [
-            'feature' => 'analytics',
+            'feature' => 'site-intel.analytics',
             'reason' => 'plan',
         ]));
         $this->assertSame(0, RequestLog::query()->count());
@@ -47,12 +49,54 @@ class FeatureAccessMiddlewareTest extends TestCase
             ->get('/youtube?tab=analytics');
 
         $response->assertRedirect(route('billing.edit', [
-            'feature' => 'analytics',
+            'feature' => 'youtube.analytics',
             'reason' => 'plan',
         ]));
         $this->assertDatabaseMissing('feature_usage_daily', [
             'user_id' => $user->id,
             'feature' => 'analytics',
         ]);
+    }
+
+    public function test_site_intel_seo_audit_tab_redirects_to_billing(): void
+    {
+        $user = User::factory()->create();
+
+        $response = $this
+            ->actingAs($user)
+            ->get('/site-intel?tab=seoAudit');
+
+        $response->assertRedirect(route('billing.edit', [
+            'feature' => 'site-intel.seo-audit',
+            'reason' => 'plan',
+        ]));
+    }
+
+    public function test_direct_page_tab_request_redirects_when_quota_is_exhausted(): void
+    {
+        $user = User::factory()->create();
+        UserSubscription::query()->create([
+            'user_id' => $user->id,
+            'plan' => User::SUBSCRIPTION_PLAN_PLUS,
+            'status' => UserSubscription::STATUS_ACTIVE,
+            'starts_at' => now()->subMinute(),
+            'ends_at' => now()->addMonth(),
+        ]);
+
+        FeatureUsageDaily::query()->create([
+            'user_id' => $user->id,
+            'feature' => 'analytics',
+            'usage_date' => now()->startOfDay(),
+            'used' => 10,
+        ]);
+
+        $response = $this
+            ->actingAs($user)
+            ->get('/site-intel?tab=seoAudit');
+
+        $response->assertRedirect(route('billing.edit', [
+            'feature' => 'site-intel.seo-audit',
+            'reason' => 'quota',
+        ]));
     }
 }
