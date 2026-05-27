@@ -9,10 +9,12 @@ use App\Models\UserSubscription;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Route;
+use Tests\Feature\Concerns\CreatesSubscribedUser;
 use Tests\TestCase;
 
 class FeatureAccessMiddlewareTest extends TestCase
 {
+    use CreatesSubscribedUser;
     use RefreshDatabase;
 
     public function test_denied_feature_request_is_not_written_to_dashboard_activity(): void
@@ -103,14 +105,7 @@ class FeatureAccessMiddlewareTest extends TestCase
 
     public function test_direct_page_tab_request_redirects_when_quota_is_exhausted(): void
     {
-        $user = User::factory()->create();
-        UserSubscription::query()->create([
-            'user_id' => $user->id,
-            'plan' => User::SUBSCRIPTION_PLAN_PLUS,
-            'status' => UserSubscription::STATUS_ACTIVE,
-            'starts_at' => now()->subMinute(),
-            'ends_at' => now()->addMonth(),
-        ]);
+        $user = $this->createSubscribedUser();
 
         FeatureUsageDaily::query()->create([
             'user_id' => $user->id,
@@ -143,14 +138,7 @@ class FeatureAccessMiddlewareTest extends TestCase
             ],
         ]);
 
-        $user = User::factory()->create();
-        UserSubscription::query()->create([
-            'user_id' => $user->id,
-            'plan' => User::SUBSCRIPTION_PLAN_PLUS,
-            'status' => UserSubscription::STATUS_ACTIVE,
-            'starts_at' => now()->subMinute(),
-            'ends_at' => now()->addMonth(),
-        ]);
+        $user = $this->createSubscribedUser();
 
         $this
             ->actingAs($user)
@@ -189,14 +177,7 @@ class FeatureAccessMiddlewareTest extends TestCase
             ],
         ]);
 
-        $user = User::factory()->create();
-        UserSubscription::query()->create([
-            'user_id' => $user->id,
-            'plan' => User::SUBSCRIPTION_PLAN_PLUS,
-            'status' => UserSubscription::STATUS_ACTIVE,
-            'starts_at' => now()->subMinute(),
-            'ends_at' => now()->addMonth(),
-        ]);
+        $user = $this->createSubscribedUser();
 
         $this
             ->actingAs($user)
@@ -223,14 +204,7 @@ class FeatureAccessMiddlewareTest extends TestCase
             ],
         ]);
 
-        $user = User::factory()->create();
-        UserSubscription::query()->create([
-            'user_id' => $user->id,
-            'plan' => User::SUBSCRIPTION_PLAN_PLUS,
-            'status' => UserSubscription::STATUS_ACTIVE,
-            'starts_at' => now()->subMinute(),
-            'ends_at' => now()->addMonth(),
-        ]);
+        $user = $this->createSubscribedUser();
         FeatureUsageDaily::query()->create([
             'user_id' => $user->id,
             'feature' => 'telegram.analytics',

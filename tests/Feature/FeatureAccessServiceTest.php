@@ -8,11 +8,22 @@ use App\Models\UserSubscription;
 use App\Services\Access\Contracts\FeatureAccessServiceInterface;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Config;
+use Tests\Feature\Concerns\ControlsTestTime;
+use Tests\Feature\Concerns\CreatesSubscribedUser;
 use Tests\TestCase;
 
 class FeatureAccessServiceTest extends TestCase
 {
+    use ControlsTestTime;
+    use CreatesSubscribedUser;
     use RefreshDatabase;
+
+    protected function tearDown(): void
+    {
+        $this->tearDownControlsTestTime();
+
+        parent::tearDown();
+    }
 
     public function test_free_account_cannot_use_analytics(): void
     {
@@ -27,8 +38,7 @@ class FeatureAccessServiceTest extends TestCase
 
     public function test_plus_subscription_consumes_analytics_quota(): void
     {
-        $user = User::factory()->create();
-        $this->subscribe($user, User::SUBSCRIPTION_PLAN_PLUS);
+        $user = $this->createSubscribedUser();
 
         $decision = $this->service()->consume($user, 'telegram.analytics.summary');
 
@@ -43,8 +53,7 @@ class FeatureAccessServiceTest extends TestCase
 
     public function test_site_intel_seo_audit_uses_own_quota_pool(): void
     {
-        $user = User::factory()->create();
-        $this->subscribe($user, User::SUBSCRIPTION_PLAN_PLUS);
+        $user = $this->createSubscribedUser();
 
         $decision = $this->service()->consume($user, 'site-intel.seo-audit');
 
@@ -63,7 +72,7 @@ class FeatureAccessServiceTest extends TestCase
         ]);
 
         $user = User::factory()->create();
-        $this->subscribe($user, User::SUBSCRIPTION_PLAN_PLUS);
+        $this->attachSubscription($user);
 
         $this->assertTrue($this->service()->consume($user, 'youtube.analytics.summary')->allowed);
         $this->assertTrue($this->service()->consume($user, 'youtube.analytics.summary')->allowed);
@@ -78,8 +87,7 @@ class FeatureAccessServiceTest extends TestCase
 
     public function test_plus_subscription_stops_after_daily_parser_limit(): void
     {
-        $user = User::factory()->create();
-        $this->subscribe($user, User::SUBSCRIPTION_PLAN_PLUS);
+        $user = $this->createSubscribedUser();
 
         for ($i = 0; $i < 5; $i++) {
             $this->assertTrue($this->service()->consume($user, 'youtube.parser.comments')->allowed);
@@ -95,10 +103,32 @@ class FeatureAccessServiceTest extends TestCase
         $this->assertTrue($this->service()->consume($user, 'telegram.parser.start')->allowed);
     }
 
+    public function test_daily_quota_is_available_again_on_the_next_day_without_a_job(): void
+    {
+        $this->freezeNow('2026-05-27 10:00:00');
+
+        $user = $this->createSubscribedUser();
+
+        for ($i = 0; $i < 5; $i++) {
+            $this->assertTrue($this->service()->consume($user, 'youtube.parser.comments')->allowed);
+        }
+
+        $this->assertFalse($this->service()->consume($user, 'youtube.parser.comments')->allowed);
+        $this->assertSame(5, $this->usage($user, 'youtube.parser', '2026-05-27'));
+
+        $this->freezeNow('2026-05-28 00:01:00');
+
+        $decision = $this->service()->consume($user, 'youtube.parser.comments');
+
+        $this->assertTrue($decision->allowed);
+        $this->assertSame(1, $decision->used);
+        $this->assertSame(5, $this->usage($user, 'youtube.parser', '2026-05-27'));
+        $this->assertSame(1, $this->usage($user, 'youtube.parser', '2026-05-28'));
+    }
+
     public function test_parser_status_requires_paid_plan_without_consuming_quota(): void
     {
-        $user = User::factory()->create();
-        $this->subscribe($user, User::SUBSCRIPTION_PLAN_PLUS);
+        $user = $this->createSubscribedUser();
 
         $decision = $this->service()->consume($user, 'telegram.parser.status');
 
@@ -129,22 +159,17 @@ class FeatureAccessServiceTest extends TestCase
         return $this->app->make(FeatureAccessServiceInterface::class);
     }
 
-    private function subscribe(User $user, string $plan): void
+    private function usage(User $user, string $feature, ?string $date = null): int
     {
-        UserSubscription::query()->create([
-            'user_id' => $user->id,
-            'plan' => $plan,
-            'status' => UserSubscription::STATUS_ACTIVE,
-            'starts_at' => now()->subMinute(),
-            'ends_at' => now()->addMonth(),
-        ]);
-    }
-
-    private function usage(User $user, string $feature): int
-    {
-        return (int) FeatureUsageDaily::query()
+        $query = FeatureUsageDaily::query()
             ->where('user_id', $user->id)
-            ->where('feature', $feature)
+            ->where('feature', $feature);
+
+        if ($date !== null) {
+            $query->whereDate('usage_date', $date);
+        }
+
+        return (int) $query
             ->value('used');
     }
 }
