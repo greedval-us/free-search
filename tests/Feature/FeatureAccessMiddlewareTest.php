@@ -74,6 +74,33 @@ class FeatureAccessMiddlewareTest extends TestCase
         ]));
     }
 
+    public function test_page_tab_access_can_be_added_from_config(): void
+    {
+        Route::get('/_custom-access-page', static fn () => response('ok'))
+            ->middleware('feature.access')
+            ->name('custom-access-page');
+
+        Config::set('access.page_resources', [
+            ...config('access.page_resources'),
+            'custom-access-page' => [
+                'tabs' => [
+                    'deepAnalytics' => 'telegram.analytics',
+                ],
+            ],
+        ]);
+
+        $user = User::factory()->create();
+
+        $response = $this
+            ->actingAs($user)
+            ->get('/_custom-access-page?tab=deepAnalytics');
+
+        $response->assertRedirect(route('billing.edit', [
+            'feature' => 'telegram.analytics',
+            'reason' => 'plan',
+        ]));
+    }
+
     public function test_direct_page_tab_request_redirects_when_quota_is_exhausted(): void
     {
         $user = User::factory()->create();
@@ -139,6 +166,46 @@ class FeatureAccessMiddlewareTest extends TestCase
             'user_id' => $user->id,
             'feature' => 'telegram.analytics',
             'used' => 1,
+        ]);
+    }
+
+    public function test_non_counting_query_values_can_be_added_from_config(): void
+    {
+        Route::get('/_feature-access-non-counting-query-test', static fn () => response()->json(['ok' => true]))
+            ->middleware('feature.access')
+            ->name('feature-access.non-counting-query-test');
+
+        Config::set('access.protected_routes', [
+            ...config('access.protected_routes'),
+            'feature-access.non-counting-query-test' => [
+                'resource' => 'telegram.analytics',
+                'counts' => true,
+            ],
+        ]);
+        Config::set('access.non_counting_query_values', [
+            ...config('access.non_counting_query_values'),
+            'mode' => [
+                'preview',
+            ],
+        ]);
+
+        $user = User::factory()->create();
+        UserSubscription::query()->create([
+            'user_id' => $user->id,
+            'plan' => User::SUBSCRIPTION_PLAN_PLUS,
+            'status' => UserSubscription::STATUS_ACTIVE,
+            'starts_at' => now()->subMinute(),
+            'ends_at' => now()->addMonth(),
+        ]);
+
+        $this
+            ->actingAs($user)
+            ->getJson('/_feature-access-non-counting-query-test?mode=preview')
+            ->assertOk();
+
+        $this->assertDatabaseMissing('feature_usage_daily', [
+            'user_id' => $user->id,
+            'feature' => 'telegram.analytics',
         ]);
     }
 

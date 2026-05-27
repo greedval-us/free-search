@@ -72,6 +72,33 @@ return [
         'moderator',
     ],
 
+    'page_resources' => [
+        'site-intel' => [
+            'tabs' => [
+                'analytics' => 'site-intel.analytics',
+                'seoAudit' => 'site-intel.seo-audit',
+            ],
+        ],
+        'telegram' => [
+            'tabs' => [
+                'analytics' => 'telegram.analytics',
+                'parser' => 'telegram.parser',
+            ],
+        ],
+        'youtube' => [
+            'tabs' => [
+                'analytics' => 'youtube.analytics',
+                'parser' => 'youtube.parser',
+            ],
+        ],
+    ],
+
+    'non_counting_query_values' => [
+        'snapshotRole' => [
+            'previous',
+        ],
+    ],
+
     'protected_routes' => [
         'site-intel.analytics' => ['resource' => 'site-intel.analytics', 'counts' => true],
         'site-intel.report' => ['resource' => 'site-intel.analytics', 'counts' => false],

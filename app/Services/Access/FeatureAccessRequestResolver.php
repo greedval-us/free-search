@@ -43,20 +43,24 @@ final readonly class FeatureAccessRequestResolver implements FeatureAccessReques
 
     private function requestedPageResource(string $routeName, Request $request): ?string
     {
-        if (! in_array($routeName, ['telegram', 'youtube', 'site-intel'], true)) {
+        $pageResources = config('access.page_resources', []);
+        if (! is_array($pageResources)) {
             return null;
         }
 
-        $tab = (string) $request->query('tab', '');
-        if ($routeName === 'site-intel' && $tab === 'seoAudit') {
-            return 'site-intel.seo-audit';
-        }
-
-        if (! in_array($tab, ['analytics', 'parser'], true)) {
+        $pageConfig = $pageResources[$routeName] ?? null;
+        if (! is_array($pageConfig)) {
             return null;
         }
 
-        return "{$routeName}.{$tab}";
+        $tabs = $pageConfig['tabs'] ?? [];
+        if (! is_array($tabs)) {
+            return null;
+        }
+
+        $resource = $tabs[(string) $request->query('tab', '')] ?? null;
+
+        return is_string($resource) && $resource !== '' ? $resource : null;
     }
 
     private function shouldConsume(Request $request, AccessResourcePolicy $policy): bool
@@ -65,6 +69,26 @@ final readonly class FeatureAccessRequestResolver implements FeatureAccessReques
             return false;
         }
 
-        return (string) $request->query('snapshotRole', '') !== 'previous';
+        return ! $this->hasNonCountingQueryValue($request);
+    }
+
+    private function hasNonCountingQueryValue(Request $request): bool
+    {
+        $queryValues = config('access.non_counting_query_values', []);
+        if (! is_array($queryValues)) {
+            return false;
+        }
+
+        foreach ($queryValues as $key => $values) {
+            if (! is_string($key) || ! is_array($values)) {
+                continue;
+            }
+
+            if (in_array((string) $request->query($key, ''), $values, true)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }
