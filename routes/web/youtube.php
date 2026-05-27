@@ -14,6 +14,9 @@ Route::prefix('youtube')->name('youtube.')->group(function (): void {
         Route::get('videos', [YouTubeSearchController::class, 'videos'])
             ->middleware('throttle:30,1')
             ->name('videos');
+        Route::get('comments-preview', [YouTubeParserController::class, 'commentsPreview'])
+            ->middleware('throttle:30,1')
+            ->name('comments-preview');
     });
 
     Route::prefix('analytics')->name('analytics.')->group(function (): void {

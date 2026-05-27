@@ -126,6 +126,34 @@ class YouTubeControllerIsolationTest extends TestCase
             ->assertJsonPath('data.items.0.id', 'comment-1');
     }
 
+    public function test_youtube_search_comments_preview_controller_maps_request_to_service(): void
+    {
+        $user = User::factory()->create();
+
+        $this->mock(YouTubeParserApplicationServiceInterface::class, function ($mock): void {
+            $mock->shouldReceive('comments')
+                ->once()
+                ->with(Mockery::on(
+                    fn (YouTubeCommentsQueryDTO $query): bool => $query->videoId === 'abc123'
+                        && $query->maxResults === 4
+                        && $query->order === 'time'
+                ))
+                ->andReturn([
+                    'items' => [['id' => 'comment-preview-1']],
+                ]);
+        });
+
+        $this
+            ->actingAs($user)
+            ->getJson(route('youtube.search.comments-preview', [
+                'videoId' => 'abc123',
+                'limit' => 4,
+                'order' => 'time',
+            ]))
+            ->assertOk()
+            ->assertJsonPath('data.items.0.id', 'comment-preview-1');
+    }
+
     public function test_youtube_parser_start_controller_passes_authenticated_user_to_service(): void
     {
         $user = $this->paidUser();

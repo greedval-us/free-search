@@ -226,7 +226,7 @@ class FeatureAccessMiddlewareTest extends TestCase
         ]);
     }
 
-    public function test_youtube_search_comments_preview_does_not_consume_parser_quota(): void
+    public function test_youtube_search_comments_preview_route_does_not_consume_parser_quota(): void
     {
         $user = $this->createSubscribedUser();
 
@@ -244,9 +244,8 @@ class FeatureAccessMiddlewareTest extends TestCase
 
         $this
             ->actingAs($user)
-            ->getJson(route('youtube.parser.comments', [
+            ->getJson(route('youtube.search.comments-preview', [
                 'videoId' => 'video123',
-                'quotaContext' => 'youtube-search-comments-preview',
             ]))
             ->assertOk();
 
@@ -256,7 +255,7 @@ class FeatureAccessMiddlewareTest extends TestCase
         ]);
     }
 
-    public function test_youtube_search_comments_preview_is_allowed_even_when_parser_quota_is_exhausted(): void
+    public function test_youtube_search_comments_preview_route_is_allowed_even_when_parser_quota_is_exhausted(): void
     {
         $user = $this->createSubscribedUser();
         FeatureUsageDaily::query()->create([
@@ -280,9 +279,8 @@ class FeatureAccessMiddlewareTest extends TestCase
 
         $this
             ->actingAs($user)
-            ->getJson(route('youtube.parser.comments', [
+            ->getJson(route('youtube.search.comments-preview', [
                 'videoId' => 'video123',
-                'quotaContext' => 'youtube-search-comments-preview',
             ]))
             ->assertOk();
 
@@ -293,31 +291,4 @@ class FeatureAccessMiddlewareTest extends TestCase
         ]);
     }
 
-    public function test_quota_context_is_ignored_for_other_routes(): void
-    {
-        Route::get('/_feature-access-quota-context-scope-test', static fn () => response()->json(['ok' => true]))
-            ->middleware('feature.access')
-            ->name('feature-access.quota-context-scope-test');
-
-        Config::set('access.protected_routes', [
-            ...config('access.protected_routes'),
-            'feature-access.quota-context-scope-test' => [
-                'resource' => 'telegram.analytics',
-                'counts' => true,
-            ],
-        ]);
-
-        $user = $this->createSubscribedUser();
-
-        $this
-            ->actingAs($user)
-            ->getJson('/_feature-access-quota-context-scope-test?quotaContext=youtube-search-comments-preview')
-            ->assertOk();
-
-        $this->assertDatabaseHas('feature_usage_daily', [
-            'user_id' => $user->id,
-            'feature' => 'telegram.analytics',
-            'used' => 1,
-        ]);
-    }
 }

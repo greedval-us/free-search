@@ -99,14 +99,6 @@ return [
         ],
     ],
 
-    'non_counting_query_values_scoped' => [
-        'youtube.parser.comments' => [
-            'quotaContext' => [
-                'youtube-search-comments-preview',
-            ],
-        ],
-    ],
-
     'protected_routes' => [
         'site-intel.analytics' => ['resource' => 'site-intel.analytics', 'counts' => true],
         'site-intel.report' => ['resource' => 'site-intel.analytics', 'counts' => false],

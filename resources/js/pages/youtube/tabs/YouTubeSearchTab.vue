@@ -171,14 +171,13 @@ const loadComments = async (video: YouTubeVideo, append = false) => {
     }
 
     const response = await apiRequest<YouTubeCommentsPayload>(
-        '/youtube/parser/comments',
+        '/youtube/search/comments-preview',
         {
             query: {
                 videoId: video.id,
                 limit: 20,
                 order: 'relevance',
                 pageToken: append ? state.nextPageToken : '',
-                quotaContext: 'youtube-search-comments-preview',
             },
         }
     );

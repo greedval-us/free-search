@@ -34,12 +34,10 @@ final readonly class FeatureAccessRequestResolver implements FeatureAccessReques
             return null;
         }
 
-        $hasNonCountingQueryValue = $this->hasNonCountingQueryValue($request, $routeName);
-
         return new FeatureAccessRequest(
             resource: $policy->resource,
-            consume: $this->shouldConsume($policy, $hasNonCountingQueryValue),
-            counts: $this->shouldCount($policy, $hasNonCountingQueryValue),
+            consume: $this->shouldConsume($request, $policy),
+            counts: $policy->counts,
         );
     }
 
@@ -65,33 +63,18 @@ final readonly class FeatureAccessRequestResolver implements FeatureAccessReques
         return is_string($resource) && $resource !== '' ? $resource : null;
     }
 
-    private function shouldConsume(AccessResourcePolicy $policy, bool $hasNonCountingQueryValue): bool
+    private function shouldConsume(Request $request, AccessResourcePolicy $policy): bool
     {
         if (! $policy->counts) {
             return false;
         }
 
-        return ! $hasNonCountingQueryValue;
+        return ! $this->hasNonCountingQueryValue($request);
     }
 
-    private function shouldCount(AccessResourcePolicy $policy, bool $hasNonCountingQueryValue): bool
+    private function hasNonCountingQueryValue(Request $request): bool
     {
-        if (! $policy->counts) {
-            return false;
-        }
-
-        return ! $hasNonCountingQueryValue;
-    }
-
-    private function hasNonCountingQueryValue(Request $request, string $routeName): bool
-    {
-        return $this->matchesNonCountingQueryValues(
-            $request,
-            config('access.non_counting_query_values', [])
-        ) || $this->matchesNonCountingQueryValues(
-            $request,
-            $this->scopedQueryValuesForRoute($routeName)
-        );
+        return $this->matchesNonCountingQueryValues($request, config('access.non_counting_query_values', []));
     }
 
     /**
@@ -114,20 +97,5 @@ final readonly class FeatureAccessRequestResolver implements FeatureAccessReques
         }
 
         return false;
-    }
-
-    /**
-     * @return array<string, array<int, string>>
-     */
-    private function scopedQueryValuesForRoute(string $routeName): array
-    {
-        $scoped = config('access.non_counting_query_values_scoped', []);
-        if (! is_array($scoped)) {
-            return [];
-        }
-
-        $routeScoped = $scoped[$routeName] ?? [];
-
-        return is_array($routeScoped) ? $routeScoped : [];
     }
 }

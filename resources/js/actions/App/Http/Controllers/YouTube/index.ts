@@ -1,10 +1,10 @@
 import YouTubeSearchController from './YouTubeSearchController'
-import YouTubeAnalyticsController from './YouTubeAnalyticsController'
 import YouTubeParserController from './YouTubeParserController'
+import YouTubeAnalyticsController from './YouTubeAnalyticsController'
 const YouTube = {
     YouTubeSearchController: Object.assign(YouTubeSearchController, YouTubeSearchController),
-YouTubeAnalyticsController: Object.assign(YouTubeAnalyticsController, YouTubeAnalyticsController),
 YouTubeParserController: Object.assign(YouTubeParserController, YouTubeParserController),
+YouTubeAnalyticsController: Object.assign(YouTubeAnalyticsController, YouTubeAnalyticsController),
 }
 
 export default YouTube
