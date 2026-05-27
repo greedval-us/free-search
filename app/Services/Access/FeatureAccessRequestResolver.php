@@ -74,7 +74,14 @@ final readonly class FeatureAccessRequestResolver implements FeatureAccessReques
 
     private function hasNonCountingQueryValue(Request $request): bool
     {
-        $queryValues = config('access.non_counting_query_values', []);
+        return $this->matchesNonCountingQueryValues($request, config('access.non_counting_query_values', []));
+    }
+
+    /**
+     * @param  mixed  $queryValues
+     */
+    private function matchesNonCountingQueryValues(Request $request, mixed $queryValues): bool
+    {
         if (! is_array($queryValues)) {
             return false;
         }

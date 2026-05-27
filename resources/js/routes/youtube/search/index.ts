@@ -77,8 +77,87 @@ videos.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
         })
     
     videos.form = videosForm
+/**
+* @see \App\Http\Controllers\YouTube\YouTubeParserController::commentsPreview
+ * @see app/Http/Controllers/YouTube/YouTubeParserController.php:42
+ * @route '/youtube/search/comments-preview'
+ */
+export const commentsPreview = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+    url: commentsPreview.url(options),
+    method: 'get',
+})
+
+commentsPreview.definition = {
+    methods: ["get","head"],
+    url: '/youtube/search/comments-preview',
+} satisfies RouteDefinition<["get","head"]>
+
+/**
+* @see \App\Http\Controllers\YouTube\YouTubeParserController::commentsPreview
+ * @see app/Http/Controllers/YouTube/YouTubeParserController.php:42
+ * @route '/youtube/search/comments-preview'
+ */
+commentsPreview.url = (options?: RouteQueryOptions) => {
+    return commentsPreview.definition.url + queryParams(options)
+}
+
+/**
+* @see \App\Http\Controllers\YouTube\YouTubeParserController::commentsPreview
+ * @see app/Http/Controllers/YouTube/YouTubeParserController.php:42
+ * @route '/youtube/search/comments-preview'
+ */
+commentsPreview.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+    url: commentsPreview.url(options),
+    method: 'get',
+})
+/**
+* @see \App\Http\Controllers\YouTube\YouTubeParserController::commentsPreview
+ * @see app/Http/Controllers/YouTube/YouTubeParserController.php:42
+ * @route '/youtube/search/comments-preview'
+ */
+commentsPreview.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
+    url: commentsPreview.url(options),
+    method: 'head',
+})
+
+    /**
+* @see \App\Http\Controllers\YouTube\YouTubeParserController::commentsPreview
+ * @see app/Http/Controllers/YouTube/YouTubeParserController.php:42
+ * @route '/youtube/search/comments-preview'
+ */
+    const commentsPreviewForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+        action: commentsPreview.url(options),
+        method: 'get',
+    })
+
+            /**
+* @see \App\Http\Controllers\YouTube\YouTubeParserController::commentsPreview
+ * @see app/Http/Controllers/YouTube/YouTubeParserController.php:42
+ * @route '/youtube/search/comments-preview'
+ */
+        commentsPreviewForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+            action: commentsPreview.url(options),
+            method: 'get',
+        })
+            /**
+* @see \App\Http\Controllers\YouTube\YouTubeParserController::commentsPreview
+ * @see app/Http/Controllers/YouTube/YouTubeParserController.php:42
+ * @route '/youtube/search/comments-preview'
+ */
+        commentsPreviewForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+            action: commentsPreview.url({
+                        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
+                            _method: 'HEAD',
+                            ...(options?.query ?? options?.mergeQuery ?? {}),
+                        }
+                    }),
+            method: 'get',
+        })
+    
+    commentsPreview.form = commentsPreviewForm
 const search = {
     videos: Object.assign(videos, videos),
+commentsPreview: Object.assign(commentsPreview, commentsPreview),
 }
 
 export default search

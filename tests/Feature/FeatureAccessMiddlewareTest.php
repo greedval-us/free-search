@@ -5,14 +5,18 @@ namespace Tests\Feature;
 use App\Models\FeatureUsageDaily;
 use App\Models\RequestLog;
 use App\Models\User;
-use App\Models\UserSubscription;
+use App\Modules\YouTube\DTO\Request\YouTubeCommentsQueryDTO;
+use App\Modules\YouTube\Parser\Contracts\YouTubeParserApplicationServiceInterface;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Route;
+use Mockery;
+use Tests\Feature\Concerns\CreatesSubscribedUser;
 use Tests\TestCase;
 
 class FeatureAccessMiddlewareTest extends TestCase
 {
+    use CreatesSubscribedUser;
     use RefreshDatabase;
 
     public function test_denied_feature_request_is_not_written_to_dashboard_activity(): void
@@ -103,14 +107,7 @@ class FeatureAccessMiddlewareTest extends TestCase
 
     public function test_direct_page_tab_request_redirects_when_quota_is_exhausted(): void
     {
-        $user = User::factory()->create();
-        UserSubscription::query()->create([
-            'user_id' => $user->id,
-            'plan' => User::SUBSCRIPTION_PLAN_PLUS,
-            'status' => UserSubscription::STATUS_ACTIVE,
-            'starts_at' => now()->subMinute(),
-            'ends_at' => now()->addMonth(),
-        ]);
+        $user = $this->createSubscribedUser();
 
         FeatureUsageDaily::query()->create([
             'user_id' => $user->id,
@@ -143,14 +140,7 @@ class FeatureAccessMiddlewareTest extends TestCase
             ],
         ]);
 
-        $user = User::factory()->create();
-        UserSubscription::query()->create([
-            'user_id' => $user->id,
-            'plan' => User::SUBSCRIPTION_PLAN_PLUS,
-            'status' => UserSubscription::STATUS_ACTIVE,
-            'starts_at' => now()->subMinute(),
-            'ends_at' => now()->addMonth(),
-        ]);
+        $user = $this->createSubscribedUser();
 
         $this
             ->actingAs($user)
@@ -189,14 +179,7 @@ class FeatureAccessMiddlewareTest extends TestCase
             ],
         ]);
 
-        $user = User::factory()->create();
-        UserSubscription::query()->create([
-            'user_id' => $user->id,
-            'plan' => User::SUBSCRIPTION_PLAN_PLUS,
-            'status' => UserSubscription::STATUS_ACTIVE,
-            'starts_at' => now()->subMinute(),
-            'ends_at' => now()->addMonth(),
-        ]);
+        $user = $this->createSubscribedUser();
 
         $this
             ->actingAs($user)
@@ -223,14 +206,7 @@ class FeatureAccessMiddlewareTest extends TestCase
             ],
         ]);
 
-        $user = User::factory()->create();
-        UserSubscription::query()->create([
-            'user_id' => $user->id,
-            'plan' => User::SUBSCRIPTION_PLAN_PLUS,
-            'status' => UserSubscription::STATUS_ACTIVE,
-            'starts_at' => now()->subMinute(),
-            'ends_at' => now()->addMonth(),
-        ]);
+        $user = $this->createSubscribedUser();
         FeatureUsageDaily::query()->create([
             'user_id' => $user->id,
             'feature' => 'telegram.analytics',
@@ -249,4 +225,86 @@ class FeatureAccessMiddlewareTest extends TestCase
             'used' => 10,
         ]);
     }
+
+    public function test_youtube_search_comments_preview_route_does_not_consume_parser_quota(): void
+    {
+        $user = $this->createSubscribedUser();
+
+        $this->mock(YouTubeParserApplicationServiceInterface::class, function ($mock): void {
+            $mock->shouldReceive('comments')
+                ->once()
+                ->with(Mockery::type(YouTubeCommentsQueryDTO::class))
+                ->andReturn([
+                    'items' => [],
+                    'pagination' => [
+                        'nextPageToken' => null,
+                    ],
+                ]);
+        });
+
+        $this
+            ->actingAs($user)
+            ->getJson(route('youtube.search.comments-preview', [
+                'videoId' => 'video123',
+            ]))
+            ->assertOk();
+
+        $this->assertDatabaseMissing('feature_usage_daily', [
+            'user_id' => $user->id,
+            'feature' => 'youtube.parser',
+        ]);
+    }
+
+    public function test_youtube_search_comments_preview_route_is_denied_for_free_user(): void
+    {
+        $user = User::factory()->create();
+
+        $this->mock(YouTubeParserApplicationServiceInterface::class, function ($mock): void {
+            $mock->shouldNotReceive('comments');
+        });
+
+        $this
+            ->actingAs($user)
+            ->getJson(route('youtube.search.comments-preview', [
+                'videoId' => 'video123',
+            ]))
+            ->assertForbidden();
+    }
+
+    public function test_youtube_search_comments_preview_route_is_allowed_even_when_parser_quota_is_exhausted(): void
+    {
+        $user = $this->createSubscribedUser();
+        FeatureUsageDaily::query()->create([
+            'user_id' => $user->id,
+            'feature' => 'youtube.parser',
+            'usage_date' => now()->startOfDay(),
+            'used' => 5,
+        ]);
+
+        $this->mock(YouTubeParserApplicationServiceInterface::class, function ($mock): void {
+            $mock->shouldReceive('comments')
+                ->once()
+                ->with(Mockery::type(YouTubeCommentsQueryDTO::class))
+                ->andReturn([
+                    'items' => [],
+                    'pagination' => [
+                        'nextPageToken' => null,
+                    ],
+                ]);
+        });
+
+        $this
+            ->actingAs($user)
+            ->getJson(route('youtube.search.comments-preview', [
+                'videoId' => 'video123',
+            ]))
+            ->assertOk();
+
+        $this->assertDatabaseHas('feature_usage_daily', [
+            'user_id' => $user->id,
+            'feature' => 'youtube.parser',
+            'used' => 5,
+        ]);
+    }
+
 }

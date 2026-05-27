@@ -39,6 +39,15 @@ class YouTubeParserController extends Controller
         }
     }
 
+    public function commentsPreview(YouTubeParserRequest $request): JsonResponse
+    {
+        try {
+            return $this->jsonData($this->parserApplicationService->comments($request->toDTO()));
+        } catch (RuntimeException $exception) {
+            return $this->jsonError($exception->getMessage(), $this->statusCodeFromException($exception));
+        }
+    }
+
     public function start(YouTubeParserStartRequest $request): JsonResponse
     {
         return $this->jsonPayloadFrom($this->parserApplicationService->start($request->toStartDTO()));
