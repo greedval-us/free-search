@@ -22,14 +22,24 @@ final readonly class UserQuotaSummaryFormatter
             return '-';
         }
 
-        $lines = [];
+        $groups = [];
 
-        foreach (array_keys($resources) as $resource) {
+        foreach ($resources as $resource => $config) {
             $resource = (string) $resource;
-            $lines[] = $this->formatFeature(
-                $this->labelFor($resource),
+            $config = is_array($config) ? $config : [];
+            $module = (string) ($config['module'] ?? strtok($resource, '.') ?: $resource);
+            $capability = (string) ($config['capability'] ?? str($resource)->after('.'));
+
+            $groups[$module][] = $this->formatFeature(
+                $this->capabilityLabel($capability),
                 $features[$resource] ?? null,
             );
+        }
+
+        $lines = [];
+
+        foreach ($groups as $module => $items) {
+            $lines[] = $this->moduleLabel((string) $module).': '.implode(', ', $items);
         }
 
         return implode('; ', $lines);
@@ -46,11 +56,19 @@ final readonly class UserQuotaSummaryFormatter
         return "{$label}: {$remaining}/{$limit}";
     }
 
-    private function labelFor(string $resource): string
+    private function moduleLabel(string $module): string
     {
-        $key = "admin_panel.quota_resources.{$resource}";
+        $key = "admin_panel.quota_modules.{$module}";
         $label = __($key);
 
-        return $label === $key ? $resource : $label;
+        return $label === $key ? $module : $label;
+    }
+
+    private function capabilityLabel(string $capability): string
+    {
+        $key = "admin_panel.quota_capabilities.{$capability}";
+        $label = __($key);
+
+        return $label === $key ? $capability : $label;
     }
 }

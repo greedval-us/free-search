@@ -1084,8 +1084,16 @@
         "plan": {
             "title": "Ваш тариф",
             "manage": "Управлять тарифом",
-            "analytics": "Остаток аналитики сегодня",
-            "parser": "Остаток парсинга сегодня",
+            "modules": {
+                "site-intel": "Site Intel",
+                "telegram": "Telegram",
+                "youtube": "YouTube"
+            },
+            "capabilities": {
+                "analytics": "Аналитика",
+                "seo-audit": "SEO аудит",
+                "parser": "Парсер"
+            },
             "unavailable": "Недоступно"
         }
     },

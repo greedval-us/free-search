@@ -97,12 +97,30 @@ return [
         'unknown' => 'unknown',
     ],
 
+    'quota_modules' => [
+        'site-intel' => 'Site Intel',
+        'telegram' => 'Telegram',
+        'youtube' => 'YouTube',
+    ],
+
+    'quota_capabilities' => [
+        'analytics' => 'analytics',
+        'seo-audit' => 'SEO audit',
+        'parser' => 'parser',
+    ],
+
     'quota_resources' => [
-        'site-intel.analytics' => 'Site Intel analytics',
-        'site-intel.seo-audit' => 'SEO audit',
-        'telegram.analytics' => 'Telegram analytics',
-        'telegram.parser' => 'Telegram parser',
-        'youtube.analytics' => 'YouTube analytics',
-        'youtube.parser' => 'YouTube parser',
+        'site-intel' => [
+            'analytics' => 'Site Intel analytics',
+            'seo-audit' => 'SEO audit',
+        ],
+        'telegram' => [
+            'analytics' => 'Telegram analytics',
+            'parser' => 'Telegram parser',
+        ],
+        'youtube' => [
+            'analytics' => 'YouTube analytics',
+            'parser' => 'YouTube parser',
+        ],
     ],
 ];

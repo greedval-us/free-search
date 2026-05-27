@@ -1023,8 +1023,16 @@
         "plan": {
             "title": "Your plan",
             "manage": "Manage plan",
-            "analytics": "Analytics left today",
-            "parser": "Parser left today",
+            "modules": {
+                "site-intel": "Site Intel",
+                "telegram": "Telegram",
+                "youtube": "YouTube"
+            },
+            "capabilities": {
+                "analytics": "Analytics",
+                "seo-audit": "SEO audit",
+                "parser": "Parser"
+            },
             "unavailable": "Unavailable"
         },
         "summary": {

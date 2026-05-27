@@ -6,7 +6,9 @@ namespace App\MoonShine\Resources\AppUser\Pages;
 
 use App\Models\User;
 use App\MoonShine\Resources\AppUser\AppUserResource;
+use App\MoonShine\Resources\UserSubscription\Pages\UserSubscriptionIndexPage;
 use App\MoonShine\Support\UserQuotaSummaryFormatter;
+use Illuminate\Validation\Rule;
 use MoonShine\Contracts\Core\TypeCasts\DataWrapperContract;
 use MoonShine\Contracts\UI\ComponentContract;
 use MoonShine\Contracts\UI\FieldContract;
@@ -54,10 +56,10 @@ final class AppUserFormPage extends FormPage
 
                 Text::make(__('admin_panel.fields.telegram_id'), 'telegram_id')->nullable(),
 
-                Text::make(__('admin_panel.fields.plan'), 'id', static fn (mixed $original): string => $original instanceof User
+                Select::make(__('admin_panel.fields.plan'), 'subscription_plan', static fn (mixed $original): string => $original instanceof User
                     ? $original->currentPlan()->value
                     : User::SUBSCRIPTION_PLAN_FREE)
-                    ->disabled()
+                    ->options(UserSubscriptionIndexPage::planOptions())
                     ->onApply(static fn (mixed $data, mixed $value, mixed $field): mixed => $data),
 
                 Date::make(__('admin_panel.fields.subscription_ends_at'), 'activeSubscription.ends_at')
@@ -82,6 +84,7 @@ final class AppUserFormPage extends FormPage
             'name' => ['sometimes', 'prohibited'],
             'email' => ['sometimes', 'prohibited'],
             'account_type' => ['sometimes', 'prohibited'],
+            'subscription_plan' => ['nullable', Rule::in(array_keys(UserSubscriptionIndexPage::planOptions()))],
             'telegram_id' => ['nullable', 'string', 'max:255'],
             'is_blocked' => ['nullable', 'boolean'],
         ];

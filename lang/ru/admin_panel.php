@@ -97,12 +97,30 @@ return [
         'unknown' => 'неизвестно',
     ],
 
+    'quota_modules' => [
+        'site-intel' => 'Site Intel',
+        'telegram' => 'Telegram',
+        'youtube' => 'YouTube',
+    ],
+
+    'quota_capabilities' => [
+        'analytics' => 'аналитика',
+        'seo-audit' => 'SEO аудит',
+        'parser' => 'парсер',
+    ],
+
     'quota_resources' => [
-        'site-intel.analytics' => 'Site Intel аналитика',
-        'site-intel.seo-audit' => 'SEO аудит',
-        'telegram.analytics' => 'Telegram аналитика',
-        'telegram.parser' => 'Telegram парсер',
-        'youtube.analytics' => 'YouTube аналитика',
-        'youtube.parser' => 'YouTube парсер',
+        'site-intel' => [
+            'analytics' => 'Site Intel аналитика',
+            'seo-audit' => 'SEO аудит',
+        ],
+        'telegram' => [
+            'analytics' => 'Telegram аналитика',
+            'parser' => 'Telegram парсер',
+        ],
+        'youtube' => [
+            'analytics' => 'YouTube аналитика',
+            'parser' => 'YouTube парсер',
+        ],
     ],
 ];

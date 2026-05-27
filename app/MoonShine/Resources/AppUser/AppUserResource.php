@@ -6,6 +6,7 @@ namespace App\MoonShine\Resources\AppUser;
 
 use App\Models\AdminAuditLog;
 use App\Models\User;
+use App\Models\UserSubscription;
 use App\MoonShine\Resources\AppUser\Pages\AppUserFormPage;
 use App\MoonShine\Resources\AppUser\Pages\AppUserIndexPage;
 use Illuminate\Contracts\Database\Eloquent\Builder;
@@ -37,6 +38,8 @@ class AppUserResource extends ModelResource
         'name',
         'email',
         'account_type',
+        'subscription_plan',
+        'subscription_ends_at',
         'telegram_id',
         'is_blocked',
     ];
@@ -116,6 +119,9 @@ class AppUserResource extends ModelResource
             return $item;
         }
 
+        $this->syncSubscriptionFromRequest($model);
+        $model->unsetRelation('activeSubscription');
+
         $after = $this->snapshotUser($model);
         $changes = $this->buildDiff($before, $after);
         if ($changes === []) {
@@ -149,7 +155,12 @@ class AppUserResource extends ModelResource
         $snapshot = [];
 
         foreach (self::AUDIT_FIELDS as $field) {
-            $value = $user->{$field} ?? null;
+            $value = match ($field) {
+                'subscription_plan' => $user->currentPlan()->value,
+                'subscription_ends_at' => $user->activeSubscription()->first()?->ends_at,
+                default => $user->{$field} ?? null,
+            };
+
             if ($value instanceof \DateTimeInterface) {
                 $value = $value->format(DATE_ATOM);
             }
@@ -184,5 +195,61 @@ class AppUserResource extends ModelResource
         }
 
         return $diff;
+    }
+
+    private function syncSubscriptionFromRequest(User $user): void
+    {
+        if (! request()->has('subscription_plan')) {
+            return;
+        }
+
+        $plan = (string) request()->input('subscription_plan', User::SUBSCRIPTION_PLAN_FREE);
+        if (! in_array($plan, [
+            User::SUBSCRIPTION_PLAN_FREE,
+            User::SUBSCRIPTION_PLAN_PLUS,
+            User::SUBSCRIPTION_PLAN_PRO,
+        ], true)) {
+            return;
+        }
+
+        $now = now();
+
+        if ($plan === User::SUBSCRIPTION_PLAN_FREE) {
+            $user->subscriptions()
+                ->where('status', UserSubscription::STATUS_ACTIVE)
+                ->where('ends_at', '>', $now)
+                ->update([
+                    'status' => UserSubscription::STATUS_CANCELED,
+                    'ends_at' => $now,
+                    'updated_at' => $now,
+                ]);
+
+            return;
+        }
+
+        $activeSubscription = $user->activeSubscription()->first();
+        if ($activeSubscription instanceof UserSubscription && $activeSubscription->plan === $plan) {
+            return;
+        }
+
+        $user->subscriptions()
+            ->where('status', UserSubscription::STATUS_ACTIVE)
+            ->where('ends_at', '>', $now)
+            ->update([
+                'status' => UserSubscription::STATUS_CANCELED,
+                'ends_at' => $now,
+                'updated_at' => $now,
+            ]);
+
+        $user->subscriptions()->create([
+            'plan' => $plan,
+            'status' => UserSubscription::STATUS_ACTIVE,
+            'starts_at' => $now,
+            'ends_at' => $now->copy()->addMonth(),
+            'metadata' => [
+                'source' => 'moonshine',
+                'actor_admin_id' => auth('moonshine')->id(),
+            ],
+        ]);
     }
 }
