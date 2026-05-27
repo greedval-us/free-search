@@ -29,8 +29,13 @@ final class EnsureFeatureAccess
             return $next($request);
         }
 
-        $decision = $resource !== null
-            ? $this->featureAccessService->inspect($user, $resource)
+        $routePolicy = $this->protectedRoutePolicy($routeName);
+        $decision = $resource !== null || $routePolicy === null || ! $this->shouldConsume($request, $routePolicy)
+            ? $this->featureAccessService->inspect(
+                $user,
+                $resource ?? (string) ($routePolicy['resource'] ?? $routePolicy['feature'] ?? 'analytics'),
+                $resource !== null || (bool) ($routePolicy['counts'] ?? true),
+            )
             : $this->featureAccessService->consume($user, $routeName);
 
         if ($decision->allowed) {
@@ -75,8 +80,33 @@ final class EnsureFeatureAccess
 
     private function isProtectedRoute(string $routeName): bool
     {
-        $routes = config('access.protected_routes', []);
+        return $this->protectedRoutePolicy($routeName) !== null;
+    }
 
-        return is_array($routes) && array_key_exists($routeName, $routes);
+    /**
+     * @return array<string, mixed>|null
+     */
+    private function protectedRoutePolicy(string $routeName): ?array
+    {
+        $routes = config('access.protected_routes', []);
+        if (! is_array($routes) || ! array_key_exists($routeName, $routes)) {
+            return null;
+        }
+
+        $policy = $routes[$routeName];
+
+        return is_array($policy) ? $policy : null;
+    }
+
+    /**
+     * @param  array<string, mixed>  $routePolicy
+     */
+    private function shouldConsume(Request $request, array $routePolicy): bool
+    {
+        if (! (bool) ($routePolicy['counts'] ?? true)) {
+            return false;
+        }
+
+        return (string) $request->query('snapshotRole', '') !== 'previous';
     }
 }

@@ -74,13 +74,13 @@ return [
 
     'protected_routes' => [
         'site-intel.analytics' => ['resource' => 'site-intel.analytics', 'counts' => true],
-        'site-intel.report' => ['resource' => 'site-intel.analytics', 'counts' => true],
+        'site-intel.report' => ['resource' => 'site-intel.analytics', 'counts' => false],
         'site-intel.seo-audit' => ['resource' => 'site-intel.seo-audit', 'counts' => true],
-        'site-intel.seo-report' => ['resource' => 'site-intel.seo-audit', 'counts' => true],
+        'site-intel.seo-report' => ['resource' => 'site-intel.seo-audit', 'counts' => false],
         'telegram.analytics.summary' => ['resource' => 'telegram.analytics', 'counts' => true],
-        'telegram.analytics.report' => ['resource' => 'telegram.analytics', 'counts' => true],
+        'telegram.analytics.report' => ['resource' => 'telegram.analytics', 'counts' => false],
         'youtube.analytics.summary' => ['resource' => 'youtube.analytics', 'counts' => true],
-        'youtube.analytics.report' => ['resource' => 'youtube.analytics', 'counts' => true],
+        'youtube.analytics.report' => ['resource' => 'youtube.analytics', 'counts' => false],
 
         'telegram.parser.start' => ['resource' => 'telegram.parser', 'counts' => true],
         'telegram.parser.status' => ['resource' => 'telegram.parser', 'counts' => false],

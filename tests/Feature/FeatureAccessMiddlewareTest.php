@@ -7,6 +7,8 @@ use App\Models\RequestLog;
 use App\Models\User;
 use App\Models\UserSubscription;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Config;
+use Illuminate\Support\Facades\Route;
 use Tests\TestCase;
 
 class FeatureAccessMiddlewareTest extends TestCase
@@ -98,5 +100,86 @@ class FeatureAccessMiddlewareTest extends TestCase
             'feature' => 'site-intel.seo-audit',
             'reason' => 'quota',
         ]));
+    }
+
+    public function test_previous_analytics_snapshot_does_not_consume_quota(): void
+    {
+        Route::get('/_feature-access-summary-test', static fn () => response()->json(['ok' => true]))
+            ->middleware('feature.access')
+            ->name('feature-access.summary-test');
+
+        Config::set('access.protected_routes', [
+            ...config('access.protected_routes'),
+            'feature-access.summary-test' => [
+                'resource' => 'telegram.analytics',
+                'counts' => true,
+            ],
+        ]);
+
+        $user = User::factory()->create();
+        UserSubscription::query()->create([
+            'user_id' => $user->id,
+            'plan' => User::SUBSCRIPTION_PLAN_PLUS,
+            'status' => UserSubscription::STATUS_ACTIVE,
+            'starts_at' => now()->subMinute(),
+            'ends_at' => now()->addMonth(),
+        ]);
+
+        $this
+            ->actingAs($user)
+            ->getJson('/_feature-access-summary-test?snapshotRole=current')
+            ->assertOk();
+
+        $this
+            ->actingAs($user)
+            ->getJson('/_feature-access-summary-test?snapshotRole=previous')
+            ->assertOk();
+
+        $this->assertDatabaseHas('feature_usage_daily', [
+            'user_id' => $user->id,
+            'feature' => 'telegram.analytics',
+            'used' => 1,
+        ]);
+    }
+
+    public function test_non_counting_routes_allow_paid_user_without_consuming_quota(): void
+    {
+        Route::get('/_feature-access-report-test', static fn () => response()->json(['ok' => true]))
+            ->middleware('feature.access')
+            ->name('feature-access.report-test');
+
+        Config::set('access.protected_routes', [
+            ...config('access.protected_routes'),
+            'feature-access.report-test' => [
+                'resource' => 'telegram.analytics',
+                'counts' => false,
+            ],
+        ]);
+
+        $user = User::factory()->create();
+        UserSubscription::query()->create([
+            'user_id' => $user->id,
+            'plan' => User::SUBSCRIPTION_PLAN_PLUS,
+            'status' => UserSubscription::STATUS_ACTIVE,
+            'starts_at' => now()->subMinute(),
+            'ends_at' => now()->addMonth(),
+        ]);
+        FeatureUsageDaily::query()->create([
+            'user_id' => $user->id,
+            'feature' => 'telegram.analytics',
+            'usage_date' => now()->startOfDay(),
+            'used' => 10,
+        ]);
+
+        $this
+            ->actingAs($user)
+            ->getJson('/_feature-access-report-test')
+            ->assertOk();
+
+        $this->assertDatabaseHas('feature_usage_daily', [
+            'user_id' => $user->id,
+            'feature' => 'telegram.analytics',
+            'used' => 10,
+        ]);
     }
 }

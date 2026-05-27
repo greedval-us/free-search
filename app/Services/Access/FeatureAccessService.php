@@ -20,9 +20,9 @@ final class FeatureAccessService implements FeatureAccessServiceInterface
         return $this->decide($user, $policy, true);
     }
 
-    public function inspect(User $user, string $resource): FeatureAccessDecision
+    public function inspect(User $user, string $resource, bool $counts = true): FeatureAccessDecision
     {
-        return $this->decide($user, $this->resourcePolicy($resource, true), false);
+        return $this->decide($user, $this->resourcePolicy($resource, $counts), false);
     }
 
     private function decide(User $user, AccessResourcePolicy $policy, bool $consume): FeatureAccessDecision
