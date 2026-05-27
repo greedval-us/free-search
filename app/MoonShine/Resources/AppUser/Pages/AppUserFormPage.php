@@ -6,6 +6,9 @@ namespace App\MoonShine\Resources\AppUser\Pages;
 
 use App\Models\User;
 use App\MoonShine\Resources\AppUser\AppUserResource;
+use App\MoonShine\Resources\UserSubscription\Pages\UserSubscriptionIndexPage;
+use App\MoonShine\Support\UserQuotaSummaryFormatter;
+use Illuminate\Validation\Rule;
 use MoonShine\Contracts\Core\TypeCasts\DataWrapperContract;
 use MoonShine\Contracts\UI\ComponentContract;
 use MoonShine\Contracts\UI\FieldContract;
@@ -15,6 +18,7 @@ use MoonShine\UI\Components\Layout\Flex;
 use MoonShine\UI\Fields\Date;
 use MoonShine\UI\Fields\Email;
 use MoonShine\UI\Fields\ID;
+use MoonShine\UI\Fields\Preview;
 use MoonShine\UI\Fields\Select;
 use MoonShine\UI\Fields\Switcher;
 use MoonShine\UI\Fields\Text;
@@ -53,10 +57,21 @@ final class AppUserFormPage extends FormPage
 
                 Text::make(__('admin_panel.fields.telegram_id'), 'telegram_id')->nullable(),
 
-                Switcher::make(__('admin_panel.fields.premium_enabled'), 'is_premium'),
-                Date::make(__('admin_panel.fields.premium_expires_at'), 'premium_expires_at')
-                    ->withTime()
-                    ->nullable(),
+                Select::make(__('admin_panel.fields.plan'), 'subscription_plan', static fn (mixed $original): string => $original instanceof User
+                    ? $original->currentPlan()->value
+                    : User::SUBSCRIPTION_PLAN_FREE)
+                    ->options(UserSubscriptionIndexPage::planOptions())
+                    ->onApply(static fn (mixed $data, mixed $value, mixed $field): mixed => $data),
+
+                Date::make(__('admin_panel.fields.subscription_ends_at'), 'activeSubscription.ends_at')
+                    ->format('d.m.Y H:i')
+                    ->disabled()
+                    ->onApply(static fn (mixed $data, mixed $value, mixed $field): mixed => $data),
+
+                Preview::make(__('admin_panel.fields.quota_remaining'), 'id', static fn (mixed $original): mixed => $original instanceof User
+                    ? app(UserQuotaSummaryFormatter::class)->forDetails($original)
+                    : '-')
+                    ->onApply(static fn (mixed $data, mixed $value, mixed $field): mixed => $data),
 
                 Switcher::make(__('admin_panel.fields.blocked'), 'is_blocked'),
             ]),
@@ -69,9 +84,8 @@ final class AppUserFormPage extends FormPage
             'name' => ['sometimes', 'prohibited'],
             'email' => ['sometimes', 'prohibited'],
             'account_type' => ['sometimes', 'prohibited'],
+            'subscription_plan' => ['nullable', Rule::in(array_keys(UserSubscriptionIndexPage::planOptions()))],
             'telegram_id' => ['nullable', 'string', 'max:255'],
-            'is_premium' => ['nullable', 'boolean'],
-            'premium_expires_at' => ['nullable', 'date'],
             'is_blocked' => ['nullable', 'boolean'],
         ];
     }

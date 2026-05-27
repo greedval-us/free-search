@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { router, usePage } from '@inertiajs/vue3';
 import type { Component } from 'vue';
 import { useI18n } from '@/composables/useI18n';
 import IntelModuleLayout from './IntelModuleLayout.vue';
@@ -8,9 +9,10 @@ export type ModuleTabDefinition = {
     labelKey: string;
     icon: Component;
     component?: Component;
+    accessKey?: string;
 };
 
-defineProps<{
+const props = defineProps<{
     tabs: readonly ModuleTabDefinition[];
     activeTab: string;
 }>();
@@ -20,6 +22,21 @@ const emit = defineEmits<{
 }>();
 
 const { t } = useI18n();
+const page = usePage();
+
+const selectTab = (tab: string): void => {
+    const definition = props.tabs.find((item) => item.key === tab);
+    const accessKey = definition?.accessKey ?? tab;
+    const access = page.props.auth?.access?.features?.[accessKey];
+
+    if (access && !access.allowed) {
+        const reason = access.limit > 0 ? 'quota' : 'plan';
+        router.visit(`/settings/billing?feature=${accessKey}&reason=${reason}`);
+        return;
+    }
+
+    emit('update:activeTab', tab);
+};
 </script>
 
 <template>
@@ -29,7 +46,7 @@ const { t } = useI18n();
                 v-for="tab in tabs"
                 :key="tab.key"
                 type="button"
-                @click="emit('update:activeTab', tab.key)"
+                @click="selectTab(tab.key)"
                 :aria-pressed="activeTab === tab.key"
                 :class="[
                     'inline-flex min-h-8 items-center rounded-md px-3 py-1.5 text-xs font-medium transition-colors',

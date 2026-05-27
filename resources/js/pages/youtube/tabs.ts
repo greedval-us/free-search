@@ -15,11 +15,13 @@ export const YOUTUBE_TABS = [
         labelKey: 'youtube.tabs.analytics',
         icon: MODULE_TAB_ICONS.analytics,
         component: YouTubeAnalyticsTab,
+        accessKey: 'youtube.analytics',
     },
     {
         key: 'parser',
         labelKey: 'youtube.tabs.parser',
         icon: MODULE_TAB_ICONS.parser,
         component: YouTubeParserTab,
+        accessKey: 'youtube.parser',
     },
 ] as const;

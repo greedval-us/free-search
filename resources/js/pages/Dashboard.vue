@@ -1,9 +1,10 @@
 ﻿<script setup lang="ts">
-import { Head, Link, router, useForm } from '@inertiajs/vue3';
+import { Head, Link, router, useForm, usePage } from '@inertiajs/vue3';
 import {
     BarChart3,
     BookmarkPlus,
     Compass,
+    CreditCard,
     Flame,
     History,
     Pin,
@@ -104,17 +105,14 @@ const props = withDefaults(
                 date_from: '',
                 date_to: '',
             },
-            available_modules: [
-                'site-intel',
-                'telegram',
-                'youtube',
-                'shifr',
-            ],
+            available_modules: ['site-intel', 'telegram', 'youtube', 'shifr'],
         }),
     }
 );
 
 const { t, locale } = useI18n();
+const page = usePage();
+const access = computed(() => page.props.auth.access);
 const chartMax = Math.max(...props.dashboard.chart.map((x) => x.count), 1);
 const BODY_SCROLL_LOCK_CLASS = 'dashboard-scroll-lock';
 
@@ -171,6 +169,62 @@ const topDay = computed(() => {
 const lastQuery = computed(() => {
     return props.dashboard.activity_feed[0] ?? null;
 });
+
+const quotaLabel = (quota: { limit: number; remaining: number }): string => {
+    if (!quota || quota.limit === 0) {
+        return t('dashboard.plan.unavailable');
+    }
+
+    return `${quota.remaining}/${quota.limit}`;
+};
+
+const quotaGroups = computed(() => {
+    const groups: Record<
+        string,
+        Array<{
+            key: string;
+            capability: string;
+            limit: number;
+            remaining: number;
+        }>
+    > = {};
+
+    for (const [key, quota] of Object.entries(access.value.features)) {
+        if (!key.includes('.')) {
+            continue;
+        }
+
+        const [module, ...capabilityParts] = key.split('.');
+        const capability = capabilityParts.join('.');
+
+        groups[module] ??= [];
+        groups[module].push({
+            key,
+            capability,
+            limit: quota.limit,
+            remaining: quota.remaining,
+        });
+    }
+
+    return Object.entries(groups).map(([module, items]) => ({
+        module,
+        items,
+    }));
+});
+
+const quotaModuleLabel = (module: string): string => {
+    const translationKey = `dashboard.plan.modules.${module}`;
+    const translated = t(translationKey);
+
+    return translated === translationKey ? module : translated;
+};
+
+const quotaCapabilityLabel = (capability: string): string => {
+    const translationKey = `dashboard.plan.capabilities.${capability}`;
+    const translated = t(translationKey);
+
+    return translated === translationKey ? capability : translated;
+};
 
 const moduleLabel = (key: string): string => {
     const translationKey = `dashboard.modules.${key}`;
@@ -376,6 +430,55 @@ onBeforeUnmount(() => {
                         {{ dashboard.summary.active_days_last_30_days }}
                     </p>
                 </article>
+            </section>
+
+            <section class="intel-panel">
+                <div class="flex flex-wrap items-center justify-between gap-3">
+                    <div>
+                        <p
+                            class="text-xs tracking-wide text-muted-foreground uppercase"
+                        >
+                            {{ t('dashboard.plan.title') }}
+                        </p>
+                        <h2 class="mt-1 text-lg font-semibold uppercase">
+                            {{ access.plan }}
+                        </h2>
+                    </div>
+                    <Link
+                        href="/settings/billing"
+                        class="inline-flex h-9 items-center gap-2 rounded-md border border-sidebar-border/70 bg-background/50 px-3 text-sm transition hover:border-primary/40 hover:bg-background/80"
+                    >
+                        <CreditCard class="h-4 w-4" />
+                        {{ t('dashboard.plan.manage') }}
+                    </Link>
+                </div>
+                <div class="mt-3 grid gap-2 lg:grid-cols-3">
+                    <div
+                        v-for="group in quotaGroups"
+                        :key="group.module"
+                        class="rounded-md border border-sidebar-border/70 bg-background/40 p-3"
+                    >
+                        <p
+                            class="text-xs font-medium text-muted-foreground uppercase"
+                        >
+                            {{ quotaModuleLabel(group.module) }}
+                        </p>
+                        <dl class="mt-2 space-y-1.5 text-sm">
+                            <div
+                                v-for="item in group.items"
+                                :key="item.key"
+                                class="flex items-center justify-between gap-3"
+                            >
+                                <dt class="truncate text-muted-foreground">
+                                    {{ quotaCapabilityLabel(item.capability) }}
+                                </dt>
+                                <dd class="font-semibold">
+                                    {{ quotaLabel(item) }}
+                                </dd>
+                            </div>
+                        </dl>
+                    </div>
+                </div>
             </section>
 
             <section class="grid gap-4 xl:grid-cols-2">

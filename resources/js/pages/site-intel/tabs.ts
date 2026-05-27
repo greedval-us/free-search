@@ -11,6 +11,7 @@ export type SiteIntelTabDefinition = {
     labelKey: string;
     icon: Component;
     component: Component;
+    accessKey?: string;
 };
 
 export const SITE_INTEL_TABS: readonly SiteIntelTabDefinition[] = [
@@ -31,11 +32,13 @@ export const SITE_INTEL_TABS: readonly SiteIntelTabDefinition[] = [
         labelKey: 'siteIntel.tabs.analytics',
         icon: BarChart3,
         component: SiteIntelAnalyticsTab,
+        accessKey: 'site-intel.analytics',
     },
     {
         key: 'seoAudit',
         labelKey: 'siteIntel.tabs.seoAudit',
         icon: SearchCheck,
         component: SeoAuditTab,
+        accessKey: 'site-intel.seo-audit',
     },
 ] as const;

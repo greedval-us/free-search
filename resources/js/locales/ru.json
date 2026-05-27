@@ -1080,6 +1080,21 @@
             "period90": "90 дней",
             "apply": "Применить фильтры",
             "reset": "Сбросить"
+        },
+        "plan": {
+            "title": "Ваш тариф",
+            "manage": "Управлять тарифом",
+            "modules": {
+                "site-intel": "Site Intel",
+                "telegram": "Telegram",
+                "youtube": "YouTube"
+            },
+            "capabilities": {
+                "analytics": "Аналитика",
+                "seo-audit": "SEO аудит",
+                "parser": "Парсер"
+            },
+            "unavailable": "Недоступно"
         }
     },
     "navigation": {
@@ -1119,6 +1134,7 @@
         "profile": "Профиль",
         "security": "Безопасность",
         "appearance": "Оформление",
+        "billing": "Тариф",
         "profilePage": {
             "title": "Настройки профиля",
             "heading": "Информация профиля",
@@ -1179,6 +1195,18 @@
             "title": "Настройки оформления",
             "heading": "Настройки оформления",
             "headingDescription": "Обновите настройки внешнего вида аккаунта"
+        },
+        "billingPage": {
+            "title": "Тариф",
+            "heading": "Тариф и оплата",
+            "description": "Проверьте текущий тариф и доступные варианты обновления.",
+            "currentPlan": "Текущий тариф",
+            "validUntil": "Действует до",
+            "noExpiry": "Нет активной платной подписки",
+            "active": "Активен",
+            "analytics": "Запросов аналитики в день",
+            "parser": "Запросов парсинга в день",
+            "backDashboard": "Назад в панель"
         },
         "deleteAccount": {
             "title": "Удалить аккаунт",

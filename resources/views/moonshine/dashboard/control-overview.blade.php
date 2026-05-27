@@ -6,7 +6,7 @@
     $allowedPeriods = $allowedPeriods ?? [7, 30, 90];
 
     $usersTotal = (int) ($snapshot['users_total'] ?? 0);
-    $usersPremiumActive = (int) ($snapshot['users_premium_active'] ?? 0);
+    $usersPaidActive = (int) ($snapshot['users_paid_active'] ?? 0);
     $usersBlocked = (int) ($snapshot['users_blocked'] ?? 0);
     $requests24h = (int) ($snapshot['requests_24h'] ?? 0);
     $requests7d = (int) ($snapshot['requests_7d'] ?? 0);
@@ -16,7 +16,7 @@
     $queueInProgress = (int) ($snapshot['queue_jobs_in_progress'] ?? 0);
     $failed24h = (int) ($snapshot['failed_jobs_24h'] ?? 0);
 
-    $premiumShare = $usersTotal > 0 ? round(($usersPremiumActive / $usersTotal) * 100, 1) : 0.0;
+    $paidShare = $usersTotal > 0 ? round(($usersPaidActive / $usersTotal) * 100, 1) : 0.0;
     $blockedShare = $usersTotal > 0 ? round(($usersBlocked / $usersTotal) * 100, 1) : 0.0;
     $errorShare = $requests24h > 0 ? round((($errors4xx24h + $errors5xx24h) / $requests24h) * 100, 1) : 0.0;
 
@@ -77,10 +77,10 @@
 
     <div class="grid grid-cols-2 gap-3 lg:grid-cols-3 2xl:grid-cols-6">
         <div class="box p-3">
-            <p class="text-xs text-secondary">{{ __('admin_dashboard.visual.premium_share') }}</p>
-            <p class="mt-1 text-xl font-semibold">{{ $premiumShare }}%</p>
+            <p class="text-xs text-secondary">{{ __('admin_dashboard.visual.paid_share') }}</p>
+            <p class="mt-1 text-xl font-semibold">{{ $paidShare }}%</p>
             <div class="mt-2 h-2 rounded overflow-hidden" style="background: rgba(148,163,184,0.25);">
-                <div class="h-full" style="background-color: #22c55e; width: {{ min(100, max(0, $premiumShare)) }}%;"></div>
+                <div class="h-full" style="background-color: #22c55e; width: {{ min(100, max(0, $paidShare)) }}%;"></div>
             </div>
         </div>
 

@@ -2,11 +2,14 @@
 
 namespace App\Http\Middleware;
 
+use App\Services\Access\AccountAccessSummaryService;
 use Illuminate\Http\Request;
 use Inertia\Middleware;
 
 class HandleInertiaRequests extends Middleware
 {
+    public function __construct(private readonly AccountAccessSummaryService $accessSummaryService) {}
+
     /**
      * The root template that's loaded on the first page visit.
      *
@@ -45,9 +48,9 @@ class HandleInertiaRequests extends Middleware
                     'email',
                     'email_verified_at',
                     'account_type',
-                    'premium_until',
                     'created_at',
                 ]),
+                'access' => $this->accessSummaryService->forUser($request->user()),
             ],
             'sidebarOpen' => ! $request->hasCookie('sidebar_state') || $request->cookie('sidebar_state') === 'true',
         ];

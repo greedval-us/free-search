@@ -34,156 +34,34 @@ class RequestLogRunUrlBuilder
      */
     private function buildModuleUrl(string $path, array $payload): ?string
     {
-        if ($path === '/site-intel/site-health') {
-            return $this->buildUrl('/site-intel', [
-                'tab' => 'siteHealth',
-                'target' => $this->readString($payload, ['target']),
-                'autorun' => '1',
-            ]);
+        /** @var array<string, array{base: string, params: array<string, mixed>}> $definitions */
+        $definitions = config('activity.run_url_routes', []);
+        $definition = $definitions[$path] ?? null;
+
+        if (!is_array($definition)) {
+            return null;
         }
 
-        if ($path === '/site-intel/domain-lite') {
-            return $this->buildUrl('/site-intel', [
-                'tab' => 'domainLite',
-                'domain' => $this->readString($payload, ['domain']),
-                'autorun' => '1',
-            ]);
+        $resolved = [];
+        foreach ($definition['params'] as $queryKey => $spec) {
+            if (is_string($spec)) {
+                $resolved[$queryKey] = $spec;
+
+                continue;
+            }
+
+            if (array_key_exists('keys', $spec)) {
+                $resolved[$queryKey] = $this->readString($payload, $spec['keys']);
+
+                continue;
+            }
+
+            if (array_key_exists('int', $spec)) {
+                $resolved[$queryKey] = $this->readIntString($payload, $spec['int']);
+            }
         }
 
-        if ($path === '/site-intel/analytics' || $path === '/site-intel/report') {
-            return $this->buildUrl('/site-intel', [
-                'tab' => 'analytics',
-                'target' => $this->readString($payload, ['target']),
-                'autorun' => '1',
-            ]);
-        }
-
-        if ($path === '/telegram/search/messages' || $path === '/telegram/search/comments') {
-            return $this->buildUrl('/telegram', [
-                'tab' => 'search',
-                'chatUsername' => $this->readString($payload, ['chatUsername']),
-                'q' => $this->readString($payload, ['q']),
-                'fromUsername' => $this->readString($payload, ['fromUsername']),
-                'dateFrom' => $this->readString($payload, ['dateFrom']),
-                'dateTo' => $this->readString($payload, ['dateTo']),
-                'limit' => $this->readIntString($payload, 'limit'),
-                'autorun' => '1',
-            ]);
-        }
-
-        if ($path === '/telegram/analytics/summary' || $path === '/telegram/analytics/report') {
-            return $this->buildUrl('/telegram', [
-                'tab' => 'analytics',
-                'chatUsername' => $this->readString($payload, ['chatUsername']),
-                'keyword' => $this->readString($payload, ['keyword']),
-                'periodDays' => $this->readIntString($payload, 'periodDays'),
-                'dateFrom' => $this->readString($payload, ['dateFrom']),
-                'dateTo' => $this->readString($payload, ['dateTo']),
-                'scorePriority' => $this->readString($payload, ['scorePriority']),
-                'autorun' => '1',
-            ]);
-        }
-
-        if ($path === '/youtube/search/videos') {
-            return $this->buildUrl('/youtube', [
-                'tab' => 'search',
-                'q' => $this->readString($payload, ['q']),
-                'type' => $this->readString($payload, ['type']),
-                'channelId' => $this->readString($payload, ['channelId']),
-                'order' => $this->readString($payload, ['order']),
-                'publishedAfter' => $this->readString($payload, ['publishedAfter']),
-                'publishedBefore' => $this->readString($payload, ['publishedBefore']),
-                'regionCode' => $this->readString($payload, ['regionCode']),
-                'relevanceLanguage' => $this->readString($payload, ['relevanceLanguage']),
-                'safeSearch' => $this->readString($payload, ['safeSearch']),
-                'videoDuration' => $this->readString($payload, ['videoDuration']),
-                'videoDefinition' => $this->readString($payload, ['videoDefinition']),
-                'videoCaption' => $this->readString($payload, ['videoCaption']),
-                'limit' => $this->readIntString($payload, 'limit'),
-                'autorun' => '1',
-            ]);
-        }
-
-        if ($path === '/youtube/analytics/summary' || $path === '/youtube/analytics/report') {
-            return $this->buildUrl('/youtube', [
-                'tab' => 'analytics',
-                'mode' => $this->readString($payload, ['mode']),
-                'videoId' => $this->readString($payload, ['videoId']),
-                'channelId' => $this->readString($payload, ['channelId']),
-                'periodDays' => $this->readIntString($payload, 'periodDays'),
-                'dateFrom' => $this->readString($payload, ['dateFrom']),
-                'dateTo' => $this->readString($payload, ['dateTo']),
-                'autorun' => '1',
-            ]);
-        }
-
-        if ($path === '/youtube/parser/comments') {
-            return $this->buildUrl('/youtube', [
-                'tab' => 'parser',
-                'videoId' => $this->readString($payload, ['videoId']),
-                'order' => $this->readString($payload, ['order']),
-                'searchTerms' => $this->readString($payload, ['searchTerms']),
-                'limit' => $this->readIntString($payload, 'limit'),
-                'autorun' => '1',
-            ]);
-        }
-
-        if ($path === '/shifr/hash') {
-            return $this->buildUrl('/shifr', [
-                'tab' => 'hash',
-                'text' => $this->readString($payload, ['text']),
-                'algorithm' => $this->readString($payload, ['algorithm']),
-                'hmac_key' => $this->readString($payload, ['hmac_key']),
-                'autorun' => '1',
-            ]);
-        }
-
-        if ($path === '/shifr/transform') {
-            return $this->buildUrl('/shifr', [
-                'tab' => 'transform',
-                'text' => $this->readString($payload, ['text']),
-                'operation' => $this->readString($payload, ['operation']),
-                'autorun' => '1',
-            ]);
-        }
-
-        if ($path === '/shifr/ioc-extract') {
-            return $this->buildUrl('/shifr', [
-                'tab' => 'ioc',
-                'text' => $this->readString($payload, ['text']),
-                'autorun' => '1',
-            ]);
-        }
-
-        if ($path === '/shifr/jwt-inspect') {
-            return $this->buildUrl('/shifr', [
-                'tab' => 'jwt',
-                'token' => $this->readString($payload, ['token']),
-                'secret' => $this->readString($payload, ['secret']),
-                'autorun' => '1',
-            ]);
-        }
-
-        if ($path === '/shifr/classic') {
-            return $this->buildUrl('/shifr', [
-                'tab' => 'classic',
-                'text' => $this->readString($payload, ['text']),
-                'cipher' => $this->readString($payload, ['cipher']),
-                'direction' => $this->readString($payload, ['direction']),
-                'shift' => $this->readIntString($payload, 'shift'),
-                'key' => $this->readString($payload, ['key']),
-                'rails' => $this->readIntString($payload, 'rails'),
-                'xor_key' => $this->readString($payload, ['xor_key']),
-                'affine_a' => $this->readIntString($payload, 'affine_a'),
-                'affine_b' => $this->readIntString($payload, 'affine_b'),
-                'playfair_key' => $this->readString($payload, ['playfair_key']),
-                'column_key' => $this->readString($payload, ['column_key']),
-                'morse_separator' => $this->readString($payload, ['morse_separator']),
-                'autorun' => '1',
-            ]);
-        }
-
-        return null;
+        return $this->buildUrl($definition['base'], $resolved);
     }
 
     /**

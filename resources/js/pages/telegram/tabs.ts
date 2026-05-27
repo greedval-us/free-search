@@ -10,6 +10,7 @@ export type TelegramTabDefinition = {
     labelKey: string;
     icon: Component;
     component: Component;
+    accessKey?: string;
 };
 
 export const TELEGRAM_TABS: readonly TelegramTabDefinition[] = [
@@ -24,11 +25,13 @@ export const TELEGRAM_TABS: readonly TelegramTabDefinition[] = [
         labelKey: 'telegram.tabs.analytics',
         icon: MODULE_TAB_ICONS.analytics,
         component: TelegramAnalyticsTab,
+        accessKey: 'telegram.analytics',
     },
     {
         key: 'parser',
         labelKey: 'telegram.tabs.parser',
         icon: MODULE_TAB_ICONS.parser,
         component: TelegramParserTab,
+        accessKey: 'telegram.parser',
     },
 ] as const;

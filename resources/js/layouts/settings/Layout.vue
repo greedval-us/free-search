@@ -27,6 +27,10 @@ const sidebarNavItems = computed<NavItem[]>(() => [
         title: t('settings.appearance'),
         href: editAppearance(),
     },
+    {
+        title: t('settings.billing'),
+        href: '/settings/billing',
+    },
 ]);
 
 const { isCurrentOrParentUrl } = useCurrentUrl();
@@ -41,14 +45,14 @@ const toggleLocale = () => {
 
 <template>
     <div
-        class="mx-4 mt-4 rounded-2xl border border-sidebar-border/80 bg-card/70 px-4 py-6 shadow-xl backdrop-blur sm:mx-6 sm:mt-6"
+        class="mx-4 mt-4 mb-4 flex min-h-0 flex-1 flex-col overflow-hidden rounded-2xl border border-sidebar-border/80 bg-card/70 px-4 py-6 shadow-xl backdrop-blur sm:mx-6 sm:mt-6"
     >
         <Heading
             :title="t('settings.title')"
             :description="t('settings.description')"
         />
 
-        <div class="flex flex-col lg:flex-row lg:space-x-12">
+        <div class="flex min-h-0 flex-1 flex-col lg:flex-row lg:space-x-12">
             <aside class="w-full max-w-xl lg:w-48">
                 <nav
                     class="flex flex-col space-y-1 space-x-0"
@@ -87,8 +91,10 @@ const toggleLocale = () => {
 
             <Separator class="my-6 lg:hidden" />
 
-            <div class="flex-1 md:max-w-2xl">
-                <section class="max-w-xl space-y-12">
+            <div class="min-h-0 flex-1 md:max-w-2xl">
+                <section
+                    class="intel-scroll max-h-[72vh] max-w-xl space-y-12 overflow-y-auto pr-1 [scrollbar-gutter:stable]"
+                >
                     <slot />
                 </section>
             </div>

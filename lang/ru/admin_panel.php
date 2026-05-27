@@ -14,19 +14,28 @@ return [
         'queue_jobs' => 'Задачи очереди',
         'failed_jobs' => 'Проваленные задачи',
         'admin_audit_log' => 'Журнал аудита админки',
+        'user_subscriptions' => 'Подписки пользователей',
+        'feature_usage_daily' => 'Дневное использование квот',
     ],
 
     'fields' => [
         'name' => 'Имя',
         'email' => 'E-mail',
         'account_type' => 'Тип аккаунта',
-        'premium' => 'Премиум',
+        'plan' => 'Тариф',
+        'subscription_ends_at' => 'Подписка действует до',
+        'quota_remaining' => 'Остаток квот сегодня',
+        'starts_at' => 'Начало',
+        'ends_at' => 'Окончание',
+        'metadata' => 'Метаданные',
+        'usage_date' => 'Дата использования',
+        'feature' => 'Функция',
+        'used' => 'Использовано',
+        'updated_at' => 'Обновлено',
         'blocked' => 'Блокировка',
         'telegram_id' => 'Telegram ID',
         'requests' => 'Запросы',
         'created_at' => 'Дата создания',
-        'premium_enabled' => 'Премиум включен',
-        'premium_expires_at' => 'Премиум истекает',
         'date' => 'Дата',
         'user' => 'Пользователь',
         'method' => 'Метод',
@@ -64,7 +73,10 @@ return [
         'ready_now' => 'Готово сейчас',
         'last_24h' => 'Последние 24ч',
         'blocked_users' => 'Заблокированные',
-        'premium_users' => 'Премиум пользователи',
+        'paid_users' => 'Платные пользователи',
+        'plus_users' => 'Plus пользователи',
+        'pro_users' => 'Pro пользователи',
+        'active_subscriptions' => 'Активные подписки',
     ],
 
     'values' => [
@@ -72,6 +84,8 @@ return [
         'no' => 'нет',
         'blocked' => 'заблокирован',
         'active' => 'активен',
+        'canceled' => 'отменена',
+        'expired' => 'истекла',
         'user' => 'пользователь',
         'admin' => 'админ',
         'moderator' => 'модератор',
@@ -81,5 +95,38 @@ return [
         'false' => 'false',
         'complex' => '[сложный объект]',
         'unknown' => 'неизвестно',
+    ],
+
+    'quota_modules' => [
+        'site-intel' => 'Site Intel',
+        'telegram' => 'Telegram',
+        'youtube' => 'YouTube',
+    ],
+
+    'quota_capabilities' => [
+        'analytics' => 'аналитика',
+        'seo-audit' => 'SEO аудит',
+        'parser' => 'парсер',
+    ],
+
+    'quota_capability_short' => [
+        'analytics' => 'А',
+        'seo-audit' => 'SEO',
+        'parser' => 'П',
+    ],
+
+    'quota_resources' => [
+        'site-intel' => [
+            'analytics' => 'Site Intel аналитика',
+            'seo-audit' => 'SEO аудит',
+        ],
+        'telegram' => [
+            'analytics' => 'Telegram аналитика',
+            'parser' => 'Telegram парсер',
+        ],
+        'youtube' => [
+            'analytics' => 'YouTube аналитика',
+            'parser' => 'YouTube парсер',
+        ],
     ],
 ];
