@@ -128,7 +128,7 @@ class YouTubeControllerIsolationTest extends TestCase
 
     public function test_youtube_search_comments_preview_controller_maps_request_to_service(): void
     {
-        $user = User::factory()->create();
+        $user = $this->paidUser();
 
         $this->mock(YouTubeParserApplicationServiceInterface::class, function ($mock): void {
             $mock->shouldReceive('comments')

@@ -114,6 +114,7 @@ return [
         'telegram.parser.stop' => ['resource' => 'telegram.parser', 'counts' => false],
         'telegram.parser.download-excel' => ['resource' => 'telegram.parser', 'counts' => false],
         'telegram.parser.download-json' => ['resource' => 'telegram.parser', 'counts' => false],
+        'youtube.search.comments-preview' => ['resource' => 'youtube.parser', 'counts' => false],
         'youtube.parser.comments' => ['resource' => 'youtube.parser', 'counts' => true],
         'youtube.parser.start' => ['resource' => 'youtube.parser', 'counts' => true],
         'youtube.parser.status' => ['resource' => 'youtube.parser', 'counts' => false],

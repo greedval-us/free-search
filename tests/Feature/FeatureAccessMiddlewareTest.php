@@ -255,6 +255,22 @@ class FeatureAccessMiddlewareTest extends TestCase
         ]);
     }
 
+    public function test_youtube_search_comments_preview_route_is_denied_for_free_user(): void
+    {
+        $user = User::factory()->create();
+
+        $this->mock(YouTubeParserApplicationServiceInterface::class, function ($mock): void {
+            $mock->shouldNotReceive('comments');
+        });
+
+        $this
+            ->actingAs($user)
+            ->getJson(route('youtube.search.comments-preview', [
+                'videoId' => 'video123',
+            ]))
+            ->assertForbidden();
+    }
+
     public function test_youtube_search_comments_preview_route_is_allowed_even_when_parser_quota_is_exhausted(): void
     {
         $user = $this->createSubscribedUser();

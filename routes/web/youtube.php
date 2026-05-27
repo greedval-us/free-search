@@ -15,7 +15,7 @@ Route::prefix('youtube')->name('youtube.')->group(function (): void {
             ->middleware('throttle:30,1')
             ->name('videos');
         Route::get('comments-preview', [YouTubeParserController::class, 'commentsPreview'])
-            ->middleware('throttle:30,1')
+            ->middleware(['feature.access', 'throttle:30,1'])
             ->name('comments-preview');
     });
 
