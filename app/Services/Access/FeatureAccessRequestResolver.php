@@ -34,10 +34,12 @@ final readonly class FeatureAccessRequestResolver implements FeatureAccessReques
             return null;
         }
 
+        $hasNonCountingQueryValue = $this->hasNonCountingQueryValue($request, $routeName);
+
         return new FeatureAccessRequest(
             resource: $policy->resource,
-            consume: $this->shouldConsume($request, $policy),
-            counts: $policy->counts,
+            consume: $this->shouldConsume($policy, $hasNonCountingQueryValue),
+            counts: $this->shouldCount($policy, $hasNonCountingQueryValue),
         );
     }
 
@@ -63,18 +65,40 @@ final readonly class FeatureAccessRequestResolver implements FeatureAccessReques
         return is_string($resource) && $resource !== '' ? $resource : null;
     }
 
-    private function shouldConsume(Request $request, AccessResourcePolicy $policy): bool
+    private function shouldConsume(AccessResourcePolicy $policy, bool $hasNonCountingQueryValue): bool
     {
         if (! $policy->counts) {
             return false;
         }
 
-        return ! $this->hasNonCountingQueryValue($request);
+        return ! $hasNonCountingQueryValue;
     }
 
-    private function hasNonCountingQueryValue(Request $request): bool
+    private function shouldCount(AccessResourcePolicy $policy, bool $hasNonCountingQueryValue): bool
     {
-        $queryValues = config('access.non_counting_query_values', []);
+        if (! $policy->counts) {
+            return false;
+        }
+
+        return ! $hasNonCountingQueryValue;
+    }
+
+    private function hasNonCountingQueryValue(Request $request, string $routeName): bool
+    {
+        return $this->matchesNonCountingQueryValues(
+            $request,
+            config('access.non_counting_query_values', [])
+        ) || $this->matchesNonCountingQueryValues(
+            $request,
+            $this->scopedQueryValuesForRoute($routeName)
+        );
+    }
+
+    /**
+     * @param  mixed  $queryValues
+     */
+    private function matchesNonCountingQueryValues(Request $request, mixed $queryValues): bool
+    {
         if (! is_array($queryValues)) {
             return false;
         }
@@ -90,5 +114,20 @@ final readonly class FeatureAccessRequestResolver implements FeatureAccessReques
         }
 
         return false;
+    }
+
+    /**
+     * @return array<string, array<int, string>>
+     */
+    private function scopedQueryValuesForRoute(string $routeName): array
+    {
+        $scoped = config('access.non_counting_query_values_scoped', []);
+        if (! is_array($scoped)) {
+            return [];
+        }
+
+        $routeScoped = $scoped[$routeName] ?? [];
+
+        return is_array($routeScoped) ? $routeScoped : [];
     }
 }

@@ -178,6 +178,7 @@ const loadComments = async (video: YouTubeVideo, append = false) => {
                 limit: 20,
                 order: 'relevance',
                 pageToken: append ? state.nextPageToken : '',
+                quotaContext: 'youtube-search-comments-preview',
             },
         }
     );

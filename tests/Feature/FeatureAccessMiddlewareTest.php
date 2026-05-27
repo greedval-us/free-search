@@ -5,10 +5,12 @@ namespace Tests\Feature;
 use App\Models\FeatureUsageDaily;
 use App\Models\RequestLog;
 use App\Models\User;
-use App\Models\UserSubscription;
+use App\Modules\YouTube\DTO\Request\YouTubeCommentsQueryDTO;
+use App\Modules\YouTube\Parser\Contracts\YouTubeParserApplicationServiceInterface;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Route;
+use Mockery;
 use Tests\Feature\Concerns\CreatesSubscribedUser;
 use Tests\TestCase;
 
@@ -221,6 +223,101 @@ class FeatureAccessMiddlewareTest extends TestCase
             'user_id' => $user->id,
             'feature' => 'telegram.analytics',
             'used' => 10,
+        ]);
+    }
+
+    public function test_youtube_search_comments_preview_does_not_consume_parser_quota(): void
+    {
+        $user = $this->createSubscribedUser();
+
+        $this->mock(YouTubeParserApplicationServiceInterface::class, function ($mock): void {
+            $mock->shouldReceive('comments')
+                ->once()
+                ->with(Mockery::type(YouTubeCommentsQueryDTO::class))
+                ->andReturn([
+                    'items' => [],
+                    'pagination' => [
+                        'nextPageToken' => null,
+                    ],
+                ]);
+        });
+
+        $this
+            ->actingAs($user)
+            ->getJson(route('youtube.parser.comments', [
+                'videoId' => 'video123',
+                'quotaContext' => 'youtube-search-comments-preview',
+            ]))
+            ->assertOk();
+
+        $this->assertDatabaseMissing('feature_usage_daily', [
+            'user_id' => $user->id,
+            'feature' => 'youtube.parser',
+        ]);
+    }
+
+    public function test_youtube_search_comments_preview_is_allowed_even_when_parser_quota_is_exhausted(): void
+    {
+        $user = $this->createSubscribedUser();
+        FeatureUsageDaily::query()->create([
+            'user_id' => $user->id,
+            'feature' => 'youtube.parser',
+            'usage_date' => now()->startOfDay(),
+            'used' => 5,
+        ]);
+
+        $this->mock(YouTubeParserApplicationServiceInterface::class, function ($mock): void {
+            $mock->shouldReceive('comments')
+                ->once()
+                ->with(Mockery::type(YouTubeCommentsQueryDTO::class))
+                ->andReturn([
+                    'items' => [],
+                    'pagination' => [
+                        'nextPageToken' => null,
+                    ],
+                ]);
+        });
+
+        $this
+            ->actingAs($user)
+            ->getJson(route('youtube.parser.comments', [
+                'videoId' => 'video123',
+                'quotaContext' => 'youtube-search-comments-preview',
+            ]))
+            ->assertOk();
+
+        $this->assertDatabaseHas('feature_usage_daily', [
+            'user_id' => $user->id,
+            'feature' => 'youtube.parser',
+            'used' => 5,
+        ]);
+    }
+
+    public function test_quota_context_is_ignored_for_other_routes(): void
+    {
+        Route::get('/_feature-access-quota-context-scope-test', static fn () => response()->json(['ok' => true]))
+            ->middleware('feature.access')
+            ->name('feature-access.quota-context-scope-test');
+
+        Config::set('access.protected_routes', [
+            ...config('access.protected_routes'),
+            'feature-access.quota-context-scope-test' => [
+                'resource' => 'telegram.analytics',
+                'counts' => true,
+            ],
+        ]);
+
+        $user = $this->createSubscribedUser();
+
+        $this
+            ->actingAs($user)
+            ->getJson('/_feature-access-quota-context-scope-test?quotaContext=youtube-search-comments-preview')
+            ->assertOk();
+
+        $this->assertDatabaseHas('feature_usage_daily', [
+            'user_id' => $user->id,
+            'feature' => 'telegram.analytics',
+            'used' => 1,
         ]);
     }
 }
