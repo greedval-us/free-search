@@ -54,7 +54,7 @@ class FeatureAccessMiddlewareTest extends TestCase
         ]));
         $this->assertDatabaseMissing('feature_usage_daily', [
             'user_id' => $user->id,
-            'feature' => 'analytics',
+            'feature' => 'youtube.analytics',
         ]);
     }
 
@@ -85,7 +85,7 @@ class FeatureAccessMiddlewareTest extends TestCase
 
         FeatureUsageDaily::query()->create([
             'user_id' => $user->id,
-            'feature' => 'analytics',
+            'feature' => 'site-intel.seo-audit',
             'usage_date' => now()->startOfDay(),
             'used' => 10,
         ]);

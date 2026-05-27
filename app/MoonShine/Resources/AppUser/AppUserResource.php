@@ -38,8 +38,6 @@ class AppUserResource extends ModelResource
         'email',
         'account_type',
         'telegram_id',
-        'is_premium',
-        'premium_expires_at',
         'is_blocked',
     ];
 
@@ -81,15 +79,14 @@ class AppUserResource extends ModelResource
             'account_type',
             'telegram_id',
             'is_blocked',
-            'is_premium',
         ];
     }
 
     protected function modifyQueryBuilder(Builder $builder): Builder
     {
-        $builder->withCount('requestLogs');
+        $builder->with(['activeSubscription'])->withCount('requestLogs');
 
-        if (!$this->hasQueryParam('sort')) {
+        if (! $this->hasQueryParam('sort')) {
             $builder->orderByDesc('created_at');
         }
 
@@ -109,7 +106,7 @@ class AppUserResource extends ModelResource
     protected function afterUpdated(DataWrapperContract $item): DataWrapperContract
     {
         $model = $item->getOriginal();
-        if (!$model instanceof User || $model->id === null) {
+        if (! $model instanceof User || $model->id === null) {
             return $item;
         }
 
@@ -164,8 +161,8 @@ class AppUserResource extends ModelResource
     }
 
     /**
-     * @param array<string, mixed> $before
-     * @param array<string, mixed> $after
+     * @param  array<string, mixed>  $before
+     * @param  array<string, mixed>  $after
      * @return array<string, array<string, mixed>>
      */
     private function buildDiff(array $before, array $after): array

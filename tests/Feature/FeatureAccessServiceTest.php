@@ -37,10 +37,11 @@ class FeatureAccessServiceTest extends TestCase
         $this->assertSame('plus', $decision->plan);
         $this->assertSame(10, $decision->limit);
         $this->assertSame(1, $decision->used);
-        $this->assertSame(1, $this->usage($user, 'analytics'));
+        $this->assertSame(1, $this->usage($user, 'telegram.analytics'));
+        $this->assertSame(0, $this->usage($user, 'analytics'));
     }
 
-    public function test_site_intel_seo_audit_uses_analytics_quota_pool(): void
+    public function test_site_intel_seo_audit_uses_own_quota_pool(): void
     {
         $user = User::factory()->create();
         $this->subscribe($user, User::SUBSCRIPTION_PLAN_PLUS);
@@ -50,14 +51,16 @@ class FeatureAccessServiceTest extends TestCase
         $this->assertTrue($decision->allowed);
         $this->assertSame('site-intel.seo-audit', $decision->feature);
         $this->assertSame(10, $decision->limit);
-        $this->assertSame(1, $this->usage($user, 'analytics'));
-        $this->assertSame(0, $this->usage($user, 'site-intel.seo-audit'));
+        $this->assertSame(1, $this->usage($user, 'site-intel.seo-audit'));
+        $this->assertSame(0, $this->usage($user, 'site-intel.analytics'));
     }
 
     public function test_module_specific_quota_override_can_be_configured(): void
     {
-        Config::set('access.plans.plus.youtube.analytics', 2);
-        Config::set('access.resources.youtube.analytics.quota_key', 'youtube.analytics');
+        Config::set('access.plans.plus', [
+            ...config('access.plans.plus'),
+            'youtube.analytics' => 2,
+        ]);
 
         $user = User::factory()->create();
         $this->subscribe($user, User::SUBSCRIPTION_PLAN_PLUS);
@@ -82,11 +85,14 @@ class FeatureAccessServiceTest extends TestCase
             $this->assertTrue($this->service()->consume($user, 'youtube.parser.comments')->allowed);
         }
 
-        $decision = $this->service()->consume($user, 'telegram.parser.start');
+        $decision = $this->service()->consume($user, 'youtube.parser.comments');
 
         $this->assertFalse($decision->allowed);
         $this->assertSame(5, $decision->limit);
         $this->assertSame(5, $decision->used);
+        $this->assertSame(5, $this->usage($user, 'youtube.parser'));
+        $this->assertSame(0, $this->usage($user, 'telegram.parser'));
+        $this->assertTrue($this->service()->consume($user, 'telegram.parser.start')->allowed);
     }
 
     public function test_parser_status_requires_paid_plan_without_consuming_quota(): void
@@ -98,7 +104,7 @@ class FeatureAccessServiceTest extends TestCase
 
         $this->assertTrue($decision->allowed);
         $this->assertFalse($decision->counts);
-        $this->assertSame(0, $this->usage($user, 'parser'));
+        $this->assertSame(0, $this->usage($user, 'telegram.parser'));
     }
 
     public function test_expired_subscription_falls_back_to_free(): void

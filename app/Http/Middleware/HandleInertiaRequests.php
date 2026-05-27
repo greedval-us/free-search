@@ -48,7 +48,6 @@ class HandleInertiaRequests extends Middleware
                     'email',
                     'email_verified_at',
                     'account_type',
-                    'premium_until',
                     'created_at',
                 ]),
                 'access' => $this->accessSummaryService->forUser($request->user()),

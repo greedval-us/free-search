@@ -8,6 +8,7 @@ use App\Models\FailedJob;
 use App\Models\QueueJob;
 use App\Models\RequestLog;
 use App\Models\User;
+use App\Models\UserSubscription;
 use Carbon\CarbonImmutable;
 use Illuminate\Support\Collection;
 
@@ -24,14 +25,27 @@ final class AdminControlAnalyticsService
         $monthAgo = $now->subDays(30);
 
         $usersTotal = User::query()->count();
-        $usersPremiumTotal = User::query()->where('is_premium', true)->count();
-        $usersPremiumActive = User::query()
-            ->where('is_premium', true)
-            ->where(static function ($query) use ($now): void {
-                $query->whereNull('premium_expires_at')
-                    ->orWhere('premium_expires_at', '>', $now);
-            })
-            ->count();
+        $activeSubscriptions = UserSubscription::query()
+            ->where('status', UserSubscription::STATUS_ACTIVE)
+            ->where('starts_at', '<=', $now)
+            ->where('ends_at', '>', $now);
+
+        $usersPaidTotal = UserSubscription::query()
+            ->whereIn('plan', [User::SUBSCRIPTION_PLAN_PLUS, User::SUBSCRIPTION_PLAN_PRO])
+            ->distinct('user_id')
+            ->count('user_id');
+        $usersPaidActive = (clone $activeSubscriptions)
+            ->whereIn('plan', [User::SUBSCRIPTION_PLAN_PLUS, User::SUBSCRIPTION_PLAN_PRO])
+            ->distinct('user_id')
+            ->count('user_id');
+        $usersPlusActive = (clone $activeSubscriptions)
+            ->where('plan', User::SUBSCRIPTION_PLAN_PLUS)
+            ->distinct('user_id')
+            ->count('user_id');
+        $usersProActive = (clone $activeSubscriptions)
+            ->where('plan', User::SUBSCRIPTION_PLAN_PRO)
+            ->distinct('user_id')
+            ->count('user_id');
 
         $requestsTotal = RequestLog::query()->count();
         $requests24h = RequestLog::query()->where('created_at', '>=', $dayAgo)->count();
@@ -47,8 +61,10 @@ final class AdminControlAnalyticsService
             'users_registered_24h' => User::query()->where('created_at', '>=', $dayAgo)->count(),
             'users_registered_7d' => User::query()->where('created_at', '>=', $weekAgo)->count(),
             'users_registered_30d' => User::query()->where('created_at', '>=', $monthAgo)->count(),
-            'users_premium_total' => $usersPremiumTotal,
-            'users_premium_active' => $usersPremiumActive,
+            'users_paid_total' => $usersPaidTotal,
+            'users_paid_active' => $usersPaidActive,
+            'users_plus_active' => $usersPlusActive,
+            'users_pro_active' => $usersProActive,
             'users_blocked' => User::query()->where('is_blocked', true)->count(),
             'users_active_24h' => RequestLog::query()
                 ->where('created_at', '>=', $dayAgo)

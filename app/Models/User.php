@@ -19,8 +19,6 @@ use Laravel\Fortify\TwoFactorAuthenticatable;
     'email',
     'password',
     'account_type',
-    'is_premium',
-    'premium_expires_at',
     'telegram_id',
     'is_blocked',
 ])]
@@ -56,8 +54,6 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
             'two_factor_confirmed_at' => 'datetime',
-            'is_premium' => 'boolean',
-            'premium_expires_at' => 'datetime',
             'is_blocked' => 'boolean',
         ];
     }
@@ -76,38 +72,6 @@ class User extends Authenticatable
     public function isModerator(): bool
     {
         return $this->account_type === self::ACCOUNT_TYPE_MODERATOR;
-    }
-
-    /**
-     * Check if user has premium access.
-     */
-    public function hasPremiumAccess(): bool
-    {
-        if (! $this->is_premium) {
-            return false;
-        }
-
-        if ($this->premium_expires_at === null) {
-            return true;
-        }
-
-        return $this->premium_expires_at->isFuture();
-    }
-
-    /**
-     * Check if premium has expired.
-     */
-    public function isPremiumExpired(): bool
-    {
-        if (! $this->is_premium) {
-            return true;
-        }
-
-        if ($this->premium_expires_at === null) {
-            return false;
-        }
-
-        return $this->premium_expires_at->isPast();
     }
 
     /**
@@ -171,26 +135,6 @@ class User extends Authenticatable
     public function scopeAdmins($query)
     {
         return $query->where('account_type', self::ACCOUNT_TYPE_ADMIN);
-    }
-
-    /**
-     * Scope a query to only include premium users.
-     */
-    public function scopePremium($query)
-    {
-        return $query->where('is_premium', true);
-    }
-
-    /**
-     * Scope a query to only include active premium users.
-     */
-    public function scopeActivePremium($query)
-    {
-        return $query->where('is_premium', true)
-            ->where(function ($q) {
-                $q->whereNull('premium_expires_at')
-                    ->orWhere('premium_expires_at', '>', now());
-            });
     }
 
     /**

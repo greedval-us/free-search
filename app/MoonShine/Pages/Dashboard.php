@@ -47,7 +47,7 @@ class Dashboard extends Page
             $period = 7;
         }
 
-        $analytics = new AdminControlAnalyticsService();
+        $analytics = new AdminControlAnalyticsService;
         $snapshot = $analytics->snapshot();
         $topModules = array_map(
             static function (array $row): array {
@@ -82,9 +82,21 @@ class Dashboard extends Page
                 ->iconColor(Color::PRIMARY)
                 ->columnSpan(12, 12),
 
-            ValueMetric::make(__('admin_dashboard.metrics.premium_users_active'))
+            ValueMetric::make(__('admin_dashboard.metrics.paid_users_active'))
                 ->icon('star')
-                ->value($snapshot['users_premium_active'])
+                ->value($snapshot['users_paid_active'])
+                ->iconColor(Color::SUCCESS)
+                ->columnSpan(12, 12),
+
+            ValueMetric::make(__('admin_dashboard.metrics.plus_users_active'))
+                ->icon('sparkles')
+                ->value($snapshot['users_plus_active'])
+                ->iconColor(Color::WARNING)
+                ->columnSpan(12, 12),
+
+            ValueMetric::make(__('admin_dashboard.metrics.pro_users_active'))
+                ->icon('shield-check')
+                ->value($snapshot['users_pro_active'])
                 ->iconColor(Color::SUCCESS)
                 ->columnSpan(12, 12),
 

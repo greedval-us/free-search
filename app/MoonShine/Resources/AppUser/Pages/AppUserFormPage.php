@@ -6,6 +6,7 @@ namespace App\MoonShine\Resources\AppUser\Pages;
 
 use App\Models\User;
 use App\MoonShine\Resources\AppUser\AppUserResource;
+use App\MoonShine\Support\UserQuotaSummaryFormatter;
 use MoonShine\Contracts\Core\TypeCasts\DataWrapperContract;
 use MoonShine\Contracts\UI\ComponentContract;
 use MoonShine\Contracts\UI\FieldContract;
@@ -53,10 +54,22 @@ final class AppUserFormPage extends FormPage
 
                 Text::make(__('admin_panel.fields.telegram_id'), 'telegram_id')->nullable(),
 
-                Switcher::make(__('admin_panel.fields.premium_enabled'), 'is_premium'),
-                Date::make(__('admin_panel.fields.premium_expires_at'), 'premium_expires_at')
-                    ->withTime()
-                    ->nullable(),
+                Text::make(__('admin_panel.fields.plan'), 'id', static fn (mixed $original): string => $original instanceof User
+                    ? $original->currentPlan()->value
+                    : User::SUBSCRIPTION_PLAN_FREE)
+                    ->disabled()
+                    ->onApply(static fn (mixed $data, mixed $value, mixed $field): mixed => $data),
+
+                Date::make(__('admin_panel.fields.subscription_ends_at'), 'activeSubscription.ends_at')
+                    ->format('d.m.Y H:i')
+                    ->disabled()
+                    ->onApply(static fn (mixed $data, mixed $value, mixed $field): mixed => $data),
+
+                Text::make(__('admin_panel.fields.quota_remaining'), 'id', static fn (mixed $original): string => $original instanceof User
+                    ? app(UserQuotaSummaryFormatter::class)->format($original)
+                    : '-')
+                    ->disabled()
+                    ->onApply(static fn (mixed $data, mixed $value, mixed $field): mixed => $data),
 
                 Switcher::make(__('admin_panel.fields.blocked'), 'is_blocked'),
             ]),
@@ -70,8 +83,6 @@ final class AppUserFormPage extends FormPage
             'email' => ['sometimes', 'prohibited'],
             'account_type' => ['sometimes', 'prohibited'],
             'telegram_id' => ['nullable', 'string', 'max:255'],
-            'is_premium' => ['nullable', 'boolean'],
-            'premium_expires_at' => ['nullable', 'date'],
             'is_blocked' => ['nullable', 'boolean'],
         ];
     }
