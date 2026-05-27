@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { Head, Link } from '@inertiajs/vue3';
-import { Check, CreditCard, Gauge, ShieldCheck } from 'lucide-vue-next';
+import { Check, CreditCard, ShieldCheck } from 'lucide-vue-next';
 import { computed } from 'vue';
 import Heading from '@/components/Heading.vue';
 import { Button } from '@/components/ui/button';
@@ -35,16 +35,6 @@ const formatDate = (value: string | null | undefined): string => {
 
     return new Date(value).toLocaleDateString(locale.value);
 };
-
-const quotaText = (feature: string): string => {
-    const quota = props.access.features[feature];
-
-    if (!quota || quota.limit === 0) {
-        return t('settings.billingPage.unavailable');
-    }
-
-    return `${quota.remaining}/${quota.limit}`;
-};
 </script>
 
 <template>
@@ -76,27 +66,6 @@ const quotaText = (feature: string): string => {
                     </p>
                 </div>
                 <ShieldCheck class="h-7 w-7 text-cyan-300" />
-            </div>
-
-            <div class="mt-4 grid gap-3 sm:grid-cols-2">
-                <div class="rounded-md border border-sidebar-border/70 p-3">
-                    <div class="flex items-center gap-2 text-sm font-medium">
-                        <Gauge class="h-4 w-4" />
-                        {{ t('settings.billingPage.analyticsQuota') }}
-                    </div>
-                    <p class="mt-2 text-xl font-semibold">
-                        {{ quotaText('analytics') }}
-                    </p>
-                </div>
-                <div class="rounded-md border border-sidebar-border/70 p-3">
-                    <div class="flex items-center gap-2 text-sm font-medium">
-                        <Gauge class="h-4 w-4" />
-                        {{ t('settings.billingPage.parserQuota') }}
-                    </div>
-                    <p class="mt-2 text-xl font-semibold">
-                        {{ quotaText('parser') }}
-                    </p>
-                </div>
             </div>
         </section>
 
