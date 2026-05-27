@@ -2,6 +2,7 @@
 
 namespace App\Http\Middleware;
 
+use App\Services\Access\Contracts\FeatureAccessRequestResolverInterface;
 use App\Services\Access\Contracts\FeatureAccessServiceInterface;
 use Closure;
 use Illuminate\Http\JsonResponse;
@@ -10,7 +11,10 @@ use Symfony\Component\HttpFoundation\Response;
 
 final class EnsureFeatureAccess
 {
-    public function __construct(private readonly FeatureAccessServiceInterface $featureAccessService) {}
+    public function __construct(
+        private readonly FeatureAccessServiceInterface $featureAccessService,
+        private readonly FeatureAccessRequestResolverInterface $requestResolver,
+    ) {}
 
     /**
      * @param  Closure(Request): Response  $next
@@ -24,19 +28,14 @@ final class EnsureFeatureAccess
             return $next($request);
         }
 
-        $resource = $this->requestedPageResource($routeName, $request);
-        if ($resource === null && ! $this->isProtectedRoute($routeName)) {
+        $accessRequest = $this->requestResolver->resolve($request);
+        if ($accessRequest === null) {
             return $next($request);
         }
 
-        $routePolicy = $this->protectedRoutePolicy($routeName);
-        $decision = $resource !== null || $routePolicy === null || ! $this->shouldConsume($request, $routePolicy)
-            ? $this->featureAccessService->inspect(
-                $user,
-                $resource ?? (string) ($routePolicy['resource'] ?? $routePolicy['feature'] ?? 'analytics'),
-                $resource !== null || (bool) ($routePolicy['counts'] ?? true),
-            )
-            : $this->featureAccessService->consume($user, $routeName);
+        $decision = $accessRequest->consume
+            ? $this->featureAccessService->consume($user, $routeName)
+            : $this->featureAccessService->inspect($user, $accessRequest->resource, $accessRequest->counts);
 
         if ($decision->allowed) {
             return $next($request);
@@ -58,55 +57,5 @@ final class EnsureFeatureAccess
             'feature' => $decision->feature,
             'reason' => $decision->limit <= 0 ? 'plan' : 'quota',
         ]);
-    }
-
-    private function requestedPageResource(string $routeName, Request $request): ?string
-    {
-        if (! in_array($routeName, ['telegram', 'youtube', 'site-intel'], true)) {
-            return null;
-        }
-
-        $tab = (string) $request->query('tab', '');
-        if ($routeName === 'site-intel' && $tab === 'seoAudit') {
-            return 'site-intel.seo-audit';
-        }
-
-        if (! in_array($tab, ['analytics', 'parser'], true)) {
-            return null;
-        }
-
-        return "{$routeName}.{$tab}";
-    }
-
-    private function isProtectedRoute(string $routeName): bool
-    {
-        return $this->protectedRoutePolicy($routeName) !== null;
-    }
-
-    /**
-     * @return array<string, mixed>|null
-     */
-    private function protectedRoutePolicy(string $routeName): ?array
-    {
-        $routes = config('access.protected_routes', []);
-        if (! is_array($routes) || ! array_key_exists($routeName, $routes)) {
-            return null;
-        }
-
-        $policy = $routes[$routeName];
-
-        return is_array($policy) ? $policy : null;
-    }
-
-    /**
-     * @param  array<string, mixed>  $routePolicy
-     */
-    private function shouldConsume(Request $request, array $routePolicy): bool
-    {
-        if (! (bool) ($routePolicy['counts'] ?? true)) {
-            return false;
-        }
-
-        return (string) $request->query('snapshotRole', '') !== 'previous';
     }
 }

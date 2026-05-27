@@ -2,32 +2,38 @@
 
 namespace App\Services\Access;
 
-use App\Models\FeatureUsageDaily;
 use App\Models\User;
+use App\Services\Access\Contracts\AccessPolicyResolverInterface;
 use App\Services\Access\Contracts\FeatureAccessServiceInterface;
+use App\Services\Access\Contracts\FeatureUsageCounterInterface;
+use App\Services\Access\Contracts\PlanQuotaResolverInterface;
 use App\Services\Access\DTO\FeatureAccessDecision;
 use App\Support\Access\AccountPlan;
-use Carbon\CarbonImmutable;
-use Illuminate\Support\Arr;
-use Illuminate\Support\Facades\DB;
 
 final class FeatureAccessService implements FeatureAccessServiceInterface
 {
+    public function __construct(
+        private readonly AccessPolicyResolverInterface $policyResolver,
+        private readonly FeatureUsageCounterInterface $usageCounter,
+        private readonly PlanQuotaResolverInterface $quotaResolver,
+    ) {}
+
     public function consume(User $user, string $routeName): FeatureAccessDecision
     {
-        $policy = $this->routePolicy($routeName);
+        $policy = $this->policyResolver->routePolicy($routeName)
+            ?? $this->policyResolver->resourcePolicy('analytics');
 
         return $this->decide($user, $policy, true);
     }
 
     public function inspect(User $user, string $resource, bool $counts = true): FeatureAccessDecision
     {
-        return $this->decide($user, $this->resourcePolicy($resource, $counts), false);
+        return $this->decide($user, $this->policyResolver->resourcePolicy($resource, $counts), false);
     }
 
     private function decide(User $user, AccessResourcePolicy $policy, bool $consume): FeatureAccessDecision
     {
-        if ($this->shouldBypass($user)) {
+        if ($this->policyResolver->canBypass($user)) {
             return new FeatureAccessDecision(
                 allowed: true,
                 feature: $policy->resource,
@@ -39,7 +45,7 @@ final class FeatureAccessService implements FeatureAccessServiceInterface
         }
 
         $plan = $user->currentPlan();
-        $limit = $this->limitFor($plan, $policy->resource, $policy->quotaKey);
+        $limit = $this->quotaResolver->limitFor($plan, $policy);
 
         if ($limit <= 0) {
             return $this->deny(
@@ -53,7 +59,7 @@ final class FeatureAccessService implements FeatureAccessServiceInterface
         }
 
         if (! $consume) {
-            $used = $this->usedToday($user, $policy->quotaKey);
+            $used = $this->usageCounter->usedToday($user, $policy->quotaKey);
 
             if ($policy->counts && $used >= $limit) {
                 return $this->deny(
@@ -72,7 +78,7 @@ final class FeatureAccessService implements FeatureAccessServiceInterface
                 plan: $plan->value,
                 limit: $limit,
                 used: $used,
-                counts: false,
+                counts: $policy->counts,
             );
         }
 
@@ -82,110 +88,32 @@ final class FeatureAccessService implements FeatureAccessServiceInterface
                 feature: $policy->resource,
                 plan: $plan->value,
                 limit: $limit,
-                used: $this->usedToday($user, $policy->quotaKey),
+                used: $this->usageCounter->usedToday($user, $policy->quotaKey),
                 counts: false,
             );
         }
 
-        return DB::transaction(function () use ($user, $policy, $plan, $limit): FeatureAccessDecision {
-            $usage = FeatureUsageDaily::query()
-                ->where('user_id', $user->id)
-                ->where('feature', $policy->quotaKey)
-                ->where('usage_date', $this->usageDate())
-                ->lockForUpdate()
-                ->first();
+        $used = $this->usageCounter->consume($user, $policy->quotaKey, $limit);
 
-            if ($usage === null) {
-                $usage = FeatureUsageDaily::query()->create([
-                    'user_id' => $user->id,
-                    'feature' => $policy->quotaKey,
-                    'usage_date' => $this->usageDate(),
-                    'used' => 0,
-                ]);
-            }
-
-            if ($usage->used >= $limit) {
-                return $this->deny(
-                    feature: $policy->resource,
-                    plan: $plan,
-                    limit: $limit,
-                    used: $usage->used,
-                    counts: $policy->counts,
-                    message: __('Daily limit reached for this feature.')
-                );
-            }
-
-            $used = $usage->used + 1;
-            $usage->forceFill(['used' => $used])->save();
-
-            return new FeatureAccessDecision(
-                allowed: true,
+        if ($used === null) {
+            return $this->deny(
                 feature: $policy->resource,
-                plan: $plan->value,
+                plan: $plan,
                 limit: $limit,
-                used: $used,
+                used: $this->usageCounter->usedToday($user, $policy->quotaKey),
                 counts: $policy->counts,
+                message: __('Daily limit reached for this feature.')
             );
-        });
-    }
+        }
 
-    private function routePolicy(string $routeName): AccessResourcePolicy
-    {
-        $routes = config('access.protected_routes', []);
-        $policy = is_array($routes) ? ($routes[$routeName] ?? []) : [];
-
-        return $this->resourcePolicy(
-            (string) ($policy['resource'] ?? $policy['feature'] ?? 'analytics'),
-            (bool) ($policy['counts'] ?? true)
+        return new FeatureAccessDecision(
+            allowed: true,
+            feature: $policy->resource,
+            plan: $plan->value,
+            limit: $limit,
+            used: $used,
+            counts: $policy->counts,
         );
-    }
-
-    private function resourcePolicy(string $resource, bool $counts): AccessResourcePolicy
-    {
-        $resources = config('access.resources', []);
-        $nestedResourceConfig = is_array($resources) ? data_get($resources, $resource) : null;
-        $resourceConfig = is_array($resources)
-            ? (is_array($nestedResourceConfig) ? $nestedResourceConfig : ($resources[$resource] ?? []))
-            : [];
-
-        return new AccessResourcePolicy(
-            resource: $resource,
-            quotaKey: (string) ($resourceConfig['quota_key'] ?? $resource),
-            counts: $counts,
-        );
-    }
-
-    private function shouldBypass(User $user): bool
-    {
-        $accountTypes = config('access.bypass_account_types', []);
-
-        return is_array($accountTypes)
-            && in_array((string) $user->account_type, $accountTypes, true);
-    }
-
-    private function limitFor(AccountPlan $plan, string $resource, string $quotaKey): int
-    {
-        $plans = config('access.plans', []);
-        $planLimits = is_array($plans) ? ($plans[$plan->value] ?? []) : [];
-        $limit = is_array($planLimits)
-            ? ($planLimits[$resource] ?? Arr::get($planLimits, $resource) ?? $planLimits[$quotaKey] ?? Arr::get($planLimits, $quotaKey) ?? 0)
-            : 0;
-
-        return max(0, (int) $limit);
-    }
-
-    private function usedToday(User $user, string $feature): int
-    {
-        return (int) FeatureUsageDaily::query()
-            ->where('user_id', $user->id)
-            ->where('feature', $feature)
-            ->where('usage_date', $this->usageDate())
-            ->value('used');
-    }
-
-    private function usageDate(): CarbonImmutable
-    {
-        return CarbonImmutable::now(config('app.timezone'))->startOfDay();
     }
 
     private function deny(
