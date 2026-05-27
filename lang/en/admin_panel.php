@@ -109,6 +109,12 @@ return [
         'parser' => 'parser',
     ],
 
+    'quota_capability_short' => [
+        'analytics' => 'A',
+        'seo-audit' => 'SEO',
+        'parser' => 'P',
+    ],
+
     'quota_resources' => [
         'site-intel' => [
             'analytics' => 'Site Intel analytics',

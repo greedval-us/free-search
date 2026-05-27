@@ -18,6 +18,7 @@ use MoonShine\UI\Components\Layout\Flex;
 use MoonShine\UI\Fields\Date;
 use MoonShine\UI\Fields\Email;
 use MoonShine\UI\Fields\ID;
+use MoonShine\UI\Fields\Preview;
 use MoonShine\UI\Fields\Select;
 use MoonShine\UI\Fields\Switcher;
 use MoonShine\UI\Fields\Text;
@@ -67,10 +68,9 @@ final class AppUserFormPage extends FormPage
                     ->disabled()
                     ->onApply(static fn (mixed $data, mixed $value, mixed $field): mixed => $data),
 
-                Text::make(__('admin_panel.fields.quota_remaining'), 'id', static fn (mixed $original): string => $original instanceof User
-                    ? app(UserQuotaSummaryFormatter::class)->format($original)
+                Preview::make(__('admin_panel.fields.quota_remaining'), 'id', static fn (mixed $original): mixed => $original instanceof User
+                    ? app(UserQuotaSummaryFormatter::class)->forDetails($original)
                     : '-')
-                    ->disabled()
                     ->onApply(static fn (mixed $data, mixed $value, mixed $field): mixed => $data),
 
                 Switcher::make(__('admin_panel.fields.blocked'), 'is_blocked'),

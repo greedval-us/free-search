@@ -15,6 +15,7 @@ use MoonShine\UI\Fields\Email;
 use MoonShine\UI\Fields\Field;
 use MoonShine\UI\Fields\ID;
 use MoonShine\UI\Fields\Number;
+use MoonShine\UI\Fields\Preview;
 use MoonShine\UI\Fields\Select;
 use MoonShine\UI\Fields\Text;
 
@@ -37,7 +38,7 @@ final class AppUserIndexPage extends AdminIndexPage
                 ->badge(static fn (mixed $value, Field $field): string => self::planBadge($value)),
             Date::make(__('admin_panel.fields.subscription_ends_at'), 'activeSubscription.ends_at')
                 ->format('d.m.Y H:i'),
-            Text::make(__('admin_panel.fields.quota_remaining'), 'id', static fn (mixed $original): string => self::quotaSummary($original)),
+            Preview::make(__('admin_panel.fields.quota_remaining'), 'id', static fn (mixed $original): mixed => self::quotaSummary($original)),
             Text::make(__('admin_panel.fields.blocked'), 'is_blocked', static fn (mixed $original): string => self::resolveFlag($original, 'is_blocked') ? __('admin_panel.values.blocked') : __('admin_panel.values.active'))
                 ->badge(static fn (mixed $value, Field $field): string => self::resolveFlag($value, 'is_blocked') ? 'error' : 'success'),
             Text::make(__('admin_panel.fields.telegram_id'), 'telegram_id'),
@@ -138,12 +139,12 @@ final class AppUserIndexPage extends AdminIndexPage
         };
     }
 
-    private static function quotaSummary(mixed $value): string
+    private static function quotaSummary(mixed $value): mixed
     {
         if (! $value instanceof User) {
             return '-';
         }
 
-        return app(UserQuotaSummaryFormatter::class)->format($value);
+        return app(UserQuotaSummaryFormatter::class)->forIndex($value);
     }
 }
