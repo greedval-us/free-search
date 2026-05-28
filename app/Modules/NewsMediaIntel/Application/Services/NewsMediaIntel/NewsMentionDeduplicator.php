@@ -2,37 +2,143 @@
 
 namespace App\Modules\NewsMediaIntel\Application\Services\NewsMediaIntel;
 
+use App\Modules\NewsMediaIntel\Application\Support\NewsMediaIntelConfig;
 use App\Modules\NewsMediaIntel\Domain\DTO\NewsMentionDTO;
 
 final class NewsMentionDeduplicator
 {
+    public function __construct(
+        private readonly NewsMediaIntelConfig $config,
+    ) {
+    }
+
     /**
      * @param array<int, NewsMentionDTO> $mentions
      * @return array<int, NewsMentionDTO>
      */
     public function deduplicate(array $mentions): array
     {
-        $map = [];
+        $linkMap = [];
+        $contentMap = [];
 
         foreach ($mentions as $mention) {
-            $key = mb_strtolower(trim($mention->link));
-            if ($key === '') {
-                continue;
-            }
+            $linkKey = $this->normalizedLinkKey($mention->link);
+            $contentKey = $this->normalizedContentKey($mention->title, $mention->snippet);
 
-            if (isset($map[$key])) {
-                $existing = $map[$key];
+            if ($linkKey !== '' && isset($linkMap[$linkKey])) {
+                $existing = $linkMap[$linkKey];
                 if ($this->shouldReplace($existing, $mention)) {
-                    $map[$key] = $mention;
+                    $linkMap[$linkKey] = $mention;
+
+                    if ($contentKey !== '') {
+                        $contentMap[$contentKey] = $mention;
+                    }
                 }
 
                 continue;
             }
 
-            $map[$key] = $mention;
+            if ($contentKey !== '' && isset($contentMap[$contentKey])) {
+                $existing = $contentMap[$contentKey];
+                if ($this->shouldReplace($existing, $mention)) {
+                    $contentMap[$contentKey] = $mention;
+
+                    if ($linkKey !== '') {
+                        $linkMap[$linkKey] = $mention;
+                    }
+                }
+
+                continue;
+            }
+
+            if ($linkKey !== '') {
+                $linkMap[$linkKey] = $mention;
+            }
+
+            if ($contentKey !== '') {
+                $contentMap[$contentKey] = $mention;
+            }
         }
 
-        return array_values($map);
+        $merged = [];
+        foreach (array_merge(array_values($linkMap), array_values($contentMap)) as $mention) {
+            $key = spl_object_hash($mention);
+            $merged[$key] = $mention;
+        }
+
+        return array_values($merged);
+    }
+
+    private function normalizedLinkKey(string $link): string
+    {
+        $raw = trim($link);
+        if ($raw === '') {
+            return '';
+        }
+
+        $parts = parse_url($raw);
+        if (!is_array($parts)) {
+            return mb_strtolower($raw);
+        }
+
+        $host = mb_strtolower((string) ($parts['host'] ?? ''));
+        if ($this->config->dedupStripWww()) {
+            $host = preg_replace('/^www\./i', '', $host) ?? $host;
+        }
+        $path = (string) ($parts['path'] ?? '');
+        if ($this->config->dedupTrimTrailingSlash()) {
+            $path = rtrim($path, '/');
+        }
+        $path = $path === '' ? '/' : $path;
+
+        $query = $this->normalizeQuery((string) ($parts['query'] ?? ''));
+
+        return $host . $path . ($query === '' ? '' : '?' . $query);
+    }
+
+    private function normalizeQuery(string $query): string
+    {
+        if ($query === '') {
+            return '';
+        }
+
+        parse_str($query, $params);
+
+        if (!is_array($params) || $params === []) {
+            return '';
+        }
+
+        $trackers = array_fill_keys($this->config->dedupQueryTrackers(), true);
+
+        foreach (array_keys($params) as $key) {
+            $normalized = mb_strtolower((string) $key);
+            if (array_key_exists($normalized, $trackers)) {
+                unset($params[$key]);
+            }
+        }
+
+        if ($params === []) {
+            return '';
+        }
+
+        ksort($params);
+
+        return http_build_query($params);
+    }
+
+    private function normalizedContentKey(string $title, string $snippet): string
+    {
+        $text = trim($title . ' ' . $snippet);
+        if ($text === '') {
+            return '';
+        }
+
+        $normalized = mb_strtolower($text);
+        $normalized = preg_replace('/[^\p{L}\p{N}\s]+/u', ' ', $normalized) ?? $normalized;
+        $normalized = preg_replace('/\s+/u', ' ', $normalized) ?? $normalized;
+        $normalized = trim($normalized);
+
+        return $normalized === '' ? '' : $normalized;
     }
 
     private function shouldReplace(NewsMentionDTO $existing, NewsMentionDTO $candidate): bool
