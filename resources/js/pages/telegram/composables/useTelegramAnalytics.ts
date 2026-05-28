@@ -79,7 +79,7 @@ const diffDays = (from: string, to: string): number | null => {
 
 export const useTelegramAnalytics = (t: TranslateFn) => {
     const form = reactive<TelegramAnalyticsForm>({
-        chatUsername: 'durov',
+        chatUsername: '',
         keyword: '',
         periodDays: 7 as AnalyticsPeriod,
         dateFrom: '',
