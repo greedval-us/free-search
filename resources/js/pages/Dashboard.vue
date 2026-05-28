@@ -372,6 +372,55 @@ onBeforeUnmount(() => {
                 </div>
             </section>
 
+            <section class="intel-panel">
+                <div class="flex flex-wrap items-center justify-between gap-3">
+                    <div>
+                        <p
+                            class="text-xs tracking-wide text-muted-foreground uppercase"
+                        >
+                            {{ t('dashboard.plan.title') }}
+                        </p>
+                        <h2 class="mt-1 text-lg font-semibold uppercase">
+                            {{ access.plan }}
+                        </h2>
+                    </div>
+                    <Link
+                        href="/settings/billing"
+                        class="inline-flex h-9 items-center gap-2 rounded-md border border-sidebar-border/70 bg-background/50 px-3 text-sm transition hover:border-primary/40 hover:bg-background/80"
+                    >
+                        <CreditCard class="h-4 w-4" />
+                        {{ t('dashboard.plan.manage') }}
+                    </Link>
+                </div>
+                <div class="mt-3 grid gap-2 lg:grid-cols-3">
+                    <div
+                        v-for="group in quotaGroups"
+                        :key="group.module"
+                        class="rounded-md border border-sidebar-border/70 bg-background/40 p-3"
+                    >
+                        <p
+                            class="text-xs font-medium text-muted-foreground uppercase"
+                        >
+                            {{ quotaModuleLabel(group.module) }}
+                        </p>
+                        <dl class="mt-2 space-y-1.5 text-sm">
+                            <div
+                                v-for="item in group.items"
+                                :key="item.key"
+                                class="flex items-center justify-between gap-3"
+                            >
+                                <dt class="truncate text-muted-foreground">
+                                    {{ quotaCapabilityLabel(item.capability) }}
+                                </dt>
+                                <dd class="font-semibold">
+                                    {{ quotaLabel(item) }}
+                                </dd>
+                            </div>
+                        </dl>
+                    </div>
+                </div>
+            </section>
+
             <section
                 class="grid grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-4 xl:grid-cols-4"
             >
@@ -430,55 +479,6 @@ onBeforeUnmount(() => {
                         {{ dashboard.summary.active_days_last_30_days }}
                     </p>
                 </article>
-            </section>
-
-            <section class="intel-panel">
-                <div class="flex flex-wrap items-center justify-between gap-3">
-                    <div>
-                        <p
-                            class="text-xs tracking-wide text-muted-foreground uppercase"
-                        >
-                            {{ t('dashboard.plan.title') }}
-                        </p>
-                        <h2 class="mt-1 text-lg font-semibold uppercase">
-                            {{ access.plan }}
-                        </h2>
-                    </div>
-                    <Link
-                        href="/settings/billing"
-                        class="inline-flex h-9 items-center gap-2 rounded-md border border-sidebar-border/70 bg-background/50 px-3 text-sm transition hover:border-primary/40 hover:bg-background/80"
-                    >
-                        <CreditCard class="h-4 w-4" />
-                        {{ t('dashboard.plan.manage') }}
-                    </Link>
-                </div>
-                <div class="mt-3 grid gap-2 lg:grid-cols-3">
-                    <div
-                        v-for="group in quotaGroups"
-                        :key="group.module"
-                        class="rounded-md border border-sidebar-border/70 bg-background/40 p-3"
-                    >
-                        <p
-                            class="text-xs font-medium text-muted-foreground uppercase"
-                        >
-                            {{ quotaModuleLabel(group.module) }}
-                        </p>
-                        <dl class="mt-2 space-y-1.5 text-sm">
-                            <div
-                                v-for="item in group.items"
-                                :key="item.key"
-                                class="flex items-center justify-between gap-3"
-                            >
-                                <dt class="truncate text-muted-foreground">
-                                    {{ quotaCapabilityLabel(item.capability) }}
-                                </dt>
-                                <dd class="font-semibold">
-                                    {{ quotaLabel(item) }}
-                                </dd>
-                            </div>
-                        </dl>
-                    </div>
-                </div>
             </section>
 
             <section class="grid gap-4 xl:grid-cols-2">
