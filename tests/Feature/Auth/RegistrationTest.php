@@ -36,4 +36,46 @@ class RegistrationTest extends TestCase
         $this->assertAuthenticated();
         $response->assertRedirect(route('dashboard', absolute: false));
     }
+
+    public function test_registration_rejects_cyrillic_name()
+    {
+        $response = $this->from(route('register'))->post(route('register.store'), [
+            'name' => 'Тестовый Пользователь',
+            'email' => 'test@example.com',
+            'password' => 'password',
+            'password_confirmation' => 'password',
+        ]);
+
+        $this->assertGuest();
+        $response->assertRedirect(route('register'));
+        $response->assertSessionHasErrors(['name']);
+    }
+
+    public function test_registration_rejects_invalid_email()
+    {
+        $response = $this->from(route('register'))->post(route('register.store'), [
+            'name' => 'Test User',
+            'email' => 'invalid-email',
+            'password' => 'password',
+            'password_confirmation' => 'password',
+        ]);
+
+        $this->assertGuest();
+        $response->assertRedirect(route('register'));
+        $response->assertSessionHasErrors(['email']);
+    }
+
+    public function test_registration_rejects_weak_password()
+    {
+        $response = $this->from(route('register'))->post(route('register.store'), [
+            'name' => 'Test User',
+            'email' => 'test@example.com',
+            'password' => 'password',
+            'password_confirmation' => 'password',
+        ]);
+
+        $this->assertGuest();
+        $response->assertRedirect(route('register'));
+        $response->assertSessionHasErrors(['password']);
+    }
 }

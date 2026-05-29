@@ -43,6 +43,8 @@ defineOptions({
                     :tabindex="1"
                     autocomplete="name"
                     name="name"
+                    pattern="[A-Za-z0-9\s.\'-]+"
+                    title="Use Latin letters, numbers, spaces and . ' - only"
                     :placeholder="t('auth.register.namePlaceholder')"
                     class="border-slate-700 bg-slate-900/80 text-slate-100 placeholder:text-slate-400"
                 />
