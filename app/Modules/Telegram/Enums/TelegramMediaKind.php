@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Modules\Telegram\Support;
+namespace App\Modules\Telegram\Enums;
 
 enum TelegramMediaKind: string
 {
@@ -57,4 +57,3 @@ enum TelegramMediaKind: string
         };
     }
 }
-

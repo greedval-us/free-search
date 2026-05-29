@@ -2,9 +2,9 @@
 
 namespace App\Modules\Telegram\Presenters;
 
-use App\Modules\Telegram\Support\TelegramMediaKind;
-use App\Modules\Telegram\Support\TelegramReactionIdentityKind;
-use App\Modules\Telegram\Support\TelegramReactionLabel;
+use App\Modules\Telegram\Enums\TelegramMediaKind;
+use App\Modules\Telegram\Enums\TelegramReactionIdentityKind;
+use App\Modules\Telegram\Enums\TelegramReactionLabel;
 
 class TelegramMessagePresenter
 {

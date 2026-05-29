@@ -2,6 +2,8 @@
 
 namespace App\Modules\SiteIntel\Application\Services\SiteHealth;
 
+use App\Modules\SiteIntel\Enums\SiteIntelScoreLevel;
+
 final class SiteHealthScoreCalculator
 {
     /**
@@ -65,11 +67,7 @@ final class SiteHealthScoreCalculator
         }
 
         $score = max(0, min(100, $score));
-        $level = match (true) {
-            $score >= 80 => 'high',
-            $score >= 55 => 'medium',
-            default => 'low',
-        };
+        $level = SiteIntelScoreLevel::fromThresholds($score, 80, 55)->value;
 
         return [
             'value' => $score,
@@ -78,4 +76,3 @@ final class SiteHealthScoreCalculator
         ];
     }
 }
-

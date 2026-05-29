@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Modules\Telegram\Support;
+namespace App\Modules\Telegram\Enums;
 
 enum TelegramReactionLabel: string
 {
@@ -8,4 +8,3 @@ enum TelegramReactionLabel: string
     case Custom = 'Custom';
     case Reaction = 'Reaction';
 }
-

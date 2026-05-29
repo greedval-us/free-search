@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Modules\Telegram\Support;
+namespace App\Modules\Telegram\Enums;
 
 enum TelegramReactionIdentityKind: string
 {
@@ -19,4 +19,3 @@ enum TelegramReactionIdentityKind: string
         return $this->value . ':' . $value;
     }
 }
-
