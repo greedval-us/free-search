@@ -4,6 +4,7 @@ namespace App\Modules\Telegram\Presenters;
 
 use App\Modules\Telegram\Support\TelegramMediaKind;
 use App\Modules\Telegram\Support\TelegramReactionIdentityKind;
+use App\Modules\Telegram\Support\TelegramReactionLabel;
 
 class TelegramMessagePresenter
 {
@@ -98,11 +99,11 @@ class TelegramMessagePresenter
             $isPaid = (bool) ($reaction->is_paid ?? false);
 
             if (($isPaid || str_contains(strtolower($type), 'paid')) && $emoji === '') {
-                $emoji = 'Paid';
+                $emoji = TelegramReactionLabel::Paid->value;
             }
 
             if ($emoji === '' && str_contains(strtolower($type), 'custom')) {
-                $emoji = 'Custom';
+                $emoji = TelegramReactionLabel::Custom->value;
             }
 
             if ($emoji === '' && $count <= 0) {
@@ -122,7 +123,7 @@ class TelegramMessagePresenter
 
             $result[] = [
                 'key' => $key,
-                'emoji' => $identity['label'] ?? ($emoji !== '' ? $emoji : 'Reaction'),
+                'emoji' => $identity['label'] ?? ($emoji !== '' ? $emoji : TelegramReactionLabel::Reaction->value),
                 'count' => $count,
                 'senderIds' => $senderIdsByReaction[$key] ?? [],
             ];
@@ -297,11 +298,11 @@ class TelegramMessagePresenter
         $label = $emoticon;
 
         if ($label === '' && ($isPaid || str_contains($normalizedType, 'paid'))) {
-            $label = 'Paid';
+            $label = TelegramReactionLabel::Paid->value;
         } elseif ($label === '' && str_contains($normalizedType, 'custom')) {
-            $label = 'Custom';
+            $label = TelegramReactionLabel::Custom->value;
         } elseif ($label === '') {
-            $label = 'Reaction';
+            $label = TelegramReactionLabel::Reaction->value;
         }
 
         $key = match (true) {
