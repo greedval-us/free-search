@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\Shifr;
 
+use App\Modules\Shifr\Enums\ShifrCipherDirection;
 use App\Modules\Shifr\DTO\Classic\ClassicCipherLookupDTO;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\Validator;
@@ -18,7 +19,7 @@ final class ShifrClassicCipherRequest extends AbstractShifrRequest
         return [
             'text' => ['required', 'string', 'max:20000'],
             'cipher' => ['required', 'string', 'in:caesar,atbash,rot13,rot47,rot5,vigenere,rail_fence,xor,affine,playfair,columnar,morse'],
-            'direction' => ['required', 'string', 'in:encrypt,decrypt,transform'],
+            'direction' => ['required', 'string', 'in:' . ShifrCipherDirection::ruleList()],
             'shift' => ['nullable', 'integer', 'min:-1000', 'max:1000'],
             'key' => [
                 'nullable',
@@ -62,11 +63,11 @@ final class ShifrClassicCipherRequest extends AbstractShifrRequest
                 return;
             }
 
-            if ($this->isTransformOnlyCipher($cipher) && $direction !== 'transform') {
+            if ($this->isTransformOnlyCipher($cipher) && $direction !== ShifrCipherDirection::Transform->value) {
                 $validator->errors()->add('direction', __('For this cipher direction must be transform.'));
             }
 
-            if (!$this->isTransformOnlyCipher($cipher) && $direction === 'transform') {
+            if (!$this->isTransformOnlyCipher($cipher) && $direction === ShifrCipherDirection::Transform->value) {
                 $validator->errors()->add('direction', __('Transform direction is only available for ROT ciphers.'));
             }
         });

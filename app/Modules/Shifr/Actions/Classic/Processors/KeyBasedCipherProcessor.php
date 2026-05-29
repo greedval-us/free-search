@@ -6,6 +6,7 @@ use App\Modules\Shifr\Actions\Classic\Contracts\ClassicCipherProcessorInterface;
 use App\Modules\Shifr\Actions\Classic\Support\ClassicCipherResultFactory;
 use App\Modules\Shifr\DTO\Classic\ClassicCipherLookupDTO;
 use App\Modules\Shifr\DTO\Contracts\ShifrResultDataInterface;
+use App\Modules\Shifr\Enums\ShifrCipherDirection;
 use App\Modules\Shifr\Support\ClassicCiphers\ClassicCipherAffinePlayfair;
 use App\Modules\Shifr\Support\ClassicCiphers\ClassicCipherTransposition;
 use App\Modules\Shifr\Support\ClassicCiphers\ClassicCipherVigenere;
@@ -45,8 +46,8 @@ final class KeyBasedCipherProcessor implements ClassicCipherProcessorInterface
         }
 
         return match ($dto->direction) {
-            'encrypt' => $this->resultFactory->fromOriginalAndResult($dto->text, $this->vigenere->encrypt($dto->text, $dto->key)),
-            'decrypt' => $this->resultFactory->fromOriginalAndResult($dto->text, $this->vigenere->decrypt($dto->text, $dto->key)),
+            ShifrCipherDirection::Encrypt->value => $this->resultFactory->fromOriginalAndResult($dto->text, $this->vigenere->encrypt($dto->text, $dto->key)),
+            ShifrCipherDirection::Decrypt->value => $this->resultFactory->fromOriginalAndResult($dto->text, $this->vigenere->decrypt($dto->text, $dto->key)),
             default => null,
         };
     }
@@ -58,8 +59,8 @@ final class KeyBasedCipherProcessor implements ClassicCipherProcessorInterface
         }
 
         return match ($dto->direction) {
-            'encrypt' => $this->resultFactory->fromOriginalAndResult($dto->text, $this->xor->encrypt($dto->text, $dto->xorKey)),
-            'decrypt' => $this->resultFactory->fromOriginalAndResult($dto->text, $this->xor->decrypt($dto->text, $dto->xorKey)),
+            ShifrCipherDirection::Encrypt->value => $this->resultFactory->fromOriginalAndResult($dto->text, $this->xor->encrypt($dto->text, $dto->xorKey)),
+            ShifrCipherDirection::Decrypt->value => $this->resultFactory->fromOriginalAndResult($dto->text, $this->xor->decrypt($dto->text, $dto->xorKey)),
             default => null,
         };
     }
@@ -71,11 +72,11 @@ final class KeyBasedCipherProcessor implements ClassicCipherProcessorInterface
         }
 
         return match ($dto->direction) {
-            'encrypt' => $this->resultFactory->fromOriginalAndResult(
+            ShifrCipherDirection::Encrypt->value => $this->resultFactory->fromOriginalAndResult(
                 $dto->text,
                 $this->affinePlayfair->playfairEncrypt($dto->text, $dto->playfairKey)
             ),
-            'decrypt' => $this->resultFactory->fromOriginalAndResult(
+            ShifrCipherDirection::Decrypt->value => $this->resultFactory->fromOriginalAndResult(
                 $dto->text,
                 $this->affinePlayfair->playfairDecrypt($dto->text, $dto->playfairKey)
             ),
@@ -90,11 +91,11 @@ final class KeyBasedCipherProcessor implements ClassicCipherProcessorInterface
         }
 
         return match ($dto->direction) {
-            'encrypt' => $this->resultFactory->fromOriginalAndResult(
+            ShifrCipherDirection::Encrypt->value => $this->resultFactory->fromOriginalAndResult(
                 $dto->text,
                 $this->transposition->columnarEncrypt($dto->text, $dto->columnKey)
             ),
-            'decrypt' => $this->resultFactory->fromOriginalAndResult(
+            ShifrCipherDirection::Decrypt->value => $this->resultFactory->fromOriginalAndResult(
                 $dto->text,
                 $this->transposition->columnarDecrypt($dto->text, $dto->columnKey)
             ),
