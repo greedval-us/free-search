@@ -2,6 +2,8 @@
 
 namespace App\Modules\Telegram\Presenters;
 
+use App\Modules\Telegram\Support\TelegramMediaKind;
+
 class TelegramMessagePresenter
 {
     public function presentMessages(array $messages, string $chatUsername): array
@@ -69,39 +71,12 @@ class TelegramMessagePresenter
             $mediaType = (string) $raw['media']['_'];
         }
 
-        $kind = 'none';
-        if ($mediaType !== null) {
-            $type = strtolower($mediaType);
-            $kind = match (true) {
-                str_contains($type, 'photo') => 'photo',
-                str_contains($type, 'video') => 'video',
-                str_contains($type, 'document') => 'document',
-                str_contains($type, 'audio') => 'audio',
-                str_contains($type, 'geo') => 'geo',
-                str_contains($type, 'poll') => 'poll',
-                str_contains($type, 'contact') => 'contact',
-                str_contains($type, 'webpage') => 'link_preview',
-                default => 'other',
-            };
-        }
-
-        $labels = [
-            'photo' => 'Фото',
-            'video' => 'Видео',
-            'document' => 'Документ',
-            'audio' => 'Аудио',
-            'geo' => 'Геопозиция',
-            'poll' => 'Опрос',
-            'contact' => 'Контакт',
-            'link_preview' => 'Ссылка',
-            'other' => 'Медиа',
-            'none' => 'Нет',
-        ];
+        $kind = TelegramMediaKind::fromRawType($mediaType);
 
         return [
-            'hasMedia' => $kind !== 'none',
-            'type' => $kind,
-            'label' => $labels[$kind] ?? 'Медиа',
+            'hasMedia' => $kind->hasMedia(),
+            'type' => $kind->value,
+            'label' => $kind->label(),
             'rawType' => $mediaType,
         ];
     }
