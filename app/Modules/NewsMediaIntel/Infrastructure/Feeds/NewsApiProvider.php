@@ -4,7 +4,7 @@ namespace App\Modules\NewsMediaIntel\Infrastructure\Feeds;
 
 use App\Modules\NewsMediaIntel\Application\Contracts\NewsFeedProviderInterface;
 use App\Modules\NewsMediaIntel\Application\Support\NewsMediaIntelConfig;
-use App\Modules\NewsMediaIntel\Application\Support\NewsFeedSources;
+use App\Modules\NewsMediaIntel\Enums\NewsFeedSource;
 use App\Modules\NewsMediaIntel\Domain\DTO\NewsMentionDTO;
 use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Support\Facades\Http;
@@ -18,7 +18,7 @@ final class NewsApiProvider implements NewsFeedProviderInterface
 
     public function key(): string
     {
-        return NewsFeedSources::NEWS_API;
+        return NewsFeedSource::NewsApi->value;
     }
 
     /**
@@ -78,7 +78,7 @@ final class NewsApiProvider implements NewsFeedProviderInterface
             }
 
             $items[] = new NewsMentionDTO(
-                source: NewsFeedSources::NEWS_API,
+                source: NewsFeedSource::NewsApi->value,
                 title: $title,
                 snippet: $snippet,
                 link: $link,

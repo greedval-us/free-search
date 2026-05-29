@@ -2,6 +2,8 @@
 
 namespace App\Modules\NewsMediaIntel\Application\Support;
 
+use App\Modules\NewsMediaIntel\Enums\NewsFeedSource;
+
 final class NewsMediaIntelConfig
 {
     /**
@@ -332,6 +334,6 @@ final class NewsMediaIntelConfig
      */
     private static function allowedProviderKeys(): array
     {
-        return NewsFeedSources::all();
+        return NewsFeedSource::values();
     }
 }

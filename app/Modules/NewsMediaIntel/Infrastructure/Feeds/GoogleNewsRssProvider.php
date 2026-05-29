@@ -2,13 +2,13 @@
 
 namespace App\Modules\NewsMediaIntel\Infrastructure\Feeds;
 
-use App\Modules\NewsMediaIntel\Application\Support\NewsFeedSources;
+use App\Modules\NewsMediaIntel\Enums\NewsFeedSource;
 
 final class GoogleNewsRssProvider extends AbstractTemplateRssNewsFeedProvider
 {
     protected function sourceKey(): string
     {
-        return NewsFeedSources::GOOGLE_NEWS;
+        return NewsFeedSource::GoogleNews->value;
     }
 
     protected function urlTemplate(): string
