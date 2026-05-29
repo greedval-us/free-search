@@ -3,7 +3,7 @@
 namespace App\Services\Access;
 
 use App\Services\Access\Contracts\PlanQuotaResolverInterface;
-use App\Support\Access\AccountPlan;
+use App\Support\Access\Enums\AccountPlan;
 use Illuminate\Support\Arr;
 
 final class PlanQuotaResolver implements PlanQuotaResolverInterface
