@@ -3,6 +3,7 @@
 namespace App\Modules\Telegram\Presenters;
 
 use App\Modules\Telegram\Support\TelegramMediaKind;
+use App\Modules\Telegram\Support\TelegramReactionIdentityKind;
 
 class TelegramMessagePresenter
 {
@@ -117,7 +118,7 @@ class TelegramMessagePresenter
                 'reaction' => $reaction->raw['reaction'] ?? null,
             ]);
 
-            $key = $identity['key'] ?? ('label:' . md5($emoji !== '' ? $emoji : 'reaction'));
+            $key = $identity['key'] ?? TelegramReactionIdentityKind::Label->key(md5($emoji !== '' ? $emoji : 'reaction'));
 
             $result[] = [
                 'key' => $key,
@@ -304,11 +305,11 @@ class TelegramMessagePresenter
         }
 
         $key = match (true) {
-            $documentId !== null && $documentId > 0 => 'document:' . $documentId,
-            $emoticon !== '' => 'emoji:' . md5($emoticon),
-            $isPaid || str_contains($normalizedType, 'paid') => 'paid',
-            $reactionType !== '' => 'type:' . $reactionType,
-            default => 'label:' . md5($label),
+            $documentId !== null && $documentId > 0 => TelegramReactionIdentityKind::Document->key($documentId),
+            $emoticon !== '' => TelegramReactionIdentityKind::Emoji->key(md5($emoticon)),
+            $isPaid || str_contains($normalizedType, 'paid') => TelegramReactionIdentityKind::Paid->key(''),
+            $reactionType !== '' => TelegramReactionIdentityKind::Type->key($reactionType),
+            default => TelegramReactionIdentityKind::Label->key(md5($label)),
         };
 
         return [
