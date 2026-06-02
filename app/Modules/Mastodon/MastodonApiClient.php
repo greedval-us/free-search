@@ -43,6 +43,16 @@ final class MastodonApiClient implements MastodonGatewayInterface
         ], fn (mixed $value): bool => $value !== null && $value !== ''));
     }
 
+    public function tagTimeline(string $tagName, int $limit, ?string $maxId = null): array
+    {
+        $encodedTagName = rawurlencode($tagName);
+
+        return $this->getPaginatedCollection("/api/v1/timelines/tag/{$encodedTagName}", array_filter([
+            'limit' => $limit,
+            'max_id' => $maxId,
+        ], fn (mixed $value): bool => $value !== null && $value !== ''));
+    }
+
     /**
      * @param  array<string, mixed>  $query
      * @return array<string, mixed>

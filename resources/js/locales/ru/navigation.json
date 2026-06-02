@@ -1,0 +1,14 @@
+{
+    "platform": "Платформа",
+    "menu": "Меню навигации",
+    "dashboard": "Панель",
+    "mastodon": "Mastodon",
+    "telegram": "Телеграм",
+    "youtube": "YouTube",
+    "siteIntel": "Аналитика сайта",
+    "newsMediaIntel": "Новости и медиа",
+    "shifr": "Шифр",
+    "modulesWiki": "Вики модулей",
+    "repository": "Репозиторий",
+    "documentation": "Документация"
+}

@@ -1,7 +1,7 @@
 import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFormDefinition, applyUrlDefaults } from './../../../../../wayfinder'
 /**
 * @see \App\Http\Controllers\Mastodon\MastodonSearchController::search
- * @see app/Http/Controllers/Mastodon/MastodonSearchController.php:23
+ * @see app/Http/Controllers/Mastodon/MastodonSearchController.php:24
  * @route '/mastodon/search'
  */
 export const search = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -16,7 +16,7 @@ search.definition = {
 
 /**
 * @see \App\Http\Controllers\Mastodon\MastodonSearchController::search
- * @see app/Http/Controllers/Mastodon/MastodonSearchController.php:23
+ * @see app/Http/Controllers/Mastodon/MastodonSearchController.php:24
  * @route '/mastodon/search'
  */
 search.url = (options?: RouteQueryOptions) => {
@@ -25,7 +25,7 @@ search.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\Mastodon\MastodonSearchController::search
- * @see app/Http/Controllers/Mastodon/MastodonSearchController.php:23
+ * @see app/Http/Controllers/Mastodon/MastodonSearchController.php:24
  * @route '/mastodon/search'
  */
 search.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -34,7 +34,7 @@ search.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
 })
 /**
 * @see \App\Http\Controllers\Mastodon\MastodonSearchController::search
- * @see app/Http/Controllers/Mastodon/MastodonSearchController.php:23
+ * @see app/Http/Controllers/Mastodon/MastodonSearchController.php:24
  * @route '/mastodon/search'
  */
 search.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -44,7 +44,7 @@ search.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 
     /**
 * @see \App\Http\Controllers\Mastodon\MastodonSearchController::search
- * @see app/Http/Controllers/Mastodon/MastodonSearchController.php:23
+ * @see app/Http/Controllers/Mastodon/MastodonSearchController.php:24
  * @route '/mastodon/search'
  */
     const searchForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -54,7 +54,7 @@ search.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 
             /**
 * @see \App\Http\Controllers\Mastodon\MastodonSearchController::search
- * @see app/Http/Controllers/Mastodon/MastodonSearchController.php:23
+ * @see app/Http/Controllers/Mastodon/MastodonSearchController.php:24
  * @route '/mastodon/search'
  */
         searchForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -63,7 +63,7 @@ search.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
         })
             /**
 * @see \App\Http\Controllers\Mastodon\MastodonSearchController::search
- * @see app/Http/Controllers/Mastodon/MastodonSearchController.php:23
+ * @see app/Http/Controllers/Mastodon/MastodonSearchController.php:24
  * @route '/mastodon/search'
  */
         searchForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -79,7 +79,7 @@ search.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     search.form = searchForm
 /**
 * @see \App\Http\Controllers\Mastodon\MastodonSearchController::context
- * @see app/Http/Controllers/Mastodon/MastodonSearchController.php:32
+ * @see app/Http/Controllers/Mastodon/MastodonSearchController.php:33
  * @route '/mastodon/statuses/{statusId}/context'
  */
 export const context = (args: { statusId: string | number } | [statusId: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -94,7 +94,7 @@ context.definition = {
 
 /**
 * @see \App\Http\Controllers\Mastodon\MastodonSearchController::context
- * @see app/Http/Controllers/Mastodon/MastodonSearchController.php:32
+ * @see app/Http/Controllers/Mastodon/MastodonSearchController.php:33
  * @route '/mastodon/statuses/{statusId}/context'
  */
 context.url = (args: { statusId: string | number } | [statusId: string | number ] | string | number, options?: RouteQueryOptions) => {
@@ -122,7 +122,7 @@ context.url = (args: { statusId: string | number } | [statusId: string | number 
 
 /**
 * @see \App\Http\Controllers\Mastodon\MastodonSearchController::context
- * @see app/Http/Controllers/Mastodon/MastodonSearchController.php:32
+ * @see app/Http/Controllers/Mastodon/MastodonSearchController.php:33
  * @route '/mastodon/statuses/{statusId}/context'
  */
 context.get = (args: { statusId: string | number } | [statusId: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -131,7 +131,7 @@ context.get = (args: { statusId: string | number } | [statusId: string | number 
 })
 /**
 * @see \App\Http\Controllers\Mastodon\MastodonSearchController::context
- * @see app/Http/Controllers/Mastodon/MastodonSearchController.php:32
+ * @see app/Http/Controllers/Mastodon/MastodonSearchController.php:33
  * @route '/mastodon/statuses/{statusId}/context'
  */
 context.head = (args: { statusId: string | number } | [statusId: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -141,7 +141,7 @@ context.head = (args: { statusId: string | number } | [statusId: string | number
 
     /**
 * @see \App\Http\Controllers\Mastodon\MastodonSearchController::context
- * @see app/Http/Controllers/Mastodon/MastodonSearchController.php:32
+ * @see app/Http/Controllers/Mastodon/MastodonSearchController.php:33
  * @route '/mastodon/statuses/{statusId}/context'
  */
     const contextForm = (args: { statusId: string | number } | [statusId: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -151,7 +151,7 @@ context.head = (args: { statusId: string | number } | [statusId: string | number
 
             /**
 * @see \App\Http\Controllers\Mastodon\MastodonSearchController::context
- * @see app/Http/Controllers/Mastodon/MastodonSearchController.php:32
+ * @see app/Http/Controllers/Mastodon/MastodonSearchController.php:33
  * @route '/mastodon/statuses/{statusId}/context'
  */
         contextForm.get = (args: { statusId: string | number } | [statusId: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -160,7 +160,7 @@ context.head = (args: { statusId: string | number } | [statusId: string | number
         })
             /**
 * @see \App\Http\Controllers\Mastodon\MastodonSearchController::context
- * @see app/Http/Controllers/Mastodon/MastodonSearchController.php:32
+ * @see app/Http/Controllers/Mastodon/MastodonSearchController.php:33
  * @route '/mastodon/statuses/{statusId}/context'
  */
         contextForm.head = (args: { statusId: string | number } | [statusId: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -176,7 +176,7 @@ context.head = (args: { statusId: string | number } | [statusId: string | number
     context.form = contextForm
 /**
 * @see \App\Http\Controllers\Mastodon\MastodonSearchController::accountStatuses
- * @see app/Http/Controllers/Mastodon/MastodonSearchController.php:41
+ * @see app/Http/Controllers/Mastodon/MastodonSearchController.php:42
  * @route '/mastodon/accounts/{accountId}/statuses'
  */
 export const accountStatuses = (args: { accountId: string | number } | [accountId: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -191,7 +191,7 @@ accountStatuses.definition = {
 
 /**
 * @see \App\Http\Controllers\Mastodon\MastodonSearchController::accountStatuses
- * @see app/Http/Controllers/Mastodon/MastodonSearchController.php:41
+ * @see app/Http/Controllers/Mastodon/MastodonSearchController.php:42
  * @route '/mastodon/accounts/{accountId}/statuses'
  */
 accountStatuses.url = (args: { accountId: string | number } | [accountId: string | number ] | string | number, options?: RouteQueryOptions) => {
@@ -219,7 +219,7 @@ accountStatuses.url = (args: { accountId: string | number } | [accountId: string
 
 /**
 * @see \App\Http\Controllers\Mastodon\MastodonSearchController::accountStatuses
- * @see app/Http/Controllers/Mastodon/MastodonSearchController.php:41
+ * @see app/Http/Controllers/Mastodon/MastodonSearchController.php:42
  * @route '/mastodon/accounts/{accountId}/statuses'
  */
 accountStatuses.get = (args: { accountId: string | number } | [accountId: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -228,7 +228,7 @@ accountStatuses.get = (args: { accountId: string | number } | [accountId: string
 })
 /**
 * @see \App\Http\Controllers\Mastodon\MastodonSearchController::accountStatuses
- * @see app/Http/Controllers/Mastodon/MastodonSearchController.php:41
+ * @see app/Http/Controllers/Mastodon/MastodonSearchController.php:42
  * @route '/mastodon/accounts/{accountId}/statuses'
  */
 accountStatuses.head = (args: { accountId: string | number } | [accountId: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -238,7 +238,7 @@ accountStatuses.head = (args: { accountId: string | number } | [accountId: strin
 
     /**
 * @see \App\Http\Controllers\Mastodon\MastodonSearchController::accountStatuses
- * @see app/Http/Controllers/Mastodon/MastodonSearchController.php:41
+ * @see app/Http/Controllers/Mastodon/MastodonSearchController.php:42
  * @route '/mastodon/accounts/{accountId}/statuses'
  */
     const accountStatusesForm = (args: { accountId: string | number } | [accountId: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -248,7 +248,7 @@ accountStatuses.head = (args: { accountId: string | number } | [accountId: strin
 
             /**
 * @see \App\Http\Controllers\Mastodon\MastodonSearchController::accountStatuses
- * @see app/Http/Controllers/Mastodon/MastodonSearchController.php:41
+ * @see app/Http/Controllers/Mastodon/MastodonSearchController.php:42
  * @route '/mastodon/accounts/{accountId}/statuses'
  */
         accountStatusesForm.get = (args: { accountId: string | number } | [accountId: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -257,7 +257,7 @@ accountStatuses.head = (args: { accountId: string | number } | [accountId: strin
         })
             /**
 * @see \App\Http\Controllers\Mastodon\MastodonSearchController::accountStatuses
- * @see app/Http/Controllers/Mastodon/MastodonSearchController.php:41
+ * @see app/Http/Controllers/Mastodon/MastodonSearchController.php:42
  * @route '/mastodon/accounts/{accountId}/statuses'
  */
         accountStatusesForm.head = (args: { accountId: string | number } | [accountId: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -273,7 +273,7 @@ accountStatuses.head = (args: { accountId: string | number } | [accountId: strin
     accountStatuses.form = accountStatusesForm
 /**
 * @see \App\Http\Controllers\Mastodon\MastodonSearchController::accountFollowers
- * @see app/Http/Controllers/Mastodon/MastodonSearchController.php:50
+ * @see app/Http/Controllers/Mastodon/MastodonSearchController.php:51
  * @route '/mastodon/accounts/{accountId}/followers'
  */
 export const accountFollowers = (args: { accountId: string | number } | [accountId: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -288,7 +288,7 @@ accountFollowers.definition = {
 
 /**
 * @see \App\Http\Controllers\Mastodon\MastodonSearchController::accountFollowers
- * @see app/Http/Controllers/Mastodon/MastodonSearchController.php:50
+ * @see app/Http/Controllers/Mastodon/MastodonSearchController.php:51
  * @route '/mastodon/accounts/{accountId}/followers'
  */
 accountFollowers.url = (args: { accountId: string | number } | [accountId: string | number ] | string | number, options?: RouteQueryOptions) => {
@@ -316,7 +316,7 @@ accountFollowers.url = (args: { accountId: string | number } | [accountId: strin
 
 /**
 * @see \App\Http\Controllers\Mastodon\MastodonSearchController::accountFollowers
- * @see app/Http/Controllers/Mastodon/MastodonSearchController.php:50
+ * @see app/Http/Controllers/Mastodon/MastodonSearchController.php:51
  * @route '/mastodon/accounts/{accountId}/followers'
  */
 accountFollowers.get = (args: { accountId: string | number } | [accountId: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -325,7 +325,7 @@ accountFollowers.get = (args: { accountId: string | number } | [accountId: strin
 })
 /**
 * @see \App\Http\Controllers\Mastodon\MastodonSearchController::accountFollowers
- * @see app/Http/Controllers/Mastodon/MastodonSearchController.php:50
+ * @see app/Http/Controllers/Mastodon/MastodonSearchController.php:51
  * @route '/mastodon/accounts/{accountId}/followers'
  */
 accountFollowers.head = (args: { accountId: string | number } | [accountId: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -335,7 +335,7 @@ accountFollowers.head = (args: { accountId: string | number } | [accountId: stri
 
     /**
 * @see \App\Http\Controllers\Mastodon\MastodonSearchController::accountFollowers
- * @see app/Http/Controllers/Mastodon/MastodonSearchController.php:50
+ * @see app/Http/Controllers/Mastodon/MastodonSearchController.php:51
  * @route '/mastodon/accounts/{accountId}/followers'
  */
     const accountFollowersForm = (args: { accountId: string | number } | [accountId: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -345,7 +345,7 @@ accountFollowers.head = (args: { accountId: string | number } | [accountId: stri
 
             /**
 * @see \App\Http\Controllers\Mastodon\MastodonSearchController::accountFollowers
- * @see app/Http/Controllers/Mastodon/MastodonSearchController.php:50
+ * @see app/Http/Controllers/Mastodon/MastodonSearchController.php:51
  * @route '/mastodon/accounts/{accountId}/followers'
  */
         accountFollowersForm.get = (args: { accountId: string | number } | [accountId: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -354,7 +354,7 @@ accountFollowers.head = (args: { accountId: string | number } | [accountId: stri
         })
             /**
 * @see \App\Http\Controllers\Mastodon\MastodonSearchController::accountFollowers
- * @see app/Http/Controllers/Mastodon/MastodonSearchController.php:50
+ * @see app/Http/Controllers/Mastodon/MastodonSearchController.php:51
  * @route '/mastodon/accounts/{accountId}/followers'
  */
         accountFollowersForm.head = (args: { accountId: string | number } | [accountId: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -368,6 +368,103 @@ accountFollowers.head = (args: { accountId: string | number } | [accountId: stri
         })
     
     accountFollowers.form = accountFollowersForm
-const MastodonSearchController = { search, context, accountStatuses, accountFollowers }
+/**
+* @see \App\Http\Controllers\Mastodon\MastodonSearchController::tagTimeline
+ * @see app/Http/Controllers/Mastodon/MastodonSearchController.php:60
+ * @route '/mastodon/tags/{tagName}/statuses'
+ */
+export const tagTimeline = (args: { tagName: string | number } | [tagName: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+    url: tagTimeline.url(args, options),
+    method: 'get',
+})
+
+tagTimeline.definition = {
+    methods: ["get","head"],
+    url: '/mastodon/tags/{tagName}/statuses',
+} satisfies RouteDefinition<["get","head"]>
+
+/**
+* @see \App\Http\Controllers\Mastodon\MastodonSearchController::tagTimeline
+ * @see app/Http/Controllers/Mastodon/MastodonSearchController.php:60
+ * @route '/mastodon/tags/{tagName}/statuses'
+ */
+tagTimeline.url = (args: { tagName: string | number } | [tagName: string | number ] | string | number, options?: RouteQueryOptions) => {
+    if (typeof args === 'string' || typeof args === 'number') {
+        args = { tagName: args }
+    }
+
+    
+    if (Array.isArray(args)) {
+        args = {
+                    tagName: args[0],
+                }
+    }
+
+    args = applyUrlDefaults(args)
+
+    const parsedArgs = {
+                        tagName: args.tagName,
+                }
+
+    return tagTimeline.definition.url
+            .replace('{tagName}', parsedArgs.tagName.toString())
+            .replace(/\/+$/, '') + queryParams(options)
+}
+
+/**
+* @see \App\Http\Controllers\Mastodon\MastodonSearchController::tagTimeline
+ * @see app/Http/Controllers/Mastodon/MastodonSearchController.php:60
+ * @route '/mastodon/tags/{tagName}/statuses'
+ */
+tagTimeline.get = (args: { tagName: string | number } | [tagName: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+    url: tagTimeline.url(args, options),
+    method: 'get',
+})
+/**
+* @see \App\Http\Controllers\Mastodon\MastodonSearchController::tagTimeline
+ * @see app/Http/Controllers/Mastodon/MastodonSearchController.php:60
+ * @route '/mastodon/tags/{tagName}/statuses'
+ */
+tagTimeline.head = (args: { tagName: string | number } | [tagName: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'head'> => ({
+    url: tagTimeline.url(args, options),
+    method: 'head',
+})
+
+    /**
+* @see \App\Http\Controllers\Mastodon\MastodonSearchController::tagTimeline
+ * @see app/Http/Controllers/Mastodon/MastodonSearchController.php:60
+ * @route '/mastodon/tags/{tagName}/statuses'
+ */
+    const tagTimelineForm = (args: { tagName: string | number } | [tagName: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+        action: tagTimeline.url(args, options),
+        method: 'get',
+    })
+
+            /**
+* @see \App\Http\Controllers\Mastodon\MastodonSearchController::tagTimeline
+ * @see app/Http/Controllers/Mastodon/MastodonSearchController.php:60
+ * @route '/mastodon/tags/{tagName}/statuses'
+ */
+        tagTimelineForm.get = (args: { tagName: string | number } | [tagName: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+            action: tagTimeline.url(args, options),
+            method: 'get',
+        })
+            /**
+* @see \App\Http\Controllers\Mastodon\MastodonSearchController::tagTimeline
+ * @see app/Http/Controllers/Mastodon/MastodonSearchController.php:60
+ * @route '/mastodon/tags/{tagName}/statuses'
+ */
+        tagTimelineForm.head = (args: { tagName: string | number } | [tagName: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+            action: tagTimeline.url(args, {
+                        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
+                            _method: 'HEAD',
+                            ...(options?.query ?? options?.mergeQuery ?? {}),
+                        }
+                    }),
+            method: 'get',
+        })
+    
+    tagTimeline.form = tagTimelineForm
+const MastodonSearchController = { search, context, accountStatuses, accountFollowers, tagTimeline }
 
 export default MastodonSearchController

@@ -1,0 +1,92 @@
+{
+    "title": "Settings",
+    "description": "Manage your profile and account settings",
+    "profile": "Profile",
+    "security": "Security",
+    "appearance": "Appearance",
+    "billing": "Plan & billing",
+    "profilePage": {
+        "title": "Profile settings",
+        "heading": "Profile information",
+        "headingDescription": "Update your name",
+        "name": "Name",
+        "email": "Email address",
+        "namePlaceholder": "Full name",
+        "emailPlaceholder": "Email address",
+        "emailUnverified": "Your email address is unverified.",
+        "resendVerification": "Click here to resend the verification email.",
+        "verificationSent": "A new verification link has been sent to your email address.",
+        "save": "Save"
+    },
+    "securityPage": {
+        "title": "Security settings",
+        "updatePassword": "Update password",
+        "updatePasswordDescription": "Ensure your account is using a long, random password to stay secure",
+        "currentPassword": "Current password",
+        "newPassword": "New password",
+        "confirmPassword": "Confirm password",
+        "savePassword": "Save password",
+        "twoFactorTitle": "Two-factor authentication",
+        "twoFactorDescription": "Manage your two-factor authentication settings",
+        "twoFactorEnableHint": "When you enable two-factor authentication, you will be prompted for a secure pin during login. This pin can be retrieved from a TOTP-supported application on your phone.",
+        "twoFactorContinueSetup": "Continue setup",
+        "twoFactorEnable": "Enable 2FA",
+        "twoFactorEnabledHint": "You will be prompted for a secure, random pin during login, which you can retrieve from the TOTP-supported application on your phone.",
+        "twoFactorDisable": "Disable 2FA",
+        "twoFactorSetup": {
+            "enabledTitle": "Two-factor authentication enabled",
+            "enabledDescription": "Your account is protected with two-factor authentication.",
+            "verifyTitle": "Verify authentication code",
+            "verifyDescription": "Enter the 6-digit code from your authenticator app to finish setup.",
+            "enableTitle": "Enable two-factor authentication",
+            "enableDescription": "Scan the QR code with your authenticator app, then continue.",
+            "close": "Close",
+            "continue": "Continue",
+            "orManual": "or, enter the code manually",
+            "back": "Back",
+            "confirm": "Confirm"
+        },
+        "twoFactorRecovery": {
+            "title": "2FA recovery codes",
+            "description": "Recovery codes let you regain access if you lose your 2FA device. Store them in a secure password manager.",
+            "hide": "Hide recovery codes",
+            "view": "View recovery codes",
+            "regenerate": "Regenerate codes",
+            "footerPrefix": "Each recovery code can be used once to access your account and will be removed after use. If you need more, click ",
+            "footerSuffix": " above."
+        },
+        "twoFactorErrors": {
+            "fetchQrCode": "Failed to fetch QR code.",
+            "fetchSetupKey": "Failed to fetch a setup key.",
+            "fetchRecoveryCodes": "Failed to fetch recovery codes."
+        }
+    },
+    "appearancePage": {
+        "title": "Appearance settings",
+        "heading": "Appearance settings",
+        "headingDescription": "Update your account's appearance settings"
+    },
+    "billingPage": {
+        "title": "Plan & billing",
+        "heading": "Plan & billing",
+        "description": "Review your current plan and available upgrades.",
+        "currentPlan": "Current plan",
+        "validUntil": "Valid until",
+        "noExpiry": "No active paid subscription",
+        "active": "Active",
+        "analytics": "Analytics requests per day",
+        "parser": "Parser requests per day",
+        "backDashboard": "Back to dashboard"
+    },
+    "deleteAccount": {
+        "title": "Delete account",
+        "description": "Delete your account and all of its resources",
+        "warning": "Warning",
+        "warningDescription": "Please proceed with caution, this cannot be undone.",
+        "button": "Delete account",
+        "confirmTitle": "Are you sure you want to delete your account?",
+        "confirmDescription": "Once your account is deleted, all of its resources and data will also be permanently deleted. Please enter your password to confirm you would like to permanently delete your account.",
+        "password": "Password",
+        "confirmButton": "Delete account"
+    }
+}

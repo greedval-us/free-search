@@ -8,6 +8,7 @@ use App\Modules\Mastodon\DTO\Result\MastodonAccountFollowersResultDTO;
 use App\Modules\Mastodon\DTO\Result\MastodonAccountStatusesResultDTO;
 use App\Modules\Mastodon\DTO\Result\MastodonSearchResultDTO;
 use App\Modules\Mastodon\DTO\Result\MastodonStatusContextResultDTO;
+use App\Modules\Mastodon\DTO\Result\MastodonTagTimelineResultDTO;
 use App\Modules\Mastodon\Search\Contracts\MastodonSearchApplicationServiceInterface;
 
 final class MastodonSearchApplicationService implements MastodonSearchApplicationServiceInterface
@@ -17,6 +18,7 @@ final class MastodonSearchApplicationService implements MastodonSearchApplicatio
         private readonly \App\Modules\Mastodon\Actions\Request\LoadStatusContextAction $loadStatusContextAction,
         private readonly \App\Modules\Mastodon\Actions\Request\LoadAccountStatusesAction $loadAccountStatusesAction,
         private readonly \App\Modules\Mastodon\Actions\Request\LoadAccountFollowersAction $loadAccountFollowersAction,
+        private readonly \App\Modules\Mastodon\Actions\Request\LoadTagTimelineAction $loadTagTimelineAction,
     ) {
     }
 
@@ -38,5 +40,10 @@ final class MastodonSearchApplicationService implements MastodonSearchApplicatio
     public function accountFollowers(string $accountId, int $limit, ?string $maxId = null): MastodonAccountFollowersResultDTO
     {
         return $this->loadAccountFollowersAction->handle($accountId, $limit, $maxId);
+    }
+
+    public function tagTimeline(string $tagName, int $limit, ?string $maxId = null): MastodonTagTimelineResultDTO
+    {
+        return $this->loadTagTimelineAction->handle($tagName, $limit, $maxId);
     }
 }

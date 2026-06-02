@@ -6,6 +6,7 @@ use App\Models\User;
 use App\Modules\Mastodon\DTO\Request\MastodonSearchQueryDTO;
 use App\Modules\Mastodon\DTO\Result\MastodonSearchResultDTO;
 use App\Modules\Mastodon\DTO\Result\MastodonStatusContextResultDTO;
+use App\Modules\Mastodon\DTO\Result\MastodonTagTimelineResultDTO;
 use App\Modules\Mastodon\Search\Contracts\MastodonSearchApplicationServiceInterface;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Mockery;
@@ -228,5 +229,46 @@ class MastodonControllerIsolationTest extends TestCase
             ->getJson(route('mastodon.accounts.followers', ['accountId' => '109999', 'limit' => 10]))
             ->assertOk()
             ->assertJsonPath('data.accounts.0.id', 'follower-1');
+    }
+
+    public function test_mastodon_tag_timeline_controller_returns_statuses_and_analytics_payload(): void
+    {
+        $user = User::factory()->create();
+
+        $this->mock(MastodonSearchApplicationServiceInterface::class, function ($mock): void {
+            $mock->shouldReceive('tagTimeline')
+                ->once()
+                ->with('osint', 10, null)
+                ->andReturn(new MastodonTagTimelineResultDTO(
+                    statuses: [[
+                        'id' => 'tag-status-1',
+                        'content' => 'Tagged post',
+                    ]],
+                    analytics: [
+                        'uniqueAccountsCount' => 1,
+                        'uniqueAccounts' => [[
+                            'id' => 'account-1',
+                            'acct' => 'analyst@example.social',
+                        ]],
+                        'uniqueInstancesCount' => 1,
+                        'instanceDomains' => ['example.social'],
+                        'postsWithMediaCount' => 0,
+                        'postsWithLinksCount' => 1,
+                    ],
+                    pagination: [
+                        'limit' => 10,
+                        'maxId' => null,
+                        'nextMaxId' => null,
+                        'hasMore' => false,
+                    ],
+                ));
+        });
+
+        $this
+            ->actingAs($user)
+            ->getJson(route('mastodon.tags.statuses', ['tagName' => 'osint', 'limit' => 10]))
+            ->assertOk()
+            ->assertJsonPath('data.statuses.0.id', 'tag-status-1')
+            ->assertJsonPath('data.analytics.uniqueAccountsCount', 1);
     }
 }

@@ -1,0 +1,21 @@
+{
+    "headTitle": "Uraboros | OSINT Intelligence Platform",
+    "platformTitle": "Uraboros Intelligence Platform",
+    "dashboard": "Панель",
+    "signIn": "Войти",
+    "register": "Регистрация",
+    "pill": "OSINT • Analytics • Investigations",
+    "heroTitle": "Коммерческая OSINT-платформа для аналитиков и команд расследований",
+    "heroDescription": "Единое рабочее пространство для поиска, верификации и аналитики: от первого сигнала до отчета без разрозненного стека инструментов.",
+    "openDashboard": "Открыть рабочее пространство",
+    "getStarted": "Начать расследование",
+    "createAccount": "Создать аккаунт",
+    "features": {
+        "monitoringTitle": "Единый операционный процесс",
+        "monitoringText": "Снижайте рутину аналитика: сбор, верификация и pivots в одном интерфейсе.",
+        "osintTitle": "Кросс-источниковые OSINT-pivots",
+        "osintText": "Связывайте сущности, инфраструктуру и публичные следы в одной картине.",
+        "dashboardsTitle": "Продуктовая подача выводов",
+        "dashboardsText": "Структурированные выводы, понятные риск-пояснения и контекст для аудита."
+    }
+}

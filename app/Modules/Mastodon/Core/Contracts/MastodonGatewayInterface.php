@@ -24,4 +24,9 @@ interface MastodonGatewayInterface
      * @return array<string, mixed>
      */
     public function accountFollowers(string $accountId, int $limit, ?string $maxId = null): array;
+
+    /**
+     * @return array<string, mixed>
+     */
+    public function tagTimeline(string $tagName, int $limit, ?string $maxId = null): array;
 }

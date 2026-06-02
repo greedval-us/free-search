@@ -1,0 +1,14 @@
+{
+    "platform": "Platform",
+    "menu": "Navigation menu",
+    "dashboard": "Dashboard",
+    "mastodon": "Mastodon",
+    "telegram": "Telegram",
+    "youtube": "YouTube",
+    "siteIntel": "Site Intel",
+    "newsMediaIntel": "News & Media Intel",
+    "shifr": "Cipher",
+    "modulesWiki": "Modules Wiki",
+    "repository": "Repository",
+    "documentation": "Documentation"
+}

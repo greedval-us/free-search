@@ -70,6 +70,7 @@ export type MastodonAccount = {
 };
 
 export type MastodonHashtag = {
+    id: string;
     name: string;
     url: string;
     history: Array<{
@@ -111,6 +112,32 @@ export type MastodonAccountStatusesPayload = {
 
 export type MastodonAccountFollowersPayload = {
     accounts: MastodonAccount[];
+    pagination: {
+        limit: number;
+        maxId: string | null;
+        nextMaxId: string | null;
+        hasMore: boolean;
+    };
+};
+
+export type MastodonTagTimelinePayload = {
+    statuses: MastodonStatus[];
+    analytics: {
+        uniqueAccountsCount: number;
+        uniqueAccounts: Array<{
+            id: string;
+            username?: string;
+            acct: string;
+            displayName?: string;
+            url?: string;
+            avatar?: string;
+            instanceDomain?: string;
+        }>;
+        uniqueInstancesCount: number;
+        instanceDomains: string[];
+        postsWithMediaCount: number;
+        postsWithLinksCount: number;
+    };
     pagination: {
         limit: number;
         maxId: string | null;

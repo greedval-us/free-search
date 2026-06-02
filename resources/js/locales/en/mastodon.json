@@ -1,0 +1,106 @@
+{
+    "headTitle": "Mastodon",
+    "help": {
+        "label": "What is this data?"
+    },
+    "tabs": {
+        "search": "Search"
+    },
+    "search": {
+        "title": "Mastodon Search",
+        "collapsed": "Search panel is collapsed",
+        "filters": "Public fediverse search filters and parameters",
+        "hint": "Search public statuses, accounts, and hashtags on the configured Mastodon instance through the official API.",
+        "query": "Query",
+        "type": "Search type",
+        "limit": "Limit",
+        "resolve": "Resolve remote resources",
+        "resolveRemote": "Search across other instances",
+        "onlyWithReplies": "Only with replies",
+        "placeholder": "for example: osint analyst",
+        "advancedAriaShow": "Show advanced filters",
+        "advancedAriaHide": "Hide advanced filters",
+        "submit": "Search",
+        "searching": "Searching...",
+        "resultTitle": "Results",
+        "shown": "Shown",
+        "empty": "Run a search to view Mastodon results.",
+        "loadMore": "Load more",
+        "loadingMore": "Loading...",
+        "noText": "[No text]",
+        "noBio": "No profile bio available.",
+        "language": "Language",
+        "languagePlaceholder": "for example: en",
+        "instanceDomain": "Instance domain",
+        "instancePlaceholder": "for example: mastodon.social",
+        "hasMedia": "Has media",
+        "hasLinks": "Has links",
+        "hasReplies": "Has replies"
+    },
+    "sections": {
+        "statuses": "Statuses",
+        "accounts": "Accounts",
+        "hashtags": "Hashtags"
+    },
+    "accounts": {
+        "showPosts": "Account posts",
+        "hidePosts": "Hide posts",
+        "showFollowers": "Followers",
+        "hideFollowers": "Hide followers",
+        "postsSection": "Account posts",
+        "followersSection": "Followers",
+        "emptyPosts": "No posts found.",
+        "emptyFollowers": "No followers found."
+    },
+    "metrics": {
+        "replies": "Replies",
+        "reblogs": "Boosts",
+        "favourites": "Favorites",
+        "media": "Media",
+        "followers": "Followers",
+        "following": "Following",
+        "posts": "Posts",
+        "historyPoints": "History points",
+        "uses": "Uses",
+        "accounts": "Accounts",
+        "postType": "Post type",
+        "language": "Language",
+        "mentions": "Mentions",
+        "links": "Links",
+        "bot": "Bot",
+        "group": "Group"
+    },
+    "options": {
+        "type": {
+            "statuses": "Statuses",
+            "accounts": "Accounts",
+            "hashtags": "Hashtags",
+            "all": "All"
+        },
+        "any": "Any",
+        "yes": "Yes",
+        "no": "No"
+    },
+    "common": {
+        "open": "Open post",
+        "openProfile": "Open profile",
+        "openTag": "Open hashtag"
+    },
+    "errors": {
+        "requestFailed": "Request failed.",
+        "contextFailed": "Failed to load replies."
+    },
+    "postTypes": {
+        "original": "Original",
+        "reply": "Reply",
+        "boost": "Boost"
+    },
+    "comments": {
+        "show": "Replies",
+        "hide": "Hide replies",
+        "loading": "Loading thread...",
+        "empty": "No replies found.",
+        "ancestors": "Context before post",
+        "replies": "Replies to post"
+    }
+}

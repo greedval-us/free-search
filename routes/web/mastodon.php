@@ -25,4 +25,8 @@ Route::prefix('mastodon')->name('mastodon.')->group(function (): void {
     Route::get('accounts/{accountId}/followers', [MastodonSearchController::class, 'accountFollowers'])
         ->middleware('throttle:60,1')
         ->name('accounts.followers');
+
+    Route::get('tags/{tagName}/statuses', [MastodonSearchController::class, 'tagTimeline'])
+        ->middleware('throttle:60,1')
+        ->name('tags.statuses');
 });

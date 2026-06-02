@@ -1,0 +1,93 @@
+{
+    "headTitle": "Mastodon",
+    "help": {
+        "label": "Что это за данные?"
+    },
+    "tabs": {
+        "search": "Поиск"
+    },
+    "search": {
+        "title": "Поиск Mastodon",
+        "collapsed": "Панель поиска свернута",
+        "filters": "Фильтры и параметры публичного поиска по fediverse",
+        "hint": "Поиск по публичным постам, аккаунтам и хэштегам на настроенном Mastodon-инстансе через официальный API.",
+        "query": "Запрос",
+        "type": "Тип поиска",
+        "limit": "Лимит",
+        "resolve": "Разрешать удалённые ресурсы",
+        "placeholder": "например: osint analyst",
+        "advancedAriaShow": "Показать дополнительные фильтры",
+        "advancedAriaHide": "Скрыть дополнительные фильтры",
+        "submit": "Найти",
+        "searching": "Ищем...",
+        "resultTitle": "Результаты",
+        "shown": "Показано",
+        "empty": "Выполните поиск, чтобы увидеть результаты Mastodon.",
+        "loadMore": "Показать ещё",
+        "loadingMore": "Загрузка...",
+        "noText": "[Без текста]",
+        "noBio": "Описание профиля отсутствует.",
+        "language": "Язык",
+        "languagePlaceholder": "например: en",
+        "instanceDomain": "Домен инстанса",
+        "instancePlaceholder": "например: mastodon.social",
+        "hasMedia": "Есть медиа",
+        "hasLinks": "Есть ссылки"
+    },
+    "sections": {
+        "statuses": "Посты",
+        "accounts": "Аккаунты",
+        "hashtags": "Хэштеги"
+    },
+    "metrics": {
+        "replies": "Ответы",
+        "reblogs": "Бусты",
+        "favourites": "Избранное",
+        "media": "Медиа",
+        "followers": "Подписчики",
+        "following": "Подписки",
+        "posts": "Посты",
+        "historyPoints": "Точек истории",
+        "uses": "Использований",
+        "accounts": "Аккаунтов",
+        "postType": "Тип поста",
+        "language": "Язык",
+        "mentions": "Упоминания",
+        "links": "Ссылки",
+        "bot": "Бот",
+        "group": "Группа"
+    },
+    "options": {
+        "type": {
+            "statuses": "Посты",
+            "accounts": "Аккаунты",
+            "hashtags": "Хэштеги",
+            "all": "Всё"
+        },
+        "any": "Любой",
+        "yes": "Да",
+        "no": "Нет"
+    },
+    "common": {
+        "open": "Открыть пост",
+        "openProfile": "Открыть профиль",
+        "openTag": "Открыть хэштег"
+    },
+    "errors": {
+        "requestFailed": "Ошибка запроса.",
+        "contextFailed": "Не удалось загрузить ответы."
+    },
+    "postTypes": {
+        "original": "Оригинал",
+        "reply": "Ответ",
+        "boost": "Буст"
+    },
+    "comments": {
+        "show": "Ответы",
+        "hide": "Скрыть ответы",
+        "loading": "Загружаем тред...",
+        "empty": "Ответы не найдены.",
+        "ancestors": "Контекст до поста",
+        "replies": "Ответы на пост"
+    }
+}

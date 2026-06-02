@@ -1,0 +1,296 @@
+{
+    "headTitle": "Telegram",
+    "help": {
+        "label": "What is this data?"
+    },
+    "search": {
+        "title": "Telegram Search",
+        "collapsed": "Search panel is collapsed",
+        "filters": "Message search filters and parameters",
+        "channelUsername": "Channel username",
+        "keyword": "Keyword",
+        "authorId": "Author ID",
+        "placeholderKeyword": "security",
+        "placeholderAuthor": "@username or id",
+        "showAdvanced": "Show filters",
+        "hideAdvanced": "Hide filters",
+        "find": "Analyze",
+        "searching": "Analyzing...",
+        "limit": "Limit",
+        "dateFrom": "Date from",
+        "dateTo": "Date to",
+        "mediaType": "Media type",
+        "mediaAny": "Any",
+        "mediaNone": "No media",
+        "mediaPhoto": "Photo",
+        "mediaVideo": "Video",
+        "mediaDocument": "Document",
+        "mediaAudio": "Audio",
+        "mediaLink": "Link",
+        "mediaOther": "Other",
+        "minViews": "Min views",
+        "minForwards": "Min forwards",
+        "advancedAriaShow": "Show additional filters",
+        "advancedAriaHide": "Hide additional filters",
+        "help": {
+            "overview": "Operational Telegram search for analysts: filter by channel, author, keyword, and date to isolate relevant evidence quickly."
+        }
+    },
+    "messages": {
+        "title": "Messages",
+        "shown": "Shown",
+        "empty": "Run a search to view messages.",
+        "date": "Date",
+        "authorId": "Author ID",
+        "views": "Views",
+        "forwards": "Forwards",
+        "replies": "Replies",
+        "media": "Media",
+        "giftYes": "Gift: yes",
+        "noText": "[No text]",
+        "openInTelegram": "Open in Telegram",
+        "showMedia": "Media",
+        "hideMedia": "Hide media",
+        "unsupportedMedia": "Inline preview is not supported for this media type.",
+        "openFile": "Open file",
+        "loadMore": "Show more",
+        "loadingMore": "Loading..."
+    },
+    "comments": {
+        "toggleHide": "Hide comments",
+        "toggleShow": "Comments",
+        "title": "Comments",
+        "loading": "Loading comments...",
+        "notFound": "Comments not found.",
+        "author": "Author",
+        "date": "Date",
+        "loadMore": "Show more comments",
+        "loadingMore": "Loading next batch..."
+    },
+    "popover": {
+        "reactionIds": "IDs for reaction",
+        "giftIds": "IDs for gift",
+        "id": "id"
+    },
+    "mediaTypes": {
+        "photo": "Photo",
+        "video": "Video",
+        "document": "Document",
+        "audio": "Audio",
+        "geo": "Geo",
+        "poll": "Poll",
+        "contact": "Contact",
+        "link_preview": "Link",
+        "other": "Media",
+        "none": "None"
+    },
+    "errors": {
+        "channelRequired": "Please enter the channel username first.",
+        "searchFailed": "Unable to complete analysis. Please retry in a moment.",
+        "unknownSearchError": "Unexpected response received. Please retry the analysis.",
+        "commentsFailed": "Failed to load comments."
+    },
+    "tabs": {
+        "search": "Search",
+        "analytics": "Analytics",
+        "parser": "Parser"
+    },
+    "parser": {
+        "title": "Telegram Parser",
+        "description": "This section is prepared for parser workflows. We will add sources, rules, and scheduled collection here.",
+        "status": "Stub: in development",
+        "subtitle": "Online Telegram data collection and export",
+        "collapsed": "Settings collapsed",
+        "start": "Start collect",
+        "stop": "Stop",
+        "collecting": "Collecting...",
+        "download": "Download Excel",
+        "downloadJson": "Download JSON",
+        "keywordHint": "Keyword is set, date range is ignored and all matching messages are collected.",
+        "periods": {
+            "day": "Last day",
+            "week": "Last week",
+            "month": "Last month",
+            "custom": "Custom"
+        },
+        "filters": {
+            "channel": "Channel username",
+            "keyword": "Keyword (optional)",
+            "period": "Period",
+            "from": "Date from",
+            "to": "Date to"
+        },
+        "progress": {
+            "title": "Collection progress",
+            "messages": "Messages processed",
+            "comments": "Comments processed",
+            "stage": {
+                "idle": "Idle",
+                "messages": "Collecting messages",
+                "comments": "Collecting comments",
+                "finishing": "Preparing export",
+                "completed": "Completed",
+                "failed": "Failed",
+                "stopped": "Stopped"
+            }
+        },
+        "help": {
+            "overview": "Controlled online collection workflow for Telegram messages and comments with export-ready outputs and minimal storage footprint."
+        },
+        "errors": {
+            "customBothDates": "Please specify both custom period dates.",
+            "customInvalid": "Custom period is invalid.",
+            "customTooLong": "Custom period cannot exceed one month.",
+            "failed": "Parser failed."
+        }
+    },
+    "analytics": {
+        "title": "Telegram Analytics",
+        "subtitle": "Analyze channel activity for the last 1 to 7 days.",
+        "collapsed": "Settings panel is collapsed.",
+        "loading": "Loading analytics...",
+        "refresh": "Refresh",
+        "report": "Open report",
+        "downloadReport": "Download report",
+        "vsPrevious": "vs previous period",
+        "hideSettings": "Hide settings",
+        "score": "Score",
+        "openTelegram": "Open in Telegram",
+        "emptyPost": "No post text",
+        "periods": {
+            "1": "Last 1 day",
+            "3": "Last 3 days",
+            "7": "Last 7 days"
+        },
+        "filters": {
+            "channel": "Channel username",
+            "period": "Period",
+            "from": "From",
+            "to": "To"
+        },
+        "group": {
+            "type": "Type",
+            "participants": "Participants",
+            "online": "Online",
+            "verified": "Verified",
+            "createdAt": "Created",
+            "statsAvailable": "Statistics available",
+            "linkedChatId": "Linked chat ID",
+            "restricted": "Restricted",
+            "scam": "Scam",
+            "types": {
+                "channel": "Channel",
+                "group": "Group",
+                "forum": "Forum",
+                "gigagroup": "Gigagroup",
+                "chat": "Chat"
+            }
+        },
+        "fraud": {
+            "title": "Anti-Fraud",
+            "hint": "Risk signals based on suspicious engagement patterns.",
+            "riskScore": "Risk score",
+            "riskLevel": "Risk level",
+            "suspiciousPosts": "Suspicious posts",
+            "triggers": "Triggers",
+            "noTriggers": "No strong fraud signals detected.",
+            "level": {
+                "low": "Low",
+                "medium": "Medium",
+                "high": "High"
+            },
+            "trigger": {
+                "zero_view_interactions": "Interactions without views",
+                "author_concentration": "High author concentration",
+                "time_burst": "Time burst concentration",
+                "reaction_ratio_cluster": "Cluster with high reaction ratio",
+                "suspicious_posts_cluster": "Cluster of suspicious posts"
+            },
+            "reason": {
+                "interactions_without_views": "Interactions without views",
+                "high_reaction_ratio": "Abnormally high reaction ratio",
+                "high_forward_ratio": "Abnormally high forward ratio",
+                "gifts_with_low_views": "Gifts with low views",
+                "high_interactions_low_views": "High interactions with low views"
+            }
+        },
+        "priority": {
+            "title": "What's more important",
+            "formula": "Applied formula",
+            "balanced": "Balanced",
+            "reach": "Reach",
+            "discussion": "Discussion",
+            "virality": "Virality"
+        },
+        "help": {
+            "label": "What is this data?",
+            "overview": "Executive-friendly Telegram analytics with trends, engagement signals, and anti-fraud context for rapid decision-making.",
+            "formula": "Post score formula. Variables: V = views, F = forwards, R = replies, Re = reactions, G = gifts. Calculation: score = V*wV + F*wF + R*wR + Re*wRe + G*wG.",
+            "antiFraud": "Anti-Fraud score (0-100) aggregates suspicious engagement patterns and trigger clusters to prioritize review workload.",
+            "funnel": "Shows the step-by-step conversion from all posts to posts with meaningful engagement.",
+            "audience": "Shows author structure: concentration, recurring contributors, and peak activity hours.",
+            "activity": "Shows period dynamics by bucket: number of posts, views, and interactions.",
+            "distribution": "Shows which media formats and reactions dominate in the selected period.",
+            "opinionLeaders": "Shows top authors by impact score and engagement, with trends by day.",
+            "topPosts": "Shows the highest-impact posts ranked by weighted score."
+        },
+        "empty": {
+            "title": "Pick a channel and period",
+            "description": "The analytics module aggregates live Telegram messages and renders charts, totals, and top posts for the selected period."
+        },
+        "errors": {
+            "channelRequired": "Please enter a channel username.",
+            "loadFailed": "Could not load analytics.",
+            "rangeTooLong": "The custom date range cannot exceed 7 days."
+        },
+        "stats": {
+            "messages": "Messages",
+            "messagesShort": "posts",
+            "views": "Views",
+            "forwards": "Forwards",
+            "replies": "Replies",
+            "reactions": "Reactions",
+            "gifts": "Gifts",
+            "mediaPosts": "Posts with media",
+            "avgViewsPerPost": "Avg. views / post",
+            "avgInteractionsPerPost": "Avg. interactions / post",
+            "uniqueAuthors": "Unique authors",
+            "activeAuthors": "Active authors",
+            "singleMessageAuthors": "Single-message authors",
+            "returningAuthors": "Returning authors",
+            "topAuthorShare": "Top author share",
+            "top5AuthorsShare": "Top 5 authors share",
+            "concentrationIndex": "Concentration index"
+        },
+        "charts": {
+            "activity": "Activity trend",
+            "activityHint": "Messages, views, and interactions across the chosen range.",
+            "funnel": "Engagement funnel",
+            "funnelHint": "Message flow from publication to engagement signals.",
+            "funnelMessages": "Published messages",
+            "funnelViewed": "Messages with views",
+            "funnelInteracted": "Messages with interactions",
+            "funnelReacted": "Messages with reactions",
+            "fromPrevious": "Conversion vs previous stage",
+            "fromStart": "Conversion vs first stage",
+            "audience": "Audience structure",
+            "audienceHint": "Author activity and concentration for the selected period.",
+            "mostActiveHours": "Most active hours",
+            "distribution": "Content mix",
+            "distributionHint": "Top media types and reaction groups.",
+            "media": "Media types",
+            "reactions": "Reactions",
+            "messages": "Messages",
+            "views": "Views",
+            "interactions": "Interactions",
+            "opinionLeaders": "Opinion leaders",
+            "opinionLeadersHint": "Top authors by impact, based on score and interactions.",
+            "opinionLeadersBreakdown": "Leaders breakdown",
+            "opinionLeadersByDay": "Leaders by day",
+            "opinionLeadersByDayHint": "Daily activity of opinion leaders within the selected range.",
+            "author": "Author",
+            "topPosts": "Top posts",
+            "topPostsHint": "Posts ranked by an engagement score."
+        }
+    }
+}

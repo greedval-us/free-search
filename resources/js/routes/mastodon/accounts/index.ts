@@ -1,7 +1,7 @@
 import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFormDefinition, applyUrlDefaults } from './../../../wayfinder'
 /**
 * @see \App\Http\Controllers\Mastodon\MastodonSearchController::statuses
- * @see app/Http/Controllers/Mastodon/MastodonSearchController.php:41
+ * @see app/Http/Controllers/Mastodon/MastodonSearchController.php:42
  * @route '/mastodon/accounts/{accountId}/statuses'
  */
 export const statuses = (args: { accountId: string | number } | [accountId: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -16,7 +16,7 @@ statuses.definition = {
 
 /**
 * @see \App\Http\Controllers\Mastodon\MastodonSearchController::statuses
- * @see app/Http/Controllers/Mastodon/MastodonSearchController.php:41
+ * @see app/Http/Controllers/Mastodon/MastodonSearchController.php:42
  * @route '/mastodon/accounts/{accountId}/statuses'
  */
 statuses.url = (args: { accountId: string | number } | [accountId: string | number ] | string | number, options?: RouteQueryOptions) => {
@@ -44,7 +44,7 @@ statuses.url = (args: { accountId: string | number } | [accountId: string | numb
 
 /**
 * @see \App\Http\Controllers\Mastodon\MastodonSearchController::statuses
- * @see app/Http/Controllers/Mastodon/MastodonSearchController.php:41
+ * @see app/Http/Controllers/Mastodon/MastodonSearchController.php:42
  * @route '/mastodon/accounts/{accountId}/statuses'
  */
 statuses.get = (args: { accountId: string | number } | [accountId: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -53,7 +53,7 @@ statuses.get = (args: { accountId: string | number } | [accountId: string | numb
 })
 /**
 * @see \App\Http\Controllers\Mastodon\MastodonSearchController::statuses
- * @see app/Http/Controllers/Mastodon/MastodonSearchController.php:41
+ * @see app/Http/Controllers/Mastodon/MastodonSearchController.php:42
  * @route '/mastodon/accounts/{accountId}/statuses'
  */
 statuses.head = (args: { accountId: string | number } | [accountId: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -63,7 +63,7 @@ statuses.head = (args: { accountId: string | number } | [accountId: string | num
 
     /**
 * @see \App\Http\Controllers\Mastodon\MastodonSearchController::statuses
- * @see app/Http/Controllers/Mastodon/MastodonSearchController.php:41
+ * @see app/Http/Controllers/Mastodon/MastodonSearchController.php:42
  * @route '/mastodon/accounts/{accountId}/statuses'
  */
     const statusesForm = (args: { accountId: string | number } | [accountId: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -73,7 +73,7 @@ statuses.head = (args: { accountId: string | number } | [accountId: string | num
 
             /**
 * @see \App\Http\Controllers\Mastodon\MastodonSearchController::statuses
- * @see app/Http/Controllers/Mastodon/MastodonSearchController.php:41
+ * @see app/Http/Controllers/Mastodon/MastodonSearchController.php:42
  * @route '/mastodon/accounts/{accountId}/statuses'
  */
         statusesForm.get = (args: { accountId: string | number } | [accountId: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -82,7 +82,7 @@ statuses.head = (args: { accountId: string | number } | [accountId: string | num
         })
             /**
 * @see \App\Http\Controllers\Mastodon\MastodonSearchController::statuses
- * @see app/Http/Controllers/Mastodon/MastodonSearchController.php:41
+ * @see app/Http/Controllers/Mastodon/MastodonSearchController.php:42
  * @route '/mastodon/accounts/{accountId}/statuses'
  */
         statusesForm.head = (args: { accountId: string | number } | [accountId: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -98,7 +98,7 @@ statuses.head = (args: { accountId: string | number } | [accountId: string | num
     statuses.form = statusesForm
 /**
 * @see \App\Http\Controllers\Mastodon\MastodonSearchController::followers
- * @see app/Http/Controllers/Mastodon/MastodonSearchController.php:50
+ * @see app/Http/Controllers/Mastodon/MastodonSearchController.php:51
  * @route '/mastodon/accounts/{accountId}/followers'
  */
 export const followers = (args: { accountId: string | number } | [accountId: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -113,7 +113,7 @@ followers.definition = {
 
 /**
 * @see \App\Http\Controllers\Mastodon\MastodonSearchController::followers
- * @see app/Http/Controllers/Mastodon/MastodonSearchController.php:50
+ * @see app/Http/Controllers/Mastodon/MastodonSearchController.php:51
  * @route '/mastodon/accounts/{accountId}/followers'
  */
 followers.url = (args: { accountId: string | number } | [accountId: string | number ] | string | number, options?: RouteQueryOptions) => {
@@ -141,7 +141,7 @@ followers.url = (args: { accountId: string | number } | [accountId: string | num
 
 /**
 * @see \App\Http\Controllers\Mastodon\MastodonSearchController::followers
- * @see app/Http/Controllers/Mastodon/MastodonSearchController.php:50
+ * @see app/Http/Controllers/Mastodon/MastodonSearchController.php:51
  * @route '/mastodon/accounts/{accountId}/followers'
  */
 followers.get = (args: { accountId: string | number } | [accountId: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -150,7 +150,7 @@ followers.get = (args: { accountId: string | number } | [accountId: string | num
 })
 /**
 * @see \App\Http\Controllers\Mastodon\MastodonSearchController::followers
- * @see app/Http/Controllers/Mastodon/MastodonSearchController.php:50
+ * @see app/Http/Controllers/Mastodon/MastodonSearchController.php:51
  * @route '/mastodon/accounts/{accountId}/followers'
  */
 followers.head = (args: { accountId: string | number } | [accountId: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -160,7 +160,7 @@ followers.head = (args: { accountId: string | number } | [accountId: string | nu
 
     /**
 * @see \App\Http\Controllers\Mastodon\MastodonSearchController::followers
- * @see app/Http/Controllers/Mastodon/MastodonSearchController.php:50
+ * @see app/Http/Controllers/Mastodon/MastodonSearchController.php:51
  * @route '/mastodon/accounts/{accountId}/followers'
  */
     const followersForm = (args: { accountId: string | number } | [accountId: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -170,7 +170,7 @@ followers.head = (args: { accountId: string | number } | [accountId: string | nu
 
             /**
 * @see \App\Http\Controllers\Mastodon\MastodonSearchController::followers
- * @see app/Http/Controllers/Mastodon/MastodonSearchController.php:50
+ * @see app/Http/Controllers/Mastodon/MastodonSearchController.php:51
  * @route '/mastodon/accounts/{accountId}/followers'
  */
         followersForm.get = (args: { accountId: string | number } | [accountId: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -179,7 +179,7 @@ followers.head = (args: { accountId: string | number } | [accountId: string | nu
         })
             /**
 * @see \App\Http\Controllers\Mastodon\MastodonSearchController::followers
- * @see app/Http/Controllers/Mastodon/MastodonSearchController.php:50
+ * @see app/Http/Controllers/Mastodon/MastodonSearchController.php:51
  * @route '/mastodon/accounts/{accountId}/followers'
  */
         followersForm.head = (args: { accountId: string | number } | [accountId: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({

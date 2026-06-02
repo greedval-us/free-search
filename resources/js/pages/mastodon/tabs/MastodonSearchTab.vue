@@ -15,6 +15,7 @@ import type {
     MastodonSearchPayload,
     MastodonStatus,
     MastodonStatusContextPayload,
+    MastodonTagTimelinePayload,
     MastodonStatusThreadNode,
 } from '../types';
 
@@ -75,6 +76,34 @@ const accountDetailsById = ref<
             followersHasMore: boolean;
             statusesNextMaxId: string | null;
             followersNextMaxId: string | null;
+        }
+    >
+>({});
+const hashtagDetailsByName = ref<
+    Record<
+        string,
+        {
+            open: boolean;
+            loading: boolean;
+            loadingMore: boolean;
+            error: string | null;
+            statuses: MastodonStatus[];
+            uniqueAccountsCount: number;
+            uniqueAccounts: Array<{
+                id: string;
+                username?: string;
+                acct: string;
+                displayName?: string;
+                url?: string;
+                avatar?: string;
+                instanceDomain?: string;
+            }>;
+            uniqueInstancesCount: number;
+            instanceDomains: string[];
+            postsWithMediaCount: number;
+            postsWithLinksCount: number;
+            hasMore: boolean;
+            nextMaxId: string | null;
         }
     >
 >({});
@@ -147,6 +176,28 @@ const ensureAccountDetailsState = (accountId: string) => {
     }
 
     return accountDetailsById.value[accountId];
+};
+
+const ensureHashtagDetailsState = (hashtagName: string) => {
+    if (!hashtagDetailsByName.value[hashtagName]) {
+        hashtagDetailsByName.value[hashtagName] = {
+            open: false,
+            loading: false,
+            loadingMore: false,
+            error: null,
+            statuses: [],
+            uniqueAccountsCount: 0,
+            uniqueAccounts: [],
+            uniqueInstancesCount: 0,
+            instanceDomains: [],
+            postsWithMediaCount: 0,
+            postsWithLinksCount: 0,
+            hasMore: false,
+            nextMaxId: null,
+        };
+    }
+
+    return hashtagDetailsByName.value[hashtagName];
 };
 
 const normalizeBooleanFilter = (value: string): string | undefined => {
@@ -366,6 +417,67 @@ const loadMoreAccountStatuses = async (accountId: string) => {
 
 const loadMoreAccountFollowers = async (accountId: string) => {
     await loadAccountFollowers(accountId, true);
+};
+
+const loadHashtagStatuses = async (hashtagName: string, append = false) => {
+    const state = ensureHashtagDetailsState(hashtagName);
+
+    if ((append && state.loadingMore) || (!append && state.loading)) {
+        return;
+    }
+
+    if (append) {
+        state.loadingMore = true;
+    } else {
+        state.loading = true;
+        state.error = null;
+    }
+
+    const response = await apiRequest<MastodonTagTimelinePayload>(
+        `/mastodon/tags/${encodeURIComponent(hashtagName)}/statuses`,
+        {
+            query: {
+                limit: form.value.limit,
+                maxId: append ? state.nextMaxId ?? undefined : undefined,
+            },
+        }
+    );
+
+    state.loading = false;
+    state.loadingMore = false;
+
+    if (!response.ok) {
+        state.error = response.message ?? mastodonText('mastodon.errors.requestFailed', 'Ошибка запроса.');
+
+        return;
+    }
+
+    state.statuses = append
+        ? mergeUniqueById(state.statuses, response.data.statuses)
+        : response.data.statuses;
+    state.uniqueAccountsCount = response.data.analytics.uniqueAccountsCount;
+    state.uniqueAccounts = response.data.analytics.uniqueAccounts;
+    state.uniqueInstancesCount = response.data.analytics.uniqueInstancesCount;
+    state.instanceDomains = response.data.analytics.instanceDomains;
+    state.postsWithMediaCount = response.data.analytics.postsWithMediaCount;
+    state.postsWithLinksCount = response.data.analytics.postsWithLinksCount;
+    state.hasMore = response.data.pagination.hasMore;
+    state.nextMaxId = response.data.pagination.nextMaxId;
+};
+
+const toggleHashtagStatuses = async (hashtagName: string) => {
+    const state = ensureHashtagDetailsState(hashtagName);
+    state.open = !state.open;
+
+    if (!state.open || state.loading || state.statuses.length > 0) {
+        return;
+    }
+
+    await loadHashtagStatuses(hashtagName);
+};
+
+const loadMoreHashtagStatuses = async (hashtagName: string) => {
+    await loadHashtagStatuses(hashtagName, true);
 };
 </script>
 
@@ -1162,6 +1274,20 @@ const loadMoreAccountFollowers = async (accountId: string) => {
                         </a>
                     </div>
 
+                    <div class="mt-3 flex flex-wrap gap-2">
+                        <button
+                            type="button"
+                            class="cursor-pointer rounded-full border border-input px-2 py-1 text-xs text-foreground hover:bg-accent"
+                            @click="toggleHashtagStatuses(hashtag.name)"
+                        >
+                            {{
+                                ensureHashtagDetailsState(hashtag.name).open
+                                    ? mastodonText('mastodon.hashtags.hidePosts', 'Скрыть посты')
+                                    : mastodonText('mastodon.hashtags.showPosts', 'Посты по хэштегу')
+                            }}
+                        </button>
+                    </div>
+
                     <div
                         v-if="hashtag.history.length > 0"
                         class="mt-3 grid gap-2 md:grid-cols-2"
@@ -1174,6 +1300,182 @@ const loadMoreAccountFollowers = async (accountId: string) => {
                             <div>{{ point.day }}</div>
                             <div>{{ t('mastodon.metrics.uses') }}: {{ point.uses }}</div>
                             <div>{{ t('mastodon.metrics.accounts') }}: {{ point.accounts }}</div>
+                        </div>
+                    </div>
+
+                    <div
+                        v-if="ensureHashtagDetailsState(hashtag.name).open"
+                        class="mt-3 rounded-lg border border-border/70 bg-card/60 p-3"
+                    >
+                        <p
+                            v-if="ensureHashtagDetailsState(hashtag.name).loading"
+                            class="text-xs text-muted-foreground"
+                        >
+                            {{ t('mastodon.comments.loading') }}
+                        </p>
+
+                        <p
+                            v-else-if="ensureHashtagDetailsState(hashtag.name).error"
+                            class="text-xs text-destructive"
+                        >
+                            {{ ensureHashtagDetailsState(hashtag.name).error }}
+                        </p>
+
+                        <div v-else class="space-y-3">
+                            <div class="grid gap-2 md:grid-cols-2 xl:grid-cols-4">
+                                <div class="rounded-md border border-border/70 bg-background/70 p-2 text-xs">
+                                    <div class="text-muted-foreground">{{ mastodonText('mastodon.hashtags.uniqueAccounts', 'Уникальные аккаунты в загруженной выборке') }}</div>
+                                    <div class="mt-1 text-sm font-semibold text-foreground">
+                                        {{ ensureHashtagDetailsState(hashtag.name).uniqueAccountsCount }}
+                                    </div>
+                                </div>
+                                <div class="rounded-md border border-border/70 bg-background/70 p-2 text-xs">
+                                    <div class="text-muted-foreground">{{ mastodonText('mastodon.hashtags.uniqueInstances', 'Уникальные инстансы в загруженной выборке') }}</div>
+                                    <div class="mt-1 text-sm font-semibold text-foreground">
+                                        {{ ensureHashtagDetailsState(hashtag.name).uniqueInstancesCount }}
+                                    </div>
+                                </div>
+                                <div class="rounded-md border border-border/70 bg-background/70 p-2 text-xs">
+                                    <div class="text-muted-foreground">{{ mastodonText('mastodon.hashtags.postsWithMedia', 'Посты с медиа в загруженной выборке') }}</div>
+                                    <div class="mt-1 text-sm font-semibold text-foreground">
+                                        {{ ensureHashtagDetailsState(hashtag.name).postsWithMediaCount }}
+                                    </div>
+                                </div>
+                                <div class="rounded-md border border-border/70 bg-background/70 p-2 text-xs">
+                                    <div class="text-muted-foreground">{{ mastodonText('mastodon.hashtags.postsWithLinks', 'Посты со ссылками в загруженной выборке') }}</div>
+                                    <div class="mt-1 text-sm font-semibold text-foreground">
+                                        {{ ensureHashtagDetailsState(hashtag.name).postsWithLinksCount }}
+                                    </div>
+                                </div>
+                            </div>
+
+                            <p class="text-[11px] text-muted-foreground">
+                                {{ mastodonText('mastodon.hashtags.sampleNote', 'Эта сводка считается только по постам, которые уже загружены ниже, а не по всей истории хэштега.') }}
+                            </p>
+
+                            <div
+                                v-if="ensureHashtagDetailsState(hashtag.name).uniqueAccounts.length > 0"
+                                class="space-y-2"
+                            >
+                                <div class="text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">
+                                    {{ mastodonText('mastodon.hashtags.accountsSection', 'Кто использовал') }}
+                                </div>
+                                <div class="flex flex-wrap gap-2">
+                                    <a
+                                        v-for="account in ensureHashtagDetailsState(hashtag.name).uniqueAccounts"
+                                        :key="`${hashtag.name}-account-${account.id}`"
+                                        :href="account.url || '#'"
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        class="rounded-full border border-input px-2 py-1 text-xs text-primary hover:bg-accent"
+                                    >
+                                        @{{ account.acct }}
+                                    </a>
+                                </div>
+                            </div>
+
+                            <div
+                                v-if="ensureHashtagDetailsState(hashtag.name).instanceDomains.length > 0"
+                                class="space-y-2"
+                            >
+                                <div class="text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">
+                                    {{ mastodonText('mastodon.hashtags.instancesSection', 'Инстансы') }}
+                                </div>
+                                <div class="flex flex-wrap gap-2">
+                                    <span
+                                        v-for="domain in ensureHashtagDetailsState(hashtag.name).instanceDomains"
+                                        :key="`${hashtag.name}-domain-${domain}`"
+                                        class="rounded-full border border-cyan-500/30 bg-cyan-500/10 px-2 py-1 text-xs text-cyan-700"
+                                    >
+                                        {{ domain }}
+                                    </span>
+                                </div>
+                            </div>
+
+                            <div class="space-y-2">
+                                <div class="text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">
+                                    {{ mastodonText('mastodon.hashtags.postsSection', 'Посты по хэштегу') }}
+                                </div>
+
+                                <p
+                                    v-if="ensureHashtagDetailsState(hashtag.name).statuses.length === 0"
+                                    class="text-xs text-muted-foreground"
+                                >
+                                    {{ mastodonText('mastodon.hashtags.emptyPosts', 'Посты не найдены.') }}
+                                </p>
+
+                                <article
+                                    v-for="status in ensureHashtagDetailsState(hashtag.name).statuses"
+                                    :key="`${hashtag.name}-status-${status.id}`"
+                                    class="rounded-md border border-border/70 bg-background/70 p-3"
+                                >
+                                    <div class="mb-2 flex items-center gap-3">
+                                        <img
+                                            v-if="status.account.avatar"
+                                            :src="status.account.avatar"
+                                            :alt="status.account.displayName || status.account.acct"
+                                            class="h-8 w-8 rounded-full object-cover"
+                                            loading="lazy"
+                                        />
+                                        <div class="min-w-0">
+                                            <div class="truncate text-xs font-semibold text-foreground">
+                                                {{ status.account.displayName || status.account.username }}
+                                            </div>
+                                            <div class="truncate text-[11px] text-muted-foreground">
+                                                @{{ status.account.acct }} | {{ status.instanceDomain || status.account.instanceDomain }} | {{ formatDate(status.createdAt) }}
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <p
+                                        v-if="status.spoilerText"
+                                        class="mb-2 rounded-md border border-amber-500/30 bg-amber-500/10 px-2 py-1 text-[11px] text-amber-700"
+                                    >
+                                        {{ status.spoilerText }}
+                                    </p>
+
+                                    <p class="text-xs leading-relaxed text-foreground">
+                                        {{ status.content || t('mastodon.search.noText') }}
+                                    </p>
+
+                                    <div class="mt-2 flex flex-wrap gap-3 text-[11px] text-muted-foreground">
+                                        <span>{{ t('mastodon.metrics.postType') }}: {{ t(`mastodon.postTypes.${status.postType}`) }}</span>
+                                        <span>{{ t('mastodon.metrics.replies') }}: {{ status.repliesCount }}</span>
+                                        <span>{{ t('mastodon.metrics.reblogs') }}: {{ status.reblogsCount }}</span>
+                                        <span>{{ t('mastodon.metrics.favourites') }}: {{ status.favouritesCount }}</span>
+                                    </div>
+
+                                    <div class="mt-2 flex flex-wrap gap-2">
+                                        <a
+                                            v-if="status.url"
+                                            :href="status.url"
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            class="cursor-pointer rounded-full border border-input px-2 py-1 text-[11px] text-primary hover:bg-accent"
+                                        >
+                                            <ExternalLink class="mr-1 inline h-3 w-3" />
+                                            {{ t('mastodon.common.open') }}
+                                        </a>
+                                    </div>
+                                </article>
+
+                                <div
+                                    v-if="ensureHashtagDetailsState(hashtag.name).hasMore"
+                                    class="pt-1"
+                                >
+                                    <button
+                                        :disabled="ensureHashtagDetailsState(hashtag.name).loadingMore"
+                                        class="cursor-pointer rounded-md border border-input bg-background px-3 py-2 text-xs font-medium hover:bg-accent disabled:cursor-not-allowed disabled:opacity-60"
+                                        @click="loadMoreHashtagStatuses(hashtag.name)"
+                                    >
+                                        {{
+                                            ensureHashtagDetailsState(hashtag.name).loadingMore
+                                                ? t('mastodon.search.loadingMore')
+                                                : t('mastodon.search.loadMore')
+                                        }}
+                                    </button>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </article>
