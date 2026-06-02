@@ -13,20 +13,26 @@ final class MastodonSearchRequest extends FormRequest
 
     protected function prepareForValidation(): void
     {
-        if (! $this->has('resolve')) {
-            return;
-        }
-
-        $resolve = $this->input('resolve');
-
-        if (is_string($resolve)) {
-            $normalized = filter_var($resolve, FILTER_VALIDATE_BOOL, FILTER_NULL_ON_FAILURE);
-
-            if ($normalized !== null) {
-                $this->merge([
-                    'resolve' => $normalized,
-                ]);
+        foreach (['resolve', 'hasMedia', 'hasLinks'] as $key) {
+            if (! $this->has($key)) {
+                continue;
             }
+
+            $value = $this->input($key);
+
+            if (! is_string($value)) {
+                continue;
+            }
+
+            $normalized = filter_var($value, FILTER_VALIDATE_BOOL, FILTER_NULL_ON_FAILURE);
+
+            if ($normalized === null) {
+                continue;
+            }
+
+            $this->merge([
+                $key => $normalized,
+            ]);
         }
     }
 
@@ -43,6 +49,10 @@ final class MastodonSearchRequest extends FormRequest
             'limit' => ['nullable', 'integer', 'min:1', 'max:'.$this->mastodonModuleConfig()->searchLimitMax()],
             'offset' => ['nullable', 'integer', 'min:0'],
             'resolve' => ['nullable', 'boolean'],
+            'language' => ['nullable', 'string', 'max:12'],
+            'hasMedia' => ['nullable', 'boolean'],
+            'hasLinks' => ['nullable', 'boolean'],
+            'instanceDomain' => ['nullable', 'string', 'max:255'],
         ];
     }
 
@@ -57,6 +67,14 @@ final class MastodonSearchRequest extends FormRequest
             limit: min($config->searchLimitMax(), max(1, (int) ($validated['limit'] ?? $config->searchLimitDefault()))),
             offset: max(0, (int) ($validated['offset'] ?? 0)),
             resolve: filter_var($validated['resolve'] ?? false, FILTER_VALIDATE_BOOL),
+            language: strtolower(trim((string) ($validated['language'] ?? ''))),
+            hasMedia: array_key_exists('hasMedia', $validated)
+                ? filter_var($validated['hasMedia'], FILTER_VALIDATE_BOOL, FILTER_NULL_ON_FAILURE)
+                : null,
+            hasLinks: array_key_exists('hasLinks', $validated)
+                ? filter_var($validated['hasLinks'], FILTER_VALIDATE_BOOL, FILTER_NULL_ON_FAILURE)
+                : null,
+            instanceDomain: strtolower(trim((string) ($validated['instanceDomain'] ?? ''))),
         );
     }
 }

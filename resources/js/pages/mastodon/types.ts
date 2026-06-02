@@ -6,6 +6,7 @@ export type MastodonStatus = {
     uri: string;
     createdAt: string;
     content: string;
+    spoilerText: string;
     language: string;
     visibility: string;
     sensitive: boolean;
@@ -13,6 +14,18 @@ export type MastodonStatus = {
     reblogsCount: number;
     favouritesCount: number;
     mediaAttachmentsCount: number;
+    hasMedia: boolean;
+    hasLinks: boolean;
+    postType: 'original' | 'reply' | 'boost' | string;
+    instanceDomain: string;
+    links: string[];
+    domains: string[];
+    mentions: Array<{
+        id: string;
+        username: string;
+        acct: string;
+        url: string;
+    }>;
     tags: string[];
     account: {
         id: string;
@@ -21,6 +34,7 @@ export type MastodonStatus = {
         displayName: string;
         url: string;
         avatar: string;
+        instanceDomain: string;
     };
 };
 
@@ -35,11 +49,19 @@ export type MastodonAccount = {
     discoverable: boolean;
     locked: boolean;
     bot: boolean;
+    group: boolean;
     note: string;
+    createdAt: string;
     followersCount: number;
     followingCount: number;
     statusesCount: number;
     lastStatusAt: string;
+    instanceDomain: string;
+    fields: Array<{
+        name: string;
+        value: string;
+        verifiedAt: string;
+    }>;
 };
 
 export type MastodonHashtag = {

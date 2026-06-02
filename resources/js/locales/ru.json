@@ -1038,7 +1038,13 @@
             "loadMore": "Показать ещё",
             "loadingMore": "Загрузка...",
             "noText": "[Без текста]",
-            "noBio": "Описание профиля отсутствует."
+            "noBio": "Описание профиля отсутствует.",
+            "language": "Язык",
+            "languagePlaceholder": "например: en",
+            "instanceDomain": "Домен инстанса",
+            "instancePlaceholder": "например: mastodon.social",
+            "hasMedia": "Есть медиа",
+            "hasLinks": "Есть ссылки"
         },
         "sections": {
             "statuses": "Посты",
@@ -1055,7 +1061,13 @@
             "posts": "Посты",
             "historyPoints": "Точек истории",
             "uses": "Использований",
-            "accounts": "Аккаунтов"
+            "accounts": "Аккаунтов",
+            "postType": "Тип поста",
+            "language": "Язык",
+            "mentions": "Упоминания",
+            "links": "Ссылки",
+            "bot": "Бот",
+            "group": "Группа"
         },
         "options": {
             "type": {
@@ -1063,7 +1075,10 @@
                 "accounts": "Аккаунты",
                 "hashtags": "Хэштеги",
                 "all": "Всё"
-            }
+            },
+            "any": "Любой",
+            "yes": "Да",
+            "no": "Нет"
         },
         "common": {
             "open": "Открыть пост",
@@ -1072,6 +1087,11 @@
         },
         "errors": {
             "requestFailed": "Ошибка запроса."
+        },
+        "postTypes": {
+            "original": "Оригинал",
+            "reply": "Ответ",
+            "boost": "Буст"
         }
     },
     "dashboard": {

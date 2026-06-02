@@ -26,11 +26,13 @@ final class SearchResourcesAction extends AbstractMastodonAction
 
         $statuses = collect($payload['statuses'] ?? [])
             ->map(fn (array $item): array => $this->statusPresenter->present($item))
+            ->filter(fn (array $item): bool => $this->matchesStatusFilters($item, $query))
             ->values()
             ->all();
 
         $accounts = collect($payload['accounts'] ?? [])
             ->map(fn (array $item): array => $this->accountPresenter->present($item))
+            ->filter(fn (array $item): bool => $this->matchesAccountFilters($item, $query))
             ->values()
             ->all();
 
@@ -55,5 +57,50 @@ final class SearchResourcesAction extends AbstractMastodonAction
                 'hasMore' => $hasMore,
             ],
         );
+    }
+
+    /**
+     * @param array<string, mixed> $item
+     */
+    private function matchesStatusFilters(array $item, MastodonSearchQueryDTO $query): bool
+    {
+        if ($query->language !== '' && strtolower((string) ($item['language'] ?? '')) !== $query->language) {
+            return false;
+        }
+
+        if ($query->hasMedia !== null && (bool) ($item['hasMedia'] ?? false) !== $query->hasMedia) {
+            return false;
+        }
+
+        if ($query->hasLinks !== null && (bool) ($item['hasLinks'] ?? false) !== $query->hasLinks) {
+            return false;
+        }
+
+        if ($query->instanceDomain !== '' && strtolower((string) ($item['instanceDomain'] ?? '')) !== $query->instanceDomain) {
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
+     * @param array<string, mixed> $item
+     */
+    private function matchesAccountFilters(array $item, MastodonSearchQueryDTO $query): bool
+    {
+        if ($query->instanceDomain !== '' && strtolower((string) ($item['instanceDomain'] ?? '')) !== $query->instanceDomain) {
+            return false;
+        }
+
+        if ($query->hasLinks !== null) {
+            $hasLinks = collect($item['fields'] ?? [])
+                ->contains(fn (array $field): bool => str_contains((string) ($field['value'] ?? ''), 'http'));
+
+            if ($hasLinks !== $query->hasLinks) {
+                return false;
+            }
+        }
+
+        return true;
     }
 }

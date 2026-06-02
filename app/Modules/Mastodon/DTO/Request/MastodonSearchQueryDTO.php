@@ -10,6 +10,10 @@ final readonly class MastodonSearchQueryDTO
         public int $limit,
         public int $offset = 0,
         public bool $resolve = false,
+        public string $language = '',
+        public ?bool $hasMedia = null,
+        public ?bool $hasLinks = null,
+        public string $instanceDomain = '',
     ) {
     }
 

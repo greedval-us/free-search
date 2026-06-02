@@ -19,6 +19,10 @@ const form = ref({
     type: 'statuses',
     limit: 10,
     resolve: false,
+    language: '',
+    hasMedia: '',
+    hasLinks: '',
+    instanceDomain: '',
 });
 
 const loading = ref(false);
@@ -46,6 +50,14 @@ const clampLimit = () => {
 const formatDate = (value: string) =>
     value ? new Date(value).toLocaleString() : '-';
 
+const normalizeBooleanFilter = (value: string): string | undefined => {
+    if (value === 'true' || value === 'false') {
+        return value;
+    }
+
+    return undefined;
+};
+
 const runSearch = async (append = false) => {
     if (append) {
         loadingMore.value = true;
@@ -60,6 +72,10 @@ const runSearch = async (append = false) => {
             type: form.value.type,
             limit: form.value.limit,
             resolve: form.value.resolve ? 'true' : undefined,
+            language: form.value.language || undefined,
+            hasMedia: normalizeBooleanFilter(form.value.hasMedia),
+            hasLinks: normalizeBooleanFilter(form.value.hasLinks),
+            instanceDomain: form.value.instanceDomain || undefined,
             offset: append ? result.value?.pagination.nextOffset ?? 0 : 0,
         },
     });
@@ -181,7 +197,7 @@ const runSearch = async (append = false) => {
 
         <IntelAdvancedFilters
             :open="!searchPanelCollapsed && showAdvanced"
-            content-class="md:grid-cols-2"
+            content-class="md:grid-cols-2 xl:grid-cols-4"
         >
             <label class="block min-w-0">
                 <span class="mb-1 block truncate text-xs font-medium text-muted-foreground">
@@ -201,6 +217,59 @@ const runSearch = async (append = false) => {
             <label class="flex items-center gap-3 rounded-md border border-input bg-background px-3 py-2 text-sm">
                 <input v-model="form.resolve" type="checkbox" class="h-4 w-4" />
                 <span>{{ t('mastodon.search.resolve') }}</span>
+            </label>
+
+            <label class="block min-w-0">
+                <span class="mb-1 block truncate text-xs font-medium text-muted-foreground">
+                    {{ t('mastodon.search.language') }}
+                </span>
+                <input
+                    v-model="form.language"
+                    type="text"
+                    maxlength="12"
+                    class="h-10 w-full rounded-md border border-input bg-background px-3 text-sm"
+                    :placeholder="t('mastodon.search.languagePlaceholder')"
+                />
+            </label>
+
+            <label class="block min-w-0">
+                <span class="mb-1 block truncate text-xs font-medium text-muted-foreground">
+                    {{ t('mastodon.search.instanceDomain') }}
+                </span>
+                <input
+                    v-model="form.instanceDomain"
+                    type="text"
+                    class="h-10 w-full rounded-md border border-input bg-background px-3 text-sm"
+                    :placeholder="t('mastodon.search.instancePlaceholder')"
+                />
+            </label>
+
+            <label class="block min-w-0">
+                <span class="mb-1 block truncate text-xs font-medium text-muted-foreground">
+                    {{ t('mastodon.search.hasMedia') }}
+                </span>
+                <select
+                    v-model="form.hasMedia"
+                    class="h-10 w-full rounded-md border border-input bg-background px-3 text-sm"
+                >
+                    <option value="">{{ t('mastodon.options.any') }}</option>
+                    <option value="true">{{ t('mastodon.options.yes') }}</option>
+                    <option value="false">{{ t('mastodon.options.no') }}</option>
+                </select>
+            </label>
+
+            <label class="block min-w-0">
+                <span class="mb-1 block truncate text-xs font-medium text-muted-foreground">
+                    {{ t('mastodon.search.hasLinks') }}
+                </span>
+                <select
+                    v-model="form.hasLinks"
+                    class="h-10 w-full rounded-md border border-input bg-background px-3 text-sm"
+                >
+                    <option value="">{{ t('mastodon.options.any') }}</option>
+                    <option value="true">{{ t('mastodon.options.yes') }}</option>
+                    <option value="false">{{ t('mastodon.options.no') }}</option>
+                </select>
             </label>
         </IntelAdvancedFilters>
 
@@ -244,16 +313,25 @@ const runSearch = async (append = false) => {
                                 {{ status.account.displayName || status.account.username }}
                             </div>
                             <div class="truncate text-xs text-muted-foreground">
-                                @{{ status.account.acct }} | {{ formatDate(status.createdAt) }}
+                                @{{ status.account.acct }} | {{ status.instanceDomain || status.account.instanceDomain }} | {{ formatDate(status.createdAt) }}
                             </div>
                         </div>
                     </div>
+
+                    <p
+                        v-if="status.spoilerText"
+                        class="mb-2 rounded-md border border-amber-500/30 bg-amber-500/10 px-2 py-1 text-xs text-amber-700"
+                    >
+                        {{ status.spoilerText }}
+                    </p>
 
                     <p class="text-sm leading-relaxed text-foreground">
                         {{ status.content || t('mastodon.search.noText') }}
                     </p>
 
                     <div class="mt-3 flex flex-wrap gap-3 text-xs text-muted-foreground">
+                        <span>{{ t('mastodon.metrics.postType') }}: {{ t(`mastodon.postTypes.${status.postType}`) }}</span>
+                        <span>{{ t('mastodon.metrics.language') }}: {{ status.language || '-' }}</span>
                         <span>{{ t('mastodon.metrics.replies') }}: {{ status.repliesCount }}</span>
                         <span>{{ t('mastodon.metrics.reblogs') }}: {{ status.reblogsCount }}</span>
                         <span>{{ t('mastodon.metrics.favourites') }}: {{ status.favouritesCount }}</span>
@@ -279,6 +357,47 @@ const runSearch = async (append = false) => {
                         >
                             #{{ tag }}
                         </span>
+
+                        <span
+                            v-for="domain in status.domains"
+                            :key="`${status.id}-domain-${domain}`"
+                            class="rounded-full border border-cyan-500/30 bg-cyan-500/10 px-2 py-1 text-xs text-cyan-700"
+                        >
+                            {{ domain }}
+                        </span>
+                    </div>
+
+                    <div
+                        v-if="status.mentions.length > 0 || status.links.length > 0"
+                        class="mt-3 space-y-2 text-xs"
+                    >
+                        <div v-if="status.mentions.length > 0" class="flex flex-wrap gap-2">
+                            <span class="text-muted-foreground">{{ t('mastodon.metrics.mentions') }}:</span>
+                            <a
+                                v-for="mention in status.mentions"
+                                :key="`${status.id}-mention-${mention.acct}`"
+                                :href="mention.url"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                class="rounded-full border border-input px-2 py-1 text-primary hover:bg-accent"
+                            >
+                                @{{ mention.acct }}
+                            </a>
+                        </div>
+
+                        <div v-if="status.links.length > 0" class="space-y-1">
+                            <div class="text-muted-foreground">{{ t('mastodon.metrics.links') }}:</div>
+                            <a
+                                v-for="link in status.links"
+                                :key="`${status.id}-link-${link}`"
+                                :href="link"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                class="block truncate text-primary hover:underline"
+                            >
+                                {{ link }}
+                            </a>
+                        </div>
                     </div>
                 </article>
             </section>
@@ -305,7 +424,7 @@ const runSearch = async (append = false) => {
                                 {{ account.displayName || account.username }}
                             </div>
                             <div class="truncate text-xs text-muted-foreground">
-                                @{{ account.acct }}
+                                @{{ account.acct }} | {{ account.instanceDomain }} | {{ formatDate(account.createdAt) }}
                             </div>
                             <p class="mt-2 text-sm leading-relaxed text-foreground">
                                 {{ account.note || t('mastodon.search.noBio') }}
@@ -314,6 +433,18 @@ const runSearch = async (append = false) => {
                                 <span>{{ t('mastodon.metrics.followers') }}: {{ account.followersCount }}</span>
                                 <span>{{ t('mastodon.metrics.following') }}: {{ account.followingCount }}</span>
                                 <span>{{ t('mastodon.metrics.posts') }}: {{ account.statusesCount }}</span>
+                                <span v-if="account.bot">{{ t('mastodon.metrics.bot') }}</span>
+                                <span v-if="account.group">{{ t('mastodon.metrics.group') }}</span>
+                            </div>
+                            <div v-if="account.fields.length > 0" class="mt-3 grid gap-2 md:grid-cols-2">
+                                <div
+                                    v-for="field in account.fields"
+                                    :key="`${account.id}-${field.name}-${field.value}`"
+                                    class="rounded-md border border-border/70 bg-card/60 p-2 text-xs"
+                                >
+                                    <div class="font-medium text-foreground">{{ field.name }}</div>
+                                    <div class="break-all text-muted-foreground">{{ field.value }}</div>
+                                </div>
                             </div>
                             <div class="mt-3 flex flex-wrap gap-2">
                                 <a

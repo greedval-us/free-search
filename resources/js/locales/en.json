@@ -1038,7 +1038,13 @@
             "loadMore": "Load more",
             "loadingMore": "Loading...",
             "noText": "[No text]",
-            "noBio": "No profile bio available."
+            "noBio": "No profile bio available.",
+            "language": "Language",
+            "languagePlaceholder": "for example: en",
+            "instanceDomain": "Instance domain",
+            "instancePlaceholder": "for example: mastodon.social",
+            "hasMedia": "Has media",
+            "hasLinks": "Has links"
         },
         "sections": {
             "statuses": "Statuses",
@@ -1055,7 +1061,13 @@
             "posts": "Posts",
             "historyPoints": "History points",
             "uses": "Uses",
-            "accounts": "Accounts"
+            "accounts": "Accounts",
+            "postType": "Post type",
+            "language": "Language",
+            "mentions": "Mentions",
+            "links": "Links",
+            "bot": "Bot",
+            "group": "Group"
         },
         "options": {
             "type": {
@@ -1063,7 +1075,10 @@
                 "accounts": "Accounts",
                 "hashtags": "Hashtags",
                 "all": "All"
-            }
+            },
+            "any": "Any",
+            "yes": "Yes",
+            "no": "No"
         },
         "common": {
             "open": "Open post",
@@ -1072,6 +1087,11 @@
         },
         "errors": {
             "requestFailed": "Request failed."
+        },
+        "postTypes": {
+            "original": "Original",
+            "reply": "Reply",
+            "boost": "Boost"
         }
     },
     "dashboard": {

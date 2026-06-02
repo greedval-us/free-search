@@ -27,6 +27,10 @@ class MastodonControllerIsolationTest extends TestCase
                         && $query->type === 'statuses'
                         && $query->limit === 5
                         && $query->resolve
+                        && $query->language === 'en'
+                        && $query->hasMedia === true
+                        && $query->hasLinks === true
+                        && $query->instanceDomain === 'mastodon.social'
                 ))
                 ->andReturn(new MastodonSearchResultDTO(
                     statuses: [[
@@ -53,6 +57,10 @@ class MastodonControllerIsolationTest extends TestCase
                 'type' => 'statuses',
                 'limit' => 5,
                 'resolve' => true,
+                'language' => 'en',
+                'hasMedia' => true,
+                'hasLinks' => true,
+                'instanceDomain' => 'mastodon.social',
             ]))
             ->assertOk()
             ->assertJsonPath('data.statuses.0.id', 'status-1')
@@ -89,6 +97,8 @@ class MastodonControllerIsolationTest extends TestCase
                 ->with(Mockery::on(
                     fn (MastodonSearchQueryDTO $query): bool => $query->query === 'osint'
                         && $query->resolve === false
+                        && $query->hasMedia === false
+                        && $query->hasLinks === false
                 ))
                 ->andReturn(new MastodonSearchResultDTO(
                     statuses: [],
@@ -110,6 +120,8 @@ class MastodonControllerIsolationTest extends TestCase
             ->getJson(route('mastodon.search.index', [
                 'q' => 'osint',
                 'resolve' => 'false',
+                'hasMedia' => 'false',
+                'hasLinks' => 'false',
             ]))
             ->assertOk()
             ->assertJsonPath('data.pagination.query', 'osint');
