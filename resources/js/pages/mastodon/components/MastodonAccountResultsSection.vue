@@ -7,7 +7,6 @@ import type { MastodonAccount, MastodonAccountDetailsState } from '../types';
 defineProps<{
     accounts: MastodonAccount[];
     formatDate: (value: string) => string;
-    mastodonText: (key: string, fallback: string) => string;
     ensureAccountDetailsState: (
         accountId: string
     ) => MastodonAccountDetailsState;
@@ -27,6 +26,7 @@ const { t } = useI18n();
         >
             {{ t('mastodon.sections.accounts') }}
         </div>
+
         <MastodonAccountCard
             v-for="account in accounts"
             :key="account.id"
@@ -41,16 +41,11 @@ const { t } = useI18n();
                 >
                     {{
                         ensureAccountDetailsState(account.id).statusesOpen
-                            ? mastodonText(
-                                  'mastodon.accounts.hidePosts',
-                                  'Скрыть посты'
-                              )
-                            : mastodonText(
-                                  'mastodon.accounts.showPosts',
-                                  'Посты аккаунта'
-                              )
+                            ? t('mastodon.accounts.hidePosts')
+                            : t('mastodon.accounts.showPosts')
                     }}
                 </button>
+
                 <button
                     type="button"
                     class="cursor-pointer rounded-full border border-input px-2 py-1 text-xs text-foreground hover:bg-accent"
@@ -58,14 +53,8 @@ const { t } = useI18n();
                 >
                     {{
                         ensureAccountDetailsState(account.id).followersOpen
-                            ? mastodonText(
-                                  'mastodon.accounts.hideFollowers',
-                                  'Скрыть подписчиков'
-                              )
-                            : mastodonText(
-                                  'mastodon.accounts.showFollowers',
-                                  'Подписчики'
-                              )
+                            ? t('mastodon.accounts.hideFollowers')
+                            : t('mastodon.accounts.showFollowers')
                     }}
                 </button>
             </template>
@@ -84,6 +73,7 @@ const { t } = useI18n();
                     >
                         {{ t('mastodon.comments.loading') }}
                     </p>
+
                     <p
                         v-else-if="
                             ensureAccountDetailsState(account.id).statusesError
@@ -94,17 +84,14 @@ const { t } = useI18n();
                             ensureAccountDetailsState(account.id).statusesError
                         }}
                     </p>
+
                     <div v-else class="space-y-2">
                         <div
                             class="text-[11px] font-semibold tracking-wide text-muted-foreground uppercase"
                         >
-                            {{
-                                mastodonText(
-                                    'mastodon.accounts.postsSection',
-                                    'Посты аккаунта'
-                                )
-                            }}
+                            {{ t('mastodon.accounts.postsSection') }}
                         </div>
+
                         <p
                             v-if="
                                 ensureAccountDetailsState(account.id).statuses
@@ -112,13 +99,9 @@ const { t } = useI18n();
                             "
                             class="text-xs text-muted-foreground"
                         >
-                            {{
-                                mastodonText(
-                                    'mastodon.accounts.emptyPosts',
-                                    'Посты не найдены.'
-                                )
-                            }}
+                            {{ t('mastodon.accounts.emptyPosts') }}
                         </p>
+
                         <MastodonStatusCard
                             v-for="status in ensureAccountDetailsState(
                                 account.id
@@ -168,6 +151,7 @@ const { t } = useI18n();
                     >
                         {{ t('mastodon.comments.loading') }}
                     </p>
+
                     <p
                         v-else-if="
                             ensureAccountDetailsState(account.id).followersError
@@ -178,17 +162,14 @@ const { t } = useI18n();
                             ensureAccountDetailsState(account.id).followersError
                         }}
                     </p>
+
                     <div v-else class="space-y-2">
                         <div
                             class="text-[11px] font-semibold tracking-wide text-muted-foreground uppercase"
                         >
-                            {{
-                                mastodonText(
-                                    'mastodon.accounts.followersSection',
-                                    'Подписчики'
-                                )
-                            }}
+                            {{ t('mastodon.accounts.followersSection') }}
                         </div>
+
                         <p
                             v-if="
                                 ensureAccountDetailsState(account.id).followers
@@ -196,13 +177,9 @@ const { t } = useI18n();
                             "
                             class="text-xs text-muted-foreground"
                         >
-                            {{
-                                mastodonText(
-                                    'mastodon.accounts.emptyFollowers',
-                                    'Подписчики не найдены.'
-                                )
-                            }}
+                            {{ t('mastodon.accounts.emptyFollowers') }}
                         </p>
+
                         <MastodonAccountCard
                             v-for="follower in ensureAccountDetailsState(
                                 account.id

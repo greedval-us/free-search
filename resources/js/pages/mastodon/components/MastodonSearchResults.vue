@@ -16,7 +16,6 @@ defineProps<{
     loading: boolean;
     totalShown: number;
     formatDate: (value: string) => string;
-    mastodonText: (key: string, fallback: string) => string;
     ensureContextState: (statusId: string) => MastodonStatusContextState;
     ensureAccountDetailsState: (
         accountId: string
@@ -63,7 +62,6 @@ const { t } = useI18n();
         <MastodonAccountResultsSection
             :accounts="result?.accounts ?? []"
             :format-date="formatDate"
-            :mastodon-text="mastodonText"
             :ensure-account-details-state="ensureAccountDetailsState"
             :toggle-account-statuses="toggleAccountStatuses"
             :toggle-account-followers="toggleAccountFollowers"
@@ -74,7 +72,6 @@ const { t } = useI18n();
         <MastodonHashtagResultsSection
             :hashtags="result?.hashtags ?? []"
             :format-date="formatDate"
-            :mastodon-text="mastodonText"
             :ensure-hashtag-details-state="ensureHashtagDetailsState"
             :toggle-hashtag-statuses="toggleHashtagStatuses"
             :load-more-hashtag-statuses="loadMoreHashtagStatuses"

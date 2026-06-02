@@ -1,13 +1,13 @@
 <script setup lang="ts">
 import { ExternalLink } from 'lucide-vue-next';
 import { useI18n } from '@/composables/useI18n';
+import MastodonHashtagSummaryGrid from './MastodonHashtagSummaryGrid.vue';
 import MastodonStatusCard from './MastodonStatusCard.vue';
 import type { MastodonHashtag, MastodonHashtagDetailsState } from '../types';
 
 defineProps<{
     hashtags: MastodonHashtag[];
     formatDate: (value: string) => string;
-    mastodonText: (key: string, fallback: string) => string;
     ensureHashtagDetailsState: (
         hashtagName: string
     ) => MastodonHashtagDetailsState;
@@ -25,6 +25,7 @@ const { t } = useI18n();
         >
             {{ t('mastodon.sections.hashtags') }}
         </div>
+
         <article
             v-for="hashtag in hashtags"
             :key="hashtag.name"
@@ -38,6 +39,7 @@ const { t } = useI18n();
                         {{ hashtag.history.length }}
                     </div>
                 </div>
+
                 <a
                     v-if="hashtag.url"
                     :href="hashtag.url"
@@ -58,14 +60,8 @@ const { t } = useI18n();
                 >
                     {{
                         ensureHashtagDetailsState(hashtag.name).open
-                            ? mastodonText(
-                                  'mastodon.hashtags.hidePosts',
-                                  'Скрыть посты'
-                              )
-                            : mastodonText(
-                                  'mastodon.hashtags.showPosts',
-                                  'Посты по хэштегу'
-                              )
+                            ? t('mastodon.hashtags.hidePosts')
+                            : t('mastodon.hashtags.showPosts')
                     }}
                 </button>
             </div>
@@ -109,96 +105,12 @@ const { t } = useI18n();
                 </p>
 
                 <div v-else class="space-y-3">
-                    <div class="grid gap-2 md:grid-cols-2 xl:grid-cols-4">
-                        <div
-                            class="rounded-md border border-border/70 bg-background/70 p-2 text-xs"
-                        >
-                            <div class="text-muted-foreground">
-                                {{
-                                    mastodonText(
-                                        'mastodon.hashtags.uniqueAccounts',
-                                        'Уникальные аккаунты в загруженной выборке'
-                                    )
-                                }}
-                            </div>
-                            <div
-                                class="mt-1 text-sm font-semibold text-foreground"
-                            >
-                                {{
-                                    ensureHashtagDetailsState(hashtag.name)
-                                        .uniqueAccountsCount
-                                }}
-                            </div>
-                        </div>
-                        <div
-                            class="rounded-md border border-border/70 bg-background/70 p-2 text-xs"
-                        >
-                            <div class="text-muted-foreground">
-                                {{
-                                    mastodonText(
-                                        'mastodon.hashtags.uniqueInstances',
-                                        'Уникальные инстансы в загруженной выборке'
-                                    )
-                                }}
-                            </div>
-                            <div
-                                class="mt-1 text-sm font-semibold text-foreground"
-                            >
-                                {{
-                                    ensureHashtagDetailsState(hashtag.name)
-                                        .uniqueInstancesCount
-                                }}
-                            </div>
-                        </div>
-                        <div
-                            class="rounded-md border border-border/70 bg-background/70 p-2 text-xs"
-                        >
-                            <div class="text-muted-foreground">
-                                {{
-                                    mastodonText(
-                                        'mastodon.hashtags.postsWithMedia',
-                                        'Посты с медиа в загруженной выборке'
-                                    )
-                                }}
-                            </div>
-                            <div
-                                class="mt-1 text-sm font-semibold text-foreground"
-                            >
-                                {{
-                                    ensureHashtagDetailsState(hashtag.name)
-                                        .postsWithMediaCount
-                                }}
-                            </div>
-                        </div>
-                        <div
-                            class="rounded-md border border-border/70 bg-background/70 p-2 text-xs"
-                        >
-                            <div class="text-muted-foreground">
-                                {{
-                                    mastodonText(
-                                        'mastodon.hashtags.postsWithLinks',
-                                        'Посты со ссылками в загруженной выборке'
-                                    )
-                                }}
-                            </div>
-                            <div
-                                class="mt-1 text-sm font-semibold text-foreground"
-                            >
-                                {{
-                                    ensureHashtagDetailsState(hashtag.name)
-                                        .postsWithLinksCount
-                                }}
-                            </div>
-                        </div>
-                    </div>
+                    <MastodonHashtagSummaryGrid
+                        :state="ensureHashtagDetailsState(hashtag.name)"
+                    />
 
                     <p class="text-[11px] text-muted-foreground">
-                        {{
-                            mastodonText(
-                                'mastodon.hashtags.sampleNote',
-                                'Эта сводка считается только по постам, которые уже загружены ниже, а не по всей истории хэштега.'
-                            )
-                        }}
+                        {{ t('mastodon.hashtags.sampleNote') }}
                     </p>
 
                     <div
@@ -211,12 +123,7 @@ const { t } = useI18n();
                         <div
                             class="text-[11px] font-semibold tracking-wide text-muted-foreground uppercase"
                         >
-                            {{
-                                mastodonText(
-                                    'mastodon.hashtags.accountsSection',
-                                    'Кто использовал'
-                                )
-                            }}
+                            {{ t('mastodon.hashtags.accountsSection') }}
                         </div>
                         <div class="flex flex-wrap gap-2">
                             <a
@@ -244,12 +151,7 @@ const { t } = useI18n();
                         <div
                             class="text-[11px] font-semibold tracking-wide text-muted-foreground uppercase"
                         >
-                            {{
-                                mastodonText(
-                                    'mastodon.hashtags.instancesSection',
-                                    'Инстансы'
-                                )
-                            }}
+                            {{ t('mastodon.hashtags.instancesSection') }}
                         </div>
                         <div class="flex flex-wrap gap-2">
                             <span
@@ -268,12 +170,7 @@ const { t } = useI18n();
                         <div
                             class="text-[11px] font-semibold tracking-wide text-muted-foreground uppercase"
                         >
-                            {{
-                                mastodonText(
-                                    'mastodon.hashtags.postsSection',
-                                    'Посты по хэштегу'
-                                )
-                            }}
+                            {{ t('mastodon.hashtags.postsSection') }}
                         </div>
 
                         <p
@@ -283,12 +180,7 @@ const { t } = useI18n();
                             "
                             class="text-xs text-muted-foreground"
                         >
-                            {{
-                                mastodonText(
-                                    'mastodon.hashtags.emptyPosts',
-                                    'Посты не найдены.'
-                                )
-                            }}
+                            {{ t('mastodon.hashtags.emptyPosts') }}
                         </p>
 
                         <MastodonStatusCard

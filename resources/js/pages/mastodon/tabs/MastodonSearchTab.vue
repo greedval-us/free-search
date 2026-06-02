@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { ChevronDown, ChevronUp, Search, Settings } from 'lucide-vue-next';
-import { computed } from 'vue';
 import HelpTooltip from '@/components/ui/HelpTooltip.vue';
 import IntelAdvancedFilters from '@/components/ui/IntelAdvancedFilters.vue';
 import IntelResultPanel from '@/components/ui/IntelResultPanel.vue';
@@ -37,20 +36,6 @@ const {
     toggleHashtagStatuses,
     loadMoreHashtagStatuses,
 } = useMastodonSearch(t);
-
-const mastodonText = (key: string, fallback: string) => {
-    const label = t(key);
-
-    return label === key ? fallback : label;
-};
-
-const resolveRemoteLabel = computed(() => {
-    const label = t('mastodon.search.resolveRemote');
-
-    return label === 'mastodon.search.resolveRemote'
-        ? 'Искать на других инстансах'
-        : label;
-});
 </script>
 
 <template>
@@ -219,7 +204,7 @@ const resolveRemoteLabel = computed(() => {
                         type="checkbox"
                         class="h-4 w-4"
                     />
-                    <span>{{ resolveRemoteLabel }}</span>
+                    <span>{{ t('mastodon.search.resolveRemote') }}</span>
                 </span>
             </label>
 
@@ -341,7 +326,6 @@ const resolveRemoteLabel = computed(() => {
             :loading="loading"
             :total-shown="totalShown"
             :format-date="formatDate"
-            :mastodon-text="mastodonText"
             :ensure-context-state="ensureContextState"
             :ensure-account-details-state="ensureAccountDetailsState"
             :ensure-hashtag-details-state="ensureHashtagDetailsState"
