@@ -1,4 +1,5 @@
 import {
+    AtSign,
     BookOpenText,
     Fingerprint,
     LayoutGrid,
@@ -26,6 +27,13 @@ const moduleNavDefinitions: readonly ModuleNavDefinition[] = [
         labelKey: 'navigation.dashboard',
         href: dashboard(),
         icon: LayoutGrid,
+        showInHeader: true,
+    },
+    {
+        key: 'mastodon',
+        labelKey: 'navigation.mastodon',
+        href: '/mastodon',
+        icon: AtSign,
         showInHeader: true,
     },
     {

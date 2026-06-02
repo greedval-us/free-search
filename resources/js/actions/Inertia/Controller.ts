@@ -158,6 +158,84 @@ Controllerd5ecae56bdcfbb8acbee4b606463b6bd.head = (options?: RouteQueryOptions):
     /**
 * @see \Inertia\Controller::__invoke
  * @see vendor/inertiajs/inertia-laravel/src/Controller.php:13
+ * @route '/mastodon'
+ */
+const Controllera0dc76fc616bb8573621ef29fff4495e = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+    url: Controllera0dc76fc616bb8573621ef29fff4495e.url(options),
+    method: 'get',
+})
+
+Controllera0dc76fc616bb8573621ef29fff4495e.definition = {
+    methods: ["get","head"],
+    url: '/mastodon',
+} satisfies RouteDefinition<["get","head"]>
+
+/**
+* @see \Inertia\Controller::__invoke
+ * @see vendor/inertiajs/inertia-laravel/src/Controller.php:13
+ * @route '/mastodon'
+ */
+Controllera0dc76fc616bb8573621ef29fff4495e.url = (options?: RouteQueryOptions) => {
+    return Controllera0dc76fc616bb8573621ef29fff4495e.definition.url + queryParams(options)
+}
+
+/**
+* @see \Inertia\Controller::__invoke
+ * @see vendor/inertiajs/inertia-laravel/src/Controller.php:13
+ * @route '/mastodon'
+ */
+Controllera0dc76fc616bb8573621ef29fff4495e.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+    url: Controllera0dc76fc616bb8573621ef29fff4495e.url(options),
+    method: 'get',
+})
+/**
+* @see \Inertia\Controller::__invoke
+ * @see vendor/inertiajs/inertia-laravel/src/Controller.php:13
+ * @route '/mastodon'
+ */
+Controllera0dc76fc616bb8573621ef29fff4495e.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
+    url: Controllera0dc76fc616bb8573621ef29fff4495e.url(options),
+    method: 'head',
+})
+
+    /**
+* @see \Inertia\Controller::__invoke
+ * @see vendor/inertiajs/inertia-laravel/src/Controller.php:13
+ * @route '/mastodon'
+ */
+    const Controllera0dc76fc616bb8573621ef29fff4495eForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+        action: Controllera0dc76fc616bb8573621ef29fff4495e.url(options),
+        method: 'get',
+    })
+
+            /**
+* @see \Inertia\Controller::__invoke
+ * @see vendor/inertiajs/inertia-laravel/src/Controller.php:13
+ * @route '/mastodon'
+ */
+        Controllera0dc76fc616bb8573621ef29fff4495eForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+            action: Controllera0dc76fc616bb8573621ef29fff4495e.url(options),
+            method: 'get',
+        })
+            /**
+* @see \Inertia\Controller::__invoke
+ * @see vendor/inertiajs/inertia-laravel/src/Controller.php:13
+ * @route '/mastodon'
+ */
+        Controllera0dc76fc616bb8573621ef29fff4495eForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+            action: Controllera0dc76fc616bb8573621ef29fff4495e.url({
+                        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
+                            _method: 'HEAD',
+                            ...(options?.query ?? options?.mergeQuery ?? {}),
+                        }
+                    }),
+            method: 'get',
+        })
+    
+    Controllera0dc76fc616bb8573621ef29fff4495e.form = Controllera0dc76fc616bb8573621ef29fff4495eForm
+    /**
+* @see \Inertia\Controller::__invoke
+ * @see vendor/inertiajs/inertia-laravel/src/Controller.php:13
  * @route '/site-intel'
  */
 const Controller8afb288f411615c9a5737c884d0340a0 = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -549,6 +627,7 @@ Controllere19ee86e9cf603ce1a59a1ec5d21dec5.head = (options?: RouteQueryOptions):
 const Controller = {
     '/': Controller980bb49ee7ae63891f1d891d2fbcf1c9,
     '/telegram': Controllerd5ecae56bdcfbb8acbee4b606463b6bd,
+    '/mastodon': Controllera0dc76fc616bb8573621ef29fff4495e,
     '/site-intel': Controller8afb288f411615c9a5737c884d0340a0,
     '/news-media-intel': Controller36a2b357ae6134bc8055dfa5be128cd4,
     '/shifr': Controller3d3b36cdb4f38dee299ffd8b2029aaa7,

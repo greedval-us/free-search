@@ -8,6 +8,7 @@ class DashboardModuleRegistry
      * @var array<string, string>
      */
     private const MODULE_URLS = [
+        'mastodon' => '/mastodon',
         'site-intel' => '/site-intel',
         'news-media-intel' => '/news-media-intel',
         'telegram' => '/telegram',

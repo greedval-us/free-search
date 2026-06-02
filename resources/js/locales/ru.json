@@ -1010,6 +1010,70 @@
             "mentions": "Упоминания дедуплицируются по URL. Длинные заголовки и ссылки переносятся внутри карточки."
         }
     },
+    "mastodon": {
+        "headTitle": "Mastodon",
+        "help": {
+            "label": "Что это за данные?"
+        },
+        "tabs": {
+            "search": "Поиск"
+        },
+        "search": {
+            "title": "Поиск Mastodon",
+            "collapsed": "Панель поиска свернута",
+            "filters": "Фильтры и параметры публичного поиска по fediverse",
+            "hint": "Поиск по публичным постам, аккаунтам и хэштегам на настроенном Mastodon-инстансе через официальный API.",
+            "query": "Запрос",
+            "type": "Тип поиска",
+            "limit": "Лимит",
+            "resolve": "Разрешать удалённые ресурсы",
+            "placeholder": "например: osint analyst",
+            "advancedAriaShow": "Показать дополнительные фильтры",
+            "advancedAriaHide": "Скрыть дополнительные фильтры",
+            "submit": "Найти",
+            "searching": "Ищем...",
+            "resultTitle": "Результаты",
+            "shown": "Показано",
+            "empty": "Выполните поиск, чтобы увидеть результаты Mastodon.",
+            "loadMore": "Показать ещё",
+            "loadingMore": "Загрузка...",
+            "noText": "[Без текста]",
+            "noBio": "Описание профиля отсутствует."
+        },
+        "sections": {
+            "statuses": "Посты",
+            "accounts": "Аккаунты",
+            "hashtags": "Хэштеги"
+        },
+        "metrics": {
+            "replies": "Ответы",
+            "reblogs": "Бусты",
+            "favourites": "Избранное",
+            "media": "Медиа",
+            "followers": "Подписчики",
+            "following": "Подписки",
+            "posts": "Посты",
+            "historyPoints": "Точек истории",
+            "uses": "Использований",
+            "accounts": "Аккаунтов"
+        },
+        "options": {
+            "type": {
+                "statuses": "Посты",
+                "accounts": "Аккаунты",
+                "hashtags": "Хэштеги",
+                "all": "Всё"
+            }
+        },
+        "common": {
+            "open": "Открыть пост",
+            "openProfile": "Открыть профиль",
+            "openTag": "Открыть хэштег"
+        },
+        "errors": {
+            "requestFailed": "Ошибка запроса."
+        }
+    },
     "dashboard": {
         "meta": {
             "title": "Панель"
@@ -1041,6 +1105,7 @@
             "empty": "История запросов пока пустая. Запустите первый поиск."
         },
         "modules": {
+            "mastodon": "Mastodon",
             "site-intel": "Аналитика сайта",
             "news-media-intel": "Новости и медиа",
             "telegram": "Аналитика Telegram",
@@ -1085,6 +1150,7 @@
             "title": "Ваш тариф",
             "manage": "Управлять тарифом",
             "modules": {
+                "mastodon": "Mastodon",
                 "site-intel": "Site Intel",
                 "telegram": "Telegram",
                 "youtube": "YouTube"
@@ -1101,6 +1167,7 @@
         "platform": "Платформа",
         "menu": "Меню навигации",
         "dashboard": "Панель",
+        "mastodon": "Mastodon",
         "telegram": "Телеграм",
         "youtube": "YouTube",
         "siteIntel": "Аналитика сайта",

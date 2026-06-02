@@ -1,0 +1,117 @@
+<?php
+
+namespace Tests\Feature\Controllers;
+
+use App\Models\User;
+use App\Modules\Mastodon\DTO\Request\MastodonSearchQueryDTO;
+use App\Modules\Mastodon\DTO\Result\MastodonSearchResultDTO;
+use App\Modules\Mastodon\Search\Contracts\MastodonSearchApplicationServiceInterface;
+use Illuminate\Foundation\Testing\RefreshDatabase;
+use Mockery;
+use RuntimeException;
+use Tests\TestCase;
+
+class MastodonControllerIsolationTest extends TestCase
+{
+    use RefreshDatabase;
+
+    public function test_mastodon_search_controller_returns_service_payload(): void
+    {
+        $user = User::factory()->create();
+
+        $this->mock(MastodonSearchApplicationServiceInterface::class, function ($mock): void {
+            $mock->shouldReceive('search')
+                ->once()
+                ->with(Mockery::on(
+                    fn (MastodonSearchQueryDTO $query): bool => $query->query === 'osint'
+                        && $query->type === 'statuses'
+                        && $query->limit === 5
+                        && $query->resolve
+                ))
+                ->andReturn(new MastodonSearchResultDTO(
+                    statuses: [[
+                        'id' => 'status-1',
+                        'content' => 'OSINT in fediverse',
+                    ]],
+                    accounts: [],
+                    hashtags: [],
+                    pagination: [
+                        'query' => 'osint',
+                        'type' => 'statuses',
+                        'limit' => 5,
+                        'offset' => 0,
+                        'nextOffset' => null,
+                        'hasMore' => false,
+                    ],
+                ));
+        });
+
+        $this
+            ->actingAs($user)
+            ->getJson(route('mastodon.search.index', [
+                'q' => 'osint',
+                'type' => 'statuses',
+                'limit' => 5,
+                'resolve' => true,
+            ]))
+            ->assertOk()
+            ->assertJsonPath('data.statuses.0.id', 'status-1')
+            ->assertJsonPath('data.pagination.limit', 5);
+    }
+
+    public function test_mastodon_search_controller_maps_runtime_exception_to_json_error(): void
+    {
+        $user = User::factory()->create();
+
+        $this->mock(MastodonSearchApplicationServiceInterface::class, function ($mock): void {
+            $mock->shouldReceive('search')
+                ->once()
+                ->andThrow(new RuntimeException('Mastodon quota exceeded.', 429));
+        });
+
+        $this
+            ->actingAs($user)
+            ->getJson(route('mastodon.search.index', ['q' => 'osint']))
+            ->assertTooManyRequests()
+            ->assertJson([
+                'ok' => false,
+                'message' => 'Mastodon quota exceeded.',
+            ]);
+    }
+
+    public function test_mastodon_search_controller_accepts_string_boolean_resolve_query_param(): void
+    {
+        $user = User::factory()->create();
+
+        $this->mock(MastodonSearchApplicationServiceInterface::class, function ($mock): void {
+            $mock->shouldReceive('search')
+                ->once()
+                ->with(Mockery::on(
+                    fn (MastodonSearchQueryDTO $query): bool => $query->query === 'osint'
+                        && $query->resolve === false
+                ))
+                ->andReturn(new MastodonSearchResultDTO(
+                    statuses: [],
+                    accounts: [],
+                    hashtags: [],
+                    pagination: [
+                        'query' => 'osint',
+                        'type' => 'statuses',
+                        'limit' => 10,
+                        'offset' => 0,
+                        'nextOffset' => null,
+                        'hasMore' => false,
+                    ],
+                ));
+        });
+
+        $this
+            ->actingAs($user)
+            ->getJson(route('mastodon.search.index', [
+                'q' => 'osint',
+                'resolve' => 'false',
+            ]))
+            ->assertOk()
+            ->assertJsonPath('data.pagination.query', 'osint');
+    }
+}

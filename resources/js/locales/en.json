@@ -1010,6 +1010,70 @@
             "mentions": "Mentions are deduplicated by URL. Long headlines and links are wrapped to stay inside the card."
         }
     },
+    "mastodon": {
+        "headTitle": "Mastodon",
+        "help": {
+            "label": "What is this data?"
+        },
+        "tabs": {
+            "search": "Search"
+        },
+        "search": {
+            "title": "Mastodon Search",
+            "collapsed": "Search panel is collapsed",
+            "filters": "Public fediverse search filters and parameters",
+            "hint": "Search public statuses, accounts, and hashtags on the configured Mastodon instance through the official API.",
+            "query": "Query",
+            "type": "Search type",
+            "limit": "Limit",
+            "resolve": "Resolve remote resources",
+            "placeholder": "for example: osint analyst",
+            "advancedAriaShow": "Show advanced filters",
+            "advancedAriaHide": "Hide advanced filters",
+            "submit": "Search",
+            "searching": "Searching...",
+            "resultTitle": "Results",
+            "shown": "Shown",
+            "empty": "Run a search to view Mastodon results.",
+            "loadMore": "Load more",
+            "loadingMore": "Loading...",
+            "noText": "[No text]",
+            "noBio": "No profile bio available."
+        },
+        "sections": {
+            "statuses": "Statuses",
+            "accounts": "Accounts",
+            "hashtags": "Hashtags"
+        },
+        "metrics": {
+            "replies": "Replies",
+            "reblogs": "Boosts",
+            "favourites": "Favorites",
+            "media": "Media",
+            "followers": "Followers",
+            "following": "Following",
+            "posts": "Posts",
+            "historyPoints": "History points",
+            "uses": "Uses",
+            "accounts": "Accounts"
+        },
+        "options": {
+            "type": {
+                "statuses": "Statuses",
+                "accounts": "Accounts",
+                "hashtags": "Hashtags",
+                "all": "All"
+            }
+        },
+        "common": {
+            "open": "Open post",
+            "openProfile": "Open profile",
+            "openTag": "Open hashtag"
+        },
+        "errors": {
+            "requestFailed": "Request failed."
+        }
+    },
     "dashboard": {
         "meta": {
             "title": "Dashboard"
@@ -1024,6 +1088,7 @@
             "title": "Your plan",
             "manage": "Manage plan",
             "modules": {
+                "mastodon": "Mastodon",
                 "site-intel": "Site Intel",
                 "telegram": "Telegram",
                 "youtube": "YouTube"
@@ -1056,6 +1121,7 @@
             "empty": "No query history yet. Run your first search."
         },
         "modules": {
+            "mastodon": "Mastodon",
             "site-intel": "Site intelligence",
             "news-media-intel": "News and media intelligence",
             "telegram": "Telegram analytics",
@@ -1101,6 +1167,7 @@
         "platform": "Platform",
         "menu": "Navigation menu",
         "dashboard": "Dashboard",
+        "mastodon": "Mastodon",
         "telegram": "Telegram",
         "youtube": "YouTube",
         "siteIntel": "Site Intel",

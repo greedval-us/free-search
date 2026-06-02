@@ -447,6 +447,84 @@ telegram.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 /**
 * @see \Inertia\Controller::__invoke
  * @see vendor/inertiajs/inertia-laravel/src/Controller.php:13
+ * @route '/mastodon'
+ */
+export const mastodon = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+    url: mastodon.url(options),
+    method: 'get',
+})
+
+mastodon.definition = {
+    methods: ["get","head"],
+    url: '/mastodon',
+} satisfies RouteDefinition<["get","head"]>
+
+/**
+* @see \Inertia\Controller::__invoke
+ * @see vendor/inertiajs/inertia-laravel/src/Controller.php:13
+ * @route '/mastodon'
+ */
+mastodon.url = (options?: RouteQueryOptions) => {
+    return mastodon.definition.url + queryParams(options)
+}
+
+/**
+* @see \Inertia\Controller::__invoke
+ * @see vendor/inertiajs/inertia-laravel/src/Controller.php:13
+ * @route '/mastodon'
+ */
+mastodon.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+    url: mastodon.url(options),
+    method: 'get',
+})
+/**
+* @see \Inertia\Controller::__invoke
+ * @see vendor/inertiajs/inertia-laravel/src/Controller.php:13
+ * @route '/mastodon'
+ */
+mastodon.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
+    url: mastodon.url(options),
+    method: 'head',
+})
+
+    /**
+* @see \Inertia\Controller::__invoke
+ * @see vendor/inertiajs/inertia-laravel/src/Controller.php:13
+ * @route '/mastodon'
+ */
+    const mastodonForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+        action: mastodon.url(options),
+        method: 'get',
+    })
+
+            /**
+* @see \Inertia\Controller::__invoke
+ * @see vendor/inertiajs/inertia-laravel/src/Controller.php:13
+ * @route '/mastodon'
+ */
+        mastodonForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+            action: mastodon.url(options),
+            method: 'get',
+        })
+            /**
+* @see \Inertia\Controller::__invoke
+ * @see vendor/inertiajs/inertia-laravel/src/Controller.php:13
+ * @route '/mastodon'
+ */
+        mastodonForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+            action: mastodon.url({
+                        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
+                            _method: 'HEAD',
+                            ...(options?.query ?? options?.mergeQuery ?? {}),
+                        }
+                    }),
+            method: 'get',
+        })
+    
+    mastodon.form = mastodonForm
+/**
+* @see \Inertia\Controller::__invoke
+ * @see vendor/inertiajs/inertia-laravel/src/Controller.php:13
  * @route '/site-intel'
  */
 export const siteIntel = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
