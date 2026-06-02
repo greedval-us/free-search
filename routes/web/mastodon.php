@@ -13,4 +13,8 @@ Route::prefix('mastodon')->name('mastodon.')->group(function (): void {
             ->middleware('throttle:45,1')
             ->name('index');
     });
+
+    Route::get('statuses/{statusId}/context', [MastodonSearchController::class, 'context'])
+        ->middleware('throttle:60,1')
+        ->name('statuses.context');
 });

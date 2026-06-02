@@ -13,7 +13,7 @@ final class MastodonSearchRequest extends FormRequest
 
     protected function prepareForValidation(): void
     {
-        foreach (['resolve', 'hasMedia', 'hasLinks'] as $key) {
+        foreach (['resolve', 'hasMedia', 'hasLinks', 'hasReplies'] as $key) {
             if (! $this->has($key)) {
                 continue;
             }
@@ -52,6 +52,7 @@ final class MastodonSearchRequest extends FormRequest
             'language' => ['nullable', 'string', 'max:12'],
             'hasMedia' => ['nullable', 'boolean'],
             'hasLinks' => ['nullable', 'boolean'],
+            'hasReplies' => ['nullable', 'boolean'],
             'instanceDomain' => ['nullable', 'string', 'max:255'],
         ];
     }
@@ -73,6 +74,9 @@ final class MastodonSearchRequest extends FormRequest
                 : null,
             hasLinks: array_key_exists('hasLinks', $validated)
                 ? filter_var($validated['hasLinks'], FILTER_VALIDATE_BOOL, FILTER_NULL_ON_FAILURE)
+                : null,
+            hasReplies: array_key_exists('hasReplies', $validated)
+                ? filter_var($validated['hasReplies'], FILTER_VALIDATE_BOOL, FILTER_NULL_ON_FAILURE)
                 : null,
             instanceDomain: strtolower(trim((string) ($validated['instanceDomain'] ?? ''))),
         );

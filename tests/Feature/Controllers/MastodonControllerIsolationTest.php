@@ -5,6 +5,7 @@ namespace Tests\Feature\Controllers;
 use App\Models\User;
 use App\Modules\Mastodon\DTO\Request\MastodonSearchQueryDTO;
 use App\Modules\Mastodon\DTO\Result\MastodonSearchResultDTO;
+use App\Modules\Mastodon\DTO\Result\MastodonStatusContextResultDTO;
 use App\Modules\Mastodon\Search\Contracts\MastodonSearchApplicationServiceInterface;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Mockery;
@@ -30,6 +31,7 @@ class MastodonControllerIsolationTest extends TestCase
                         && $query->language === 'en'
                         && $query->hasMedia === true
                         && $query->hasLinks === true
+                        && $query->hasReplies === true
                         && $query->instanceDomain === 'mastodon.social'
                 ))
                 ->andReturn(new MastodonSearchResultDTO(
@@ -60,6 +62,7 @@ class MastodonControllerIsolationTest extends TestCase
                 'language' => 'en',
                 'hasMedia' => true,
                 'hasLinks' => true,
+                'hasReplies' => true,
                 'instanceDomain' => 'mastodon.social',
             ]))
             ->assertOk()
@@ -99,6 +102,7 @@ class MastodonControllerIsolationTest extends TestCase
                         && $query->resolve === false
                         && $query->hasMedia === false
                         && $query->hasLinks === false
+                        && $query->hasReplies === false
                 ))
                 ->andReturn(new MastodonSearchResultDTO(
                     statuses: [],
@@ -122,8 +126,43 @@ class MastodonControllerIsolationTest extends TestCase
                 'resolve' => 'false',
                 'hasMedia' => 'false',
                 'hasLinks' => 'false',
+                'hasReplies' => 'false',
             ]))
             ->assertOk()
             ->assertJsonPath('data.pagination.query', 'osint');
+    }
+
+    public function test_mastodon_status_context_controller_returns_thread_payload(): void
+    {
+        $user = User::factory()->create();
+
+        $this->mock(MastodonSearchApplicationServiceInterface::class, function ($mock): void {
+            $mock->shouldReceive('context')
+                ->once()
+                ->with('116679508138293961')
+                ->andReturn(new MastodonStatusContextResultDTO(
+                    ancestors: [],
+                    descendants: [[
+                        'id' => 'reply-1',
+                        'content' => 'First reply',
+                    ]],
+                    descendantsTree: [[
+                        'id' => 'reply-1',
+                        'content' => 'First reply',
+                        'replies' => [[
+                            'id' => 'reply-1-1',
+                            'content' => 'Nested reply',
+                            'replies' => [],
+                        ]],
+                    ]],
+                ));
+        });
+
+        $this
+            ->actingAs($user)
+            ->getJson(route('mastodon.statuses.context', ['statusId' => '116679508138293961']))
+            ->assertOk()
+            ->assertJsonPath('data.descendants.0.id', 'reply-1')
+            ->assertJsonPath('data.descendantsTree.0.replies.0.id', 'reply-1-1');
     }
 }

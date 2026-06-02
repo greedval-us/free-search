@@ -13,6 +13,7 @@ final readonly class MastodonSearchQueryDTO
         public string $language = '',
         public ?bool $hasMedia = null,
         public ?bool $hasLinks = null,
+        public ?bool $hasReplies = null,
         public string $instanceDomain = '',
     ) {
     }

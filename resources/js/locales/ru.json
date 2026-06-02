@@ -1086,12 +1086,21 @@
             "openTag": "Открыть хэштег"
         },
         "errors": {
-            "requestFailed": "Ошибка запроса."
+            "requestFailed": "Ошибка запроса.",
+            "contextFailed": "Не удалось загрузить ответы."
         },
         "postTypes": {
             "original": "Оригинал",
             "reply": "Ответ",
             "boost": "Буст"
+        },
+        "comments": {
+            "show": "Ответы",
+            "hide": "Скрыть ответы",
+            "loading": "Загружаем тред...",
+            "empty": "Ответы не найдены.",
+            "ancestors": "Контекст до поста",
+            "replies": "Ответы на пост"
         }
     },
     "dashboard": {

@@ -7,7 +7,13 @@ import IntelResultPanel from '@/components/ui/IntelResultPanel.vue';
 import IntelSearchPanel from '@/components/ui/IntelSearchPanel.vue';
 import { useI18n } from '@/composables/useI18n';
 import { apiRequest } from '@/lib/api';
-import type { MastodonSearchPayload } from '../types';
+import MastodonReplyThread from '../components/MastodonReplyThread.vue';
+import type {
+    MastodonSearchPayload,
+    MastodonStatus,
+    MastodonStatusContextPayload,
+    MastodonStatusThreadNode,
+} from '../types';
 
 const { t } = useI18n();
 
@@ -22,6 +28,7 @@ const form = ref({
     language: '',
     hasMedia: '',
     hasLinks: '',
+    hasReplies: '',
     instanceDomain: '',
 });
 
@@ -31,8 +38,22 @@ const error = ref<string | null>(null);
 const result = ref<MastodonSearchPayload | null>(null);
 const showAdvanced = ref(false);
 const searchPanelCollapsed = ref(false);
+const contextByStatusId = ref<
+    Record<
+        string,
+        {
+            open: boolean;
+            loading: boolean;
+            error: string | null;
+            ancestors: MastodonStatus[];
+            descendants: MastodonStatus[];
+            descendantsTree: MastodonStatusThreadNode[];
+        }
+    >
+>({});
 
 const canSearch = computed(() => form.value.q.trim().length > 0);
+const showsRepliesFilter = computed(() => form.value.type === 'statuses');
 const totalShown = computed(
     () =>
         (result.value?.statuses.length ?? 0) +
@@ -49,6 +70,21 @@ const clampLimit = () => {
 
 const formatDate = (value: string) =>
     value ? new Date(value).toLocaleString() : '-';
+
+const ensureContextState = (statusId: string) => {
+    if (!contextByStatusId.value[statusId]) {
+        contextByStatusId.value[statusId] = {
+            open: false,
+            loading: false,
+            error: null,
+            ancestors: [],
+            descendants: [],
+            descendantsTree: [],
+        };
+    }
+
+    return contextByStatusId.value[statusId];
+};
 
 const normalizeBooleanFilter = (value: string): string | undefined => {
     if (value === 'true' || value === 'false') {
@@ -75,6 +111,7 @@ const runSearch = async (append = false) => {
             language: form.value.language || undefined,
             hasMedia: normalizeBooleanFilter(form.value.hasMedia),
             hasLinks: normalizeBooleanFilter(form.value.hasLinks),
+            hasReplies: normalizeBooleanFilter(form.value.hasReplies),
             instanceDomain: form.value.instanceDomain || undefined,
             offset: append ? result.value?.pagination.nextOffset ?? 0 : 0,
         },
@@ -101,6 +138,44 @@ const runSearch = async (append = false) => {
     }
 
     result.value = response.data;
+};
+
+const loadContext = async (statusId: string) => {
+    const state = ensureContextState(statusId);
+
+    if (state.loading) {
+        return;
+    }
+
+    state.loading = true;
+    state.error = null;
+
+    const response = await apiRequest<MastodonStatusContextPayload>(
+        `/mastodon/statuses/${statusId}/context`
+    );
+
+    state.loading = false;
+
+    if (!response.ok) {
+        state.error = response.message ?? t('mastodon.errors.contextFailed');
+
+        return;
+    }
+
+    state.ancestors = response.data.ancestors;
+    state.descendants = response.data.descendants;
+    state.descendantsTree = response.data.descendantsTree;
+};
+
+const toggleContext = async (statusId: string) => {
+    const state = ensureContextState(statusId);
+    state.open = !state.open;
+
+    if (!state.open || state.loading || state.ancestors.length > 0 || state.descendantsTree.length > 0) {
+        return;
+    }
+
+    await loadContext(statusId);
 };
 </script>
 
@@ -165,6 +240,20 @@ const runSearch = async (append = false) => {
                         <option value="hashtags">{{ t('mastodon.options.type.hashtags') }}</option>
                         <option value="all">{{ t('mastodon.options.type.all') }}</option>
                     </select>
+                </label>
+
+                <label
+                    v-if="showsRepliesFilter"
+                    class="flex items-center gap-3 rounded-md border border-input bg-background px-3 py-2 text-sm md:col-span-2 xl:col-span-1"
+                >
+                    <input
+                        v-model="form.hasReplies"
+                        type="checkbox"
+                        class="h-4 w-4"
+                        true-value="true"
+                        false-value=""
+                    />
+                    <span>{{ t('mastodon.metrics.replies') }}</span>
                 </label>
             </div>
 
@@ -271,6 +360,7 @@ const runSearch = async (append = false) => {
                     <option value="false">{{ t('mastodon.options.no') }}</option>
                 </select>
             </label>
+
         </IntelAdvancedFilters>
 
         <p v-if="error" class="mt-3 text-sm text-destructive">{{ error }}</p>
@@ -365,6 +455,19 @@ const runSearch = async (append = false) => {
                         >
                             {{ domain }}
                         </span>
+
+                        <button
+                            v-if="status.repliesCount > 0"
+                            type="button"
+                            class="cursor-pointer rounded-full border border-input px-3 py-1 text-xs font-medium text-foreground hover:bg-accent"
+                            @click="toggleContext(status.id)"
+                        >
+                            {{
+                                ensureContextState(status.id).open
+                                    ? t('mastodon.comments.hide')
+                                    : `${t('mastodon.comments.show')} (${status.repliesCount})`
+                            }}
+                        </button>
                     </div>
 
                     <div
@@ -397,6 +500,67 @@ const runSearch = async (append = false) => {
                             >
                                 {{ link }}
                             </a>
+                        </div>
+                    </div>
+
+                    <div
+                        v-if="ensureContextState(status.id).open"
+                        class="mt-3 rounded-lg border border-border/70 bg-card/60 p-3"
+                    >
+                        <p
+                            v-if="ensureContextState(status.id).loading"
+                            class="text-xs text-muted-foreground"
+                        >
+                            {{ t('mastodon.comments.loading') }}
+                        </p>
+
+                        <p
+                            v-else-if="ensureContextState(status.id).error"
+                            class="text-xs text-destructive"
+                        >
+                            {{ ensureContextState(status.id).error }}
+                        </p>
+
+                        <div v-else class="space-y-3">
+                            <div
+                                v-if="ensureContextState(status.id).ancestors.length > 0"
+                                class="space-y-2"
+                            >
+                                <div class="text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">
+                                    {{ t('mastodon.comments.ancestors') }}
+                                </div>
+                                <article
+                                    v-for="item in ensureContextState(status.id).ancestors"
+                                    :key="`${status.id}-ancestor-${item.id}`"
+                                    class="rounded-md border border-border/70 bg-background/70 p-2"
+                                >
+                                    <div class="mb-1 text-[11px] text-muted-foreground">
+                                        @{{ item.account.acct }} | {{ formatDate(item.createdAt) }}
+                                    </div>
+                                    <p class="text-xs leading-relaxed text-foreground">
+                                        {{ item.content || t('mastodon.search.noText') }}
+                                    </p>
+                                </article>
+                            </div>
+
+                            <div class="space-y-2">
+                                <div class="text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">
+                                    {{ t('mastodon.comments.replies') }}
+                                </div>
+
+                                <p
+                                    v-if="ensureContextState(status.id).descendants.length === 0"
+                                    class="text-xs text-muted-foreground"
+                                >
+                                    {{ t('mastodon.comments.empty') }}
+                                </p>
+
+                                <MastodonReplyThread
+                                    v-else
+                                    :items="ensureContextState(status.id).descendantsTree"
+                                    :no-text-label="t('mastodon.search.noText')"
+                                />
+                            </div>
                         </div>
                     </div>
                 </article>

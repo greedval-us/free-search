@@ -9,4 +9,9 @@ interface MastodonGatewayInterface
      * @return array<string, mixed>
      */
     public function search(array $params): array;
+
+    /**
+     * @return array<string, mixed>
+     */
+    public function context(string $statusId): array;
 }

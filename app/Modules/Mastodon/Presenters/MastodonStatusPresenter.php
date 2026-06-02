@@ -31,6 +31,7 @@ final class MastodonStatusPresenter
             'id' => (string) ($item['id'] ?? ''),
             'url' => $statusUrl,
             'uri' => (string) ($item['uri'] ?? ''),
+            'inReplyToId' => empty($item['in_reply_to_id']) ? null : (string) $item['in_reply_to_id'],
             'createdAt' => (string) ($item['created_at'] ?? ''),
             'content' => $content,
             'spoilerText' => $this->plainText((string) ($item['spoiler_text'] ?? '')),

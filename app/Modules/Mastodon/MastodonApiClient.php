@@ -22,6 +22,11 @@ final class MastodonApiClient implements MastodonGatewayInterface
         return $this->get('/api/v2/search', $params);
     }
 
+    public function context(string $statusId): array
+    {
+        return $this->get("/api/v1/statuses/{$statusId}/context", []);
+    }
+
     /**
      * @param  array<string, mixed>  $query
      * @return array<string, mixed>

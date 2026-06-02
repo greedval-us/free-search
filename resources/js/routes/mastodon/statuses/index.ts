@@ -1,82 +1,4 @@
-import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFormDefinition, applyUrlDefaults } from './../../../../../wayfinder'
-/**
-* @see \App\Http\Controllers\Mastodon\MastodonSearchController::search
- * @see app/Http/Controllers/Mastodon/MastodonSearchController.php:22
- * @route '/mastodon/search'
- */
-export const search = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
-    url: search.url(options),
-    method: 'get',
-})
-
-search.definition = {
-    methods: ["get","head"],
-    url: '/mastodon/search',
-} satisfies RouteDefinition<["get","head"]>
-
-/**
-* @see \App\Http\Controllers\Mastodon\MastodonSearchController::search
- * @see app/Http/Controllers/Mastodon/MastodonSearchController.php:22
- * @route '/mastodon/search'
- */
-search.url = (options?: RouteQueryOptions) => {
-    return search.definition.url + queryParams(options)
-}
-
-/**
-* @see \App\Http\Controllers\Mastodon\MastodonSearchController::search
- * @see app/Http/Controllers/Mastodon/MastodonSearchController.php:22
- * @route '/mastodon/search'
- */
-search.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
-    url: search.url(options),
-    method: 'get',
-})
-/**
-* @see \App\Http\Controllers\Mastodon\MastodonSearchController::search
- * @see app/Http/Controllers/Mastodon/MastodonSearchController.php:22
- * @route '/mastodon/search'
- */
-search.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
-    url: search.url(options),
-    method: 'head',
-})
-
-    /**
-* @see \App\Http\Controllers\Mastodon\MastodonSearchController::search
- * @see app/Http/Controllers/Mastodon/MastodonSearchController.php:22
- * @route '/mastodon/search'
- */
-    const searchForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
-        action: search.url(options),
-        method: 'get',
-    })
-
-            /**
-* @see \App\Http\Controllers\Mastodon\MastodonSearchController::search
- * @see app/Http/Controllers/Mastodon/MastodonSearchController.php:22
- * @route '/mastodon/search'
- */
-        searchForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
-            action: search.url(options),
-            method: 'get',
-        })
-            /**
-* @see \App\Http\Controllers\Mastodon\MastodonSearchController::search
- * @see app/Http/Controllers/Mastodon/MastodonSearchController.php:22
- * @route '/mastodon/search'
- */
-        searchForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
-            action: search.url({
-                        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
-                            _method: 'HEAD',
-                            ...(options?.query ?? options?.mergeQuery ?? {}),
-                        }
-                    }),
-            method: 'get',
-        })
-    
-    search.form = searchForm
+import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFormDefinition, applyUrlDefaults } from './../../../wayfinder'
 /**
 * @see \App\Http\Controllers\Mastodon\MastodonSearchController::context
  * @see app/Http/Controllers/Mastodon/MastodonSearchController.php:31
@@ -174,6 +96,8 @@ context.head = (args: { statusId: string | number } | [statusId: string | number
         })
     
     context.form = contextForm
-const MastodonSearchController = { search, context }
+const statuses = {
+    context: Object.assign(context, context),
+}
 
-export default MastodonSearchController
+export default statuses

@@ -4,6 +4,7 @@ export type MastodonStatus = {
     id: string;
     url: string;
     uri: string;
+    inReplyToId: string | null;
     createdAt: string;
     content: string;
     spoilerText: string;
@@ -36,6 +37,10 @@ export type MastodonStatus = {
         avatar: string;
         instanceDomain: string;
     };
+};
+
+export type MastodonStatusThreadNode = MastodonStatus & {
+    replies: MastodonStatusThreadNode[];
 };
 
 export type MastodonAccount = {
@@ -86,4 +91,10 @@ export type MastodonSearchPayload = {
         nextOffset: number | null;
         hasMore: boolean;
     };
+};
+
+export type MastodonStatusContextPayload = {
+    ancestors: MastodonStatus[];
+    descendants: MastodonStatus[];
+    descendantsTree: MastodonStatusThreadNode[];
 };

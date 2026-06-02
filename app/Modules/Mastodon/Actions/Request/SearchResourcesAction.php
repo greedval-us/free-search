@@ -76,6 +76,14 @@ final class SearchResourcesAction extends AbstractMastodonAction
             return false;
         }
 
+        if ($query->hasReplies !== null) {
+            $hasReplies = (int) ($item['repliesCount'] ?? 0) > 0;
+
+            if ($hasReplies !== $query->hasReplies) {
+                return false;
+            }
+        }
+
         if ($query->instanceDomain !== '' && strtolower((string) ($item['instanceDomain'] ?? '')) !== $query->instanceDomain) {
             return false;
         }

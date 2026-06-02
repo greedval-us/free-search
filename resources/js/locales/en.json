@@ -1044,7 +1044,8 @@
             "instanceDomain": "Instance domain",
             "instancePlaceholder": "for example: mastodon.social",
             "hasMedia": "Has media",
-            "hasLinks": "Has links"
+            "hasLinks": "Has links",
+            "hasReplies": "Has replies"
         },
         "sections": {
             "statuses": "Statuses",
@@ -1086,12 +1087,21 @@
             "openTag": "Open hashtag"
         },
         "errors": {
-            "requestFailed": "Request failed."
+            "requestFailed": "Request failed.",
+            "contextFailed": "Failed to load replies."
         },
         "postTypes": {
             "original": "Original",
             "reply": "Reply",
             "boost": "Boost"
+        },
+        "comments": {
+            "show": "Replies",
+            "hide": "Hide replies",
+            "loading": "Loading thread...",
+            "empty": "No replies found.",
+            "ancestors": "Context before post",
+            "replies": "Replies to post"
         }
     },
     "dashboard": {
