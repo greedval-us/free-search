@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ExternalLink } from 'lucide-vue-next';
 import { useI18n } from '@/composables/useI18n';
+import MastodonStatusCard from './MastodonStatusCard.vue';
 import type { MastodonHashtag, MastodonHashtagDetailsState } from '../types';
 
 defineProps<{
@@ -290,162 +291,15 @@ const { t } = useI18n();
                             }}
                         </p>
 
-                        <article
+                        <MastodonStatusCard
                             v-for="status in ensureHashtagDetailsState(
                                 hashtag.name
                             ).statuses"
                             :key="`${hashtag.name}-status-${status.id}`"
-                            class="rounded-md border border-border/70 bg-background/70 p-3"
-                        >
-                            <div class="mb-2 flex items-center gap-3">
-                                <img
-                                    v-if="status.account.avatar"
-                                    :src="status.account.avatar"
-                                    :alt="
-                                        status.account.displayName ||
-                                        status.account.acct
-                                    "
-                                    class="h-8 w-8 rounded-full object-cover"
-                                    loading="lazy"
-                                />
-                                <div class="min-w-0">
-                                    <div
-                                        class="truncate text-xs font-semibold text-foreground"
-                                    >
-                                        {{
-                                            status.account.displayName ||
-                                            status.account.username
-                                        }}
-                                    </div>
-                                    <div
-                                        class="truncate text-[11px] text-muted-foreground"
-                                    >
-                                        @{{ status.account.acct }} |
-                                        {{
-                                            status.instanceDomain ||
-                                            status.account.instanceDomain
-                                        }}
-                                        | {{ formatDate(status.createdAt) }}
-                                    </div>
-                                </div>
-                            </div>
-
-                            <p
-                                v-if="status.spoilerText"
-                                class="mb-2 rounded-md border border-amber-500/30 bg-amber-500/10 px-2 py-1 text-[11px] text-amber-700"
-                            >
-                                {{ status.spoilerText }}
-                            </p>
-
-                            <p class="text-xs leading-relaxed text-foreground">
-                                {{
-                                    status.content ||
-                                    t('mastodon.search.noText')
-                                }}
-                            </p>
-
-                            <div
-                                class="mt-2 flex flex-wrap gap-3 text-[11px] text-muted-foreground"
-                            >
-                                <span
-                                    >{{ t('mastodon.metrics.postType') }}:
-                                    {{
-                                        t(
-                                            `mastodon.postTypes.${status.postType}`
-                                        )
-                                    }}</span
-                                >
-                                <span
-                                    >{{ t('mastodon.metrics.replies') }}:
-                                    {{ status.repliesCount }}</span
-                                >
-                                <span
-                                    >{{ t('mastodon.metrics.reblogs') }}:
-                                    {{ status.reblogsCount }}</span
-                                >
-                                <span
-                                    >{{ t('mastodon.metrics.favourites') }}:
-                                    {{ status.favouritesCount }}</span
-                                >
-                            </div>
-
-                            <div class="mt-2 flex flex-wrap gap-2">
-                                <a
-                                    v-if="status.url"
-                                    :href="status.url"
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    class="cursor-pointer rounded-full border border-input px-2 py-1 text-[11px] text-primary hover:bg-accent"
-                                >
-                                    <ExternalLink class="mr-1 inline h-3 w-3" />
-                                    {{ t('mastodon.common.open') }}
-                                </a>
-
-                                <span
-                                    v-for="tag in status.tags"
-                                    :key="`${hashtag.name}-inner-tag-${status.id}-${tag}`"
-                                    class="rounded-full border border-input px-2 py-1 text-[11px] text-muted-foreground"
-                                >
-                                    #{{ tag }}
-                                </span>
-
-                                <span
-                                    v-for="domain in status.domains"
-                                    :key="`${hashtag.name}-inner-domain-${status.id}-${domain}`"
-                                    class="rounded-full border border-cyan-500/30 bg-cyan-500/10 px-2 py-1 text-[11px] text-cyan-700"
-                                >
-                                    {{ domain }}
-                                </span>
-                            </div>
-
-                            <div
-                                v-if="
-                                    status.mentions.length > 0 ||
-                                    status.links.length > 0
-                                "
-                                class="mt-2 space-y-2 text-[11px]"
-                            >
-                                <div
-                                    v-if="status.mentions.length > 0"
-                                    class="flex flex-wrap gap-2"
-                                >
-                                    <span class="text-muted-foreground"
-                                        >{{
-                                            t('mastodon.metrics.mentions')
-                                        }}:</span
-                                    >
-                                    <a
-                                        v-for="mention in status.mentions"
-                                        :key="`${hashtag.name}-inner-mention-${status.id}-${mention.acct}`"
-                                        :href="mention.url"
-                                        target="_blank"
-                                        rel="noopener noreferrer"
-                                        class="rounded-full border border-input px-2 py-1 text-primary hover:bg-accent"
-                                    >
-                                        @{{ mention.acct }}
-                                    </a>
-                                </div>
-
-                                <div
-                                    v-if="status.links.length > 0"
-                                    class="space-y-1"
-                                >
-                                    <div class="text-muted-foreground">
-                                        {{ t('mastodon.metrics.links') }}:
-                                    </div>
-                                    <a
-                                        v-for="link in status.links"
-                                        :key="`${hashtag.name}-inner-link-${status.id}-${link}`"
-                                        :href="link"
-                                        target="_blank"
-                                        rel="noopener noreferrer"
-                                        class="block truncate text-primary hover:underline"
-                                    >
-                                        {{ link }}
-                                    </a>
-                                </div>
-                            </div>
-                        </article>
+                            :status="status"
+                            :format-date="formatDate"
+                            compact
+                        />
 
                         <div
                             v-if="
