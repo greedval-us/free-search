@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Mastodon\MastodonAnalyticsController;
+use App\Http\Controllers\Mastodon\MastodonParserController;
 use App\Http\Controllers\Mastodon\MastodonSearchController;
 use Illuminate\Support\Facades\Route;
 
@@ -23,6 +24,24 @@ Route::prefix('mastodon')->name('mastodon.')->group(function (): void {
         Route::get('', [MastodonSearchController::class, 'search'])
             ->middleware('throttle:45,1')
             ->name('index');
+    });
+
+    Route::prefix('parser')->name('parser.')->group(function (): void {
+        Route::post('start', [MastodonParserController::class, 'start'])
+            ->middleware(['feature.access', 'throttle:10,1'])
+            ->name('start');
+        Route::get('status/{runId}', [MastodonParserController::class, 'status'])
+            ->middleware(['feature.access', 'throttle:40,1'])
+            ->name('status');
+        Route::post('stop/{runId}', [MastodonParserController::class, 'stop'])
+            ->middleware(['feature.access', 'throttle:20,1'])
+            ->name('stop');
+        Route::get('download-excel/{runId}', [MastodonParserController::class, 'downloadExcel'])
+            ->middleware(['feature.access', 'throttle:10,1'])
+            ->name('download-excel');
+        Route::get('download-json/{runId}', [MastodonParserController::class, 'downloadJson'])
+            ->middleware(['feature.access', 'throttle:10,1'])
+            ->name('download-json');
     });
 
     Route::get('statuses/{statusId}/context', [MastodonSearchController::class, 'context'])

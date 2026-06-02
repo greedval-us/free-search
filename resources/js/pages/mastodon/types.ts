@@ -1,4 +1,4 @@
-export type MastodonTabValue = 'search' | 'analytics';
+export type MastodonTabValue = 'search' | 'analytics' | 'parser';
 
 export type MastodonStatus = {
     id: string;

@@ -5,7 +5,42 @@
     },
     "tabs": {
         "search": "Search",
-        "analytics": "Analytics"
+        "analytics": "Analytics",
+        "parser": "Parser"
+    },
+    "parser": {
+        "title": "Mastodon Parser",
+        "collapsed": "Parser panel is collapsed",
+        "subtitle": "Collect all available posts from a Mastodon account and replies to each original post.",
+        "hint": "Use an account handle like @analyst@mastodon.social. The parser walks through the account timeline, then loads reply threads under each original post.",
+        "account": "Account",
+        "accountPlaceholder": "for example: @analyst@mastodon.social",
+        "start": "Start parser",
+        "stop": "Stop",
+        "collecting": "Collecting data...",
+        "download": "Download Excel",
+        "downloadJson": "Download JSON",
+        "help": {
+            "overview": "Build an export with the account timeline and reply threads under each original post."
+        },
+        "progress": {
+            "title": "Parser progress",
+            "statuses": "Statuses",
+            "comments": "Comments",
+            "stage": {
+                "idle": "Idle",
+                "statuses": "Loading statuses",
+                "comments": "Loading comments",
+                "finishing": "Building export",
+                "completed": "Completed",
+                "failed": "Failed",
+                "stopped": "Stopped"
+            }
+        },
+        "errors": {
+            "accountRequired": "Account is required.",
+            "failed": "Failed to run parser."
+        }
     },
     "analytics": {
         "title": "Mastodon Analytics",

@@ -22,6 +22,13 @@ final class MastodonApiClient implements MastodonGatewayInterface
         return $this->get('/api/v2/search', $params);
     }
 
+    public function lookupAccount(string $acct): array
+    {
+        return $this->get('/api/v1/accounts/lookup', [
+            'acct' => $acct,
+        ]);
+    }
+
     public function context(string $statusId): array
     {
         return $this->get("/api/v1/statuses/{$statusId}/context", []);

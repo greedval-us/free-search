@@ -6,6 +6,7 @@ return [
             'analytics' => 0,
             'parser' => 0,
             'mastodon.analytics' => 0,
+            'mastodon.parser' => 0,
             'site-intel.analytics' => 0,
             'site-intel.seo-audit' => 0,
             'telegram.analytics' => 0,
@@ -17,6 +18,7 @@ return [
             'analytics' => 10,
             'parser' => 5,
             'mastodon.analytics' => 10,
+            'mastodon.parser' => 5,
             'site-intel.analytics' => 10,
             'site-intel.seo-audit' => 10,
             'telegram.analytics' => 10,
@@ -28,6 +30,7 @@ return [
             'analytics' => 100,
             'parser' => 50,
             'mastodon.analytics' => 100,
+            'mastodon.parser' => 50,
             'site-intel.analytics' => 100,
             'site-intel.seo-audit' => 100,
             'telegram.analytics' => 100,
@@ -42,6 +45,11 @@ return [
             'module' => 'mastodon',
             'capability' => 'analytics',
             'quota_key' => 'mastodon.analytics',
+        ],
+        'mastodon.parser' => [
+            'module' => 'mastodon',
+            'capability' => 'parser',
+            'quota_key' => 'mastodon.parser',
         ],
         'site-intel.analytics' => [
             'module' => 'site-intel',
@@ -84,6 +92,7 @@ return [
         'mastodon' => [
             'tabs' => [
                 'analytics' => 'mastodon.analytics',
+                'parser' => 'mastodon.parser',
             ],
         ],
         'site-intel' => [
@@ -115,6 +124,11 @@ return [
     'protected_routes' => [
         'mastodon.analytics.summary' => ['resource' => 'mastodon.analytics', 'counts' => true],
         'mastodon.analytics.report' => ['resource' => 'mastodon.analytics', 'counts' => false],
+        'mastodon.parser.start' => ['resource' => 'mastodon.parser', 'counts' => true],
+        'mastodon.parser.status' => ['resource' => 'mastodon.parser', 'counts' => false],
+        'mastodon.parser.stop' => ['resource' => 'mastodon.parser', 'counts' => false],
+        'mastodon.parser.download-excel' => ['resource' => 'mastodon.parser', 'counts' => false],
+        'mastodon.parser.download-json' => ['resource' => 'mastodon.parser', 'counts' => false],
         'site-intel.analytics' => ['resource' => 'site-intel.analytics', 'counts' => true],
         'site-intel.report' => ['resource' => 'site-intel.analytics', 'counts' => false],
         'site-intel.seo-audit' => ['resource' => 'site-intel.seo-audit', 'counts' => true],

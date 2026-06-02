@@ -119,6 +119,7 @@ return [
     'quota_resources' => [
         'mastodon' => [
             'analytics' => 'Mastodon аналитика',
+            'parser' => 'Mastodon парсер',
         ],
         'site-intel' => [
             'analytics' => 'Site Intel аналитика',
