@@ -29,7 +29,10 @@
         "report": "Open report",
         "downloadReport": "Download report",
         "loading": "Building analytics...",
-        "empty": "Run analytics to view the Mastodon summary.",
+        "empty": {
+            "title": "Mastodon analytics is ready",
+            "description": "Run analytics to build a sample-based summary for an account or hashtag."
+        },
         "accountProfile": "Account profile",
         "hashtagProfile": "Hashtag profile",
         "sample": "Sample coverage",

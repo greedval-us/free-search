@@ -16,6 +16,7 @@ import MetricCard from '@/components/ui/MetricCard.vue';
 import SectionCard from '@/components/ui/SectionCard.vue';
 import { useI18n } from '@/composables/useI18n';
 import { apiRequest } from '@/lib/api';
+import MastodonAnalyticsEmptyState from './MastodonAnalyticsEmptyState.vue';
 import type { MastodonAccount, MastodonAnalyticsPayload, MastodonHashtag } from '../types';
 
 type AnalyticsMode = 'account' | 'hashtag';
@@ -307,28 +308,12 @@ const downloadReport = () => {
 
     <IntelResultPanel>
         <div class="intel-scroll min-h-0 flex-1 space-y-4 overflow-y-auto pr-1">
-            <div
-                v-if="loading && !result"
-                class="rounded-xl border border-sidebar-border/80 bg-card/70 p-6 text-center text-sm text-muted-foreground shadow-xl backdrop-blur"
-            >
-                {{ t('mastodon.analytics.loading') }}
-            </div>
-
-            <div
-                v-else-if="!result"
-                class="rounded-xl border border-sidebar-border/80 bg-card/70 p-6 text-center text-sm text-muted-foreground shadow-xl backdrop-blur"
-            >
-                <p>{{ t('mastodon.analytics.empty') }}</p>
-                <button
-                    type="button"
-                    :disabled="!canRun || loading"
-                    class="mt-4 inline-flex h-10 cursor-pointer items-center gap-2 rounded-md border border-input bg-background px-4 text-sm font-medium hover:bg-accent disabled:cursor-not-allowed disabled:opacity-60"
-                    @click="runAnalytics"
-                >
-                    <RefreshCw class="h-4 w-4" />
-                    {{ t('mastodon.analytics.refresh') }}
-                </button>
-            </div>
+            <MastodonAnalyticsEmptyState
+                v-if="!result"
+                :loading="loading"
+                :disabled="!canRun"
+                @refresh="runAnalytics"
+            />
 
             <template v-else>
                 <SectionCard v-if="accountProfile" :title="t('mastodon.analytics.accountProfile')">
@@ -357,8 +342,8 @@ const downloadReport = () => {
                                 </a>
                             </div>
                             <p class="mt-1 text-xs text-muted-foreground">
-                                @{{ accountProfile.acct }} ·
-                                {{ accountProfile.instanceDomain || '-' }} ·
+                                @{{ accountProfile.acct }} |
+                                {{ accountProfile.instanceDomain || '-' }} |
                                 {{ formatDate(accountProfile.createdAt) }}
                             </p>
                             <p class="mt-2 text-xs leading-relaxed text-muted-foreground">
@@ -484,7 +469,7 @@ const downloadReport = () => {
                                             {{ status.account.displayName || status.account.acct }}
                                         </div>
                                         <div class="truncate text-[11px] text-muted-foreground">
-                                            @{{ status.account.acct }} · {{ formatDate(status.createdAt) }}
+                                            @{{ status.account.acct }} | {{ formatDate(status.createdAt) }}
                                         </div>
                                     </div>
                                     <a
@@ -522,7 +507,7 @@ const downloadReport = () => {
                                 :key="domain.domain"
                                 class="rounded-full border border-input px-2 py-1 text-xs"
                             >
-                                {{ domain.domain }} · {{ domain.count }}
+                                {{ domain.domain }} | {{ domain.count }}
                             </span>
                         </div>
                         <p v-else class="text-xs text-muted-foreground">
@@ -538,7 +523,7 @@ const downloadReport = () => {
                                 class="inline-flex items-center gap-1 rounded-full border border-input px-2 py-1 text-xs"
                             >
                                 <Tags class="h-3 w-3" />
-                                #{{ tag.tag }} · {{ tag.count }}
+                                #{{ tag.tag }} | {{ tag.count }}
                             </span>
                         </div>
                         <p v-else class="text-xs text-muted-foreground">
