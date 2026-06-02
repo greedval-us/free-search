@@ -14,4 +14,14 @@ interface MastodonGatewayInterface
      * @return array<string, mixed>
      */
     public function context(string $statusId): array;
+
+    /**
+     * @return array<int, array<string, mixed>>
+     */
+    public function accountStatuses(string $accountId, int $limit): array;
+
+    /**
+     * @return array<int, array<string, mixed>>
+     */
+    public function accountFollowers(string $accountId, int $limit): array;
 }

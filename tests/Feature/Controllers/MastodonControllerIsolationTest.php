@@ -32,6 +32,9 @@ class MastodonControllerIsolationTest extends TestCase
                         && $query->hasMedia === true
                         && $query->hasLinks === true
                         && $query->hasReplies === true
+                        && $query->author === '@analyst'
+                        && $query->dateFrom === '2026-06-01T10:00'
+                        && $query->dateTo === '2026-06-02T18:00'
                         && $query->instanceDomain === 'mastodon.social'
                 ))
                 ->andReturn(new MastodonSearchResultDTO(
@@ -63,6 +66,9 @@ class MastodonControllerIsolationTest extends TestCase
                 'hasMedia' => true,
                 'hasLinks' => true,
                 'hasReplies' => true,
+                'author' => '@analyst',
+                'dateFrom' => '2026-06-01T10:00',
+                'dateTo' => '2026-06-02T18:00',
                 'instanceDomain' => 'mastodon.social',
             ]))
             ->assertOk()
@@ -164,5 +170,51 @@ class MastodonControllerIsolationTest extends TestCase
             ->assertOk()
             ->assertJsonPath('data.descendants.0.id', 'reply-1')
             ->assertJsonPath('data.descendantsTree.0.replies.0.id', 'reply-1-1');
+    }
+
+    public function test_mastodon_account_statuses_controller_returns_statuses_payload(): void
+    {
+        $user = User::factory()->create();
+
+        $this->mock(MastodonSearchApplicationServiceInterface::class, function ($mock): void {
+            $mock->shouldReceive('accountStatuses')
+                ->once()
+                ->with('109999', 10)
+                ->andReturn(new \App\Modules\Mastodon\DTO\Result\MastodonAccountStatusesResultDTO(
+                    statuses: [[
+                        'id' => 'status-42',
+                        'content' => 'Account status',
+                    ]],
+                ));
+        });
+
+        $this
+            ->actingAs($user)
+            ->getJson(route('mastodon.accounts.statuses', ['accountId' => '109999', 'limit' => 10]))
+            ->assertOk()
+            ->assertJsonPath('data.statuses.0.id', 'status-42');
+    }
+
+    public function test_mastodon_account_followers_controller_returns_followers_payload(): void
+    {
+        $user = User::factory()->create();
+
+        $this->mock(MastodonSearchApplicationServiceInterface::class, function ($mock): void {
+            $mock->shouldReceive('accountFollowers')
+                ->once()
+                ->with('109999', 10)
+                ->andReturn(new \App\Modules\Mastodon\DTO\Result\MastodonAccountFollowersResultDTO(
+                    accounts: [[
+                        'id' => 'follower-1',
+                        'acct' => 'analyst@example.social',
+                    ]],
+                ));
+        });
+
+        $this
+            ->actingAs($user)
+            ->getJson(route('mastodon.accounts.followers', ['accountId' => '109999', 'limit' => 10]))
+            ->assertOk()
+            ->assertJsonPath('data.accounts.0.id', 'follower-1');
     }
 }

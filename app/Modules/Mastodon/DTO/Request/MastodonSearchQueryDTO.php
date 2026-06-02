@@ -14,6 +14,9 @@ final readonly class MastodonSearchQueryDTO
         public ?bool $hasMedia = null,
         public ?bool $hasLinks = null,
         public ?bool $hasReplies = null,
+        public string $author = '',
+        public string $dateFrom = '',
+        public string $dateTo = '',
         public string $instanceDomain = '',
     ) {
     }

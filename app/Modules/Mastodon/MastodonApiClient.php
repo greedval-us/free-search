@@ -27,6 +27,20 @@ final class MastodonApiClient implements MastodonGatewayInterface
         return $this->get("/api/v1/statuses/{$statusId}/context", []);
     }
 
+    public function accountStatuses(string $accountId, int $limit): array
+    {
+        return $this->get("/api/v1/accounts/{$accountId}/statuses", [
+            'limit' => $limit,
+        ]);
+    }
+
+    public function accountFollowers(string $accountId, int $limit): array
+    {
+        return $this->get("/api/v1/accounts/{$accountId}/followers", [
+            'limit' => $limit,
+        ]);
+    }
+
     /**
      * @param  array<string, mixed>  $query
      * @return array<string, mixed>

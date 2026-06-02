@@ -9,6 +9,9 @@ import { useI18n } from '@/composables/useI18n';
 import { apiRequest } from '@/lib/api';
 import MastodonReplyThread from '../components/MastodonReplyThread.vue';
 import type {
+    MastodonAccount,
+    MastodonAccountFollowersPayload,
+    MastodonAccountStatusesPayload,
     MastodonSearchPayload,
     MastodonStatus,
     MastodonStatusContextPayload,
@@ -25,6 +28,9 @@ const form = ref({
     type: 'statuses',
     limit: 10,
     resolve: false,
+    author: '',
+    dateFrom: '',
+    dateTo: '',
     language: '',
     hasMedia: '',
     hasLinks: '',
@@ -51,9 +57,37 @@ const contextByStatusId = ref<
         }
     >
 >({});
+const accountDetailsById = ref<
+    Record<
+        string,
+        {
+            statusesOpen: boolean;
+            followersOpen: boolean;
+            statusesLoading: boolean;
+            followersLoading: boolean;
+            statusesError: string | null;
+            followersError: string | null;
+            statuses: MastodonStatus[];
+            followers: MastodonAccount[];
+        }
+    >
+>({});
 
 const canSearch = computed(() => form.value.q.trim().length > 0);
 const showsRepliesFilter = computed(() => form.value.type === 'statuses');
+const showsStatusFilters = computed(() => form.value.type === 'statuses');
+const resolveRemoteLabel = computed(() => {
+    const label = t('mastodon.search.resolveRemote');
+
+    return label === 'mastodon.search.resolveRemote'
+        ? 'Искать на других инстансах'
+        : label;
+});
+const mastodonText = (key: string, fallback: string) => {
+    const label = t(key);
+
+    return label === key ? fallback : label;
+};
 const totalShown = computed(
     () =>
         (result.value?.statuses.length ?? 0) +
@@ -86,6 +120,23 @@ const ensureContextState = (statusId: string) => {
     return contextByStatusId.value[statusId];
 };
 
+const ensureAccountDetailsState = (accountId: string) => {
+    if (!accountDetailsById.value[accountId]) {
+        accountDetailsById.value[accountId] = {
+            statusesOpen: false,
+            followersOpen: false,
+            statusesLoading: false,
+            followersLoading: false,
+            statusesError: null,
+            followersError: null,
+            statuses: [],
+            followers: [],
+        };
+    }
+
+    return accountDetailsById.value[accountId];
+};
+
 const normalizeBooleanFilter = (value: string): string | undefined => {
     if (value === 'true' || value === 'false') {
         return value;
@@ -109,6 +160,9 @@ const runSearch = async (append = false) => {
             limit: form.value.limit,
             resolve: form.value.resolve ? 'true' : undefined,
             language: form.value.language || undefined,
+            author: showsStatusFilters.value ? form.value.author || undefined : undefined,
+            dateFrom: showsStatusFilters.value ? form.value.dateFrom || undefined : undefined,
+            dateTo: showsStatusFilters.value ? form.value.dateTo || undefined : undefined,
             hasMedia: normalizeBooleanFilter(form.value.hasMedia),
             hasLinks: normalizeBooleanFilter(form.value.hasLinks),
             hasReplies: normalizeBooleanFilter(form.value.hasReplies),
@@ -177,6 +231,88 @@ const toggleContext = async (statusId: string) => {
 
     await loadContext(statusId);
 };
+
+const loadAccountStatuses = async (accountId: string) => {
+    const state = ensureAccountDetailsState(accountId);
+
+    if (state.statusesLoading) {
+        return;
+    }
+
+    state.statusesLoading = true;
+    state.statusesError = null;
+
+    const response = await apiRequest<MastodonAccountStatusesPayload>(
+        `/mastodon/accounts/${accountId}/statuses`,
+        {
+            query: {
+                limit: form.value.limit,
+            },
+        }
+    );
+
+    state.statusesLoading = false;
+
+    if (!response.ok) {
+        state.statusesError = response.message ?? mastodonText('mastodon.errors.requestFailed', 'Ошибка запроса.');
+
+        return;
+    }
+
+    state.statuses = response.data.statuses;
+};
+
+const loadAccountFollowers = async (accountId: string) => {
+    const state = ensureAccountDetailsState(accountId);
+
+    if (state.followersLoading) {
+        return;
+    }
+
+    state.followersLoading = true;
+    state.followersError = null;
+
+    const response = await apiRequest<MastodonAccountFollowersPayload>(
+        `/mastodon/accounts/${accountId}/followers`,
+        {
+            query: {
+                limit: form.value.limit,
+            },
+        }
+    );
+
+    state.followersLoading = false;
+
+    if (!response.ok) {
+        state.followersError = response.message ?? mastodonText('mastodon.errors.requestFailed', 'Ошибка запроса.');
+
+        return;
+    }
+
+    state.followers = response.data.accounts;
+};
+
+const toggleAccountStatuses = async (account: MastodonAccount) => {
+    const state = ensureAccountDetailsState(account.id);
+    state.statusesOpen = !state.statusesOpen;
+
+    if (!state.statusesOpen || state.statusesLoading || state.statuses.length > 0) {
+        return;
+    }
+
+    await loadAccountStatuses(account.id);
+};
+
+const toggleAccountFollowers = async (account: MastodonAccount) => {
+    const state = ensureAccountDetailsState(account.id);
+    state.followersOpen = !state.followersOpen;
+
+    if (!state.followersOpen || state.followersLoading || state.followers.length > 0) {
+        return;
+    }
+
+    await loadAccountFollowers(account.id);
+};
 </script>
 
 <template>
@@ -212,9 +348,9 @@ const toggleContext = async (statusId: string) => {
 
         <div
             v-if="!searchPanelCollapsed"
-            class="mt-3 flex flex-wrap items-end gap-3"
+            class="mt-3 grid gap-3 xl:grid-cols-[minmax(0,1fr)_auto]"
         >
-            <div class="grid min-w-0 flex-1 gap-3 md:grid-cols-2 xl:grid-cols-3">
+            <div class="grid min-w-0 gap-3 md:grid-cols-2 xl:grid-cols-4">
                 <label class="block min-w-0 xl:col-span-2">
                     <span class="mb-1 block truncate text-xs font-medium text-muted-foreground">
                         {{ t('mastodon.search.query') }}
@@ -244,20 +380,27 @@ const toggleContext = async (statusId: string) => {
 
                 <label
                     v-if="showsRepliesFilter"
-                    class="flex items-center gap-3 rounded-md border border-input bg-background px-3 py-2 text-sm md:col-span-2 xl:col-span-1"
+                    class="block min-w-0 md:col-span-2 xl:col-span-1"
                 >
-                    <input
-                        v-model="form.hasReplies"
-                        type="checkbox"
-                        class="h-4 w-4"
-                        true-value="true"
-                        false-value=""
-                    />
-                    <span>{{ t('mastodon.metrics.replies') }}</span>
+                    <span class="mb-1 block truncate text-xs font-medium text-muted-foreground">
+                        {{ t('mastodon.metrics.replies') }}
+                    </span>
+                    <span
+                        class="flex h-10 items-center gap-3 rounded-md border border-input bg-background px-3 text-sm"
+                    >
+                        <input
+                            v-model="form.hasReplies"
+                            type="checkbox"
+                            class="h-4 w-4"
+                            true-value="true"
+                            false-value=""
+                        />
+                        <span>{{ t('mastodon.search.onlyWithReplies') }}</span>
+                    </span>
                 </label>
             </div>
 
-            <div class="flex w-full flex-wrap items-end gap-2 lg:w-auto">
+            <div class="flex flex-wrap items-end gap-2 xl:justify-end">
                 <button
                     type="button"
                     :aria-label="
@@ -303,9 +446,16 @@ const toggleContext = async (statusId: string) => {
                 />
             </label>
 
-            <label class="flex items-center gap-3 rounded-md border border-input bg-background px-3 py-2 text-sm">
-                <input v-model="form.resolve" type="checkbox" class="h-4 w-4" />
-                <span>{{ t('mastodon.search.resolve') }}</span>
+            <label class="block min-w-0">
+                <span class="mb-1 block truncate text-xs font-medium text-muted-foreground">
+                    {{ t('mastodon.search.resolve') }}
+                </span>
+                <span
+                    class="flex h-10 items-center gap-3 rounded-md border border-input bg-background px-3 text-sm"
+                >
+                    <input v-model="form.resolve" type="checkbox" class="h-4 w-4" />
+                    <span>{{ resolveRemoteLabel }}</span>
+                </span>
             </label>
 
             <label class="block min-w-0">
@@ -318,6 +468,39 @@ const toggleContext = async (statusId: string) => {
                     maxlength="12"
                     class="h-10 w-full rounded-md border border-input bg-background px-3 text-sm"
                     :placeholder="t('mastodon.search.languagePlaceholder')"
+                />
+            </label>
+
+            <label v-if="showsStatusFilters" class="block min-w-0">
+                <span class="mb-1 block truncate text-xs font-medium text-muted-foreground">
+                    {{ t('telegram.comments.author') }}
+                </span>
+                <input
+                    v-model="form.author"
+                    type="text"
+                    class="h-10 w-full rounded-md border border-input bg-background px-3 text-sm"
+                />
+            </label>
+
+            <label v-if="showsStatusFilters" class="block min-w-0">
+                <span class="mb-1 block truncate text-xs font-medium text-muted-foreground">
+                    {{ t('telegram.search.dateFrom') }}
+                </span>
+                <input
+                    v-model="form.dateFrom"
+                    type="datetime-local"
+                    class="h-10 w-full rounded-md border border-input bg-background px-3 text-sm"
+                />
+            </label>
+
+            <label v-if="showsStatusFilters" class="block min-w-0">
+                <span class="mb-1 block truncate text-xs font-medium text-muted-foreground">
+                    {{ t('telegram.search.dateTo') }}
+                </span>
+                <input
+                    v-model="form.dateTo"
+                    type="datetime-local"
+                    class="h-10 w-full rounded-md border border-input bg-background px-3 text-sm"
                 />
             </label>
 
@@ -611,6 +794,28 @@ const toggleContext = async (statusId: string) => {
                                 </div>
                             </div>
                             <div class="mt-3 flex flex-wrap gap-2">
+                                <button
+                                    type="button"
+                                    class="cursor-pointer rounded-full border border-input px-2 py-1 text-xs text-foreground hover:bg-accent"
+                                    @click="toggleAccountStatuses(account)"
+                                >
+                                    {{
+                                        ensureAccountDetailsState(account.id).statusesOpen
+                                            ? mastodonText('mastodon.accounts.hidePosts', 'Скрыть посты')
+                                            : mastodonText('mastodon.accounts.showPosts', 'Посты аккаунта')
+                                    }}
+                                </button>
+                                <button
+                                    type="button"
+                                    class="cursor-pointer rounded-full border border-input px-2 py-1 text-xs text-foreground hover:bg-accent"
+                                    @click="toggleAccountFollowers(account)"
+                                >
+                                    {{
+                                        ensureAccountDetailsState(account.id).followersOpen
+                                            ? mastodonText('mastodon.accounts.hideFollowers', 'Скрыть подписчиков')
+                                            : mastodonText('mastodon.accounts.showFollowers', 'Подписчики')
+                                    }}
+                                </button>
                                 <a
                                     v-if="account.url"
                                     :href="account.url"
@@ -621,6 +826,86 @@ const toggleContext = async (statusId: string) => {
                                     <ExternalLink class="mr-1 inline h-3 w-3" />
                                     {{ t('mastodon.common.openProfile') }}
                                 </a>
+                            </div>
+                            <div
+                                v-if="ensureAccountDetailsState(account.id).statusesOpen"
+                                class="mt-3 rounded-lg border border-border/70 bg-card/60 p-3"
+                            >
+                                <p
+                                    v-if="ensureAccountDetailsState(account.id).statusesLoading"
+                                    class="text-xs text-muted-foreground"
+                                >
+                                    {{ mastodonText('mastodon.comments.loading', 'Загрузка...') }}
+                                </p>
+                                <p
+                                    v-else-if="ensureAccountDetailsState(account.id).statusesError"
+                                    class="text-xs text-destructive"
+                                >
+                                    {{ ensureAccountDetailsState(account.id).statusesError }}
+                                </p>
+                                <div v-else class="space-y-2">
+                                    <div class="text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">
+                                        {{ mastodonText('mastodon.accounts.postsSection', 'Посты аккаунта') }}
+                                    </div>
+                                    <p
+                                        v-if="ensureAccountDetailsState(account.id).statuses.length === 0"
+                                        class="text-xs text-muted-foreground"
+                                    >
+                                        {{ mastodonText('mastodon.accounts.emptyPosts', 'Посты не найдены.') }}
+                                    </p>
+                                    <article
+                                        v-for="status in ensureAccountDetailsState(account.id).statuses"
+                                        :key="`${account.id}-status-${status.id}`"
+                                        class="rounded-md border border-border/70 bg-background/70 p-2"
+                                    >
+                                        <div class="mb-1 text-[11px] text-muted-foreground">
+                                            {{ formatDate(status.createdAt) }} | {{ status.instanceDomain || status.account.instanceDomain }}
+                                        </div>
+                                        <p class="text-xs leading-relaxed text-foreground">
+                                            {{ status.content || t('mastodon.search.noText') }}
+                                        </p>
+                                    </article>
+                                </div>
+                            </div>
+                            <div
+                                v-if="ensureAccountDetailsState(account.id).followersOpen"
+                                class="mt-3 rounded-lg border border-border/70 bg-card/60 p-3"
+                            >
+                                <p
+                                    v-if="ensureAccountDetailsState(account.id).followersLoading"
+                                    class="text-xs text-muted-foreground"
+                                >
+                                    {{ mastodonText('mastodon.comments.loading', 'Загрузка...') }}
+                                </p>
+                                <p
+                                    v-else-if="ensureAccountDetailsState(account.id).followersError"
+                                    class="text-xs text-destructive"
+                                >
+                                    {{ ensureAccountDetailsState(account.id).followersError }}
+                                </p>
+                                <div v-else class="space-y-2">
+                                    <div class="text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">
+                                        {{ mastodonText('mastodon.accounts.followersSection', 'Подписчики') }}
+                                    </div>
+                                    <p
+                                        v-if="ensureAccountDetailsState(account.id).followers.length === 0"
+                                        class="text-xs text-muted-foreground"
+                                    >
+                                        {{ mastodonText('mastodon.accounts.emptyFollowers', 'Подписчики не найдены.') }}
+                                    </p>
+                                    <article
+                                        v-for="follower in ensureAccountDetailsState(account.id).followers"
+                                        :key="`${account.id}-follower-${follower.id}`"
+                                        class="rounded-md border border-border/70 bg-background/70 p-2"
+                                    >
+                                        <div class="text-xs font-medium text-foreground">
+                                            {{ follower.displayName || follower.username }}
+                                        </div>
+                                        <div class="text-[11px] text-muted-foreground">
+                                            @{{ follower.acct }} | {{ follower.instanceDomain }}
+                                        </div>
+                                    </article>
+                                </div>
                             </div>
                         </div>
                     </div>

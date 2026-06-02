@@ -1027,6 +1027,8 @@
             "type": "Search type",
             "limit": "Limit",
             "resolve": "Resolve remote resources",
+            "resolveRemote": "Search across other instances",
+            "onlyWithReplies": "Only with replies",
             "placeholder": "for example: osint analyst",
             "advancedAriaShow": "Show advanced filters",
             "advancedAriaHide": "Hide advanced filters",
@@ -1051,6 +1053,16 @@
             "statuses": "Statuses",
             "accounts": "Accounts",
             "hashtags": "Hashtags"
+        },
+        "accounts": {
+            "showPosts": "Account posts",
+            "hidePosts": "Hide posts",
+            "showFollowers": "Followers",
+            "hideFollowers": "Hide followers",
+            "postsSection": "Account posts",
+            "followersSection": "Followers",
+            "emptyPosts": "No posts found.",
+            "emptyFollowers": "No followers found."
         },
         "metrics": {
             "replies": "Replies",

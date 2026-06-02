@@ -98,3 +98,11 @@ export type MastodonStatusContextPayload = {
     descendants: MastodonStatus[];
     descendantsTree: MastodonStatusThreadNode[];
 };
+
+export type MastodonAccountStatusesPayload = {
+    statuses: MastodonStatus[];
+};
+
+export type MastodonAccountFollowersPayload = {
+    accounts: MastodonAccount[];
+};

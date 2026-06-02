@@ -53,6 +53,9 @@ final class MastodonSearchRequest extends FormRequest
             'hasMedia' => ['nullable', 'boolean'],
             'hasLinks' => ['nullable', 'boolean'],
             'hasReplies' => ['nullable', 'boolean'],
+            'author' => ['nullable', 'string', 'max:255'],
+            'dateFrom' => ['nullable', 'date'],
+            'dateTo' => ['nullable', 'date', 'after_or_equal:dateFrom'],
             'instanceDomain' => ['nullable', 'string', 'max:255'],
         ];
     }
@@ -78,6 +81,9 @@ final class MastodonSearchRequest extends FormRequest
             hasReplies: array_key_exists('hasReplies', $validated)
                 ? filter_var($validated['hasReplies'], FILTER_VALIDATE_BOOL, FILTER_NULL_ON_FAILURE)
                 : null,
+            author: trim((string) ($validated['author'] ?? '')),
+            dateFrom: trim((string) ($validated['dateFrom'] ?? '')),
+            dateTo: trim((string) ($validated['dateTo'] ?? '')),
             instanceDomain: strtolower(trim((string) ($validated['instanceDomain'] ?? ''))),
         );
     }

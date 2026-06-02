@@ -64,6 +64,14 @@ final class SearchResourcesAction extends AbstractMastodonAction
      */
     private function matchesStatusFilters(array $item, MastodonSearchQueryDTO $query): bool
     {
+        if (! $this->matchesAuthorFilter($item, $query->author)) {
+            return false;
+        }
+
+        if (! $this->matchesDateRangeFilter($item, $query->dateFrom, $query->dateTo)) {
+            return false;
+        }
+
         if ($query->language !== '' && strtolower((string) ($item['language'] ?? '')) !== $query->language) {
             return false;
         }
@@ -89,6 +97,67 @@ final class SearchResourcesAction extends AbstractMastodonAction
         }
 
         return true;
+    }
+
+    /**
+     * @param array<string, mixed> $item
+     */
+    private function matchesAuthorFilter(array $item, string $author): bool
+    {
+        $needle = strtolower(trim($author));
+
+        if ($needle === '') {
+            return true;
+        }
+
+        return collect([
+            (string) data_get($item, 'account.username', ''),
+            (string) data_get($item, 'account.acct', ''),
+            (string) data_get($item, 'account.displayName', ''),
+        ])
+            ->map(fn (string $value): string => strtolower($value))
+            ->contains(fn (string $value): bool => str_contains($value, $needle));
+    }
+
+    /**
+     * @param array<string, mixed> $item
+     */
+    private function matchesDateRangeFilter(array $item, string $dateFrom, string $dateTo): bool
+    {
+        if ($dateFrom === '' && $dateTo === '') {
+            return true;
+        }
+
+        $createdAt = $this->toTimestamp((string) ($item['createdAt'] ?? ''));
+
+        if ($createdAt === null) {
+            return false;
+        }
+
+        $fromTimestamp = $this->toTimestamp($dateFrom);
+
+        if ($fromTimestamp !== null && $createdAt < $fromTimestamp) {
+            return false;
+        }
+
+        $toTimestamp = $this->toTimestamp($dateTo);
+
+        if ($toTimestamp !== null && $createdAt > $toTimestamp) {
+            return false;
+        }
+
+        return true;
+    }
+
+    private function toTimestamp(string $value): ?int
+    {
+        if ($value === '') {
+            return null;
+        }
+
+        $timestamp = strtotime($value);
+
+        return $timestamp === false ? null : $timestamp;
     }
 
     /**
