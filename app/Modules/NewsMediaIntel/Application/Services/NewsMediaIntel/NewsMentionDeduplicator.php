@@ -6,33 +6,66 @@ use App\Modules\NewsMediaIntel\Domain\DTO\NewsMentionDTO;
 
 final class NewsMentionDeduplicator
 {
+    public function __construct(
+        private readonly NewsMentionFingerprintFactory $fingerprints,
+    ) {
+    }
+
     /**
      * @param array<int, NewsMentionDTO> $mentions
      * @return array<int, NewsMentionDTO>
      */
     public function deduplicate(array $mentions): array
     {
-        $map = [];
+        $linkMap = [];
+        $contentMap = [];
 
         foreach ($mentions as $mention) {
-            $key = mb_strtolower(trim($mention->link));
-            if ($key === '') {
-                continue;
-            }
+            $linkKey = $this->fingerprints->linkKey($mention->link);
+            $contentKey = $this->fingerprints->contentKey($mention->title, $mention->snippet);
 
-            if (isset($map[$key])) {
-                $existing = $map[$key];
+            if ($linkKey !== '' && isset($linkMap[$linkKey])) {
+                $existing = $linkMap[$linkKey];
                 if ($this->shouldReplace($existing, $mention)) {
-                    $map[$key] = $mention;
+                    $linkMap[$linkKey] = $mention;
+
+                    if ($contentKey !== '') {
+                        $contentMap[$contentKey] = $mention;
+                    }
                 }
 
                 continue;
             }
 
-            $map[$key] = $mention;
+            if ($contentKey !== '' && isset($contentMap[$contentKey])) {
+                $existing = $contentMap[$contentKey];
+                if ($this->shouldReplace($existing, $mention)) {
+                    $contentMap[$contentKey] = $mention;
+
+                    if ($linkKey !== '') {
+                        $linkMap[$linkKey] = $mention;
+                    }
+                }
+
+                continue;
+            }
+
+            if ($linkKey !== '') {
+                $linkMap[$linkKey] = $mention;
+            }
+
+            if ($contentKey !== '') {
+                $contentMap[$contentKey] = $mention;
+            }
         }
 
-        return array_values($map);
+        $merged = [];
+        foreach (array_merge(array_values($linkMap), array_values($contentMap)) as $mention) {
+            $key = spl_object_hash($mention);
+            $merged[$key] = $mention;
+        }
+
+        return array_values($merged);
     }
 
     private function shouldReplace(NewsMentionDTO $existing, NewsMentionDTO $candidate): bool

@@ -8,7 +8,7 @@ use App\Services\Access\Contracts\FeatureAccessServiceInterface;
 use App\Services\Access\Contracts\FeatureUsageCounterInterface;
 use App\Services\Access\Contracts\PlanQuotaResolverInterface;
 use App\Services\Access\DTO\FeatureAccessDecision;
-use App\Support\Access\AccountPlan;
+use App\Support\Access\Enums\AccountPlan;
 
 final class FeatureAccessService implements FeatureAccessServiceInterface
 {

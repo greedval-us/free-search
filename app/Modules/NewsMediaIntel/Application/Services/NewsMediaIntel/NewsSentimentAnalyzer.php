@@ -2,19 +2,22 @@
 
 namespace App\Modules\NewsMediaIntel\Application\Services\NewsMediaIntel;
 
+use App\Modules\NewsMediaIntel\Application\Support\NewsMediaIntelConfig;
 use App\Modules\NewsMediaIntel\Domain\DTO\NewsMentionDTO;
 use App\Modules\NewsMediaIntel\Domain\DTO\SentimentSummaryDTO;
 
 final class NewsSentimentAnalyzer
 {
+    public function __construct(
+        private readonly NewsMediaIntelConfig $config,
+    ) {
+    }
+
     /**
      * @param array<int, NewsMentionDTO> $mentions
      */
     public function summarize(array $mentions): SentimentSummaryDTO
     {
-        $positiveWords = ['success', 'growth', 'win', 'award', 'profit', 'улучш', 'рост', 'успех'];
-        $negativeWords = ['fraud', 'crime', 'attack', 'breach', 'loss', 'скандал', 'утеч', 'мошенн'];
-
         $positive = 0;
         $neutral = 0;
         $negative = 0;
@@ -23,13 +26,13 @@ final class NewsSentimentAnalyzer
             $text = mb_strtolower(trim($mention->title . ' ' . $mention->snippet));
             $score = 0;
 
-            foreach ($positiveWords as $word) {
+            foreach ($this->config->sentimentPositiveWords() as $word) {
                 if (str_contains($text, $word)) {
                     $score++;
                 }
             }
 
-            foreach ($negativeWords as $word) {
+            foreach ($this->config->sentimentNegativeWords() as $word) {
                 if (str_contains($text, $word)) {
                     $score--;
                 }
@@ -51,4 +54,3 @@ final class NewsSentimentAnalyzer
         );
     }
 }
-

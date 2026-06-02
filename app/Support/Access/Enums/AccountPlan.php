@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Support\Access;
+namespace App\Support\Access\Enums;
 
 enum AccountPlan: string
 {

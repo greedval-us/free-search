@@ -6,6 +6,7 @@ use App\Modules\Shifr\Actions\Classic\Contracts\ClassicCipherProcessorInterface;
 use App\Modules\Shifr\Actions\Classic\Support\ClassicCipherResultFactory;
 use App\Modules\Shifr\DTO\Classic\ClassicCipherLookupDTO;
 use App\Modules\Shifr\DTO\Contracts\ShifrResultDataInterface;
+use App\Modules\Shifr\Enums\ShifrCipherDirection;
 use App\Modules\Shifr\Support\ClassicCiphers\ClassicCipherAffinePlayfair;
 use App\Modules\Shifr\Support\ClassicCiphers\ClassicCipherRailFence;
 use App\Modules\Shifr\Support\ClassicCiphers\ClassicCipherTransposition;
@@ -38,8 +39,8 @@ final class PatternCipherProcessor implements ClassicCipherProcessorInterface
     private function resolveRailFence(ClassicCipherLookupDTO $dto): ?ShifrResultDataInterface
     {
         return match ($dto->direction) {
-            'encrypt' => $this->resultFactory->fromOriginalAndResult($dto->text, $this->railFence->encrypt($dto->text, $dto->rails)),
-            'decrypt' => $this->resultFactory->fromOriginalAndResult($dto->text, $this->railFence->decrypt($dto->text, $dto->rails)),
+            ShifrCipherDirection::Encrypt->value => $this->resultFactory->fromOriginalAndResult($dto->text, $this->railFence->encrypt($dto->text, $dto->rails)),
+            ShifrCipherDirection::Decrypt->value => $this->resultFactory->fromOriginalAndResult($dto->text, $this->railFence->decrypt($dto->text, $dto->rails)),
             default => null,
         };
     }
@@ -47,11 +48,11 @@ final class PatternCipherProcessor implements ClassicCipherProcessorInterface
     private function resolveAffine(ClassicCipherLookupDTO $dto): ?ShifrResultDataInterface
     {
         return match ($dto->direction) {
-            'encrypt' => $this->resultFactory->fromOriginalAndResult(
+            ShifrCipherDirection::Encrypt->value => $this->resultFactory->fromOriginalAndResult(
                 $dto->text,
                 $this->affinePlayfair->affineEncrypt($dto->text, $dto->affineA, $dto->affineB)
             ),
-            'decrypt' => $this->resultFactory->fromOriginalAndResult(
+            ShifrCipherDirection::Decrypt->value => $this->resultFactory->fromOriginalAndResult(
                 $dto->text,
                 $this->affinePlayfair->affineDecrypt($dto->text, $dto->affineA, $dto->affineB)
             ),
@@ -62,11 +63,11 @@ final class PatternCipherProcessor implements ClassicCipherProcessorInterface
     private function resolveMorse(ClassicCipherLookupDTO $dto): ?ShifrResultDataInterface
     {
         return match ($dto->direction) {
-            'encrypt' => $this->resultFactory->fromOriginalAndResult(
+            ShifrCipherDirection::Encrypt->value => $this->resultFactory->fromOriginalAndResult(
                 $dto->text,
                 $this->transposition->morseEncode($dto->text, $dto->morseSeparator)
             ),
-            'decrypt' => $this->resultFactory->fromOriginalAndResult(
+            ShifrCipherDirection::Decrypt->value => $this->resultFactory->fromOriginalAndResult(
                 $dto->text,
                 $this->transposition->morseDecode($dto->text, $dto->morseSeparator)
             ),

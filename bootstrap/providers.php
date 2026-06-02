@@ -7,6 +7,7 @@ use App\Providers\MadelineProtoServiceProvider;
 use App\Providers\MoonShineServiceProvider;
 use App\Providers\SupportServiceProvider;
 use App\Modules\Export\Providers\ExportServiceProvider;
+use App\Modules\Mastodon\Providers\MastodonServiceProvider;
 use App\Modules\NewsMediaIntel\Providers\NewsMediaIntelServiceProvider;
 use App\Modules\Shifr\Providers\ShifrServiceProvider;
 use App\Modules\SiteIntel\Providers\SiteIntelServiceProvider;
@@ -19,6 +20,7 @@ return [
     DashboardServiceProvider::class,
     ExportServiceProvider::class,
     SiteIntelServiceProvider::class,
+    MastodonServiceProvider::class,
     NewsMediaIntelServiceProvider::class,
     TelegramServiceProvider::class,
     YouTubeServiceProvider::class,

@@ -2,6 +2,10 @@
 
 namespace App\Modules\Telegram\Presenters;
 
+use App\Modules\Telegram\Enums\TelegramMediaKind;
+use App\Modules\Telegram\Enums\TelegramReactionIdentityKind;
+use App\Modules\Telegram\Enums\TelegramReactionLabel;
+
 class TelegramMessagePresenter
 {
     public function presentMessages(array $messages, string $chatUsername): array
@@ -69,39 +73,12 @@ class TelegramMessagePresenter
             $mediaType = (string) $raw['media']['_'];
         }
 
-        $kind = 'none';
-        if ($mediaType !== null) {
-            $type = strtolower($mediaType);
-            $kind = match (true) {
-                str_contains($type, 'photo') => 'photo',
-                str_contains($type, 'video') => 'video',
-                str_contains($type, 'document') => 'document',
-                str_contains($type, 'audio') => 'audio',
-                str_contains($type, 'geo') => 'geo',
-                str_contains($type, 'poll') => 'poll',
-                str_contains($type, 'contact') => 'contact',
-                str_contains($type, 'webpage') => 'link_preview',
-                default => 'other',
-            };
-        }
-
-        $labels = [
-            'photo' => 'Фото',
-            'video' => 'Видео',
-            'document' => 'Документ',
-            'audio' => 'Аудио',
-            'geo' => 'Геопозиция',
-            'poll' => 'Опрос',
-            'contact' => 'Контакт',
-            'link_preview' => 'Ссылка',
-            'other' => 'Медиа',
-            'none' => 'Нет',
-        ];
+        $kind = TelegramMediaKind::fromRawType($mediaType);
 
         return [
-            'hasMedia' => $kind !== 'none',
-            'type' => $kind,
-            'label' => $labels[$kind] ?? 'Медиа',
+            'hasMedia' => $kind->hasMedia(),
+            'type' => $kind->value,
+            'label' => $kind->label(),
             'rawType' => $mediaType,
         ];
     }
@@ -122,11 +99,11 @@ class TelegramMessagePresenter
             $isPaid = (bool) ($reaction->is_paid ?? false);
 
             if (($isPaid || str_contains(strtolower($type), 'paid')) && $emoji === '') {
-                $emoji = 'Paid';
+                $emoji = TelegramReactionLabel::Paid->value;
             }
 
             if ($emoji === '' && str_contains(strtolower($type), 'custom')) {
-                $emoji = 'Custom';
+                $emoji = TelegramReactionLabel::Custom->value;
             }
 
             if ($emoji === '' && $count <= 0) {
@@ -142,11 +119,11 @@ class TelegramMessagePresenter
                 'reaction' => $reaction->raw['reaction'] ?? null,
             ]);
 
-            $key = $identity['key'] ?? ('label:' . md5($emoji !== '' ? $emoji : 'reaction'));
+            $key = $identity['key'] ?? TelegramReactionIdentityKind::Label->key(md5($emoji !== '' ? $emoji : 'reaction'));
 
             $result[] = [
                 'key' => $key,
-                'emoji' => $identity['label'] ?? ($emoji !== '' ? $emoji : 'Reaction'),
+                'emoji' => $identity['label'] ?? ($emoji !== '' ? $emoji : TelegramReactionLabel::Reaction->value),
                 'count' => $count,
                 'senderIds' => $senderIdsByReaction[$key] ?? [],
             ];
@@ -321,19 +298,19 @@ class TelegramMessagePresenter
         $label = $emoticon;
 
         if ($label === '' && ($isPaid || str_contains($normalizedType, 'paid'))) {
-            $label = 'Paid';
+            $label = TelegramReactionLabel::Paid->value;
         } elseif ($label === '' && str_contains($normalizedType, 'custom')) {
-            $label = 'Custom';
+            $label = TelegramReactionLabel::Custom->value;
         } elseif ($label === '') {
-            $label = 'Reaction';
+            $label = TelegramReactionLabel::Reaction->value;
         }
 
         $key = match (true) {
-            $documentId !== null && $documentId > 0 => 'document:' . $documentId,
-            $emoticon !== '' => 'emoji:' . md5($emoticon),
-            $isPaid || str_contains($normalizedType, 'paid') => 'paid',
-            $reactionType !== '' => 'type:' . $reactionType,
-            default => 'label:' . md5($label),
+            $documentId !== null && $documentId > 0 => TelegramReactionIdentityKind::Document->key($documentId),
+            $emoticon !== '' => TelegramReactionIdentityKind::Emoji->key(md5($emoticon)),
+            $isPaid || str_contains($normalizedType, 'paid') => TelegramReactionIdentityKind::Paid->key(''),
+            $reactionType !== '' => TelegramReactionIdentityKind::Type->key($reactionType),
+            default => TelegramReactionIdentityKind::Label->key(md5($label)),
         };
 
         return [

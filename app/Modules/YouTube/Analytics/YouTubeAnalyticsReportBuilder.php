@@ -2,6 +2,8 @@
 
 namespace App\Modules\YouTube\Analytics;
 
+use App\Modules\YouTube\Enums\YouTubeDurationBucket;
+
 class YouTubeAnalyticsReportBuilder
 {
     /**
@@ -40,7 +42,7 @@ class YouTubeAnalyticsReportBuilder
     public function distribution(array $videos): array
     {
         $timeline = [];
-        $duration = ['short' => 0, 'medium' => 0, 'long' => 0];
+        $duration = YouTubeDurationBucket::emptyDistribution();
         $definition = [];
         $captions = ['with' => 0, 'without' => 0];
 
@@ -48,7 +50,8 @@ class YouTubeAnalyticsReportBuilder
             $this->appendTimelineRow($timeline, $video);
 
             $seconds = (int) ($video['durationSeconds'] ?? 0);
-            $duration[$seconds < 240 ? 'short' : ($seconds <= 1200 ? 'medium' : 'long')]++;
+            $bucket = YouTubeDurationBucket::fromSeconds($seconds);
+            $duration[$bucket->value]++;
 
             $quality = (string) ($video['definition'] ?? 'unknown');
             $definition[$quality] = ($definition[$quality] ?? 0) + 1;
@@ -121,7 +124,7 @@ class YouTubeAnalyticsReportBuilder
         $totals = $this->totals($videos);
         $top = $this->topBy($videos, 'views')[0] ?? null;
         $duration = $this->distribution($videos)['duration'];
-        $dominantDuration = array_keys($duration, max($duration), true)[0] ?? 'medium';
+        $dominantDuration = array_keys($duration, max($duration), true)[0] ?? YouTubeDurationBucket::Medium->value;
 
         return array_values(array_filter([
             $focusVideo !== null ? [

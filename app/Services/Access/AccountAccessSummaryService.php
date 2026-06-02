@@ -5,7 +5,7 @@ namespace App\Services\Access;
 use App\Models\FeatureUsageDaily;
 use App\Models\User;
 use App\Models\UserSubscription;
-use App\Support\Access\AccountPlan;
+use App\Support\Access\Enums\AccountPlan;
 use Carbon\CarbonImmutable;
 use Illuminate\Support\Arr;
 

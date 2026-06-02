@@ -1,0 +1,89 @@
+{
+    "meta": {
+        "title": "Панель"
+    },
+    "header": {
+        "kicker": "Панель пользователя",
+        "title": "Моя активность",
+        "subtitle": "Отслеживайте реальные запросы, последние действия и быстро возвращайтесь в нужные модули.",
+        "badge": "История запросов сохраняется автоматически"
+    },
+    "summary": {
+        "total": "Все запросы",
+        "last7": "За 7 дней",
+        "last30": "За 30 дней",
+        "activeDays": "Активные дни"
+    },
+    "sections": {
+        "favorite": "Любимый модуль",
+        "topModules": "Популярные модули",
+        "weekly": "Активность по дням",
+        "recentQueries": "Последние запросы",
+        "quickActions": "Быстрые действия",
+        "insights": "Полезные выводы",
+        "savedQueries": "Сохраненные запросы"
+    },
+    "favorite": {
+        "usedPrefix": "Использован",
+        "usedSuffix": "раз",
+        "empty": "История запросов пока пустая. Запустите первый поиск."
+    },
+    "modules": {
+        "mastodon": "Mastodon",
+        "site-intel": "Аналитика сайта",
+        "news-media-intel": "Новости и медиа",
+        "telegram": "Аналитика Telegram",
+        "youtube": "YouTube",
+        "shifr": "Модуль шифров",
+        "default": "Поисковый модуль",
+        "lastUsed": "Последний запуск",
+        "open": "Открыть модуль",
+        "empty": "Активности по модулям пока нет."
+    },
+    "weekly": {
+        "empty": "Данных за неделю пока нет."
+    },
+    "recent": {
+        "empty": "Запросов пока нет.",
+        "runAgain": "Повторить",
+        "save": "Сохранить запрос"
+    },
+    "common": {
+        "na": "н/д"
+    },
+    "insights": {
+        "topDay": "Самый активный день",
+        "lastQuery": "Последний запрос",
+        "favorite": "Любимый модуль"
+    },
+    "saved": {
+        "empty": "Сохраненных запросов пока нет.",
+        "run": "Запустить",
+        "delete": "Удалить"
+    },
+    "filters": {
+        "allModules": "Все модули",
+        "queryPlaceholder": "Поиск по тексту запроса",
+        "period7": "7 дней",
+        "period30": "30 дней",
+        "period90": "90 дней",
+        "apply": "Применить фильтры",
+        "reset": "Сбросить"
+    },
+    "plan": {
+        "title": "Ваш тариф",
+        "manage": "Управлять тарифом",
+        "modules": {
+            "mastodon": "Mastodon",
+            "site-intel": "Site Intel",
+            "telegram": "Telegram",
+            "youtube": "YouTube"
+        },
+        "capabilities": {
+            "analytics": "Аналитика",
+            "seo-audit": "SEO аудит",
+            "parser": "Парсер"
+        },
+        "unavailable": "Недоступно"
+    }
+}

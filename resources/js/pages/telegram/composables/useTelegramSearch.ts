@@ -15,7 +15,7 @@ const LIMIT_MAX = 50;
 
 export const useTelegramSearch = (t: TranslateFn) => {
     const form = reactive({
-        chatUsername: 'durov',
+        chatUsername: '',
         q: '',
         fromUsername: '',
         dateFrom: '',

@@ -1,0 +1,21 @@
+{
+    "headTitle": "Uraboros | OSINT Intelligence Platform",
+    "platformTitle": "Uraboros Intelligence Platform",
+    "dashboard": "Dashboard",
+    "signIn": "Sign in",
+    "register": "Register",
+    "pill": "OSINT ? Analytics ? Investigations",
+    "heroTitle": "Commercial-grade OSINT workspace for analysts and investigation teams",
+    "heroDescription": "Run search, verification, and analysis in one platform: move from first signal to report-ready findings without fragmented tooling.",
+    "openDashboard": "Open Workspace",
+    "getStarted": "Start Investigation",
+    "createAccount": "Create Workspace Account",
+    "features": {
+        "monitoringTitle": "Unified operational workflow",
+        "monitoringText": "Reduce analyst overhead with one interface for collection, validation, and intelligence pivots.",
+        "osintTitle": "Cross-source OSINT pivots",
+        "osintText": "Link entities, infrastructure, and public traces across threat, archive, and reputation sources.",
+        "dashboardsTitle": "Executive-ready output",
+        "dashboardsText": "Deliver structured insights with clear risk narratives and audit-friendly context."
+    }
+}

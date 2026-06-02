@@ -15,6 +15,7 @@ use App\Modules\Shifr\DTO\Classic\AtbashResultDTO;
 use App\Modules\Shifr\DTO\Classic\CaesarCipherRequestDTO;
 use App\Modules\Shifr\DTO\Classic\ClassicCipherLookupDTO;
 use App\Modules\Shifr\DTO\Contracts\ShifrResultDataInterface;
+use App\Modules\Shifr\Enums\ShifrCipherDirection;
 
 final class ShiftMirrorCipherProcessor implements ClassicCipherProcessorInterface
 {
@@ -52,8 +53,8 @@ final class ShiftMirrorCipherProcessor implements ClassicCipherProcessorInterfac
         ]);
 
         return match ($dto->direction) {
-            'encrypt' => $this->encryptCaesar->execute($request),
-            'decrypt' => $this->decryptCaesar->execute($request),
+            ShifrCipherDirection::Encrypt->value => $this->encryptCaesar->execute($request),
+            ShifrCipherDirection::Decrypt->value => $this->decryptCaesar->execute($request),
             default => null,
         };
     }
@@ -65,15 +66,15 @@ final class ShiftMirrorCipherProcessor implements ClassicCipherProcessorInterfac
         ]);
 
         return match ($dto->direction) {
-            'encrypt' => $this->encryptAtbash->execute($request),
-            'decrypt' => $this->decryptAtbash->execute($request),
+            ShifrCipherDirection::Encrypt->value => $this->encryptAtbash->execute($request),
+            ShifrCipherDirection::Decrypt->value => $this->decryptAtbash->execute($request),
             default => null,
         };
     }
 
     private function resolveRot(ClassicCipherLookupDTO $dto): ?ShifrResultDataInterface
     {
-        if ($dto->direction !== 'transform') {
+        if ($dto->direction !== ShifrCipherDirection::Transform->value) {
             return null;
         }
 

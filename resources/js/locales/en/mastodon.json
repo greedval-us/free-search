@@ -1,0 +1,209 @@
+{
+    "headTitle": "Mastodon",
+    "help": {
+        "label": "What is this data?"
+    },
+    "tabs": {
+        "search": "Search",
+        "analytics": "Analytics",
+        "parser": "Parser"
+    },
+    "parser": {
+        "title": "Mastodon Parser",
+        "collapsed": "Parser panel is collapsed",
+        "subtitle": "Collect all available posts from a Mastodon account and replies to each original post.",
+        "hint": "Use an account handle like @analyst@mastodon.social. The parser walks through the account timeline, then loads reply threads under each original post.",
+        "account": "Account",
+        "accountPlaceholder": "for example: @analyst@mastodon.social",
+        "start": "Start parser",
+        "stop": "Stop",
+        "collecting": "Collecting data...",
+        "download": "Download Excel",
+        "downloadJson": "Download JSON",
+        "help": {
+            "overview": "Build an export with the account timeline and reply threads under each original post."
+        },
+        "progress": {
+            "title": "Parser progress",
+            "statuses": "Statuses",
+            "comments": "Comments",
+            "stage": {
+                "idle": "Idle",
+                "statuses": "Loading statuses",
+                "comments": "Loading comments",
+                "finishing": "Building export",
+                "completed": "Completed",
+                "failed": "Failed",
+                "stopped": "Stopped"
+            }
+        },
+        "errors": {
+            "accountRequired": "Account is required.",
+            "failed": "Failed to run parser."
+        }
+    },
+    "analytics": {
+        "title": "Mastodon Analytics",
+        "collapsed": "Analytics panel is collapsed",
+        "filters": "Aggregate account and hashtag activity across several pages of Mastodon data",
+        "hint": "Build a sample-based OSINT summary for a Mastodon account or hashtag, including activity, languages, domains, mentions, and top posts.",
+        "mode": "Analytics mode",
+        "modes": {
+            "account": "Account",
+            "hashtag": "Hashtag"
+        },
+        "target": "Target",
+        "accountPlaceholder": "for example: @analyst@mastodon.social",
+        "hashtagPlaceholder": "for example: osint",
+        "limit": "Posts per page",
+        "pages": "Pages to sample",
+        "dateFrom": "Date from",
+        "dateTo": "Date to",
+        "run": "Run analytics",
+        "refresh": "Refresh",
+        "report": "Open report",
+        "downloadReport": "Download report",
+        "loading": "Building analytics...",
+        "empty": {
+            "title": "Mastodon analytics is ready",
+            "description": "Run analytics to build a sample-based summary for an account or hashtag."
+        },
+        "accountProfile": "Account profile",
+        "hashtagProfile": "Hashtag profile",
+        "sample": "Sample coverage",
+        "sampleTarget": "Resolved target",
+        "sampledPosts": "Sampled posts",
+        "pagesRequested": "Pages requested",
+        "pagesLoaded": "Pages loaded",
+        "timeline": "Timeline",
+        "topPosts": "Top posts",
+        "topDomains": "Top domains",
+        "topTags": "Top tags",
+        "topAccounts": "Top accounts",
+        "topMentions": "Top mentions",
+        "topLanguages": "Top languages",
+        "usesInSample": "uses in sample",
+        "mentionsInSample": "mentions in sample",
+        "noTimeline": "No activity timeline available for this sample.",
+        "noTopPosts": "No posts available in the sample.",
+        "noDomains": "No outbound domains found in the sample.",
+        "noTags": "No tags found in the sample.",
+        "noAccounts": "No accounts found in the sample.",
+        "noMentions": "No mentions found in the sample.",
+        "noLanguages": "No language distribution found in the sample.",
+        "metrics": {
+            "posts": "Posts",
+            "accounts": "Accounts",
+            "instances": "Instances",
+            "languages": "Languages",
+            "mediaPosts": "Posts with media",
+            "linkPosts": "Posts with links",
+            "replyPosts": "Reply posts",
+            "boostPosts": "Boost posts",
+            "sensitivePosts": "Sensitive posts",
+            "repliesTotal": "Replies total",
+            "reblogsTotal": "Boosts total",
+            "favouritesTotal": "Favorites total"
+        },
+        "errors": {
+            "requestFailed": "Request failed."
+        }
+    },
+    "search": {
+        "title": "Mastodon Search",
+        "collapsed": "Search panel is collapsed",
+        "filters": "Public fediverse search filters and parameters",
+        "hint": "Search public statuses, accounts, and hashtags on the configured Mastodon instance through the official API.",
+        "query": "Query",
+        "type": "Search type",
+        "limit": "Limit",
+        "resolve": "Resolve remote resources",
+        "resolveRemote": "Search across other instances",
+        "onlyWithReplies": "Only with replies",
+        "placeholder": "for example: osint analyst",
+        "advancedAriaShow": "Show advanced filters",
+        "advancedAriaHide": "Hide advanced filters",
+        "submit": "Search",
+        "searching": "Searching...",
+        "resultTitle": "Results",
+        "shown": "Shown",
+        "empty": "Run a search to view Mastodon results.",
+        "loadMore": "Load more",
+        "loadingMore": "Loading...",
+        "noText": "[No text]",
+        "noBio": "No profile bio available.",
+        "language": "Language",
+        "languagePlaceholder": "for example: en",
+        "instanceDomain": "Instance domain",
+        "instancePlaceholder": "for example: mastodon.social",
+        "hasMedia": "Has media",
+        "hasLinks": "Has links",
+        "hasReplies": "Has replies"
+    },
+    "sections": {
+        "statuses": "Statuses",
+        "accounts": "Accounts",
+        "hashtags": "Hashtags"
+    },
+    "accounts": {
+        "showPosts": "Account posts",
+        "hidePosts": "Hide posts",
+        "showFollowers": "Followers",
+        "hideFollowers": "Hide followers",
+        "postsSection": "Account posts",
+        "followersSection": "Followers",
+        "emptyPosts": "No posts found.",
+        "emptyFollowers": "No followers found."
+    },
+    "metrics": {
+        "replies": "Replies",
+        "reblogs": "Boosts",
+        "favourites": "Favorites",
+        "media": "Media",
+        "followers": "Followers",
+        "following": "Following",
+        "posts": "Posts",
+        "historyPoints": "History points",
+        "uses": "Uses",
+        "accounts": "Accounts",
+        "postType": "Post type",
+        "language": "Language",
+        "mentions": "Mentions",
+        "links": "Links",
+        "bot": "Bot",
+        "group": "Group"
+    },
+    "options": {
+        "type": {
+            "statuses": "Statuses",
+            "accounts": "Accounts",
+            "hashtags": "Hashtags",
+            "all": "All"
+        },
+        "any": "Any",
+        "yes": "Yes",
+        "no": "No"
+    },
+    "common": {
+        "open": "Open post",
+        "openProfile": "Open profile",
+        "openTag": "Open hashtag"
+    },
+    "errors": {
+        "requestFailed": "Request failed.",
+        "contextFailed": "Failed to load replies."
+    },
+    "postTypes": {
+        "original": "Original",
+        "reply": "Reply",
+        "boost": "Boost"
+    },
+    "comments": {
+        "show": "Replies",
+        "hide": "Hide replies",
+        "loading": "Loading thread...",
+        "empty": "No replies found.",
+        "ancestors": "Context before post",
+        "replies": "Replies to post"
+    }
+}

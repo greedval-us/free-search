@@ -2,6 +2,8 @@
 
 namespace App\Modules\SiteIntel\Application\Services\SiteIntelAnalytics;
 
+use App\Modules\SiteIntel\Enums\SiteIntelScoreLevel;
+
 final class SiteIntelAnalyticsOverviewBuilder
 {
     /**
@@ -45,11 +47,7 @@ final class SiteIntelAnalyticsOverviewBuilder
 
     private function scoreLevel(int $score): string
     {
-        return match (true) {
-            $score >= 75 => 'high',
-            $score >= 45 => 'medium',
-            default => 'low',
-        };
+        return SiteIntelScoreLevel::fromThresholds($score, 75, 45)->value;
     }
 
     /**

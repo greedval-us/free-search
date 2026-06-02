@@ -2,6 +2,8 @@
 
 namespace App\Modules\SiteIntel\Application\Services\SeoAudit;
 
+use App\Modules\SiteIntel\Enums\SiteIntelRecommendationPriority;
+
 final class SeoAuditRecommendationBuilder
 {
     public function __construct(
@@ -49,105 +51,105 @@ final class SeoAuditRecommendationBuilder
         $items = [];
 
         if (($indexability['indexable'] ?? false) !== true) {
-            $items[] = ['priority' => 'critical', 'key' => 'enable_indexing'];
+            $items[] = ['priority' => SiteIntelRecommendationPriority::Critical->value, 'key' => 'enable_indexing'];
         }
 
         if (($security['https'] ?? false) !== true) {
-            $items[] = ['priority' => 'critical', 'key' => 'enable_https'];
+            $items[] = ['priority' => SiteIntelRecommendationPriority::Critical->value, 'key' => 'enable_https'];
         }
 
         if ($this->thresholds->isTitleOutOfRange((int) ($meta['titleLength'] ?? 0))) {
-            $items[] = ['priority' => 'medium', 'key' => 'improve_title_length'];
+            $items[] = ['priority' => SiteIntelRecommendationPriority::Medium->value, 'key' => 'improve_title_length'];
         }
 
         if ($this->thresholds->isDescriptionOutOfRange((int) ($meta['descriptionLength'] ?? 0))) {
-            $items[] = ['priority' => 'medium', 'key' => 'improve_description_length'];
+            $items[] = ['priority' => SiteIntelRecommendationPriority::Medium->value, 'key' => 'improve_description_length'];
         }
 
         if (($headings['h1'] ?? 0) !== 1) {
-            $items[] = ['priority' => 'medium', 'key' => 'fix_h1_count'];
+            $items[] = ['priority' => SiteIntelRecommendationPriority::Medium->value, 'key' => 'fix_h1_count'];
         }
 
         if (($robots['available'] ?? false) !== true) {
-            $items[] = ['priority' => 'medium', 'key' => 'add_robots_txt'];
+            $items[] = ['priority' => SiteIntelRecommendationPriority::Medium->value, 'key' => 'add_robots_txt'];
         }
 
         if (($sitemap['available'] ?? false) !== true) {
-            $items[] = ['priority' => 'medium', 'key' => 'add_sitemap'];
+            $items[] = ['priority' => SiteIntelRecommendationPriority::Medium->value, 'key' => 'add_sitemap'];
         }
 
         if ($this->thresholds->isSlowTtfb((int) ($performance['ttfbMsApprox'] ?? 0))) {
-            $items[] = ['priority' => 'medium', 'key' => 'improve_ttfb'];
+            $items[] = ['priority' => SiteIntelRecommendationPriority::Medium->value, 'key' => 'improve_ttfb'];
         }
 
         if ($this->thresholds->isHeavyPage((int) ($performance['pageSizeKb'] ?? 0))) {
-            $items[] = ['priority' => 'low', 'key' => 'reduce_page_size'];
+            $items[] = ['priority' => SiteIntelRecommendationPriority::Low->value, 'key' => 'reduce_page_size'];
         }
 
         if (($security['mixedContent'] ?? false) === true) {
-            $items[] = ['priority' => 'medium', 'key' => 'remove_mixed_content'];
+            $items[] = ['priority' => SiteIntelRecommendationPriority::Medium->value, 'key' => 'remove_mixed_content'];
         }
         if (($mobileFriendly['isResponsive'] ?? false) !== true) {
-            $items[] = ['priority' => 'medium', 'key' => 'add_viewport_meta'];
+            $items[] = ['priority' => SiteIntelRecommendationPriority::Medium->value, 'key' => 'add_viewport_meta'];
         }
         if (($soft404['detected'] ?? false) === true) {
-            $items[] = ['priority' => 'critical', 'key' => 'fix_soft_404'];
+            $items[] = ['priority' => SiteIntelRecommendationPriority::Critical->value, 'key' => 'fix_soft_404'];
         }
         if ($this->thresholds->hasHighRenderBlocking((int) ($performance['renderBlocking']['total'] ?? 0))) {
-            $items[] = ['priority' => 'medium', 'key' => 'reduce_render_blocking'];
+            $items[] = ['priority' => SiteIntelRecommendationPriority::Medium->value, 'key' => 'reduce_render_blocking'];
         }
         if (($pagination['isPaginated'] ?? false) === true && !(($pagination['hasRelPrev'] ?? false) && ($pagination['hasRelNext'] ?? false))) {
-            $items[] = ['priority' => 'low', 'key' => 'fix_pagination_rel_links'];
+            $items[] = ['priority' => SiteIntelRecommendationPriority::Low->value, 'key' => 'fix_pagination_rel_links'];
         }
         if ((int) ($quality['anchors']['empty'] ?? 0) > 0) {
-            $items[] = ['priority' => 'medium', 'key' => 'fix_empty_anchor_text'];
+            $items[] = ['priority' => SiteIntelRecommendationPriority::Medium->value, 'key' => 'fix_empty_anchor_text'];
         }
         if ((int) ($quality['accessibility']['imagesWithoutAlt'] ?? 0) > 0) {
-            $items[] = ['priority' => 'medium', 'key' => 'add_image_alt_attributes'];
+            $items[] = ['priority' => SiteIntelRecommendationPriority::Medium->value, 'key' => 'add_image_alt_attributes'];
         }
         if (($quality['content']['thinContent'] ?? false) === true) {
-            $items[] = ['priority' => 'medium', 'key' => 'expand_thin_content'];
+            $items[] = ['priority' => SiteIntelRecommendationPriority::Medium->value, 'key' => 'expand_thin_content'];
         }
         if (($quality['content']['lowTextRatio'] ?? false) === true) {
-            $items[] = ['priority' => 'low', 'key' => 'improve_text_html_ratio'];
+            $items[] = ['priority' => SiteIntelRecommendationPriority::Low->value, 'key' => 'improve_text_html_ratio'];
         }
         if (($quality['linkGraph']['orphanRisk'] ?? false) === true) {
-            $items[] = ['priority' => 'medium', 'key' => 'improve_internal_linking'];
+            $items[] = ['priority' => SiteIntelRecommendationPriority::Medium->value, 'key' => 'improve_internal_linking'];
         }
         if ((int) ($quality['htmlValidation']['issueCount'] ?? 0) > 0) {
-            $items[] = ['priority' => 'low', 'key' => 'fix_html_structure'];
+            $items[] = ['priority' => SiteIntelRecommendationPriority::Low->value, 'key' => 'fix_html_structure'];
         }
         if (is_array($international['missingReciprocal'] ?? null) && $international['missingReciprocal'] !== []) {
-            $items[] = ['priority' => 'medium', 'key' => 'fix_hreflang_reciprocal_links'];
+            $items[] = ['priority' => SiteIntelRecommendationPriority::Medium->value, 'key' => 'fix_hreflang_reciprocal_links'];
         }
         if (is_array($international['missingXDefault'] ?? null) && $international['missingXDefault'] !== []) {
-            $items[] = ['priority' => 'low', 'key' => 'add_hreflang_x_default'];
+            $items[] = ['priority' => SiteIntelRecommendationPriority::Low->value, 'key' => 'add_hreflang_x_default'];
         }
         if ((int) ($crawlBudget['botHits'] ?? 0) === 0) {
-            $items[] = ['priority' => 'low', 'key' => 'verify_bot_access_in_logs'];
+            $items[] = ['priority' => SiteIntelRecommendationPriority::Low->value, 'key' => 'verify_bot_access_in_logs'];
         }
         if ((int) ($crawlBudget['statusBuckets']['5xx'] ?? 0) > 0) {
-            $items[] = ['priority' => 'medium', 'key' => 'reduce_bot_5xx_errors'];
+            $items[] = ['priority' => SiteIntelRecommendationPriority::Medium->value, 'key' => 'reduce_bot_5xx_errors'];
         }
 
         if (is_array($crawl['duplicates']['titles'] ?? null) && $crawl['duplicates']['titles'] !== []) {
-            $items[] = ['priority' => 'medium', 'key' => 'deduplicate_titles'];
+            $items[] = ['priority' => SiteIntelRecommendationPriority::Medium->value, 'key' => 'deduplicate_titles'];
         }
 
         if (is_array($crawl['canonicalAudit']['missing'] ?? null) && $crawl['canonicalAudit']['missing'] !== []) {
-            $items[] = ['priority' => 'medium', 'key' => 'set_canonical_on_all_pages'];
+            $items[] = ['priority' => SiteIntelRecommendationPriority::Medium->value, 'key' => 'set_canonical_on_all_pages'];
         }
 
         if (is_array($crawl['hreflangAudit']['pagesWithoutSelfReference'] ?? null) && $crawl['hreflangAudit']['pagesWithoutSelfReference'] !== []) {
-            $items[] = ['priority' => 'low', 'key' => 'fix_hreflang_self_reference'];
+            $items[] = ['priority' => SiteIntelRecommendationPriority::Low->value, 'key' => 'fix_hreflang_self_reference'];
         }
 
         if (is_array($sitemapAudit['non200'] ?? null) && $sitemapAudit['non200'] !== []) {
-            $items[] = ['priority' => 'medium', 'key' => 'fix_sitemap_non_200_urls'];
+            $items[] = ['priority' => SiteIntelRecommendationPriority::Medium->value, 'key' => 'fix_sitemap_non_200_urls'];
         }
 
         if ($items === []) {
-            $items[] = ['priority' => 'low', 'key' => 'maintain_current_setup'];
+            $items[] = ['priority' => SiteIntelRecommendationPriority::Low->value, 'key' => 'maintain_current_setup'];
         }
 
         return array_values(array_unique($items, SORT_REGULAR));

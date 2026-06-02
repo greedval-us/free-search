@@ -2,6 +2,8 @@
 
 namespace App\Modules\NewsMediaIntel\Application\Support;
 
+use App\Modules\NewsMediaIntel\Enums\NewsFeedSource;
+
 final class NewsMediaIntelConfig
 {
     /**
@@ -37,6 +39,14 @@ final class NewsMediaIntelConfig
             newsApiLanguage: self::stringValue($config, ['newsapi', 'language'], 'ru'),
             newsApiPageSize: max(1, self::intValue($config, ['newsapi', 'page_size'], 30)),
             newsApiTimeoutSeconds: max(1, self::intValue($config, ['newsapi', 'timeout_seconds'], 15)),
+            sentimentPositiveWords: self::stringListValue($config, ['analysis', 'sentiment', 'positive_words']),
+            sentimentNegativeWords: self::stringListValue($config, ['analysis', 'sentiment', 'negative_words']),
+            topicStopWords: self::stringListValue($config, ['analysis', 'topics', 'stop_words']),
+            topicMinWordLength: max(1, self::intValue($config, ['analysis', 'topics', 'min_word_length'], 4)),
+            topicTopLimit: max(1, self::intValue($config, ['analysis', 'topics', 'top_limit'], 20)),
+            dedupStripWww: self::boolValue($config, ['deduplication', 'strip_www'], true),
+            dedupTrimTrailingSlash: self::boolValue($config, ['deduplication', 'trim_trailing_slash'], true),
+            dedupQueryTrackers: self::stringListValue($config, ['deduplication', 'query_trackers']),
         );
     }
 
@@ -57,6 +67,18 @@ final class NewsMediaIntelConfig
         private readonly string $newsApiLanguage,
         private readonly int $newsApiPageSize,
         private readonly int $newsApiTimeoutSeconds,
+        /** @var array<int, string> */
+        private readonly array $sentimentPositiveWords,
+        /** @var array<int, string> */
+        private readonly array $sentimentNegativeWords,
+        /** @var array<int, string> */
+        private readonly array $topicStopWords,
+        private readonly int $topicMinWordLength,
+        private readonly int $topicTopLimit,
+        private readonly bool $dedupStripWww,
+        private readonly bool $dedupTrimTrailingSlash,
+        /** @var array<int, string> */
+        private readonly array $dedupQueryTrackers,
     ) {
     }
 
@@ -139,6 +161,58 @@ final class NewsMediaIntelConfig
     }
 
     /**
+     * @return array<int, string>
+     */
+    public function sentimentPositiveWords(): array
+    {
+        return $this->sentimentPositiveWords;
+    }
+
+    /**
+     * @return array<int, string>
+     */
+    public function sentimentNegativeWords(): array
+    {
+        return $this->sentimentNegativeWords;
+    }
+
+    /**
+     * @return array<int, string>
+     */
+    public function topicStopWords(): array
+    {
+        return $this->topicStopWords;
+    }
+
+    public function topicMinWordLength(): int
+    {
+        return $this->topicMinWordLength;
+    }
+
+    public function topicTopLimit(): int
+    {
+        return $this->topicTopLimit;
+    }
+
+    public function dedupStripWww(): bool
+    {
+        return $this->dedupStripWww;
+    }
+
+    public function dedupTrimTrailingSlash(): bool
+    {
+        return $this->dedupTrimTrailingSlash;
+    }
+
+    /**
+     * @return array<int, string>
+     */
+    public function dedupQueryTrackers(): array
+    {
+        return $this->dedupQueryTrackers;
+    }
+
+    /**
      * @param array<string, mixed> $config
      * @param array<int, string> $path
      */
@@ -158,6 +232,46 @@ final class NewsMediaIntelConfig
         $value = self::valueByPath($config, $path);
 
         return is_numeric($value) ? (int) $value : $default;
+    }
+
+    /**
+     * @param array<string, mixed> $config
+     * @param array<int, string> $path
+     */
+    private static function boolValue(array $config, array $path, bool $default): bool
+    {
+        $value = self::valueByPath($config, $path);
+
+        return is_bool($value) ? $value : $default;
+    }
+
+    /**
+     * @param array<string, mixed> $config
+     * @param array<int, string> $path
+     * @return array<int, string>
+     */
+    private static function stringListValue(array $config, array $path): array
+    {
+        $value = self::valueByPath($config, $path);
+        if (!is_array($value)) {
+            return [];
+        }
+
+        $result = [];
+        foreach ($value as $item) {
+            if (!is_string($item)) {
+                continue;
+            }
+
+            $normalized = mb_strtolower(trim($item));
+            if ($normalized === '') {
+                continue;
+            }
+
+            $result[] = $normalized;
+        }
+
+        return array_values(array_unique($result));
     }
 
     /**
@@ -220,6 +334,6 @@ final class NewsMediaIntelConfig
      */
     private static function allowedProviderKeys(): array
     {
-        return NewsFeedSources::all();
+        return NewsFeedSource::values();
     }
 }

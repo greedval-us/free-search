@@ -2,6 +2,7 @@
 
 namespace App\Modules\SiteIntel\Application\Services\DomainLite;
 
+use App\Modules\SiteIntel\Enums\SiteIntelScoreLevel;
 use Carbon\Carbon;
 
 final class DomainLiteRiskScoreCalculator
@@ -101,11 +102,7 @@ final class DomainLiteRiskScoreCalculator
         }
 
         $score = max(0, min(100, $score));
-        $level = match (true) {
-            $score >= 60 => 'high',
-            $score >= 30 => 'medium',
-            default => 'low',
-        };
+        $level = SiteIntelScoreLevel::fromThresholds($score, 60, 30)->value;
 
         return [
             'score' => $score,

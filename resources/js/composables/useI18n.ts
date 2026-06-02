@@ -1,6 +1,6 @@
 import { computed, ref } from 'vue';
-import en from '@/locales/en.json';
-import ru from '@/locales/ru.json';
+import en from '@/locales/en';
+import ru from '@/locales/ru';
 
 type Locale = 'en' | 'ru';
 type Messages = Record<string, unknown>;

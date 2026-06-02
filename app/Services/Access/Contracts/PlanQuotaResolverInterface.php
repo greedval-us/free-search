@@ -3,7 +3,7 @@
 namespace App\Services\Access\Contracts;
 
 use App\Services\Access\AccessResourcePolicy;
-use App\Support\Access\AccountPlan;
+use App\Support\Access\Enums\AccountPlan;
 
 interface PlanQuotaResolverInterface
 {
