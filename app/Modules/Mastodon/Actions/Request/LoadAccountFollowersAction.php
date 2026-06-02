@@ -15,15 +15,24 @@ final class LoadAccountFollowersAction extends AbstractMastodonAction
         parent::__construct($gateway);
     }
 
-    public function handle(string $accountId, int $limit): MastodonAccountFollowersResultDTO
+    public function handle(string $accountId, int $limit, ?string $maxId = null): MastodonAccountFollowersResultDTO
     {
-        $payload = $this->gateway->accountFollowers($accountId, $limit);
+        $payload = $this->gateway->accountFollowers($accountId, $limit, $maxId);
+        $accounts = collect($payload['items'] ?? [])
+            ->map(fn (array $item): array => $this->accountPresenter->present($item))
+            ->values()
+            ->all();
+        $nextMaxId = data_get($payload, 'pagination.nextMaxId');
+        $hasMore = is_string($nextMaxId) && $nextMaxId !== '';
 
         return new MastodonAccountFollowersResultDTO(
-            accounts: collect($payload)
-                ->map(fn (array $item): array => $this->accountPresenter->present($item))
-                ->values()
-                ->all(),
+            accounts: $accounts,
+            pagination: [
+                'limit' => $limit,
+                'maxId' => $maxId,
+                'nextMaxId' => $hasMore ? $nextMaxId : null,
+                'hasMore' => $hasMore,
+            ],
         );
     }
 }

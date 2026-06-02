@@ -179,12 +179,18 @@ class MastodonControllerIsolationTest extends TestCase
         $this->mock(MastodonSearchApplicationServiceInterface::class, function ($mock): void {
             $mock->shouldReceive('accountStatuses')
                 ->once()
-                ->with('109999', 10)
+                ->with('109999', 10, null)
                 ->andReturn(new \App\Modules\Mastodon\DTO\Result\MastodonAccountStatusesResultDTO(
                     statuses: [[
                         'id' => 'status-42',
                         'content' => 'Account status',
                     ]],
+                    pagination: [
+                        'limit' => 10,
+                        'maxId' => null,
+                        'nextMaxId' => null,
+                        'hasMore' => false,
+                    ],
                 ));
         });
 
@@ -202,12 +208,18 @@ class MastodonControllerIsolationTest extends TestCase
         $this->mock(MastodonSearchApplicationServiceInterface::class, function ($mock): void {
             $mock->shouldReceive('accountFollowers')
                 ->once()
-                ->with('109999', 10)
+                ->with('109999', 10, null)
                 ->andReturn(new \App\Modules\Mastodon\DTO\Result\MastodonAccountFollowersResultDTO(
                     accounts: [[
                         'id' => 'follower-1',
                         'acct' => 'analyst@example.social',
                     ]],
+                    pagination: [
+                        'limit' => 10,
+                        'maxId' => null,
+                        'nextMaxId' => null,
+                        'hasMore' => false,
+                    ],
                 ));
         });
 

@@ -11,6 +11,7 @@ final class MastodonAccountFollowersResultDTO implements ArrayPayloadable
      */
     public function __construct(
         public readonly array $accounts,
+        public readonly array $pagination,
     ) {
     }
 
@@ -21,6 +22,7 @@ final class MastodonAccountFollowersResultDTO implements ArrayPayloadable
     {
         return [
             'accounts' => $this->accounts,
+            'pagination' => $this->pagination,
         ];
     }
 }

@@ -101,8 +101,20 @@ export type MastodonStatusContextPayload = {
 
 export type MastodonAccountStatusesPayload = {
     statuses: MastodonStatus[];
+    pagination: {
+        limit: number;
+        maxId: string | null;
+        nextMaxId: string | null;
+        hasMore: boolean;
+    };
 };
 
 export type MastodonAccountFollowersPayload = {
     accounts: MastodonAccount[];
+    pagination: {
+        limit: number;
+        maxId: string | null;
+        nextMaxId: string | null;
+        hasMore: boolean;
+    };
 };

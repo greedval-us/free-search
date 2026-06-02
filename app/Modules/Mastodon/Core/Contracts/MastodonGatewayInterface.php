@@ -16,12 +16,12 @@ interface MastodonGatewayInterface
     public function context(string $statusId): array;
 
     /**
-     * @return array<int, array<string, mixed>>
+     * @return array<string, mixed>
      */
-    public function accountStatuses(string $accountId, int $limit): array;
+    public function accountStatuses(string $accountId, int $limit, ?string $maxId = null): array;
 
     /**
-     * @return array<int, array<string, mixed>>
+     * @return array<string, mixed>
      */
-    public function accountFollowers(string $accountId, int $limit): array;
+    public function accountFollowers(string $accountId, int $limit, ?string $maxId = null): array;
 }

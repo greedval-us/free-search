@@ -15,15 +15,24 @@ final class LoadAccountStatusesAction extends AbstractMastodonAction
         parent::__construct($gateway);
     }
 
-    public function handle(string $accountId, int $limit): MastodonAccountStatusesResultDTO
+    public function handle(string $accountId, int $limit, ?string $maxId = null): MastodonAccountStatusesResultDTO
     {
-        $payload = $this->gateway->accountStatuses($accountId, $limit);
+        $payload = $this->gateway->accountStatuses($accountId, $limit, $maxId);
+        $statuses = collect($payload['items'] ?? [])
+            ->map(fn (array $item): array => $this->statusPresenter->present($item))
+            ->values()
+            ->all();
+        $nextMaxId = data_get($payload, 'pagination.nextMaxId');
+        $hasMore = is_string($nextMaxId) && $nextMaxId !== '';
 
         return new MastodonAccountStatusesResultDTO(
-            statuses: collect($payload)
-                ->map(fn (array $item): array => $this->statusPresenter->present($item))
-                ->values()
-                ->all(),
+            statuses: $statuses,
+            pagination: [
+                'limit' => $limit,
+                'maxId' => $maxId,
+                'nextMaxId' => $hasMore ? $nextMaxId : null,
+                'hasMore' => $hasMore,
+            ],
         );
     }
 }

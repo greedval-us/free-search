@@ -26,6 +26,7 @@ final class MastodonAccountResourceRequest extends FormRequest
         return [
             'accountId' => ['required', 'string', 'max:255'],
             'limit' => ['nullable', 'integer', 'min:1', 'max:'.$this->mastodonModuleConfig()->searchLimitMax()],
+            'maxId' => ['nullable', 'string', 'max:255'],
         ];
     }
 
@@ -42,5 +43,12 @@ final class MastodonAccountResourceRequest extends FormRequest
             $config->searchLimitMax(),
             max(1, (int) ($this->validated('limit') ?? $config->searchLimitDefault()))
         );
+    }
+
+    public function maxId(): ?string
+    {
+        $value = trim((string) ($this->validated('maxId') ?? ''));
+
+        return $value === '' ? null : $value;
     }
 }

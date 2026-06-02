@@ -30,13 +30,13 @@ final class MastodonSearchApplicationService implements MastodonSearchApplicatio
         return $this->loadStatusContextAction->handle($statusId);
     }
 
-    public function accountStatuses(string $accountId, int $limit): MastodonAccountStatusesResultDTO
+    public function accountStatuses(string $accountId, int $limit, ?string $maxId = null): MastodonAccountStatusesResultDTO
     {
-        return $this->loadAccountStatusesAction->handle($accountId, $limit);
+        return $this->loadAccountStatusesAction->handle($accountId, $limit, $maxId);
     }
 
-    public function accountFollowers(string $accountId, int $limit): MastodonAccountFollowersResultDTO
+    public function accountFollowers(string $accountId, int $limit, ?string $maxId = null): MastodonAccountFollowersResultDTO
     {
-        return $this->loadAccountFollowersAction->handle($accountId, $limit);
+        return $this->loadAccountFollowersAction->handle($accountId, $limit, $maxId);
     }
 }

@@ -41,7 +41,7 @@ final class MastodonSearchController extends Controller
     public function accountStatuses(MastodonAccountResourceRequest $request): JsonResponse
     {
         try {
-            return $this->jsonDataFrom($this->service->accountStatuses($request->accountId(), $request->limit()));
+            return $this->jsonDataFrom($this->service->accountStatuses($request->accountId(), $request->limit(), $request->maxId()));
         } catch (RuntimeException $exception) {
             return $this->jsonError($exception->getMessage(), $this->statusCodeFromException($exception));
         }
@@ -50,7 +50,7 @@ final class MastodonSearchController extends Controller
     public function accountFollowers(MastodonAccountResourceRequest $request): JsonResponse
     {
         try {
-            return $this->jsonDataFrom($this->service->accountFollowers($request->accountId(), $request->limit()));
+            return $this->jsonDataFrom($this->service->accountFollowers($request->accountId(), $request->limit(), $request->maxId()));
         } catch (RuntimeException $exception) {
             return $this->jsonError($exception->getMessage(), $this->statusCodeFromException($exception));
         }

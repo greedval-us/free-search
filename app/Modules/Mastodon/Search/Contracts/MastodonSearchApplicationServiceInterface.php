@@ -14,7 +14,7 @@ interface MastodonSearchApplicationServiceInterface
 
     public function context(string $statusId): MastodonStatusContextResultDTO;
 
-    public function accountStatuses(string $accountId, int $limit): MastodonAccountStatusesResultDTO;
+    public function accountStatuses(string $accountId, int $limit, ?string $maxId = null): MastodonAccountStatusesResultDTO;
 
-    public function accountFollowers(string $accountId, int $limit): MastodonAccountFollowersResultDTO;
+    public function accountFollowers(string $accountId, int $limit, ?string $maxId = null): MastodonAccountFollowersResultDTO;
 }

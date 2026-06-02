@@ -27,18 +27,20 @@ final class MastodonApiClient implements MastodonGatewayInterface
         return $this->get("/api/v1/statuses/{$statusId}/context", []);
     }
 
-    public function accountStatuses(string $accountId, int $limit): array
+    public function accountStatuses(string $accountId, int $limit, ?string $maxId = null): array
     {
-        return $this->get("/api/v1/accounts/{$accountId}/statuses", [
+        return $this->getPaginatedCollection("/api/v1/accounts/{$accountId}/statuses", array_filter([
             'limit' => $limit,
-        ]);
+            'max_id' => $maxId,
+        ], fn (mixed $value): bool => $value !== null && $value !== ''));
     }
 
-    public function accountFollowers(string $accountId, int $limit): array
+    public function accountFollowers(string $accountId, int $limit, ?string $maxId = null): array
     {
-        return $this->get("/api/v1/accounts/{$accountId}/followers", [
+        return $this->getPaginatedCollection("/api/v1/accounts/{$accountId}/followers", array_filter([
             'limit' => $limit,
-        ]);
+            'max_id' => $maxId,
+        ], fn (mixed $value): bool => $value !== null && $value !== ''));
     }
 
     /**
@@ -46,6 +48,32 @@ final class MastodonApiClient implements MastodonGatewayInterface
      * @return array<string, mixed>
      */
     private function get(string $endpoint, array $query): array
+    {
+        $response = $this->request($endpoint, $query);
+
+        return $response->json() ?? [];
+    }
+
+    /**
+     * @param  array<string, mixed>  $query
+     * @return array<string, mixed>
+     */
+    private function getPaginatedCollection(string $endpoint, array $query): array
+    {
+        $response = $this->request($endpoint, $query);
+
+        return [
+            'items' => $response->json() ?? [],
+            'pagination' => [
+                'nextMaxId' => $this->extractNextMaxId((string) $response->header('Link', '')),
+            ],
+        ];
+    }
+
+    /**
+     * @param  array<string, mixed>  $query
+     */
+    private function request(string $endpoint, array $query): \Illuminate\Http\Client\Response
     {
         if ($this->config->apiToken() === '') {
             throw new RuntimeException('MASTODON_API_TOKEN is not configured.');
@@ -74,7 +102,37 @@ final class MastodonApiClient implements MastodonGatewayInterface
             throw new RuntimeException($message, $response->status());
         }
 
-        return $response->json() ?? [];
+        return $response;
+    }
+
+    private function extractNextMaxId(string $linkHeader): ?string
+    {
+        if ($linkHeader === '') {
+            return null;
+        }
+
+        foreach (explode(',', $linkHeader) as $part) {
+            if (! str_contains($part, 'rel="next"')) {
+                continue;
+            }
+
+            if (! preg_match('/<([^>]+)>/', $part, $matches)) {
+                continue;
+            }
+
+            $url = $matches[1] ?? '';
+
+            if ($url === '') {
+                continue;
+            }
+
+            parse_str((string) parse_url($url, PHP_URL_QUERY), $query);
+            $maxId = trim((string) ($query['max_id'] ?? ''));
+
+            return $maxId !== '' ? $maxId : null;
+        }
+
+        return null;
     }
 
     private function http(): PendingRequest
