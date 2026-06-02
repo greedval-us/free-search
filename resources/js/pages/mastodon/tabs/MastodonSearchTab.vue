@@ -38,6 +38,12 @@ const {
     loadMoreHashtagStatuses,
 } = useMastodonSearch(t);
 
+const mastodonText = (key: string, fallback: string) => {
+    const label = t(key);
+
+    return label === key ? fallback : label;
+};
+
 const resolveRemoteLabel = computed(() => {
     const label = t('mastodon.search.resolveRemote');
 
@@ -335,6 +341,7 @@ const resolveRemoteLabel = computed(() => {
             :loading="loading"
             :total-shown="totalShown"
             :format-date="formatDate"
+            :mastodon-text="mastodonText"
             :ensure-context-state="ensureContextState"
             :ensure-account-details-state="ensureAccountDetailsState"
             :ensure-hashtag-details-state="ensureHashtagDetailsState"
