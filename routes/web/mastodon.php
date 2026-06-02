@@ -11,11 +11,11 @@ Route::inertia('mastodon', 'Mastodon')
 Route::prefix('mastodon')->name('mastodon.')->group(function (): void {
     Route::prefix('analytics')->name('analytics.')->group(function (): void {
         Route::get('summary', [MastodonAnalyticsController::class, 'summary'])
-            ->middleware('throttle:30,1')
+            ->middleware(['feature.access', 'throttle:30,1'])
             ->name('summary');
 
         Route::get('report', [MastodonAnalyticsController::class, 'report'])
-            ->middleware('throttle:20,1')
+            ->middleware(['feature.access', 'throttle:20,1'])
             ->name('report');
     });
 

@@ -9,6 +9,7 @@ export type MastodonTabDefinition = {
     labelKey: string;
     icon: Component;
     component: Component;
+    accessKey?: string;
 };
 
 export const MASTODON_TABS: readonly MastodonTabDefinition[] = [
@@ -23,5 +24,6 @@ export const MASTODON_TABS: readonly MastodonTabDefinition[] = [
         labelKey: 'mastodon.tabs.analytics',
         icon: MODULE_TAB_ICONS.analytics,
         component: MastodonAnalyticsTab,
+        accessKey: 'mastodon.analytics',
     },
 ] as const;

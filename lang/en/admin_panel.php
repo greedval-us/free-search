@@ -98,6 +98,7 @@ return [
     ],
 
     'quota_modules' => [
+        'mastodon' => 'Mastodon',
         'site-intel' => 'Site Intel',
         'telegram' => 'Telegram',
         'youtube' => 'YouTube',
@@ -116,6 +117,9 @@ return [
     ],
 
     'quota_resources' => [
+        'mastodon' => [
+            'analytics' => 'Mastodon analytics',
+        ],
         'site-intel' => [
             'analytics' => 'Site Intel analytics',
             'seo-audit' => 'SEO audit',

@@ -5,6 +5,7 @@ return [
         'free' => [
             'analytics' => 0,
             'parser' => 0,
+            'mastodon.analytics' => 0,
             'site-intel.analytics' => 0,
             'site-intel.seo-audit' => 0,
             'telegram.analytics' => 0,
@@ -15,6 +16,7 @@ return [
         'plus' => [
             'analytics' => 10,
             'parser' => 5,
+            'mastodon.analytics' => 10,
             'site-intel.analytics' => 10,
             'site-intel.seo-audit' => 10,
             'telegram.analytics' => 10,
@@ -25,6 +27,7 @@ return [
         'pro' => [
             'analytics' => 100,
             'parser' => 50,
+            'mastodon.analytics' => 100,
             'site-intel.analytics' => 100,
             'site-intel.seo-audit' => 100,
             'telegram.analytics' => 100,
@@ -35,6 +38,11 @@ return [
     ],
 
     'resources' => [
+        'mastodon.analytics' => [
+            'module' => 'mastodon',
+            'capability' => 'analytics',
+            'quota_key' => 'mastodon.analytics',
+        ],
         'site-intel.analytics' => [
             'module' => 'site-intel',
             'capability' => 'analytics',
@@ -73,6 +81,11 @@ return [
     ],
 
     'page_resources' => [
+        'mastodon' => [
+            'tabs' => [
+                'analytics' => 'mastodon.analytics',
+            ],
+        ],
         'site-intel' => [
             'tabs' => [
                 'analytics' => 'site-intel.analytics',
@@ -100,6 +113,8 @@ return [
     ],
 
     'protected_routes' => [
+        'mastodon.analytics.summary' => ['resource' => 'mastodon.analytics', 'counts' => true],
+        'mastodon.analytics.report' => ['resource' => 'mastodon.analytics', 'counts' => false],
         'site-intel.analytics' => ['resource' => 'site-intel.analytics', 'counts' => true],
         'site-intel.report' => ['resource' => 'site-intel.analytics', 'counts' => false],
         'site-intel.seo-audit' => ['resource' => 'site-intel.seo-audit', 'counts' => true],
