@@ -2,12 +2,12 @@
 
 namespace App\Http\Requests\Mastodon;
 
+use App\Http\Requests\LocalizedFormRequest;
 use App\Http\Requests\Mastodon\Concerns\ResolvesMastodonModuleConfig;
 use App\Modules\Mastodon\DTO\Request\MastodonAnalyticsQueryDTO;
-use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
-final class MastodonAnalyticsRequest extends FormRequest
+final class MastodonAnalyticsRequest extends LocalizedFormRequest
 {
     use ResolvesMastodonModuleConfig;
 
@@ -37,6 +37,7 @@ final class MastodonAnalyticsRequest extends FormRequest
             'dateFrom' => ['nullable', 'date_format:Y-m-d'],
             'dateTo' => ['nullable', 'date_format:Y-m-d', 'after_or_equal:dateFrom'],
             'resolve' => ['nullable', 'boolean'],
+            'locale' => $this->localeRule(),
         ];
     }
 
@@ -56,5 +57,10 @@ final class MastodonAnalyticsRequest extends FormRequest
                 ? filter_var($validated['resolve'], FILTER_VALIDATE_BOOL)
                 : true,
         );
+    }
+
+    public function locale(): string
+    {
+        return $this->resolveLocale();
     }
 }

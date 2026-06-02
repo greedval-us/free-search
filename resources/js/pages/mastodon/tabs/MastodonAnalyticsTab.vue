@@ -1,5 +1,14 @@
 <script setup lang="ts">
-import { BarChart3, ChevronDown, ChevronUp, ExternalLink, RefreshCw, Tags } from 'lucide-vue-next';
+import {
+    BarChart3,
+    ChevronDown,
+    ChevronUp,
+    Download,
+    ExternalLink,
+    FileText,
+    RefreshCw,
+    Tags,
+} from 'lucide-vue-next';
 import { computed, ref } from 'vue';
 import HelpTooltip from '@/components/ui/HelpTooltip.vue';
 import IntelResultPanel from '@/components/ui/IntelResultPanel.vue';
@@ -11,7 +20,7 @@ import type { MastodonAccount, MastodonAnalyticsPayload, MastodonHashtag } from 
 
 type AnalyticsMode = 'account' | 'hashtag';
 
-const { t } = useI18n();
+const { t, locale } = useI18n();
 
 const form = ref({
     mode: 'account' as AnalyticsMode,
@@ -29,6 +38,7 @@ const result = ref<MastodonAnalyticsPayload | null>(null);
 const panelCollapsed = ref(false);
 
 const canRun = computed(() => form.value.target.trim().length > 0);
+const canUseReportActions = computed(() => result.value !== null && canRun.value);
 const isAccountMode = computed(() => form.value.mode === 'account');
 const accountProfile = computed(() =>
     result.value?.meta.mode === 'account' && result.value.profile
@@ -72,6 +82,7 @@ const runAnalytics = async () => {
                 dateFrom: form.value.dateFrom || undefined,
                 dateTo: form.value.dateTo || undefined,
                 resolve: form.value.resolve ? 'true' : 'false',
+                locale: locale.value,
             },
         }
     );
@@ -85,6 +96,39 @@ const runAnalytics = async () => {
     }
 
     result.value = response.data;
+};
+
+const reportUrl = computed(() => {
+    const query = new URLSearchParams({
+        mode: form.value.mode,
+        target: form.value.target.trim(),
+        limit: String(form.value.limit),
+        pages: String(form.value.pages),
+        resolve: form.value.resolve ? '1' : '0',
+        locale: locale.value,
+    });
+
+    if (form.value.dateFrom) {
+        query.set('dateFrom', form.value.dateFrom);
+    }
+
+    if (form.value.dateTo) {
+        query.set('dateTo', form.value.dateTo);
+    }
+
+    return `/mastodon/analytics/report?${query.toString()}`;
+});
+
+const openReport = () => {
+    window.open(reportUrl.value, '_blank', 'noopener,noreferrer');
+};
+
+const downloadReport = () => {
+    window.open(
+        `${reportUrl.value}&download=1`,
+        '_blank',
+        'noopener,noreferrer'
+    );
 };
 </script>
 
@@ -104,7 +148,7 @@ const runAnalytics = async () => {
                     {{
                         panelCollapsed
                             ? t('mastodon.analytics.collapsed')
-                            : t('mastodon.analytics.filters')
+                            : t('mastodon.analytics.hint')
                     }}
                 </p>
             </div>
@@ -119,7 +163,7 @@ const runAnalytics = async () => {
             </button>
         </div>
 
-        <div v-if="!panelCollapsed" class="mt-3 space-y-3">
+        <div v-if="!panelCollapsed" class="mt-3 space-y-2.5">
             <div class="grid gap-2.5 md:grid-cols-2 xl:grid-cols-12">
                 <label class="block min-w-0 xl:col-span-2">
                     <span class="mb-1 block truncate text-xs font-medium text-muted-foreground">
@@ -182,7 +226,7 @@ const runAnalytics = async () => {
                     />
                 </label>
 
-                <label class="block min-w-0 xl:col-span-2">
+                <label class="block min-w-0 xl:col-span-1">
                     <span class="mb-1 block truncate text-xs font-medium text-muted-foreground">
                         {{ t('mastodon.analytics.dateFrom') }}
                     </span>
@@ -193,7 +237,7 @@ const runAnalytics = async () => {
                     />
                 </label>
 
-                <label class="block min-w-0 xl:col-span-2">
+                <label class="block min-w-0 xl:col-span-1">
                     <span class="mb-1 block truncate text-xs font-medium text-muted-foreground">
                         {{ t('mastodon.analytics.dateTo') }}
                     </span>
@@ -231,8 +275,28 @@ const runAnalytics = async () => {
                         {{
                             loading
                                 ? t('mastodon.analytics.loading')
-                                : t('mastodon.analytics.run')
+                                : t('mastodon.analytics.refresh')
                         }}
+                    </button>
+
+                    <button
+                        type="button"
+                        :disabled="!canUseReportActions"
+                        class="inline-flex h-10 cursor-pointer items-center gap-2 rounded-md bg-primary px-4 text-sm font-semibold text-primary-foreground hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-60"
+                        @click="openReport"
+                    >
+                        <FileText class="h-4 w-4" />
+                        {{ t('mastodon.analytics.report') }}
+                    </button>
+
+                    <button
+                        type="button"
+                        :disabled="!canUseReportActions"
+                        class="inline-flex h-10 cursor-pointer items-center gap-2 rounded-md border border-input bg-background px-4 text-sm font-medium hover:bg-accent disabled:cursor-not-allowed disabled:opacity-60"
+                        @click="downloadReport"
+                    >
+                        <Download class="h-4 w-4" />
+                        {{ t('mastodon.analytics.downloadReport') }}
                     </button>
                 </div>
             </div>
@@ -254,7 +318,16 @@ const runAnalytics = async () => {
                 v-else-if="!result"
                 class="rounded-xl border border-sidebar-border/80 bg-card/70 p-6 text-center text-sm text-muted-foreground shadow-xl backdrop-blur"
             >
-                {{ t('mastodon.analytics.empty') }}
+                <p>{{ t('mastodon.analytics.empty') }}</p>
+                <button
+                    type="button"
+                    :disabled="!canRun || loading"
+                    class="mt-4 inline-flex h-10 cursor-pointer items-center gap-2 rounded-md border border-input bg-background px-4 text-sm font-medium hover:bg-accent disabled:cursor-not-allowed disabled:opacity-60"
+                    @click="runAnalytics"
+                >
+                    <RefreshCw class="h-4 w-4" />
+                    {{ t('mastodon.analytics.refresh') }}
+                </button>
             </div>
 
             <template v-else>

@@ -345,4 +345,56 @@ class MastodonControllerIsolationTest extends TestCase
             ->assertJsonPath('data.meta.resolvedTarget', '#osint')
             ->assertJsonPath('data.summary.postsCount', 12);
     }
+
+    public function test_mastodon_analytics_report_renders_html_response(): void
+    {
+        $user = User::factory()->create();
+
+        $this->mock(MastodonAnalyticsApplicationServiceInterface::class, function ($mock): void {
+            $mock->shouldReceive('summary')
+                ->once()
+                ->andReturn(new MastodonAnalyticsResultDTO(
+                    profile: null,
+                    meta: [
+                        'mode' => 'account',
+                        'target' => '@analyst@example.social',
+                        'resolvedTarget' => '@analyst@example.social',
+                        'pagesRequested' => 3,
+                        'pagesLoaded' => 1,
+                        'sampledPosts' => 4,
+                    ],
+                    summary: [
+                        'postsCount' => 4,
+                        'uniqueAccountsCount' => 1,
+                        'uniqueInstancesCount' => 1,
+                        'uniqueLanguagesCount' => 1,
+                        'postsWithMediaCount' => 0,
+                        'postsWithLinksCount' => 1,
+                        'replyPostsCount' => 0,
+                        'boostPostsCount' => 0,
+                        'sensitivePostsCount' => 0,
+                        'totalReplies' => 2,
+                        'totalReblogs' => 3,
+                        'totalFavourites' => 5,
+                    ],
+                    timeline: [],
+                    topDomains: [],
+                    topTags: [],
+                    topAccounts: [],
+                    topMentions: [],
+                    topLanguages: [],
+                    topPosts: [],
+                ));
+        });
+
+        $this
+            ->actingAs($user)
+            ->get(route('mastodon.analytics.report', [
+                'mode' => 'account',
+                'target' => '@analyst@example.social',
+                'locale' => 'en',
+            ]))
+            ->assertOk()
+            ->assertSee('Mastodon Analytics Report');
+    }
 }

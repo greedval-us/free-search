@@ -13,6 +13,10 @@ Route::prefix('mastodon')->name('mastodon.')->group(function (): void {
         Route::get('summary', [MastodonAnalyticsController::class, 'summary'])
             ->middleware('throttle:30,1')
             ->name('summary');
+
+        Route::get('report', [MastodonAnalyticsController::class, 'report'])
+            ->middleware('throttle:20,1')
+            ->name('report');
     });
 
     Route::prefix('search')->name('search.')->group(function (): void {
