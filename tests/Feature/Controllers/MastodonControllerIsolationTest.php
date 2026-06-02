@@ -3,7 +3,10 @@
 namespace Tests\Feature\Controllers;
 
 use App\Models\User;
+use App\Modules\Mastodon\Analytics\Contracts\MastodonAnalyticsApplicationServiceInterface;
+use App\Modules\Mastodon\DTO\Request\MastodonAnalyticsQueryDTO;
 use App\Modules\Mastodon\DTO\Request\MastodonSearchQueryDTO;
+use App\Modules\Mastodon\DTO\Result\MastodonAnalyticsResultDTO;
 use App\Modules\Mastodon\DTO\Result\MastodonSearchResultDTO;
 use App\Modules\Mastodon\DTO\Result\MastodonStatusContextResultDTO;
 use App\Modules\Mastodon\DTO\Result\MastodonTagTimelineResultDTO;
@@ -270,5 +273,76 @@ class MastodonControllerIsolationTest extends TestCase
             ->assertOk()
             ->assertJsonPath('data.statuses.0.id', 'tag-status-1')
             ->assertJsonPath('data.analytics.uniqueAccountsCount', 1);
+    }
+
+    public function test_mastodon_analytics_controller_returns_summary_payload(): void
+    {
+        $user = User::factory()->create();
+
+        $this->mock(MastodonAnalyticsApplicationServiceInterface::class, function ($mock): void {
+            $mock->shouldReceive('summary')
+                ->once()
+                ->with(Mockery::on(
+                    fn (MastodonAnalyticsQueryDTO $query): bool => $query->mode === 'hashtag'
+                        && $query->target === 'osint'
+                        && $query->limit === 10
+                        && $query->pages === 3
+                        && $query->dateFrom === '2026-05-01'
+                        && $query->dateTo === '2026-05-31'
+                        && $query->resolve === true
+                ))
+                ->andReturn(new MastodonAnalyticsResultDTO(
+                    profile: [
+                        'id' => 'tag-1',
+                        'name' => 'osint',
+                        'url' => 'https://mastodon.social/tags/osint',
+                        'history' => [],
+                    ],
+                    meta: [
+                        'mode' => 'hashtag',
+                        'target' => 'osint',
+                        'resolvedTarget' => '#osint',
+                        'pagesRequested' => 3,
+                        'pagesLoaded' => 2,
+                        'sampledPosts' => 12,
+                    ],
+                    summary: [
+                        'postsCount' => 12,
+                        'uniqueAccountsCount' => 5,
+                        'uniqueInstancesCount' => 3,
+                        'uniqueLanguagesCount' => 2,
+                        'postsWithMediaCount' => 4,
+                        'postsWithLinksCount' => 6,
+                        'replyPostsCount' => 1,
+                        'boostPostsCount' => 2,
+                        'sensitivePostsCount' => 0,
+                        'totalReplies' => 10,
+                        'totalReblogs' => 22,
+                        'totalFavourites' => 31,
+                    ],
+                    timeline: [],
+                    topDomains: [],
+                    topTags: [],
+                    topAccounts: [],
+                    topMentions: [],
+                    topLanguages: [],
+                    topPosts: [],
+                ));
+        });
+
+        $this
+            ->actingAs($user)
+            ->getJson(route('mastodon.analytics.summary', [
+                'mode' => 'hashtag',
+                'target' => 'osint',
+                'limit' => 10,
+                'pages' => 3,
+                'dateFrom' => '2026-05-01',
+                'dateTo' => '2026-05-31',
+                'resolve' => true,
+            ]))
+            ->assertOk()
+            ->assertJsonPath('data.meta.resolvedTarget', '#osint')
+            ->assertJsonPath('data.summary.postsCount', 12);
     }
 }

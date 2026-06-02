@@ -1,4 +1,4 @@
-export type MastodonTabValue = 'search';
+export type MastodonTabValue = 'search' | 'analytics';
 
 export type MastodonStatus = {
     id: string;
@@ -144,4 +144,64 @@ export type MastodonTagTimelinePayload = {
         nextMaxId: string | null;
         hasMore: boolean;
     };
+};
+
+export type MastodonAnalyticsPayload = {
+    profile: MastodonAccount | MastodonHashtag | null;
+    meta: {
+        mode: 'account' | 'hashtag' | string;
+        target: string;
+        resolvedTarget: string;
+        pagesRequested: number;
+        pagesLoaded: number;
+        sampledPosts: number;
+    };
+    summary: {
+        postsCount: number;
+        uniqueAccountsCount: number;
+        uniqueInstancesCount: number;
+        uniqueLanguagesCount: number;
+        postsWithMediaCount: number;
+        postsWithLinksCount: number;
+        replyPostsCount: number;
+        boostPostsCount: number;
+        sensitivePostsCount: number;
+        totalReplies: number;
+        totalReblogs: number;
+        totalFavourites: number;
+    };
+    timeline: Array<{
+        day: string;
+        posts: number;
+        postsWithMedia: number;
+        postsWithLinks: number;
+        replies: number;
+        reblogs: number;
+        favourites: number;
+    }>;
+    topDomains: Array<{
+        domain: string;
+        count: number;
+    }>;
+    topTags: Array<{
+        tag: string;
+        count: number;
+    }>;
+    topAccounts: Array<
+        MastodonStatus['account'] & {
+            count: number;
+        }
+    >;
+    topMentions: Array<{
+        id: string;
+        username: string;
+        acct: string;
+        url: string;
+        count: number;
+    }>;
+    topLanguages: Array<{
+        language: string;
+        count: number;
+    }>;
+    topPosts: MastodonStatus[];
 };

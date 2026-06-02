@@ -1,6 +1,8 @@
+import MastodonAnalyticsController from './MastodonAnalyticsController'
 import MastodonSearchController from './MastodonSearchController'
 const Mastodon = {
-    MastodonSearchController: Object.assign(MastodonSearchController, MastodonSearchController),
+    MastodonAnalyticsController: Object.assign(MastodonAnalyticsController, MastodonAnalyticsController),
+MastodonSearchController: Object.assign(MastodonSearchController, MastodonSearchController),
 }
 
 export default Mastodon

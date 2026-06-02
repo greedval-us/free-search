@@ -4,7 +4,69 @@
         "label": "What is this data?"
     },
     "tabs": {
-        "search": "Search"
+        "search": "Search",
+        "analytics": "Analytics"
+    },
+    "analytics": {
+        "title": "Mastodon Analytics",
+        "collapsed": "Analytics panel is collapsed",
+        "filters": "Aggregate account and hashtag activity across several pages of Mastodon data",
+        "hint": "Build a sample-based OSINT summary for a Mastodon account or hashtag, including activity, languages, domains, mentions, and top posts.",
+        "mode": "Analytics mode",
+        "modes": {
+            "account": "Account",
+            "hashtag": "Hashtag"
+        },
+        "target": "Target",
+        "accountPlaceholder": "for example: @analyst@mastodon.social",
+        "hashtagPlaceholder": "for example: osint",
+        "limit": "Posts per page",
+        "pages": "Pages to sample",
+        "dateFrom": "Date from",
+        "dateTo": "Date to",
+        "run": "Run analytics",
+        "loading": "Building analytics...",
+        "empty": "Run analytics to view the Mastodon summary.",
+        "accountProfile": "Account profile",
+        "hashtagProfile": "Hashtag profile",
+        "sample": "Sample coverage",
+        "sampleTarget": "Resolved target",
+        "sampledPosts": "Sampled posts",
+        "pagesRequested": "Pages requested",
+        "pagesLoaded": "Pages loaded",
+        "timeline": "Timeline",
+        "topPosts": "Top posts",
+        "topDomains": "Top domains",
+        "topTags": "Top tags",
+        "topAccounts": "Top accounts",
+        "topMentions": "Top mentions",
+        "topLanguages": "Top languages",
+        "usesInSample": "uses in sample",
+        "mentionsInSample": "mentions in sample",
+        "noTimeline": "No activity timeline available for this sample.",
+        "noTopPosts": "No posts available in the sample.",
+        "noDomains": "No outbound domains found in the sample.",
+        "noTags": "No tags found in the sample.",
+        "noAccounts": "No accounts found in the sample.",
+        "noMentions": "No mentions found in the sample.",
+        "noLanguages": "No language distribution found in the sample.",
+        "metrics": {
+            "posts": "Posts",
+            "accounts": "Accounts",
+            "instances": "Instances",
+            "languages": "Languages",
+            "mediaPosts": "Posts with media",
+            "linkPosts": "Posts with links",
+            "replyPosts": "Reply posts",
+            "boostPosts": "Boost posts",
+            "sensitivePosts": "Sensitive posts",
+            "repliesTotal": "Replies total",
+            "reblogsTotal": "Boosts total",
+            "favouritesTotal": "Favorites total"
+        },
+        "errors": {
+            "requestFailed": "Request failed."
+        }
     },
     "search": {
         "title": "Mastodon Search",

@@ -2,6 +2,8 @@
 
 namespace App\Modules\Mastodon\Providers;
 
+use App\Modules\Mastodon\Analytics\Contracts\MastodonAnalyticsApplicationServiceInterface;
+use App\Modules\Mastodon\Analytics\MastodonAnalyticsApplicationService;
 use App\Modules\Mastodon\Core\Contracts\MastodonGatewayInterface;
 use App\Modules\Mastodon\MastodonApiClient;
 use App\Modules\Mastodon\Search\Contracts\MastodonSearchApplicationServiceInterface;
@@ -35,6 +37,7 @@ final class MastodonServiceProvider extends BindingsServiceProvider
     {
         return [
             MastodonGatewayInterface::class => MastodonApiClient::class,
+            MastodonAnalyticsApplicationServiceInterface::class => MastodonAnalyticsApplicationService::class,
             MastodonSearchApplicationServiceInterface::class => MastodonSearchApplicationService::class,
         ];
     }
