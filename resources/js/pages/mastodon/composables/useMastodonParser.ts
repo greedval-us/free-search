@@ -25,6 +25,7 @@ type ParserStatusResponse = {
 };
 
 const POLL_INTERVAL_MS = 3000;
+const TERMINAL_STATUSES: ParserStatus[] = ['completed', 'failed', 'stopped'];
 
 export const useMastodonParser = (t: TranslateFn) => {
     const form = reactive({
@@ -48,6 +49,15 @@ export const useMastodonParser = (t: TranslateFn) => {
         () => form.account.trim().length > 0 && !loading.value
     );
 
+    const csrfToken = () =>
+        document.querySelector<HTMLMetaElement>('meta[name="csrf-token"]')
+            ?.content ?? '';
+
+    const requestHeaders = (contentType?: 'application/json') => ({
+        ...(contentType ? { 'Content-Type': contentType } : {}),
+        'X-CSRF-TOKEN': csrfToken(),
+    });
+
     const resetState = () => {
         runId.value = null;
         progress.value = 0;
@@ -57,6 +67,22 @@ export const useMastodonParser = (t: TranslateFn) => {
         downloadUrl.value = null;
         downloadJsonUrl.value = null;
     };
+
+    const applyPayload = (payload: ParserStatusResponse) => {
+        stage.value = payload.stage;
+        progress.value = payload.progress;
+        processedStatuses.value = payload.processedStatuses;
+        processedComments.value = payload.processedComments;
+        error.value = payload.error;
+        downloadUrl.value = payload.downloadUrl;
+        downloadJsonUrl.value = payload.downloadJsonUrl;
+    };
+
+    const stopRunRequest = (activeRunId: string) =>
+        apiRequest<ParserStatusResponse>(`/mastodon/parser/stop/${activeRunId}`, {
+            method: 'POST',
+            headers: requestHeaders(),
+        });
 
     const stopSilently = () => {
         if (pollTimer.value !== null) {
@@ -68,18 +94,7 @@ export const useMastodonParser = (t: TranslateFn) => {
         const activeRunId = runId.value;
 
         if (activeRunId) {
-            apiRequest<ParserStatusResponse>(
-                `/mastodon/parser/stop/${activeRunId}`,
-                {
-                    method: 'POST',
-                    headers: {
-                        'X-CSRF-TOKEN':
-                            document.querySelector<HTMLMetaElement>(
-                                'meta[name="csrf-token"]'
-                            )?.content ?? '',
-                    },
-                }
-            ).catch(() => undefined);
+            stopRunRequest(activeRunId).catch(() => undefined);
         }
     };
 
@@ -101,28 +116,13 @@ export const useMastodonParser = (t: TranslateFn) => {
             return;
         }
 
-        apiRequest<ParserStatusResponse>(`/mastodon/parser/stop/${activeRunId}`, {
-            method: 'POST',
-            headers: {
-                'X-CSRF-TOKEN':
-                    document.querySelector<HTMLMetaElement>(
-                        'meta[name="csrf-token"]'
-                    )?.content ?? '',
-            },
-        })
+        stopRunRequest(activeRunId)
             .then((response) => {
                 if (!response.ok || response.data.runId !== runId.value) {
                     return;
                 }
 
-                const payload = response.data;
-                stage.value = payload.stage;
-                progress.value = payload.progress;
-                processedStatuses.value = payload.processedStatuses;
-                processedComments.value = payload.processedComments;
-                error.value = payload.error;
-                downloadUrl.value = payload.downloadUrl;
-                downloadJsonUrl.value = payload.downloadJsonUrl;
+                applyPayload(response.data);
             })
             .catch(() => undefined);
     };
@@ -146,13 +146,7 @@ export const useMastodonParser = (t: TranslateFn) => {
                 '/mastodon/parser/start',
                 {
                     method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-CSRF-TOKEN':
-                            document.querySelector<HTMLMetaElement>(
-                                'meta[name="csrf-token"]'
-                            )?.content ?? '',
-                    },
+                    headers: requestHeaders('application/json'),
                     body: {
                         account: form.account.trim(),
                     },
@@ -165,14 +159,8 @@ export const useMastodonParser = (t: TranslateFn) => {
                 );
             }
 
-            const payload = response.data;
-            runId.value = payload.runId;
-            stage.value = payload.stage;
-            progress.value = payload.progress;
-            processedStatuses.value = payload.processedStatuses;
-            processedComments.value = payload.processedComments;
-            downloadUrl.value = payload.downloadUrl;
-            downloadJsonUrl.value = payload.downloadJsonUrl;
+            runId.value = response.data.runId;
+            applyPayload(response.data);
 
             const pollStatus = async () => {
                 if (!runId.value || pollRequestInFlight.value) {
@@ -198,19 +186,9 @@ export const useMastodonParser = (t: TranslateFn) => {
                     }
 
                     const statusPayload = statusResponse.data;
-                    stage.value = statusPayload.stage;
-                    progress.value = statusPayload.progress;
-                    processedStatuses.value = statusPayload.processedStatuses;
-                    processedComments.value = statusPayload.processedComments;
-                    error.value = statusPayload.error;
+                    applyPayload(statusPayload);
 
-                    if (
-                        statusPayload.status === 'completed' ||
-                        statusPayload.status === 'failed' ||
-                        statusPayload.status === 'stopped'
-                    ) {
-                        downloadUrl.value = statusPayload.downloadUrl;
-                        downloadJsonUrl.value = statusPayload.downloadJsonUrl;
+                    if (TERMINAL_STATUSES.includes(statusPayload.status)) {
                         loading.value = false;
                         stopSilently();
 
@@ -278,10 +256,7 @@ export const useMastodonParser = (t: TranslateFn) => {
             keepalive: true,
             headers: {
                 Accept: 'application/json',
-                'X-CSRF-TOKEN':
-                    document.querySelector<HTMLMetaElement>(
-                        'meta[name="csrf-token"]'
-                    )?.content ?? '',
+                'X-CSRF-TOKEN': csrfToken(),
             },
         }).catch(() => undefined);
     };

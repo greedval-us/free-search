@@ -2,10 +2,16 @@
 
 namespace App\Modules\Mastodon\Presenters;
 
+use App\Modules\Mastodon\Enums\MastodonPostType;
 use Illuminate\Support\Arr;
 
 final class MastodonStatusPresenter
 {
+    public function __construct(
+        private readonly MastodonAccountPresenter $accountPresenter,
+    ) {
+    }
+
     /**
      * @param array<string, mixed> $item
      * @return array<string, mixed>
@@ -17,15 +23,7 @@ final class MastodonStatusPresenter
         $statusUrl = (string) ($item['url'] ?? '');
         $links = $this->extractLinks($item);
         $domains = $this->extractDomains($links);
-        $mentions = collect(Arr::get($item, 'mentions', []))
-            ->map(fn (array $mention): array => [
-                'id' => (string) ($mention['id'] ?? ''),
-                'username' => (string) ($mention['username'] ?? ''),
-                'acct' => (string) ($mention['acct'] ?? ''),
-                'url' => (string) ($mention['url'] ?? ''),
-            ])
-            ->values()
-            ->all();
+        $mediaAttachments = Arr::get($item, 'media_attachments', []);
 
         return [
             'id' => (string) ($item['id'] ?? ''),
@@ -41,29 +39,47 @@ final class MastodonStatusPresenter
             'repliesCount' => (int) ($item['replies_count'] ?? 0),
             'reblogsCount' => (int) ($item['reblogs_count'] ?? 0),
             'favouritesCount' => (int) ($item['favourites_count'] ?? 0),
-            'mediaAttachmentsCount' => count(Arr::get($item, 'media_attachments', [])),
-            'hasMedia' => count(Arr::get($item, 'media_attachments', [])) > 0,
+            'mediaAttachmentsCount' => count($mediaAttachments),
+            'hasMedia' => count($mediaAttachments) > 0,
             'hasLinks' => $links !== [],
             'postType' => $this->resolvePostType($item),
             'instanceDomain' => $this->resolveDomain($accountUrl !== '' ? $accountUrl : $statusUrl),
             'links' => $links,
             'domains' => $domains,
-            'mentions' => $mentions,
-            'tags' => collect(Arr::get($item, 'tags', []))
-                ->map(fn (array $tag): string => (string) ($tag['name'] ?? ''))
-                ->filter()
-                ->values()
-                ->all(),
-            'account' => [
-                'id' => (string) Arr::get($item, 'account.id', ''),
-                'username' => (string) Arr::get($item, 'account.username', ''),
-                'acct' => (string) Arr::get($item, 'account.acct', ''),
-                'displayName' => $this->plainText((string) Arr::get($item, 'account.display_name', '')),
-                'url' => $accountUrl,
-                'avatar' => (string) Arr::get($item, 'account.avatar', ''),
-                'instanceDomain' => $this->resolveDomain($accountUrl),
-            ],
+            'mentions' => $this->presentMentions($item),
+            'tags' => $this->presentTags($item),
+            'account' => $this->accountPresenter->present((array) ($item['account'] ?? [])),
         ];
+    }
+
+    /**
+     * @param array<string, mixed> $item
+     * @return array<int, array<string, string>>
+     */
+    private function presentMentions(array $item): array
+    {
+        return collect(Arr::get($item, 'mentions', []))
+            ->map(fn (array $mention): array => [
+                'id' => (string) ($mention['id'] ?? ''),
+                'username' => (string) ($mention['username'] ?? ''),
+                'acct' => (string) ($mention['acct'] ?? ''),
+                'url' => (string) ($mention['url'] ?? ''),
+            ])
+            ->values()
+            ->all();
+    }
+
+    /**
+     * @param array<string, mixed> $item
+     * @return array<int, string>
+     */
+    private function presentTags(array $item): array
+    {
+        return collect(Arr::get($item, 'tags', []))
+            ->map(fn (array $tag): string => (string) ($tag['name'] ?? ''))
+            ->filter()
+            ->values()
+            ->all();
     }
 
     /**
@@ -108,14 +124,14 @@ final class MastodonStatusPresenter
     private function resolvePostType(array $item): string
     {
         if (Arr::get($item, 'reblog.id')) {
-            return 'boost';
+            return MastodonPostType::Boost->value;
         }
 
         if (! empty($item['in_reply_to_id'])) {
-            return 'reply';
+            return MastodonPostType::Reply->value;
         }
 
-        return 'original';
+        return MastodonPostType::Original->value;
     }
 
     private function resolveDomain(string $url): string

@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\Mastodon;
 
+use App\Http\Requests\Concerns\NormalizesBooleanInputs;
 use App\Http\Requests\LocalizedFormRequest;
 use App\Http\Requests\Mastodon\Concerns\ResolvesMastodonModuleConfig;
 use App\Modules\Mastodon\DTO\Request\MastodonAnalyticsQueryDTO;
@@ -9,17 +10,12 @@ use Illuminate\Validation\Rule;
 
 final class MastodonAnalyticsRequest extends LocalizedFormRequest
 {
+    use NormalizesBooleanInputs;
     use ResolvesMastodonModuleConfig;
 
     protected function prepareForValidation(): void
     {
-        if ($this->has('resolve') && is_string($this->input('resolve'))) {
-            $normalized = filter_var($this->input('resolve'), FILTER_VALIDATE_BOOL, FILTER_NULL_ON_FAILURE);
-
-            if ($normalized !== null) {
-                $this->merge(['resolve' => $normalized]);
-            }
-        }
+        $this->normalizeBooleanInputs(['resolve']);
     }
 
     public function authorize(): bool

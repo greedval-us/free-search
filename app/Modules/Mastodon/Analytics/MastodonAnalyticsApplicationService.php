@@ -14,6 +14,10 @@ use RuntimeException;
 
 final class MastodonAnalyticsApplicationService implements MastodonAnalyticsApplicationServiceInterface
 {
+    private const SEARCH_PICK_LIMIT = 10;
+    private const TOP_POSTS_LIMIT = 8;
+    private const TOP_VALUES_LIMIT = 10;
+
     public function __construct(
         private readonly MastodonGatewayInterface $gateway,
         private readonly MastodonStatusPresenter $statusPresenter,
@@ -178,13 +182,11 @@ final class MastodonAnalyticsApplicationService implements MastodonAnalyticsAppl
             ->sortByDesc(fn (array $status): int => ((int) ($status['repliesCount'] ?? 0))
                 + ((int) ($status['reblogsCount'] ?? 0))
                 + ((int) ($status['favouritesCount'] ?? 0)))
-            ->take(8)
+            ->take(self::TOP_POSTS_LIMIT)
             ->values()
             ->all();
 
-        $profileTarget = $mode === 'account'
-            ? (string) ($profile['acct'] ?? $target)
-            : '#'.(string) ($profile['name'] ?? trim(ltrim($target, '#')));
+        $profileTarget = $this->buildResolvedTarget($mode, $profile, $target);
 
         return new MastodonAnalyticsResultDTO(
             profile: $profile,
@@ -243,26 +245,12 @@ final class MastodonAnalyticsApplicationService implements MastodonAnalyticsAppl
             return [];
         }
 
-        $payload = $this->gateway->search(array_filter([
-            'q' => $target,
-            'type' => 'accounts',
-            'limit' => 10,
-            'resolve' => $resolve ? 'true' : null,
-        ], static fn (mixed $value): bool => $value !== null && $value !== ''));
+        $payload = $this->gateway->search($this->searchPayload($target, 'accounts', $resolve));
 
         $accounts = collect($payload['accounts'] ?? [])
             ->map(fn (array $item): array => $this->accountPresenter->present($item));
 
-        $exact = $accounts->first(function (array $account) use ($needle): bool {
-            $acct = strtolower((string) ($account['acct'] ?? ''));
-            $username = strtolower((string) ($account['username'] ?? ''));
-            $url = strtolower((string) ($account['url'] ?? ''));
-
-            return $acct === ltrim($needle, '@')
-                || '@'.$acct === $needle
-                || $username === ltrim($needle, '@')
-                || $url === $needle;
-        });
+        $exact = $accounts->first(fn (array $account): bool => $this->matchesAccountTarget($account, $needle));
 
         if (is_array($exact)) {
             return $exact;
@@ -282,12 +270,7 @@ final class MastodonAnalyticsApplicationService implements MastodonAnalyticsAppl
             return [];
         }
 
-        $payload = $this->gateway->search(array_filter([
-            'q' => $needle,
-            'type' => 'hashtags',
-            'limit' => 10,
-            'resolve' => $resolve ? 'true' : null,
-        ], static fn (mixed $value): bool => $value !== null && $value !== ''));
+        $payload = $this->gateway->search($this->searchPayload($needle, 'hashtags', $resolve));
 
         $hashtags = collect($payload['hashtags'] ?? [])
             ->map(fn (array $item): array => $this->hashtagPresenter->present($item));
@@ -343,7 +326,7 @@ final class MastodonAnalyticsApplicationService implements MastodonAnalyticsAppl
             ->filter()
             ->countBy()
             ->sortDesc()
-            ->take(10)
+            ->take(self::TOP_VALUES_LIMIT)
             ->map(fn (int $count, string $value): array => [
                 $key => $value,
                 'count' => $count,
@@ -370,7 +353,7 @@ final class MastodonAnalyticsApplicationService implements MastodonAnalyticsAppl
                 ];
             })
             ->sortByDesc('count')
-            ->take(10)
+            ->take(self::TOP_VALUES_LIMIT)
             ->values()
             ->all();
     }
@@ -399,8 +382,48 @@ final class MastodonAnalyticsApplicationService implements MastodonAnalyticsAppl
                 ];
             })
             ->sortByDesc('count')
-            ->take(10)
+            ->take(self::TOP_VALUES_LIMIT)
             ->values()
             ->all();
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    private function searchPayload(string $query, string $type, bool $resolve): array
+    {
+        return array_filter([
+            'q' => $query,
+            'type' => $type,
+            'limit' => self::SEARCH_PICK_LIMIT,
+            'resolve' => $resolve ? 'true' : null,
+        ], static fn (mixed $value): bool => $value !== null && $value !== '');
+    }
+
+    /**
+     * @param array<string, mixed> $account
+     */
+    private function matchesAccountTarget(array $account, string $needle): bool
+    {
+        $acct = strtolower((string) ($account['acct'] ?? ''));
+        $username = strtolower((string) ($account['username'] ?? ''));
+        $url = strtolower((string) ($account['url'] ?? ''));
+
+        return $acct === ltrim($needle, '@')
+            || '@'.$acct === $needle
+            || $username === ltrim($needle, '@')
+            || $url === $needle;
+    }
+
+    /**
+     * @param array<string, mixed>|null $profile
+     */
+    private function buildResolvedTarget(string $mode, ?array $profile, string $target): string
+    {
+        if ($mode === 'account') {
+            return (string) ($profile['acct'] ?? $target);
+        }
+
+        return '#'.(string) ($profile['name'] ?? trim(ltrim($target, '#')));
     }
 }

@@ -94,7 +94,33 @@ export type MastodonSearchPayload = {
     };
 };
 
+export type MastodonSearchType = 'statuses' | 'accounts' | 'hashtags' | 'all';
+
+export type MastodonSearchForm = {
+    q: string;
+    type: MastodonSearchType;
+    limit: number;
+    resolve: boolean;
+    author: string;
+    dateFrom: string;
+    dateTo: string;
+    language: string;
+    hasMedia: string;
+    hasLinks: string;
+    hasReplies: string;
+    instanceDomain: string;
+};
+
 export type MastodonStatusContextPayload = {
+    ancestors: MastodonStatus[];
+    descendants: MastodonStatus[];
+    descendantsTree: MastodonStatusThreadNode[];
+};
+
+export type MastodonStatusContextState = {
+    open: boolean;
+    loading: boolean;
+    error: string | null;
     ancestors: MastodonStatus[];
     descendants: MastodonStatus[];
     descendantsTree: MastodonStatusThreadNode[];
@@ -118,6 +144,23 @@ export type MastodonAccountFollowersPayload = {
         nextMaxId: string | null;
         hasMore: boolean;
     };
+};
+
+export type MastodonAccountDetailsState = {
+    statusesOpen: boolean;
+    followersOpen: boolean;
+    statusesLoading: boolean;
+    followersLoading: boolean;
+    statusesLoadingMore: boolean;
+    followersLoadingMore: boolean;
+    statusesError: string | null;
+    followersError: string | null;
+    statuses: MastodonStatus[];
+    followers: MastodonAccount[];
+    statusesHasMore: boolean;
+    followersHasMore: boolean;
+    statusesNextMaxId: string | null;
+    followersNextMaxId: string | null;
 };
 
 export type MastodonTagTimelinePayload = {
@@ -144,6 +187,30 @@ export type MastodonTagTimelinePayload = {
         nextMaxId: string | null;
         hasMore: boolean;
     };
+};
+
+export type MastodonHashtagDetailsState = {
+    open: boolean;
+    loading: boolean;
+    loadingMore: boolean;
+    error: string | null;
+    statuses: MastodonStatus[];
+    uniqueAccountsCount: number;
+    uniqueAccounts: Array<{
+        id: string;
+        username?: string;
+        acct: string;
+        displayName?: string;
+        url?: string;
+        avatar?: string;
+        instanceDomain?: string;
+    }>;
+    uniqueInstancesCount: number;
+    instanceDomains: string[];
+    postsWithMediaCount: number;
+    postsWithLinksCount: number;
+    hasMore: boolean;
+    nextMaxId: string | null;
 };
 
 export type MastodonAnalyticsPayload = {

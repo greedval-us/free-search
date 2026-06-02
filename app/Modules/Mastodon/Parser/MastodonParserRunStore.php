@@ -3,6 +3,7 @@
 namespace App\Modules\Mastodon\Parser;
 
 use App\Modules\ParserSupport\JsonRunStore;
+use App\Modules\Mastodon\Parser\Enums\MastodonParserStage;
 
 final class MastodonParserRunStore extends JsonRunStore
 {
@@ -16,7 +17,7 @@ final class MastodonParserRunStore extends JsonRunStore
             'runId' => $runId,
             'userId' => $userId,
             'status' => 'running',
-            'stage' => 'statuses',
+            'stage' => MastodonParserStage::Statuses->value,
             'progress' => 1,
             'error' => null,
             'createdAt' => $now,

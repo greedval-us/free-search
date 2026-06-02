@@ -3,6 +3,8 @@
 namespace App\Modules\Mastodon\Parser;
 
 use App\Modules\Mastodon\Core\Contracts\MastodonGatewayInterface;
+use App\Modules\Mastodon\Enums\MastodonPostType;
+use App\Modules\Mastodon\Parser\Enums\MastodonParserStage;
 use App\Modules\Mastodon\Presenters\MastodonAccountPresenter;
 use App\Modules\Mastodon\Presenters\MastodonStatusPresenter;
 
@@ -27,12 +29,13 @@ final class MastodonParserCollector
             return $run;
         }
 
-        $stage = (string) ($run['stage'] ?? 'statuses');
+        $stage = MastodonParserStage::tryFrom((string) ($run['stage'] ?? ''))
+            ?? MastodonParserStage::Statuses;
 
         return match ($stage) {
-            'statuses' => $this->advanceStatuses($run),
-            'comments' => $this->advanceComments($run),
-            'finishing' => $this->finish($run),
+            MastodonParserStage::Statuses => $this->advanceStatuses($run),
+            MastodonParserStage::Comments => $this->advanceComments($run),
+            MastodonParserStage::Finishing => $this->finish($run),
             default => $run,
         };
     }
@@ -68,13 +71,7 @@ final class MastodonParserCollector
         $data = is_array($run['data'] ?? null) ? $run['data'] : [];
         $stats = is_array($run['stats'] ?? null) ? $run['stats'] : [];
 
-        $account = is_array($data['account'] ?? null) ? $data['account'] : null;
-        if ($account === null) {
-            $lookup = $this->gateway->lookupAccount((string) ($context['account'] ?? ''));
-            $account = $this->accountPresenter->present($lookup);
-            $data['account'] = $account;
-            $cursor['statusesTotalHint'] = (int) ($account['statusesCount'] ?? 0);
-        }
+        $account = $this->resolveAccount($context, $data, $cursor);
 
         $payload = $this->gateway->accountStatuses(
             (string) ($account['id'] ?? ''),
@@ -93,19 +90,9 @@ final class MastodonParserCollector
             }
 
             $presented = $this->statusPresenter->present($item);
-            $statusId = (string) ($presented['id'] ?? '');
-            if ($statusId === '' || isset($statusIds[$statusId])) {
-                continue;
-            }
 
-            $statusIds[$statusId] = true;
-            $statusesIndex[] = $presented;
-
-            if (
-                (string) ($presented['postType'] ?? '') === 'original'
-                && (int) ($presented['repliesCount'] ?? 0) > 0
-            ) {
-                $commentStatusIds[] = $statusId;
+            if ($this->appendStatus($presented, $statusIds, $statusesIndex)) {
+                $this->appendCommentRootStatusId($presented, $commentStatusIds);
             }
         }
 
@@ -116,16 +103,16 @@ final class MastodonParserCollector
         if ($nextMaxId !== '') {
             $cursor['statusesMaxId'] = $nextMaxId;
             $totalHint = max(0, (int) ($cursor['statusesTotalHint'] ?? 0));
-            if ($totalHint > 0) {
-                $run['progress'] = min(70, max(2, (int) floor((count($statusesIndex) / $totalHint) * 70)));
-            } else {
-                $run['progress'] = min(70, 2 + ((int) $cursor['statusesPage'] * 3));
-            }
+            $run['progress'] = $totalHint > 0
+                ? min(70, max(2, (int) floor((count($statusesIndex) / $totalHint) * 70)))
+                : min(70, 2 + ((int) $cursor['statusesPage'] * 3));
         } else {
             $cursor['statusesMaxId'] = '';
             $cursor['commentStatusIds'] = array_values(array_unique($commentStatusIds));
             $cursor['commentStatusIndex'] = 0;
-            $run['stage'] = count($cursor['commentStatusIds']) > 0 ? 'comments' : 'finishing';
+            $run['stage'] = count($cursor['commentStatusIds']) > 0
+                ? MastodonParserStage::Comments->value
+                : MastodonParserStage::Finishing->value;
             $run['progress'] = count($cursor['commentStatusIds']) > 0 ? 75 : 95;
         }
 
@@ -151,7 +138,7 @@ final class MastodonParserCollector
         $commentStatusIds = is_array($cursor['commentStatusIds'] ?? null) ? array_values($cursor['commentStatusIds']) : [];
         $statusIndex = (int) ($cursor['commentStatusIndex'] ?? 0);
         if ($statusIndex >= count($commentStatusIds)) {
-            $run['stage'] = 'finishing';
+            $run['stage'] = MastodonParserStage::Finishing->value;
             $run['progress'] = 95;
 
             return $run;
@@ -168,41 +155,12 @@ final class MastodonParserCollector
                 continue;
             }
 
-            $presented = $this->statusPresenter->present($item);
-            $commentId = (string) ($presented['id'] ?? '');
-            if ($commentId === '') {
-                continue;
-            }
-
-            $compositeId = $rootStatusId . ':' . $commentId;
-            if (isset($commentIds[$compositeId])) {
-                continue;
-            }
-
-            $commentIds[$compositeId] = true;
-            $commentsIndex[] = [
-                'rootStatusId' => $rootStatusId,
-                'commentId' => $commentId,
-                'parentStatusId' => $presented['inReplyToId'] ?? null,
-                'createdAt' => (string) ($presented['createdAt'] ?? ''),
-                'content' => (string) ($presented['content'] ?? ''),
-                'spoilerText' => (string) ($presented['spoilerText'] ?? ''),
-                'language' => (string) ($presented['language'] ?? ''),
-                'visibility' => (string) ($presented['visibility'] ?? ''),
-                'sensitive' => (bool) ($presented['sensitive'] ?? false),
-                'repliesCount' => (int) ($presented['repliesCount'] ?? 0),
-                'reblogsCount' => (int) ($presented['reblogsCount'] ?? 0),
-                'favouritesCount' => (int) ($presented['favouritesCount'] ?? 0),
-                'hasMedia' => (bool) ($presented['hasMedia'] ?? false),
-                'hasLinks' => (bool) ($presented['hasLinks'] ?? false),
-                'postType' => (string) ($presented['postType'] ?? ''),
-                'url' => (string) ($presented['url'] ?? ''),
-                'links' => is_array($presented['links'] ?? null) ? $presented['links'] : [],
-                'domains' => is_array($presented['domains'] ?? null) ? $presented['domains'] : [],
-                'tags' => is_array($presented['tags'] ?? null) ? $presented['tags'] : [],
-                'mentions' => is_array($presented['mentions'] ?? null) ? $presented['mentions'] : [],
-                'account' => is_array($presented['account'] ?? null) ? $presented['account'] : [],
-            ];
+            $this->appendComment(
+                rootStatusId: $rootStatusId,
+                presented: $this->statusPresenter->present($item),
+                commentIds: $commentIds,
+                commentsIndex: $commentsIndex,
+            );
         }
 
         $cursor['commentStatusIndex'] = $statusIndex + 1;
@@ -212,7 +170,7 @@ final class MastodonParserCollector
         $run['progress'] = min(99, 75 + (int) floor(($processedRoots / $totalRoots) * 24));
 
         if ($processedRoots >= count($commentStatusIds)) {
-            $run['stage'] = 'finishing';
+            $run['stage'] = MastodonParserStage::Finishing->value;
             $run['progress'] = 95;
         }
 
@@ -233,11 +191,121 @@ final class MastodonParserCollector
     {
         $run['result'] = $this->buildResultSnapshot($run);
         $run['status'] = 'completed';
-        $run['stage'] = 'completed';
+        $run['stage'] = MastodonParserStage::Completed->value;
         $run['progress'] = 100;
         $run['error'] = null;
 
         return $run;
+    }
+
+    /**
+     * @param array<string, mixed> $context
+     * @param array<string, mixed> $data
+     * @param array<string, mixed> $cursor
+     * @return array<string, mixed>
+     */
+    private function resolveAccount(array $context, array &$data, array &$cursor): array
+    {
+        $account = is_array($data['account'] ?? null) ? $data['account'] : null;
+
+        if ($account !== null) {
+            return $account;
+        }
+
+        $lookup = $this->gateway->lookupAccount((string) ($context['account'] ?? ''));
+        $account = $this->accountPresenter->present($lookup);
+        $data['account'] = $account;
+        $cursor['statusesTotalHint'] = (int) ($account['statusesCount'] ?? 0);
+
+        return $account;
+    }
+
+    /**
+     * @param array<string, mixed> $presented
+     * @param array<string, bool> $statusIds
+     * @param array<int, array<string, mixed>> $statusesIndex
+     */
+    private function appendStatus(array $presented, array &$statusIds, array &$statusesIndex): bool
+    {
+        $statusId = (string) ($presented['id'] ?? '');
+
+        if ($statusId === '' || isset($statusIds[$statusId])) {
+            return false;
+        }
+
+        $statusIds[$statusId] = true;
+        $statusesIndex[] = $presented;
+
+        return true;
+    }
+
+    /**
+     * @param array<string, mixed> $presented
+     * @param array<int, string> $commentStatusIds
+     */
+    private function appendCommentRootStatusId(array $presented, array &$commentStatusIds): void
+    {
+        if (
+            (string) ($presented['postType'] ?? '') !== MastodonPostType::Original->value
+            || (int) ($presented['repliesCount'] ?? 0) <= 0
+        ) {
+            return;
+        }
+
+        $statusId = (string) ($presented['id'] ?? '');
+
+        if ($statusId !== '') {
+            $commentStatusIds[] = $statusId;
+        }
+    }
+
+    /**
+     * @param array<string, mixed> $presented
+     * @param array<string, bool> $commentIds
+     * @param array<int, array<string, mixed>> $commentsIndex
+     */
+    private function appendComment(
+        string $rootStatusId,
+        array $presented,
+        array &$commentIds,
+        array &$commentsIndex,
+    ): void {
+        $commentId = (string) ($presented['id'] ?? '');
+
+        if ($commentId === '') {
+            return;
+        }
+
+        $compositeId = $rootStatusId . ':' . $commentId;
+
+        if (isset($commentIds[$compositeId])) {
+            return;
+        }
+
+        $commentIds[$compositeId] = true;
+        $commentsIndex[] = [
+            'rootStatusId' => $rootStatusId,
+            'commentId' => $commentId,
+            'parentStatusId' => $presented['inReplyToId'] ?? null,
+            'createdAt' => (string) ($presented['createdAt'] ?? ''),
+            'content' => (string) ($presented['content'] ?? ''),
+            'spoilerText' => (string) ($presented['spoilerText'] ?? ''),
+            'language' => (string) ($presented['language'] ?? ''),
+            'visibility' => (string) ($presented['visibility'] ?? ''),
+            'sensitive' => (bool) ($presented['sensitive'] ?? false),
+            'repliesCount' => (int) ($presented['repliesCount'] ?? 0),
+            'reblogsCount' => (int) ($presented['reblogsCount'] ?? 0),
+            'favouritesCount' => (int) ($presented['favouritesCount'] ?? 0),
+            'hasMedia' => (bool) ($presented['hasMedia'] ?? false),
+            'hasLinks' => (bool) ($presented['hasLinks'] ?? false),
+            'postType' => (string) ($presented['postType'] ?? ''),
+            'url' => (string) ($presented['url'] ?? ''),
+            'links' => is_array($presented['links'] ?? null) ? $presented['links'] : [],
+            'domains' => is_array($presented['domains'] ?? null) ? $presented['domains'] : [],
+            'tags' => is_array($presented['tags'] ?? null) ? $presented['tags'] : [],
+            'mentions' => is_array($presented['mentions'] ?? null) ? $presented['mentions'] : [],
+            'account' => is_array($presented['account'] ?? null) ? $presented['account'] : [],
+        ];
     }
 
     private function nullIfEmpty(string $value): ?string

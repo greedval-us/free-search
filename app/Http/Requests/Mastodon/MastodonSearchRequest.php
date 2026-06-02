@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\Mastodon;
 
+use App\Http\Requests\Concerns\NormalizesBooleanInputs;
 use App\Http\Requests\Mastodon\Concerns\ResolvesMastodonModuleConfig;
 use App\Modules\Mastodon\DTO\Request\MastodonSearchQueryDTO;
 use Illuminate\Foundation\Http\FormRequest;
@@ -9,31 +10,12 @@ use Illuminate\Validation\Rule;
 
 final class MastodonSearchRequest extends FormRequest
 {
+    use NormalizesBooleanInputs;
     use ResolvesMastodonModuleConfig;
 
     protected function prepareForValidation(): void
     {
-        foreach (['resolve', 'hasMedia', 'hasLinks', 'hasReplies'] as $key) {
-            if (! $this->has($key)) {
-                continue;
-            }
-
-            $value = $this->input($key);
-
-            if (! is_string($value)) {
-                continue;
-            }
-
-            $normalized = filter_var($value, FILTER_VALIDATE_BOOL, FILTER_NULL_ON_FAILURE);
-
-            if ($normalized === null) {
-                continue;
-            }
-
-            $this->merge([
-                $key => $normalized,
-            ]);
-        }
+        $this->normalizeBooleanInputs(['resolve', 'hasMedia', 'hasLinks', 'hasReplies']);
     }
 
     public function authorize(): bool

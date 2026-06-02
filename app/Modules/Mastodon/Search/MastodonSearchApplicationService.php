@@ -2,6 +2,10 @@
 
 namespace App\Modules\Mastodon\Search;
 
+use App\Modules\Mastodon\Actions\Request\LoadAccountFollowersAction;
+use App\Modules\Mastodon\Actions\Request\LoadAccountStatusesAction;
+use App\Modules\Mastodon\Actions\Request\LoadStatusContextAction;
+use App\Modules\Mastodon\Actions\Request\LoadTagTimelineAction;
 use App\Modules\Mastodon\Actions\Request\SearchResourcesAction;
 use App\Modules\Mastodon\DTO\Request\MastodonSearchQueryDTO;
 use App\Modules\Mastodon\DTO\Result\MastodonAccountFollowersResultDTO;
@@ -15,10 +19,10 @@ final class MastodonSearchApplicationService implements MastodonSearchApplicatio
 {
     public function __construct(
         private readonly SearchResourcesAction $searchResourcesAction,
-        private readonly \App\Modules\Mastodon\Actions\Request\LoadStatusContextAction $loadStatusContextAction,
-        private readonly \App\Modules\Mastodon\Actions\Request\LoadAccountStatusesAction $loadAccountStatusesAction,
-        private readonly \App\Modules\Mastodon\Actions\Request\LoadAccountFollowersAction $loadAccountFollowersAction,
-        private readonly \App\Modules\Mastodon\Actions\Request\LoadTagTimelineAction $loadTagTimelineAction,
+        private readonly LoadStatusContextAction $loadStatusContextAction,
+        private readonly LoadAccountStatusesAction $loadAccountStatusesAction,
+        private readonly LoadAccountFollowersAction $loadAccountFollowersAction,
+        private readonly LoadTagTimelineAction $loadTagTimelineAction,
     ) {
     }
 
