@@ -1,6 +1,7 @@
 import {
     AtSign,
     BookOpenText,
+    Cloud,
     Fingerprint,
     LayoutGrid,
     Newspaper,
@@ -27,6 +28,13 @@ const moduleNavDefinitions: readonly ModuleNavDefinition[] = [
         labelKey: 'navigation.dashboard',
         href: dashboard(),
         icon: LayoutGrid,
+        showInHeader: true,
+    },
+    {
+        key: 'bluesky',
+        labelKey: 'navigation.bluesky',
+        href: '/bluesky',
+        icon: Cloud,
         showInHeader: true,
     },
     {

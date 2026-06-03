@@ -105,7 +105,7 @@ const props = withDefaults(
                 date_from: '',
                 date_to: '',
             },
-            available_modules: ['site-intel', 'telegram', 'youtube', 'shifr'],
+            available_modules: ['bluesky', 'site-intel', 'telegram', 'youtube', 'shifr'],
         }),
     }
 );
@@ -122,6 +122,13 @@ const quickActions = computed(() => {
     }
 
     return [
+        {
+            key: 'bluesky',
+            count: 0,
+            last_at: null,
+            url: '/bluesky',
+            is_pinned: false,
+        },
         {
             key: 'site-intel',
             count: 0,

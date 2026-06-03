@@ -6,6 +6,7 @@ use App\Providers\FortifyServiceProvider;
 use App\Providers\MadelineProtoServiceProvider;
 use App\Providers\MoonShineServiceProvider;
 use App\Providers\SupportServiceProvider;
+use App\Modules\Bluesky\Providers\BlueskyServiceProvider;
 use App\Modules\Export\Providers\ExportServiceProvider;
 use App\Modules\Mastodon\Providers\MastodonServiceProvider;
 use App\Modules\NewsMediaIntel\Providers\NewsMediaIntelServiceProvider;
@@ -19,6 +20,7 @@ return [
     SupportServiceProvider::class,
     DashboardServiceProvider::class,
     ExportServiceProvider::class,
+    BlueskyServiceProvider::class,
     SiteIntelServiceProvider::class,
     MastodonServiceProvider::class,
     NewsMediaIntelServiceProvider::class,

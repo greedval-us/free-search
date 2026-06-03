@@ -1,5 +1,6 @@
 import telegram from './telegram.json';
 import youtube from './youtube.json';
+import bluesky from './bluesky.json';
 import siteIntel from './siteIntel.json';
 import newsMediaIntel from './newsMediaIntel.json';
 import mastodon from './mastodon.json';
@@ -15,6 +16,7 @@ import shifr from './shifr.json';
 const ru = {
     telegram,
     youtube,
+    bluesky,
     siteIntel,
     newsMediaIntel,
     mastodon,

@@ -29,6 +29,7 @@
         "empty": "История запросов пока пустая. Запустите первый поиск."
     },
     "modules": {
+        "bluesky": "Bluesky",
         "mastodon": "Mastodon",
         "site-intel": "Аналитика сайта",
         "news-media-intel": "Новости и медиа",
@@ -74,6 +75,7 @@
         "title": "Ваш тариф",
         "manage": "Управлять тарифом",
         "modules": {
+            "bluesky": "Bluesky",
             "mastodon": "Mastodon",
             "site-intel": "Site Intel",
             "telegram": "Telegram",

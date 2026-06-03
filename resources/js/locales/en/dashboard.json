@@ -12,6 +12,7 @@
         "title": "Your plan",
         "manage": "Manage plan",
         "modules": {
+            "bluesky": "Bluesky",
             "mastodon": "Mastodon",
             "site-intel": "Site Intel",
             "telegram": "Telegram",
@@ -45,6 +46,7 @@
         "empty": "No query history yet. Run your first search."
     },
     "modules": {
+        "bluesky": "Bluesky",
         "mastodon": "Mastodon",
         "site-intel": "Site intelligence",
         "news-media-intel": "News and media intelligence",

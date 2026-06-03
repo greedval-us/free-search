@@ -1,0 +1,81 @@
+{
+    "headTitle": "Bluesky",
+    "help": {
+        "label": "What is this data?"
+    },
+    "tabs": {
+        "search": "Search"
+    },
+    "search": {
+        "title": "Bluesky Search",
+        "collapsed": "Search panel is collapsed",
+        "filters": "Search public Bluesky posts and accounts with OSINT-friendly filters",
+        "hint": "Uses authenticated Bluesky API search with your configured app password. Search posts, actors, or both and refine by language, author, links, tags, and dates.",
+        "query": "Query",
+        "type": "Search type",
+        "sort": "Sort",
+        "limit": "Limit",
+        "author": "Author",
+        "mentions": "Mentions",
+        "domain": "Domain",
+        "url": "Link contains",
+        "tag": "Hashtag",
+        "since": "Date from",
+        "until": "Date to",
+        "language": "Language",
+        "languagePlaceholder": "for example: en",
+        "authorPlaceholder": "for example: analyst.bsky.social",
+        "mentionsPlaceholder": "for example: did:plc:abc123",
+        "domainPlaceholder": "for example: example.org",
+        "urlPlaceholder": "for example: https://example.org/report",
+        "tagPlaceholder": "for example: osint",
+        "placeholder": "for example: osint investigations",
+        "advancedAriaShow": "Show advanced filters",
+        "advancedAriaHide": "Hide advanced filters",
+        "submit": "Search",
+        "searching": "Searching...",
+        "resultTitle": "Results",
+        "shown": "Shown",
+        "empty": "Run a search to view Bluesky results.",
+        "noMatches": "No results matched the current filters.",
+        "loadMore": "Load more",
+        "loadingMore": "Loading...",
+        "noText": "[No text]",
+        "noBio": "No profile description available."
+    },
+    "sections": {
+        "posts": "Posts",
+        "actors": "Accounts"
+    },
+    "metrics": {
+        "likes": "Likes",
+        "reposts": "Reposts",
+        "replies": "Replies",
+        "quotes": "Quotes",
+        "media": "Media",
+        "followers": "Followers",
+        "following": "Following",
+        "posts": "Posts",
+        "languages": "Languages",
+        "hashtags": "Hashtags",
+        "domains": "Domains"
+    },
+    "options": {
+        "type": {
+            "posts": "Posts",
+            "actors": "Accounts",
+            "all": "All"
+        },
+        "sort": {
+            "latest": "Latest",
+            "top": "Top"
+        }
+    },
+    "common": {
+        "openPost": "Open post",
+        "openProfile": "Open profile"
+    },
+    "errors": {
+        "requestFailed": "Request failed."
+    }
+}

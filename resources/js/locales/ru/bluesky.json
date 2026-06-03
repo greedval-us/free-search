@@ -1,0 +1,81 @@
+{
+    "headTitle": "Bluesky",
+    "help": {
+        "label": "Что это за данные?"
+    },
+    "tabs": {
+        "search": "Поиск"
+    },
+    "search": {
+        "title": "Поиск Bluesky",
+        "collapsed": "Панель поиска свернута",
+        "filters": "Поиск по публичным постам и аккаунтам Bluesky с OSINT-фильтрами",
+        "hint": "Использует аутентифицированный Bluesky API с вашим app password. Можно искать посты, аккаунты или оба типа сразу, с фильтрами по языку, автору, ссылкам, тегам и датам.",
+        "query": "Запрос",
+        "type": "Тип поиска",
+        "sort": "Сортировка",
+        "limit": "Лимит",
+        "author": "Автор",
+        "mentions": "Упоминает",
+        "domain": "Домен",
+        "url": "Ссылка содержит",
+        "tag": "Хэштег",
+        "since": "Дата с",
+        "until": "Дата по",
+        "language": "Язык",
+        "languagePlaceholder": "например: en",
+        "authorPlaceholder": "например: analyst.bsky.social",
+        "mentionsPlaceholder": "например: did:plc:abc123",
+        "domainPlaceholder": "например: example.org",
+        "urlPlaceholder": "например: https://example.org/report",
+        "tagPlaceholder": "например: osint",
+        "placeholder": "например: osint investigations",
+        "advancedAriaShow": "Показать дополнительные фильтры",
+        "advancedAriaHide": "Скрыть дополнительные фильтры",
+        "submit": "Найти",
+        "searching": "Ищем...",
+        "resultTitle": "Результаты",
+        "shown": "Показано",
+        "empty": "Выполните поиск, чтобы увидеть результаты Bluesky.",
+        "noMatches": "По текущим фильтрам ничего не найдено.",
+        "loadMore": "Показать ещё",
+        "loadingMore": "Загрузка...",
+        "noText": "[Без текста]",
+        "noBio": "Описание профиля отсутствует."
+    },
+    "sections": {
+        "posts": "Посты",
+        "actors": "Аккаунты"
+    },
+    "metrics": {
+        "likes": "Лайки",
+        "reposts": "Репосты",
+        "replies": "Ответы",
+        "quotes": "Цитаты",
+        "media": "Медиа",
+        "followers": "Подписчики",
+        "following": "Подписки",
+        "posts": "Посты",
+        "languages": "Языки",
+        "hashtags": "Хэштеги",
+        "domains": "Домены"
+    },
+    "options": {
+        "type": {
+            "posts": "Посты",
+            "actors": "Аккаунты",
+            "all": "Всё"
+        },
+        "sort": {
+            "latest": "Свежие",
+            "top": "Топ"
+        }
+    },
+    "common": {
+        "openPost": "Открыть пост",
+        "openProfile": "Открыть профиль"
+    },
+    "errors": {
+        "requestFailed": "Ошибка запроса."
+    }
+}

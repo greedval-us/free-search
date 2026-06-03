@@ -1,6 +1,7 @@
 import DashboardController from './DashboardController'
 import Dashboard from './Dashboard'
 import Telegram from './Telegram'
+import Bluesky from './Bluesky'
 import Mastodon from './Mastodon'
 import SiteIntel from './SiteIntel'
 import NewsMediaIntel from './NewsMediaIntel'
@@ -12,6 +13,7 @@ const Controllers = {
     DashboardController: Object.assign(DashboardController, DashboardController),
 Dashboard: Object.assign(Dashboard, Dashboard),
 Telegram: Object.assign(Telegram, Telegram),
+Bluesky: Object.assign(Bluesky, Bluesky),
 Mastodon: Object.assign(Mastodon, Mastodon),
 SiteIntel: Object.assign(SiteIntel, SiteIntel),
 NewsMediaIntel: Object.assign(NewsMediaIntel, NewsMediaIntel),
