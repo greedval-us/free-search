@@ -113,24 +113,36 @@ const mediaPreviewUrl = (post: BlueskyPost): string => {
                     <div class="mt-3 flex flex-wrap gap-2 text-xs text-muted-foreground">
                         <button
                             type="button"
-                            class="cursor-pointer rounded-full border border-input px-2 py-1 hover:bg-accent"
+                            class="cursor-pointer rounded-full border border-input px-3 py-1 text-xs font-medium text-foreground hover:bg-accent"
                             @click="toggleLikes(post)"
                         >
-                            {{ t('bluesky.metrics.likes') }}: {{ post.likeCount }}
+                            {{
+                                ensureLikesState(post.id).open
+                                    ? t('bluesky.engagement.hideLikes')
+                                    : `${t('bluesky.engagement.showLikes')} (${post.likeCount})`
+                            }}
                         </button>
                         <button
                             type="button"
-                            class="cursor-pointer rounded-full border border-input px-2 py-1 hover:bg-accent"
+                            class="cursor-pointer rounded-full border border-input px-3 py-1 text-xs font-medium text-foreground hover:bg-accent"
                             @click="toggleReposts(post)"
                         >
-                            {{ t('bluesky.metrics.reposts') }}: {{ post.repostCount }}
+                            {{
+                                ensureRepostsState(post.id).open
+                                    ? t('bluesky.engagement.hideReposts')
+                                    : `${t('bluesky.engagement.showReposts')} (${post.repostCount})`
+                            }}
                         </button>
                         <button
                             type="button"
-                            class="cursor-pointer rounded-full border border-input px-2 py-1 hover:bg-accent"
+                            class="cursor-pointer rounded-full border border-input px-3 py-1 text-xs font-medium text-foreground hover:bg-accent"
                             @click="toggleThread(post)"
                         >
-                            {{ t('bluesky.metrics.replies') }}: {{ post.replyCount }}
+                            {{
+                                ensureThreadState(post.id).open
+                                    ? t('bluesky.engagement.hideThread')
+                                    : `${t('bluesky.engagement.showThread')} (${post.replyCount})`
+                            }}
                         </button>
                         <span class="rounded-full border border-input px-2 py-1">
                             {{ t('bluesky.metrics.quotes') }}: {{ post.quoteCount }}
@@ -294,21 +306,8 @@ const mediaPreviewUrl = (post: BlueskyPost): string => {
                         v-if="ensureLikesState(post.id).open"
                         class="mt-3 rounded-lg border border-border/70 bg-card/60 p-3"
                     >
-                        <div class="mb-2 flex items-center justify-between">
+                        <div class="mb-2">
                             <p class="text-xs font-medium">{{ t('bluesky.engagement.likes') }}</p>
-                            <button
-                                v-if="ensureLikesState(post.id).hasMore"
-                                type="button"
-                                :disabled="ensureLikesState(post.id).loadingMore"
-                                class="cursor-pointer text-xs text-primary hover:underline disabled:opacity-60"
-                                @click="loadLikes(post, true)"
-                            >
-                                {{
-                                    ensureLikesState(post.id).loadingMore
-                                        ? t('bluesky.search.loadingMore')
-                                        : t('bluesky.search.loadMore')
-                                }}
-                            </button>
                         </div>
                         <p v-if="ensureLikesState(post.id).loading" class="text-xs text-muted-foreground">
                             {{ t('bluesky.engagement.loading') }}
@@ -334,7 +333,28 @@ const mediaPreviewUrl = (post: BlueskyPost): string => {
                                     {{ item.actor.displayName || item.actor.handle }}
                                 </a>
                                 <p class="text-xs text-muted-foreground">@{{ item.actor.handle }}</p>
+                                <p v-if="item.createdAt || item.indexedAt" class="text-[11px] text-muted-foreground">
+                                    {{ formatDate(item.createdAt || item.indexedAt) }}
+                                </p>
                             </div>
+                        </div>
+
+                        <div
+                            v-if="ensureLikesState(post.id).hasMore"
+                            class="pt-1"
+                        >
+                            <button
+                                type="button"
+                                :disabled="ensureLikesState(post.id).loadingMore"
+                                class="cursor-pointer rounded-md border border-input bg-background px-3 py-2 text-xs font-medium hover:bg-accent disabled:cursor-not-allowed disabled:opacity-60"
+                                @click="loadLikes(post, true)"
+                            >
+                                {{
+                                    ensureLikesState(post.id).loadingMore
+                                        ? t('bluesky.search.loadingMore')
+                                        : t('bluesky.search.loadMore')
+                                }}
+                            </button>
                         </div>
                     </div>
 
@@ -342,21 +362,8 @@ const mediaPreviewUrl = (post: BlueskyPost): string => {
                         v-if="ensureRepostsState(post.id).open"
                         class="mt-3 rounded-lg border border-border/70 bg-card/60 p-3"
                     >
-                        <div class="mb-2 flex items-center justify-between">
+                        <div class="mb-2">
                             <p class="text-xs font-medium">{{ t('bluesky.engagement.reposts') }}</p>
-                            <button
-                                v-if="ensureRepostsState(post.id).hasMore"
-                                type="button"
-                                :disabled="ensureRepostsState(post.id).loadingMore"
-                                class="cursor-pointer text-xs text-primary hover:underline disabled:opacity-60"
-                                @click="loadReposts(post, true)"
-                            >
-                                {{
-                                    ensureRepostsState(post.id).loadingMore
-                                        ? t('bluesky.search.loadingMore')
-                                        : t('bluesky.search.loadMore')
-                                }}
-                            </button>
                         </div>
                         <p v-if="ensureRepostsState(post.id).loading" class="text-xs text-muted-foreground">
                             {{ t('bluesky.engagement.loading') }}
@@ -382,7 +389,28 @@ const mediaPreviewUrl = (post: BlueskyPost): string => {
                                     {{ item.actor.displayName || item.actor.handle }}
                                 </a>
                                 <p class="text-xs text-muted-foreground">@{{ item.actor.handle }}</p>
+                                <p v-if="item.createdAt || item.indexedAt" class="text-[11px] text-muted-foreground">
+                                    {{ formatDate(item.createdAt || item.indexedAt) }}
+                                </p>
                             </div>
+                        </div>
+
+                        <div
+                            v-if="ensureRepostsState(post.id).hasMore"
+                            class="pt-1"
+                        >
+                            <button
+                                type="button"
+                                :disabled="ensureRepostsState(post.id).loadingMore"
+                                class="cursor-pointer rounded-md border border-input bg-background px-3 py-2 text-xs font-medium hover:bg-accent disabled:cursor-not-allowed disabled:opacity-60"
+                                @click="loadReposts(post, true)"
+                            >
+                                {{
+                                    ensureRepostsState(post.id).loadingMore
+                                        ? t('bluesky.search.loadingMore')
+                                        : t('bluesky.search.loadMore')
+                                }}
+                            </button>
                         </div>
                     </div>
 
@@ -407,7 +435,18 @@ const mediaPreviewUrl = (post: BlueskyPost): string => {
                                     :key="`${post.id}-ancestor-${ancestor.id}`"
                                     class="rounded-md border border-border/70 bg-background/70 p-2 text-xs"
                                 >
-                                    {{ ancestor.text || t('bluesky.search.noText') }}
+                                    <div class="mb-1 flex flex-wrap items-center gap-2">
+                                        <span class="font-medium text-foreground">
+                                            {{ ancestor.author.displayName || ancestor.author.handle }}
+                                        </span>
+                                        <span class="text-muted-foreground">
+                                            @{{ ancestor.author.handle }}
+                                        </span>
+                                        <span class="text-muted-foreground">
+                                            {{ formatDate(ancestor.createdAt) }}
+                                        </span>
+                                    </div>
+                                    <p>{{ ancestor.text || t('bluesky.search.noText') }}</p>
                                 </div>
                             </div>
 
@@ -420,6 +459,17 @@ const mediaPreviewUrl = (post: BlueskyPost): string => {
                                     :key="`${post.id}-reply-${reply.id}`"
                                     class="rounded-md border border-border/70 bg-background/70 p-2 text-xs"
                                 >
+                                    <div class="mb-1 flex flex-wrap items-center gap-2">
+                                        <span class="font-medium text-foreground">
+                                            {{ reply.author.displayName || reply.author.handle }}
+                                        </span>
+                                        <span class="text-muted-foreground">
+                                            @{{ reply.author.handle }}
+                                        </span>
+                                        <span class="text-muted-foreground">
+                                            {{ formatDate(reply.createdAt) }}
+                                        </span>
+                                    </div>
                                     <p>{{ reply.text || t('bluesky.search.noText') }}</p>
                                     <div
                                         v-if="reply.replies.length > 0"
@@ -428,9 +478,22 @@ const mediaPreviewUrl = (post: BlueskyPost): string => {
                                         <div
                                             v-for="child in reply.replies"
                                             :key="`${reply.id}-${child.id}`"
-                                            class="mt-2 text-muted-foreground"
+                                            class="mt-2 rounded-md border border-border/50 bg-background/60 p-2"
                                         >
-                                            {{ child.text || t('bluesky.search.noText') }}
+                                            <div class="mb-1 flex flex-wrap items-center gap-2 text-[11px]">
+                                                <span class="font-medium text-foreground">
+                                                    {{ child.author.displayName || child.author.handle }}
+                                                </span>
+                                                <span class="text-muted-foreground">
+                                                    @{{ child.author.handle }}
+                                                </span>
+                                                <span class="text-muted-foreground">
+                                                    {{ formatDate(child.createdAt) }}
+                                                </span>
+                                            </div>
+                                            <p class="text-muted-foreground">
+                                                {{ child.text || t('bluesky.search.noText') }}
+                                            </p>
                                         </div>
                                     </div>
                                 </div>
