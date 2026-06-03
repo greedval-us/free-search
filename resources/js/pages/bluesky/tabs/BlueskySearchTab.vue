@@ -25,6 +25,14 @@ const {
     clampLimit,
     runSearch,
     formatDate,
+    ensureLikesState,
+    ensureRepostsState,
+    ensureThreadState,
+    toggleLikes,
+    toggleReposts,
+    toggleThread,
+    loadLikes,
+    loadReposts,
 } = useBlueskySearch(t);
 </script>
 
@@ -270,6 +278,14 @@ const {
             :loading="loading"
             :total-shown="totalShown"
             :format-date="formatDate"
+            :ensure-likes-state="ensureLikesState"
+            :ensure-reposts-state="ensureRepostsState"
+            :ensure-thread-state="ensureThreadState"
+            :toggle-likes="toggleLikes"
+            :toggle-reposts="toggleReposts"
+            :toggle-thread="toggleThread"
+            :load-likes="loadLikes"
+            :load-reposts="loadReposts"
         />
 
         <div v-if="hasMore" class="mt-4 flex justify-center">

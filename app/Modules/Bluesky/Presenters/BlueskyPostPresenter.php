@@ -29,10 +29,17 @@ final class BlueskyPostPresenter
             'text' => trim((string) ($record['text'] ?? '')),
             'createdAt' => (string) ($record['createdAt'] ?? $item['indexedAt'] ?? ''),
             'indexedAt' => (string) ($item['indexedAt'] ?? ''),
+            'labels' => collect($item['labels'] ?? [])
+                ->map(fn (array $label): string => (string) ($label['val'] ?? ''))
+                ->filter()
+                ->values()
+                ->all(),
             'replyCount' => (int) ($item['replyCount'] ?? 0),
             'repostCount' => (int) ($item['repostCount'] ?? 0),
             'likeCount' => (int) ($item['likeCount'] ?? 0),
             'quoteCount' => (int) ($item['quoteCount'] ?? 0),
+            'replyRootUri' => (string) Arr::get($record, 'reply.root.uri', ''),
+            'replyParentUri' => (string) Arr::get($record, 'reply.parent.uri', ''),
             'languages' => collect($record['langs'] ?? [])
                 ->map(fn (mixed $value): string => strtolower((string) $value))
                 ->filter()
@@ -47,6 +54,7 @@ final class BlueskyPostPresenter
                 ->unique()
                 ->values()
                 ->all(),
+            'media' => $this->extractMedia($item),
             'hasMedia' => $this->hasMediaEmbed($item),
             'hasLinks' => $links !== [],
             'postType' => Arr::has($record, 'reply') ? 'reply' : 'post',
@@ -127,7 +135,7 @@ final class BlueskyPostPresenter
      */
     private function hasMediaEmbed(array $item): bool
     {
-        $embedType = (string) ($item['embed']['$type'] ?? '');
+        $embedType = $this->embedType($item);
 
         if ($embedType === '') {
             return false;
@@ -136,6 +144,100 @@ final class BlueskyPostPresenter
         return str_contains($embedType, '.images')
             || str_contains($embedType, '.video')
             || str_contains($embedType, '.recordWithMedia');
+    }
+
+    /**
+     * @param array<string, mixed> $item
+     * @return array<string, mixed>
+     */
+    private function extractMedia(array $item): array
+    {
+        $embedType = $this->embedType($item);
+        $images = collect(Arr::get($item, 'embed.images', []))
+            ->map(fn (array $image): array => [
+                'thumb' => (string) ($image['thumb'] ?? ''),
+                'fullsize' => (string) ($image['fullsize'] ?? ''),
+                'alt' => trim((string) ($image['alt'] ?? '')),
+            ])
+            ->values()
+            ->all();
+
+        $external = (array) Arr::get($item, 'embed.external', []);
+        $video = [
+            'playlist' => (string) Arr::get($item, 'embed.playlist', ''),
+            'thumbnail' => (string) Arr::get($item, 'embed.thumbnail', ''),
+            'alt' => trim((string) Arr::get($item, 'embed.alt', '')),
+        ];
+
+        if (str_contains($embedType, '.recordWithMedia')) {
+            $images = collect(Arr::get($item, 'embed.media.images', []))
+                ->map(fn (array $image): array => [
+                    'thumb' => (string) ($image['thumb'] ?? ''),
+                    'fullsize' => (string) ($image['fullsize'] ?? ''),
+                    'alt' => trim((string) ($image['alt'] ?? '')),
+                ])
+                ->values()
+                ->all();
+
+            $external = (array) Arr::get($item, 'embed.media.external', []);
+            $video = [
+                'playlist' => (string) Arr::get($item, 'embed.media.playlist', ''),
+                'thumbnail' => (string) Arr::get($item, 'embed.media.thumbnail', ''),
+                'alt' => trim((string) Arr::get($item, 'embed.media.alt', '')),
+            ];
+        }
+
+        return [
+            'type' => $this->resolveMediaType($embedType),
+            'images' => $images,
+            'video' => $video,
+            'external' => [
+                'uri' => (string) ($external['uri'] ?? ''),
+                'title' => trim((string) ($external['title'] ?? '')),
+                'description' => trim((string) ($external['description'] ?? '')),
+                'thumb' => (string) ($external['thumb'] ?? ''),
+            ],
+        ];
+    }
+
+    /**
+     * @param array<string, mixed> $item
+     */
+    private function embedType(array $item): string
+    {
+        return (string) (
+            $item['embed']['$type']
+            ?? Arr::get($item, 'embed.media.$type', '')
+        );
+    }
+
+    private function resolveMediaType(string $embedType): string
+    {
+        if ($embedType === '') {
+            return 'none';
+        }
+
+        if (str_contains($embedType, '.images')) {
+            return 'images';
+        }
+
+        if (str_contains($embedType, '.video')) {
+            return 'video';
+        }
+
+        if (str_contains($embedType, '.external')) {
+            return 'external';
+        }
+
+        if (str_contains($embedType, '.recordWithMedia')) {
+            return 'recordWithMedia';
+        }
+
+        if (str_contains($embedType, '.record')) {
+            return 'record';
+        }
+
+        return 'other';
     }
 
     private function resolvePostUrl(string $uri, string $handle): string

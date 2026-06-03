@@ -134,4 +134,19 @@ class FakeBlueskySearchGateway implements BlueskyGatewayInterface
             ],
         ];
     }
+
+    public function getLikes(string $uri, ?string $cid, int $limit, ?string $cursor = null): array
+    {
+        return ['likes' => []];
+    }
+
+    public function getRepostedBy(string $uri, int $limit, ?string $cursor = null): array
+    {
+        return ['repostedBy' => []];
+    }
+
+    public function getPostThread(string $uri, int $depth = 6, int $parentHeight = 6): array
+    {
+        return ['thread' => []];
+    }
 }

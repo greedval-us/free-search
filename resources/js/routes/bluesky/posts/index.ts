@@ -1,82 +1,4 @@
-import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFormDefinition } from './../../../../../wayfinder'
-/**
-* @see \App\Http\Controllers\Bluesky\BlueskySearchController::search
- * @see app/Http/Controllers/Bluesky/BlueskySearchController.php:23
- * @route '/bluesky/search'
- */
-export const search = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
-    url: search.url(options),
-    method: 'get',
-})
-
-search.definition = {
-    methods: ["get","head"],
-    url: '/bluesky/search',
-} satisfies RouteDefinition<["get","head"]>
-
-/**
-* @see \App\Http\Controllers\Bluesky\BlueskySearchController::search
- * @see app/Http/Controllers/Bluesky/BlueskySearchController.php:23
- * @route '/bluesky/search'
- */
-search.url = (options?: RouteQueryOptions) => {
-    return search.definition.url + queryParams(options)
-}
-
-/**
-* @see \App\Http\Controllers\Bluesky\BlueskySearchController::search
- * @see app/Http/Controllers/Bluesky/BlueskySearchController.php:23
- * @route '/bluesky/search'
- */
-search.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
-    url: search.url(options),
-    method: 'get',
-})
-/**
-* @see \App\Http\Controllers\Bluesky\BlueskySearchController::search
- * @see app/Http/Controllers/Bluesky/BlueskySearchController.php:23
- * @route '/bluesky/search'
- */
-search.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
-    url: search.url(options),
-    method: 'head',
-})
-
-    /**
-* @see \App\Http\Controllers\Bluesky\BlueskySearchController::search
- * @see app/Http/Controllers/Bluesky/BlueskySearchController.php:23
- * @route '/bluesky/search'
- */
-    const searchForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
-        action: search.url(options),
-        method: 'get',
-    })
-
-            /**
-* @see \App\Http\Controllers\Bluesky\BlueskySearchController::search
- * @see app/Http/Controllers/Bluesky/BlueskySearchController.php:23
- * @route '/bluesky/search'
- */
-        searchForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
-            action: search.url(options),
-            method: 'get',
-        })
-            /**
-* @see \App\Http\Controllers\Bluesky\BlueskySearchController::search
- * @see app/Http/Controllers/Bluesky/BlueskySearchController.php:23
- * @route '/bluesky/search'
- */
-        searchForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
-            action: search.url({
-                        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
-                            _method: 'HEAD',
-                            ...(options?.query ?? options?.mergeQuery ?? {}),
-                        }
-                    }),
-            method: 'get',
-        })
-    
-    search.form = searchForm
+import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFormDefinition } from './../../../wayfinder'
 /**
 * @see \App\Http\Controllers\Bluesky\BlueskySearchController::likes
  * @see app/Http/Controllers/Bluesky/BlueskySearchController.php:32
@@ -311,6 +233,10 @@ thread.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
         })
     
     thread.form = threadForm
-const BlueskySearchController = { search, likes, reposts, thread }
+const posts = {
+    likes: Object.assign(likes, likes),
+reposts: Object.assign(reposts, reposts),
+thread: Object.assign(thread, thread),
+}
 
-export default BlueskySearchController
+export default posts

@@ -53,6 +53,7 @@
         "replies": "Ответы",
         "quotes": "Цитаты",
         "media": "Медиа",
+        "postType": "Тип поста",
         "followers": "Подписчики",
         "following": "Подписки",
         "posts": "Посты",
@@ -73,7 +74,28 @@
     },
     "common": {
         "openPost": "Открыть пост",
-        "openProfile": "Открыть профиль"
+        "openProfile": "Открыть профиль",
+        "openMedia": "Открыть медиа"
+    },
+    "osint": {
+        "title": "OSINT-детали",
+        "indexedAt": "Индексировано",
+        "replyRoot": "Корневой пост треда",
+        "replyParent": "Родительский пост",
+        "links": "Внешние ссылки",
+        "mentions": "Упомянутые DID",
+        "labels": "Метки модерации"
+    },
+    "engagement": {
+        "likes": "Поставили лайк",
+        "reposts": "Сделали репост",
+        "thread": "Контекст треда",
+        "ancestors": "Предыдущие посты",
+        "replies": "Ответы",
+        "loading": "Загружаем взаимодействия...",
+        "emptyLikes": "Лайки не найдены.",
+        "emptyReposts": "Репосты не найдены.",
+        "emptyThread": "Данные по треду не найдены."
     },
     "errors": {
         "requestFailed": "Ошибка запроса."

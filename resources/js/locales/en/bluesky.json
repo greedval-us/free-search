@@ -53,6 +53,7 @@
         "replies": "Replies",
         "quotes": "Quotes",
         "media": "Media",
+        "postType": "Post type",
         "followers": "Followers",
         "following": "Following",
         "posts": "Posts",
@@ -73,7 +74,28 @@
     },
     "common": {
         "openPost": "Open post",
-        "openProfile": "Open profile"
+        "openProfile": "Open profile",
+        "openMedia": "Open media"
+    },
+    "osint": {
+        "title": "OSINT details",
+        "indexedAt": "Indexed at",
+        "replyRoot": "Reply root",
+        "replyParent": "Reply parent",
+        "links": "External links",
+        "mentions": "Mentioned DIDs",
+        "labels": "Moderation labels"
+    },
+    "engagement": {
+        "likes": "Liked by",
+        "reposts": "Reposted by",
+        "thread": "Thread context",
+        "ancestors": "Earlier posts",
+        "replies": "Replies",
+        "loading": "Loading interaction data...",
+        "emptyLikes": "No likes found.",
+        "emptyReposts": "No reposts found.",
+        "emptyThread": "No thread details found."
     },
     "errors": {
         "requestFailed": "Request failed."

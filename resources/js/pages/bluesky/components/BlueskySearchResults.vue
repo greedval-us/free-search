@@ -1,15 +1,45 @@
 <script setup lang="ts">
 import { useI18n } from '@/composables/useI18n';
-import type { BlueskySearchPayload } from '../types';
+import type {
+    BlueskyInteractionState,
+    BlueskyPost,
+    BlueskySearchPayload,
+    BlueskyThreadNode,
+    BlueskyThreadState,
+} from '../types';
 
 defineProps<{
     result: BlueskySearchPayload | null;
     loading: boolean;
     totalShown: number;
     formatDate: (value: string) => string;
+    ensureLikesState: (postId: string) => BlueskyInteractionState;
+    ensureRepostsState: (postId: string) => BlueskyInteractionState;
+    ensureThreadState: (postId: string) => BlueskyThreadState;
+    toggleLikes: (post: BlueskyPost) => void | Promise<void>;
+    toggleReposts: (post: BlueskyPost) => void | Promise<void>;
+    toggleThread: (post: BlueskyPost) => void | Promise<void>;
+    loadLikes: (post: BlueskyPost, append?: boolean) => void | Promise<void>;
+    loadReposts: (post: BlueskyPost, append?: boolean) => void | Promise<void>;
 }>();
 
 const { t } = useI18n();
+
+const mediaPreviewUrl = (post: BlueskyPost): string => {
+    if (post.media.type === 'images') {
+        return post.media.images[0]?.fullsize || post.media.images[0]?.thumb || '';
+    }
+
+    if (post.media.type === 'video' || post.media.type === 'recordWithMedia') {
+        return post.media.video.thumbnail || '';
+    }
+
+    if (post.media.type === 'external') {
+        return post.media.external.thumb || '';
+    }
+
+    return '';
+};
 </script>
 
 <template>
@@ -81,17 +111,32 @@ const { t } = useI18n();
                     </p>
 
                     <div class="mt-3 flex flex-wrap gap-2 text-xs text-muted-foreground">
-                        <span class="rounded-full border border-input px-2 py-1">
+                        <button
+                            type="button"
+                            class="cursor-pointer rounded-full border border-input px-2 py-1 hover:bg-accent"
+                            @click="toggleLikes(post)"
+                        >
                             {{ t('bluesky.metrics.likes') }}: {{ post.likeCount }}
-                        </span>
-                        <span class="rounded-full border border-input px-2 py-1">
+                        </button>
+                        <button
+                            type="button"
+                            class="cursor-pointer rounded-full border border-input px-2 py-1 hover:bg-accent"
+                            @click="toggleReposts(post)"
+                        >
                             {{ t('bluesky.metrics.reposts') }}: {{ post.repostCount }}
-                        </span>
-                        <span class="rounded-full border border-input px-2 py-1">
+                        </button>
+                        <button
+                            type="button"
+                            class="cursor-pointer rounded-full border border-input px-2 py-1 hover:bg-accent"
+                            @click="toggleThread(post)"
+                        >
                             {{ t('bluesky.metrics.replies') }}: {{ post.replyCount }}
-                        </span>
+                        </button>
                         <span class="rounded-full border border-input px-2 py-1">
                             {{ t('bluesky.metrics.quotes') }}: {{ post.quoteCount }}
+                        </span>
+                        <span class="rounded-full border border-input px-2 py-1">
+                            {{ t('bluesky.metrics.postType') }}: {{ post.postType }}
                         </span>
                         <span
                             v-if="post.hasMedia"
@@ -99,6 +144,79 @@ const { t } = useI18n();
                         >
                             {{ t('bluesky.metrics.media') }}
                         </span>
+                    </div>
+
+                    <div
+                        v-if="post.hasMedia || post.media.type === 'external'"
+                        class="mt-3 overflow-hidden rounded-lg border border-border/70 bg-card/60 p-3"
+                    >
+                        <div
+                            v-if="post.media.images.length > 0"
+                            class="grid gap-3 md:grid-cols-2"
+                        >
+                            <a
+                                v-for="(image, index) in post.media.images"
+                                :key="`${post.id}-image-${index}`"
+                                :href="image.fullsize || image.thumb"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                class="overflow-hidden rounded-md border border-border/70"
+                            >
+                                <img
+                                    :src="image.thumb || image.fullsize"
+                                    :alt="image.alt || `media-${index}`"
+                                    class="h-56 w-full object-cover"
+                                    loading="lazy"
+                                />
+                            </a>
+                        </div>
+
+                        <div
+                            v-else-if="post.media.video.thumbnail"
+                            class="space-y-2"
+                        >
+                            <img
+                                :src="post.media.video.thumbnail"
+                                :alt="post.media.video.alt || post.text"
+                                class="h-56 w-full rounded-md object-cover"
+                                loading="lazy"
+                            />
+                            <a
+                                v-if="post.media.video.playlist"
+                                :href="post.media.video.playlist"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                class="text-xs text-primary hover:underline"
+                            >
+                                {{ t('bluesky.common.openMedia') }}
+                            </a>
+                        </div>
+
+                        <div
+                            v-else-if="post.media.external.uri"
+                            class="flex gap-3"
+                        >
+                            <img
+                                v-if="mediaPreviewUrl(post)"
+                                :src="mediaPreviewUrl(post)"
+                                :alt="post.media.external.title || post.text"
+                                class="h-20 w-20 rounded-md object-cover"
+                                loading="lazy"
+                            />
+                            <div class="min-w-0">
+                                <a
+                                    :href="post.media.external.uri"
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    class="text-sm font-medium text-primary hover:underline"
+                                >
+                                    {{ post.media.external.title || post.media.external.uri }}
+                                </a>
+                                <p class="mt-1 text-xs text-muted-foreground">
+                                    {{ post.media.external.description }}
+                                </p>
+                            </div>
+                        </div>
                     </div>
 
                     <div
@@ -122,6 +240,211 @@ const { t } = useI18n();
                                 {{ t('bluesky.metrics.domains') }}
                             </p>
                             <p>{{ post.domains.join(', ') }}</p>
+                        </div>
+                    </div>
+
+                    <div class="mt-3 rounded-lg border border-border/70 bg-card/50 p-3 text-xs">
+                        <p class="mb-2 font-medium text-muted-foreground">
+                            {{ t('bluesky.osint.title') }}
+                        </p>
+                        <div class="grid gap-2 md:grid-cols-2">
+                            <p><span class="text-muted-foreground">DID:</span> {{ post.author.did || '-' }}</p>
+                            <p><span class="text-muted-foreground">CID:</span> {{ post.cid || '-' }}</p>
+                            <p><span class="text-muted-foreground">AT URI:</span> {{ post.uri || '-' }}</p>
+                            <p><span class="text-muted-foreground">{{ t('bluesky.osint.indexedAt') }}:</span> {{ formatDate(post.indexedAt) }}</p>
+                            <p><span class="text-muted-foreground">{{ t('bluesky.osint.replyRoot') }}:</span> {{ post.replyRootUri || '-' }}</p>
+                            <p><span class="text-muted-foreground">{{ t('bluesky.osint.replyParent') }}:</span> {{ post.replyParentUri || '-' }}</p>
+                        </div>
+
+                        <div v-if="post.links.length > 0" class="mt-3">
+                            <p class="mb-1 font-medium text-muted-foreground">
+                                {{ t('bluesky.osint.links') }}
+                            </p>
+                            <div class="space-y-1">
+                                <a
+                                    v-for="link in post.links"
+                                    :key="`${post.id}-${link}`"
+                                    :href="link"
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    class="block truncate text-primary hover:underline"
+                                >
+                                    {{ link }}
+                                </a>
+                            </div>
+                        </div>
+
+                        <div v-if="post.mentions.length > 0 || post.labels.length > 0" class="mt-3 grid gap-2 md:grid-cols-2">
+                            <div v-if="post.mentions.length > 0">
+                                <p class="mb-1 font-medium text-muted-foreground">
+                                    {{ t('bluesky.osint.mentions') }}
+                                </p>
+                                <p>{{ post.mentions.join(', ') }}</p>
+                            </div>
+                            <div v-if="post.labels.length > 0">
+                                <p class="mb-1 font-medium text-muted-foreground">
+                                    {{ t('bluesky.osint.labels') }}
+                                </p>
+                                <p>{{ post.labels.join(', ') }}</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div
+                        v-if="ensureLikesState(post.id).open"
+                        class="mt-3 rounded-lg border border-border/70 bg-card/60 p-3"
+                    >
+                        <div class="mb-2 flex items-center justify-between">
+                            <p class="text-xs font-medium">{{ t('bluesky.engagement.likes') }}</p>
+                            <button
+                                v-if="ensureLikesState(post.id).hasMore"
+                                type="button"
+                                :disabled="ensureLikesState(post.id).loadingMore"
+                                class="cursor-pointer text-xs text-primary hover:underline disabled:opacity-60"
+                                @click="loadLikes(post, true)"
+                            >
+                                {{
+                                    ensureLikesState(post.id).loadingMore
+                                        ? t('bluesky.search.loadingMore')
+                                        : t('bluesky.search.loadMore')
+                                }}
+                            </button>
+                        </div>
+                        <p v-if="ensureLikesState(post.id).loading" class="text-xs text-muted-foreground">
+                            {{ t('bluesky.engagement.loading') }}
+                        </p>
+                        <p v-else-if="ensureLikesState(post.id).error" class="text-xs text-destructive">
+                            {{ ensureLikesState(post.id).error }}
+                        </p>
+                        <div v-else-if="ensureLikesState(post.id).items.length === 0" class="text-xs text-muted-foreground">
+                            {{ t('bluesky.engagement.emptyLikes') }}
+                        </div>
+                        <div v-else class="space-y-2">
+                            <div
+                                v-for="item in ensureLikesState(post.id).items"
+                                :key="`${post.id}-like-${item.actor.did}-${item.indexedAt}`"
+                                class="rounded-md border border-border/70 bg-background/70 p-2"
+                            >
+                                <a
+                                    :href="item.actor.url"
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    class="text-xs font-medium text-primary hover:underline"
+                                >
+                                    {{ item.actor.displayName || item.actor.handle }}
+                                </a>
+                                <p class="text-xs text-muted-foreground">@{{ item.actor.handle }}</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div
+                        v-if="ensureRepostsState(post.id).open"
+                        class="mt-3 rounded-lg border border-border/70 bg-card/60 p-3"
+                    >
+                        <div class="mb-2 flex items-center justify-between">
+                            <p class="text-xs font-medium">{{ t('bluesky.engagement.reposts') }}</p>
+                            <button
+                                v-if="ensureRepostsState(post.id).hasMore"
+                                type="button"
+                                :disabled="ensureRepostsState(post.id).loadingMore"
+                                class="cursor-pointer text-xs text-primary hover:underline disabled:opacity-60"
+                                @click="loadReposts(post, true)"
+                            >
+                                {{
+                                    ensureRepostsState(post.id).loadingMore
+                                        ? t('bluesky.search.loadingMore')
+                                        : t('bluesky.search.loadMore')
+                                }}
+                            </button>
+                        </div>
+                        <p v-if="ensureRepostsState(post.id).loading" class="text-xs text-muted-foreground">
+                            {{ t('bluesky.engagement.loading') }}
+                        </p>
+                        <p v-else-if="ensureRepostsState(post.id).error" class="text-xs text-destructive">
+                            {{ ensureRepostsState(post.id).error }}
+                        </p>
+                        <div v-else-if="ensureRepostsState(post.id).items.length === 0" class="text-xs text-muted-foreground">
+                            {{ t('bluesky.engagement.emptyReposts') }}
+                        </div>
+                        <div v-else class="space-y-2">
+                            <div
+                                v-for="item in ensureRepostsState(post.id).items"
+                                :key="`${post.id}-repost-${item.actor.did}-${item.indexedAt}`"
+                                class="rounded-md border border-border/70 bg-background/70 p-2"
+                            >
+                                <a
+                                    :href="item.actor.url"
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    class="text-xs font-medium text-primary hover:underline"
+                                >
+                                    {{ item.actor.displayName || item.actor.handle }}
+                                </a>
+                                <p class="text-xs text-muted-foreground">@{{ item.actor.handle }}</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div
+                        v-if="ensureThreadState(post.id).open"
+                        class="mt-3 rounded-lg border border-border/70 bg-card/60 p-3"
+                    >
+                        <p class="mb-2 text-xs font-medium">{{ t('bluesky.engagement.thread') }}</p>
+                        <p v-if="ensureThreadState(post.id).loading" class="text-xs text-muted-foreground">
+                            {{ t('bluesky.engagement.loading') }}
+                        </p>
+                        <p v-else-if="ensureThreadState(post.id).error" class="text-xs text-destructive">
+                            {{ ensureThreadState(post.id).error }}
+                        </p>
+                        <div v-else class="space-y-2">
+                            <div v-if="ensureThreadState(post.id).ancestors.length > 0" class="space-y-2">
+                                <p class="text-xs font-medium text-muted-foreground">
+                                    {{ t('bluesky.engagement.ancestors') }}
+                                </p>
+                                <div
+                                    v-for="ancestor in ensureThreadState(post.id).ancestors"
+                                    :key="`${post.id}-ancestor-${ancestor.id}`"
+                                    class="rounded-md border border-border/70 bg-background/70 p-2 text-xs"
+                                >
+                                    {{ ancestor.text || t('bluesky.search.noText') }}
+                                </div>
+                            </div>
+
+                            <div v-if="ensureThreadState(post.id).replies.length > 0" class="space-y-2">
+                                <p class="text-xs font-medium text-muted-foreground">
+                                    {{ t('bluesky.engagement.replies') }}
+                                </p>
+                                <div
+                                    v-for="reply in ensureThreadState(post.id).replies"
+                                    :key="`${post.id}-reply-${reply.id}`"
+                                    class="rounded-md border border-border/70 bg-background/70 p-2 text-xs"
+                                >
+                                    <p>{{ reply.text || t('bluesky.search.noText') }}</p>
+                                    <div
+                                        v-if="reply.replies.length > 0"
+                                        class="mt-2 border-l border-border pl-3"
+                                    >
+                                        <div
+                                            v-for="child in reply.replies"
+                                            :key="`${reply.id}-${child.id}`"
+                                            class="mt-2 text-muted-foreground"
+                                        >
+                                            {{ child.text || t('bluesky.search.noText') }}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div
+                                v-if="
+                                    ensureThreadState(post.id).ancestors.length === 0 &&
+                                    ensureThreadState(post.id).replies.length === 0
+                                "
+                                class="text-xs text-muted-foreground"
+                            >
+                                {{ t('bluesky.engagement.emptyThread') }}
+                            </div>
                         </div>
                     </div>
                 </article>

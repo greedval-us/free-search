@@ -32,6 +32,34 @@ final class BlueskyApiClient implements BlueskyGatewayInterface
         return $this->get('/xrpc/app.bsky.actor.searchActors', $params);
     }
 
+    public function getLikes(string $uri, ?string $cid, int $limit, ?string $cursor = null): array
+    {
+        return $this->get('/xrpc/app.bsky.feed.getLikes', array_filter([
+            'uri' => $uri,
+            'cid' => $cid,
+            'limit' => $limit,
+            'cursor' => $cursor,
+        ], fn (mixed $value): bool => $value !== null && $value !== ''));
+    }
+
+    public function getRepostedBy(string $uri, int $limit, ?string $cursor = null): array
+    {
+        return $this->get('/xrpc/app.bsky.feed.getRepostedBy', array_filter([
+            'uri' => $uri,
+            'limit' => $limit,
+            'cursor' => $cursor,
+        ], fn (mixed $value): bool => $value !== null && $value !== ''));
+    }
+
+    public function getPostThread(string $uri, int $depth = 6, int $parentHeight = 6): array
+    {
+        return $this->get('/xrpc/app.bsky.feed.getPostThread', [
+            'uri' => $uri,
+            'depth' => $depth,
+            'parentHeight' => $parentHeight,
+        ]);
+    }
+
     /**
      * @param array<string, mixed> $query
      * @return array<string, mixed>

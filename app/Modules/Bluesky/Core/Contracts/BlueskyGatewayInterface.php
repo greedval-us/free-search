@@ -15,4 +15,19 @@ interface BlueskyGatewayInterface
      * @return array<string, mixed>
      */
     public function searchActors(array $params): array;
+
+    /**
+     * @return array<string, mixed>
+     */
+    public function getLikes(string $uri, ?string $cid, int $limit, ?string $cursor = null): array;
+
+    /**
+     * @return array<string, mixed>
+     */
+    public function getRepostedBy(string $uri, int $limit, ?string $cursor = null): array;
+
+    /**
+     * @return array<string, mixed>
+     */
+    public function getPostThread(string $uri, int $depth = 6, int $parentHeight = 6): array;
 }
