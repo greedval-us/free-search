@@ -7,8 +7,12 @@ import IntelSearchPanel from '@/components/ui/IntelSearchPanel.vue';
 import { useI18n } from '@/composables/useI18n';
 import BlueskySearchResults from '../components/BlueskySearchResults.vue';
 import { useBlueskySearch } from '../composables/useBlueskySearch';
+import { BlueskySearchSort, BlueskySearchType } from '../types';
 
 const { t } = useI18n();
+
+const searchTypes = BlueskySearchType;
+const searchSorts = BlueskySearchSort;
 
 const {
     limitMax,
@@ -80,7 +84,9 @@ const {
         >
             <div class="grid min-w-0 gap-3 md:grid-cols-2 xl:grid-cols-4">
                 <label class="block min-w-0 xl:col-span-2">
-                    <span class="mb-1 block truncate text-xs font-medium text-muted-foreground">
+                    <span
+                        class="mb-1 block truncate text-xs font-medium text-muted-foreground"
+                    >
                         {{ t('bluesky.search.query') }}
                     </span>
                     <input
@@ -92,37 +98,41 @@ const {
                 </label>
 
                 <label class="block min-w-0">
-                    <span class="mb-1 block truncate text-xs font-medium text-muted-foreground">
+                    <span
+                        class="mb-1 block truncate text-xs font-medium text-muted-foreground"
+                    >
                         {{ t('bluesky.search.type') }}
                     </span>
                     <select
                         v-model="form.type"
                         class="h-10 w-full rounded-md border border-input bg-background px-3 text-sm"
                     >
-                        <option value="posts">
+                        <option :value="searchTypes.Posts">
                             {{ t('bluesky.options.type.posts') }}
                         </option>
-                        <option value="actors">
+                        <option :value="searchTypes.Actors">
                             {{ t('bluesky.options.type.actors') }}
                         </option>
-                        <option value="all">
+                        <option :value="searchTypes.All">
                             {{ t('bluesky.options.type.all') }}
                         </option>
                     </select>
                 </label>
 
                 <label class="block min-w-0">
-                    <span class="mb-1 block truncate text-xs font-medium text-muted-foreground">
+                    <span
+                        class="mb-1 block truncate text-xs font-medium text-muted-foreground"
+                    >
                         {{ t('bluesky.search.sort') }}
                     </span>
                     <select
                         v-model="form.sort"
                         class="h-10 w-full rounded-md border border-input bg-background px-3 text-sm"
                     >
-                        <option value="latest">
+                        <option :value="searchSorts.Latest">
                             {{ t('bluesky.options.sort.latest') }}
                         </option>
-                        <option value="top">
+                        <option :value="searchSorts.Top">
                             {{ t('bluesky.options.sort.top') }}
                         </option>
                     </select>
@@ -166,7 +176,9 @@ const {
             content-class="md:grid-cols-2 xl:grid-cols-4"
         >
             <label class="block min-w-0">
-                <span class="mb-1 block truncate text-xs font-medium text-muted-foreground">
+                <span
+                    class="mb-1 block truncate text-xs font-medium text-muted-foreground"
+                >
                     {{ t('bluesky.search.limit') }}
                 </span>
                 <input
@@ -181,7 +193,9 @@ const {
             </label>
 
             <label class="block min-w-0">
-                <span class="mb-1 block truncate text-xs font-medium text-muted-foreground">
+                <span
+                    class="mb-1 block truncate text-xs font-medium text-muted-foreground"
+                >
                     {{ t('bluesky.search.language') }}
                 </span>
                 <input
@@ -194,7 +208,9 @@ const {
             </label>
 
             <label class="block min-w-0">
-                <span class="mb-1 block truncate text-xs font-medium text-muted-foreground">
+                <span
+                    class="mb-1 block truncate text-xs font-medium text-muted-foreground"
+                >
                     {{ t('bluesky.search.author') }}
                 </span>
                 <input
@@ -206,7 +222,9 @@ const {
             </label>
 
             <label class="block min-w-0">
-                <span class="mb-1 block truncate text-xs font-medium text-muted-foreground">
+                <span
+                    class="mb-1 block truncate text-xs font-medium text-muted-foreground"
+                >
                     {{ t('bluesky.search.mentions') }}
                 </span>
                 <input
@@ -218,7 +236,9 @@ const {
             </label>
 
             <label class="block min-w-0">
-                <span class="mb-1 block truncate text-xs font-medium text-muted-foreground">
+                <span
+                    class="mb-1 block truncate text-xs font-medium text-muted-foreground"
+                >
                     {{ t('bluesky.search.domain') }}
                 </span>
                 <input
@@ -230,7 +250,9 @@ const {
             </label>
 
             <label class="block min-w-0">
-                <span class="mb-1 block truncate text-xs font-medium text-muted-foreground">
+                <span
+                    class="mb-1 block truncate text-xs font-medium text-muted-foreground"
+                >
                     {{ t('bluesky.search.url') }}
                 </span>
                 <input
@@ -242,7 +264,9 @@ const {
             </label>
 
             <label class="block min-w-0">
-                <span class="mb-1 block truncate text-xs font-medium text-muted-foreground">
+                <span
+                    class="mb-1 block truncate text-xs font-medium text-muted-foreground"
+                >
                     {{ t('bluesky.search.tag') }}
                 </span>
                 <input
@@ -254,7 +278,9 @@ const {
             </label>
 
             <label class="block min-w-0">
-                <span class="mb-1 block truncate text-xs font-medium text-muted-foreground">
+                <span
+                    class="mb-1 block truncate text-xs font-medium text-muted-foreground"
+                >
                     {{ t('bluesky.search.since') }}
                 </span>
                 <input
@@ -265,7 +291,9 @@ const {
             </label>
 
             <label class="block min-w-0">
-                <span class="mb-1 block truncate text-xs font-medium text-muted-foreground">
+                <span
+                    class="mb-1 block truncate text-xs font-medium text-muted-foreground"
+                >
                     {{ t('bluesky.search.until') }}
                 </span>
                 <input

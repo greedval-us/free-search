@@ -1,5 +1,27 @@
 export type BlueskyTabValue = 'search';
 
+export enum BlueskySearchType {
+    All = 'all',
+    Posts = 'posts',
+    Actors = 'actors',
+}
+
+export enum BlueskySearchSort {
+    Top = 'top',
+    Latest = 'latest',
+}
+
+export enum BlueskyPostEngagementKind {
+    Likes = 'likes',
+    Reposts = 'reposts',
+}
+
+export enum BlueskyActorDetailKind {
+    Posts = 'posts',
+    Followers = 'followers',
+    Follows = 'follows',
+}
+
 export type BlueskyActor = {
     did: string;
     handle: string;
@@ -74,9 +96,6 @@ export type BlueskyPost = {
     postType: string;
     author: BlueskyActor;
 };
-
-export type BlueskySearchType = 'all' | 'posts' | 'actors';
-export type BlueskySearchSort = 'top' | 'latest';
 
 export type BlueskySearchForm = {
     q: string;

@@ -1,3 +1,4 @@
+import type { Ref } from 'vue';
 import { computed, ref } from 'vue';
 import { apiRequest } from '@/lib/api';
 import type {
@@ -13,6 +14,11 @@ import type {
     BlueskyThreadPayload,
     BlueskyThreadState,
 } from '../types';
+import {
+    BlueskyPostEngagementKind as PostEngagementKind,
+    BlueskySearchSort as SearchSort,
+    BlueskySearchType as SearchType,
+} from '../types';
 
 type TranslateFn = (key: string) => string;
 
@@ -22,10 +28,10 @@ const DEFAULT_LIMIT = 10;
 
 const createSearchForm = (): BlueskySearchForm => ({
     q: '',
-    type: 'posts',
+    type: SearchType.Posts,
     limit: DEFAULT_LIMIT,
     cursor: '',
-    sort: 'latest',
+    sort: SearchSort.Latest,
     language: '',
     author: '',
     mentions: '',
@@ -79,6 +85,31 @@ const createActorDetailsState = (): BlueskyActorDetailsState => ({
     followsNextCursor: null,
 });
 
+type PagedPayload<TItem> = {
+    items: TItem[];
+    pagination: {
+        hasMore: boolean;
+        nextCursor: string | null;
+    };
+};
+
+type ActorDetailHandler = {
+    load: (actor: BlueskyActor, append?: boolean) => Promise<void>;
+    toggle: (actor: BlueskyActor) => Promise<void>;
+};
+
+const ensureStateInMap = <TState>(
+    store: Ref<Record<string, TState>>,
+    key: string,
+    createState: () => TState
+): TState => {
+    if (!store.value[key]) {
+        store.value[key] = createState();
+    }
+
+    return store.value[key];
+};
+
 export const useBlueskySearch = (t: TranslateFn) => {
     const form = ref<BlueskySearchForm>(createSearchForm());
     const loading = ref(false);
@@ -94,18 +125,20 @@ export const useBlueskySearch = (t: TranslateFn) => {
 
     const canSearch = computed(() => form.value.q.trim().length > 0);
     const totalShown = computed(
-        () => (result.value?.posts.length ?? 0) + (result.value?.actors.length ?? 0)
+        () =>
+            (result.value?.posts.length ?? 0) +
+            (result.value?.actors.length ?? 0)
     );
     const hasMore = computed(() => {
         if (!result.value) {
             return false;
         }
 
-        if (form.value.type === 'posts') {
+        if (form.value.type === SearchType.Posts) {
             return result.value.pagination.posts.hasMore;
         }
 
-        if (form.value.type === 'actors') {
+        if (form.value.type === SearchType.Actors) {
             return result.value.pagination.actors.hasMore;
         }
 
@@ -127,11 +160,11 @@ export const useBlueskySearch = (t: TranslateFn) => {
             return '';
         }
 
-        if (form.value.type === 'posts') {
+        if (form.value.type === SearchType.Posts) {
             return result.value.pagination.posts.nextCursor ?? '';
         }
 
-        if (form.value.type === 'actors') {
+        if (form.value.type === SearchType.Actors) {
             return result.value.pagination.actors.nextCursor ?? '';
         }
 
@@ -197,21 +230,18 @@ export const useBlueskySearch = (t: TranslateFn) => {
     const formatDate = (value: string) =>
         value ? new Date(value).toLocaleString() : '-';
 
-    const ensureLikesState = (postId: string) => {
-        if (!likesByPostId.value[postId]) {
-            likesByPostId.value[postId] = createInteractionState();
-        }
+    const ensureInteractionState = (kind: PostEngagementKind, postId: string) =>
+        ensureStateInMap(
+            kind === PostEngagementKind.Likes ? likesByPostId : repostsByPostId,
+            postId,
+            createInteractionState
+        );
 
-        return likesByPostId.value[postId];
-    };
+    const ensureLikesState = (postId: string) =>
+        ensureInteractionState(PostEngagementKind.Likes, postId);
 
-    const ensureRepostsState = (postId: string) => {
-        if (!repostsByPostId.value[postId]) {
-            repostsByPostId.value[postId] = createInteractionState();
-        }
-
-        return repostsByPostId.value[postId];
-    };
+    const ensureRepostsState = (postId: string) =>
+        ensureInteractionState(PostEngagementKind.Reposts, postId);
 
     const ensureThreadState = (postId: string) => {
         if (!threadByPostId.value[postId]) {
@@ -221,16 +251,15 @@ export const useBlueskySearch = (t: TranslateFn) => {
         return threadByPostId.value[postId];
     };
 
-    const ensureActorDetailsState = (actorDid: string) => {
-        if (!actorDetailsByDid.value[actorDid]) {
-            actorDetailsByDid.value[actorDid] = createActorDetailsState();
-        }
+    const ensureActorDetailsState = (actorDid: string) =>
+        ensureStateInMap(actorDetailsByDid, actorDid, createActorDetailsState);
 
-        return actorDetailsByDid.value[actorDid];
-    };
-
-    const loadLikes = async (post: BlueskyPost, append = false) => {
-        const state = ensureLikesState(post.id);
+    const loadInteraction = async (
+        kind: PostEngagementKind,
+        post: BlueskyPost,
+        append = false
+    ) => {
+        const state = ensureInteractionState(kind, post.id);
 
         if ((append && state.loadingMore) || (!append && state.loading)) {
             return;
@@ -244,13 +273,19 @@ export const useBlueskySearch = (t: TranslateFn) => {
         }
 
         const response = await apiRequest<BlueskyInteractionPayload>(
-            '/bluesky/posts/likes',
+            kind === PostEngagementKind.Likes
+                ? '/bluesky/posts/likes'
+                : '/bluesky/posts/reposts',
             {
                 query: {
                     uri: post.uri,
-                    cid: post.cid,
                     limit: form.value.limit,
-                    cursor: append ? (state.nextCursor ?? undefined) : undefined,
+                    cursor: append
+                        ? (state.nextCursor ?? undefined)
+                        : undefined,
+                    ...(kind === PostEngagementKind.Likes
+                        ? { cid: post.cid }
+                        : {}),
                 },
             }
         );
@@ -271,46 +306,11 @@ export const useBlueskySearch = (t: TranslateFn) => {
         state.nextCursor = response.data.pagination.nextCursor;
     };
 
-    const loadReposts = async (post: BlueskyPost, append = false) => {
-        const state = ensureRepostsState(post.id);
+    const loadLikes = async (post: BlueskyPost, append = false) =>
+        loadInteraction(PostEngagementKind.Likes, post, append);
 
-        if ((append && state.loadingMore) || (!append && state.loading)) {
-            return;
-        }
-
-        if (append) {
-            state.loadingMore = true;
-        } else {
-            state.loading = true;
-            state.error = null;
-        }
-
-        const response = await apiRequest<BlueskyInteractionPayload>(
-            '/bluesky/posts/reposts',
-            {
-                query: {
-                    uri: post.uri,
-                    limit: form.value.limit,
-                    cursor: append ? (state.nextCursor ?? undefined) : undefined,
-                },
-            }
-        );
-
-        state.loading = false;
-        state.loadingMore = false;
-
-        if (!response.ok) {
-            state.error = response.message ?? t('bluesky.errors.requestFailed');
-
-            return;
-        }
-
-        state.items = append
-            ? [...state.items, ...response.data.items]
-            : response.data.items;
-        state.hasMore = response.data.pagination.hasMore;
-        state.nextCursor = response.data.pagination.nextCursor;
-    };
+    const loadReposts = async (post: BlueskyPost, append = false) =>
+        loadInteraction(PostEngagementKind.Reposts, post, append);
 
     const loadThread = async (post: BlueskyPost) => {
         const state = ensureThreadState(post.id);
@@ -346,27 +346,25 @@ export const useBlueskySearch = (t: TranslateFn) => {
         state.replies = response.data.replies;
     };
 
-    const toggleLikes = async (post: BlueskyPost) => {
-        const state = ensureLikesState(post.id);
+    const toggleInteraction = async (
+        kind: PostEngagementKind,
+        post: BlueskyPost
+    ) => {
+        const state = ensureInteractionState(kind, post.id);
         state.open = !state.open;
 
         if (!state.open || state.loading || state.items.length > 0) {
             return;
         }
 
-        await loadLikes(post);
+        await loadInteraction(kind, post);
     };
 
-    const toggleReposts = async (post: BlueskyPost) => {
-        const state = ensureRepostsState(post.id);
-        state.open = !state.open;
+    const toggleLikes = async (post: BlueskyPost) =>
+        toggleInteraction(PostEngagementKind.Likes, post);
 
-        if (!state.open || state.loading || state.items.length > 0) {
-            return;
-        }
-
-        await loadReposts(post);
-    };
+    const toggleReposts = async (post: BlueskyPost) =>
+        toggleInteraction(PostEngagementKind.Reposts, post);
 
     const toggleThread = async (post: BlueskyPost) => {
         const state = ensureThreadState(post.id);
@@ -379,146 +377,209 @@ export const useBlueskySearch = (t: TranslateFn) => {
         await loadThread(post);
     };
 
-    const loadActorPosts = async (actor: BlueskyActor, append = false) => {
-        const state = ensureActorDetailsState(actor.did);
+    const createActorDetailHandler = <
+        TItem,
+        TPayload extends PagedPayload<TItem>,
+    >(options: {
+        endpoint:
+            | '/bluesky/actors/feed'
+            | '/bluesky/actors/followers'
+            | '/bluesky/actors/follows';
+        isOpen: (state: BlueskyActorDetailsState) => boolean;
+        setOpen: (state: BlueskyActorDetailsState, value: boolean) => void;
+        isLoading: (state: BlueskyActorDetailsState) => boolean;
+        setLoading: (state: BlueskyActorDetailsState, value: boolean) => void;
+        isLoadingMore: (state: BlueskyActorDetailsState) => boolean;
+        setLoadingMore: (
+            state: BlueskyActorDetailsState,
+            value: boolean
+        ) => void;
+        setError: (
+            state: BlueskyActorDetailsState,
+            value: string | null
+        ) => void;
+        getItems: (state: BlueskyActorDetailsState) => TItem[];
+        setItems: (state: BlueskyActorDetailsState, items: TItem[]) => void;
+        setHasMore: (state: BlueskyActorDetailsState, value: boolean) => void;
+        getNextCursor: (state: BlueskyActorDetailsState) => string | null;
+        setNextCursor: (
+            state: BlueskyActorDetailsState,
+            value: string | null
+        ) => void;
+    }): ActorDetailHandler => {
+        const load = async (actor: BlueskyActor, append = false) => {
+            const state = ensureActorDetailsState(actor.did);
 
-        if ((append && state.postsLoadingMore) || (!append && state.postsLoading)) {
-            return;
-        }
+            if (
+                (append && options.isLoadingMore(state)) ||
+                (!append && options.isLoading(state))
+            ) {
+                return;
+            }
 
-        if (append) {
-            state.postsLoadingMore = true;
-        } else {
-            state.postsLoading = true;
-            state.postsError = null;
-        }
+            if (append) {
+                options.setLoadingMore(state, true);
+            } else {
+                options.setLoading(state, true);
+                options.setError(state, null);
+            }
 
-        const response = await apiRequest<BlueskyPostListPayload>('/bluesky/actors/feed', {
-            query: {
-                actor: actor.did || actor.handle,
-                limit: form.value.limit,
-                cursor: append ? (state.postsNextCursor ?? undefined) : undefined,
-            },
-        });
+            const response = await apiRequest<TPayload>(options.endpoint, {
+                query: {
+                    actor: actor.did || actor.handle,
+                    limit: form.value.limit,
+                    cursor: append
+                        ? (options.getNextCursor(state) ?? undefined)
+                        : undefined,
+                },
+            });
 
-        state.postsLoading = false;
-        state.postsLoadingMore = false;
+            options.setLoading(state, false);
+            options.setLoadingMore(state, false);
 
-        if (!response.ok) {
-            state.postsError = response.message ?? t('bluesky.errors.requestFailed');
+            if (!response.ok) {
+                options.setError(
+                    state,
+                    response.message ?? t('bluesky.errors.requestFailed')
+                );
 
-            return;
-        }
+                return;
+            }
 
-        state.posts = append ? [...state.posts, ...response.data.items] : response.data.items;
-        state.postsHasMore = response.data.pagination.hasMore;
-        state.postsNextCursor = response.data.pagination.nextCursor;
+            const items = append
+                ? [...options.getItems(state), ...response.data.items]
+                : response.data.items;
+
+            options.setItems(state, items);
+            options.setHasMore(state, response.data.pagination.hasMore);
+            options.setNextCursor(state, response.data.pagination.nextCursor);
+        };
+
+        const toggle = async (actor: BlueskyActor) => {
+            const state = ensureActorDetailsState(actor.did);
+            const nextOpenState = !options.isOpen(state);
+            options.setOpen(state, nextOpenState);
+
+            if (
+                !nextOpenState ||
+                options.isLoading(state) ||
+                options.getItems(state).length > 0
+            ) {
+                return;
+            }
+
+            await load(actor);
+        };
+
+        return { load, toggle };
     };
 
-    const loadActorFollowers = async (actor: BlueskyActor, append = false) => {
-        const state = ensureActorDetailsState(actor.did);
+    const actorPostsHandler = createActorDetailHandler<
+        BlueskyPost,
+        BlueskyPostListPayload
+    >({
+        endpoint: '/bluesky/actors/feed',
+        isOpen: (state) => state.postsOpen,
+        setOpen: (state, value) => {
+            state.postsOpen = value;
+        },
+        isLoading: (state) => state.postsLoading,
+        setLoading: (state, value) => {
+            state.postsLoading = value;
+        },
+        isLoadingMore: (state) => state.postsLoadingMore,
+        setLoadingMore: (state, value) => {
+            state.postsLoadingMore = value;
+        },
+        setError: (state, value) => {
+            state.postsError = value;
+        },
+        getItems: (state) => state.posts,
+        setItems: (state, items) => {
+            state.posts = items;
+        },
+        setHasMore: (state, value) => {
+            state.postsHasMore = value;
+        },
+        getNextCursor: (state) => state.postsNextCursor,
+        setNextCursor: (state, value) => {
+            state.postsNextCursor = value;
+        },
+    });
 
-        if ((append && state.followersLoadingMore) || (!append && state.followersLoading)) {
-            return;
-        }
+    const actorFollowersHandler = createActorDetailHandler<
+        BlueskyActor,
+        BlueskyActorListPayload
+    >({
+        endpoint: '/bluesky/actors/followers',
+        isOpen: (state) => state.followersOpen,
+        setOpen: (state, value) => {
+            state.followersOpen = value;
+        },
+        isLoading: (state) => state.followersLoading,
+        setLoading: (state, value) => {
+            state.followersLoading = value;
+        },
+        isLoadingMore: (state) => state.followersLoadingMore,
+        setLoadingMore: (state, value) => {
+            state.followersLoadingMore = value;
+        },
+        setError: (state, value) => {
+            state.followersError = value;
+        },
+        getItems: (state) => state.followers,
+        setItems: (state, items) => {
+            state.followers = items;
+        },
+        setHasMore: (state, value) => {
+            state.followersHasMore = value;
+        },
+        getNextCursor: (state) => state.followersNextCursor,
+        setNextCursor: (state, value) => {
+            state.followersNextCursor = value;
+        },
+    });
 
-        if (append) {
-            state.followersLoadingMore = true;
-        } else {
-            state.followersLoading = true;
-            state.followersError = null;
-        }
+    const actorFollowsHandler = createActorDetailHandler<
+        BlueskyActor,
+        BlueskyActorListPayload
+    >({
+        endpoint: '/bluesky/actors/follows',
+        isOpen: (state) => state.followsOpen,
+        setOpen: (state, value) => {
+            state.followsOpen = value;
+        },
+        isLoading: (state) => state.followsLoading,
+        setLoading: (state, value) => {
+            state.followsLoading = value;
+        },
+        isLoadingMore: (state) => state.followsLoadingMore,
+        setLoadingMore: (state, value) => {
+            state.followsLoadingMore = value;
+        },
+        setError: (state, value) => {
+            state.followsError = value;
+        },
+        getItems: (state) => state.follows,
+        setItems: (state, items) => {
+            state.follows = items;
+        },
+        setHasMore: (state, value) => {
+            state.followsHasMore = value;
+        },
+        getNextCursor: (state) => state.followsNextCursor,
+        setNextCursor: (state, value) => {
+            state.followsNextCursor = value;
+        },
+    });
 
-        const response = await apiRequest<BlueskyActorListPayload>('/bluesky/actors/followers', {
-            query: {
-                actor: actor.did || actor.handle,
-                limit: form.value.limit,
-                cursor: append ? (state.followersNextCursor ?? undefined) : undefined,
-            },
-        });
+    const loadActorPosts = actorPostsHandler.load;
+    const loadActorFollowers = actorFollowersHandler.load;
+    const loadActorFollows = actorFollowsHandler.load;
 
-        state.followersLoading = false;
-        state.followersLoadingMore = false;
-
-        if (!response.ok) {
-            state.followersError = response.message ?? t('bluesky.errors.requestFailed');
-
-            return;
-        }
-
-        state.followers = append ? [...state.followers, ...response.data.items] : response.data.items;
-        state.followersHasMore = response.data.pagination.hasMore;
-        state.followersNextCursor = response.data.pagination.nextCursor;
-    };
-
-    const loadActorFollows = async (actor: BlueskyActor, append = false) => {
-        const state = ensureActorDetailsState(actor.did);
-
-        if ((append && state.followsLoadingMore) || (!append && state.followsLoading)) {
-            return;
-        }
-
-        if (append) {
-            state.followsLoadingMore = true;
-        } else {
-            state.followsLoading = true;
-            state.followsError = null;
-        }
-
-        const response = await apiRequest<BlueskyActorListPayload>('/bluesky/actors/follows', {
-            query: {
-                actor: actor.did || actor.handle,
-                limit: form.value.limit,
-                cursor: append ? (state.followsNextCursor ?? undefined) : undefined,
-            },
-        });
-
-        state.followsLoading = false;
-        state.followsLoadingMore = false;
-
-        if (!response.ok) {
-            state.followsError = response.message ?? t('bluesky.errors.requestFailed');
-
-            return;
-        }
-
-        state.follows = append ? [...state.follows, ...response.data.items] : response.data.items;
-        state.followsHasMore = response.data.pagination.hasMore;
-        state.followsNextCursor = response.data.pagination.nextCursor;
-    };
-
-    const toggleActorPosts = async (actor: BlueskyActor) => {
-        const state = ensureActorDetailsState(actor.did);
-        state.postsOpen = !state.postsOpen;
-
-        if (!state.postsOpen || state.postsLoading || state.posts.length > 0) {
-            return;
-        }
-
-        await loadActorPosts(actor);
-    };
-
-    const toggleActorFollowers = async (actor: BlueskyActor) => {
-        const state = ensureActorDetailsState(actor.did);
-        state.followersOpen = !state.followersOpen;
-
-        if (!state.followersOpen || state.followersLoading || state.followers.length > 0) {
-            return;
-        }
-
-        await loadActorFollowers(actor);
-    };
-
-    const toggleActorFollows = async (actor: BlueskyActor) => {
-        const state = ensureActorDetailsState(actor.did);
-        state.followsOpen = !state.followsOpen;
-
-        if (!state.followsOpen || state.followsLoading || state.follows.length > 0) {
-            return;
-        }
-
-        await loadActorFollows(actor);
-    };
+    const toggleActorPosts = actorPostsHandler.toggle;
+    const toggleActorFollowers = actorFollowersHandler.toggle;
+    const toggleActorFollows = actorFollowsHandler.toggle;
 
     return {
         limitMax: LIMIT_MAX,
