@@ -1,10 +1,11 @@
 <script setup lang="ts">
 import { useI18n } from '@/composables/useI18n';
 import type {
+    BlueskyActor,
+    BlueskyActorDetailsState,
     BlueskyInteractionState,
     BlueskyPost,
     BlueskySearchPayload,
-    BlueskyThreadNode,
     BlueskyThreadState,
 } from '../types';
 
@@ -16,11 +17,18 @@ defineProps<{
     ensureLikesState: (postId: string) => BlueskyInteractionState;
     ensureRepostsState: (postId: string) => BlueskyInteractionState;
     ensureThreadState: (postId: string) => BlueskyThreadState;
+    ensureActorDetailsState: (actorDid: string) => BlueskyActorDetailsState;
     toggleLikes: (post: BlueskyPost) => void | Promise<void>;
     toggleReposts: (post: BlueskyPost) => void | Promise<void>;
     toggleThread: (post: BlueskyPost) => void | Promise<void>;
     loadLikes: (post: BlueskyPost, append?: boolean) => void | Promise<void>;
     loadReposts: (post: BlueskyPost, append?: boolean) => void | Promise<void>;
+    toggleActorPosts: (actor: BlueskyActor) => void | Promise<void>;
+    toggleActorFollowers: (actor: BlueskyActor) => void | Promise<void>;
+    toggleActorFollows: (actor: BlueskyActor) => void | Promise<void>;
+    loadActorPosts: (actor: BlueskyActor, append?: boolean) => void | Promise<void>;
+    loadActorFollowers: (actor: BlueskyActor, append?: boolean) => void | Promise<void>;
+    loadActorFollows: (actor: BlueskyActor, append?: boolean) => void | Promise<void>;
 }>();
 
 const { t } = useI18n();
@@ -563,6 +571,171 @@ const mediaPreviewUrl = (post: BlueskyPost): string => {
                         <span class="rounded-full border border-input px-2 py-1">
                             {{ t('bluesky.metrics.posts') }}: {{ actor.postsCount }}
                         </span>
+                    </div>
+
+                    <div class="mt-3 flex flex-wrap gap-2">
+                        <button
+                            type="button"
+                            class="cursor-pointer rounded-full border border-input px-3 py-1 text-xs font-medium text-foreground hover:bg-accent"
+                            @click="toggleActorPosts(actor)"
+                        >
+                            {{
+                                ensureActorDetailsState(actor.did).postsOpen
+                                    ? t('bluesky.accounts.hidePosts')
+                                    : t('bluesky.accounts.showPosts')
+                            }}
+                        </button>
+                        <button
+                            type="button"
+                            class="cursor-pointer rounded-full border border-input px-3 py-1 text-xs font-medium text-foreground hover:bg-accent"
+                            @click="toggleActorFollowers(actor)"
+                        >
+                            {{
+                                ensureActorDetailsState(actor.did).followersOpen
+                                    ? t('bluesky.accounts.hideFollowers')
+                                    : t('bluesky.accounts.showFollowers')
+                            }}
+                        </button>
+                        <button
+                            type="button"
+                            class="cursor-pointer rounded-full border border-input px-3 py-1 text-xs font-medium text-foreground hover:bg-accent"
+                            @click="toggleActorFollows(actor)"
+                        >
+                            {{
+                                ensureActorDetailsState(actor.did).followsOpen
+                                    ? t('bluesky.accounts.hideFollows')
+                                    : t('bluesky.accounts.showFollows')
+                            }}
+                        </button>
+                    </div>
+
+                    <div v-if="ensureActorDetailsState(actor.did).postsOpen" class="mt-3 rounded-lg border border-border/70 bg-card/60 p-3">
+                        <p v-if="ensureActorDetailsState(actor.did).postsLoading" class="text-xs text-muted-foreground">
+                            {{ t('bluesky.engagement.loading') }}
+                        </p>
+                        <p v-else-if="ensureActorDetailsState(actor.did).postsError" class="text-xs text-destructive">
+                            {{ ensureActorDetailsState(actor.did).postsError }}
+                        </p>
+                        <div v-else class="space-y-2">
+                            <div class="text-[11px] font-semibold tracking-wide text-muted-foreground uppercase">
+                                {{ t('bluesky.accounts.postsSection') }}
+                            </div>
+                            <p v-if="ensureActorDetailsState(actor.did).posts.length === 0" class="text-xs text-muted-foreground">
+                                {{ t('bluesky.accounts.emptyPosts') }}
+                            </p>
+                            <article
+                                v-for="post in ensureActorDetailsState(actor.did).posts"
+                                :key="`${actor.did}-post-${post.id}`"
+                                class="rounded-md border border-border/70 bg-background/70 p-3"
+                            >
+                                <div class="mb-1 text-[11px] text-muted-foreground">
+                                    {{ formatDate(post.createdAt) }}
+                                </div>
+                                <p class="text-xs leading-relaxed text-foreground">
+                                    {{ post.text || t('bluesky.search.noText') }}
+                                </p>
+                            </article>
+                            <div v-if="ensureActorDetailsState(actor.did).postsHasMore" class="pt-1">
+                                <button
+                                    type="button"
+                                    :disabled="ensureActorDetailsState(actor.did).postsLoadingMore"
+                                    class="cursor-pointer rounded-md border border-input bg-background px-3 py-2 text-xs font-medium hover:bg-accent disabled:cursor-not-allowed disabled:opacity-60"
+                                    @click="loadActorPosts(actor, true)"
+                                >
+                                    {{
+                                        ensureActorDetailsState(actor.did).postsLoadingMore
+                                            ? t('bluesky.search.loadingMore')
+                                            : t('bluesky.search.loadMore')
+                                    }}
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div v-if="ensureActorDetailsState(actor.did).followersOpen" class="mt-3 rounded-lg border border-border/70 bg-card/60 p-3">
+                        <p v-if="ensureActorDetailsState(actor.did).followersLoading" class="text-xs text-muted-foreground">
+                            {{ t('bluesky.engagement.loading') }}
+                        </p>
+                        <p v-else-if="ensureActorDetailsState(actor.did).followersError" class="text-xs text-destructive">
+                            {{ ensureActorDetailsState(actor.did).followersError }}
+                        </p>
+                        <div v-else class="space-y-2">
+                            <div class="text-[11px] font-semibold tracking-wide text-muted-foreground uppercase">
+                                {{ t('bluesky.accounts.followersSection') }}
+                            </div>
+                            <p v-if="ensureActorDetailsState(actor.did).followers.length === 0" class="text-xs text-muted-foreground">
+                                {{ t('bluesky.accounts.emptyFollowers') }}
+                            </p>
+                            <article
+                                v-for="follower in ensureActorDetailsState(actor.did).followers"
+                                :key="`${actor.did}-follower-${follower.did}`"
+                                class="rounded-md border border-border/70 bg-background/70 p-3"
+                            >
+                                <div class="text-xs font-medium text-foreground">
+                                    {{ follower.displayName || follower.handle }}
+                                </div>
+                                <div class="text-[11px] text-muted-foreground">
+                                    @{{ follower.handle }}
+                                </div>
+                            </article>
+                            <div v-if="ensureActorDetailsState(actor.did).followersHasMore" class="pt-1">
+                                <button
+                                    type="button"
+                                    :disabled="ensureActorDetailsState(actor.did).followersLoadingMore"
+                                    class="cursor-pointer rounded-md border border-input bg-background px-3 py-2 text-xs font-medium hover:bg-accent disabled:cursor-not-allowed disabled:opacity-60"
+                                    @click="loadActorFollowers(actor, true)"
+                                >
+                                    {{
+                                        ensureActorDetailsState(actor.did).followersLoadingMore
+                                            ? t('bluesky.search.loadingMore')
+                                            : t('bluesky.search.loadMore')
+                                    }}
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div v-if="ensureActorDetailsState(actor.did).followsOpen" class="mt-3 rounded-lg border border-border/70 bg-card/60 p-3">
+                        <p v-if="ensureActorDetailsState(actor.did).followsLoading" class="text-xs text-muted-foreground">
+                            {{ t('bluesky.engagement.loading') }}
+                        </p>
+                        <p v-else-if="ensureActorDetailsState(actor.did).followsError" class="text-xs text-destructive">
+                            {{ ensureActorDetailsState(actor.did).followsError }}
+                        </p>
+                        <div v-else class="space-y-2">
+                            <div class="text-[11px] font-semibold tracking-wide text-muted-foreground uppercase">
+                                {{ t('bluesky.accounts.followsSection') }}
+                            </div>
+                            <p v-if="ensureActorDetailsState(actor.did).follows.length === 0" class="text-xs text-muted-foreground">
+                                {{ t('bluesky.accounts.emptyFollows') }}
+                            </p>
+                            <article
+                                v-for="follow in ensureActorDetailsState(actor.did).follows"
+                                :key="`${actor.did}-follow-${follow.did}`"
+                                class="rounded-md border border-border/70 bg-background/70 p-3"
+                            >
+                                <div class="text-xs font-medium text-foreground">
+                                    {{ follow.displayName || follow.handle }}
+                                </div>
+                                <div class="text-[11px] text-muted-foreground">
+                                    @{{ follow.handle }}
+                                </div>
+                            </article>
+                            <div v-if="ensureActorDetailsState(actor.did).followsHasMore" class="pt-1">
+                                <button
+                                    type="button"
+                                    :disabled="ensureActorDetailsState(actor.did).followsLoadingMore"
+                                    class="cursor-pointer rounded-md border border-input bg-background px-3 py-2 text-xs font-medium hover:bg-accent disabled:cursor-not-allowed disabled:opacity-60"
+                                    @click="loadActorFollows(actor, true)"
+                                >
+                                    {{
+                                        ensureActorDetailsState(actor.did).followsLoadingMore
+                                            ? t('bluesky.search.loadingMore')
+                                            : t('bluesky.search.loadMore')
+                                    }}
+                                </button>
+                            </div>
+                        </div>
                     </div>
                 </article>
             </section>

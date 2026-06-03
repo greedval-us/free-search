@@ -28,11 +28,18 @@ const {
     ensureLikesState,
     ensureRepostsState,
     ensureThreadState,
+    ensureActorDetailsState,
     toggleLikes,
     toggleReposts,
     toggleThread,
     loadLikes,
     loadReposts,
+    toggleActorPosts,
+    toggleActorFollowers,
+    toggleActorFollows,
+    loadActorPosts,
+    loadActorFollowers,
+    loadActorFollows,
 } = useBlueskySearch(t);
 </script>
 
@@ -281,11 +288,18 @@ const {
             :ensure-likes-state="ensureLikesState"
             :ensure-reposts-state="ensureRepostsState"
             :ensure-thread-state="ensureThreadState"
+            :ensure-actor-details-state="ensureActorDetailsState"
             :toggle-likes="toggleLikes"
             :toggle-reposts="toggleReposts"
             :toggle-thread="toggleThread"
             :load-likes="loadLikes"
             :load-reposts="loadReposts"
+            :toggle-actor-posts="toggleActorPosts"
+            :toggle-actor-followers="toggleActorFollowers"
+            :toggle-actor-follows="toggleActorFollows"
+            :load-actor-posts="loadActorPosts"
+            :load-actor-followers="loadActorFollowers"
+            :load-actor-follows="loadActorFollows"
         />
 
         <div v-if="hasMore" class="mt-4 flex justify-center">

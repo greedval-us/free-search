@@ -1,7 +1,7 @@
 import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFormDefinition } from './../../../../../wayfinder'
 /**
 * @see \App\Http\Controllers\Bluesky\BlueskySearchController::search
- * @see app/Http/Controllers/Bluesky/BlueskySearchController.php:23
+ * @see app/Http/Controllers/Bluesky/BlueskySearchController.php:24
  * @route '/bluesky/search'
  */
 export const search = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -16,7 +16,7 @@ search.definition = {
 
 /**
 * @see \App\Http\Controllers\Bluesky\BlueskySearchController::search
- * @see app/Http/Controllers/Bluesky/BlueskySearchController.php:23
+ * @see app/Http/Controllers/Bluesky/BlueskySearchController.php:24
  * @route '/bluesky/search'
  */
 search.url = (options?: RouteQueryOptions) => {
@@ -25,7 +25,7 @@ search.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\Bluesky\BlueskySearchController::search
- * @see app/Http/Controllers/Bluesky/BlueskySearchController.php:23
+ * @see app/Http/Controllers/Bluesky/BlueskySearchController.php:24
  * @route '/bluesky/search'
  */
 search.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -34,7 +34,7 @@ search.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
 })
 /**
 * @see \App\Http\Controllers\Bluesky\BlueskySearchController::search
- * @see app/Http/Controllers/Bluesky/BlueskySearchController.php:23
+ * @see app/Http/Controllers/Bluesky/BlueskySearchController.php:24
  * @route '/bluesky/search'
  */
 search.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -44,7 +44,7 @@ search.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 
     /**
 * @see \App\Http\Controllers\Bluesky\BlueskySearchController::search
- * @see app/Http/Controllers/Bluesky/BlueskySearchController.php:23
+ * @see app/Http/Controllers/Bluesky/BlueskySearchController.php:24
  * @route '/bluesky/search'
  */
     const searchForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -54,7 +54,7 @@ search.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 
             /**
 * @see \App\Http\Controllers\Bluesky\BlueskySearchController::search
- * @see app/Http/Controllers/Bluesky/BlueskySearchController.php:23
+ * @see app/Http/Controllers/Bluesky/BlueskySearchController.php:24
  * @route '/bluesky/search'
  */
         searchForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -63,7 +63,7 @@ search.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
         })
             /**
 * @see \App\Http\Controllers\Bluesky\BlueskySearchController::search
- * @see app/Http/Controllers/Bluesky/BlueskySearchController.php:23
+ * @see app/Http/Controllers/Bluesky/BlueskySearchController.php:24
  * @route '/bluesky/search'
  */
         searchForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -79,7 +79,7 @@ search.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     search.form = searchForm
 /**
 * @see \App\Http\Controllers\Bluesky\BlueskySearchController::likes
- * @see app/Http/Controllers/Bluesky/BlueskySearchController.php:32
+ * @see app/Http/Controllers/Bluesky/BlueskySearchController.php:33
  * @route '/bluesky/posts/likes'
  */
 export const likes = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -94,7 +94,7 @@ likes.definition = {
 
 /**
 * @see \App\Http\Controllers\Bluesky\BlueskySearchController::likes
- * @see app/Http/Controllers/Bluesky/BlueskySearchController.php:32
+ * @see app/Http/Controllers/Bluesky/BlueskySearchController.php:33
  * @route '/bluesky/posts/likes'
  */
 likes.url = (options?: RouteQueryOptions) => {
@@ -103,7 +103,7 @@ likes.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\Bluesky\BlueskySearchController::likes
- * @see app/Http/Controllers/Bluesky/BlueskySearchController.php:32
+ * @see app/Http/Controllers/Bluesky/BlueskySearchController.php:33
  * @route '/bluesky/posts/likes'
  */
 likes.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -112,7 +112,7 @@ likes.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
 })
 /**
 * @see \App\Http\Controllers\Bluesky\BlueskySearchController::likes
- * @see app/Http/Controllers/Bluesky/BlueskySearchController.php:32
+ * @see app/Http/Controllers/Bluesky/BlueskySearchController.php:33
  * @route '/bluesky/posts/likes'
  */
 likes.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -122,7 +122,7 @@ likes.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 
     /**
 * @see \App\Http\Controllers\Bluesky\BlueskySearchController::likes
- * @see app/Http/Controllers/Bluesky/BlueskySearchController.php:32
+ * @see app/Http/Controllers/Bluesky/BlueskySearchController.php:33
  * @route '/bluesky/posts/likes'
  */
     const likesForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -132,7 +132,7 @@ likes.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 
             /**
 * @see \App\Http\Controllers\Bluesky\BlueskySearchController::likes
- * @see app/Http/Controllers/Bluesky/BlueskySearchController.php:32
+ * @see app/Http/Controllers/Bluesky/BlueskySearchController.php:33
  * @route '/bluesky/posts/likes'
  */
         likesForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -141,7 +141,7 @@ likes.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
         })
             /**
 * @see \App\Http\Controllers\Bluesky\BlueskySearchController::likes
- * @see app/Http/Controllers/Bluesky/BlueskySearchController.php:32
+ * @see app/Http/Controllers/Bluesky/BlueskySearchController.php:33
  * @route '/bluesky/posts/likes'
  */
         likesForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -157,7 +157,7 @@ likes.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     likes.form = likesForm
 /**
 * @see \App\Http\Controllers\Bluesky\BlueskySearchController::reposts
- * @see app/Http/Controllers/Bluesky/BlueskySearchController.php:43
+ * @see app/Http/Controllers/Bluesky/BlueskySearchController.php:44
  * @route '/bluesky/posts/reposts'
  */
 export const reposts = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -172,7 +172,7 @@ reposts.definition = {
 
 /**
 * @see \App\Http\Controllers\Bluesky\BlueskySearchController::reposts
- * @see app/Http/Controllers/Bluesky/BlueskySearchController.php:43
+ * @see app/Http/Controllers/Bluesky/BlueskySearchController.php:44
  * @route '/bluesky/posts/reposts'
  */
 reposts.url = (options?: RouteQueryOptions) => {
@@ -181,7 +181,7 @@ reposts.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\Bluesky\BlueskySearchController::reposts
- * @see app/Http/Controllers/Bluesky/BlueskySearchController.php:43
+ * @see app/Http/Controllers/Bluesky/BlueskySearchController.php:44
  * @route '/bluesky/posts/reposts'
  */
 reposts.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -190,7 +190,7 @@ reposts.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
 })
 /**
 * @see \App\Http\Controllers\Bluesky\BlueskySearchController::reposts
- * @see app/Http/Controllers/Bluesky/BlueskySearchController.php:43
+ * @see app/Http/Controllers/Bluesky/BlueskySearchController.php:44
  * @route '/bluesky/posts/reposts'
  */
 reposts.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -200,7 +200,7 @@ reposts.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 
     /**
 * @see \App\Http\Controllers\Bluesky\BlueskySearchController::reposts
- * @see app/Http/Controllers/Bluesky/BlueskySearchController.php:43
+ * @see app/Http/Controllers/Bluesky/BlueskySearchController.php:44
  * @route '/bluesky/posts/reposts'
  */
     const repostsForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -210,7 +210,7 @@ reposts.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 
             /**
 * @see \App\Http\Controllers\Bluesky\BlueskySearchController::reposts
- * @see app/Http/Controllers/Bluesky/BlueskySearchController.php:43
+ * @see app/Http/Controllers/Bluesky/BlueskySearchController.php:44
  * @route '/bluesky/posts/reposts'
  */
         repostsForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -219,7 +219,7 @@ reposts.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
         })
             /**
 * @see \App\Http\Controllers\Bluesky\BlueskySearchController::reposts
- * @see app/Http/Controllers/Bluesky/BlueskySearchController.php:43
+ * @see app/Http/Controllers/Bluesky/BlueskySearchController.php:44
  * @route '/bluesky/posts/reposts'
  */
         repostsForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -235,7 +235,7 @@ reposts.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     reposts.form = repostsForm
 /**
 * @see \App\Http\Controllers\Bluesky\BlueskySearchController::thread
- * @see app/Http/Controllers/Bluesky/BlueskySearchController.php:54
+ * @see app/Http/Controllers/Bluesky/BlueskySearchController.php:55
  * @route '/bluesky/posts/thread'
  */
 export const thread = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -250,7 +250,7 @@ thread.definition = {
 
 /**
 * @see \App\Http\Controllers\Bluesky\BlueskySearchController::thread
- * @see app/Http/Controllers/Bluesky/BlueskySearchController.php:54
+ * @see app/Http/Controllers/Bluesky/BlueskySearchController.php:55
  * @route '/bluesky/posts/thread'
  */
 thread.url = (options?: RouteQueryOptions) => {
@@ -259,7 +259,7 @@ thread.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\Bluesky\BlueskySearchController::thread
- * @see app/Http/Controllers/Bluesky/BlueskySearchController.php:54
+ * @see app/Http/Controllers/Bluesky/BlueskySearchController.php:55
  * @route '/bluesky/posts/thread'
  */
 thread.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -268,7 +268,7 @@ thread.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
 })
 /**
 * @see \App\Http\Controllers\Bluesky\BlueskySearchController::thread
- * @see app/Http/Controllers/Bluesky/BlueskySearchController.php:54
+ * @see app/Http/Controllers/Bluesky/BlueskySearchController.php:55
  * @route '/bluesky/posts/thread'
  */
 thread.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -278,7 +278,7 @@ thread.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 
     /**
 * @see \App\Http\Controllers\Bluesky\BlueskySearchController::thread
- * @see app/Http/Controllers/Bluesky/BlueskySearchController.php:54
+ * @see app/Http/Controllers/Bluesky/BlueskySearchController.php:55
  * @route '/bluesky/posts/thread'
  */
     const threadForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -288,7 +288,7 @@ thread.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 
             /**
 * @see \App\Http\Controllers\Bluesky\BlueskySearchController::thread
- * @see app/Http/Controllers/Bluesky/BlueskySearchController.php:54
+ * @see app/Http/Controllers/Bluesky/BlueskySearchController.php:55
  * @route '/bluesky/posts/thread'
  */
         threadForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -297,7 +297,7 @@ thread.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
         })
             /**
 * @see \App\Http\Controllers\Bluesky\BlueskySearchController::thread
- * @see app/Http/Controllers/Bluesky/BlueskySearchController.php:54
+ * @see app/Http/Controllers/Bluesky/BlueskySearchController.php:55
  * @route '/bluesky/posts/thread'
  */
         threadForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -311,6 +311,240 @@ thread.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
         })
     
     thread.form = threadForm
-const BlueskySearchController = { search, likes, reposts, thread }
+/**
+* @see \App\Http\Controllers\Bluesky\BlueskySearchController::authorFeed
+ * @see app/Http/Controllers/Bluesky/BlueskySearchController.php:66
+ * @route '/bluesky/actors/feed'
+ */
+export const authorFeed = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+    url: authorFeed.url(options),
+    method: 'get',
+})
+
+authorFeed.definition = {
+    methods: ["get","head"],
+    url: '/bluesky/actors/feed',
+} satisfies RouteDefinition<["get","head"]>
+
+/**
+* @see \App\Http\Controllers\Bluesky\BlueskySearchController::authorFeed
+ * @see app/Http/Controllers/Bluesky/BlueskySearchController.php:66
+ * @route '/bluesky/actors/feed'
+ */
+authorFeed.url = (options?: RouteQueryOptions) => {
+    return authorFeed.definition.url + queryParams(options)
+}
+
+/**
+* @see \App\Http\Controllers\Bluesky\BlueskySearchController::authorFeed
+ * @see app/Http/Controllers/Bluesky/BlueskySearchController.php:66
+ * @route '/bluesky/actors/feed'
+ */
+authorFeed.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+    url: authorFeed.url(options),
+    method: 'get',
+})
+/**
+* @see \App\Http\Controllers\Bluesky\BlueskySearchController::authorFeed
+ * @see app/Http/Controllers/Bluesky/BlueskySearchController.php:66
+ * @route '/bluesky/actors/feed'
+ */
+authorFeed.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
+    url: authorFeed.url(options),
+    method: 'head',
+})
+
+    /**
+* @see \App\Http\Controllers\Bluesky\BlueskySearchController::authorFeed
+ * @see app/Http/Controllers/Bluesky/BlueskySearchController.php:66
+ * @route '/bluesky/actors/feed'
+ */
+    const authorFeedForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+        action: authorFeed.url(options),
+        method: 'get',
+    })
+
+            /**
+* @see \App\Http\Controllers\Bluesky\BlueskySearchController::authorFeed
+ * @see app/Http/Controllers/Bluesky/BlueskySearchController.php:66
+ * @route '/bluesky/actors/feed'
+ */
+        authorFeedForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+            action: authorFeed.url(options),
+            method: 'get',
+        })
+            /**
+* @see \App\Http\Controllers\Bluesky\BlueskySearchController::authorFeed
+ * @see app/Http/Controllers/Bluesky/BlueskySearchController.php:66
+ * @route '/bluesky/actors/feed'
+ */
+        authorFeedForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+            action: authorFeed.url({
+                        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
+                            _method: 'HEAD',
+                            ...(options?.query ?? options?.mergeQuery ?? {}),
+                        }
+                    }),
+            method: 'get',
+        })
+    
+    authorFeed.form = authorFeedForm
+/**
+* @see \App\Http\Controllers\Bluesky\BlueskySearchController::followers
+ * @see app/Http/Controllers/Bluesky/BlueskySearchController.php:77
+ * @route '/bluesky/actors/followers'
+ */
+export const followers = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+    url: followers.url(options),
+    method: 'get',
+})
+
+followers.definition = {
+    methods: ["get","head"],
+    url: '/bluesky/actors/followers',
+} satisfies RouteDefinition<["get","head"]>
+
+/**
+* @see \App\Http\Controllers\Bluesky\BlueskySearchController::followers
+ * @see app/Http/Controllers/Bluesky/BlueskySearchController.php:77
+ * @route '/bluesky/actors/followers'
+ */
+followers.url = (options?: RouteQueryOptions) => {
+    return followers.definition.url + queryParams(options)
+}
+
+/**
+* @see \App\Http\Controllers\Bluesky\BlueskySearchController::followers
+ * @see app/Http/Controllers/Bluesky/BlueskySearchController.php:77
+ * @route '/bluesky/actors/followers'
+ */
+followers.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+    url: followers.url(options),
+    method: 'get',
+})
+/**
+* @see \App\Http\Controllers\Bluesky\BlueskySearchController::followers
+ * @see app/Http/Controllers/Bluesky/BlueskySearchController.php:77
+ * @route '/bluesky/actors/followers'
+ */
+followers.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
+    url: followers.url(options),
+    method: 'head',
+})
+
+    /**
+* @see \App\Http\Controllers\Bluesky\BlueskySearchController::followers
+ * @see app/Http/Controllers/Bluesky/BlueskySearchController.php:77
+ * @route '/bluesky/actors/followers'
+ */
+    const followersForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+        action: followers.url(options),
+        method: 'get',
+    })
+
+            /**
+* @see \App\Http\Controllers\Bluesky\BlueskySearchController::followers
+ * @see app/Http/Controllers/Bluesky/BlueskySearchController.php:77
+ * @route '/bluesky/actors/followers'
+ */
+        followersForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+            action: followers.url(options),
+            method: 'get',
+        })
+            /**
+* @see \App\Http\Controllers\Bluesky\BlueskySearchController::followers
+ * @see app/Http/Controllers/Bluesky/BlueskySearchController.php:77
+ * @route '/bluesky/actors/followers'
+ */
+        followersForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+            action: followers.url({
+                        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
+                            _method: 'HEAD',
+                            ...(options?.query ?? options?.mergeQuery ?? {}),
+                        }
+                    }),
+            method: 'get',
+        })
+    
+    followers.form = followersForm
+/**
+* @see \App\Http\Controllers\Bluesky\BlueskySearchController::follows
+ * @see app/Http/Controllers/Bluesky/BlueskySearchController.php:88
+ * @route '/bluesky/actors/follows'
+ */
+export const follows = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+    url: follows.url(options),
+    method: 'get',
+})
+
+follows.definition = {
+    methods: ["get","head"],
+    url: '/bluesky/actors/follows',
+} satisfies RouteDefinition<["get","head"]>
+
+/**
+* @see \App\Http\Controllers\Bluesky\BlueskySearchController::follows
+ * @see app/Http/Controllers/Bluesky/BlueskySearchController.php:88
+ * @route '/bluesky/actors/follows'
+ */
+follows.url = (options?: RouteQueryOptions) => {
+    return follows.definition.url + queryParams(options)
+}
+
+/**
+* @see \App\Http\Controllers\Bluesky\BlueskySearchController::follows
+ * @see app/Http/Controllers/Bluesky/BlueskySearchController.php:88
+ * @route '/bluesky/actors/follows'
+ */
+follows.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+    url: follows.url(options),
+    method: 'get',
+})
+/**
+* @see \App\Http\Controllers\Bluesky\BlueskySearchController::follows
+ * @see app/Http/Controllers/Bluesky/BlueskySearchController.php:88
+ * @route '/bluesky/actors/follows'
+ */
+follows.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
+    url: follows.url(options),
+    method: 'head',
+})
+
+    /**
+* @see \App\Http\Controllers\Bluesky\BlueskySearchController::follows
+ * @see app/Http/Controllers/Bluesky/BlueskySearchController.php:88
+ * @route '/bluesky/actors/follows'
+ */
+    const followsForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+        action: follows.url(options),
+        method: 'get',
+    })
+
+            /**
+* @see \App\Http\Controllers\Bluesky\BlueskySearchController::follows
+ * @see app/Http/Controllers/Bluesky/BlueskySearchController.php:88
+ * @route '/bluesky/actors/follows'
+ */
+        followsForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+            action: follows.url(options),
+            method: 'get',
+        })
+            /**
+* @see \App\Http\Controllers\Bluesky\BlueskySearchController::follows
+ * @see app/Http/Controllers/Bluesky/BlueskySearchController.php:88
+ * @route '/bluesky/actors/follows'
+ */
+        followsForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+            action: follows.url({
+                        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
+                            _method: 'HEAD',
+                            ...(options?.query ?? options?.mergeQuery ?? {}),
+                        }
+                    }),
+            method: 'get',
+        })
+    
+    follows.form = followsForm
+const BlueskySearchController = { search, likes, reposts, thread, authorFeed, followers, follows }
 
 export default BlueskySearchController

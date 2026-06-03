@@ -1,8 +1,12 @@
 import { computed, ref } from 'vue';
 import { apiRequest } from '@/lib/api';
 import type {
+    BlueskyActor,
+    BlueskyActorDetailsState,
+    BlueskyActorListPayload,
     BlueskyInteractionPayload,
     BlueskyInteractionState,
+    BlueskyPostListPayload,
     BlueskySearchForm,
     BlueskySearchPayload,
     BlueskyPost,
@@ -51,6 +55,30 @@ const createThreadState = (): BlueskyThreadState => ({
     replies: [],
 });
 
+const createActorDetailsState = (): BlueskyActorDetailsState => ({
+    postsOpen: false,
+    followersOpen: false,
+    followsOpen: false,
+    postsLoading: false,
+    followersLoading: false,
+    followsLoading: false,
+    postsLoadingMore: false,
+    followersLoadingMore: false,
+    followsLoadingMore: false,
+    postsError: null,
+    followersError: null,
+    followsError: null,
+    posts: [],
+    followers: [],
+    follows: [],
+    postsHasMore: false,
+    followersHasMore: false,
+    followsHasMore: false,
+    postsNextCursor: null,
+    followersNextCursor: null,
+    followsNextCursor: null,
+});
+
 export const useBlueskySearch = (t: TranslateFn) => {
     const form = ref<BlueskySearchForm>(createSearchForm());
     const loading = ref(false);
@@ -62,6 +90,7 @@ export const useBlueskySearch = (t: TranslateFn) => {
     const likesByPostId = ref<Record<string, BlueskyInteractionState>>({});
     const repostsByPostId = ref<Record<string, BlueskyInteractionState>>({});
     const threadByPostId = ref<Record<string, BlueskyThreadState>>({});
+    const actorDetailsByDid = ref<Record<string, BlueskyActorDetailsState>>({});
 
     const canSearch = computed(() => form.value.q.trim().length > 0);
     const totalShown = computed(
@@ -190,6 +219,14 @@ export const useBlueskySearch = (t: TranslateFn) => {
         }
 
         return threadByPostId.value[postId];
+    };
+
+    const ensureActorDetailsState = (actorDid: string) => {
+        if (!actorDetailsByDid.value[actorDid]) {
+            actorDetailsByDid.value[actorDid] = createActorDetailsState();
+        }
+
+        return actorDetailsByDid.value[actorDid];
     };
 
     const loadLikes = async (post: BlueskyPost, append = false) => {
@@ -342,6 +379,147 @@ export const useBlueskySearch = (t: TranslateFn) => {
         await loadThread(post);
     };
 
+    const loadActorPosts = async (actor: BlueskyActor, append = false) => {
+        const state = ensureActorDetailsState(actor.did);
+
+        if ((append && state.postsLoadingMore) || (!append && state.postsLoading)) {
+            return;
+        }
+
+        if (append) {
+            state.postsLoadingMore = true;
+        } else {
+            state.postsLoading = true;
+            state.postsError = null;
+        }
+
+        const response = await apiRequest<BlueskyPostListPayload>('/bluesky/actors/feed', {
+            query: {
+                actor: actor.did || actor.handle,
+                limit: form.value.limit,
+                cursor: append ? (state.postsNextCursor ?? undefined) : undefined,
+            },
+        });
+
+        state.postsLoading = false;
+        state.postsLoadingMore = false;
+
+        if (!response.ok) {
+            state.postsError = response.message ?? t('bluesky.errors.requestFailed');
+
+            return;
+        }
+
+        state.posts = append ? [...state.posts, ...response.data.items] : response.data.items;
+        state.postsHasMore = response.data.pagination.hasMore;
+        state.postsNextCursor = response.data.pagination.nextCursor;
+    };
+
+    const loadActorFollowers = async (actor: BlueskyActor, append = false) => {
+        const state = ensureActorDetailsState(actor.did);
+
+        if ((append && state.followersLoadingMore) || (!append && state.followersLoading)) {
+            return;
+        }
+
+        if (append) {
+            state.followersLoadingMore = true;
+        } else {
+            state.followersLoading = true;
+            state.followersError = null;
+        }
+
+        const response = await apiRequest<BlueskyActorListPayload>('/bluesky/actors/followers', {
+            query: {
+                actor: actor.did || actor.handle,
+                limit: form.value.limit,
+                cursor: append ? (state.followersNextCursor ?? undefined) : undefined,
+            },
+        });
+
+        state.followersLoading = false;
+        state.followersLoadingMore = false;
+
+        if (!response.ok) {
+            state.followersError = response.message ?? t('bluesky.errors.requestFailed');
+
+            return;
+        }
+
+        state.followers = append ? [...state.followers, ...response.data.items] : response.data.items;
+        state.followersHasMore = response.data.pagination.hasMore;
+        state.followersNextCursor = response.data.pagination.nextCursor;
+    };
+
+    const loadActorFollows = async (actor: BlueskyActor, append = false) => {
+        const state = ensureActorDetailsState(actor.did);
+
+        if ((append && state.followsLoadingMore) || (!append && state.followsLoading)) {
+            return;
+        }
+
+        if (append) {
+            state.followsLoadingMore = true;
+        } else {
+            state.followsLoading = true;
+            state.followsError = null;
+        }
+
+        const response = await apiRequest<BlueskyActorListPayload>('/bluesky/actors/follows', {
+            query: {
+                actor: actor.did || actor.handle,
+                limit: form.value.limit,
+                cursor: append ? (state.followsNextCursor ?? undefined) : undefined,
+            },
+        });
+
+        state.followsLoading = false;
+        state.followsLoadingMore = false;
+
+        if (!response.ok) {
+            state.followsError = response.message ?? t('bluesky.errors.requestFailed');
+
+            return;
+        }
+
+        state.follows = append ? [...state.follows, ...response.data.items] : response.data.items;
+        state.followsHasMore = response.data.pagination.hasMore;
+        state.followsNextCursor = response.data.pagination.nextCursor;
+    };
+
+    const toggleActorPosts = async (actor: BlueskyActor) => {
+        const state = ensureActorDetailsState(actor.did);
+        state.postsOpen = !state.postsOpen;
+
+        if (!state.postsOpen || state.postsLoading || state.posts.length > 0) {
+            return;
+        }
+
+        await loadActorPosts(actor);
+    };
+
+    const toggleActorFollowers = async (actor: BlueskyActor) => {
+        const state = ensureActorDetailsState(actor.did);
+        state.followersOpen = !state.followersOpen;
+
+        if (!state.followersOpen || state.followersLoading || state.followers.length > 0) {
+            return;
+        }
+
+        await loadActorFollowers(actor);
+    };
+
+    const toggleActorFollows = async (actor: BlueskyActor) => {
+        const state = ensureActorDetailsState(actor.did);
+        state.followsOpen = !state.followsOpen;
+
+        if (!state.followsOpen || state.followsLoading || state.follows.length > 0) {
+            return;
+        }
+
+        await loadActorFollows(actor);
+    };
+
     return {
         limitMax: LIMIT_MAX,
         form,
@@ -360,10 +538,17 @@ export const useBlueskySearch = (t: TranslateFn) => {
         ensureLikesState,
         ensureRepostsState,
         ensureThreadState,
+        ensureActorDetailsState,
         toggleLikes,
         toggleReposts,
         toggleThread,
         loadLikes,
         loadReposts,
+        toggleActorPosts,
+        toggleActorFollowers,
+        toggleActorFollows,
+        loadActorPosts,
+        loadActorFollowers,
+        loadActorFollows,
     };
 };

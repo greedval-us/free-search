@@ -32,6 +32,17 @@ final class BlueskyApiClient implements BlueskyGatewayInterface
         return $this->get('/xrpc/app.bsky.actor.searchActors', $params);
     }
 
+    public function getProfiles(array $actors): array
+    {
+        $query = [];
+
+        foreach ($actors as $actor) {
+            $query['actors'][] = $actor;
+        }
+
+        return $this->get('/xrpc/app.bsky.actor.getProfiles', $query);
+    }
+
     public function getLikes(string $uri, ?string $cid, int $limit, ?string $cursor = null): array
     {
         return $this->get('/xrpc/app.bsky.feed.getLikes', array_filter([
@@ -58,6 +69,34 @@ final class BlueskyApiClient implements BlueskyGatewayInterface
             'depth' => $depth,
             'parentHeight' => $parentHeight,
         ]);
+    }
+
+    public function getAuthorFeed(string $actor, int $limit, ?string $cursor = null, ?string $filter = null): array
+    {
+        return $this->get('/xrpc/app.bsky.feed.getAuthorFeed', array_filter([
+            'actor' => $actor,
+            'limit' => $limit,
+            'cursor' => $cursor,
+            'filter' => $filter,
+        ], fn (mixed $value): bool => $value !== null && $value !== ''));
+    }
+
+    public function getFollowers(string $actor, int $limit, ?string $cursor = null): array
+    {
+        return $this->get('/xrpc/app.bsky.graph.getFollowers', array_filter([
+            'actor' => $actor,
+            'limit' => $limit,
+            'cursor' => $cursor,
+        ], fn (mixed $value): bool => $value !== null && $value !== ''));
+    }
+
+    public function getFollows(string $actor, int $limit, ?string $cursor = null): array
+    {
+        return $this->get('/xrpc/app.bsky.graph.getFollows', array_filter([
+            'actor' => $actor,
+            'limit' => $limit,
+            'cursor' => $cursor,
+        ], fn (mixed $value): bool => $value !== null && $value !== ''));
     }
 
     /**

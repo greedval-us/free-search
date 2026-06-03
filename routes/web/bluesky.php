@@ -27,4 +27,18 @@ Route::prefix('bluesky')->name('bluesky.')->group(function (): void {
             ->middleware('throttle:60,1')
             ->name('thread');
     });
+
+    Route::prefix('actors')->name('actors.')->group(function (): void {
+        Route::get('feed', [BlueskySearchController::class, 'authorFeed'])
+            ->middleware('throttle:60,1')
+            ->name('feed');
+
+        Route::get('followers', [BlueskySearchController::class, 'followers'])
+            ->middleware('throttle:60,1')
+            ->name('followers');
+
+        Route::get('follows', [BlueskySearchController::class, 'follows'])
+            ->middleware('throttle:60,1')
+            ->name('follows');
+    });
 });

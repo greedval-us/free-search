@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Bluesky;
 
 use App\Http\Controllers\Concerns\ResolvesHttpStatusCodeFromException;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Bluesky\BlueskyActorResourceRequest;
 use App\Http\Requests\Bluesky\BlueskyPostResourceRequest;
 use App\Http\Requests\Bluesky\BlueskySearchRequest;
 use App\Http\Requests\Bluesky\BlueskyThreadRequest;
@@ -56,6 +57,39 @@ final class BlueskySearchController extends Controller
         try {
             return $this->jsonDataFrom(
                 $this->service->thread($request->uri(), $request->depth(), $request->parentHeight())
+            );
+        } catch (RuntimeException $exception) {
+            return $this->jsonError($exception->getMessage(), $this->statusCodeFromException($exception));
+        }
+    }
+
+    public function authorFeed(BlueskyActorResourceRequest $request): JsonResponse
+    {
+        try {
+            return $this->jsonDataFrom(
+                $this->service->authorFeed($request->actor(), $request->limit(), $request->cursor(), $request->filter())
+            );
+        } catch (RuntimeException $exception) {
+            return $this->jsonError($exception->getMessage(), $this->statusCodeFromException($exception));
+        }
+    }
+
+    public function followers(BlueskyActorResourceRequest $request): JsonResponse
+    {
+        try {
+            return $this->jsonDataFrom(
+                $this->service->followers($request->actor(), $request->limit(), $request->cursor())
+            );
+        } catch (RuntimeException $exception) {
+            return $this->jsonError($exception->getMessage(), $this->statusCodeFromException($exception));
+        }
+    }
+
+    public function follows(BlueskyActorResourceRequest $request): JsonResponse
+    {
+        try {
+            return $this->jsonDataFrom(
+                $this->service->follows($request->actor(), $request->limit(), $request->cursor())
             );
         } catch (RuntimeException $exception) {
             return $this->jsonError($exception->getMessage(), $this->statusCodeFromException($exception));

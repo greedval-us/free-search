@@ -35,7 +35,27 @@ final class SearchContentAction extends AbstractBlueskyAction
             ->all();
 
         $actors = collect($actorsPayload['actors'] ?? [])
-            ->map(fn (array $item): array => $this->actorPresenter->present($item))
+            ->pipe(function ($actors) {
+                $identifiers = $actors
+                    ->map(fn (array $item): string => (string) ($item['did'] ?? $item['handle'] ?? ''))
+                    ->filter()
+                    ->values()
+                    ->all();
+
+                if ($identifiers === []) {
+                    return collect();
+                }
+
+                $profiles = collect($this->gateway->getProfiles($identifiers)['profiles'] ?? [])
+                    ->keyBy(fn (array $item): string => (string) ($item['did'] ?? $item['handle'] ?? ''));
+
+                return $actors->map(function (array $item) use ($profiles): array {
+                    $key = (string) ($item['did'] ?? $item['handle'] ?? '');
+                    $detailed = (array) ($profiles->get($key) ?? []);
+
+                    return $this->actorPresenter->present($detailed !== [] ? array_replace($item, $detailed) : $item);
+                });
+            })
             ->values()
             ->all();
 
