@@ -78,54 +78,6 @@ const mediaPreviewUrl = (post: BlueskyPost): string => {
             {{ post.text || t('bluesky.search.noText') }}
         </p>
 
-        <div class="mt-3 flex flex-wrap gap-2 text-xs text-muted-foreground">
-            <button
-                type="button"
-                class="cursor-pointer rounded-full border border-input px-3 py-1 text-xs font-medium text-foreground hover:bg-accent"
-                @click="toggleLikes(post)"
-            >
-                {{
-                    likesState.open
-                        ? t('bluesky.engagement.hideLikes')
-                        : `${t('bluesky.engagement.showLikes')} (${post.likeCount})`
-                }}
-            </button>
-            <button
-                type="button"
-                class="cursor-pointer rounded-full border border-input px-3 py-1 text-xs font-medium text-foreground hover:bg-accent"
-                @click="toggleReposts(post)"
-            >
-                {{
-                    repostsState.open
-                        ? t('bluesky.engagement.hideReposts')
-                        : `${t('bluesky.engagement.showReposts')} (${post.repostCount})`
-                }}
-            </button>
-            <button
-                type="button"
-                class="cursor-pointer rounded-full border border-input px-3 py-1 text-xs font-medium text-foreground hover:bg-accent"
-                @click="toggleThread(post)"
-            >
-                {{
-                    threadState.open
-                        ? t('bluesky.engagement.hideThread')
-                        : `${t('bluesky.engagement.showThread')} (${post.replyCount})`
-                }}
-            </button>
-            <span class="rounded-full border border-input px-2 py-1">
-                {{ t('bluesky.metrics.quotes') }}: {{ post.quoteCount }}
-            </span>
-            <span class="rounded-full border border-input px-2 py-1">
-                {{ t('bluesky.metrics.postType') }}: {{ post.postType }}
-            </span>
-            <span
-                v-if="post.hasMedia"
-                class="rounded-full border border-cyan-400/30 bg-cyan-400/10 px-2 py-1 text-cyan-300"
-            >
-                {{ t('bluesky.metrics.media') }}
-            </span>
-        </div>
-
         <div
             v-if="post.hasMedia || post.media.type === 'external'"
             class="mt-3 overflow-hidden rounded-lg border border-border/70 bg-card/60 p-3"
@@ -297,6 +249,54 @@ const mediaPreviewUrl = (post: BlueskyPost): string => {
                     <p>{{ post.labels.join(', ') }}</p>
                 </div>
             </div>
+        </div>
+
+        <div class="mt-3 flex flex-wrap gap-2 text-xs text-muted-foreground">
+            <button
+                type="button"
+                class="cursor-pointer rounded-full border border-input px-3 py-1 text-xs font-medium text-foreground hover:bg-accent"
+                @click="toggleLikes(post)"
+            >
+                {{
+                    likesState.open
+                        ? t('bluesky.engagement.hideLikes')
+                        : `${t('bluesky.engagement.showLikes')} (${post.likeCount})`
+                }}
+            </button>
+            <button
+                type="button"
+                class="cursor-pointer rounded-full border border-input px-3 py-1 text-xs font-medium text-foreground hover:bg-accent"
+                @click="toggleReposts(post)"
+            >
+                {{
+                    repostsState.open
+                        ? t('bluesky.engagement.hideReposts')
+                        : `${t('bluesky.engagement.showReposts')} (${post.repostCount})`
+                }}
+            </button>
+            <button
+                type="button"
+                class="cursor-pointer rounded-full border border-input px-3 py-1 text-xs font-medium text-foreground hover:bg-accent"
+                @click="toggleThread(post)"
+            >
+                {{
+                    threadState.open
+                        ? t('bluesky.engagement.hideThread')
+                        : `${t('bluesky.engagement.showThread')} (${post.replyCount})`
+                }}
+            </button>
+            <span class="rounded-full border border-input px-2 py-1">
+                {{ t('bluesky.metrics.quotes') }}: {{ post.quoteCount }}
+            </span>
+            <span class="rounded-full border border-input px-2 py-1">
+                {{ t('bluesky.metrics.postType') }}: {{ post.postType }}
+            </span>
+            <span
+                v-if="post.hasMedia"
+                class="rounded-full border border-cyan-400/30 bg-cyan-400/10 px-2 py-1 text-cyan-300"
+            >
+                {{ t('bluesky.metrics.media') }}
+            </span>
         </div>
 
         <BlueskyInteractionPanel
