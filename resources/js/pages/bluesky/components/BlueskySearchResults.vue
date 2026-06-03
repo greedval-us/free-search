@@ -626,14 +626,55 @@ const mediaPreviewUrl = (post: BlueskyPost): string => {
                             <article
                                 v-for="post in ensureActorDetailsState(actor.did).posts"
                                 :key="`${actor.did}-post-${post.id}`"
-                                class="rounded-md border border-border/70 bg-background/70 p-3"
+                                class="rounded-lg border border-border/70 bg-background/70 p-4"
                             >
-                                <div class="mb-1 text-[11px] text-muted-foreground">
-                                    {{ formatDate(post.createdAt) }}
+                                <div class="flex items-start justify-between gap-3">
+                                    <div class="min-w-0 space-y-1">
+                                        <div class="flex flex-wrap items-center gap-2">
+                                            <a
+                                                :href="post.author.url"
+                                                target="_blank"
+                                                rel="noopener noreferrer"
+                                                class="text-sm font-semibold text-primary hover:underline"
+                                            >
+                                                {{ post.author.displayName || post.author.handle }}
+                                            </a>
+                                            <span class="text-xs text-muted-foreground">
+                                                @{{ post.author.handle }}
+                                            </span>
+                                        </div>
+                                        <p class="text-xs text-muted-foreground">
+                                            {{ formatDate(post.createdAt) }}
+                                        </p>
+                                    </div>
+
+                                    <a
+                                        v-if="post.url"
+                                        :href="post.url"
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        class="rounded-full border border-input px-2 py-1 text-xs text-primary hover:bg-accent"
+                                    >
+                                        {{ t('bluesky.common.openPost') }}
+                                    </a>
                                 </div>
-                                <p class="text-xs leading-relaxed text-foreground">
+                                <p class="mt-3 text-sm leading-relaxed text-foreground">
                                     {{ post.text || t('bluesky.search.noText') }}
                                 </p>
+                                <div class="mt-3 flex flex-wrap gap-2 text-xs text-muted-foreground">
+                                    <span class="rounded-full border border-input px-2 py-1">
+                                        {{ t('bluesky.metrics.likes') }}: {{ post.likeCount }}
+                                    </span>
+                                    <span class="rounded-full border border-input px-2 py-1">
+                                        {{ t('bluesky.metrics.reposts') }}: {{ post.repostCount }}
+                                    </span>
+                                    <span class="rounded-full border border-input px-2 py-1">
+                                        {{ t('bluesky.metrics.replies') }}: {{ post.replyCount }}
+                                    </span>
+                                    <span class="rounded-full border border-input px-2 py-1">
+                                        {{ t('bluesky.metrics.quotes') }}: {{ post.quoteCount }}
+                                    </span>
+                                </div>
                             </article>
                             <div v-if="ensureActorDetailsState(actor.did).postsHasMore" class="pt-1">
                                 <button
@@ -669,13 +710,42 @@ const mediaPreviewUrl = (post: BlueskyPost): string => {
                             <article
                                 v-for="follower in ensureActorDetailsState(actor.did).followers"
                                 :key="`${actor.did}-follower-${follower.did}`"
-                                class="rounded-md border border-border/70 bg-background/70 p-3"
+                                class="rounded-lg border border-border/70 bg-background/70 p-4"
                             >
-                                <div class="text-xs font-medium text-foreground">
-                                    {{ follower.displayName || follower.handle }}
+                                <div class="flex items-start justify-between gap-3">
+                                    <div class="min-w-0">
+                                        <a
+                                            :href="follower.url"
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            class="text-sm font-semibold text-primary hover:underline"
+                                        >
+                                            {{ follower.displayName || follower.handle }}
+                                        </a>
+                                        <p class="text-xs text-muted-foreground">@{{ follower.handle }}</p>
+                                    </div>
+                                    <a
+                                        :href="follower.url"
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        class="rounded-full border border-input px-2 py-1 text-xs text-primary hover:bg-accent"
+                                    >
+                                        {{ t('bluesky.common.openProfile') }}
+                                    </a>
                                 </div>
-                                <div class="text-[11px] text-muted-foreground">
-                                    @{{ follower.handle }}
+                                <p class="mt-3 text-sm leading-relaxed text-foreground">
+                                    {{ follower.description || t('bluesky.search.noBio') }}
+                                </p>
+                                <div class="mt-3 flex flex-wrap gap-2 text-xs text-muted-foreground">
+                                    <span class="rounded-full border border-input px-2 py-1">
+                                        {{ t('bluesky.metrics.followers') }}: {{ follower.followersCount }}
+                                    </span>
+                                    <span class="rounded-full border border-input px-2 py-1">
+                                        {{ t('bluesky.metrics.following') }}: {{ follower.followsCount }}
+                                    </span>
+                                    <span class="rounded-full border border-input px-2 py-1">
+                                        {{ t('bluesky.metrics.posts') }}: {{ follower.postsCount }}
+                                    </span>
                                 </div>
                             </article>
                             <div v-if="ensureActorDetailsState(actor.did).followersHasMore" class="pt-1">
@@ -712,13 +782,42 @@ const mediaPreviewUrl = (post: BlueskyPost): string => {
                             <article
                                 v-for="follow in ensureActorDetailsState(actor.did).follows"
                                 :key="`${actor.did}-follow-${follow.did}`"
-                                class="rounded-md border border-border/70 bg-background/70 p-3"
+                                class="rounded-lg border border-border/70 bg-background/70 p-4"
                             >
-                                <div class="text-xs font-medium text-foreground">
-                                    {{ follow.displayName || follow.handle }}
+                                <div class="flex items-start justify-between gap-3">
+                                    <div class="min-w-0">
+                                        <a
+                                            :href="follow.url"
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            class="text-sm font-semibold text-primary hover:underline"
+                                        >
+                                            {{ follow.displayName || follow.handle }}
+                                        </a>
+                                        <p class="text-xs text-muted-foreground">@{{ follow.handle }}</p>
+                                    </div>
+                                    <a
+                                        :href="follow.url"
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        class="rounded-full border border-input px-2 py-1 text-xs text-primary hover:bg-accent"
+                                    >
+                                        {{ t('bluesky.common.openProfile') }}
+                                    </a>
                                 </div>
-                                <div class="text-[11px] text-muted-foreground">
-                                    @{{ follow.handle }}
+                                <p class="mt-3 text-sm leading-relaxed text-foreground">
+                                    {{ follow.description || t('bluesky.search.noBio') }}
+                                </p>
+                                <div class="mt-3 flex flex-wrap gap-2 text-xs text-muted-foreground">
+                                    <span class="rounded-full border border-input px-2 py-1">
+                                        {{ t('bluesky.metrics.followers') }}: {{ follow.followersCount }}
+                                    </span>
+                                    <span class="rounded-full border border-input px-2 py-1">
+                                        {{ t('bluesky.metrics.following') }}: {{ follow.followsCount }}
+                                    </span>
+                                    <span class="rounded-full border border-input px-2 py-1">
+                                        {{ t('bluesky.metrics.posts') }}: {{ follow.postsCount }}
+                                    </span>
                                 </div>
                             </article>
                             <div v-if="ensureActorDetailsState(actor.did).followsHasMore" class="pt-1">

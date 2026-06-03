@@ -103,6 +103,20 @@
         "emptyReposts": "No reposts found.",
         "emptyThread": "No thread details found."
     },
+    "accounts": {
+        "showPosts": "Show posts",
+        "hidePosts": "Hide posts",
+        "showFollowers": "Show followers",
+        "hideFollowers": "Hide followers",
+        "showFollows": "Show follows",
+        "hideFollows": "Hide follows",
+        "postsSection": "Account posts",
+        "followersSection": "Followers",
+        "followsSection": "Following",
+        "emptyPosts": "No posts found.",
+        "emptyFollowers": "No followers found.",
+        "emptyFollows": "No follows found."
+    },
     "errors": {
         "requestFailed": "Request failed."
     }

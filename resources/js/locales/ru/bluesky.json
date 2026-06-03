@@ -103,6 +103,20 @@
         "emptyReposts": "Репосты не найдены.",
         "emptyThread": "Данные по треду не найдены."
     },
+    "accounts": {
+        "showPosts": "Показать посты",
+        "hidePosts": "Скрыть посты",
+        "showFollowers": "Показать подписчиков",
+        "hideFollowers": "Скрыть подписчиков",
+        "showFollows": "Показать подписки",
+        "hideFollows": "Скрыть подписки",
+        "postsSection": "Посты аккаунта",
+        "followersSection": "Подписчики",
+        "followsSection": "Подписки",
+        "emptyPosts": "Посты не найдены.",
+        "emptyFollowers": "Подписчики не найдены.",
+        "emptyFollows": "Подписки не найдены."
+    },
     "errors": {
         "requestFailed": "Ошибка запроса."
     }
