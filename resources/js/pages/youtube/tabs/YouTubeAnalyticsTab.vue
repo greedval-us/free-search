@@ -67,15 +67,11 @@ onMounted(() => {
     >
         <template #fields>
             <div class="grid gap-2.5 md:grid-cols-2 xl:grid-cols-12">
-                <label class="block min-w-0 xl:col-span-2">
-                    <span
-                        class="mb-1 block truncate text-xs font-medium text-muted-foreground"
-                        >{{ t('youtube.analytics.mode') }}</span
-                    >
-                    <select
-                        v-model="form.mode"
-                        class="h-10 w-full rounded-md border border-input bg-background px-3 text-sm"
-                    >
+                <label class="intel-field xl:col-span-2">
+                    <span class="intel-label">{{
+                        t('youtube.analytics.mode')
+                    }}</span>
+                    <select v-model="form.mode" class="intel-select">
                         <option value="channel">
                             {{ t('youtube.options.mode.channel') }}
                         </option>
@@ -87,28 +83,27 @@ onMounted(() => {
 
                 <label
                     v-if="form.mode === 'video'"
-                    class="block min-w-0 xl:col-span-10"
+                    class="intel-field xl:col-span-10"
                 >
-                    <span
-                        class="mb-1 block truncate text-xs font-medium text-muted-foreground"
-                        >{{ t('youtube.analytics.videoId') }}</span
-                    >
+                    <span class="intel-label">{{
+                        t('youtube.analytics.videoId')
+                    }}</span>
                     <input
                         v-model="form.videoId"
                         type="text"
-                        class="h-10 w-full rounded-md border border-input bg-background px-3 text-sm"
+                        class="intel-input"
+                        :placeholder="t('youtube.analytics.videoIdPlaceholder')"
                     />
                 </label>
 
-                <label v-else class="block min-w-0 xl:col-span-4">
-                    <span
-                        class="mb-1 block truncate text-xs font-medium text-muted-foreground"
-                        >{{ t('youtube.analytics.channelId') }}</span
-                    >
+                <label v-else class="intel-field xl:col-span-4">
+                    <span class="intel-label">{{
+                        t('youtube.analytics.channelId')
+                    }}</span>
                     <input
                         v-model="form.channelId"
                         type="text"
-                        class="h-10 w-full rounded-md border border-input bg-background px-3 text-sm"
+                        class="intel-input"
                         :placeholder="t('youtube.analytics.channelPlaceholder')"
                     />
                 </label>
@@ -117,10 +112,9 @@ onMounted(() => {
                     v-if="form.mode === 'channel'"
                     class="min-w-0 xl:col-span-2"
                 >
-                    <span
-                        class="mb-1 block truncate text-xs font-medium text-muted-foreground"
-                        >{{ t('youtube.analytics.period') }}</span
-                    >
+                    <span class="intel-label">{{
+                        t('youtube.analytics.period')
+                    }}</span>
                     <div
                         class="grid h-10 grid-cols-3 gap-1 rounded-md border border-input bg-background p-1"
                     >
@@ -145,45 +139,43 @@ onMounted(() => {
 
                 <label
                     v-if="form.mode === 'channel'"
-                    class="block min-w-0 xl:col-span-2"
+                    class="intel-field xl:col-span-2"
                 >
-                    <span
-                        class="mb-1 block truncate text-xs font-medium text-muted-foreground"
-                        >{{ t('youtube.analytics.dateFrom') }}</span
-                    >
+                    <span class="intel-label">{{
+                        t('youtube.analytics.dateFrom')
+                    }}</span>
                     <input
                         v-model="form.dateFrom"
                         type="date"
                         :min="dateLimits.fromMin ?? undefined"
                         :max="dateLimits.fromMax ?? undefined"
-                        class="h-10 w-full rounded-md border border-input bg-background px-3 text-sm"
+                        class="intel-input"
                     />
                 </label>
 
                 <label
                     v-if="form.mode === 'channel'"
-                    class="block min-w-0 xl:col-span-2"
+                    class="intel-field xl:col-span-2"
                 >
-                    <span
-                        class="mb-1 block truncate text-xs font-medium text-muted-foreground"
-                        >{{ t('youtube.analytics.dateTo') }}</span
-                    >
+                    <span class="intel-label">{{
+                        t('youtube.analytics.dateTo')
+                    }}</span>
                     <input
                         v-model="form.dateTo"
                         type="date"
                         :min="dateLimits.toMin ?? undefined"
                         :max="dateLimits.toMax ?? undefined"
-                        class="h-10 w-full rounded-md border border-input bg-background px-3 text-sm"
+                        class="intel-input"
                     />
                 </label>
             </div>
         </template>
         <template #toolbarLeading>
-            <p class="text-[11px] text-muted-foreground">
+            <p class="intel-inline-note">
                 {{
                     form.mode === 'channel'
-                        ? t('youtube.analytics.period')
-                        : t('youtube.analytics.videoId')
+                        ? t('youtube.analytics.periodHint')
+                        : t('youtube.analytics.videoIdHint')
                 }}
             </p>
         </template>

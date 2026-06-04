@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import { ExternalLink } from 'lucide-vue-next';
 import { useI18n } from '@/composables/useI18n';
+import type { MastodonHashtag, MastodonHashtagDetailsState } from '../types';
 import MastodonHashtagSummaryGrid from './MastodonHashtagSummaryGrid.vue';
 import MastodonStatusCard from './MastodonStatusCard.vue';
-import type { MastodonHashtag, MastodonHashtagDetailsState } from '../types';
 
 defineProps<{
     hashtags: MastodonHashtag[];
@@ -20,9 +20,7 @@ const { t } = useI18n();
 
 <template>
     <section v-if="hashtags.length > 0" class="space-y-3">
-        <div
-            class="text-xs font-semibold tracking-wide text-muted-foreground uppercase"
-        >
+        <div class="intel-subsection-title">
             {{ t('mastodon.sections.hashtags') }}
         </div>
 
@@ -45,7 +43,7 @@ const { t } = useI18n();
                     :href="hashtag.url"
                     target="_blank"
                     rel="noopener noreferrer"
-                    class="cursor-pointer rounded-full border border-input px-2 py-1 text-xs text-primary hover:bg-accent"
+                    class="intel-link-action"
                 >
                     <ExternalLink class="mr-1 inline h-3 w-3" />
                     {{ t('mastodon.common.openTag') }}
@@ -55,7 +53,7 @@ const { t } = useI18n();
             <div class="mt-3 flex flex-wrap gap-2">
                 <button
                     type="button"
-                    class="cursor-pointer rounded-full border border-input px-2 py-1 text-xs text-foreground hover:bg-accent"
+                    class="intel-action"
                     @click="toggleHashtagStatuses(hashtag.name)"
                 >
                     {{
@@ -73,7 +71,7 @@ const { t } = useI18n();
                 <div
                     v-for="point in hashtag.history"
                     :key="`${hashtag.name}-${point.day}`"
-                    class="rounded-md border border-border/70 bg-card/60 p-2 text-xs text-muted-foreground"
+                    class="intel-stat text-muted-foreground"
                 >
                     <div>{{ point.day }}</div>
                     <div>
@@ -88,7 +86,7 @@ const { t } = useI18n();
 
             <div
                 v-if="ensureHashtagDetailsState(hashtag.name).open"
-                class="mt-3 rounded-lg border border-border/70 bg-card/60 p-3"
+                class="intel-subsection mt-3"
             >
                 <p
                     v-if="ensureHashtagDetailsState(hashtag.name).loading"
@@ -120,9 +118,7 @@ const { t } = useI18n();
                         "
                         class="space-y-2"
                     >
-                        <div
-                            class="text-[11px] font-semibold tracking-wide text-muted-foreground uppercase"
-                        >
+                        <div class="intel-subsection-title">
                             {{ t('mastodon.hashtags.accountsSection') }}
                         </div>
                         <div class="flex flex-wrap gap-2">
@@ -134,7 +130,7 @@ const { t } = useI18n();
                                 :href="account.url || '#'"
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                class="rounded-full border border-input px-2 py-1 text-xs text-primary hover:bg-accent"
+                                class="intel-link-action"
                             >
                                 @{{ account.acct }}
                             </a>
@@ -148,9 +144,7 @@ const { t } = useI18n();
                         "
                         class="space-y-2"
                     >
-                        <div
-                            class="text-[11px] font-semibold tracking-wide text-muted-foreground uppercase"
-                        >
+                        <div class="intel-subsection-title">
                             {{ t('mastodon.hashtags.instancesSection') }}
                         </div>
                         <div class="flex flex-wrap gap-2">
@@ -159,7 +153,7 @@ const { t } = useI18n();
                                     hashtag.name
                                 ).instanceDomains"
                                 :key="`${hashtag.name}-domain-${domain}`"
-                                class="rounded-full border border-cyan-500/30 bg-cyan-500/10 px-2 py-1 text-xs text-cyan-700"
+                                class="intel-pill-accent"
                             >
                                 {{ domain }}
                             </span>
@@ -167,9 +161,7 @@ const { t } = useI18n();
                     </div>
 
                     <div class="space-y-2">
-                        <div
-                            class="text-[11px] font-semibold tracking-wide text-muted-foreground uppercase"
-                        >
+                        <div class="intel-subsection-title">
                             {{ t('mastodon.hashtags.postsSection') }}
                         </div>
 

@@ -33,7 +33,7 @@ const { t } = useI18n();
         <template #actions>
             <button
                 type="button"
-                class="cursor-pointer rounded-full border border-input px-3 py-1 text-xs font-medium text-foreground hover:bg-accent"
+                class="intel-action"
                 @click="toggleActorPosts(actor)"
             >
                 {{
@@ -44,7 +44,7 @@ const { t } = useI18n();
             </button>
             <button
                 type="button"
-                class="cursor-pointer rounded-full border border-input px-3 py-1 text-xs font-medium text-foreground hover:bg-accent"
+                class="intel-action"
                 @click="toggleActorFollowers(actor)"
             >
                 {{
@@ -55,7 +55,7 @@ const { t } = useI18n();
             </button>
             <button
                 type="button"
-                class="cursor-pointer rounded-full border border-input px-3 py-1 text-xs font-medium text-foreground hover:bg-accent"
+                class="intel-action"
                 @click="toggleActorFollows(actor)"
             >
                 {{
@@ -67,10 +67,7 @@ const { t } = useI18n();
         </template>
 
         <template #details>
-            <div
-                v-if="state.postsOpen"
-                class="rounded-lg border border-border/70 bg-card/60 p-3"
-            >
+            <div v-if="state.postsOpen" class="intel-subsection">
                 <p
                     v-if="state.postsLoading"
                     class="text-xs text-muted-foreground"
@@ -84,9 +81,7 @@ const { t } = useI18n();
                     {{ state.postsError }}
                 </p>
                 <div v-else class="space-y-2">
-                    <div
-                        class="text-[11px] font-semibold tracking-wide text-muted-foreground uppercase"
-                    >
+                    <div class="intel-subsection-title">
                         {{ t('bluesky.accounts.postsSection') }}
                     </div>
                     <p
@@ -118,10 +113,7 @@ const { t } = useI18n();
                 </div>
             </div>
 
-            <div
-                v-if="state.followersOpen"
-                class="rounded-lg border border-border/70 bg-card/60 p-3"
-            >
+            <div v-if="state.followersOpen" class="intel-subsection">
                 <p
                     v-if="state.followersLoading"
                     class="text-xs text-muted-foreground"
@@ -135,9 +127,7 @@ const { t } = useI18n();
                     {{ state.followersError }}
                 </p>
                 <div v-else class="space-y-2">
-                    <div
-                        class="text-[11px] font-semibold tracking-wide text-muted-foreground uppercase"
-                    >
+                    <div class="intel-subsection-title">
                         {{ t('bluesky.accounts.followersSection') }}
                     </div>
                     <p
@@ -168,10 +158,7 @@ const { t } = useI18n();
                 </div>
             </div>
 
-            <div
-                v-if="state.followsOpen"
-                class="rounded-lg border border-border/70 bg-card/60 p-3"
-            >
+            <div v-if="state.followsOpen" class="intel-subsection">
                 <p
                     v-if="state.followsLoading"
                     class="text-xs text-muted-foreground"
@@ -185,9 +172,7 @@ const { t } = useI18n();
                     {{ state.followsError }}
                 </p>
                 <div v-else class="space-y-2">
-                    <div
-                        class="text-[11px] font-semibold tracking-wide text-muted-foreground uppercase"
-                    >
+                    <div class="intel-subsection-title">
                         {{ t('bluesky.accounts.followsSection') }}
                     </div>
                     <p

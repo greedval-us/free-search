@@ -104,7 +104,7 @@ const hasDetails = computed(() => Boolean(slots.details));
                     <div
                         v-for="field in account.fields"
                         :key="`${account.id}-${field.name}-${field.value}`"
-                        class="rounded-md border border-border/70 bg-card/60 p-2 text-[11px]"
+                        class="intel-stat"
                     >
                         <div class="font-medium text-foreground">
                             {{ field.name }}

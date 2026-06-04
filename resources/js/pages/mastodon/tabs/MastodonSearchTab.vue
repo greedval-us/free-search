@@ -57,30 +57,23 @@ const {
     >
         <template #fields>
             <div class="grid min-w-0 gap-3 md:grid-cols-2 xl:grid-cols-4">
-                <label class="block min-w-0 xl:col-span-2">
-                    <span
-                        class="mb-1 block truncate text-xs font-medium text-muted-foreground"
-                    >
-                        {{ t('mastodon.search.query') }}
-                    </span>
+                <label class="intel-field xl:col-span-2">
+                    <span class="intel-label">{{
+                        t('mastodon.search.query')
+                    }}</span>
                     <input
                         v-model="form.q"
                         type="text"
-                        class="h-10 w-full rounded-md border border-input bg-background px-3 text-sm"
+                        class="intel-input"
                         :placeholder="t('mastodon.search.placeholder')"
                     />
                 </label>
 
-                <label class="block min-w-0">
-                    <span
-                        class="mb-1 block truncate text-xs font-medium text-muted-foreground"
-                    >
-                        {{ t('mastodon.search.type') }}
-                    </span>
-                    <select
-                        v-model="form.type"
-                        class="h-10 w-full rounded-md border border-input bg-background px-3 text-sm"
-                    >
+                <label class="intel-field">
+                    <span class="intel-label">{{
+                        t('mastodon.search.type')
+                    }}</span>
+                    <select v-model="form.type" class="intel-select">
                         <option value="statuses">
                             {{ t('mastodon.options.type.statuses') }}
                         </option>
@@ -98,13 +91,11 @@ const {
 
                 <label
                     v-if="showsRepliesFilter"
-                    class="block min-w-0 md:col-span-2 xl:col-span-1"
+                    class="intel-field md:col-span-2 xl:col-span-1"
                 >
-                    <span
-                        class="mb-1 block truncate text-xs font-medium text-muted-foreground"
-                    >
-                        {{ t('mastodon.metrics.replies') }}
-                    </span>
+                    <span class="intel-label">{{
+                        t('mastodon.metrics.replies')
+                    }}</span>
                     <span
                         class="flex h-10 items-center gap-3 rounded-md border border-input bg-background px-3 text-sm"
                     >
@@ -125,29 +116,25 @@ const {
                 :open="!searchPanelCollapsed && showAdvanced"
                 content-class="md:grid-cols-2 xl:grid-cols-4"
             >
-                <label class="block min-w-0">
-                    <span
-                        class="mb-1 block truncate text-xs font-medium text-muted-foreground"
-                    >
-                        {{ t('mastodon.search.limit') }}
-                    </span>
+                <label class="intel-field">
+                    <span class="intel-label">{{
+                        t('mastodon.search.limit')
+                    }}</span>
                     <input
                         v-model.number="form.limit"
                         type="number"
                         min="1"
                         :max="limitMax"
-                        class="h-10 w-full rounded-md border border-input bg-background px-3 text-sm"
+                        class="intel-input"
                         @input="clampLimit"
                         @blur="clampLimit"
                     />
                 </label>
 
-                <label class="block min-w-0">
-                    <span
-                        class="mb-1 block truncate text-xs font-medium text-muted-foreground"
-                    >
-                        {{ t('mastodon.search.resolve') }}
-                    </span>
+                <label class="intel-field">
+                    <span class="intel-label">{{
+                        t('mastodon.search.resolve')
+                    }}</span>
                     <span
                         class="flex h-10 items-center gap-3 rounded-md border border-input bg-background px-3 text-sm"
                     >
@@ -160,84 +147,69 @@ const {
                     </span>
                 </label>
 
-                <label class="block min-w-0">
-                    <span
-                        class="mb-1 block truncate text-xs font-medium text-muted-foreground"
-                    >
-                        {{ t('mastodon.search.language') }}
-                    </span>
+                <label class="intel-field">
+                    <span class="intel-label">{{
+                        t('mastodon.search.language')
+                    }}</span>
                     <input
                         v-model="form.language"
                         type="text"
                         maxlength="12"
-                        class="h-10 w-full rounded-md border border-input bg-background px-3 text-sm"
+                        class="intel-input"
                         :placeholder="t('mastodon.search.languagePlaceholder')"
                     />
                 </label>
 
-                <label v-if="showsStatusFilters" class="block min-w-0">
-                    <span
-                        class="mb-1 block truncate text-xs font-medium text-muted-foreground"
-                    >
-                        {{ t('mastodon.search.author') }}
-                    </span>
+                <label v-if="showsStatusFilters" class="intel-field">
+                    <span class="intel-label">{{
+                        t('mastodon.search.author')
+                    }}</span>
                     <input
                         v-model="form.author"
                         type="text"
-                        class="h-10 w-full rounded-md border border-input bg-background px-3 text-sm"
+                        class="intel-input"
                     />
                 </label>
 
-                <label v-if="showsStatusFilters" class="block min-w-0">
-                    <span
-                        class="mb-1 block truncate text-xs font-medium text-muted-foreground"
-                    >
-                        {{ t('mastodon.search.dateFrom') }}
-                    </span>
+                <label v-if="showsStatusFilters" class="intel-field">
+                    <span class="intel-label">{{
+                        t('mastodon.search.dateFrom')
+                    }}</span>
                     <input
                         v-model="form.dateFrom"
                         type="datetime-local"
-                        class="h-10 w-full rounded-md border border-input bg-background px-3 text-sm"
+                        class="intel-input"
                     />
                 </label>
 
-                <label v-if="showsStatusFilters" class="block min-w-0">
-                    <span
-                        class="mb-1 block truncate text-xs font-medium text-muted-foreground"
-                    >
-                        {{ t('mastodon.search.dateTo') }}
-                    </span>
+                <label v-if="showsStatusFilters" class="intel-field">
+                    <span class="intel-label">{{
+                        t('mastodon.search.dateTo')
+                    }}</span>
                     <input
                         v-model="form.dateTo"
                         type="datetime-local"
-                        class="h-10 w-full rounded-md border border-input bg-background px-3 text-sm"
+                        class="intel-input"
                     />
                 </label>
 
-                <label class="block min-w-0">
-                    <span
-                        class="mb-1 block truncate text-xs font-medium text-muted-foreground"
-                    >
-                        {{ t('mastodon.search.instanceDomain') }}
-                    </span>
+                <label class="intel-field">
+                    <span class="intel-label">{{
+                        t('mastodon.search.instanceDomain')
+                    }}</span>
                     <input
                         v-model="form.instanceDomain"
                         type="text"
-                        class="h-10 w-full rounded-md border border-input bg-background px-3 text-sm"
+                        class="intel-input"
                         :placeholder="t('mastodon.search.instancePlaceholder')"
                     />
                 </label>
 
-                <label class="block min-w-0">
-                    <span
-                        class="mb-1 block truncate text-xs font-medium text-muted-foreground"
-                    >
-                        {{ t('mastodon.search.hasMedia') }}
-                    </span>
-                    <select
-                        v-model="form.hasMedia"
-                        class="h-10 w-full rounded-md border border-input bg-background px-3 text-sm"
-                    >
+                <label class="intel-field">
+                    <span class="intel-label">{{
+                        t('mastodon.search.hasMedia')
+                    }}</span>
+                    <select v-model="form.hasMedia" class="intel-select">
                         <option value="">
                             {{ t('mastodon.options.any') }}
                         </option>
@@ -250,16 +222,11 @@ const {
                     </select>
                 </label>
 
-                <label class="block min-w-0">
-                    <span
-                        class="mb-1 block truncate text-xs font-medium text-muted-foreground"
-                    >
-                        {{ t('mastodon.search.hasLinks') }}
-                    </span>
-                    <select
-                        v-model="form.hasLinks"
-                        class="h-10 w-full rounded-md border border-input bg-background px-3 text-sm"
-                    >
+                <label class="intel-field">
+                    <span class="intel-label">{{
+                        t('mastodon.search.hasLinks')
+                    }}</span>
+                    <select v-model="form.hasLinks" class="intel-select">
                         <option value="">
                             {{ t('mastodon.options.any') }}
                         </option>
@@ -274,22 +241,22 @@ const {
             </IntelAdvancedFilters>
         </template>
         <template #results>
-        <MastodonSearchResults
-            :result="result"
-            :loading="loading"
-            :total-shown="totalShown"
-            :format-date="formatDate"
-            :ensure-context-state="ensureContextState"
-            :ensure-account-details-state="ensureAccountDetailsState"
-            :ensure-hashtag-details-state="ensureHashtagDetailsState"
-            :toggle-context="toggleContext"
-            :toggle-account-statuses="toggleAccountStatuses"
-            :toggle-account-followers="toggleAccountFollowers"
-            :load-more-account-statuses="loadMoreAccountStatuses"
-            :load-more-account-followers="loadMoreAccountFollowers"
-            :toggle-hashtag-statuses="toggleHashtagStatuses"
-            :load-more-hashtag-statuses="loadMoreHashtagStatuses"
-        />
+            <MastodonSearchResults
+                :result="result"
+                :loading="loading"
+                :total-shown="totalShown"
+                :format-date="formatDate"
+                :ensure-context-state="ensureContextState"
+                :ensure-account-details-state="ensureAccountDetailsState"
+                :ensure-hashtag-details-state="ensureHashtagDetailsState"
+                :toggle-context="toggleContext"
+                :toggle-account-statuses="toggleAccountStatuses"
+                :toggle-account-followers="toggleAccountFollowers"
+                :load-more-account-statuses="loadMoreAccountStatuses"
+                :load-more-account-followers="loadMoreAccountFollowers"
+                :toggle-hashtag-statuses="toggleHashtagStatuses"
+                :load-more-hashtag-statuses="loadMoreHashtagStatuses"
+            />
         </template>
     </SearchTabLayout>
 </template>

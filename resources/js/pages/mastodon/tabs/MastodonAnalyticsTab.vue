@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { ExternalLink, Tags } from 'lucide-vue-next';
 import { computed, ref } from 'vue';
-import AnalyticsControlPanel from '@/components/ui/analytics/AnalyticsControlPanel.vue';
 import AnalyticsChipSection from '@/components/ui/analytics/AnalyticsChipSection.vue';
+import AnalyticsControlPanel from '@/components/ui/analytics/AnalyticsControlPanel.vue';
 import AnalyticsMetricGrid from '@/components/ui/analytics/AnalyticsMetricGrid.vue';
 import AnalyticsRankSection from '@/components/ui/analytics/AnalyticsRankSection.vue';
 import AnalyticsSampleGrid from '@/components/ui/analytics/AnalyticsSampleGrid.vue';
@@ -11,12 +11,12 @@ import IntelResultPanel from '@/components/ui/IntelResultPanel.vue';
 import SectionCard from '@/components/ui/SectionCard.vue';
 import { useI18n } from '@/composables/useI18n';
 import { apiRequest } from '@/lib/api';
-import MastodonAnalyticsEmptyState from './MastodonAnalyticsEmptyState.vue';
 import type {
     MastodonAccount,
     MastodonAnalyticsPayload,
     MastodonHashtag,
 } from '../types';
+import MastodonAnalyticsEmptyState from './MastodonAnalyticsEmptyState.vue';
 
 type AnalyticsMode = 'account' | 'hashtag';
 
@@ -249,62 +249,68 @@ const timelineItems = computed(() => [
     },
 ]);
 
-const timelinePoints = computed(() =>
-    result.value?.timeline.map((point) => ({
-        day: point.day,
-        values: [
-            { key: 'posts', value: point.posts },
-            { key: 'postsWithMedia', value: point.postsWithMedia },
-            { key: 'postsWithLinks', value: point.postsWithLinks },
-            { key: 'replies', value: point.replies },
-            { key: 'reblogs', value: point.reblogs },
-            { key: 'favourites', value: point.favourites },
-        ],
-    })) ?? []
+const timelinePoints = computed(
+    () =>
+        result.value?.timeline.map((point) => ({
+            day: point.day,
+            values: [
+                { key: 'posts', value: point.posts },
+                { key: 'postsWithMedia', value: point.postsWithMedia },
+                { key: 'postsWithLinks', value: point.postsWithLinks },
+                { key: 'replies', value: point.replies },
+                { key: 'reblogs', value: point.reblogs },
+                { key: 'favourites', value: point.favourites },
+            ],
+        })) ?? []
 );
 
-const topDomains = computed(() =>
-    result.value?.topDomains.map((domain) => ({
-        key: domain.domain,
-        label: `${domain.domain} | ${domain.count}`,
-    })) ?? []
+const topDomains = computed(
+    () =>
+        result.value?.topDomains.map((domain) => ({
+            key: domain.domain,
+            label: `${domain.domain} | ${domain.count}`,
+        })) ?? []
 );
 
-const topTags = computed(() =>
-    result.value?.topTags.map((tag) => ({
-        key: tag.tag,
-        label: `#${tag.tag} | ${tag.count}`,
-        icon: Tags,
-    })) ?? []
+const topTags = computed(
+    () =>
+        result.value?.topTags.map((tag) => ({
+            key: tag.tag,
+            label: `#${tag.tag} | ${tag.count}`,
+            icon: Tags,
+        })) ?? []
 );
 
-const topAccounts = computed(() =>
-    result.value?.topAccounts.map((account) => ({
-        key: account.id,
-        title: account.displayName || account.username,
-        subtitle: `@${account.acct}`,
-        caption: t('mastodon.analytics.usesInSample'),
-        value: account.count,
-    })) ?? []
+const topAccounts = computed(
+    () =>
+        result.value?.topAccounts.map((account) => ({
+            key: account.id,
+            title: account.displayName || account.username,
+            subtitle: `@${account.acct}`,
+            caption: t('mastodon.analytics.usesInSample'),
+            value: account.count,
+        })) ?? []
 );
 
-const topMentions = computed(() =>
-    result.value?.topMentions.map((mention) => ({
-        key: mention.acct,
-        title: `@${mention.acct}`,
-        caption: t('mastodon.analytics.mentionsInSample'),
-        value: mention.count,
-        link: mention.url,
-        linkLabel: t('mastodon.common.openProfile'),
-    })) ?? []
+const topMentions = computed(
+    () =>
+        result.value?.topMentions.map((mention) => ({
+            key: mention.acct,
+            title: `@${mention.acct}`,
+            caption: t('mastodon.analytics.mentionsInSample'),
+            value: mention.count,
+            link: mention.url,
+            linkLabel: t('mastodon.common.openProfile'),
+        })) ?? []
 );
 
-const topLanguages = computed(() =>
-    result.value?.topLanguages.map((language) => ({
-        key: language.language || 'unknown',
-        title: language.language || '-',
-        value: language.count,
-    })) ?? []
+const topLanguages = computed(
+    () =>
+        result.value?.topLanguages.map((language) => ({
+            key: language.language || 'unknown',
+            title: language.language || '-',
+            value: language.count,
+        })) ?? []
 );
 </script>
 
@@ -330,16 +336,11 @@ const topLanguages = computed(() =>
     >
         <template #fields>
             <div class="grid gap-2.5 md:grid-cols-2 xl:grid-cols-12">
-                <label class="block min-w-0 xl:col-span-2">
-                    <span
-                        class="mb-1 block truncate text-xs font-medium text-muted-foreground"
-                    >
-                        {{ t('mastodon.analytics.mode') }}
-                    </span>
-                    <select
-                        v-model="form.mode"
-                        class="h-10 w-full rounded-md border border-input bg-background px-3 text-sm"
-                    >
+                <label class="intel-field xl:col-span-2">
+                    <span class="intel-label">{{
+                        t('mastodon.analytics.mode')
+                    }}</span>
+                    <select v-model="form.mode" class="intel-select">
                         <option value="account">
                             {{ t('mastodon.analytics.modes.account') }}
                         </option>
@@ -349,16 +350,14 @@ const topLanguages = computed(() =>
                     </select>
                 </label>
 
-                <label class="block min-w-0 xl:col-span-4">
-                    <span
-                        class="mb-1 block truncate text-xs font-medium text-muted-foreground"
-                    >
-                        {{ t('mastodon.analytics.target') }}
-                    </span>
+                <label class="intel-field xl:col-span-4">
+                    <span class="intel-label">{{
+                        t('mastodon.analytics.target')
+                    }}</span>
                     <input
                         v-model="form.target"
                         type="text"
-                        class="h-10 w-full rounded-md border border-input bg-background px-3 text-sm"
+                        class="intel-input"
                         :placeholder="
                             isAccountMode
                                 ? t('mastodon.analytics.accountPlaceholder')
@@ -367,72 +366,62 @@ const topLanguages = computed(() =>
                     />
                 </label>
 
-                <label class="block min-w-0 xl:col-span-2">
-                    <span
-                        class="mb-1 block truncate text-xs font-medium text-muted-foreground"
-                    >
-                        {{ t('mastodon.analytics.limit') }}
-                    </span>
+                <label class="intel-field xl:col-span-2">
+                    <span class="intel-label">{{
+                        t('mastodon.analytics.limit')
+                    }}</span>
                     <input
                         v-model.number="form.limit"
                         type="number"
                         min="1"
                         max="20"
-                        class="h-10 w-full rounded-md border border-input bg-background px-3 text-sm"
+                        class="intel-input"
                         @change="
                             form.limit = clampNumber(form.limit, 1, 20, 10)
                         "
                     />
                 </label>
 
-                <label class="block min-w-0 xl:col-span-2">
-                    <span
-                        class="mb-1 block truncate text-xs font-medium text-muted-foreground"
-                    >
-                        {{ t('mastodon.analytics.pages') }}
-                    </span>
+                <label class="intel-field xl:col-span-2">
+                    <span class="intel-label">{{
+                        t('mastodon.analytics.pages')
+                    }}</span>
                     <input
                         v-model.number="form.pages"
                         type="number"
                         min="1"
                         max="5"
-                        class="h-10 w-full rounded-md border border-input bg-background px-3 text-sm"
+                        class="intel-input"
                         @change="form.pages = clampNumber(form.pages, 1, 5, 3)"
                     />
                 </label>
 
-                <label class="block min-w-0 xl:col-span-1">
-                    <span
-                        class="mb-1 block truncate text-xs font-medium text-muted-foreground"
-                    >
-                        {{ t('mastodon.analytics.dateFrom') }}
-                    </span>
+                <label class="intel-field xl:col-span-1">
+                    <span class="intel-label">{{
+                        t('mastodon.analytics.dateFrom')
+                    }}</span>
                     <input
                         v-model="form.dateFrom"
                         type="date"
-                        class="h-10 w-full rounded-md border border-input bg-background px-3 text-sm"
+                        class="intel-input"
                     />
                 </label>
 
-                <label class="block min-w-0 xl:col-span-1">
-                    <span
-                        class="mb-1 block truncate text-xs font-medium text-muted-foreground"
-                    >
-                        {{ t('mastodon.analytics.dateTo') }}
-                    </span>
+                <label class="intel-field xl:col-span-1">
+                    <span class="intel-label">{{
+                        t('mastodon.analytics.dateTo')
+                    }}</span>
                     <input
                         v-model="form.dateTo"
                         type="date"
-                        class="h-10 w-full rounded-md border border-input bg-background px-3 text-sm"
+                        class="intel-input"
                     />
                 </label>
             </div>
         </template>
         <template #toolbarLeading>
-            <label class="block min-w-0">
-                <span
-                    class="mb-1 block truncate text-xs font-medium text-muted-foreground"
-                >
+            <label class="intel-field">
+                <span class="intel-label">
                     {{ t('mastodon.search.resolveRemote') }}
                 </span>
                 <span
@@ -446,6 +435,9 @@ const topLanguages = computed(() =>
                     <span>{{ t('mastodon.search.resolveRemote') }}</span>
                 </span>
             </label>
+            <p class="intel-inline-note">
+                {{ t('mastodon.analytics.targetHint') }}
+            </p>
         </template>
         <template #afterActions>
             <p v-if="error" class="text-sm text-destructive">{{ error }}</p>

@@ -37,7 +37,7 @@ const { t } = useI18n();
                 :href="post.url"
                 target="_blank"
                 rel="noopener noreferrer"
-                class="rounded-full border border-input px-2 py-1 text-xs text-primary hover:bg-accent"
+                class="intel-link-action"
             >
                 {{ t('bluesky.common.openPost') }}
             </a>
@@ -48,16 +48,16 @@ const { t } = useI18n();
         </p>
 
         <div class="mt-3 flex flex-wrap gap-2 text-xs text-muted-foreground">
-            <span class="rounded-full border border-input px-2 py-1">
+            <span class="intel-pill">
                 {{ t('bluesky.metrics.likes') }}: {{ post.likeCount }}
             </span>
-            <span class="rounded-full border border-input px-2 py-1">
+            <span class="intel-pill">
                 {{ t('bluesky.metrics.reposts') }}: {{ post.repostCount }}
             </span>
-            <span class="rounded-full border border-input px-2 py-1">
+            <span class="intel-pill">
                 {{ t('bluesky.metrics.replies') }}: {{ post.replyCount }}
             </span>
-            <span class="rounded-full border border-input px-2 py-1">
+            <span class="intel-pill">
                 {{ t('bluesky.metrics.quotes') }}: {{ post.quoteCount }}
             </span>
         </div>

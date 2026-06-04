@@ -65,7 +65,6 @@ const actionsClass = computed(() =>
     props.compact ? 'mt-2 flex flex-wrap gap-2' : 'mt-3 flex flex-wrap gap-2'
 );
 
-const hasActions = computed(() => Boolean(slots.actions));
 const hasDetails = computed(() => Boolean(slots.details));
 </script>
 

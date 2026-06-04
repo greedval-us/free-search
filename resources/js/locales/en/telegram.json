@@ -8,6 +8,7 @@
         "collapsed": "Search panel is collapsed",
         "filters": "Message search filters and parameters",
         "channelUsername": "Channel username",
+        "placeholderChannel": "for example: durov",
         "keyword": "Keyword",
         "authorId": "Author ID",
         "placeholderKeyword": "security",

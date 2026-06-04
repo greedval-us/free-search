@@ -69,9 +69,7 @@ const { t } = useI18n();
         <div v-else class="space-y-4">
             <section v-if="result.posts.length > 0" class="space-y-3">
                 <div class="flex items-center justify-between gap-3">
-                    <h3
-                        class="text-xs font-semibold tracking-wide text-muted-foreground uppercase"
-                    >
+                    <h3 class="intel-subsection-title">
                         {{ t('bluesky.sections.posts') }}
                     </h3>
                     <span class="text-xs text-muted-foreground">{{
@@ -97,9 +95,7 @@ const { t } = useI18n();
 
             <section v-if="result.actors.length > 0" class="space-y-3">
                 <div class="flex items-center justify-between gap-3">
-                    <h3
-                        class="text-xs font-semibold tracking-wide text-muted-foreground uppercase"
-                    >
+                    <h3 class="intel-subsection-title">
                         {{ t('bluesky.sections.actors') }}
                     </h3>
                     <span class="text-xs text-muted-foreground">{{

@@ -5,6 +5,7 @@
         "collapsed": "Панель поиска свернута",
         "filters": "Фильтры и параметры поиска сообщений",
         "channelUsername": "Username канала",
+        "placeholderChannel": "например: durov",
         "keyword": "Ключевое слово",
         "authorId": "ID автора",
         "placeholderKeyword": "безопасность",

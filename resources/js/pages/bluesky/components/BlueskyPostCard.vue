@@ -68,7 +68,7 @@ const mediaPreviewUrl = (post: BlueskyPost): string => {
                 :href="post.url"
                 target="_blank"
                 rel="noopener noreferrer"
-                class="rounded-full border border-input px-2 py-1 text-xs text-primary hover:bg-accent"
+                class="intel-link-action"
             >
                 {{ t('bluesky.common.openPost') }}
             </a>
@@ -80,7 +80,7 @@ const mediaPreviewUrl = (post: BlueskyPost): string => {
 
         <div
             v-if="post.hasMedia || post.media.type === 'external'"
-            class="mt-3 overflow-hidden rounded-lg border border-border/70 bg-card/60 p-3"
+            class="intel-subsection mt-3 overflow-hidden"
         >
             <div
                 v-if="post.media.images.length > 0"
@@ -175,9 +175,7 @@ const mediaPreviewUrl = (post: BlueskyPost): string => {
             </div>
         </div>
 
-        <div
-            class="mt-3 rounded-lg border border-border/70 bg-card/50 p-3 text-xs"
-        >
+        <div class="intel-subsection mt-3 text-xs">
             <p class="mb-2 font-medium text-muted-foreground">
                 {{ t('bluesky.osint.title') }}
             </p>
@@ -254,7 +252,7 @@ const mediaPreviewUrl = (post: BlueskyPost): string => {
         <div class="mt-3 flex flex-wrap gap-2 text-xs text-muted-foreground">
             <button
                 type="button"
-                class="cursor-pointer rounded-full border border-input px-3 py-1 text-xs font-medium text-foreground hover:bg-accent"
+                class="intel-action"
                 @click="toggleLikes(post)"
             >
                 {{
@@ -265,7 +263,7 @@ const mediaPreviewUrl = (post: BlueskyPost): string => {
             </button>
             <button
                 type="button"
-                class="cursor-pointer rounded-full border border-input px-3 py-1 text-xs font-medium text-foreground hover:bg-accent"
+                class="intel-action"
                 @click="toggleReposts(post)"
             >
                 {{
@@ -276,7 +274,7 @@ const mediaPreviewUrl = (post: BlueskyPost): string => {
             </button>
             <button
                 type="button"
-                class="cursor-pointer rounded-full border border-input px-3 py-1 text-xs font-medium text-foreground hover:bg-accent"
+                class="intel-action"
                 @click="toggleThread(post)"
             >
                 {{
@@ -285,16 +283,13 @@ const mediaPreviewUrl = (post: BlueskyPost): string => {
                         : `${t('bluesky.engagement.showThread')} (${post.replyCount})`
                 }}
             </button>
-            <span class="rounded-full border border-input px-2 py-1">
+            <span class="intel-pill">
                 {{ t('bluesky.metrics.quotes') }}: {{ post.quoteCount }}
             </span>
-            <span class="rounded-full border border-input px-2 py-1">
+            <span class="intel-pill">
                 {{ t('bluesky.metrics.postType') }}: {{ post.postType }}
             </span>
-            <span
-                v-if="post.hasMedia"
-                class="rounded-full border border-cyan-400/30 bg-cyan-400/10 px-2 py-1 text-cyan-300"
-            >
+            <span v-if="post.hasMedia" class="intel-pill-accent">
                 {{ t('bluesky.metrics.media') }}
             </span>
         </div>
@@ -319,10 +314,7 @@ const mediaPreviewUrl = (post: BlueskyPost): string => {
             :load-more="loadReposts"
         />
 
-        <div
-            v-if="threadState.open"
-            class="mt-3 rounded-lg border border-border/70 bg-card/60 p-3"
-        >
+        <div v-if="threadState.open" class="intel-subsection mt-3">
             <p class="mb-2 text-xs font-medium">
                 {{ t('bluesky.engagement.thread') }}
             </p>

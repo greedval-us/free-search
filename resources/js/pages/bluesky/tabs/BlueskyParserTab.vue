@@ -91,20 +91,20 @@ const progressStats = computed(() => [
     >
         <template #fields>
             <div class="grid gap-3 md:grid-cols-2 xl:grid-cols-12">
-                <label class="block min-w-0 xl:col-span-12">
-                    <span class="mb-1 block truncate text-xs font-medium text-muted-foreground">
+                <label class="intel-field xl:col-span-12">
+                    <span class="intel-label">
                         {{ t('bluesky.parser.actor') }}
                     </span>
                     <input
                         v-model="form.actor"
                         type="text"
-                        class="h-10 w-full rounded-md border border-input bg-background px-3 text-sm"
+                        class="intel-input"
                         :placeholder="t('bluesky.parser.actorPlaceholder')"
                     />
                 </label>
             </div>
 
-            <div class="rounded-md border border-border/70 bg-background/40 p-3 text-xs text-muted-foreground">
+            <div class="intel-section text-muted-foreground">
                 {{ t('bluesky.parser.hint') }}
             </div>
         </template>

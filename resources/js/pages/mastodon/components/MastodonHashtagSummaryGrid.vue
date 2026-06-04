@@ -11,46 +11,38 @@ const { t } = useI18n();
 
 <template>
     <div class="grid gap-2 md:grid-cols-2 xl:grid-cols-4">
-        <div
-            class="rounded-md border border-border/70 bg-background/70 p-2 text-xs"
-        >
-            <div class="text-muted-foreground">
+        <div class="intel-stat">
+            <div class="intel-stat-label">
                 {{ t('mastodon.hashtags.uniqueAccounts') }}
             </div>
-            <div class="mt-1 text-sm font-semibold text-foreground">
+            <div class="intel-stat-value">
                 {{ state.uniqueAccountsCount }}
             </div>
         </div>
 
-        <div
-            class="rounded-md border border-border/70 bg-background/70 p-2 text-xs"
-        >
-            <div class="text-muted-foreground">
+        <div class="intel-stat">
+            <div class="intel-stat-label">
                 {{ t('mastodon.hashtags.uniqueInstances') }}
             </div>
-            <div class="mt-1 text-sm font-semibold text-foreground">
+            <div class="intel-stat-value">
                 {{ state.uniqueInstancesCount }}
             </div>
         </div>
 
-        <div
-            class="rounded-md border border-border/70 bg-background/70 p-2 text-xs"
-        >
-            <div class="text-muted-foreground">
+        <div class="intel-stat">
+            <div class="intel-stat-label">
                 {{ t('mastodon.hashtags.postsWithMedia') }}
             </div>
-            <div class="mt-1 text-sm font-semibold text-foreground">
+            <div class="intel-stat-value">
                 {{ state.postsWithMediaCount }}
             </div>
         </div>
 
-        <div
-            class="rounded-md border border-border/70 bg-background/70 p-2 text-xs"
-        >
-            <div class="text-muted-foreground">
+        <div class="intel-stat">
+            <div class="intel-stat-label">
                 {{ t('mastodon.hashtags.postsWithLinks') }}
             </div>
-            <div class="mt-1 text-sm font-semibold text-foreground">
+            <div class="intel-stat-value">
                 {{ state.postsWithLinksCount }}
             </div>
         </div>

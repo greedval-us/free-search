@@ -1,8 +1,5 @@
 <script setup lang="ts">
 import { useI18n } from '@/composables/useI18n';
-import MastodonAccountResultsSection from './MastodonAccountResultsSection.vue';
-import MastodonHashtagResultsSection from './MastodonHashtagResultsSection.vue';
-import MastodonStatusResultsSection from './MastodonStatusResultsSection.vue';
 import type {
     MastodonAccount,
     MastodonAccountDetailsState,
@@ -10,6 +7,9 @@ import type {
     MastodonSearchPayload,
     MastodonStatusContextState,
 } from '../types';
+import MastodonAccountResultsSection from './MastodonAccountResultsSection.vue';
+import MastodonHashtagResultsSection from './MastodonHashtagResultsSection.vue';
+import MastodonStatusResultsSection from './MastodonStatusResultsSection.vue';
 
 defineProps<{
     result: MastodonSearchPayload | null;
@@ -48,8 +48,23 @@ const { t } = useI18n();
     <div
         class="intel-scroll min-h-0 flex-1 space-y-4 overflow-y-auto overscroll-contain pr-1"
     >
-        <div v-if="!loading && !result" class="intel-empty">
+        <div v-if="loading" class="intel-empty">
+            {{ t('mastodon.search.searching') }}
+        </div>
+
+        <div v-else-if="!result" class="intel-empty">
             {{ t('mastodon.search.empty') }}
+        </div>
+
+        <div
+            v-else-if="
+                result.statuses.length === 0 &&
+                result.accounts.length === 0 &&
+                result.hashtags.length === 0
+            "
+            class="intel-empty"
+        >
+            {{ t('mastodon.search.noMatches') }}
         </div>
 
         <MastodonStatusResultsSection

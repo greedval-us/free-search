@@ -72,41 +72,35 @@ const progressStats = computed(() => [
     >
         <template #fields>
             <div class="grid gap-3 md:grid-cols-2 xl:grid-cols-12">
-                <label class="block min-w-0 xl:col-span-3">
-                    <span
-                        class="mb-1 block truncate text-xs font-medium text-muted-foreground"
-                        >{{ t('telegram.parser.filters.channel') }}</span
-                    >
+                <label class="intel-field xl:col-span-3">
+                    <span class="intel-label">{{
+                        t('telegram.parser.filters.channel')
+                    }}</span>
                     <input
                         v-model="form.chatUsername"
                         type="text"
-                        class="h-10 w-full rounded-md border border-input bg-background px-3 text-sm"
-                        placeholder="durov"
+                        class="intel-input"
+                        :placeholder="t('telegram.search.placeholderChannel')"
                     />
                 </label>
 
-                <label class="block min-w-0 xl:col-span-3">
-                    <span
-                        class="mb-1 block truncate text-xs font-medium text-muted-foreground"
-                        >{{ t('telegram.parser.filters.keyword') }}</span
-                    >
+                <label class="intel-field xl:col-span-3">
+                    <span class="intel-label">{{
+                        t('telegram.parser.filters.keyword')
+                    }}</span>
                     <input
                         v-model="form.keyword"
                         type="text"
-                        class="h-10 w-full rounded-md border border-input bg-background px-3 text-sm"
+                        class="intel-input"
                         :placeholder="t('telegram.search.placeholderKeyword')"
                     />
                 </label>
 
-                <label class="block min-w-0 xl:col-span-2">
-                    <span
-                        class="mb-1 block truncate text-xs font-medium text-muted-foreground"
-                        >{{ t('telegram.parser.filters.period') }}</span
-                    >
-                    <select
-                        v-model="form.period"
-                        class="h-10 w-full rounded-md border border-input bg-background px-3 text-sm"
-                    >
+                <label class="intel-field xl:col-span-2">
+                    <span class="intel-label">{{
+                        t('telegram.parser.filters.period')
+                    }}</span>
+                    <select v-model="form.period" class="intel-select">
                         <option value="day">
                             {{ t('telegram.parser.periods.day') }}
                         </option>
@@ -122,28 +116,26 @@ const progressStats = computed(() => [
                     </select>
                 </label>
 
-                <label class="block min-w-0 xl:col-span-2">
-                    <span
-                        class="mb-1 block truncate text-xs font-medium text-muted-foreground"
-                        >{{ t('telegram.parser.filters.from') }}</span
-                    >
+                <label class="intel-field xl:col-span-2">
+                    <span class="intel-label">{{
+                        t('telegram.parser.filters.from')
+                    }}</span>
                     <input
                         v-model="form.dateFrom"
                         type="date"
-                        class="h-10 w-full rounded-md border border-input bg-background px-3 text-sm disabled:opacity-50"
+                        class="intel-input"
                         :disabled="keywordActive || !customPeriod"
                     />
                 </label>
 
-                <label class="block min-w-0 xl:col-span-2">
-                    <span
-                        class="mb-1 block truncate text-xs font-medium text-muted-foreground"
-                        >{{ t('telegram.parser.filters.to') }}</span
-                    >
+                <label class="intel-field xl:col-span-2">
+                    <span class="intel-label">{{
+                        t('telegram.parser.filters.to')
+                    }}</span>
                     <input
                         v-model="form.dateTo"
                         type="date"
-                        class="h-10 w-full rounded-md border border-input bg-background px-3 text-sm disabled:opacity-50"
+                        class="intel-input"
                         :disabled="keywordActive || !customPeriod"
                     />
                 </label>

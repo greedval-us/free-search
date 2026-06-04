@@ -16,21 +16,24 @@ const formatDate = (value: string) =>
 
 <template>
     <div class="space-y-2">
-        <article
-            v-for="item in props.items"
-            :key="item.id"
-            class="rounded-md border border-border/70 bg-background/70 p-2"
-        >
+        <article v-for="item in props.items" :key="item.id" class="intel-stat">
             <div class="mb-1 text-[11px] text-muted-foreground">
-                @{{ item.account.acct }} | {{ item.instanceDomain || item.account.instanceDomain }} |
+                @{{ item.account.acct }} |
+                {{ item.instanceDomain || item.account.instanceDomain }} |
                 {{ formatDate(item.createdAt) }}
             </div>
             <p class="text-xs leading-relaxed text-foreground">
                 {{ item.content || props.noTextLabel }}
             </p>
 
-            <div v-if="item.replies.length > 0" class="mt-2 border-l border-border/80 pl-3">
-                <MastodonReplyThread :items="item.replies" :no-text-label="props.noTextLabel" />
+            <div
+                v-if="item.replies.length > 0"
+                class="mt-2 border-l border-border/80 pl-3"
+            >
+                <MastodonReplyThread
+                    :items="item.replies"
+                    :no-text-label="props.noTextLabel"
+                />
             </div>
         </article>
     </div>

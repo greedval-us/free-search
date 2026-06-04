@@ -28,7 +28,7 @@ const { t } = useI18n();
                 :href="actor.url"
                 target="_blank"
                 rel="noopener noreferrer"
-                class="rounded-full border border-input px-2 py-1 text-xs text-primary hover:bg-accent"
+                class="intel-link-action"
             >
                 {{ t('bluesky.common.openProfile') }}
             </a>
@@ -39,13 +39,13 @@ const { t } = useI18n();
         </p>
 
         <div class="mt-3 flex flex-wrap gap-2 text-xs text-muted-foreground">
-            <span class="rounded-full border border-input px-2 py-1">
+            <span class="intel-pill">
                 {{ t('bluesky.metrics.followers') }}: {{ actor.followersCount }}
             </span>
-            <span class="rounded-full border border-input px-2 py-1">
+            <span class="intel-pill">
                 {{ t('bluesky.metrics.following') }}: {{ actor.followsCount }}
             </span>
-            <span class="rounded-full border border-input px-2 py-1">
+            <span class="intel-pill">
                 {{ t('bluesky.metrics.posts') }}: {{ actor.postsCount }}
             </span>
         </div>

@@ -70,15 +70,15 @@ const progressStats = computed(() => [
     >
         <template #fields>
             <div class="grid gap-3 md:grid-cols-2 xl:grid-cols-12">
-                <label class="block min-w-0 xl:col-span-12">
-                    <span
-                        class="mb-1 block truncate text-xs font-medium text-muted-foreground"
-                        >{{ t('youtube.parser.videoId') }}</span
-                    >
+                <label class="intel-field xl:col-span-12">
+                    <span class="intel-label">{{
+                        t('youtube.parser.videoId')
+                    }}</span>
                     <input
                         v-model="form.videoId"
                         type="text"
-                        class="h-10 w-full rounded-md border border-input bg-background px-3 text-sm"
+                        class="intel-input"
+                        :placeholder="t('youtube.parser.videoIdPlaceholder')"
                     />
                 </label>
             </div>

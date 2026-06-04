@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { ExternalLink, Tags } from 'lucide-vue-next';
 import { computed } from 'vue';
-import AnalyticsControlPanel from '@/components/ui/analytics/AnalyticsControlPanel.vue';
 import AnalyticsChipSection from '@/components/ui/analytics/AnalyticsChipSection.vue';
+import AnalyticsControlPanel from '@/components/ui/analytics/AnalyticsControlPanel.vue';
 import AnalyticsMetricGrid from '@/components/ui/analytics/AnalyticsMetricGrid.vue';
 import AnalyticsRankSection from '@/components/ui/analytics/AnalyticsRankSection.vue';
 import AnalyticsSampleGrid from '@/components/ui/analytics/AnalyticsSampleGrid.vue';
@@ -138,64 +138,70 @@ const timelineItems = computed(() => [
     { key: 'quotes', label: t('bluesky.metrics.quotes'), value: '' },
 ]);
 
-const timelinePoints = computed(() =>
-    result.value?.timeline.map((point) => ({
-        day: point.day,
-        values: [
-            { key: 'posts', value: point.posts },
-            { key: 'postsWithMedia', value: point.postsWithMedia },
-            { key: 'postsWithLinks', value: point.postsWithLinks },
-            { key: 'replies', value: point.replies },
-            { key: 'reposts', value: point.reposts },
-            { key: 'likes', value: point.likes },
-            { key: 'quotes', value: point.quotes },
-        ],
-    })) ?? []
+const timelinePoints = computed(
+    () =>
+        result.value?.timeline.map((point) => ({
+            day: point.day,
+            values: [
+                { key: 'posts', value: point.posts },
+                { key: 'postsWithMedia', value: point.postsWithMedia },
+                { key: 'postsWithLinks', value: point.postsWithLinks },
+                { key: 'replies', value: point.replies },
+                { key: 'reposts', value: point.reposts },
+                { key: 'likes', value: point.likes },
+                { key: 'quotes', value: point.quotes },
+            ],
+        })) ?? []
 );
 
-const topDomains = computed(() =>
-    result.value?.topDomains.map((domain) => ({
-        key: domain.domain,
-        label: `${domain.domain} | ${domain.count}`,
-    })) ?? []
+const topDomains = computed(
+    () =>
+        result.value?.topDomains.map((domain) => ({
+            key: domain.domain,
+            label: `${domain.domain} | ${domain.count}`,
+        })) ?? []
 );
 
-const topTags = computed(() =>
-    result.value?.topTags.map((tag) => ({
-        key: tag.tag,
-        label: `#${tag.tag} | ${tag.count}`,
-        icon: Tags,
-    })) ?? []
+const topTags = computed(
+    () =>
+        result.value?.topTags.map((tag) => ({
+            key: tag.tag,
+            label: `#${tag.tag} | ${tag.count}`,
+            icon: Tags,
+        })) ?? []
 );
 
-const topAuthors = computed(() =>
-    result.value?.topAuthors.map((author) => ({
-        key: author.did,
-        title: author.displayName || author.handle,
-        subtitle: `@${author.handle}`,
-        caption: t('bluesky.analytics.usesInSample'),
-        value: author.count,
-    })) ?? []
+const topAuthors = computed(
+    () =>
+        result.value?.topAuthors.map((author) => ({
+            key: author.did,
+            title: author.displayName || author.handle,
+            subtitle: `@${author.handle}`,
+            caption: t('bluesky.analytics.usesInSample'),
+            value: author.count,
+        })) ?? []
 );
 
-const topMentions = computed(() =>
-    result.value?.topMentions.map((mention) => ({
-        key: mention.did,
-        title: mention.displayName || mention.handle || mention.did,
-        subtitle: mention.handle ? `@${mention.handle}` : mention.did,
-        caption: t('bluesky.analytics.mentionsInSample'),
-        value: mention.count,
-        link: mention.url,
-        linkLabel: t('bluesky.common.openProfile'),
-    })) ?? []
+const topMentions = computed(
+    () =>
+        result.value?.topMentions.map((mention) => ({
+            key: mention.did,
+            title: mention.displayName || mention.handle || mention.did,
+            subtitle: mention.handle ? `@${mention.handle}` : mention.did,
+            caption: t('bluesky.analytics.mentionsInSample'),
+            value: mention.count,
+            link: mention.url,
+            linkLabel: t('bluesky.common.openProfile'),
+        })) ?? []
 );
 
-const topLanguages = computed(() =>
-    result.value?.topLanguages.map((language) => ({
-        key: language.language || 'unknown',
-        title: language.language || '-',
-        value: language.count,
-    })) ?? []
+const topLanguages = computed(
+    () =>
+        result.value?.topLanguages.map((language) => ({
+            key: language.language || 'unknown',
+            title: language.language || '-',
+            value: language.count,
+        })) ?? []
 );
 </script>
 
@@ -221,16 +227,11 @@ const topLanguages = computed(() =>
     >
         <template #fields>
             <div class="grid gap-2.5 md:grid-cols-2 xl:grid-cols-12">
-                <label class="block min-w-0 xl:col-span-2">
-                    <span
-                        class="mb-1 block truncate text-xs font-medium text-muted-foreground"
-                    >
-                        {{ t('bluesky.analytics.mode') }}
-                    </span>
-                    <select
-                        v-model="form.mode"
-                        class="h-10 w-full rounded-md border border-input bg-background px-3 text-sm"
-                    >
+                <label class="intel-field xl:col-span-2">
+                    <span class="intel-label">{{
+                        t('bluesky.analytics.mode')
+                    }}</span>
+                    <select v-model="form.mode" class="intel-select">
                         <option value="account">
                             {{ t('bluesky.analytics.modes.account') }}
                         </option>
@@ -240,16 +241,14 @@ const topLanguages = computed(() =>
                     </select>
                 </label>
 
-                <label class="block min-w-0 xl:col-span-4">
-                    <span
-                        class="mb-1 block truncate text-xs font-medium text-muted-foreground"
-                    >
-                        {{ t('bluesky.analytics.target') }}
-                    </span>
+                <label class="intel-field xl:col-span-4">
+                    <span class="intel-label">{{
+                        t('bluesky.analytics.target')
+                    }}</span>
                     <input
                         v-model="form.target"
                         type="text"
-                        class="h-10 w-full rounded-md border border-input bg-background px-3 text-sm"
+                        class="intel-input"
                         :placeholder="
                             isAccountMode
                                 ? t('bluesky.analytics.accountPlaceholder')
@@ -258,70 +257,60 @@ const topLanguages = computed(() =>
                     />
                 </label>
 
-                <label class="block min-w-0 xl:col-span-2">
-                    <span
-                        class="mb-1 block truncate text-xs font-medium text-muted-foreground"
-                    >
-                        {{ t('bluesky.analytics.limit') }}
-                    </span>
+                <label class="intel-field xl:col-span-2">
+                    <span class="intel-label">{{
+                        t('bluesky.analytics.limit')
+                    }}</span>
                     <input
                         v-model.number="form.limit"
                         type="number"
                         min="1"
                         :max="limitMax"
-                        class="h-10 w-full rounded-md border border-input bg-background px-3 text-sm"
+                        class="intel-input"
                         @change="clampLimit"
                     />
                 </label>
 
-                <label class="block min-w-0 xl:col-span-2">
-                    <span
-                        class="mb-1 block truncate text-xs font-medium text-muted-foreground"
-                    >
-                        {{ t('bluesky.analytics.pages') }}
-                    </span>
+                <label class="intel-field xl:col-span-2">
+                    <span class="intel-label">{{
+                        t('bluesky.analytics.pages')
+                    }}</span>
                     <input
                         v-model.number="form.pages"
                         type="number"
                         min="1"
                         max="5"
-                        class="h-10 w-full rounded-md border border-input bg-background px-3 text-sm"
+                        class="intel-input"
                         @change="clampPages"
                     />
                 </label>
 
-                <label class="block min-w-0 xl:col-span-1">
-                    <span
-                        class="mb-1 block truncate text-xs font-medium text-muted-foreground"
-                    >
-                        {{ t('bluesky.analytics.dateFrom') }}
-                    </span>
+                <label class="intel-field xl:col-span-1">
+                    <span class="intel-label">{{
+                        t('bluesky.analytics.dateFrom')
+                    }}</span>
                     <input
                         v-model="form.dateFrom"
                         type="date"
-                        class="h-10 w-full rounded-md border border-input bg-background px-3 text-sm"
+                        class="intel-input"
                     />
                 </label>
 
-                <label class="block min-w-0 xl:col-span-1">
-                    <span
-                        class="mb-1 block truncate text-xs font-medium text-muted-foreground"
-                    >
-                        {{ t('bluesky.analytics.dateTo') }}
-                    </span>
+                <label class="intel-field xl:col-span-1">
+                    <span class="intel-label">{{
+                        t('bluesky.analytics.dateTo')
+                    }}</span>
                     <input
                         v-model="form.dateTo"
                         type="date"
-                        class="h-10 w-full rounded-md border border-input bg-background px-3 text-sm"
+                        class="intel-input"
                     />
                 </label>
             </div>
         </template>
         <template #toolbarLeading>
-            <label class="block min-w-0">
-                <span
-                    class="mb-1 block truncate text-xs font-medium text-muted-foreground"
-                >
+            <label class="intel-field">
+                <span class="intel-label">
                     {{ t('bluesky.analytics.resolveProfile') }}
                 </span>
                 <span
@@ -335,6 +324,9 @@ const topLanguages = computed(() =>
                     <span>{{ t('bluesky.analytics.resolveProfile') }}</span>
                 </span>
             </label>
+            <p class="intel-inline-note">
+                {{ t('bluesky.analytics.targetHint') }}
+            </p>
         </template>
         <template #afterActions>
             <p v-if="error" class="text-sm text-destructive">{{ error }}</p>

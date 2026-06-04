@@ -62,6 +62,7 @@
         "dateFrom": "Date from",
         "dateTo": "Date to",
         "resolveProfile": "Resolve profile details",
+        "targetHint": "Use an account handle or hashtag to build a focused Bluesky sample for review.",
         "refresh": "Run analytics",
         "loading": "Analyzing...",
         "report": "Open report",

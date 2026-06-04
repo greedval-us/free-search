@@ -15,7 +15,7 @@ const { t } = useI18n();
 </script>
 
 <template>
-    <div class="mt-3 rounded-lg border border-border/70 bg-card/60 p-3">
+    <div class="intel-subsection mt-3">
         <div class="mb-2">
             <p class="text-xs font-medium">{{ title }}</p>
         </div>
@@ -39,7 +39,7 @@ const { t } = useI18n();
             <div
                 v-for="item in state.items"
                 :key="`${post.id}-${item.actor.did}-${item.indexedAt}`"
-                class="rounded-md border border-border/70 bg-background/70 p-2"
+                class="intel-stat"
             >
                 <a
                     :href="item.actor.url"

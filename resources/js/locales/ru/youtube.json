@@ -24,7 +24,9 @@
         "publishedAfter": "Опубликовано с",
         "publishedBefore": "Опубликовано по",
         "regionCode": "Регион",
+        "regionPlaceholder": "US",
         "relevanceLanguage": "Язык",
+        "languagePlaceholder": "ru",
         "safeSearch": "Safe search",
         "videoDuration": "Длительность",
         "videoDefinition": "Качество",
@@ -42,11 +44,14 @@
         "hint": "Анализируйте активность канала за последние 1-7 дней.",
         "mode": "Режим",
         "videoId": "Video ID",
+        "videoIdPlaceholder": "ID видео или ссылка YouTube",
         "channelId": "Канал",
         "channelPlaceholder": "UC..., @handle или username",
         "period": "Период публикаций (дни)",
+        "periodHint": "Выберите недавний период публикаций или задайте свои даты в пределах 7 дней.",
         "dateFrom": "Дата с",
         "dateTo": "Дата по",
+        "videoIdHint": "Укажите ID ролика или полную ссылку YouTube для точечной аналитики.",
         "customPeriodTooLong": "Пользовательский период не может быть больше 7 дней.",
         "submit": "Анализировать",
         "refresh": "Обновить данные",
@@ -144,6 +149,7 @@
         "subtitle": "Онлайн-сбор комментариев YouTube и экспорт",
         "hint": "Парсинг комментариев под выбранным видео с дозагрузкой всех доступных ответов.",
         "videoId": "Video ID",
+        "videoIdPlaceholder": "ID видео или ссылка YouTube",
         "query": "Запрос",
         "order": "Сортировка",
         "start": "Начать сбор",
@@ -168,7 +174,7 @@
         },
         "errors": {
             "videoRequired": "Укажите Video ID или ссылку на видео.",
-        "failed": "Не удалось запустить сбор комментариев. Повторите попытку через несколько секунд."
+            "failed": "Не удалось запустить сбор комментариев. Повторите попытку через несколько секунд."
         },
         "help": {
             "overview": "Парсер YouTube собирает комментарии и все доступные ответы под указанным видео, затем формирует выгрузку в Excel и JSON."
