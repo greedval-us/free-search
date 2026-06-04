@@ -34,8 +34,7 @@ const ruModules: ModuleDoc[] = [
         purpose: 'Оперативный сбор и аналитика данных Telegram-каналов.',
         scenarios: [
             'Мониторинг инфополя',
-            'Поиск аномалий активности',
-            'Сбор хронологии доказательств',
+            'Проверка активности канала или автора',
         ],
         params: [
             {
@@ -54,27 +53,12 @@ const ruModules: ModuleDoc[] = [
                 example: 'санкции',
             },
             {
-                label: 'Автор сообщения',
-                name: 'fromUsername/authorId',
-                description: 'Имя пользователя или ID конкретного автора.',
-                why: 'Полезно, когда нужно проверить сообщения одного источника.',
-                example: '123456789',
-            },
-            {
                 label: 'Период',
                 name: 'dateFrom/dateTo',
                 description:
                     'Интервал времени, в рамках которого нужен поиск или анализ.',
                 why: 'Позволяет не смешивать старые и актуальные данные.',
                 example: '2026-05-01 .. 2026-05-07',
-            },
-            {
-                label: 'Объем выборки',
-                name: 'limit',
-                description:
-                    'Сколько сообщений или результатов нужно показать.',
-                why: 'Помогает выбрать баланс между скоростью работы и полнотой выборки.',
-                example: '20',
             },
         ],
         outputs: [
@@ -119,11 +103,7 @@ const ruModules: ModuleDoc[] = [
         title: 'YouTube',
         purpose:
             'Поиск, аналитика и сбор комментариев по YouTube-видео и каналам.',
-        scenarios: [
-            'Мониторинг видеоповестки',
-            'Анализ каналов и вовлеченности',
-            'Сбор комментариев для дальнейшей проверки',
-        ],
+        scenarios: ['Мониторинг видеоповестки', 'Анализ канала или видео'],
         params: [
             {
                 label: 'Что искать',
@@ -132,14 +112,6 @@ const ruModules: ModuleDoc[] = [
                     'Тема, фраза или название, по которым нужно найти видео, каналы или плейлисты.',
                 why: 'Это основной ориентир для поиска.',
                 example: 'osint tutorial',
-            },
-            {
-                label: 'Тип результата',
-                name: 'type',
-                description:
-                    'Что именно нужно найти: видео, канал или плейлист.',
-                why: 'Помогает сразу получить релевантный формат результата.',
-                example: 'video',
             },
             {
                 label: 'Канал',
@@ -156,28 +128,12 @@ const ruModules: ModuleDoc[] = [
                 example: 'dQw4w9WgXcQ',
             },
             {
-                label: 'Период публикации',
-                name: 'publishedAfter/publishedBefore',
+                label: 'Период',
+                name: 'publishedAfter/publishedBefore или periodDays',
                 description:
-                    'Интервал, в который должны попадать найденные публикации.',
-                why: 'Удобно для анализа свежей повестки или конкретного периода.',
+                    'Период публикации или окно аналитики, за которое нужны данные.',
+                why: 'Помогает смотреть только нужный временной отрезок.',
                 example: '2026-05-01 .. 2026-05-07',
-            },
-            {
-                label: 'Окно аналитики',
-                name: 'dateFrom/dateTo или periodDays',
-                description:
-                    'Период, за который нужно считать метрики и строить динамику.',
-                why: 'Позволяет сравнивать активность на понятном временном отрезке.',
-                example: '7',
-            },
-            {
-                label: 'Объем и страницы результатов',
-                name: 'limit/pageToken',
-                description:
-                    'Сколько результатов загружать и как переходить к следующим страницам.',
-                why: 'Нужно для поэтапного просмотра больших выборок.',
-                example: '10',
             },
         ],
         outputs: [
@@ -225,8 +181,7 @@ const ruModules: ModuleDoc[] = [
             'Поиск по постам и профилям Bluesky, а также аналитика по авторам и темам.',
         scenarios: [
             'Поиск обсуждений по теме',
-            'Проверка профилей и связей',
-            'Анализ постов, реакций и динамики',
+            'Проверка профиля и его активности',
         ],
         params: [
             {
@@ -245,8 +200,8 @@ const ruModules: ModuleDoc[] = [
                 example: '@analyst.bsky.social',
             },
             {
-                label: 'Язык, домен, упоминания или теги',
-                name: 'lang/domain/mentions/tag',
+                label: 'Фильтр по языку или теме',
+                name: 'lang/tag',
                 description: 'Дополнительные фильтры для уточнения выборки.',
                 why: 'Помогают быстрее сузить поиск до полезных результатов.',
                 example: 'ru',
@@ -284,8 +239,7 @@ const ruModules: ModuleDoc[] = [
             'Поиск по аккаунтам, постам и хэштегам Mastodon с возможностью аналитики и разбора контекста.',
         scenarios: [
             'Проверка аккаунта или инстанса',
-            'Анализ тематических тредов',
-            'Мониторинг хэштегов и вовлеченности',
+            'Мониторинг хэштега или темы',
         ],
         params: [
             {
@@ -304,8 +258,8 @@ const ruModules: ModuleDoc[] = [
                 example: '@analyst@mastodon.social',
             },
             {
-                label: 'Инстанс и язык',
-                name: 'instance/lang',
+                label: 'Инстанс',
+                name: 'instance',
                 description: 'Фильтры по серверу Mastodon и языку контента.',
                 why: 'Помогают сократить шум и уточнить источник данных.',
                 example: 'mastodon.social',
@@ -445,8 +399,7 @@ const enModules: ModuleDoc[] = [
         purpose: 'Operational collection and analytics for Telegram channels.',
         scenarios: [
             'Information field monitoring',
-            'Activity anomaly detection',
-            'Evidence timeline collection',
+            'Channel or author activity review',
         ],
         params: [
             {
@@ -464,25 +417,11 @@ const enModules: ModuleDoc[] = [
                 example: 'sanctions',
             },
             {
-                label: 'Message author',
-                name: 'fromUsername/authorId',
-                description: 'Specific username or author ID.',
-                why: 'Useful when you need to review posts from one source.',
-                example: '123456789',
-            },
-            {
                 label: 'Time period',
                 name: 'dateFrom/dateTo',
                 description: 'Time window for search or analytics.',
                 why: 'Keeps the dataset limited to the relevant period.',
                 example: '2026-05-01 .. 2026-05-07',
-            },
-            {
-                label: 'Result volume',
-                name: 'limit',
-                description: 'How many messages or results to load.',
-                why: 'Balances speed and completeness.',
-                example: '20',
             },
         ],
         outputs: ['Search results', 'Analytics metrics', 'Exportable reports'],
@@ -523,11 +462,7 @@ const enModules: ModuleDoc[] = [
         title: 'YouTube',
         purpose:
             'Search, analytics, and comment collection for YouTube videos and channels.',
-        scenarios: [
-            'Video agenda monitoring',
-            'Channel and engagement analytics',
-            'Comment collection for further validation',
-        ],
+        scenarios: ['Video agenda monitoring', 'Channel or video analysis'],
         params: [
             {
                 label: 'What to search for',
@@ -536,14 +471,6 @@ const enModules: ModuleDoc[] = [
                     'Topic, phrase, or title used to find videos, channels, or playlists.',
                 why: 'This is the main starting point for the search.',
                 example: 'osint tutorial',
-            },
-            {
-                label: 'Result type',
-                name: 'type',
-                description:
-                    'Choose whether you need videos, channels, or playlists.',
-                why: 'Keeps the output focused on the right content type.',
-                example: 'video',
             },
             {
                 label: 'Channel',
@@ -560,26 +487,12 @@ const enModules: ModuleDoc[] = [
                 example: 'dQw4w9WgXcQ',
             },
             {
-                label: 'Publication period',
-                name: 'publishedAfter/publishedBefore',
-                description: 'Time window for the content you want to find.',
-                why: 'Useful for recent trends or a specific event period.',
-                example: '2026-05-01 .. 2026-05-07',
-            },
-            {
-                label: 'Analytics window',
-                name: 'dateFrom/dateTo or periodDays',
-                description: 'Time range used to calculate metrics and trends.',
-                why: 'Makes the analytics period explicit and easy to compare.',
-                example: '7',
-            },
-            {
-                label: 'Result size and pagination',
-                name: 'limit/pageToken',
+                label: 'Time period',
+                name: 'publishedAfter/publishedBefore or periodDays',
                 description:
-                    'How many results to load and how to move through large result sets.',
-                why: 'Useful when reviewing data step by step.',
-                example: '10',
+                    'Publication period or analytics window for the data you want to review.',
+                why: 'Keeps the result set focused on the right time range.',
+                example: '2026-05-01 .. 2026-05-07',
             },
         ],
         outputs: [
@@ -627,8 +540,7 @@ const enModules: ModuleDoc[] = [
             'Search across Bluesky posts and profiles with analytics for authors and topics.',
         scenarios: [
             'Topic discussion discovery',
-            'Profile and relationship review',
-            'Post, reaction, and activity analysis',
+            'Profile and activity review',
         ],
         params: [
             {
@@ -647,8 +559,8 @@ const enModules: ModuleDoc[] = [
                 example: '@analyst.bsky.social',
             },
             {
-                label: 'Language, domain, mentions, or tag',
-                name: 'lang/domain/mentions/tag',
+                label: 'Language or topic filter',
+                name: 'lang/tag',
                 description: 'Extra filters that help narrow the result set.',
                 why: 'Makes it easier to reduce noise quickly.',
                 example: 'ru',
@@ -686,8 +598,7 @@ const enModules: ModuleDoc[] = [
             'Search across Mastodon accounts, posts, and hashtags with contextual review and analytics.',
         scenarios: [
             'Account or instance review',
-            'Thread and discussion analysis',
-            'Hashtag monitoring',
+            'Hashtag or topic monitoring',
         ],
         params: [
             {
@@ -707,10 +618,10 @@ const enModules: ModuleDoc[] = [
                 example: '@analyst@mastodon.social',
             },
             {
-                label: 'Instance and language',
-                name: 'instance/lang',
-                description: 'Server and language filters for the dataset.',
-                why: 'Helps narrow the search to the most relevant sources.',
+                label: 'Instance',
+                name: 'instance',
+                description: 'Server filter for the dataset.',
+                why: 'Helps narrow the search to the most relevant source.',
                 example: 'mastodon.social',
             },
         ],
@@ -834,18 +745,20 @@ const modules = computed(() => (isRu.value ? ruModules : enModules));
 const ui = computed(() => ({
     title: isRu.value ? 'Вики модулей' : 'Modules Wiki',
     subtitle: isRu.value
-        ? 'Краткое и понятное объяснение: что делает каждый модуль, когда его использовать и что нужно указать на входе.'
-        : 'A plain-language guide to what each module does, when to use it, and what information to provide.',
-    purpose: isRu.value ? 'Зачем нужен модуль' : 'Purpose',
-    scenarios: isRu.value ? 'Когда использовать' : 'When to use',
-    params: isRu.value ? 'Что нужно указать' : 'What to provide',
-    outputs: isRu.value ? 'Что вы получите' : 'What you get',
+        ? 'Короткое объяснение для пользователя: что делает модуль, в каких задачах он помогает и что нужно ввести для старта.'
+        : 'A short user-facing guide to what each module does, when it helps, and what you need to enter to get started.',
+    purpose: isRu.value ? 'Что делает модуль' : 'What the module does',
+    scenarios: isRu.value ? 'Для каких задач подходит' : 'Best for',
+    params: isRu.value ? 'Что нужно ввести' : 'What to enter',
+    outputs: isRu.value ? 'Что получится на выходе' : 'What you get back',
     streams: isRu.value
-        ? 'Что модуль показывает и формирует'
-        : 'What the module shows and produces',
+        ? 'Что можно посмотреть внутри'
+        : 'What you can review inside',
     open: isRu.value ? 'Открыть модуль' : 'Open module',
     planned: isRu.value ? 'В разработке' : 'In development',
-    example: isRu.value ? 'Пример' : 'Example',
+    why: isRu.value ? 'Когда это полезно' : 'When this helps',
+    example: isRu.value ? 'Например' : 'For example',
+    details: isRu.value ? 'Подробнее' : 'More details',
 }));
 
 defineOptions({
@@ -911,7 +824,7 @@ defineOptions({
                             </span>
                         </div>
 
-                        <div class="space-y-4 text-sm">
+                        <div class="space-y-3 text-sm">
                             <div>
                                 <p class="intel-title font-medium">
                                     {{ ui.purpose }}
@@ -950,8 +863,10 @@ defineOptions({
                                         <p class="mt-1 text-muted-foreground">
                                             {{ p.description }}
                                         </p>
-                                        <p class="mt-1 text-muted-foreground">
-                                            {{ p.why }}
+                                        <p
+                                            class="mt-1 text-xs text-muted-foreground"
+                                        >
+                                            {{ ui.why }}: {{ p.why }}
                                         </p>
                                         <p class="mt-1 text-xs text-primary">
                                             {{ ui.example }}:
@@ -963,23 +878,33 @@ defineOptions({
                                 </div>
                             </div>
 
-                            <div>
-                                <p class="intel-title font-medium">
-                                    {{ ui.outputs }}
-                                </p>
+                            <details class="wiki-details group">
+                                <summary class="wiki-summary">
+                                    <span class="intel-title font-medium">{{
+                                        ui.outputs
+                                    }}</span>
+                                    <span class="wiki-summary-action">{{
+                                        ui.details
+                                    }}</span>
+                                </summary>
                                 <ul
-                                    class="mt-1 list-disc space-y-1 pl-5 text-muted-foreground"
+                                    class="mt-2 list-disc space-y-1 pl-5 text-muted-foreground"
                                 >
                                     <li v-for="o in m.outputs" :key="o">
                                         {{ o }}
                                     </li>
                                 </ul>
-                            </div>
+                            </details>
 
-                            <div>
-                                <p class="intel-title font-medium">
-                                    {{ ui.streams }}
-                                </p>
+                            <details class="wiki-details group">
+                                <summary class="wiki-summary">
+                                    <span class="intel-title font-medium">{{
+                                        ui.streams
+                                    }}</span>
+                                    <span class="wiki-summary-action">{{
+                                        ui.details
+                                    }}</span>
+                                </summary>
                                 <div class="mt-2 space-y-2">
                                     <div
                                         v-for="s in m.streams"
@@ -1001,7 +926,7 @@ defineOptions({
                                         </ul>
                                     </div>
                                 </div>
-                            </div>
+                            </details>
                         </div>
                     </article>
                 </div>
@@ -1009,3 +934,33 @@ defineOptions({
         </section>
     </div>
 </template>
+
+<style scoped>
+.wiki-details {
+    border-top: 1px solid rgb(148 163 184 / 0.12);
+    padding-top: 0.75rem;
+}
+
+.wiki-summary {
+    display: flex;
+    cursor: pointer;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+    list-style: none;
+}
+
+.wiki-summary::-webkit-details-marker {
+    display: none;
+}
+
+.wiki-summary-action {
+    color: rgb(148 163 184 / 0.9);
+    font-size: 0.75rem;
+    transition: color 0.2s ease;
+}
+
+.group[open] .wiki-summary-action {
+    color: rgb(45 212 191 / 0.95);
+}
+</style>
