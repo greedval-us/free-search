@@ -8,10 +8,11 @@ use App\Modules\Bluesky\Actions\Request\LoadAuthorFeedAction;
 use App\Modules\Bluesky\Actions\Request\LoadPostLikesAction;
 use App\Modules\Bluesky\Actions\Request\LoadPostRepostsAction;
 use App\Modules\Bluesky\Actions\Request\LoadPostThreadAction;
-use App\Modules\Bluesky\DTO\Result\BlueskyThreadResultDTO;
-use App\Modules\Bluesky\Parser\Enums\BlueskyParserStage;
+use App\Modules\Bluesky\DTO\Parser\BlueskyParserCollectedDataDTO;
+use App\Modules\Bluesky\DTO\Parser\BlueskyParserStateDTO;
+use App\Modules\Bluesky\Enums\BlueskyParserInteractionKind;
+use App\Modules\Bluesky\Enums\BlueskyParserStage;
 use App\Modules\Bluesky\Support\BlueskyActorResolver;
-use App\Modules\ParserSupport\ParserRunLifecycleManager;
 
 final class BlueskyParserCollector
 {
@@ -28,7 +29,7 @@ final class BlueskyParserCollector
         private readonly LoadPostLikesAction $loadPostLikesAction,
         private readonly LoadPostRepostsAction $loadPostRepostsAction,
         private readonly LoadPostThreadAction $loadPostThreadAction,
-        private readonly ParserRunLifecycleManager $lifecycleManager,
+        private readonly BlueskyParserSnapshotBuilder $snapshotBuilder,
     ) {
     }
 
@@ -38,21 +39,20 @@ final class BlueskyParserCollector
      */
     public function advance(array $run): array
     {
-        if (! $this->lifecycleManager->isRunning($run)) {
-            return $run;
+        $state = BlueskyParserStateDTO::fromArray($run);
+
+        if (! $state->isRunning()) {
+            return $state->toArray();
         }
 
-        $stage = BlueskyParserStage::tryFrom((string) ($run['stage'] ?? ''))
-            ?? BlueskyParserStage::Profile;
-
-        return match ($stage) {
-            BlueskyParserStage::Profile => $this->advanceProfile($run),
-            BlueskyParserStage::Feed => $this->advanceFeed($run),
-            BlueskyParserStage::Followers => $this->advanceFollowers($run),
-            BlueskyParserStage::Follows => $this->advanceFollows($run),
-            BlueskyParserStage::Interactions => $this->advanceInteractions($run),
-            BlueskyParserStage::Finishing => $this->finish($run),
-            default => $run,
+        return match ($state->stage()) {
+            BlueskyParserStage::Profile => $this->advanceProfile($state),
+            BlueskyParserStage::Feed => $this->advanceFeed($state),
+            BlueskyParserStage::Followers => $this->advanceFollowers($state),
+            BlueskyParserStage::Follows => $this->advanceFollows($state),
+            BlueskyParserStage::Interactions => $this->advanceInteractions($state),
+            BlueskyParserStage::Finishing => $this->finish($state),
+            default => $state->toArray(),
         };
     }
 
@@ -62,87 +62,52 @@ final class BlueskyParserCollector
      */
     public function buildResultSnapshot(array $run): array
     {
-        $context = is_array($run['context'] ?? null) ? $run['context'] : [];
-        $data = is_array($run['data'] ?? null) ? $run['data'] : [];
+        $state = BlueskyParserStateDTO::fromArray($run);
 
-        $profile = is_array($data['profile'] ?? null) ? $data['profile'] : null;
-        $postsIndex = array_values(is_array($data['postsIndex'] ?? null) ? $data['postsIndex'] : []);
-        $authoredRepliesIndex = array_values(is_array($data['authoredRepliesIndex'] ?? null) ? $data['authoredRepliesIndex'] : []);
-        $receivedRepliesIndex = array_values(is_array($data['receivedRepliesIndex'] ?? null) ? $data['receivedRepliesIndex'] : []);
-        $followersIndex = array_values(is_array($data['followersIndex'] ?? null) ? $data['followersIndex'] : []);
-        $followsIndex = array_values(is_array($data['followsIndex'] ?? null) ? $data['followsIndex'] : []);
-        $reactionsIndex = array_values(is_array($data['reactionsIndex'] ?? null) ? $data['reactionsIndex'] : []);
-
-        return [
-            'actor' => (string) ($context['actor'] ?? ''),
-            'resolvedActor' => $profile,
-            'postsCount' => count($postsIndex),
-            'authoredRepliesCount' => count($authoredRepliesIndex),
-            'receivedRepliesCount' => count($receivedRepliesIndex),
-            'followersCount' => count($followersIndex),
-            'followsCount' => count($followsIndex),
-            'reactionsCount' => count($reactionsIndex),
-            'postsIndex' => $postsIndex,
-            'authoredRepliesIndex' => $authoredRepliesIndex,
-            'receivedRepliesIndex' => $receivedRepliesIndex,
-            'followersIndex' => $followersIndex,
-            'followsIndex' => $followsIndex,
-            'reactionsIndex' => $reactionsIndex,
-        ];
+        return $this->snapshotBuilder->build($state->actorQuery(), $state->data())->toArray();
     }
 
     /**
-     * @param array<string, mixed> $run
      * @return array<string, mixed>
      */
-    private function advanceProfile(array $run): array
+    private function advanceProfile(BlueskyParserStateDTO $state): array
     {
-        $context = is_array($run['context'] ?? null) ? $run['context'] : [];
-        $data = is_array($run['data'] ?? null) ? $run['data'] : [];
-
-        $profile = $this->actorResolver->resolve((string) ($context['actor'] ?? ''));
+        $profile = $this->actorResolver->resolve($state->actorQuery());
         $actorId = (string) ($profile['did'] ?? $profile['handle'] ?? '');
 
         if ($actorId === '') {
-            return $this->lifecycleManager->markFailed(
-                run: $run,
+            $state->fail(
                 message: __('bluesky.parser.errors.actor_not_found'),
-                stage: BlueskyParserStage::Failed->value,
+                stage: BlueskyParserStage::Failed,
             );
+
+            return $state->toArray();
         }
 
-        $data['profile'] = $profile;
-        $run['data'] = $data;
-        $run['stage'] = BlueskyParserStage::Feed->value;
-        $run['progress'] = 5;
+        $state->data()->setProfile($profile);
+        $state->setStage(BlueskyParserStage::Feed);
+        $state->setProgress(5);
 
-        return $run;
+        return $state->toArray();
     }
 
     /**
-     * @param array<string, mixed> $run
      * @return array<string, mixed>
      */
-    private function advanceFeed(array $run): array
+    private function advanceFeed(BlueskyParserStateDTO $state): array
     {
-        $data = is_array($run['data'] ?? null) ? $run['data'] : [];
-        $cursor = is_array($run['cursor'] ?? null) ? $run['cursor'] : [];
-        $stats = is_array($run['stats'] ?? null) ? $run['stats'] : [];
-        $profile = is_array($data['profile'] ?? null) ? $data['profile'] : [];
-        $actor = (string) ($profile['did'] ?? $profile['handle'] ?? '');
+        $data = $state->data();
+        $cursor = $state->cursor();
+        $actor = $data->actorIdentifier();
 
         $feed = $this->loadAuthorFeedAction->handle(
             actor: $actor,
             limit: self::FEED_LIMIT,
-            cursor: $this->nullableCursor($cursor['feedCursor'] ?? null),
+            cursor: $cursor->feedCursor(),
             filter: 'posts_with_replies',
         );
 
-        $expectedDid = (string) ($profile['did'] ?? '');
-        $postIds = is_array($data['postIds'] ?? null) ? $data['postIds'] : [];
-        $authoredReplyIds = is_array($data['authoredReplyIds'] ?? null) ? $data['authoredReplyIds'] : [];
-        $postsIndex = is_array($data['postsIndex'] ?? null) ? $data['postsIndex'] : [];
-        $authoredRepliesIndex = is_array($data['authoredRepliesIndex'] ?? null) ? $data['authoredRepliesIndex'] : [];
+        $expectedDid = $data->profileDid();
 
         foreach ($feed->items as $item) {
             if (! is_array($item)) {
@@ -154,430 +119,253 @@ final class BlueskyParserCollector
                 continue;
             }
 
-            $postType = (string) ($item['postType'] ?? 'post');
             $uri = (string) ($item['uri'] ?? $item['id'] ?? '');
 
             if ($uri === '') {
                 continue;
             }
 
-            if ($postType === 'reply') {
-                if (isset($authoredReplyIds[$uri])) {
-                    continue;
-                }
-
-                $authoredReplyIds[$uri] = true;
-                $authoredRepliesIndex[] = $item;
-            } else {
-                if (isset($postIds[$uri])) {
-                    continue;
-                }
-
-                $postIds[$uri] = true;
-                $postsIndex[] = $item;
-            }
+            $data->recordFeedItem($item);
         }
-
-        $data['postIds'] = $postIds;
-        $data['authoredReplyIds'] = $authoredReplyIds;
-        $data['postsIndex'] = $postsIndex;
-        $data['authoredRepliesIndex'] = $authoredRepliesIndex;
-        $run['data'] = $data;
-
-        $stats['processedPosts'] = count($postsIndex);
-        $stats['processedAuthoredReplies'] = count($authoredRepliesIndex);
-        $run['stats'] = $stats;
 
         $nextCursor = $feed->pagination['nextCursor'] ?? null;
         if (is_string($nextCursor) && $nextCursor !== '') {
-            $cursor['feedCursor'] = $nextCursor;
-            $cursor['feedPage'] = (int) ($cursor['feedPage'] ?? 0) + 1;
-            $run['progress'] = min(40, 5 + ((int) $cursor['feedPage'] * 4));
+            $cursor->setFeedCursor($nextCursor);
+            $state->setProgress(min(40, 5 + ($cursor->incrementFeedPage() * 4)));
         } else {
-            $cursor['feedCursor'] = '';
-            $run['stage'] = BlueskyParserStage::Followers->value;
-            $run['progress'] = 45;
+            $cursor->setFeedCursor(null);
+            $state->setStage(BlueskyParserStage::Followers);
+            $state->setProgress(45);
         }
 
-        $run['cursor'] = $cursor;
-
-        return $run;
+        return $state->toArray();
     }
 
     /**
-     * @param array<string, mixed> $run
      * @return array<string, mixed>
      */
-    private function advanceFollowers(array $run): array
+    private function advanceFollowers(BlueskyParserStateDTO $state): array
     {
-        $data = is_array($run['data'] ?? null) ? $run['data'] : [];
-        $cursor = is_array($run['cursor'] ?? null) ? $run['cursor'] : [];
-        $stats = is_array($run['stats'] ?? null) ? $run['stats'] : [];
-        $profile = is_array($data['profile'] ?? null) ? $data['profile'] : [];
-        $actor = (string) ($profile['did'] ?? $profile['handle'] ?? '');
+        $data = $state->data();
+        $cursor = $state->cursor();
+        $actor = $data->actorIdentifier();
 
         $followers = $this->loadActorFollowersAction->handle(
             actor: $actor,
             limit: self::GRAPH_LIMIT,
-            cursor: $this->nullableCursor($cursor['followersCursor'] ?? null),
+            cursor: $cursor->followersCursor(),
         );
-
-        $followersIds = is_array($data['followersIds'] ?? null) ? $data['followersIds'] : [];
-        $followersIndex = is_array($data['followersIndex'] ?? null) ? $data['followersIndex'] : [];
 
         foreach ($followers->items as $item) {
             if (! is_array($item)) {
                 continue;
             }
 
-            $did = (string) ($item['did'] ?? '');
-            if ($did === '' || isset($followersIds[$did])) {
-                continue;
-            }
-
-            $followersIds[$did] = true;
-            $followersIndex[] = $item;
+            $data->recordFollower($item);
         }
-
-        $data['followersIds'] = $followersIds;
-        $data['followersIndex'] = $followersIndex;
-        $run['data'] = $data;
-        $stats['processedFollowers'] = count($followersIndex);
-        $run['stats'] = $stats;
 
         $nextCursor = $followers->pagination['nextCursor'] ?? null;
         if (is_string($nextCursor) && $nextCursor !== '') {
-            $cursor['followersCursor'] = $nextCursor;
-            $cursor['followersPage'] = (int) ($cursor['followersPage'] ?? 0) + 1;
-            $run['progress'] = min(55, 45 + ((int) $cursor['followersPage'] * 2));
+            $cursor->setFollowersCursor($nextCursor);
+            $state->setProgress(min(55, 45 + ($cursor->incrementFollowersPage() * 2)));
         } else {
-            $cursor['followersCursor'] = '';
-            $run['stage'] = BlueskyParserStage::Follows->value;
-            $run['progress'] = 60;
+            $cursor->setFollowersCursor(null);
+            $state->setStage(BlueskyParserStage::Follows);
+            $state->setProgress(60);
         }
 
-        $run['cursor'] = $cursor;
-
-        return $run;
+        return $state->toArray();
     }
 
     /**
-     * @param array<string, mixed> $run
      * @return array<string, mixed>
      */
-    private function advanceFollows(array $run): array
+    private function advanceFollows(BlueskyParserStateDTO $state): array
     {
-        $data = is_array($run['data'] ?? null) ? $run['data'] : [];
-        $cursor = is_array($run['cursor'] ?? null) ? $run['cursor'] : [];
-        $stats = is_array($run['stats'] ?? null) ? $run['stats'] : [];
-        $profile = is_array($data['profile'] ?? null) ? $data['profile'] : [];
-        $actor = (string) ($profile['did'] ?? $profile['handle'] ?? '');
+        $data = $state->data();
+        $cursor = $state->cursor();
+        $actor = $data->actorIdentifier();
 
         $follows = $this->loadActorFollowsAction->handle(
             actor: $actor,
             limit: self::GRAPH_LIMIT,
-            cursor: $this->nullableCursor($cursor['followsCursor'] ?? null),
+            cursor: $cursor->followsCursor(),
         );
-
-        $followsIds = is_array($data['followsIds'] ?? null) ? $data['followsIds'] : [];
-        $followsIndex = is_array($data['followsIndex'] ?? null) ? $data['followsIndex'] : [];
 
         foreach ($follows->items as $item) {
             if (! is_array($item)) {
                 continue;
             }
 
-            $did = (string) ($item['did'] ?? '');
-            if ($did === '' || isset($followsIds[$did])) {
-                continue;
-            }
-
-            $followsIds[$did] = true;
-            $followsIndex[] = $item;
+            $data->recordFollow($item);
         }
-
-        $data['followsIds'] = $followsIds;
-        $data['followsIndex'] = $followsIndex;
-        $run['data'] = $data;
-        $stats['processedFollows'] = count($followsIndex);
-        $run['stats'] = $stats;
 
         $nextCursor = $follows->pagination['nextCursor'] ?? null;
         if (is_string($nextCursor) && $nextCursor !== '') {
-            $cursor['followsCursor'] = $nextCursor;
-            $cursor['followsPage'] = (int) ($cursor['followsPage'] ?? 0) + 1;
-            $run['progress'] = min(70, 60 + ((int) $cursor['followsPage'] * 2));
+            $cursor->setFollowsCursor($nextCursor);
+            $state->setProgress(min(70, 60 + ($cursor->incrementFollowsPage() * 2)));
         } else {
-            $cursor['followsCursor'] = '';
-            $cursor['interactionPostIndex'] = 0;
-            $cursor['interactionKind'] = 'likes';
-            $cursor['interactionCursor'] = '';
-            $run['stage'] = BlueskyParserStage::Interactions->value;
-            $run['progress'] = 75;
+            $cursor->setFollowsCursor(null);
+            $cursor->resetInteraction();
+            $state->setStage(BlueskyParserStage::Interactions);
+            $state->setProgress(75);
         }
 
-        $run['cursor'] = $cursor;
-
-        return $run;
+        return $state->toArray();
     }
 
     /**
-     * @param array<string, mixed> $run
      * @return array<string, mixed>
      */
-    private function advanceInteractions(array $run): array
+    private function advanceInteractions(BlueskyParserStateDTO $state): array
     {
-        $data = is_array($run['data'] ?? null) ? $run['data'] : [];
-        $cursor = is_array($run['cursor'] ?? null) ? $run['cursor'] : [];
-        $stats = is_array($run['stats'] ?? null) ? $run['stats'] : [];
+        $data = $state->data();
+        $cursor = $state->cursor();
+        $authoredItems = $data->authoredItems();
 
-        $authoredItems = array_merge(
-            is_array($data['postsIndex'] ?? null) ? $data['postsIndex'] : [],
-            is_array($data['authoredRepliesIndex'] ?? null) ? $data['authoredRepliesIndex'] : [],
-        );
-
-        $postIndex = (int) ($cursor['interactionPostIndex'] ?? 0);
+        $postIndex = $cursor->interactionPostIndex();
         if ($postIndex >= count($authoredItems)) {
-            $run['stage'] = BlueskyParserStage::Finishing->value;
-            $run['progress'] = 95;
+            $state->setStage(BlueskyParserStage::Finishing);
+            $state->setProgress(95);
 
-            return $run;
+            return $state->toArray();
         }
 
         $post = is_array($authoredItems[$postIndex] ?? null) ? $authoredItems[$postIndex] : [];
         $postUri = (string) ($post['uri'] ?? '');
         $postCid = (string) ($post['cid'] ?? '');
-        $kind = (string) ($cursor['interactionKind'] ?? 'likes');
+        $kind = $cursor->interactionKind();
 
         if ($postUri === '') {
-            $cursor['interactionPostIndex'] = $postIndex + 1;
-            $cursor['interactionKind'] = 'likes';
-            $cursor['interactionCursor'] = '';
-            $run['cursor'] = $cursor;
-
-            return $run;
+            return $this->moveToNextInteractionPost($state, $postIndex);
         }
 
         return match ($kind) {
-            'likes' => $this->collectPostLikes($run, $postUri, $postCid, $postIndex),
-            'reposts' => $this->collectPostReposts($run, $postUri, $postCid, $postIndex),
-            'replies' => $this->collectPostReplies($run, $postUri, $postIndex),
-            default => $this->moveToNextInteractionPost($run, $postIndex),
+            BlueskyParserInteractionKind::Likes => $this->collectPostLikes($state, $postUri, $postCid, $postIndex),
+            BlueskyParserInteractionKind::Reposts => $this->collectPostReposts($state, $postUri, $postCid, $postIndex),
+            BlueskyParserInteractionKind::Replies => $this->collectPostReplies($state, $postUri, $postIndex),
         };
     }
 
     /**
-     * @param array<string, mixed> $run
      * @return array<string, mixed>
      */
-    private function collectPostLikes(array $run, string $postUri, string $postCid, int $postIndex): array
-    {
-        $data = is_array($run['data'] ?? null) ? $run['data'] : [];
-        $cursor = is_array($run['cursor'] ?? null) ? $run['cursor'] : [];
-        $stats = is_array($run['stats'] ?? null) ? $run['stats'] : [];
+    private function collectPostLikes(
+        BlueskyParserStateDTO $state,
+        string $postUri,
+        string $postCid,
+        int $postIndex,
+    ): array {
+        $data = $state->data();
+        $cursor = $state->cursor();
 
         $likes = $this->loadPostLikesAction->handle(
             uri: $postUri,
             cid: $postCid !== '' ? $postCid : null,
             limit: self::INTERACTION_LIMIT,
-            cursor: $this->nullableCursor($cursor['interactionCursor'] ?? null),
+            cursor: $cursor->interactionCursor(),
         );
 
-        [$data, $stats] = $this->appendReactionItems($data, $stats, $postUri, $postCid, 'like', $likes->items);
+        foreach ($likes->items as $item) {
+            if (is_array($item)) {
+                $data->recordReaction($postUri, $postCid, BlueskyParserInteractionKind::Likes, $item);
+            }
+        }
 
         $nextCursor = $likes->pagination['nextCursor'] ?? null;
         if (is_string($nextCursor) && $nextCursor !== '') {
-            $cursor['interactionCursor'] = $nextCursor;
+            $cursor->setInteractionCursor($nextCursor);
         } else {
-            $cursor['interactionKind'] = 'reposts';
-            $cursor['interactionCursor'] = '';
+            $cursor->setInteractionKind(BlueskyParserInteractionKind::Reposts);
+            $cursor->setInteractionCursor(null);
         }
 
-        $run['data'] = $data;
-        $run['stats'] = $stats;
-        $run['cursor'] = $cursor;
-        $run['progress'] = $this->interactionProgress($data, $postIndex);
+        $state->setProgress($this->interactionProgress($data, $postIndex));
 
-        return $run;
+        return $state->toArray();
     }
 
     /**
-     * @param array<string, mixed> $run
      * @return array<string, mixed>
      */
-    private function collectPostReposts(array $run, string $postUri, string $postCid, int $postIndex): array
-    {
-        $data = is_array($run['data'] ?? null) ? $run['data'] : [];
-        $cursor = is_array($run['cursor'] ?? null) ? $run['cursor'] : [];
-        $stats = is_array($run['stats'] ?? null) ? $run['stats'] : [];
+    private function collectPostReposts(
+        BlueskyParserStateDTO $state,
+        string $postUri,
+        string $postCid,
+        int $postIndex,
+    ): array {
+        $data = $state->data();
+        $cursor = $state->cursor();
 
         $reposts = $this->loadPostRepostsAction->handle(
             uri: $postUri,
             limit: self::INTERACTION_LIMIT,
-            cursor: $this->nullableCursor($cursor['interactionCursor'] ?? null),
+            cursor: $cursor->interactionCursor(),
         );
 
-        [$data, $stats] = $this->appendReactionItems($data, $stats, $postUri, $postCid, 'repost', $reposts->items);
+        foreach ($reposts->items as $item) {
+            if (is_array($item)) {
+                $data->recordReaction($postUri, $postCid, BlueskyParserInteractionKind::Reposts, $item);
+            }
+        }
 
         $nextCursor = $reposts->pagination['nextCursor'] ?? null;
         if (is_string($nextCursor) && $nextCursor !== '') {
-            $cursor['interactionCursor'] = $nextCursor;
+            $cursor->setInteractionCursor($nextCursor);
         } else {
-            $cursor['interactionKind'] = 'replies';
-            $cursor['interactionCursor'] = '';
+            $cursor->setInteractionKind(BlueskyParserInteractionKind::Replies);
+            $cursor->setInteractionCursor(null);
         }
 
-        $run['data'] = $data;
-        $run['stats'] = $stats;
-        $run['cursor'] = $cursor;
-        $run['progress'] = $this->interactionProgress($data, $postIndex);
+        $state->setProgress($this->interactionProgress($data, $postIndex));
 
-        return $run;
+        return $state->toArray();
     }
 
     /**
-     * @param array<string, mixed> $run
      * @return array<string, mixed>
      */
-    private function collectPostReplies(array $run, string $postUri, int $postIndex): array
-    {
-        $data = is_array($run['data'] ?? null) ? $run['data'] : [];
-        $stats = is_array($run['stats'] ?? null) ? $run['stats'] : [];
-
-        $thread = $this->loadPostThreadAction->handle($postUri, self::THREAD_DEPTH, 0);
-        [$data, $stats] = $this->appendReplyItems($data, $stats, $postUri, $thread);
-
-        $run['data'] = $data;
-        $run['stats'] = $stats;
-
-        return $this->moveToNextInteractionPost($run, $postIndex);
-    }
-
-    /**
-     * @param array<string, mixed> $run
-     * @return array<string, mixed>
-     */
-    private function moveToNextInteractionPost(array $run, int $postIndex): array
-    {
-        $data = is_array($run['data'] ?? null) ? $run['data'] : [];
-        $cursor = is_array($run['cursor'] ?? null) ? $run['cursor'] : [];
-
-        $cursor['interactionPostIndex'] = $postIndex + 1;
-        $cursor['interactionKind'] = 'likes';
-        $cursor['interactionCursor'] = '';
-        $run['cursor'] = $cursor;
-        $run['progress'] = $this->interactionProgress($data, $postIndex + 1);
-
-        $total = count(array_merge(
-            is_array($data['postsIndex'] ?? null) ? $data['postsIndex'] : [],
-            is_array($data['authoredRepliesIndex'] ?? null) ? $data['authoredRepliesIndex'] : [],
-        ));
-
-        if (($postIndex + 1) >= $total) {
-            $run['stage'] = BlueskyParserStage::Finishing->value;
-            $run['progress'] = 95;
-        }
-
-        return $run;
-    }
-
-    /**
-     * @param array<string, mixed> $run
-     * @return array<string, mixed>
-     */
-    private function finish(array $run): array
-    {
-        return $this->lifecycleManager->markCompleted(
-            run: $run,
-            result: $this->buildResultSnapshot($run),
-            stage: BlueskyParserStage::Completed->value,
-        );
-    }
-
-    /**
-     * @param array<string, mixed> $data
-     * @param array<string, mixed> $stats
-     * @param array<int, array<string, mixed>> $items
-     * @return array{0: array<string, mixed>, 1: array<string, mixed>}
-     */
-    private function appendReactionItems(
-        array $data,
-        array $stats,
+    private function collectPostReplies(
+        BlueskyParserStateDTO $state,
         string $postUri,
-        string $postCid,
-        string $kind,
-        array $items,
+        int $postIndex,
     ): array {
-        $reactionIds = is_array($data['reactionIds'] ?? null) ? $data['reactionIds'] : [];
-        $reactionsIndex = is_array($data['reactionsIndex'] ?? null) ? $data['reactionsIndex'] : [];
+        $thread = $this->loadPostThreadAction->handle($postUri, self::THREAD_DEPTH, 0);
+        $state->data()->recordReceivedReplies($postUri, $this->flattenReplies($thread->replies));
 
-        foreach ($items as $item) {
-            if (! is_array($item)) {
-                continue;
-            }
-
-            $actor = is_array($item['actor'] ?? null) ? $item['actor'] : [];
-            $did = (string) ($actor['did'] ?? '');
-            if ($did === '') {
-                continue;
-            }
-
-            $reactionId = implode(':', [$postUri, $kind, $did, (string) ($item['createdAt'] ?? '')]);
-            if (isset($reactionIds[$reactionId])) {
-                continue;
-            }
-
-            $reactionIds[$reactionId] = true;
-            $reactionsIndex[] = [
-                'postUri' => $postUri,
-                'postCid' => $postCid,
-                'kind' => $kind,
-                'actor' => $actor,
-                'createdAt' => (string) ($item['createdAt'] ?? ''),
-                'indexedAt' => (string) ($item['indexedAt'] ?? ''),
-            ];
-        }
-
-        $data['reactionIds'] = $reactionIds;
-        $data['reactionsIndex'] = $reactionsIndex;
-        $stats['processedReactions'] = count($reactionsIndex);
-
-        return [$data, $stats];
+        return $this->moveToNextInteractionPost($state, $postIndex);
     }
 
     /**
-     * @param array<string, mixed> $data
-     * @param array<string, mixed> $stats
-     * @return array{0: array<string, mixed>, 1: array<string, mixed>}
+     * @return array<string, mixed>
      */
-    private function appendReplyItems(
-        array $data,
-        array $stats,
-        string $rootPostUri,
-        BlueskyThreadResultDTO $thread,
-    ): array {
-        $receivedReplyIds = is_array($data['receivedReplyIds'] ?? null) ? $data['receivedReplyIds'] : [];
-        $receivedRepliesIndex = is_array($data['receivedRepliesIndex'] ?? null) ? $data['receivedRepliesIndex'] : [];
+    private function moveToNextInteractionPost(BlueskyParserStateDTO $state, int $postIndex): array
+    {
+        $data = $state->data();
+        $cursor = $state->cursor();
 
-        foreach ($this->flattenReplies($thread->replies) as $reply) {
-            $replyUri = (string) ($reply['uri'] ?? '');
+        $cursor->resetInteraction($postIndex + 1);
+        $state->setProgress($this->interactionProgress($data, $postIndex + 1));
 
-            if ($replyUri === '' || isset($receivedReplyIds[$replyUri])) {
-                continue;
-            }
-
-            $receivedReplyIds[$replyUri] = true;
-            $receivedRepliesIndex[] = [
-                'rootPostUri' => $rootPostUri,
-                ...$reply,
-            ];
+        if (($postIndex + 1) >= count($data->authoredItems())) {
+            $state->setStage(BlueskyParserStage::Finishing);
+            $state->setProgress(95);
         }
 
-        $data['receivedReplyIds'] = $receivedReplyIds;
-        $data['receivedRepliesIndex'] = $receivedRepliesIndex;
-        $stats['processedReceivedReplies'] = count($receivedRepliesIndex);
+        return $state->toArray();
+    }
 
-        return [$data, $stats];
+    /**
+     * @return array<string, mixed>
+     */
+    private function finish(BlueskyParserStateDTO $state): array
+    {
+        $state->complete(
+            result: $this->snapshotBuilder->build($state->actorQuery(), $state->data())->toArray(),
+            stage: BlueskyParserStage::Completed,
+        );
+
+        return $state->toArray();
     }
 
     /**
@@ -607,26 +395,15 @@ final class BlueskyParserCollector
     }
 
     /**
-     * @param array<string, mixed> $data
      */
-    private function interactionProgress(array $data, int $processedPosts): int
+    private function interactionProgress(BlueskyParserCollectedDataDTO $data, int $processedPosts): int
     {
-        $total = count(array_merge(
-            is_array($data['postsIndex'] ?? null) ? $data['postsIndex'] : [],
-            is_array($data['authoredRepliesIndex'] ?? null) ? $data['authoredRepliesIndex'] : [],
-        ));
+        $total = count($data->authoredItems());
 
         if ($total <= 0) {
             return 95;
         }
 
         return min(99, 75 + (int) floor((min($processedPosts, $total) / $total) * 24));
-    }
-
-    private function nullableCursor(mixed $value): ?string
-    {
-        $cursor = trim((string) $value);
-
-        return $cursor !== '' ? $cursor : null;
     }
 }

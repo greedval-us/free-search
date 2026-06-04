@@ -2,7 +2,8 @@
 
 namespace App\Modules\Bluesky\Parser;
 
-use App\Modules\Bluesky\Parser\Enums\BlueskyParserStage;
+use App\Modules\Bluesky\Enums\BlueskyParserInteractionKind;
+use App\Modules\Bluesky\Enums\BlueskyParserStage;
 use App\Modules\ParserSupport\Enums\ParserRunStatus;
 use App\Modules\ParserSupport\JsonRunStore;
 
@@ -32,7 +33,7 @@ final class BlueskyParserRunStore extends JsonRunStore
                 'followsCursor' => '',
                 'followsPage' => 0,
                 'interactionPostIndex' => 0,
-                'interactionKind' => 'likes',
+                'interactionKind' => BlueskyParserInteractionKind::Likes->value,
                 'interactionCursor' => '',
                 'nextAdvanceAt' => 0,
             ],

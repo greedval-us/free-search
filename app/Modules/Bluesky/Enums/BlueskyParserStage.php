@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Modules\Bluesky\Parser\Enums;
+namespace App\Modules\Bluesky\Enums;
 
 enum BlueskyParserStage: string
 {

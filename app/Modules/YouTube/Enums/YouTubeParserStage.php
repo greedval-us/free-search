@@ -1,12 +1,12 @@
 <?php
 
-namespace App\Modules\Mastodon\Parser\Enums;
+namespace App\Modules\YouTube\Enums;
 
-enum MastodonParserStage: string
+enum YouTubeParserStage: string
 {
     case Idle = 'idle';
-    case Statuses = 'statuses';
     case Comments = 'comments';
+    case Replies = 'replies';
     case Finishing = 'finishing';
     case Completed = 'completed';
     case Failed = 'failed';

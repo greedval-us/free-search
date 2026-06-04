@@ -2,9 +2,9 @@
 
 namespace App\Modules\Mastodon\Parser;
 
+use App\Modules\Mastodon\DTO\Parser\MastodonParserStateDTO;
 use App\Modules\Mastodon\Core\Contracts\MastodonGatewayInterface;
-use App\Modules\Mastodon\Enums\MastodonPostType;
-use App\Modules\Mastodon\Parser\Enums\MastodonParserStage;
+use App\Modules\Mastodon\Enums\MastodonParserStage;
 use App\Modules\Mastodon\Presenters\MastodonAccountPresenter;
 use App\Modules\Mastodon\Presenters\MastodonStatusPresenter;
 
@@ -16,6 +16,7 @@ final class MastodonParserCollector
         private readonly MastodonGatewayInterface $gateway,
         private readonly MastodonAccountPresenter $accountPresenter,
         private readonly MastodonStatusPresenter $statusPresenter,
+        private readonly MastodonParserSnapshotBuilder $snapshotBuilder,
     ) {
     }
 
@@ -25,18 +26,17 @@ final class MastodonParserCollector
      */
     public function advance(array $run): array
     {
-        if (($run['status'] ?? null) !== 'running') {
-            return $run;
+        $state = MastodonParserStateDTO::fromArray($run);
+
+        if (! $state->isRunning()) {
+            return $state->toArray();
         }
 
-        $stage = MastodonParserStage::tryFrom((string) ($run['stage'] ?? ''))
-            ?? MastodonParserStage::Statuses;
-
-        return match ($stage) {
-            MastodonParserStage::Statuses => $this->advanceStatuses($run),
-            MastodonParserStage::Comments => $this->advanceComments($run),
-            MastodonParserStage::Finishing => $this->finish($run),
-            default => $run,
+        return match ($state->stage()) {
+            MastodonParserStage::Statuses => $this->advanceStatuses($state),
+            MastodonParserStage::Comments => $this->advanceComments($state),
+            MastodonParserStage::Finishing => $this->finish($state),
+            default => $state->toArray(),
         };
     }
 
@@ -46,272 +46,141 @@ final class MastodonParserCollector
      */
     public function buildResultSnapshot(array $run): array
     {
-        $context = is_array($run['context'] ?? null) ? $run['context'] : [];
-        $stats = is_array($run['stats'] ?? null) ? $run['stats'] : [];
-        $data = is_array($run['data'] ?? null) ? $run['data'] : [];
+        $state = MastodonParserStateDTO::fromArray($run);
 
-        return [
-            'account' => (string) ($context['account'] ?? ''),
-            'resolvedAccount' => is_array($data['account'] ?? null) ? $data['account'] : null,
-            'statusesCount' => (int) ($stats['processedStatuses'] ?? 0),
-            'commentsCount' => (int) ($stats['processedComments'] ?? 0),
-            'statusesIndex' => array_values(is_array($data['statusesIndex'] ?? null) ? $data['statusesIndex'] : []),
-            'commentsIndex' => array_values(is_array($data['commentsIndex'] ?? null) ? $data['commentsIndex'] : []),
-        ];
+        return $this->snapshotBuilder->build($state->accountQuery(), $state->data())->toArray();
     }
 
     /**
      * @param array<string, mixed> $run
      * @return array<string, mixed>
      */
-    private function advanceStatuses(array $run): array
+    private function advanceStatuses(MastodonParserStateDTO $state): array
     {
-        $context = is_array($run['context'] ?? null) ? $run['context'] : [];
-        $cursor = is_array($run['cursor'] ?? null) ? $run['cursor'] : [];
-        $data = is_array($run['data'] ?? null) ? $run['data'] : [];
-        $stats = is_array($run['stats'] ?? null) ? $run['stats'] : [];
+        $cursor = $state->cursor();
+        $data = $state->data();
 
-        $account = $this->resolveAccount($context, $data, $cursor);
+        $account = $this->resolveAccount($state);
 
         $payload = $this->gateway->accountStatuses(
             (string) ($account['id'] ?? ''),
             self::STATUSES_LIMIT,
-            $this->nullIfEmpty((string) ($cursor['statusesMaxId'] ?? ''))
+            $cursor->statusesMaxId()
         );
 
         $items = is_array($payload['items'] ?? null) ? $payload['items'] : [];
-        $statusIds = is_array($data['statusIds'] ?? null) ? $data['statusIds'] : [];
-        $statusesIndex = is_array($data['statusesIndex'] ?? null) ? $data['statusesIndex'] : [];
-        $commentStatusIds = is_array($cursor['commentStatusIds'] ?? null) ? array_values($cursor['commentStatusIds']) : [];
+        $commentStatusIds = $cursor->commentStatusIds();
 
         foreach ($items as $item) {
-            if (!is_array($item)) {
+            if (! is_array($item)) {
                 continue;
             }
 
             $presented = $this->statusPresenter->present($item);
 
-            if ($this->appendStatus($presented, $statusIds, $statusesIndex)) {
-                $this->appendCommentRootStatusId($presented, $commentStatusIds);
+            if ($data->appendStatus($presented) && $data->shouldLoadCommentsForStatus($presented)) {
+                $commentStatusIds[] = (string) ($presented['id'] ?? '');
             }
         }
 
-        $stats['processedStatuses'] = count($statusesIndex);
-        $cursor['statusesPage'] = (int) ($cursor['statusesPage'] ?? 0) + 1;
+        $cursor->incrementStatusesPage();
 
         $nextMaxId = (string) data_get($payload, 'pagination.nextMaxId', '');
         if ($nextMaxId !== '') {
-            $cursor['statusesMaxId'] = $nextMaxId;
-            $totalHint = max(0, (int) ($cursor['statusesTotalHint'] ?? 0));
-            $run['progress'] = $totalHint > 0
-                ? min(70, max(2, (int) floor((count($statusesIndex) / $totalHint) * 70)))
-                : min(70, 2 + ((int) $cursor['statusesPage'] * 3));
+            $cursor->setStatusesMaxId($nextMaxId);
+            $totalHint = $cursor->statusesTotalHint();
+            $state->setProgress($totalHint > 0
+                ? min(70, max(2, (int) floor(($data->statusesCount() / $totalHint) * 70)))
+                : min(70, 2 + ($cursor->statusesPage() * 3)));
         } else {
-            $cursor['statusesMaxId'] = '';
-            $cursor['commentStatusIds'] = array_values(array_unique($commentStatusIds));
-            $cursor['commentStatusIndex'] = 0;
-            $run['stage'] = count($cursor['commentStatusIds']) > 0
-                ? MastodonParserStage::Comments->value
-                : MastodonParserStage::Finishing->value;
-            $run['progress'] = count($cursor['commentStatusIds']) > 0 ? 75 : 95;
+            $cursor->setStatusesMaxId(null);
+            $cursor->setCommentStatusIds($commentStatusIds);
+            $cursor->setCommentStatusIndex(0);
+            $state->setStage(
+                count($cursor->commentStatusIds()) > 0
+                    ? MastodonParserStage::Comments
+                    : MastodonParserStage::Finishing
+            );
+            $state->setProgress(count($cursor->commentStatusIds()) > 0 ? 75 : 95);
         }
 
-        $data['statusIds'] = $statusIds;
-        $data['statusesIndex'] = $statusesIndex;
-        $run['cursor'] = $cursor;
-        $run['data'] = $data;
-        $run['stats'] = $stats;
-
-        return $run;
+        return $state->toArray();
     }
 
     /**
      * @param array<string, mixed> $run
      * @return array<string, mixed>
      */
-    private function advanceComments(array $run): array
+    private function advanceComments(MastodonParserStateDTO $state): array
     {
-        $cursor = is_array($run['cursor'] ?? null) ? $run['cursor'] : [];
-        $data = is_array($run['data'] ?? null) ? $run['data'] : [];
-        $stats = is_array($run['stats'] ?? null) ? $run['stats'] : [];
+        $cursor = $state->cursor();
+        $data = $state->data();
 
-        $commentStatusIds = is_array($cursor['commentStatusIds'] ?? null) ? array_values($cursor['commentStatusIds']) : [];
-        $statusIndex = (int) ($cursor['commentStatusIndex'] ?? 0);
+        $commentStatusIds = $cursor->commentStatusIds();
+        $statusIndex = $cursor->commentStatusIndex();
         if ($statusIndex >= count($commentStatusIds)) {
-            $run['stage'] = MastodonParserStage::Finishing->value;
-            $run['progress'] = 95;
+            $state->setStage(MastodonParserStage::Finishing);
+            $state->setProgress(95);
 
-            return $run;
+            return $state->toArray();
         }
 
         $rootStatusId = (string) $commentStatusIds[$statusIndex];
         $payload = $this->gateway->context($rootStatusId);
         $descendants = is_array($payload['descendants'] ?? null) ? $payload['descendants'] : [];
-        $commentIds = is_array($data['commentIds'] ?? null) ? $data['commentIds'] : [];
-        $commentsIndex = is_array($data['commentsIndex'] ?? null) ? $data['commentsIndex'] : [];
 
         foreach ($descendants as $item) {
-            if (!is_array($item)) {
+            if (! is_array($item)) {
                 continue;
             }
 
-            $this->appendComment(
-                rootStatusId: $rootStatusId,
-                presented: $this->statusPresenter->present($item),
-                commentIds: $commentIds,
-                commentsIndex: $commentsIndex,
-            );
+            $data->appendComment($rootStatusId, $this->statusPresenter->present($item));
         }
 
-        $cursor['commentStatusIndex'] = $statusIndex + 1;
-        $processedRoots = min((int) ($cursor['commentStatusIndex'] ?? 0), count($commentStatusIds));
+        $processedRoots = min($cursor->incrementCommentStatusIndex(), count($commentStatusIds));
         $totalRoots = max(1, count($commentStatusIds));
-        $stats['processedComments'] = count($commentsIndex);
-        $run['progress'] = min(99, 75 + (int) floor(($processedRoots / $totalRoots) * 24));
+        $state->setProgress(min(99, 75 + (int) floor(($processedRoots / $totalRoots) * 24)));
 
         if ($processedRoots >= count($commentStatusIds)) {
-            $run['stage'] = MastodonParserStage::Finishing->value;
-            $run['progress'] = 95;
+            $state->setStage(MastodonParserStage::Finishing);
+            $state->setProgress(95);
         }
 
-        $data['commentIds'] = $commentIds;
-        $data['commentsIndex'] = $commentsIndex;
-        $run['cursor'] = $cursor;
-        $run['data'] = $data;
-        $run['stats'] = $stats;
-
-        return $run;
+        return $state->toArray();
     }
 
     /**
      * @param array<string, mixed> $run
      * @return array<string, mixed>
      */
-    private function finish(array $run): array
+    private function finish(MastodonParserStateDTO $state): array
     {
-        $run['result'] = $this->buildResultSnapshot($run);
-        $run['status'] = 'completed';
-        $run['stage'] = MastodonParserStage::Completed->value;
-        $run['progress'] = 100;
-        $run['error'] = null;
+        $state->complete(
+            result: $this->snapshotBuilder->build($state->accountQuery(), $state->data())->toArray(),
+            stage: MastodonParserStage::Completed,
+        );
 
-        return $run;
+        return $state->toArray();
     }
 
     /**
-     * @param array<string, mixed> $context
-     * @param array<string, mixed> $data
-     * @param array<string, mixed> $cursor
      * @return array<string, mixed>
      */
-    private function resolveAccount(array $context, array &$data, array &$cursor): array
+    private function resolveAccount(MastodonParserStateDTO $state): array
     {
-        $account = is_array($data['account'] ?? null) ? $data['account'] : null;
+        $data = $state->data();
+        $cursor = $state->cursor();
+        $account = $data->account();
 
         if ($account !== null) {
             return $account;
         }
 
-        $lookup = $this->gateway->lookupAccount((string) ($context['account'] ?? ''));
+        $lookup = $this->gateway->lookupAccount($state->accountQuery());
         $account = $this->accountPresenter->present($lookup);
-        $data['account'] = $account;
-        $cursor['statusesTotalHint'] = (int) ($account['statusesCount'] ?? 0);
+        $data->setAccount($account);
+        $cursor->setStatusesTotalHint((int) ($account['statusesCount'] ?? 0));
 
         return $account;
-    }
-
-    /**
-     * @param array<string, mixed> $presented
-     * @param array<string, bool> $statusIds
-     * @param array<int, array<string, mixed>> $statusesIndex
-     */
-    private function appendStatus(array $presented, array &$statusIds, array &$statusesIndex): bool
-    {
-        $statusId = (string) ($presented['id'] ?? '');
-
-        if ($statusId === '' || isset($statusIds[$statusId])) {
-            return false;
-        }
-
-        $statusIds[$statusId] = true;
-        $statusesIndex[] = $presented;
-
-        return true;
-    }
-
-    /**
-     * @param array<string, mixed> $presented
-     * @param array<int, string> $commentStatusIds
-     */
-    private function appendCommentRootStatusId(array $presented, array &$commentStatusIds): void
-    {
-        if (
-            (string) ($presented['postType'] ?? '') !== MastodonPostType::Original->value
-            || (int) ($presented['repliesCount'] ?? 0) <= 0
-        ) {
-            return;
-        }
-
-        $statusId = (string) ($presented['id'] ?? '');
-
-        if ($statusId !== '') {
-            $commentStatusIds[] = $statusId;
-        }
-    }
-
-    /**
-     * @param array<string, mixed> $presented
-     * @param array<string, bool> $commentIds
-     * @param array<int, array<string, mixed>> $commentsIndex
-     */
-    private function appendComment(
-        string $rootStatusId,
-        array $presented,
-        array &$commentIds,
-        array &$commentsIndex,
-    ): void {
-        $commentId = (string) ($presented['id'] ?? '');
-
-        if ($commentId === '') {
-            return;
-        }
-
-        $compositeId = $rootStatusId . ':' . $commentId;
-
-        if (isset($commentIds[$compositeId])) {
-            return;
-        }
-
-        $commentIds[$compositeId] = true;
-        $commentsIndex[] = [
-            'rootStatusId' => $rootStatusId,
-            'commentId' => $commentId,
-            'parentStatusId' => $presented['inReplyToId'] ?? null,
-            'createdAt' => (string) ($presented['createdAt'] ?? ''),
-            'content' => (string) ($presented['content'] ?? ''),
-            'spoilerText' => (string) ($presented['spoilerText'] ?? ''),
-            'language' => (string) ($presented['language'] ?? ''),
-            'visibility' => (string) ($presented['visibility'] ?? ''),
-            'sensitive' => (bool) ($presented['sensitive'] ?? false),
-            'repliesCount' => (int) ($presented['repliesCount'] ?? 0),
-            'reblogsCount' => (int) ($presented['reblogsCount'] ?? 0),
-            'favouritesCount' => (int) ($presented['favouritesCount'] ?? 0),
-            'hasMedia' => (bool) ($presented['hasMedia'] ?? false),
-            'hasLinks' => (bool) ($presented['hasLinks'] ?? false),
-            'postType' => (string) ($presented['postType'] ?? ''),
-            'url' => (string) ($presented['url'] ?? ''),
-            'links' => is_array($presented['links'] ?? null) ? $presented['links'] : [],
-            'domains' => is_array($presented['domains'] ?? null) ? $presented['domains'] : [],
-            'tags' => is_array($presented['tags'] ?? null) ? $presented['tags'] : [],
-            'mentions' => is_array($presented['mentions'] ?? null) ? $presented['mentions'] : [],
-            'account' => is_array($presented['account'] ?? null) ? $presented['account'] : [],
-        ];
-    }
-
-    private function nullIfEmpty(string $value): ?string
-    {
-        $value = trim($value);
-
-        return $value === '' ? null : $value;
     }
 }

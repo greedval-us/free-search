@@ -3,6 +3,8 @@
 namespace App\Modules\YouTube\Parser;
 
 use App\Modules\ParserSupport\JsonRunStore;
+use App\Modules\ParserSupport\Enums\ParserRunStatus;
+use App\Modules\YouTube\Enums\YouTubeParserStage;
 
 class YouTubeParserRunStore extends JsonRunStore
 {
@@ -15,8 +17,8 @@ class YouTubeParserRunStore extends JsonRunStore
         return [
             'runId' => $runId,
             'userId' => $userId,
-            'status' => 'running',
-            'stage' => 'comments',
+            'status' => ParserRunStatus::Running->value,
+            'stage' => YouTubeParserStage::Comments->value,
             'progress' => 1,
             'error' => null,
             'createdAt' => $now,
