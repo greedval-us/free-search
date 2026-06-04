@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ExternalLink, Tags } from 'lucide-vue-next';
+import { Tags } from 'lucide-vue-next';
 import { computed } from 'vue';
 import AnalyticsChipSection from '@/components/ui/analytics/AnalyticsChipSection.vue';
 import AnalyticsControlPanel from '@/components/ui/analytics/AnalyticsControlPanel.vue';
@@ -7,6 +7,7 @@ import AnalyticsMetricGrid from '@/components/ui/analytics/AnalyticsMetricGrid.v
 import AnalyticsRankSection from '@/components/ui/analytics/AnalyticsRankSection.vue';
 import AnalyticsSampleGrid from '@/components/ui/analytics/AnalyticsSampleGrid.vue';
 import AnalyticsTimelineSection from '@/components/ui/analytics/AnalyticsTimelineSection.vue';
+import HashtagProfileCard from '@/components/ui/HashtagProfileCard.vue';
 import IntelResultPanel from '@/components/ui/IntelResultPanel.vue';
 import SectionCard from '@/components/ui/SectionCard.vue';
 import { useI18n } from '@/composables/useI18n';
@@ -203,6 +204,21 @@ const topLanguages = computed(
             value: language.count,
         })) ?? []
 );
+
+const hashtagProfileStats = computed(() =>
+    hashtagProfile.value
+        ? [
+              {
+                  label: t('bluesky.metrics.uses'),
+                  value: hashtagProfile.value.history[0]?.uses ?? 0,
+              },
+              {
+                  label: t('bluesky.metrics.accounts'),
+                  value: hashtagProfile.value.history[0]?.accounts ?? 0,
+              },
+          ]
+        : []
+);
 </script>
 
 <template>
@@ -360,27 +376,15 @@ const topLanguages = computed(
                     v-if="hashtagProfile"
                     :title="t('bluesky.analytics.hashtagProfile')"
                 >
-                    <div class="flex items-start justify-between gap-3">
-                        <div class="min-w-0">
-                            <h2 class="text-base font-semibold">
-                                #{{ hashtagProfile.name }}
-                            </h2>
-                            <p class="mt-1 text-xs text-muted-foreground">
-                                {{ t('bluesky.metrics.uses') }}:
-                                {{ hashtagProfile.history[0]?.uses ?? 0 }}
-                            </p>
-                        </div>
-                        <a
-                            v-if="hashtagProfile.url"
-                            :href="hashtagProfile.url"
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            class="inline-flex items-center gap-1 rounded-md border border-input px-2 py-1 text-xs text-primary hover:bg-accent"
-                        >
-                            <ExternalLink class="h-3 w-3" />
-                            {{ t('bluesky.common.openSearch') }}
-                        </a>
-                    </div>
+                    <HashtagProfileCard
+                        :name="hashtagProfile.name"
+                        :url="hashtagProfile.url"
+                        :open-label="t('bluesky.common.openSearch')"
+                        :stats="hashtagProfileStats"
+                        :history="hashtagProfile.history"
+                        :uses-label="t('bluesky.metrics.uses')"
+                        :accounts-label="t('bluesky.metrics.accounts')"
+                    />
                 </SectionCard>
 
                 <AnalyticsMetricGrid

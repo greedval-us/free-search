@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ExternalLink, Tags } from 'lucide-vue-next';
+import { Tags } from 'lucide-vue-next';
 import { computed, ref } from 'vue';
 import AnalyticsChipSection from '@/components/ui/analytics/AnalyticsChipSection.vue';
 import AnalyticsControlPanel from '@/components/ui/analytics/AnalyticsControlPanel.vue';
@@ -7,10 +7,13 @@ import AnalyticsMetricGrid from '@/components/ui/analytics/AnalyticsMetricGrid.v
 import AnalyticsRankSection from '@/components/ui/analytics/AnalyticsRankSection.vue';
 import AnalyticsSampleGrid from '@/components/ui/analytics/AnalyticsSampleGrid.vue';
 import AnalyticsTimelineSection from '@/components/ui/analytics/AnalyticsTimelineSection.vue';
+import HashtagProfileCard from '@/components/ui/HashtagProfileCard.vue';
 import IntelResultPanel from '@/components/ui/IntelResultPanel.vue';
 import SectionCard from '@/components/ui/SectionCard.vue';
 import { useI18n } from '@/composables/useI18n';
 import { apiRequest } from '@/lib/api';
+import MastodonAccountCard from '../components/MastodonAccountCard.vue';
+import MastodonStatusCard from '../components/MastodonStatusCard.vue';
 import type {
     MastodonAccount,
     MastodonAnalyticsPayload,
@@ -312,6 +315,21 @@ const topLanguages = computed(
             value: language.count,
         })) ?? []
 );
+
+const hashtagProfileStats = computed(() =>
+    hashtagProfile.value
+        ? [
+              {
+                  label: t('mastodon.metrics.historyPoints'),
+                  value: hashtagProfile.value.history.length,
+              },
+              {
+                  label: t('mastodon.metrics.uses'),
+                  value: hashtagProfile.value.history[0]?.uses ?? 0,
+              },
+          ]
+        : []
+);
 </script>
 
 <template>
@@ -458,100 +476,25 @@ const topLanguages = computed(
                     v-if="accountProfile"
                     :title="t('mastodon.analytics.accountProfile')"
                 >
-                    <div class="flex flex-col gap-4 md:flex-row">
-                        <img
-                            v-if="accountProfile.avatar"
-                            :src="accountProfile.avatar"
-                            :alt="
-                                accountProfile.displayName ||
-                                accountProfile.acct
-                            "
-                            class="h-20 w-20 rounded-full object-cover"
-                            loading="lazy"
-                        />
-                        <div class="min-w-0 flex-1">
-                            <div class="flex flex-wrap items-center gap-2">
-                                <h2 class="text-base font-semibold">
-                                    {{
-                                        accountProfile.displayName ||
-                                        accountProfile.username
-                                    }}
-                                </h2>
-                                <a
-                                    v-if="accountProfile.url"
-                                    :href="accountProfile.url"
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    class="inline-flex items-center gap-1 rounded-md border border-input px-2 py-1 text-xs text-primary hover:bg-accent"
-                                >
-                                    <ExternalLink class="h-3 w-3" />
-                                    {{ t('mastodon.common.openProfile') }}
-                                </a>
-                            </div>
-                            <p class="mt-1 text-xs text-muted-foreground">
-                                @{{ accountProfile.acct }} |
-                                {{ accountProfile.instanceDomain || '-' }} |
-                                {{ formatDate(accountProfile.createdAt) }}
-                            </p>
-                            <p
-                                class="mt-2 text-xs leading-relaxed text-muted-foreground"
-                            >
-                                {{
-                                    accountProfile.note ||
-                                    t('mastodon.search.noBio')
-                                }}
-                            </p>
-                        </div>
-                    </div>
+                    <MastodonAccountCard
+                        :account="accountProfile"
+                        :format-date="formatDate"
+                    />
                 </SectionCard>
 
                 <SectionCard
                     v-if="hashtagProfile"
                     :title="t('mastodon.analytics.hashtagProfile')"
                 >
-                    <div class="flex items-start justify-between gap-3">
-                        <div class="min-w-0">
-                            <h2 class="text-base font-semibold">
-                                #{{ hashtagProfile.name }}
-                            </h2>
-                            <p class="mt-1 text-xs text-muted-foreground">
-                                {{ t('mastodon.metrics.historyPoints') }}:
-                                {{ hashtagProfile.history.length }}
-                            </p>
-                        </div>
-                        <a
-                            v-if="hashtagProfile.url"
-                            :href="hashtagProfile.url"
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            class="inline-flex items-center gap-1 rounded-md border border-input px-2 py-1 text-xs text-primary hover:bg-accent"
-                        >
-                            <ExternalLink class="h-3 w-3" />
-                            {{ t('mastodon.common.openTag') }}
-                        </a>
-                    </div>
-                    <div
-                        v-if="hashtagProfile.history.length > 0"
-                        class="mt-3 grid gap-2 md:grid-cols-2 xl:grid-cols-4"
-                    >
-                        <div
-                            v-for="point in hashtagProfile.history"
-                            :key="`${hashtagProfile.name}-${point.day}`"
-                            class="rounded-md border border-border/70 bg-card/60 p-2 text-xs"
-                        >
-                            <div class="font-medium text-foreground">
-                                {{ point.day }}
-                            </div>
-                            <div class="mt-1 text-muted-foreground">
-                                {{ t('mastodon.metrics.uses') }}:
-                                {{ point.uses }}
-                            </div>
-                            <div class="text-muted-foreground">
-                                {{ t('mastodon.metrics.accounts') }}:
-                                {{ point.accounts }}
-                            </div>
-                        </div>
-                    </div>
+                    <HashtagProfileCard
+                        :name="hashtagProfile.name"
+                        :url="hashtagProfile.url"
+                        :open-label="t('mastodon.common.openTag')"
+                        :stats="hashtagProfileStats"
+                        :history="hashtagProfile.history"
+                        :uses-label="t('mastodon.metrics.uses')"
+                        :accounts-label="t('mastodon.metrics.accounts')"
+                    />
                 </SectionCard>
 
                 <AnalyticsMetricGrid
@@ -582,66 +525,13 @@ const topLanguages = computed(
                             v-if="result.topPosts.length > 0"
                             class="space-y-2"
                         >
-                            <article
+                            <MastodonStatusCard
                                 v-for="status in result.topPosts"
                                 :key="status.id"
-                                class="rounded-md border border-border/70 bg-background/70 p-3"
-                            >
-                                <div
-                                    class="flex items-center justify-between gap-3"
-                                >
-                                    <div class="min-w-0">
-                                        <div
-                                            class="truncate text-xs font-semibold text-foreground"
-                                        >
-                                            {{
-                                                status.account.displayName ||
-                                                status.account.acct
-                                            }}
-                                        </div>
-                                        <div
-                                            class="truncate text-[11px] text-muted-foreground"
-                                        >
-                                            @{{ status.account.acct }} |
-                                            {{ formatDate(status.createdAt) }}
-                                        </div>
-                                    </div>
-                                    <a
-                                        v-if="status.url"
-                                        :href="status.url"
-                                        target="_blank"
-                                        rel="noopener noreferrer"
-                                        class="inline-flex items-center gap-1 rounded-md border border-input px-2 py-1 text-[11px] text-primary hover:bg-accent"
-                                    >
-                                        <ExternalLink class="h-3 w-3" />
-                                        {{ t('mastodon.common.open') }}
-                                    </a>
-                                </div>
-                                <p
-                                    class="mt-2 text-xs leading-relaxed text-foreground"
-                                >
-                                    {{
-                                        status.content ||
-                                        t('mastodon.search.noText')
-                                    }}
-                                </p>
-                                <div
-                                    class="mt-2 flex flex-wrap gap-3 text-[11px] text-muted-foreground"
-                                >
-                                    <span
-                                        >{{ t('mastodon.metrics.replies') }}:
-                                        {{ status.repliesCount }}</span
-                                    >
-                                    <span
-                                        >{{ t('mastodon.metrics.reblogs') }}:
-                                        {{ status.reblogsCount }}</span
-                                    >
-                                    <span
-                                        >{{ t('mastodon.metrics.favourites') }}:
-                                        {{ status.favouritesCount }}</span
-                                    >
-                                </div>
-                            </article>
+                                :status="status"
+                                :format-date="formatDate"
+                                compact
+                            />
                         </div>
                         <p v-else class="text-xs text-muted-foreground">
                             {{ t('mastodon.analytics.noTopPosts') }}
