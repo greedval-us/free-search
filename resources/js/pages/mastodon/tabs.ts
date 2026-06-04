@@ -1,5 +1,5 @@
 import type { Component } from 'vue';
-import { MODULE_TAB_ICONS } from '@/lib/navigation/tab-icons';
+import { createModuleTabs } from '@/lib/navigation/create-module-tabs';
 import MastodonAnalyticsTab from './tabs/MastodonAnalyticsTab.vue';
 import MastodonParserTab from './tabs/MastodonParserTab.vue';
 import MastodonSearchTab from './tabs/MastodonSearchTab.vue';
@@ -13,25 +13,22 @@ export type MastodonTabDefinition = {
     accessKey?: string;
 };
 
-export const MASTODON_TABS: readonly MastodonTabDefinition[] = [
+export const MASTODON_TABS: readonly MastodonTabDefinition[] = createModuleTabs([
     {
         key: 'search',
         labelKey: 'mastodon.tabs.search',
-        icon: MODULE_TAB_ICONS.search,
         component: MastodonSearchTab,
     },
     {
         key: 'analytics',
         labelKey: 'mastodon.tabs.analytics',
-        icon: MODULE_TAB_ICONS.analytics,
         component: MastodonAnalyticsTab,
         accessKey: 'mastodon.analytics',
     },
     {
         key: 'parser',
         labelKey: 'mastodon.tabs.parser',
-        icon: MODULE_TAB_ICONS.parser,
         component: MastodonParserTab,
         accessKey: 'mastodon.parser',
     },
-] as const;
+]) as readonly MastodonTabDefinition[];

@@ -1,10 +1,8 @@
 ﻿<script setup lang="ts">
-import { ChevronDown, ChevronUp, Search, Settings } from 'lucide-vue-next';
 import { computed, onMounted } from 'vue';
-import HelpTooltip from '@/components/ui/HelpTooltip.vue';
 import IntelAdvancedFilters from '@/components/ui/IntelAdvancedFilters.vue';
 import IntelResultPanel from '@/components/ui/IntelResultPanel.vue';
-import IntelSearchPanel from '@/components/ui/IntelSearchPanel.vue';
+import SearchControlPanel from '@/components/ui/search/SearchControlPanel.vue';
 import { useI18n } from '@/composables/useI18n';
 import {
     getRepeatQueryParams,
@@ -121,40 +119,25 @@ onMounted(() => {
 </script>
 
 <template>
-    <IntelSearchPanel>
-        <div class="flex items-center justify-between gap-3">
-            <div class="space-y-1">
-                <div class="flex items-center gap-2 text-sm font-semibold">
-                    <Search class="h-4 w-4 text-cyan-400" />
-                    <span>{{ t('telegram.search.title') }}</span>
-                    <HelpTooltip
-                        :label="t('telegram.help.label')"
-                        :text="t('telegram.search.help.overview')"
-                    />
-                </div>
-                <p class="text-xs text-muted-foreground">
-                    {{
-                        searchPanelCollapsed
-                            ? t('telegram.search.collapsed')
-                            : t('telegram.search.filters')
-                    }}
-                </p>
-            </div>
-
-            <button
-                type="button"
-                class="inline-flex h-9 w-9 cursor-pointer items-center justify-center rounded-full border border-input text-sm text-foreground transition hover:bg-accent"
-                @click="searchPanelCollapsed = !searchPanelCollapsed"
-            >
-                <ChevronDown v-if="searchPanelCollapsed" class="h-4 w-4" />
-                <ChevronUp v-else class="h-4 w-4" />
-            </button>
-        </div>
-
-        <div
-            v-if="!searchPanelCollapsed"
-            class="mt-3 flex flex-wrap items-end gap-3"
-        >
+    <SearchControlPanel
+        :title="t('telegram.search.title')"
+        :help-label="t('telegram.help.label')"
+        :help-text="t('telegram.search.help.overview')"
+        :subtitle="t('telegram.search.filters')"
+        :collapsed-text="t('telegram.search.collapsed')"
+        :collapsed="searchPanelCollapsed"
+        :show-advanced="showAdvanced"
+        :loading="loading"
+        :can-search="canSearch"
+        :advanced-show-aria="t('telegram.search.advancedAriaShow')"
+        :advanced-hide-aria="t('telegram.search.advancedAriaHide')"
+        :submit-label="t('telegram.search.find')"
+        :searching-label="t('telegram.search.searching')"
+        @update:collapsed="searchPanelCollapsed = $event"
+        @update:show-advanced="showAdvanced = $event"
+        @submit="searchMessages(false)"
+    >
+        <template #fields>
             <div
                 class="grid min-w-0 flex-1 gap-3 md:grid-cols-2 xl:grid-cols-3"
             >
@@ -197,86 +180,59 @@ onMounted(() => {
                     />
                 </label>
             </div>
+        </template>
+        <template #advanced>
+            <IntelAdvancedFilters
+                :open="!searchPanelCollapsed && showAdvanced"
+                content-class="md:grid-cols-3"
+            >
+                <label class="block min-w-0">
+                    <span
+                        class="mb-1 block truncate text-xs font-medium text-muted-foreground"
+                        >{{ t('telegram.search.limit') }}</span
+                    >
+                    <input
+                        v-model.number="form.limit"
+                        type="number"
+                        min="1"
+                        :max="LIMIT_MAX"
+                        class="h-10 w-full rounded-md border border-input bg-background px-3 text-sm"
+                        @input="clampLimit"
+                        @blur="clampLimit"
+                    />
+                </label>
 
-            <div class="flex w-full flex-wrap gap-2 lg:w-auto">
-                <button
-                    type="button"
-                    :aria-label="
-                        showAdvanced
-                            ? t('telegram.search.advancedAriaHide')
-                            : t('telegram.search.advancedAriaShow')
-                    "
-                    class="inline-flex h-10 w-10 cursor-pointer items-center justify-center rounded-md border border-slate-700 bg-slate-900/80 text-slate-200 transition hover:border-cyan-300/40 hover:text-cyan-100"
-                    :class="{
-                        'border-cyan-400/50 bg-cyan-400/20 text-cyan-300':
-                            showAdvanced,
-                    }"
-                    @click="showAdvanced = !showAdvanced"
-                >
-                    <Settings class="h-4 w-4" />
-                </button>
+                <label class="block min-w-0">
+                    <span
+                        class="mb-1 block truncate text-xs font-medium text-muted-foreground"
+                        >{{ t('telegram.search.dateFrom') }}</span
+                    >
+                    <input
+                        v-model="form.dateFrom"
+                        type="date"
+                        class="h-10 w-full rounded-md border border-input bg-background px-3 text-sm"
+                    />
+                </label>
 
-                <button
-                    :disabled="loading || !canSearch"
-                    class="h-10 cursor-pointer rounded-md bg-primary px-5 text-sm font-semibold text-primary-foreground disabled:cursor-not-allowed disabled:opacity-60"
-                    @click="searchMessages(false)"
-                >
-                    {{
-                        loading
-                            ? t('telegram.search.searching')
-                            : t('telegram.search.find')
-                    }}
-                </button>
-            </div>
-        </div>
-
-        <IntelAdvancedFilters
-            :open="!searchPanelCollapsed && showAdvanced"
-            content-class="md:grid-cols-3"
-        >
-            <label class="block min-w-0">
-                <span
-                    class="mb-1 block truncate text-xs font-medium text-muted-foreground"
-                    >{{ t('telegram.search.limit') }}</span
-                >
-                <input
-                    v-model.number="form.limit"
-                    type="number"
-                    min="1"
-                    :max="LIMIT_MAX"
-                    class="h-10 w-full rounded-md border border-input bg-background px-3 text-sm"
-                    @input="clampLimit"
-                    @blur="clampLimit"
-                />
-            </label>
-
-            <label class="block min-w-0">
-                <span
-                    class="mb-1 block truncate text-xs font-medium text-muted-foreground"
-                    >{{ t('telegram.search.dateFrom') }}</span
-                >
-                <input
-                    v-model="form.dateFrom"
-                    type="date"
-                    class="h-10 w-full rounded-md border border-input bg-background px-3 text-sm"
-                />
-            </label>
-
-            <label class="block min-w-0">
-                <span
-                    class="mb-1 block truncate text-xs font-medium text-muted-foreground"
-                    >{{ t('telegram.search.dateTo') }}</span
-                >
-                <input
-                    v-model="form.dateTo"
-                    type="date"
-                    class="h-10 w-full rounded-md border border-input bg-background px-3 text-sm"
-                />
-            </label>
-        </IntelAdvancedFilters>
-
-        <p v-if="error" class="mt-3 text-sm text-destructive">{{ error }}</p>
-    </IntelSearchPanel>
+                <label class="block min-w-0">
+                    <span
+                        class="mb-1 block truncate text-xs font-medium text-muted-foreground"
+                        >{{ t('telegram.search.dateTo') }}</span
+                    >
+                    <input
+                        v-model="form.dateTo"
+                        type="date"
+                        class="h-10 w-full rounded-md border border-input bg-background px-3 text-sm"
+                    />
+                </label>
+            </IntelAdvancedFilters>
+        </template>
+        <template #afterActions>
+            <p v-if="error" class="mt-3 text-sm text-destructive">
+                {{ error }}
+            </p>
+        </template>
+    </SearchControlPanel>
 
     <IntelResultPanel>
         <div class="mb-3 flex items-center justify-between">

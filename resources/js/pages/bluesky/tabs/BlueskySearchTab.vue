@@ -1,9 +1,7 @@
 <script setup lang="ts">
-import { ChevronDown, ChevronUp, Search, Settings } from 'lucide-vue-next';
-import HelpTooltip from '@/components/ui/HelpTooltip.vue';
 import IntelAdvancedFilters from '@/components/ui/IntelAdvancedFilters.vue';
 import IntelResultPanel from '@/components/ui/IntelResultPanel.vue';
-import IntelSearchPanel from '@/components/ui/IntelSearchPanel.vue';
+import SearchControlPanel from '@/components/ui/search/SearchControlPanel.vue';
 import { useI18n } from '@/composables/useI18n';
 import BlueskySearchResults from '../components/BlueskySearchResults.vue';
 import { useBlueskySearch } from '../composables/useBlueskySearch';
@@ -48,40 +46,25 @@ const {
 </script>
 
 <template>
-    <IntelSearchPanel>
-        <div class="flex items-center justify-between gap-3">
-            <div class="space-y-1">
-                <div class="flex items-center gap-2 text-sm font-semibold">
-                    <Search class="h-4 w-4 text-cyan-400" />
-                    <span>{{ t('bluesky.search.title') }}</span>
-                    <HelpTooltip
-                        :label="t('bluesky.help.label')"
-                        :text="t('bluesky.search.hint')"
-                    />
-                </div>
-                <p class="text-xs text-muted-foreground">
-                    {{
-                        searchPanelCollapsed
-                            ? t('bluesky.search.collapsed')
-                            : t('bluesky.search.filters')
-                    }}
-                </p>
-            </div>
-
-            <button
-                type="button"
-                class="inline-flex h-9 w-9 cursor-pointer items-center justify-center rounded-full border border-input text-sm text-foreground transition hover:bg-accent"
-                @click="searchPanelCollapsed = !searchPanelCollapsed"
-            >
-                <ChevronDown v-if="searchPanelCollapsed" class="h-4 w-4" />
-                <ChevronUp v-else class="h-4 w-4" />
-            </button>
-        </div>
-
-        <div
-            v-if="!searchPanelCollapsed"
-            class="mt-3 grid gap-3 xl:grid-cols-[minmax(0,1fr)_auto]"
-        >
+    <SearchControlPanel
+        :title="t('bluesky.search.title')"
+        :help-label="t('bluesky.help.label')"
+        :help-text="t('bluesky.search.hint')"
+        :subtitle="t('bluesky.search.filters')"
+        :collapsed-text="t('bluesky.search.collapsed')"
+        :collapsed="searchPanelCollapsed"
+        :show-advanced="showAdvanced"
+        :loading="loading"
+        :can-search="canSearch"
+        :advanced-show-aria="t('bluesky.search.advancedAriaShow')"
+        :advanced-hide-aria="t('bluesky.search.advancedAriaHide')"
+        :submit-label="t('bluesky.search.submit')"
+        :searching-label="t('bluesky.search.searching')"
+        @update:collapsed="searchPanelCollapsed = $event"
+        @update:show-advanced="showAdvanced = $event"
+        @submit="runSearch(false)"
+    >
+        <template #fields>
             <div class="grid min-w-0 gap-3 md:grid-cols-2 xl:grid-cols-4">
                 <label class="block min-w-0 xl:col-span-2">
                     <span
@@ -138,174 +121,147 @@ const {
                     </select>
                 </label>
             </div>
+        </template>
+        <template #advanced>
+            <IntelAdvancedFilters
+                :open="!searchPanelCollapsed && showAdvanced"
+                content-class="md:grid-cols-2 xl:grid-cols-4"
+            >
+                <label class="block min-w-0">
+                    <span
+                        class="mb-1 block truncate text-xs font-medium text-muted-foreground"
+                    >
+                        {{ t('bluesky.search.limit') }}
+                    </span>
+                    <input
+                        v-model.number="form.limit"
+                        type="number"
+                        min="1"
+                        :max="limitMax"
+                        class="h-10 w-full rounded-md border border-input bg-background px-3 text-sm"
+                        @input="clampLimit"
+                        @blur="clampLimit"
+                    />
+                </label>
 
-            <div class="flex flex-wrap items-end gap-2 xl:justify-end">
-                <button
-                    type="button"
-                    :aria-label="
-                        showAdvanced
-                            ? t('bluesky.search.advancedAriaHide')
-                            : t('bluesky.search.advancedAriaShow')
-                    "
-                    class="inline-flex h-10 w-10 cursor-pointer items-center justify-center rounded-md border border-slate-700 bg-slate-900/80 text-slate-200 transition hover:border-cyan-300/40 hover:text-cyan-100"
-                    :class="{
-                        'border-cyan-400/50 bg-cyan-400/20 text-cyan-300':
-                            showAdvanced,
-                    }"
-                    @click="showAdvanced = !showAdvanced"
-                >
-                    <Settings class="h-4 w-4" />
-                </button>
+                <label class="block min-w-0">
+                    <span
+                        class="mb-1 block truncate text-xs font-medium text-muted-foreground"
+                    >
+                        {{ t('bluesky.search.language') }}
+                    </span>
+                    <input
+                        v-model="form.language"
+                        type="text"
+                        maxlength="12"
+                        class="h-10 w-full rounded-md border border-input bg-background px-3 text-sm"
+                        :placeholder="t('bluesky.search.languagePlaceholder')"
+                    />
+                </label>
 
-                <button
-                    :disabled="loading || !canSearch"
-                    class="h-10 cursor-pointer rounded-md bg-primary px-5 text-sm font-semibold text-primary-foreground disabled:cursor-not-allowed disabled:opacity-60"
-                    @click="runSearch(false)"
-                >
-                    {{
-                        loading
-                            ? t('bluesky.search.searching')
-                            : t('bluesky.search.submit')
-                    }}
-                </button>
-            </div>
-        </div>
+                <label class="block min-w-0">
+                    <span
+                        class="mb-1 block truncate text-xs font-medium text-muted-foreground"
+                    >
+                        {{ t('bluesky.search.author') }}
+                    </span>
+                    <input
+                        v-model="form.author"
+                        type="text"
+                        class="h-10 w-full rounded-md border border-input bg-background px-3 text-sm"
+                        :placeholder="t('bluesky.search.authorPlaceholder')"
+                    />
+                </label>
 
-        <IntelAdvancedFilters
-            :open="!searchPanelCollapsed && showAdvanced"
-            content-class="md:grid-cols-2 xl:grid-cols-4"
-        >
-            <label class="block min-w-0">
-                <span
-                    class="mb-1 block truncate text-xs font-medium text-muted-foreground"
-                >
-                    {{ t('bluesky.search.limit') }}
-                </span>
-                <input
-                    v-model.number="form.limit"
-                    type="number"
-                    min="1"
-                    :max="limitMax"
-                    class="h-10 w-full rounded-md border border-input bg-background px-3 text-sm"
-                    @input="clampLimit"
-                    @blur="clampLimit"
-                />
-            </label>
+                <label class="block min-w-0">
+                    <span
+                        class="mb-1 block truncate text-xs font-medium text-muted-foreground"
+                    >
+                        {{ t('bluesky.search.mentions') }}
+                    </span>
+                    <input
+                        v-model="form.mentions"
+                        type="text"
+                        class="h-10 w-full rounded-md border border-input bg-background px-3 text-sm"
+                        :placeholder="t('bluesky.search.mentionsPlaceholder')"
+                    />
+                </label>
 
-            <label class="block min-w-0">
-                <span
-                    class="mb-1 block truncate text-xs font-medium text-muted-foreground"
-                >
-                    {{ t('bluesky.search.language') }}
-                </span>
-                <input
-                    v-model="form.language"
-                    type="text"
-                    maxlength="12"
-                    class="h-10 w-full rounded-md border border-input bg-background px-3 text-sm"
-                    :placeholder="t('bluesky.search.languagePlaceholder')"
-                />
-            </label>
+                <label class="block min-w-0">
+                    <span
+                        class="mb-1 block truncate text-xs font-medium text-muted-foreground"
+                    >
+                        {{ t('bluesky.search.domain') }}
+                    </span>
+                    <input
+                        v-model="form.domain"
+                        type="text"
+                        class="h-10 w-full rounded-md border border-input bg-background px-3 text-sm"
+                        :placeholder="t('bluesky.search.domainPlaceholder')"
+                    />
+                </label>
 
-            <label class="block min-w-0">
-                <span
-                    class="mb-1 block truncate text-xs font-medium text-muted-foreground"
-                >
-                    {{ t('bluesky.search.author') }}
-                </span>
-                <input
-                    v-model="form.author"
-                    type="text"
-                    class="h-10 w-full rounded-md border border-input bg-background px-3 text-sm"
-                    :placeholder="t('bluesky.search.authorPlaceholder')"
-                />
-            </label>
+                <label class="block min-w-0">
+                    <span
+                        class="mb-1 block truncate text-xs font-medium text-muted-foreground"
+                    >
+                        {{ t('bluesky.search.url') }}
+                    </span>
+                    <input
+                        v-model="form.url"
+                        type="text"
+                        class="h-10 w-full rounded-md border border-input bg-background px-3 text-sm"
+                        :placeholder="t('bluesky.search.urlPlaceholder')"
+                    />
+                </label>
 
-            <label class="block min-w-0">
-                <span
-                    class="mb-1 block truncate text-xs font-medium text-muted-foreground"
-                >
-                    {{ t('bluesky.search.mentions') }}
-                </span>
-                <input
-                    v-model="form.mentions"
-                    type="text"
-                    class="h-10 w-full rounded-md border border-input bg-background px-3 text-sm"
-                    :placeholder="t('bluesky.search.mentionsPlaceholder')"
-                />
-            </label>
+                <label class="block min-w-0">
+                    <span
+                        class="mb-1 block truncate text-xs font-medium text-muted-foreground"
+                    >
+                        {{ t('bluesky.search.tag') }}
+                    </span>
+                    <input
+                        v-model="form.tag"
+                        type="text"
+                        class="h-10 w-full rounded-md border border-input bg-background px-3 text-sm"
+                        :placeholder="t('bluesky.search.tagPlaceholder')"
+                    />
+                </label>
 
-            <label class="block min-w-0">
-                <span
-                    class="mb-1 block truncate text-xs font-medium text-muted-foreground"
-                >
-                    {{ t('bluesky.search.domain') }}
-                </span>
-                <input
-                    v-model="form.domain"
-                    type="text"
-                    class="h-10 w-full rounded-md border border-input bg-background px-3 text-sm"
-                    :placeholder="t('bluesky.search.domainPlaceholder')"
-                />
-            </label>
+                <label class="block min-w-0">
+                    <span
+                        class="mb-1 block truncate text-xs font-medium text-muted-foreground"
+                    >
+                        {{ t('bluesky.search.since') }}
+                    </span>
+                    <input
+                        v-model="form.since"
+                        type="datetime-local"
+                        class="h-10 w-full rounded-md border border-input bg-background px-3 text-sm"
+                    />
+                </label>
 
-            <label class="block min-w-0">
-                <span
-                    class="mb-1 block truncate text-xs font-medium text-muted-foreground"
-                >
-                    {{ t('bluesky.search.url') }}
-                </span>
-                <input
-                    v-model="form.url"
-                    type="text"
-                    class="h-10 w-full rounded-md border border-input bg-background px-3 text-sm"
-                    :placeholder="t('bluesky.search.urlPlaceholder')"
-                />
-            </label>
-
-            <label class="block min-w-0">
-                <span
-                    class="mb-1 block truncate text-xs font-medium text-muted-foreground"
-                >
-                    {{ t('bluesky.search.tag') }}
-                </span>
-                <input
-                    v-model="form.tag"
-                    type="text"
-                    class="h-10 w-full rounded-md border border-input bg-background px-3 text-sm"
-                    :placeholder="t('bluesky.search.tagPlaceholder')"
-                />
-            </label>
-
-            <label class="block min-w-0">
-                <span
-                    class="mb-1 block truncate text-xs font-medium text-muted-foreground"
-                >
-                    {{ t('bluesky.search.since') }}
-                </span>
-                <input
-                    v-model="form.since"
-                    type="datetime-local"
-                    class="h-10 w-full rounded-md border border-input bg-background px-3 text-sm"
-                />
-            </label>
-
-            <label class="block min-w-0">
-                <span
-                    class="mb-1 block truncate text-xs font-medium text-muted-foreground"
-                >
-                    {{ t('bluesky.search.until') }}
-                </span>
-                <input
-                    v-model="form.until"
-                    type="datetime-local"
-                    class="h-10 w-full rounded-md border border-input bg-background px-3 text-sm"
-                />
-            </label>
-        </IntelAdvancedFilters>
-
-        <p v-if="error" class="mt-3 text-sm text-destructive">{{ error }}</p>
-    </IntelSearchPanel>
+                <label class="block min-w-0">
+                    <span
+                        class="mb-1 block truncate text-xs font-medium text-muted-foreground"
+                    >
+                        {{ t('bluesky.search.until') }}
+                    </span>
+                    <input
+                        v-model="form.until"
+                        type="datetime-local"
+                        class="h-10 w-full rounded-md border border-input bg-background px-3 text-sm"
+                    />
+                </label>
+            </IntelAdvancedFilters>
+        </template>
+        <template #afterActions>
+            <p v-if="error" class="mt-3 text-sm text-destructive">
+                {{ error }}
+            </p>
+        </template>
+    </SearchControlPanel>
 
     <IntelResultPanel>
         <BlueskySearchResults

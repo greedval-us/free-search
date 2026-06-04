@@ -1,23 +1,22 @@
 <script setup lang="ts">
-import {
-    BarChart3,
-    ChevronDown,
-    ChevronUp,
-    Download,
-    ExternalLink,
-    FileText,
-    RefreshCw,
-    Tags,
-} from 'lucide-vue-next';
+import { ExternalLink, Tags } from 'lucide-vue-next';
 import { computed, ref } from 'vue';
-import HelpTooltip from '@/components/ui/HelpTooltip.vue';
+import AnalyticsControlPanel from '@/components/ui/analytics/AnalyticsControlPanel.vue';
+import AnalyticsChipSection from '@/components/ui/analytics/AnalyticsChipSection.vue';
+import AnalyticsMetricGrid from '@/components/ui/analytics/AnalyticsMetricGrid.vue';
+import AnalyticsRankSection from '@/components/ui/analytics/AnalyticsRankSection.vue';
+import AnalyticsSampleGrid from '@/components/ui/analytics/AnalyticsSampleGrid.vue';
+import AnalyticsTimelineSection from '@/components/ui/analytics/AnalyticsTimelineSection.vue';
 import IntelResultPanel from '@/components/ui/IntelResultPanel.vue';
-import MetricCard from '@/components/ui/MetricCard.vue';
 import SectionCard from '@/components/ui/SectionCard.vue';
 import { useI18n } from '@/composables/useI18n';
 import { apiRequest } from '@/lib/api';
 import MastodonAnalyticsEmptyState from './MastodonAnalyticsEmptyState.vue';
-import type { MastodonAccount, MastodonAnalyticsPayload, MastodonHashtag } from '../types';
+import type {
+    MastodonAccount,
+    MastodonAnalyticsPayload,
+    MastodonHashtag,
+} from '../types';
 
 type AnalyticsMode = 'account' | 'hashtag';
 
@@ -39,7 +38,9 @@ const result = ref<MastodonAnalyticsPayload | null>(null);
 const panelCollapsed = ref(false);
 
 const canRun = computed(() => form.value.target.trim().length > 0);
-const canUseReportActions = computed(() => result.value !== null && canRun.value);
+const canUseReportActions = computed(
+    () => result.value !== null && canRun.value
+);
 const isAccountMode = computed(() => form.value.mode === 'account');
 const accountProfile = computed(() =>
     result.value?.meta.mode === 'account' && result.value.profile
@@ -56,7 +57,12 @@ const fmt = (value: number) => new Intl.NumberFormat().format(value ?? 0);
 const formatDate = (value: string) =>
     value ? new Date(value).toLocaleString() : '-';
 
-const clampNumber = (value: number, min: number, max: number, fallback: number) => {
+const clampNumber = (
+    value: number,
+    min: number,
+    max: number,
+    fallback: number
+) => {
     if (!Number.isFinite(value)) {
         return fallback;
     }
@@ -91,7 +97,8 @@ const runAnalytics = async () => {
     loading.value = false;
 
     if (!response.ok) {
-        error.value = response.message ?? t('mastodon.analytics.errors.requestFailed');
+        error.value =
+            response.message ?? t('mastodon.analytics.errors.requestFailed');
 
         return;
     }
@@ -131,43 +138,202 @@ const downloadReport = () => {
         'noopener,noreferrer'
     );
 };
+
+const primaryMetrics = computed(() =>
+    result.value
+        ? [
+              {
+                  title: t('mastodon.analytics.metrics.posts'),
+                  value: fmt(result.value.summary.postsCount),
+              },
+              {
+                  title: t('mastodon.analytics.metrics.accounts'),
+                  value: fmt(result.value.summary.uniqueAccountsCount),
+              },
+              {
+                  title: t('mastodon.analytics.metrics.instances'),
+                  value: fmt(result.value.summary.uniqueInstancesCount),
+              },
+              {
+                  title: t('mastodon.analytics.metrics.languages'),
+                  value: fmt(result.value.summary.uniqueLanguagesCount),
+              },
+              {
+                  title: t('mastodon.analytics.metrics.mediaPosts'),
+                  value: fmt(result.value.summary.postsWithMediaCount),
+              },
+              {
+                  title: t('mastodon.analytics.metrics.linkPosts'),
+                  value: fmt(result.value.summary.postsWithLinksCount),
+              },
+          ]
+        : []
+);
+
+const engagementMetrics = computed(() =>
+    result.value
+        ? [
+              {
+                  title: t('mastodon.analytics.metrics.replyPosts'),
+                  value: fmt(result.value.summary.replyPostsCount),
+              },
+              {
+                  title: t('mastodon.analytics.metrics.boostPosts'),
+                  value: fmt(result.value.summary.boostPostsCount),
+              },
+              {
+                  title: t('mastodon.analytics.metrics.sensitivePosts'),
+                  value: fmt(result.value.summary.sensitivePostsCount),
+              },
+              {
+                  title: t('mastodon.analytics.metrics.repliesTotal'),
+                  value: fmt(result.value.summary.totalReplies),
+              },
+              {
+                  title: t('mastodon.analytics.metrics.reblogsTotal'),
+                  value: fmt(result.value.summary.totalReblogs),
+              },
+              {
+                  title: t('mastodon.analytics.metrics.favouritesTotal'),
+                  value: fmt(result.value.summary.totalFavourites),
+              },
+          ]
+        : []
+);
+
+const sampleItems = computed(() =>
+    result.value
+        ? [
+              {
+                  label: t('mastodon.analytics.sampleTarget'),
+                  value: result.value.meta.resolvedTarget,
+              },
+              {
+                  label: t('mastodon.analytics.sampledPosts'),
+                  value: fmt(result.value.meta.sampledPosts),
+              },
+              {
+                  label: t('mastodon.analytics.pagesRequested'),
+                  value: fmt(result.value.meta.pagesRequested),
+              },
+              {
+                  label: t('mastodon.analytics.pagesLoaded'),
+                  value: fmt(result.value.meta.pagesLoaded),
+              },
+          ]
+        : []
+);
+
+const timelineItems = computed(() => [
+    {
+        key: 'posts',
+        label: t('mastodon.analytics.metrics.posts'),
+        value: '',
+    },
+    {
+        key: 'postsWithMedia',
+        label: t('mastodon.analytics.metrics.mediaPosts'),
+        value: '',
+    },
+    {
+        key: 'postsWithLinks',
+        label: t('mastodon.analytics.metrics.linkPosts'),
+        value: '',
+    },
+    { key: 'replies', label: t('mastodon.metrics.replies'), value: '' },
+    { key: 'reblogs', label: t('mastodon.metrics.reblogs'), value: '' },
+    {
+        key: 'favourites',
+        label: t('mastodon.metrics.favourites'),
+        value: '',
+    },
+]);
+
+const timelinePoints = computed(() =>
+    result.value?.timeline.map((point) => ({
+        day: point.day,
+        values: [
+            { key: 'posts', value: point.posts },
+            { key: 'postsWithMedia', value: point.postsWithMedia },
+            { key: 'postsWithLinks', value: point.postsWithLinks },
+            { key: 'replies', value: point.replies },
+            { key: 'reblogs', value: point.reblogs },
+            { key: 'favourites', value: point.favourites },
+        ],
+    })) ?? []
+);
+
+const topDomains = computed(() =>
+    result.value?.topDomains.map((domain) => ({
+        key: domain.domain,
+        label: `${domain.domain} | ${domain.count}`,
+    })) ?? []
+);
+
+const topTags = computed(() =>
+    result.value?.topTags.map((tag) => ({
+        key: tag.tag,
+        label: `#${tag.tag} | ${tag.count}`,
+        icon: Tags,
+    })) ?? []
+);
+
+const topAccounts = computed(() =>
+    result.value?.topAccounts.map((account) => ({
+        key: account.id,
+        title: account.displayName || account.username,
+        subtitle: `@${account.acct}`,
+        caption: t('mastodon.analytics.usesInSample'),
+        value: account.count,
+    })) ?? []
+);
+
+const topMentions = computed(() =>
+    result.value?.topMentions.map((mention) => ({
+        key: mention.acct,
+        title: `@${mention.acct}`,
+        caption: t('mastodon.analytics.mentionsInSample'),
+        value: mention.count,
+        link: mention.url,
+        linkLabel: t('mastodon.common.openProfile'),
+    })) ?? []
+);
+
+const topLanguages = computed(() =>
+    result.value?.topLanguages.map((language) => ({
+        key: language.language || 'unknown',
+        title: language.language || '-',
+        value: language.count,
+    })) ?? []
+);
 </script>
 
 <template>
-    <section class="intel-panel-strong sticky top-0 z-10 shrink-0">
-        <div class="flex items-center justify-between gap-3">
-            <div class="space-y-1">
-                <div class="flex items-center gap-2 text-sm font-semibold">
-                    <BarChart3 class="h-4 w-4 text-cyan-400" />
-                    <span>{{ t('mastodon.analytics.title') }}</span>
-                    <HelpTooltip
-                        :label="t('mastodon.help.label')"
-                        :text="t('mastodon.analytics.hint')"
-                    />
-                </div>
-                <p class="text-xs text-muted-foreground">
-                    {{
-                        panelCollapsed
-                            ? t('mastodon.analytics.collapsed')
-                            : t('mastodon.analytics.hint')
-                    }}
-                </p>
-            </div>
-
-            <button
-                type="button"
-                class="inline-flex h-9 w-9 cursor-pointer items-center justify-center rounded-full border border-input text-sm text-foreground transition hover:bg-accent"
-                @click="panelCollapsed = !panelCollapsed"
-            >
-                <ChevronDown v-if="panelCollapsed" class="h-4 w-4" />
-                <ChevronUp v-else class="h-4 w-4" />
-            </button>
-        </div>
-
-        <div v-if="!panelCollapsed" class="mt-3 space-y-2.5">
+    <AnalyticsControlPanel
+        :title="t('mastodon.analytics.title')"
+        :help-label="t('mastodon.help.label')"
+        :help-text="t('mastodon.analytics.hint')"
+        :subtitle="t('mastodon.analytics.hint')"
+        :collapsed-text="t('mastodon.analytics.collapsed')"
+        :collapsed="panelCollapsed"
+        :loading="loading"
+        :can-run="canRun"
+        :can-use-report-actions="canUseReportActions"
+        :run-label="t('mastodon.analytics.refresh')"
+        :loading-label="t('mastodon.analytics.loading')"
+        :report-label="t('mastodon.analytics.report')"
+        :download-report-label="t('mastodon.analytics.downloadReport')"
+        @update:collapsed="panelCollapsed = $event"
+        @run="runAnalytics"
+        @open-report="openReport"
+        @download-report="downloadReport"
+    >
+        <template #fields>
             <div class="grid gap-2.5 md:grid-cols-2 xl:grid-cols-12">
                 <label class="block min-w-0 xl:col-span-2">
-                    <span class="mb-1 block truncate text-xs font-medium text-muted-foreground">
+                    <span
+                        class="mb-1 block truncate text-xs font-medium text-muted-foreground"
+                    >
                         {{ t('mastodon.analytics.mode') }}
                     </span>
                     <select
@@ -184,7 +350,9 @@ const downloadReport = () => {
                 </label>
 
                 <label class="block min-w-0 xl:col-span-4">
-                    <span class="mb-1 block truncate text-xs font-medium text-muted-foreground">
+                    <span
+                        class="mb-1 block truncate text-xs font-medium text-muted-foreground"
+                    >
                         {{ t('mastodon.analytics.target') }}
                     </span>
                     <input
@@ -200,7 +368,9 @@ const downloadReport = () => {
                 </label>
 
                 <label class="block min-w-0 xl:col-span-2">
-                    <span class="mb-1 block truncate text-xs font-medium text-muted-foreground">
+                    <span
+                        class="mb-1 block truncate text-xs font-medium text-muted-foreground"
+                    >
                         {{ t('mastodon.analytics.limit') }}
                     </span>
                     <input
@@ -209,12 +379,16 @@ const downloadReport = () => {
                         min="1"
                         max="20"
                         class="h-10 w-full rounded-md border border-input bg-background px-3 text-sm"
-                        @change="form.limit = clampNumber(form.limit, 1, 20, 10)"
+                        @change="
+                            form.limit = clampNumber(form.limit, 1, 20, 10)
+                        "
                     />
                 </label>
 
                 <label class="block min-w-0 xl:col-span-2">
-                    <span class="mb-1 block truncate text-xs font-medium text-muted-foreground">
+                    <span
+                        class="mb-1 block truncate text-xs font-medium text-muted-foreground"
+                    >
                         {{ t('mastodon.analytics.pages') }}
                     </span>
                     <input
@@ -228,7 +402,9 @@ const downloadReport = () => {
                 </label>
 
                 <label class="block min-w-0 xl:col-span-1">
-                    <span class="mb-1 block truncate text-xs font-medium text-muted-foreground">
+                    <span
+                        class="mb-1 block truncate text-xs font-medium text-muted-foreground"
+                    >
                         {{ t('mastodon.analytics.dateFrom') }}
                     </span>
                     <input
@@ -239,7 +415,9 @@ const downloadReport = () => {
                 </label>
 
                 <label class="block min-w-0 xl:col-span-1">
-                    <span class="mb-1 block truncate text-xs font-medium text-muted-foreground">
+                    <span
+                        class="mb-1 block truncate text-xs font-medium text-muted-foreground"
+                    >
                         {{ t('mastodon.analytics.dateTo') }}
                     </span>
                     <input
@@ -249,62 +427,30 @@ const downloadReport = () => {
                     />
                 </label>
             </div>
-
-            <div
-                class="flex flex-wrap items-end justify-between gap-2.5 rounded-md border border-border/70 bg-background/60 p-2.5"
-            >
-                <label class="block min-w-0">
-                    <span class="mb-1 block truncate text-xs font-medium text-muted-foreground">
-                        {{ t('mastodon.search.resolveRemote') }}
-                    </span>
-                    <span
-                        class="flex h-10 items-center gap-3 rounded-md border border-input bg-background px-3 text-sm"
-                    >
-                        <input v-model="form.resolve" type="checkbox" class="h-4 w-4" />
-                        <span>{{ t('mastodon.search.resolveRemote') }}</span>
-                    </span>
-                </label>
-
-                <div class="flex w-full flex-wrap justify-end gap-2 md:w-auto">
-                    <button
-                        type="button"
-                        :disabled="loading || !canRun"
-                        class="inline-flex h-10 cursor-pointer items-center gap-2 rounded-md border border-input bg-background px-4 text-sm font-medium hover:bg-accent disabled:cursor-not-allowed disabled:opacity-60"
-                        @click="runAnalytics"
-                    >
-                        <RefreshCw class="h-4 w-4" :class="{ 'animate-spin': loading }" />
-                        {{
-                            loading
-                                ? t('mastodon.analytics.loading')
-                                : t('mastodon.analytics.refresh')
-                        }}
-                    </button>
-
-                    <button
-                        type="button"
-                        :disabled="!canUseReportActions"
-                        class="inline-flex h-10 cursor-pointer items-center gap-2 rounded-md bg-primary px-4 text-sm font-semibold text-primary-foreground hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-60"
-                        @click="openReport"
-                    >
-                        <FileText class="h-4 w-4" />
-                        {{ t('mastodon.analytics.report') }}
-                    </button>
-
-                    <button
-                        type="button"
-                        :disabled="!canUseReportActions"
-                        class="inline-flex h-10 cursor-pointer items-center gap-2 rounded-md border border-input bg-background px-4 text-sm font-medium hover:bg-accent disabled:cursor-not-allowed disabled:opacity-60"
-                        @click="downloadReport"
-                    >
-                        <Download class="h-4 w-4" />
-                        {{ t('mastodon.analytics.downloadReport') }}
-                    </button>
-                </div>
-            </div>
-
+        </template>
+        <template #toolbarLeading>
+            <label class="block min-w-0">
+                <span
+                    class="mb-1 block truncate text-xs font-medium text-muted-foreground"
+                >
+                    {{ t('mastodon.search.resolveRemote') }}
+                </span>
+                <span
+                    class="flex h-10 items-center gap-3 rounded-md border border-input bg-background px-3 text-sm"
+                >
+                    <input
+                        v-model="form.resolve"
+                        type="checkbox"
+                        class="h-4 w-4"
+                    />
+                    <span>{{ t('mastodon.search.resolveRemote') }}</span>
+                </span>
+            </label>
+        </template>
+        <template #afterActions>
             <p v-if="error" class="text-sm text-destructive">{{ error }}</p>
-        </div>
-    </section>
+        </template>
+    </AnalyticsControlPanel>
 
     <IntelResultPanel>
         <div class="intel-scroll min-h-0 flex-1 space-y-4 overflow-y-auto pr-1">
@@ -316,19 +462,28 @@ const downloadReport = () => {
             />
 
             <template v-else>
-                <SectionCard v-if="accountProfile" :title="t('mastodon.analytics.accountProfile')">
+                <SectionCard
+                    v-if="accountProfile"
+                    :title="t('mastodon.analytics.accountProfile')"
+                >
                     <div class="flex flex-col gap-4 md:flex-row">
                         <img
                             v-if="accountProfile.avatar"
                             :src="accountProfile.avatar"
-                            :alt="accountProfile.displayName || accountProfile.acct"
+                            :alt="
+                                accountProfile.displayName ||
+                                accountProfile.acct
+                            "
                             class="h-20 w-20 rounded-full object-cover"
                             loading="lazy"
                         />
                         <div class="min-w-0 flex-1">
                             <div class="flex flex-wrap items-center gap-2">
                                 <h2 class="text-base font-semibold">
-                                    {{ accountProfile.displayName || accountProfile.username }}
+                                    {{
+                                        accountProfile.displayName ||
+                                        accountProfile.username
+                                    }}
                                 </h2>
                                 <a
                                     v-if="accountProfile.url"
@@ -346,17 +501,27 @@ const downloadReport = () => {
                                 {{ accountProfile.instanceDomain || '-' }} |
                                 {{ formatDate(accountProfile.createdAt) }}
                             </p>
-                            <p class="mt-2 text-xs leading-relaxed text-muted-foreground">
-                                {{ accountProfile.note || t('mastodon.search.noBio') }}
+                            <p
+                                class="mt-2 text-xs leading-relaxed text-muted-foreground"
+                            >
+                                {{
+                                    accountProfile.note ||
+                                    t('mastodon.search.noBio')
+                                }}
                             </p>
                         </div>
                     </div>
                 </SectionCard>
 
-                <SectionCard v-if="hashtagProfile" :title="t('mastodon.analytics.hashtagProfile')">
+                <SectionCard
+                    v-if="hashtagProfile"
+                    :title="t('mastodon.analytics.hashtagProfile')"
+                >
                     <div class="flex items-start justify-between gap-3">
                         <div class="min-w-0">
-                            <h2 class="text-base font-semibold">#{{ hashtagProfile.name }}</h2>
+                            <h2 class="text-base font-semibold">
+                                #{{ hashtagProfile.name }}
+                            </h2>
                             <p class="mt-1 text-xs text-muted-foreground">
                                 {{ t('mastodon.metrics.historyPoints') }}:
                                 {{ hashtagProfile.history.length }}
@@ -382,94 +547,71 @@ const downloadReport = () => {
                             :key="`${hashtagProfile.name}-${point.day}`"
                             class="rounded-md border border-border/70 bg-card/60 p-2 text-xs"
                         >
-                            <div class="font-medium text-foreground">{{ point.day }}</div>
+                            <div class="font-medium text-foreground">
+                                {{ point.day }}
+                            </div>
                             <div class="mt-1 text-muted-foreground">
-                                {{ t('mastodon.metrics.uses') }}: {{ point.uses }}
+                                {{ t('mastodon.metrics.uses') }}:
+                                {{ point.uses }}
                             </div>
                             <div class="text-muted-foreground">
-                                {{ t('mastodon.metrics.accounts') }}: {{ point.accounts }}
+                                {{ t('mastodon.metrics.accounts') }}:
+                                {{ point.accounts }}
                             </div>
                         </div>
                     </div>
                 </SectionCard>
 
-                <div class="grid gap-2 sm:grid-cols-2 xl:grid-cols-6">
-                    <MetricCard :title="t('mastodon.analytics.metrics.posts')" :value="fmt(result.summary.postsCount)" />
-                    <MetricCard :title="t('mastodon.analytics.metrics.accounts')" :value="fmt(result.summary.uniqueAccountsCount)" />
-                    <MetricCard :title="t('mastodon.analytics.metrics.instances')" :value="fmt(result.summary.uniqueInstancesCount)" />
-                    <MetricCard :title="t('mastodon.analytics.metrics.languages')" :value="fmt(result.summary.uniqueLanguagesCount)" />
-                    <MetricCard :title="t('mastodon.analytics.metrics.mediaPosts')" :value="fmt(result.summary.postsWithMediaCount)" />
-                    <MetricCard :title="t('mastodon.analytics.metrics.linkPosts')" :value="fmt(result.summary.postsWithLinksCount)" />
-                </div>
+                <AnalyticsMetricGrid
+                    :items="primaryMetrics"
+                    grid-class="sm:grid-cols-2 xl:grid-cols-6"
+                />
 
-                <div class="grid gap-2 sm:grid-cols-2 xl:grid-cols-6">
-                    <MetricCard :title="t('mastodon.analytics.metrics.replyPosts')" :value="fmt(result.summary.replyPostsCount)" />
-                    <MetricCard :title="t('mastodon.analytics.metrics.boostPosts')" :value="fmt(result.summary.boostPostsCount)" />
-                    <MetricCard :title="t('mastodon.analytics.metrics.sensitivePosts')" :value="fmt(result.summary.sensitivePostsCount)" />
-                    <MetricCard :title="t('mastodon.analytics.metrics.repliesTotal')" :value="fmt(result.summary.totalReplies)" />
-                    <MetricCard :title="t('mastodon.analytics.metrics.reblogsTotal')" :value="fmt(result.summary.totalReblogs)" />
-                    <MetricCard :title="t('mastodon.analytics.metrics.favouritesTotal')" :value="fmt(result.summary.totalFavourites)" />
-                </div>
+                <AnalyticsMetricGrid
+                    :items="engagementMetrics"
+                    grid-class="sm:grid-cols-2 xl:grid-cols-6"
+                />
 
-                <SectionCard :title="t('mastodon.analytics.sample')">
-                    <div class="grid gap-2 md:grid-cols-2 xl:grid-cols-4">
-                        <div class="rounded-md border border-border/70 bg-background/70 p-3 text-xs">
-                            <div class="text-muted-foreground">{{ t('mastodon.analytics.sampleTarget') }}</div>
-                            <div class="mt-1 font-semibold text-foreground">{{ result.meta.resolvedTarget }}</div>
-                        </div>
-                        <div class="rounded-md border border-border/70 bg-background/70 p-3 text-xs">
-                            <div class="text-muted-foreground">{{ t('mastodon.analytics.sampledPosts') }}</div>
-                            <div class="mt-1 font-semibold text-foreground">{{ fmt(result.meta.sampledPosts) }}</div>
-                        </div>
-                        <div class="rounded-md border border-border/70 bg-background/70 p-3 text-xs">
-                            <div class="text-muted-foreground">{{ t('mastodon.analytics.pagesRequested') }}</div>
-                            <div class="mt-1 font-semibold text-foreground">{{ fmt(result.meta.pagesRequested) }}</div>
-                        </div>
-                        <div class="rounded-md border border-border/70 bg-background/70 p-3 text-xs">
-                            <div class="text-muted-foreground">{{ t('mastodon.analytics.pagesLoaded') }}</div>
-                            <div class="mt-1 font-semibold text-foreground">{{ fmt(result.meta.pagesLoaded) }}</div>
-                        </div>
-                    </div>
-                </SectionCard>
+                <AnalyticsSampleGrid
+                    :title="t('mastodon.analytics.sample')"
+                    :items="sampleItems"
+                />
 
                 <section class="grid gap-4 xl:grid-cols-2">
-                    <SectionCard :title="t('mastodon.analytics.timeline')">
-                        <div v-if="result.timeline.length > 0" class="space-y-2">
-                            <div
-                                v-for="point in result.timeline"
-                                :key="point.day"
-                                class="rounded-md border border-border/70 bg-background/70 p-3 text-xs"
-                            >
-                                <div class="font-medium text-foreground">{{ point.day }}</div>
-                                <div class="mt-1 flex flex-wrap gap-x-4 gap-y-1 text-muted-foreground">
-                                    <span>{{ t('mastodon.analytics.metrics.posts') }}: {{ point.posts }}</span>
-                                    <span>{{ t('mastodon.analytics.metrics.mediaPosts') }}: {{ point.postsWithMedia }}</span>
-                                    <span>{{ t('mastodon.analytics.metrics.linkPosts') }}: {{ point.postsWithLinks }}</span>
-                                    <span>{{ t('mastodon.metrics.replies') }}: {{ point.replies }}</span>
-                                    <span>{{ t('mastodon.metrics.reblogs') }}: {{ point.reblogs }}</span>
-                                    <span>{{ t('mastodon.metrics.favourites') }}: {{ point.favourites }}</span>
-                                </div>
-                            </div>
-                        </div>
-                        <p v-else class="text-xs text-muted-foreground">
-                            {{ t('mastodon.analytics.noTimeline') }}
-                        </p>
-                    </SectionCard>
+                    <AnalyticsTimelineSection
+                        :title="t('mastodon.analytics.timeline')"
+                        :items="timelineItems"
+                        :points="timelinePoints"
+                        :empty-text="t('mastodon.analytics.noTimeline')"
+                    />
 
                     <SectionCard :title="t('mastodon.analytics.topPosts')">
-                        <div v-if="result.topPosts.length > 0" class="space-y-2">
+                        <div
+                            v-if="result.topPosts.length > 0"
+                            class="space-y-2"
+                        >
                             <article
                                 v-for="status in result.topPosts"
                                 :key="status.id"
                                 class="rounded-md border border-border/70 bg-background/70 p-3"
                             >
-                                <div class="flex items-center justify-between gap-3">
+                                <div
+                                    class="flex items-center justify-between gap-3"
+                                >
                                     <div class="min-w-0">
-                                        <div class="truncate text-xs font-semibold text-foreground">
-                                            {{ status.account.displayName || status.account.acct }}
+                                        <div
+                                            class="truncate text-xs font-semibold text-foreground"
+                                        >
+                                            {{
+                                                status.account.displayName ||
+                                                status.account.acct
+                                            }}
                                         </div>
-                                        <div class="truncate text-[11px] text-muted-foreground">
-                                            @{{ status.account.acct }} | {{ formatDate(status.createdAt) }}
+                                        <div
+                                            class="truncate text-[11px] text-muted-foreground"
+                                        >
+                                            @{{ status.account.acct }} |
+                                            {{ formatDate(status.createdAt) }}
                                         </div>
                                     </div>
                                     <a
@@ -483,13 +625,29 @@ const downloadReport = () => {
                                         {{ t('mastodon.common.open') }}
                                     </a>
                                 </div>
-                                <p class="mt-2 text-xs leading-relaxed text-foreground">
-                                    {{ status.content || t('mastodon.search.noText') }}
+                                <p
+                                    class="mt-2 text-xs leading-relaxed text-foreground"
+                                >
+                                    {{
+                                        status.content ||
+                                        t('mastodon.search.noText')
+                                    }}
                                 </p>
-                                <div class="mt-2 flex flex-wrap gap-3 text-[11px] text-muted-foreground">
-                                    <span>{{ t('mastodon.metrics.replies') }}: {{ status.repliesCount }}</span>
-                                    <span>{{ t('mastodon.metrics.reblogs') }}: {{ status.reblogsCount }}</span>
-                                    <span>{{ t('mastodon.metrics.favourites') }}: {{ status.favouritesCount }}</span>
+                                <div
+                                    class="mt-2 flex flex-wrap gap-3 text-[11px] text-muted-foreground"
+                                >
+                                    <span
+                                        >{{ t('mastodon.metrics.replies') }}:
+                                        {{ status.repliesCount }}</span
+                                    >
+                                    <span
+                                        >{{ t('mastodon.metrics.reblogs') }}:
+                                        {{ status.reblogsCount }}</span
+                                    >
+                                    <span
+                                        >{{ t('mastodon.metrics.favourites') }}:
+                                        {{ status.favouritesCount }}</span
+                                    >
                                 </div>
                             </article>
                         </div>
@@ -500,123 +658,37 @@ const downloadReport = () => {
                 </section>
 
                 <section class="grid gap-4 xl:grid-cols-2">
-                    <SectionCard :title="t('mastodon.analytics.topDomains')">
-                        <div v-if="result.topDomains.length > 0" class="flex flex-wrap gap-2">
-                            <span
-                                v-for="domain in result.topDomains"
-                                :key="domain.domain"
-                                class="rounded-full border border-input px-2 py-1 text-xs"
-                            >
-                                {{ domain.domain }} | {{ domain.count }}
-                            </span>
-                        </div>
-                        <p v-else class="text-xs text-muted-foreground">
-                            {{ t('mastodon.analytics.noDomains') }}
-                        </p>
-                    </SectionCard>
+                    <AnalyticsChipSection
+                        :title="t('mastodon.analytics.topDomains')"
+                        :items="topDomains"
+                        :empty-text="t('mastodon.analytics.noDomains')"
+                    />
 
-                    <SectionCard :title="t('mastodon.analytics.topTags')">
-                        <div v-if="result.topTags.length > 0" class="flex flex-wrap gap-2">
-                            <span
-                                v-for="tag in result.topTags"
-                                :key="tag.tag"
-                                class="inline-flex items-center gap-1 rounded-full border border-input px-2 py-1 text-xs"
-                            >
-                                <Tags class="h-3 w-3" />
-                                #{{ tag.tag }} | {{ tag.count }}
-                            </span>
-                        </div>
-                        <p v-else class="text-xs text-muted-foreground">
-                            {{ t('mastodon.analytics.noTags') }}
-                        </p>
-                    </SectionCard>
+                    <AnalyticsChipSection
+                        :title="t('mastodon.analytics.topTags')"
+                        :items="topTags"
+                        :empty-text="t('mastodon.analytics.noTags')"
+                    />
                 </section>
 
                 <section class="grid gap-4 xl:grid-cols-3">
-                    <SectionCard :title="t('mastodon.analytics.topAccounts')">
-                        <div v-if="result.topAccounts.length > 0" class="space-y-2">
-                            <div
-                                v-for="account in result.topAccounts"
-                                :key="account.id"
-                                class="rounded-md border border-border/70 bg-background/70 p-3 text-xs"
-                            >
-                                <div class="flex items-center justify-between gap-3">
-                                    <div class="min-w-0">
-                                        <div class="truncate font-medium text-foreground">
-                                            {{ account.displayName || account.username }}
-                                        </div>
-                                        <div class="truncate text-muted-foreground">
-                                            @{{ account.acct }}
-                                        </div>
-                                    </div>
-                                    <div class="text-right">
-                                        <div class="font-semibold text-foreground">{{ account.count }}</div>
-                                        <div class="text-muted-foreground">{{ t('mastodon.analytics.usesInSample') }}</div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <p v-else class="text-xs text-muted-foreground">
-                            {{ t('mastodon.analytics.noAccounts') }}
-                        </p>
-                    </SectionCard>
+                    <AnalyticsRankSection
+                        :title="t('mastodon.analytics.topAccounts')"
+                        :items="topAccounts"
+                        :empty-text="t('mastodon.analytics.noAccounts')"
+                    />
 
-                    <SectionCard :title="t('mastodon.analytics.topMentions')">
-                        <div v-if="result.topMentions.length > 0" class="space-y-2">
-                            <div
-                                v-for="mention in result.topMentions"
-                                :key="mention.acct"
-                                class="rounded-md border border-border/70 bg-background/70 p-3 text-xs"
-                            >
-                                <div class="flex items-center justify-between gap-3">
-                                    <div class="min-w-0">
-                                        <div class="truncate font-medium text-foreground">
-                                            @{{ mention.acct }}
-                                        </div>
-                                        <a
-                                            v-if="mention.url"
-                                            :href="mention.url"
-                                            target="_blank"
-                                            rel="noopener noreferrer"
-                                            class="mt-1 inline-flex items-center gap-1 text-primary hover:underline"
-                                        >
-                                            <ExternalLink class="h-3 w-3" />
-                                            {{ t('mastodon.common.openProfile') }}
-                                        </a>
-                                    </div>
-                                    <div class="text-right">
-                                        <div class="font-semibold text-foreground">{{ mention.count }}</div>
-                                        <div class="text-muted-foreground">{{ t('mastodon.analytics.mentionsInSample') }}</div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <p v-else class="text-xs text-muted-foreground">
-                            {{ t('mastodon.analytics.noMentions') }}
-                        </p>
-                    </SectionCard>
+                    <AnalyticsRankSection
+                        :title="t('mastodon.analytics.topMentions')"
+                        :items="topMentions"
+                        :empty-text="t('mastodon.analytics.noMentions')"
+                    />
 
-                    <SectionCard :title="t('mastodon.analytics.topLanguages')">
-                        <div v-if="result.topLanguages.length > 0" class="space-y-2">
-                            <div
-                                v-for="language in result.topLanguages"
-                                :key="language.language"
-                                class="rounded-md border border-border/70 bg-background/70 p-3 text-xs"
-                            >
-                                <div class="flex items-center justify-between gap-3">
-                                    <div class="font-medium text-foreground">
-                                        {{ language.language || '-' }}
-                                    </div>
-                                    <div class="font-semibold text-foreground">
-                                        {{ language.count }}
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <p v-else class="text-xs text-muted-foreground">
-                            {{ t('mastodon.analytics.noLanguages') }}
-                        </p>
-                    </SectionCard>
+                    <AnalyticsRankSection
+                        :title="t('mastodon.analytics.topLanguages')"
+                        :items="topLanguages"
+                        :empty-text="t('mastodon.analytics.noLanguages')"
+                    />
                 </section>
             </template>
         </div>

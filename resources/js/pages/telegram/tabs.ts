@@ -1,5 +1,5 @@
 import type { Component } from 'vue';
-import { MODULE_TAB_ICONS } from '@/lib/navigation/tab-icons';
+import { createModuleTabs } from '@/lib/navigation/create-module-tabs';
 import TelegramAnalyticsTab from './tabs/TelegramAnalyticsTab.vue';
 import TelegramParserTab from './tabs/TelegramParserTab.vue';
 import TelegramSearchTab from './tabs/TelegramSearchTab.vue';
@@ -13,25 +13,22 @@ export type TelegramTabDefinition = {
     accessKey?: string;
 };
 
-export const TELEGRAM_TABS: readonly TelegramTabDefinition[] = [
+export const TELEGRAM_TABS: readonly TelegramTabDefinition[] = createModuleTabs([
     {
         key: 'search',
         labelKey: 'telegram.tabs.search',
-        icon: MODULE_TAB_ICONS.search,
         component: TelegramSearchTab,
     },
     {
         key: 'analytics',
         labelKey: 'telegram.tabs.analytics',
-        icon: MODULE_TAB_ICONS.analytics,
         component: TelegramAnalyticsTab,
         accessKey: 'telegram.analytics',
     },
     {
         key: 'parser',
         labelKey: 'telegram.tabs.parser',
-        icon: MODULE_TAB_ICONS.parser,
         component: TelegramParserTab,
         accessKey: 'telegram.parser',
     },
-] as const;
+]) as readonly TelegramTabDefinition[];

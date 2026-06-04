@@ -1,15 +1,8 @@
 ﻿<script setup lang="ts">
-import {
-    ChevronDown,
-    ChevronUp,
-    ExternalLink,
-    Search,
-    Settings,
-} from 'lucide-vue-next';
+import { ExternalLink } from 'lucide-vue-next';
 import { computed, onMounted, ref } from 'vue';
-import HelpTooltip from '@/components/ui/HelpTooltip.vue';
 import IntelResultPanel from '@/components/ui/IntelResultPanel.vue';
-import IntelSearchPanel from '@/components/ui/IntelSearchPanel.vue';
+import SearchControlPanel from '@/components/ui/search/SearchControlPanel.vue';
 import { useI18n } from '@/composables/useI18n';
 import {
     getRepeatQueryParams,
@@ -313,40 +306,25 @@ onMounted(() => {
 </script>
 
 <template>
-    <IntelSearchPanel>
-        <div class="flex items-center justify-between gap-3">
-            <div class="space-y-1">
-                <div class="flex items-center gap-2 text-sm font-semibold">
-                    <Search class="h-4 w-4 text-cyan-400" />
-                    <span>{{ t('youtube.search.title') }}</span>
-                    <HelpTooltip
-                        :label="t('youtube.help.label')"
-                        :text="t('youtube.search.hint')"
-                    />
-                </div>
-                <p class="text-xs text-muted-foreground">
-                    {{
-                        searchPanelCollapsed
-                            ? t('youtube.search.collapsed')
-                            : t('youtube.search.filters')
-                    }}
-                </p>
-            </div>
-
-            <button
-                type="button"
-                class="inline-flex h-9 w-9 cursor-pointer items-center justify-center rounded-full border border-input text-sm text-foreground transition hover:bg-accent"
-                @click="searchPanelCollapsed = !searchPanelCollapsed"
-            >
-                <ChevronDown v-if="searchPanelCollapsed" class="h-4 w-4" />
-                <ChevronUp v-else class="h-4 w-4" />
-            </button>
-        </div>
-
-        <div
-            v-if="!searchPanelCollapsed"
-            class="mt-3 flex flex-wrap items-end gap-3"
-        >
+    <SearchControlPanel
+        :title="t('youtube.search.title')"
+        :help-label="t('youtube.help.label')"
+        :help-text="t('youtube.search.hint')"
+        :subtitle="t('youtube.search.filters')"
+        :collapsed-text="t('youtube.search.collapsed')"
+        :collapsed="searchPanelCollapsed"
+        :show-advanced="showAdvanced"
+        :loading="loading"
+        :can-search="canSearch"
+        :advanced-show-aria="t('youtube.search.advancedAriaShow')"
+        :advanced-hide-aria="t('youtube.search.advancedAriaHide')"
+        :submit-label="t('youtube.search.submit')"
+        :searching-label="t('youtube.common.loading')"
+        @update:collapsed="searchPanelCollapsed = $event"
+        @update:show-advanced="showAdvanced = $event"
+        @submit="runSearch(false)"
+    >
+        <template #fields>
             <div
                 class="grid min-w-0 flex-1 gap-3 md:grid-cols-2 xl:grid-cols-5"
             >
@@ -424,207 +402,183 @@ onMounted(() => {
                     </select>
                 </label>
             </div>
-
-            <div class="flex w-full flex-wrap items-end gap-2 lg:w-auto">
-                <button
-                    type="button"
-                    :aria-label="
-                        showAdvanced
-                            ? t('youtube.search.advancedAriaHide')
-                            : t('youtube.search.advancedAriaShow')
-                    "
-                    class="inline-flex h-10 w-10 cursor-pointer items-center justify-center rounded-md border border-slate-700 bg-slate-900/80 text-slate-200 transition hover:border-cyan-300/40 hover:text-cyan-100"
-                    :class="{
-                        'border-cyan-400/50 bg-cyan-400/20 text-cyan-300':
-                            showAdvanced,
-                    }"
-                    @click="showAdvanced = !showAdvanced"
+        </template>
+        <template #toolbarLeading>
+            <label class="block min-w-[120px]">
+                <span
+                    class="mb-1 block truncate text-xs font-medium text-muted-foreground"
+                    >{{ t('youtube.search.limit') }}</span
                 >
-                    <Settings class="h-4 w-4" />
-                </button>
-
-                <label class="block min-w-[120px]">
+                <input
+                    v-model.number="form.limit"
+                    type="number"
+                    min="1"
+                    max="10"
+                    class="h-10 w-full rounded-md border border-input bg-background px-3 text-sm"
+                    @input="clampLimit"
+                    @blur="clampLimit"
+                />
+            </label>
+        </template>
+        <template #advanced>
+            <div
+                v-if="!searchPanelCollapsed && showAdvanced"
+                class="mt-3 grid gap-3 rounded-lg border border-border/80 bg-background/50 p-3 md:grid-cols-3 xl:grid-cols-6"
+            >
+                <label class="block min-w-0">
                     <span
                         class="mb-1 block truncate text-xs font-medium text-muted-foreground"
-                        >{{ t('youtube.search.limit') }}</span
+                        >{{ t('youtube.search.publishedAfter') }}</span
                     >
                     <input
-                        v-model.number="form.limit"
-                        type="number"
-                        min="1"
-                        max="10"
+                        v-model="form.publishedAfter"
+                        type="date"
                         class="h-10 w-full rounded-md border border-input bg-background px-3 text-sm"
-                        @input="clampLimit"
-                        @blur="clampLimit"
                     />
                 </label>
 
-                <button
-                    :disabled="loading || !canSearch"
-                    class="h-10 cursor-pointer self-end rounded-md bg-primary px-5 text-sm font-semibold text-primary-foreground disabled:cursor-not-allowed disabled:opacity-60"
-                    @click="runSearch(false)"
+                <label class="block min-w-0">
+                    <span
+                        class="mb-1 block truncate text-xs font-medium text-muted-foreground"
+                        >{{ t('youtube.search.publishedBefore') }}</span
+                    >
+                    <input
+                        v-model="form.publishedBefore"
+                        type="date"
+                        class="h-10 w-full rounded-md border border-input bg-background px-3 text-sm"
+                    />
+                </label>
+
+                <label class="block min-w-0">
+                    <span
+                        class="mb-1 block truncate text-xs font-medium text-muted-foreground"
+                        >{{ t('youtube.search.regionCode') }}</span
+                    >
+                    <input
+                        v-model="form.regionCode"
+                        maxlength="2"
+                        class="h-10 w-full rounded-md border border-input bg-background px-3 text-sm uppercase"
+                        :placeholder="'US'"
+                    />
+                </label>
+
+                <label class="block min-w-0">
+                    <span
+                        class="mb-1 block truncate text-xs font-medium text-muted-foreground"
+                        >{{ t('youtube.search.relevanceLanguage') }}</span
+                    >
+                    <input
+                        v-model="form.relevanceLanguage"
+                        class="h-10 w-full rounded-md border border-input bg-background px-3 text-sm"
+                        :placeholder="'ru'"
+                    />
+                </label>
+
+                <label class="block min-w-0">
+                    <span
+                        class="mb-1 block truncate text-xs font-medium text-muted-foreground"
+                        >{{ t('youtube.search.safeSearch') }}</span
+                    >
+                    <select
+                        v-model="form.safeSearch"
+                        class="h-10 w-full rounded-md border border-input bg-background px-3 text-sm"
+                    >
+                        <option value="moderate">
+                            {{ t('youtube.options.safeSearch.moderate') }}
+                        </option>
+                        <option value="none">
+                            {{ t('youtube.options.safeSearch.none') }}
+                        </option>
+                        <option value="strict">
+                            {{ t('youtube.options.safeSearch.strict') }}
+                        </option>
+                    </select>
+                </label>
+
+                <label class="block min-w-0">
+                    <span
+                        class="mb-1 block truncate text-xs font-medium text-muted-foreground"
+                        >{{ t('youtube.search.videoDuration') }}</span
+                    >
+                    <select
+                        v-model="form.videoDuration"
+                        :disabled="form.type !== 'video'"
+                        class="h-10 w-full rounded-md border border-input bg-background px-3 text-sm disabled:opacity-50"
+                    >
+                        <option value="any">
+                            {{ t('youtube.options.videoDuration.any') }}
+                        </option>
+                        <option value="short">
+                            {{ t('youtube.options.videoDuration.short') }}
+                        </option>
+                        <option value="medium">
+                            {{ t('youtube.options.videoDuration.medium') }}
+                        </option>
+                        <option value="long">
+                            {{ t('youtube.options.videoDuration.long') }}
+                        </option>
+                    </select>
+                </label>
+
+                <label class="block min-w-0">
+                    <span
+                        class="mb-1 block truncate text-xs font-medium text-muted-foreground"
+                        >{{ t('youtube.search.videoDefinition') }}</span
+                    >
+                    <select
+                        v-model="form.videoDefinition"
+                        :disabled="form.type !== 'video'"
+                        class="h-10 w-full rounded-md border border-input bg-background px-3 text-sm disabled:opacity-50"
+                    >
+                        <option value="any">
+                            {{ t('youtube.options.videoDefinition.any') }}
+                        </option>
+                        <option value="high">
+                            {{ t('youtube.options.videoDefinition.high') }}
+                        </option>
+                        <option value="standard">
+                            {{ t('youtube.options.videoDefinition.standard') }}
+                        </option>
+                    </select>
+                </label>
+
+                <label class="block min-w-0">
+                    <span
+                        class="mb-1 block truncate text-xs font-medium text-muted-foreground"
+                        >{{ t('youtube.search.videoCaption') }}</span
+                    >
+                    <select
+                        v-model="form.videoCaption"
+                        :disabled="form.type !== 'video'"
+                        class="h-10 w-full rounded-md border border-input bg-background px-3 text-sm disabled:opacity-50"
+                    >
+                        <option value="any">
+                            {{ t('youtube.options.videoCaption.any') }}
+                        </option>
+                        <option value="closedCaption">
+                            {{
+                                t('youtube.options.videoCaption.closedCaption')
+                            }}
+                        </option>
+                        <option value="none">
+                            {{ t('youtube.options.videoCaption.none') }}
+                        </option>
+                    </select>
+                </label>
+
+                <p
+                    class="text-xs text-muted-foreground md:col-span-3 xl:col-span-6"
                 >
-                    {{
-                        loading
-                            ? t('youtube.common.loading')
-                            : t('youtube.search.submit')
-                    }}
-                </button>
+                    {{ t('youtube.search.publicDataHint') }}
+                </p>
             </div>
-        </div>
-
-        <div
-            v-if="!searchPanelCollapsed && showAdvanced"
-            class="mt-3 grid gap-3 rounded-lg border border-border/80 bg-background/50 p-3 md:grid-cols-3 xl:grid-cols-6"
-        >
-            <label class="block min-w-0">
-                <span
-                    class="mb-1 block truncate text-xs font-medium text-muted-foreground"
-                    >{{ t('youtube.search.publishedAfter') }}</span
-                >
-                <input
-                    v-model="form.publishedAfter"
-                    type="date"
-                    class="h-10 w-full rounded-md border border-input bg-background px-3 text-sm"
-                />
-            </label>
-
-            <label class="block min-w-0">
-                <span
-                    class="mb-1 block truncate text-xs font-medium text-muted-foreground"
-                    >{{ t('youtube.search.publishedBefore') }}</span
-                >
-                <input
-                    v-model="form.publishedBefore"
-                    type="date"
-                    class="h-10 w-full rounded-md border border-input bg-background px-3 text-sm"
-                />
-            </label>
-
-            <label class="block min-w-0">
-                <span
-                    class="mb-1 block truncate text-xs font-medium text-muted-foreground"
-                    >{{ t('youtube.search.regionCode') }}</span
-                >
-                <input
-                    v-model="form.regionCode"
-                    maxlength="2"
-                    class="h-10 w-full rounded-md border border-input bg-background px-3 text-sm uppercase"
-                    :placeholder="'US'"
-                />
-            </label>
-
-            <label class="block min-w-0">
-                <span
-                    class="mb-1 block truncate text-xs font-medium text-muted-foreground"
-                    >{{ t('youtube.search.relevanceLanguage') }}</span
-                >
-                <input
-                    v-model="form.relevanceLanguage"
-                    class="h-10 w-full rounded-md border border-input bg-background px-3 text-sm"
-                    :placeholder="'ru'"
-                />
-            </label>
-
-            <label class="block min-w-0">
-                <span
-                    class="mb-1 block truncate text-xs font-medium text-muted-foreground"
-                    >{{ t('youtube.search.safeSearch') }}</span
-                >
-                <select
-                    v-model="form.safeSearch"
-                    class="h-10 w-full rounded-md border border-input bg-background px-3 text-sm"
-                >
-                    <option value="moderate">
-                        {{ t('youtube.options.safeSearch.moderate') }}
-                    </option>
-                    <option value="none">
-                        {{ t('youtube.options.safeSearch.none') }}
-                    </option>
-                    <option value="strict">
-                        {{ t('youtube.options.safeSearch.strict') }}
-                    </option>
-                </select>
-            </label>
-
-            <label class="block min-w-0">
-                <span
-                    class="mb-1 block truncate text-xs font-medium text-muted-foreground"
-                    >{{ t('youtube.search.videoDuration') }}</span
-                >
-                <select
-                    v-model="form.videoDuration"
-                    :disabled="form.type !== 'video'"
-                    class="h-10 w-full rounded-md border border-input bg-background px-3 text-sm disabled:opacity-50"
-                >
-                    <option value="any">
-                        {{ t('youtube.options.videoDuration.any') }}
-                    </option>
-                    <option value="short">
-                        {{ t('youtube.options.videoDuration.short') }}
-                    </option>
-                    <option value="medium">
-                        {{ t('youtube.options.videoDuration.medium') }}
-                    </option>
-                    <option value="long">
-                        {{ t('youtube.options.videoDuration.long') }}
-                    </option>
-                </select>
-            </label>
-
-            <label class="block min-w-0">
-                <span
-                    class="mb-1 block truncate text-xs font-medium text-muted-foreground"
-                    >{{ t('youtube.search.videoDefinition') }}</span
-                >
-                <select
-                    v-model="form.videoDefinition"
-                    :disabled="form.type !== 'video'"
-                    class="h-10 w-full rounded-md border border-input bg-background px-3 text-sm disabled:opacity-50"
-                >
-                    <option value="any">
-                        {{ t('youtube.options.videoDefinition.any') }}
-                    </option>
-                    <option value="high">
-                        {{ t('youtube.options.videoDefinition.high') }}
-                    </option>
-                    <option value="standard">
-                        {{ t('youtube.options.videoDefinition.standard') }}
-                    </option>
-                </select>
-            </label>
-
-            <label class="block min-w-0">
-                <span
-                    class="mb-1 block truncate text-xs font-medium text-muted-foreground"
-                    >{{ t('youtube.search.videoCaption') }}</span
-                >
-                <select
-                    v-model="form.videoCaption"
-                    :disabled="form.type !== 'video'"
-                    class="h-10 w-full rounded-md border border-input bg-background px-3 text-sm disabled:opacity-50"
-                >
-                    <option value="any">
-                        {{ t('youtube.options.videoCaption.any') }}
-                    </option>
-                    <option value="closedCaption">
-                        {{ t('youtube.options.videoCaption.closedCaption') }}
-                    </option>
-                    <option value="none">
-                        {{ t('youtube.options.videoCaption.none') }}
-                    </option>
-                </select>
-            </label>
-
-            <p
-                class="text-xs text-muted-foreground md:col-span-3 xl:col-span-6"
-            >
-                {{ t('youtube.search.publicDataHint') }}
+        </template>
+        <template #afterActions>
+            <p v-if="error" class="mt-3 text-sm text-destructive">
+                {{ error }}
             </p>
-        </div>
-
-        <p v-if="error" class="mt-3 text-sm text-destructive">{{ error }}</p>
-    </IntelSearchPanel>
+        </template>
+    </SearchControlPanel>
 
     <IntelResultPanel>
         <div class="mb-3 flex items-center justify-between">

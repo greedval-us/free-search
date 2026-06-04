@@ -1,14 +1,12 @@
 <script setup lang="ts">
 import {
-    ChevronDown,
-    ChevronUp,
     Database,
     Download,
     LoaderCircle,
     Square,
     Wrench,
 } from 'lucide-vue-next';
-import HelpTooltip from '@/components/ui/HelpTooltip.vue';
+import ControlPanelShell from '@/components/ui/control-panel/ControlPanelShell.vue';
 
 defineProps<{
     title: string;
@@ -38,30 +36,17 @@ const emit = defineEmits<{
 </script>
 
 <template>
-    <section class="intel-panel-strong sticky top-0 z-10 shrink-0">
-        <div class="flex items-center justify-between gap-3">
-            <div class="space-y-1">
-                <div class="flex items-center gap-2 text-sm font-semibold">
-                    <Wrench class="h-4 w-4 text-cyan-400" />
-                    <span>{{ title }}</span>
-                    <HelpTooltip :label="helpLabel" :text="helpText" />
-                </div>
-                <p class="text-xs text-muted-foreground">
-                    {{ settingsCollapsed ? collapsedText : subtitle }}
-                </p>
-            </div>
-
-            <button
-                type="button"
-                class="inline-flex h-9 w-9 cursor-pointer items-center justify-center rounded-full border border-input text-sm text-foreground transition hover:bg-accent"
-                @click="emit('update:settingsCollapsed', !settingsCollapsed)"
-            >
-                <ChevronDown v-if="settingsCollapsed" class="h-4 w-4" />
-                <ChevronUp v-else class="h-4 w-4" />
-            </button>
-        </div>
-
-        <div v-if="!settingsCollapsed" class="mt-3 space-y-3">
+    <ControlPanelShell
+        :title="title"
+        :help-label="helpLabel"
+        :help-text="helpText"
+        :subtitle="subtitle"
+        :collapsed-text="collapsedText"
+        :collapsed="settingsCollapsed"
+        :icon="Wrench"
+        body-class="space-y-3"
+        @update:collapsed="emit('update:settingsCollapsed', $event)"
+    >
             <slot name="fields" />
 
             <div class="flex flex-wrap items-center gap-2">
@@ -108,6 +93,5 @@ const emit = defineEmits<{
             </div>
 
             <slot name="afterActions" />
-        </div>
-    </section>
+    </ControlPanelShell>
 </template>
