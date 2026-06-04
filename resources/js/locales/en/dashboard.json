@@ -56,6 +56,8 @@
         "default": "Search module",
         "lastUsed": "Last used",
         "open": "Open module",
+        "pinAria": "Pin module",
+        "unpinAria": "Unpin module",
         "empty": "No module activity yet."
     },
     "weekly": {
@@ -78,7 +80,12 @@
     },
     "filters": {
         "allModules": "All modules",
+        "moduleLabel": "Module filter",
+        "queryLabel": "Query filter",
         "queryPlaceholder": "Search by query text",
+        "periodLabel": "Period filter",
+        "dateFromLabel": "Date from",
+        "dateToLabel": "Date to",
         "period7": "7 days",
         "period30": "30 days",
         "period90": "90 days",

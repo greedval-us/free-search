@@ -8,6 +8,7 @@ import InputError from '@/components/InputError.vue';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import Spinner from '@/components/ui/spinner/Spinner.vue';
 import { useI18n } from '@/composables/useI18n';
 import { edit } from '@/routes/profile';
 
@@ -16,12 +17,12 @@ defineOptions({
         breadcrumbs: [
             {
                 title: 'Profile settings',
+                titleKey: 'settings.profilePage.title',
                 href: edit(),
             },
         ],
     },
 });
-// Breadcrumb title stays static because defineOptions is evaluated outside instance scope.
 
 const page = usePage();
 const user = computed(() => page.props.auth.user);
@@ -64,6 +65,7 @@ const { t } = useI18n();
                     :disabled="processing"
                     data-test="update-profile-button"
                 >
+                    <Spinner v-if="processing" class="mr-2" />
                     {{ t('settings.profilePage.save') }}
                 </Button>
 

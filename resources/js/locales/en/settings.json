@@ -76,7 +76,8 @@
         "active": "Active",
         "analytics": "Analytics requests per day",
         "parser": "Parser requests per day",
-        "backDashboard": "Back to dashboard"
+        "backDashboard": "Back to dashboard",
+        "upgradesSoon": "Upgrades coming soon"
     },
     "deleteAccount": {
         "title": "Delete account",

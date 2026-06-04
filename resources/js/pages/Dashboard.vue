@@ -105,7 +105,13 @@ const props = withDefaults(
                 date_from: '',
                 date_to: '',
             },
-            available_modules: ['bluesky', 'site-intel', 'telegram', 'youtube', 'shifr'],
+            available_modules: [
+                'bluesky',
+                'site-intel',
+                'telegram',
+                'youtube',
+                'shifr',
+            ],
         }),
     }
 );
@@ -318,6 +324,7 @@ defineOptions({
         breadcrumbs: [
             {
                 title: 'Dashboard',
+                titleKey: 'navigation.dashboard',
                 href: dashboardRoute(),
             },
         ],
@@ -612,6 +619,13 @@ onBeforeUnmount(() => {
                                     <button
                                         type="button"
                                         class="rounded p-1 text-muted-foreground hover:bg-background/70 hover:text-foreground"
+                                        :aria-label="
+                                            module.is_pinned
+                                                ? t(
+                                                      'dashboard.modules.unpinAria'
+                                                  )
+                                                : t('dashboard.modules.pinAria')
+                                        "
                                         @click="togglePin(module.key)"
                                     >
                                         <Pin
@@ -760,6 +774,7 @@ onBeforeUnmount(() => {
                     <select
                         v-model="filterForm.module_key"
                         class="h-9 rounded-md border border-input bg-background px-2 text-sm transition outline-none focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50"
+                        :aria-label="t('dashboard.filters.moduleLabel')"
                     >
                         <option value="">
                             {{ t('dashboard.filters.allModules') }}
@@ -777,12 +792,14 @@ onBeforeUnmount(() => {
                         v-model="filterForm.query"
                         type="text"
                         class="h-9 rounded-md border border-input bg-background px-2 text-sm transition outline-none focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50"
+                        :aria-label="t('dashboard.filters.queryLabel')"
                         :placeholder="t('dashboard.filters.queryPlaceholder')"
                     />
 
                     <select
                         v-model="filterForm.period"
                         class="h-9 rounded-md border border-input bg-background px-2 text-sm transition outline-none focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50"
+                        :aria-label="t('dashboard.filters.periodLabel')"
                     >
                         <option value="7d">
                             {{ t('dashboard.filters.period7') }}
@@ -799,12 +816,14 @@ onBeforeUnmount(() => {
                         v-model="filterForm.date_from"
                         type="date"
                         class="h-9 rounded-md border border-input bg-background px-2 text-sm transition outline-none focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50"
+                        :aria-label="t('dashboard.filters.dateFromLabel')"
                     />
 
                     <input
                         v-model="filterForm.date_to"
                         type="date"
                         class="h-9 rounded-md border border-input bg-background px-2 text-sm transition outline-none focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50"
+                        :aria-label="t('dashboard.filters.dateToLabel')"
                     />
                 </div>
 

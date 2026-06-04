@@ -10,6 +10,7 @@ import TwoFactorRecoveryCodes from '@/components/TwoFactorRecoveryCodes.vue';
 import TwoFactorSetupModal from '@/components/TwoFactorSetupModal.vue';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
+import Spinner from '@/components/ui/spinner/Spinner.vue';
 import { useI18n } from '@/composables/useI18n';
 import { useTwoFactorAuth } from '@/composables/useTwoFactorAuth';
 import { edit } from '@/routes/security';
@@ -32,6 +33,7 @@ defineOptions({
         breadcrumbs: [
             {
                 title: 'Security settings',
+                titleKey: 'settings.securityPage.title',
                 href: edit(),
             },
         ],
@@ -118,6 +120,7 @@ onUnmounted(() => clearTwoFactorAuthData());
                     :disabled="processing"
                     data-test="update-password-button"
                 >
+                    <Spinner v-if="processing" class="mr-2" />
                     {{ t('settings.securityPage.savePassword') }}
                 </Button>
 
@@ -166,6 +169,7 @@ onUnmounted(() => clearTwoFactorAuthData());
                     #default="{ processing }"
                 >
                     <Button type="submit" :disabled="processing">
+                        <Spinner v-if="processing" class="mr-2" />
                         {{ t('settings.securityPage.twoFactorEnable') }}
                     </Button>
                 </Form>
@@ -184,6 +188,7 @@ onUnmounted(() => clearTwoFactorAuthData());
                         type="submit"
                         :disabled="processing"
                     >
+                        <Spinner v-if="processing" class="mr-2" />
                         {{ t('settings.securityPage.twoFactorDisable') }}
                     </Button>
                 </Form>

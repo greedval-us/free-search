@@ -25,10 +25,11 @@ const copy = computed(() => {
             heroText:
                 'Рабочая среда для поиска, проверки и аналитики: Telegram, Site Intel, YouTube, News & Media, Shifr, Dashboard и Wiki в едином контуре.',
             ctaMain: 'Перейти в рабочее пространство',
-            ctaAlt: 'Запросить доступ',
+            ctaAlt: 'Создать аккаунт',
             signIn: 'Войти',
             dashboard: 'Панель',
             register: 'Регистрация',
+            localeToggleLabel: 'Переключить язык интерфейса',
             stackTitle: 'Что уже в проде',
             stackItems: [
                 'Telegram Search / Analytics / Parser',
@@ -59,9 +60,18 @@ const copy = computed(() => {
                 'Контроль качества через структуру модулей и wiki-документацию',
             ],
             metrics: [
-                { value: '6', label: 'прикладных направлений в одном продукте' },
-                { value: '1', label: 'контур работы: сигнал → аналитика → вывод' },
-                { value: '24/7', label: 'доступность среды для командной работы' },
+                {
+                    value: '6',
+                    label: 'прикладных направлений в одном продукте',
+                },
+                {
+                    value: '1',
+                    label: 'контур работы: сигнал → аналитика → вывод',
+                },
+                {
+                    value: '24/7',
+                    label: 'доступность среды для командной работы',
+                },
             ],
             finalTitle: 'Готово для ежедневной коммерческой аналитики',
             finalText:
@@ -77,10 +87,11 @@ const copy = computed(() => {
         heroText:
             'A unified environment for search, validation, and intelligence workflows across Telegram, Site Intel, YouTube, News & Media, Shifr, Dashboard, and Wiki.',
         ctaMain: 'Open workspace',
-        ctaAlt: 'Request access',
+        ctaAlt: 'Create account',
         signIn: 'Sign in',
         dashboard: 'Dashboard',
         register: 'Register',
+        localeToggleLabel: 'Switch interface language',
         stackTitle: 'Live capabilities',
         stackItems: [
             'Telegram Search / Analytics / Parser',
@@ -111,7 +122,10 @@ const copy = computed(() => {
             'Operational consistency via modular architecture and wiki docs',
         ],
         metrics: [
-            { value: '6', label: 'applied intelligence domains in one product' },
+            {
+                value: '6',
+                label: 'applied intelligence domains in one product',
+            },
             { value: '1', label: 'workflow: signal -> analysis -> findings' },
             { value: '24/7', label: 'availability for team-based operations' },
         ],
@@ -142,7 +156,12 @@ const toggleLocale = () => setLocale(locale.value === 'ru' ? 'en' : 'ru');
                 </div>
 
                 <div class="topbar-actions">
-                    <button type="button" class="locale-btn" @click="toggleLocale">
+                    <button
+                        type="button"
+                        class="locale-btn"
+                        :aria-label="copy.localeToggleLabel"
+                        @click="toggleLocale"
+                    >
                         {{ locale.toUpperCase() }}
                     </button>
 
@@ -158,7 +177,11 @@ const toggleLocale = () => setLocale(locale.value === 'ru' ? 'en' : 'ru');
                         <Link :href="login()" class="btn btn-ghost">
                             {{ copy.signIn }}
                         </Link>
-                        <Link v-if="canRegister" :href="register()" class="btn btn-outline">
+                        <Link
+                            v-if="canRegister"
+                            :href="register()"
+                            class="btn btn-outline"
+                        >
                             {{ copy.register }}
                         </Link>
                     </template>
@@ -172,10 +195,19 @@ const toggleLocale = () => setLocale(locale.value === 'ru' ? 'en' : 'ru');
                     <p class="hero-text">{{ copy.heroText }}</p>
 
                     <div class="hero-actions">
-                        <Link :href="$page.props.auth.user ? dashboard() : login()" class="btn btn-solid">
+                        <Link
+                            :href="
+                                $page.props.auth.user ? dashboard() : login()
+                            "
+                            class="btn btn-solid"
+                        >
                             {{ copy.ctaMain }}
                         </Link>
-                        <Link v-if="!$page.props.auth.user && canRegister" :href="register()" class="btn btn-ghost">
+                        <Link
+                            v-if="!$page.props.auth.user && canRegister"
+                            :href="register()"
+                            class="btn btn-ghost"
+                        >
                             {{ copy.ctaAlt }}
                         </Link>
                     </div>
@@ -213,7 +245,11 @@ const toggleLocale = () => setLocale(locale.value === 'ru' ? 'en' : 'ru');
                     </article>
 
                     <article class="panel metrics-panel fade-in">
-                        <div v-for="metric in copy.metrics" :key="metric.label" class="metric">
+                        <div
+                            v-for="metric in copy.metrics"
+                            :key="metric.label"
+                            class="metric"
+                        >
                             <p class="metric-value">{{ metric.value }}</p>
                             <p class="metric-label">{{ metric.label }}</p>
                         </div>
@@ -224,10 +260,19 @@ const toggleLocale = () => setLocale(locale.value === 'ru' ? 'en' : 'ru');
                     <h3>{{ copy.finalTitle }}</h3>
                     <p>{{ copy.finalText }}</p>
                     <div class="hero-actions">
-                        <Link :href="$page.props.auth.user ? dashboard() : login()" class="btn btn-solid">
+                        <Link
+                            :href="
+                                $page.props.auth.user ? dashboard() : login()
+                            "
+                            class="btn btn-solid"
+                        >
                             {{ copy.ctaMain }}
                         </Link>
-                        <Link v-if="!$page.props.auth.user && canRegister" :href="register()" class="btn btn-ghost">
+                        <Link
+                            v-if="!$page.props.auth.user && canRegister"
+                            :href="register()"
+                            class="btn btn-ghost"
+                        >
                             {{ copy.ctaAlt }}
                         </Link>
                     </div>
@@ -242,9 +287,14 @@ const toggleLocale = () => setLocale(locale.value === 'ru' ? 'en' : 'ru');
     position: relative;
     min-height: 100vh;
     overflow: hidden;
-    background: radial-gradient(120% 140% at 20% 0%, #14213d 0%, #090f1f 55%, #04070f 100%);
+    background: radial-gradient(
+        120% 140% at 20% 0%,
+        #14213d 0%,
+        #090f1f 55%,
+        #04070f 100%
+    );
     color: #e6ecff;
-    font-family: "Space Grotesk", "Manrope", "Segoe UI", sans-serif;
+    font-family: 'Space Grotesk', 'Manrope', 'Segoe UI', sans-serif;
 }
 
 .bg-layer {
@@ -366,7 +416,11 @@ const toggleLocale = () => setLocale(locale.value === 'ru' ? 'en' : 'ru');
 
 .panel {
     border: 1px solid rgba(148, 163, 184, 0.2);
-    background: linear-gradient(155deg, rgba(15, 23, 42, 0.88), rgba(9, 14, 27, 0.75));
+    background: linear-gradient(
+        155deg,
+        rgba(15, 23, 42, 0.88),
+        rgba(9, 14, 27, 0.75)
+    );
     border-radius: 1.25rem;
     padding: 1.2rem;
     backdrop-filter: blur(9px);
@@ -428,7 +482,7 @@ const toggleLocale = () => setLocale(locale.value === 'ru' ? 'en' : 'ru');
 }
 
 .list li::before {
-    content: "";
+    content: '';
     width: 0.42rem;
     height: 0.42rem;
     border-radius: 999px;

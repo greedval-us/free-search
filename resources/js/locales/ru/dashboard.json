@@ -39,6 +39,8 @@
         "default": "Поисковый модуль",
         "lastUsed": "Последний запуск",
         "open": "Открыть модуль",
+        "pinAria": "Закрепить модуль",
+        "unpinAria": "Открепить модуль",
         "empty": "Активности по модулям пока нет."
     },
     "weekly": {
@@ -64,7 +66,12 @@
     },
     "filters": {
         "allModules": "Все модули",
+        "moduleLabel": "Фильтр по модулю",
+        "queryLabel": "Фильтр по запросу",
         "queryPlaceholder": "Поиск по тексту запроса",
+        "periodLabel": "Фильтр по периоду",
+        "dateFromLabel": "Дата с",
+        "dateToLabel": "Дата по",
         "period7": "7 дней",
         "period30": "30 дней",
         "period90": "90 дней",
