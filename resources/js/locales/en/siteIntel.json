@@ -20,7 +20,7 @@
     },
     "siteHealth": {
         "title": "Site Health",
-        "description": "Production-style health check for public web assets: DNS, SSL, redirects, status, and baseline hardening controls.",
+        "description": "Quick health check for public web assets: DNS, SSL, redirects, status, and baseline hardening controls.",
         "target": "URL or domain",
         "placeholder": "example.com or https://example.com",
         "check": "Analyze",
@@ -53,7 +53,7 @@
             "permissions_policy": "Permissions-Policy"
         },
         "help": {
-            "overview": "Quickly assess external site trust and resilience using technical signals that matter for risk triage and monitoring.",
+            "overview": "Quickly assess external site trust and resilience using technical signals that matter for monitoring and risk review.",
             "dns": "A/AAAA records show whether the domain resolves for IPv4 and IPv6.",
             "ssl": "Certificate details and validity period for HTTPS endpoint.",
             "securityHeaders": "Checks baseline hardening headers that reduce browser-side attack surface.",
@@ -82,7 +82,7 @@
     },
     "domainLite": {
         "title": "Domain Lite",
-        "description": "Concise domain intelligence baseline: WHOIS and DNS posture with practical risk scoring for fast triage.",
+        "description": "Concise domain intelligence snapshot: WHOIS and DNS posture with practical risk scoring for fast review.",
         "whois": "WHOIS",
         "domain": "Domain",
         "placeholder": "example.com",
@@ -187,6 +187,7 @@
         "snapshotWhoisRegistrar": "WHOIS registrar",
         "snapshotWhoisCountry": "WHOIS country",
         "snapshotDays": "days",
+        "snapshotEmailSecurityDetails": "(SPF + DMARC)",
         "recommendationMaintain": "maintain",
         "scoreUnit": "score",
         "report": "Open report",
@@ -402,6 +403,8 @@
         "contentQualityTitle": "Content quality",
         "accessibilityTitle": "Accessibility",
         "linkGraphTitle": "Link graph",
+        "linkGraphPanelTitle": "Link graph view",
+        "statusBuckets": "Status buckets",
         "wordCount": "Word count",
         "textHtmlRatio": "Text/HTML ratio",
         "thinContent": "Thin content",

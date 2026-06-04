@@ -98,7 +98,7 @@ const inputValue = (event: Event) => (event.target as HTMLInputElement).value;
                     :value="chatUsername"
                     type="text"
                     class="h-10 w-full rounded-md border border-input bg-background px-3 text-sm"
-                    placeholder="durov"
+                    :placeholder="t('telegram.search.placeholderChannel')"
                     @input="emit('update:chatUsername', inputValue($event))"
                 />
             </label>

@@ -15,8 +15,8 @@
         "placeholderAuthor": "@username or id",
         "showAdvanced": "Show filters",
         "hideAdvanced": "Hide filters",
-        "find": "Analyze",
-        "searching": "Analyzing...",
+        "find": "Search",
+        "searching": "Searching...",
         "limit": "Limit",
         "dateFrom": "Date from",
         "dateTo": "Date to",
@@ -87,8 +87,8 @@
     },
     "errors": {
         "channelRequired": "Please enter the channel username first.",
-        "searchFailed": "Unable to complete analysis. Please retry in a moment.",
-        "unknownSearchError": "Unexpected response received. Please retry the analysis.",
+        "searchFailed": "Unable to complete the search. Please retry in a moment.",
+        "unknownSearchError": "Unexpected response received. Please retry the search.",
         "commentsFailed": "Failed to load comments."
     },
     "tabs": {
@@ -101,8 +101,8 @@
         "description": "This section is prepared for parser workflows. We will add sources, rules, and scheduled collection here.",
         "status": "Stub: in development",
         "subtitle": "Online Telegram data collection and export",
-        "collapsed": "Settings collapsed",
-        "start": "Start collect",
+        "collapsed": "Settings panel is collapsed",
+        "start": "Start collection",
         "stop": "Stop",
         "collecting": "Collecting...",
         "download": "Download Excel",
@@ -136,7 +136,7 @@
             }
         },
         "help": {
-            "overview": "Controlled online collection workflow for Telegram messages and comments with export-ready outputs and minimal storage footprint."
+            "overview": "Controlled online collection for Telegram messages and comments with ready-to-export results and minimal storage footprint."
         },
         "errors": {
             "customBothDates": "Please specify both custom period dates.",
@@ -225,7 +225,7 @@
         },
         "help": {
             "label": "What is this data?",
-            "overview": "Executive-friendly Telegram analytics with trends, engagement signals, and anti-fraud context for rapid decision-making.",
+            "overview": "Friendly Telegram analytics with trends, engagement signals, and anti-fraud context for quick review.",
             "formula": "Post score formula. Variables: V = views, F = forwards, R = replies, Re = reactions, G = gifts. Calculation: score = V*wV + F*wF + R*wR + Re*wRe + G*wG.",
             "antiFraud": "Anti-Fraud score (0-100) aggregates suspicious engagement patterns and trigger clusters to prioritize review workload.",
             "funnel": "Shows the step-by-step conversion from all posts to posts with meaningful engagement.",

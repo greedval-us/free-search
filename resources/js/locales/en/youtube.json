@@ -11,8 +11,8 @@
     "search": {
         "title": "YouTube Search",
         "collapsed": "Search panel is collapsed",
-        "filters": "Video search filters and parameters",
-        "resultTitle": "Videos",
+        "filters": "Search filters and parameters",
+        "resultTitle": "Results",
         "shown": "Shown",
         "hint": "Search public videos, channels, and playlists with YouTube Data API v3. Only public data returned by the official API is available.",
         "query": "Query",
@@ -36,12 +36,12 @@
         "publicDataHint": "API v3 public search supports videos, channels, and playlists by keyword; optionally filter by channel, dates, region, language, and video-specific attributes.",
         "placeholder": "for example: osint tools",
         "submit": "Search",
-        "empty": "Run a search to view videos."
+        "empty": "Run a search to view YouTube results."
     },
     "analytics": {
         "title": "YouTube Analytics",
         "collapsed": "Settings panel is collapsed",
-        "hint": "Analyze channel activity for the last 1-7 days.",
+        "hint": "Analyze public video or channel activity for the last 1-7 days.",
         "mode": "Mode",
         "videoId": "Video ID",
         "videoIdPlaceholder": "Video ID or YouTube URL",
@@ -88,7 +88,7 @@
                 "videoId": "YouTube video ID or video URL. Used for single-video analytics.",
                 "channelId": "Channel ID, @handle, or username. Used to build analytics for recent channel publications.",
                 "period": "Quick period presets: last 1, 3, or 7 days.",
-                "dateFrom": "Start date for a custom period. Works together with “Date to”.",
+                "dateFrom": "Start date for a custom period. Works together with \"Date to\".",
                 "dateTo": "End date for a custom period. Maximum range is 7 days."
             },
             "insights": "Quick interpretation of the current dataset: focus video, top video by views, engagement, and dominant duration.",
@@ -152,7 +152,7 @@
         "videoIdPlaceholder": "Video ID or YouTube URL",
         "query": "Query",
         "order": "Order",
-        "start": "Start collect",
+        "start": "Start collection",
         "stop": "Stop",
         "collecting": "Collecting...",
         "download": "Download Excel",

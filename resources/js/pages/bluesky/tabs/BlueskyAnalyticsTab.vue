@@ -1,8 +1,10 @@
 <script setup lang="ts">
 import { Tags } from 'lucide-vue-next';
 import { computed } from 'vue';
+import AnalyticsActionEmptyState from '@/components/ui/analytics/AnalyticsActionEmptyState.vue';
 import AnalyticsChipSection from '@/components/ui/analytics/AnalyticsChipSection.vue';
 import AnalyticsControlPanel from '@/components/ui/analytics/AnalyticsControlPanel.vue';
+import AnalyticsListSection from '@/components/ui/analytics/AnalyticsListSection.vue';
 import AnalyticsMetricGrid from '@/components/ui/analytics/AnalyticsMetricGrid.vue';
 import AnalyticsRankSection from '@/components/ui/analytics/AnalyticsRankSection.vue';
 import AnalyticsSampleGrid from '@/components/ui/analytics/AnalyticsSampleGrid.vue';
@@ -351,18 +353,16 @@ const hashtagProfileStats = computed(() =>
 
     <IntelResultPanel>
         <div class="intel-scroll min-h-0 flex-1 space-y-4 overflow-y-auto pr-1">
-            <SectionCard
+            <AnalyticsActionEmptyState
                 v-if="!result"
                 :title="t('bluesky.analytics.empty.title')"
-            >
-                <p class="text-sm text-muted-foreground">
-                    {{
-                        loading
-                            ? t('bluesky.analytics.loading')
-                            : t('bluesky.analytics.empty.description')
-                    }}
-                </p>
-            </SectionCard>
+                :description="t('bluesky.analytics.empty.description')"
+                :action-label="t('bluesky.analytics.refresh')"
+                :loading-label="t('bluesky.analytics.loading')"
+                :loading="loading"
+                :disabled="!canRun"
+                @action="runAnalytics"
+            />
 
             <template v-else>
                 <SectionCard
@@ -410,22 +410,18 @@ const hashtagProfileStats = computed(() =>
                         :empty-text="t('bluesky.analytics.noTimeline')"
                     />
 
-                    <SectionCard :title="t('bluesky.analytics.topPosts')">
-                        <div
-                            v-if="result.topPosts.length > 0"
-                            class="space-y-2"
-                        >
-                            <BlueskyCompactPostCard
-                                v-for="post in result.topPosts"
-                                :key="post.id"
-                                :post="post"
-                                :format-date="formatDate"
-                            />
-                        </div>
-                        <p v-else class="text-xs text-muted-foreground">
-                            {{ t('bluesky.analytics.noTopPosts') }}
-                        </p>
-                    </SectionCard>
+                    <AnalyticsListSection
+                        :title="t('bluesky.analytics.topPosts')"
+                        :has-items="result.topPosts.length > 0"
+                        :empty-text="t('bluesky.analytics.noTopPosts')"
+                    >
+                        <BlueskyCompactPostCard
+                            v-for="post in result.topPosts"
+                            :key="post.id"
+                            :post="post"
+                            :format-date="formatDate"
+                        />
+                    </AnalyticsListSection>
                 </section>
 
                 <section class="grid gap-4 xl:grid-cols-2">

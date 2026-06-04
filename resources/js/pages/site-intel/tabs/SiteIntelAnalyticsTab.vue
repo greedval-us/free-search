@@ -322,7 +322,12 @@ onMounted(() => {
                     <p>
                         {{ t('siteIntel.analytics.snapshotEmailSecurity') }}:
                         <span class="text-muted-foreground"
-                            >{{ emailSecurityScore }}/2 (SPF + DMARC)</span
+                            >{{ emailSecurityScore }}/2
+                            {{
+                                t(
+                                    'siteIntel.analytics.snapshotEmailSecurityDetails'
+                                )
+                            }}</span
                         >
                     </p>
                     <p>

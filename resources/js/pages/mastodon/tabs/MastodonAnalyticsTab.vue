@@ -1,8 +1,10 @@
 <script setup lang="ts">
 import { Tags } from 'lucide-vue-next';
 import { computed, ref } from 'vue';
+import AnalyticsActionEmptyState from '@/components/ui/analytics/AnalyticsActionEmptyState.vue';
 import AnalyticsChipSection from '@/components/ui/analytics/AnalyticsChipSection.vue';
 import AnalyticsControlPanel from '@/components/ui/analytics/AnalyticsControlPanel.vue';
+import AnalyticsListSection from '@/components/ui/analytics/AnalyticsListSection.vue';
 import AnalyticsMetricGrid from '@/components/ui/analytics/AnalyticsMetricGrid.vue';
 import AnalyticsRankSection from '@/components/ui/analytics/AnalyticsRankSection.vue';
 import AnalyticsSampleGrid from '@/components/ui/analytics/AnalyticsSampleGrid.vue';
@@ -19,7 +21,6 @@ import type {
     MastodonAnalyticsPayload,
     MastodonHashtag,
 } from '../types';
-import MastodonAnalyticsEmptyState from './MastodonAnalyticsEmptyState.vue';
 
 type AnalyticsMode = 'account' | 'hashtag';
 
@@ -464,11 +465,15 @@ const hashtagProfileStats = computed(() =>
 
     <IntelResultPanel>
         <div class="intel-scroll min-h-0 flex-1 space-y-4 overflow-y-auto pr-1">
-            <MastodonAnalyticsEmptyState
+            <AnalyticsActionEmptyState
                 v-if="!result"
+                :title="t('mastodon.analytics.empty.title')"
+                :description="t('mastodon.analytics.empty.description')"
+                :action-label="t('mastodon.analytics.refresh')"
+                :loading-label="t('mastodon.analytics.loading')"
                 :loading="loading"
                 :disabled="!canRun"
-                @refresh="runAnalytics"
+                @action="runAnalytics"
             />
 
             <template v-else>
@@ -520,23 +525,19 @@ const hashtagProfileStats = computed(() =>
                         :empty-text="t('mastodon.analytics.noTimeline')"
                     />
 
-                    <SectionCard :title="t('mastodon.analytics.topPosts')">
-                        <div
-                            v-if="result.topPosts.length > 0"
-                            class="space-y-2"
-                        >
-                            <MastodonStatusCard
-                                v-for="status in result.topPosts"
-                                :key="status.id"
-                                :status="status"
-                                :format-date="formatDate"
-                                compact
-                            />
-                        </div>
-                        <p v-else class="text-xs text-muted-foreground">
-                            {{ t('mastodon.analytics.noTopPosts') }}
-                        </p>
-                    </SectionCard>
+                    <AnalyticsListSection
+                        :title="t('mastodon.analytics.topPosts')"
+                        :has-items="result.topPosts.length > 0"
+                        :empty-text="t('mastodon.analytics.noTopPosts')"
+                    >
+                        <MastodonStatusCard
+                            v-for="status in result.topPosts"
+                            :key="status.id"
+                            :status="status"
+                            :format-date="formatDate"
+                            compact
+                        />
+                    </AnalyticsListSection>
                 </section>
 
                 <section class="grid gap-4 xl:grid-cols-2">

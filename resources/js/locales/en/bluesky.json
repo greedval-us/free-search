@@ -63,8 +63,8 @@
         "dateTo": "Date to",
         "resolveProfile": "Resolve profile details",
         "targetHint": "Use an account handle or hashtag to build a focused Bluesky sample for review.",
-        "refresh": "Run analytics",
-        "loading": "Analyzing...",
+        "refresh": "Refresh",
+        "loading": "Refreshing analytics...",
         "report": "Open report",
         "downloadReport": "Download report",
         "accountProfile": "Account profile",
@@ -103,7 +103,7 @@
             "quotesTotal": "Quotes total"
         },
         "empty": {
-            "title": "Analytics is ready",
+            "title": "Choose a target to begin",
             "description": "Choose an account or hashtag and run analytics to build a Bluesky activity snapshot."
         },
         "errors": {
@@ -118,12 +118,12 @@
         "actorPlaceholder": "for example: analyst.bsky.social",
         "hint": "Use the parser when you need a downloadable account snapshot for deeper OSINT work. It will walk the account feed, social graph, reply activity, and visible reactions.",
         "collecting": "Collecting...",
-        "start": "Start parser",
+        "start": "Start collection",
         "stop": "Stop",
         "download": "Download Excel",
         "downloadJson": "Download JSON",
         "help": {
-            "overview": "Builds a downloadable Bluesky account dataset: profile, posts, authored replies, incoming replies, followers, follows, likes, and reposts."
+            "overview": "Build a downloadable Bluesky account dataset with profile details, posts, replies, followers, follows, likes, and reposts."
         },
         "progress": {
             "title": "Progress",

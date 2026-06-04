@@ -1,5 +1,5 @@
 {
-    "headTitle": "Shifr OSINT Toolkit",
+    "headTitle": "Shifr Toolkit",
     "tabs": {
         "hash": "Hash / HMAC",
         "transform": "Encode / Decode",
@@ -9,7 +9,7 @@
     },
     "descriptions": {
         "hash": "Generate digest or HMAC to verify integrity and compare artifacts.",
-        "transform": "Convert artifacts between Base64, Hex and URL formats for analysis.",
+        "transform": "Convert artifacts between Base64, Hex, URL, and HTML formats for analysis.",
         "ioc": "Extract emails, domains, URLs, IPs and Telegram usernames from raw text.",
         "classic": "Classical and configurable ciphers for quick OSINT experiments and artifact transformation.",
         "jwt": "Decode JWT header/payload, check timing claims and optionally verify HS signature."
@@ -42,7 +42,7 @@
     },
     "result": {
         "title": "Result",
-        "empty": "Enter text to start analysis.",
+        "empty": "Enter an artifact to view the result.",
         "readable": "Readable",
         "json": "JSON",
         "fields": {
@@ -86,8 +86,9 @@
         }
     },
     "help": {
-        "input": "Paste any artifact for quick OSINT transformations: hash, decode, and IOC extraction.",
-        "result": "Result is returned in structured JSON so it is easy to copy to reports or reuse in pivots."
+        "label": "What is this help?",
+        "input": "Paste any artifact for quick transformations, decoding, hashing, or IOC extraction.",
+        "result": "Results are returned in structured JSON so they are easy to review, copy into reports, or reuse in pivots."
     },
     "errors": {
         "requestFailed": "Request failed."
