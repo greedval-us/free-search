@@ -2,11 +2,9 @@
 
 namespace App\Modules\SiteIntel\Application\Contracts;
 
+use App\Modules\SiteIntel\DTO\Result\DomainLiteResultDTO;
+
 interface DomainLiteServiceInterface
 {
-    /**
-     * @return array<string, mixed>
-     */
-    public function lookup(string $domain): array;
+    public function lookup(string $domain): DomainLiteResultDTO;
 }
-

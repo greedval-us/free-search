@@ -6,6 +6,7 @@ use App\Modules\SiteIntel\Application\Contracts\DomainLiteServiceInterface;
 use App\Modules\SiteIntel\Application\Contracts\DomainLiteDnsResolverInterface;
 use App\Modules\SiteIntel\Application\Services\DomainLite\DomainLiteRiskScoreCalculator;
 use App\Modules\SiteIntel\Application\Services\DomainLite\DomainLiteWhoisLookup;
+use App\Modules\SiteIntel\DTO\Result\DomainLiteResultDTO;
 use Carbon\Carbon;
 
 final class DomainLiteService implements DomainLiteServiceInterface
@@ -17,23 +18,20 @@ final class DomainLiteService implements DomainLiteServiceInterface
     ) {
     }
 
-    /**
-     * @return array<string, mixed>
-     */
-    public function lookup(string $domain): array
+    public function lookup(string $domain): DomainLiteResultDTO
     {
         $dns = $this->dnsResolver->resolve($domain);
         $whois = $this->whoisLookup->lookup($domain);
         $whois = $this->enrichWhois($whois);
         $risk = $this->riskScoreCalculator->calculate($dns, $whois);
 
-        return [
+        return new DomainLiteResultDTO([
             'domain' => $domain,
             'checkedAt' => Carbon::now()->toIso8601String(),
             'dns' => $dns,
             'whois' => $whois,
             'risk' => $risk,
-        ];
+        ]);
     }
 
     /**

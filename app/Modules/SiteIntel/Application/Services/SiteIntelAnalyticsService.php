@@ -11,6 +11,7 @@ use App\Modules\SiteIntel\Application\Services\SiteIntelAnalytics\SiteIntelAnaly
 use App\Modules\SiteIntel\Application\Services\SiteIntelAnalytics\SiteIntelAnalyticsRecommendationBuilder;
 use App\Modules\SiteIntel\Application\Services\SiteIntelAnalytics\SiteIntelAnalyticsScoreCalculator;
 use App\Modules\SiteIntel\Application\Services\SiteIntelAnalytics\SiteIntelAnalyticsSignalResolver;
+use App\Modules\SiteIntel\DTO\Result\SiteIntelAnalyticsResultDTO;
 use Carbon\Carbon;
 
 final class SiteIntelAnalyticsService implements SiteIntelAnalyticsServiceInterface
@@ -27,13 +28,10 @@ final class SiteIntelAnalyticsService implements SiteIntelAnalyticsServiceInterf
     ) {
     }
 
-    /**
-     * @return array<string, mixed>
-     */
-    public function analyze(string $url, string $domain): array
+    public function analyze(string $url, string $domain): SiteIntelAnalyticsResultDTO
     {
-        $siteHealth = $this->siteHealthService->check($url);
-        $domainLite = $this->domainLiteService->lookup($domain);
+        $siteHealth = $this->siteHealthService->check($url)->toArray();
+        $domainLite = $this->domainLiteService->lookup($domain)->toArray();
 
         $scores = $this->scoreCalculator->calculate($siteHealth, $domainLite);
         $headersCoverage = $this->headersCoverageCalculator->calculate($siteHealth);
@@ -42,7 +40,7 @@ final class SiteIntelAnalyticsService implements SiteIntelAnalyticsServiceInterf
         $strengthSignals = $this->signalResolver->strengthSignals($siteHealth, $domainLite, $headersCoverage['percent']);
         $recommendations = $this->recommendationBuilder->build($riskSignals, $headersCoverage['percent'], $daysToDomainExpiry);
 
-        return [
+        return new SiteIntelAnalyticsResultDTO([
             'target' => [
                 'url' => $url,
                 'domain' => $domain,
@@ -60,6 +58,6 @@ final class SiteIntelAnalyticsService implements SiteIntelAnalyticsServiceInterf
             ),
             'siteHealth' => $siteHealth,
             'domainLite' => $domainLite,
-        ];
+        ]);
     }
 }

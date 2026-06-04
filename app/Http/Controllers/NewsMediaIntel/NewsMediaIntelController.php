@@ -18,7 +18,7 @@ final class NewsMediaIntelController extends Controller
     {
         return $this->localizedJsonDataFrom(
             $request->locale(),
-            $this->newsMediaIntelService->monitor($request->searchQuery())
+            $this->newsMediaIntelService->monitor($request->toLookupDTO())
         );
     }
 }

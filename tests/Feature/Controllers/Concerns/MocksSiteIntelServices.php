@@ -6,6 +6,10 @@ use App\Modules\SiteIntel\Application\Contracts\DomainLiteServiceInterface;
 use App\Modules\SiteIntel\Application\Contracts\SeoAuditServiceInterface;
 use App\Modules\SiteIntel\Application\Contracts\SiteHealthServiceInterface;
 use App\Modules\SiteIntel\Application\Contracts\SiteIntelAnalyticsServiceInterface;
+use App\Modules\SiteIntel\DTO\Result\DomainLiteResultDTO;
+use App\Modules\SiteIntel\DTO\Result\SeoAuditResultDTO;
+use App\Modules\SiteIntel\DTO\Result\SiteHealthResultDTO;
+use App\Modules\SiteIntel\DTO\Result\SiteIntelAnalyticsResultDTO;
 
 trait MocksSiteIntelServices
 {
@@ -15,7 +19,7 @@ trait MocksSiteIntelServices
             $mock->shouldReceive('check')
                 ->once()
                 ->with($url)
-                ->andReturn($result);
+                ->andReturn(new SiteHealthResultDTO($result));
         });
     }
 
@@ -25,7 +29,7 @@ trait MocksSiteIntelServices
             $mock->shouldReceive('lookup')
                 ->once()
                 ->with($domain)
-                ->andReturn($result);
+                ->andReturn(new DomainLiteResultDTO($result));
         });
     }
 
@@ -35,7 +39,7 @@ trait MocksSiteIntelServices
             $mock->shouldReceive('analyze')
                 ->once()
                 ->with($url, $domain)
-                ->andReturn($result);
+                ->andReturn(new SiteIntelAnalyticsResultDTO($result));
         });
     }
 
@@ -45,7 +49,7 @@ trait MocksSiteIntelServices
             $mock->shouldReceive('audit')
                 ->once()
                 ->with($url, $limit, $platformType)
-                ->andReturn($result);
+                ->andReturn(new SeoAuditResultDTO($result));
         });
     }
 }

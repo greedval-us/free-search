@@ -2,11 +2,9 @@
 
 namespace App\Modules\SiteIntel\Application\Contracts;
 
+use App\Modules\SiteIntel\DTO\Result\SiteIntelAnalyticsResultDTO;
+
 interface SiteIntelAnalyticsServiceInterface
 {
-    /**
-     * @return array<string, mixed>
-     */
-    public function analyze(string $url, string $domain): array;
+    public function analyze(string $url, string $domain): SiteIntelAnalyticsResultDTO;
 }
-

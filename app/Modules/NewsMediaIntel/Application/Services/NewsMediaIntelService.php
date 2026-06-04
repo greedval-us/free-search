@@ -9,6 +9,7 @@ use App\Modules\NewsMediaIntel\Application\Services\NewsMediaIntel\NewsSentiment
 use App\Modules\NewsMediaIntel\Application\Services\NewsMediaIntel\NewsTimelineBuilder;
 use App\Modules\NewsMediaIntel\Application\Services\NewsMediaIntel\NewsTopicExtractor;
 use App\Modules\NewsMediaIntel\Application\Support\NewsMediaIntelConfig;
+use App\Modules\NewsMediaIntel\Domain\DTO\NewsMediaIntelLookupDTO;
 use App\Modules\NewsMediaIntel\Domain\DTO\NewsMediaIntelResultDTO;
 use App\Modules\NewsMediaIntel\Domain\DTO\SentimentSummaryDTO;
 
@@ -24,9 +25,9 @@ final class NewsMediaIntelService implements NewsMediaIntelServiceInterface
     ) {
     }
 
-    public function monitor(string $query): NewsMediaIntelResultDTO
+    public function monitor(NewsMediaIntelLookupDTO $lookup): NewsMediaIntelResultDTO
     {
-        $q = trim($query);
+        $q = trim($lookup->query);
 
         if ($q === '') {
             return new NewsMediaIntelResultDTO(

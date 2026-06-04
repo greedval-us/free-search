@@ -2,11 +2,9 @@
 
 namespace App\Modules\SiteIntel\Application\Contracts;
 
+use App\Modules\SiteIntel\DTO\Result\SeoAuditResultDTO;
+
 interface SeoAuditServiceInterface
 {
-    /**
-     * @return array<string, mixed>
-     */
-    public function audit(string $url, int $crawlLimit = 8, ?string $platformType = null): array;
+    public function audit(string $url, int $crawlLimit = 8, ?string $platformType = null): SeoAuditResultDTO;
 }
-
