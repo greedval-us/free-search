@@ -3,14 +3,17 @@
 namespace Tests\Feature\Controllers\Concerns;
 
 use App\Modules\YouTube\Analytics\Contracts\YouTubeAnalyticsApplicationServiceInterface;
+use App\Modules\YouTube\DTO\Result\YouTubeAnalyticsResultDTO;
+use App\Modules\YouTube\DTO\Result\YouTubeCommentsResultDTO;
 use App\Modules\YouTube\DTO\Result\YouTubeParserRunStatusDTO;
+use App\Modules\YouTube\DTO\Result\YouTubeSearchResultDTO;
 use App\Modules\YouTube\Parser\Contracts\YouTubeParserApplicationServiceInterface;
 use App\Modules\YouTube\Search\Contracts\YouTubeSearchApplicationServiceInterface;
 use RuntimeException;
 
 trait MocksYouTubeServices
 {
-    private function mockYouTubeSearch(array $result): void
+    private function mockYouTubeSearch(YouTubeSearchResultDTO $result): void
     {
         $this->mock(YouTubeSearchApplicationServiceInterface::class, function ($mock) use ($result): void {
             $mock->shouldReceive('searchVideos')->once()->andReturn($result);
@@ -26,14 +29,14 @@ trait MocksYouTubeServices
         });
     }
 
-    private function mockYouTubeAnalyticsSummary(array $result): void
+    private function mockYouTubeAnalyticsSummary(YouTubeAnalyticsResultDTO $result): void
     {
         $this->mock(YouTubeAnalyticsApplicationServiceInterface::class, function ($mock) use ($result): void {
             $mock->shouldReceive('summary')->once()->andReturn($result);
         });
     }
 
-    private function mockYouTubeParserComments(array $result): void
+    private function mockYouTubeParserComments(YouTubeCommentsResultDTO $result): void
     {
         $this->mock(YouTubeParserApplicationServiceInterface::class, function ($mock) use ($result): void {
             $mock->shouldReceive('comments')->once()->andReturn($result);

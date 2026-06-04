@@ -79,7 +79,7 @@ videos.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     videos.form = videosForm
 /**
 * @see \App\Http\Controllers\YouTube\YouTubeParserController::commentsPreview
- * @see app/Http/Controllers/YouTube/YouTubeParserController.php:42
+ * @see app/Http/Controllers/YouTube/YouTubeParserController.php:38
  * @route '/youtube/search/comments-preview'
  */
 export const commentsPreview = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -94,7 +94,7 @@ commentsPreview.definition = {
 
 /**
 * @see \App\Http\Controllers\YouTube\YouTubeParserController::commentsPreview
- * @see app/Http/Controllers/YouTube/YouTubeParserController.php:42
+ * @see app/Http/Controllers/YouTube/YouTubeParserController.php:38
  * @route '/youtube/search/comments-preview'
  */
 commentsPreview.url = (options?: RouteQueryOptions) => {
@@ -103,7 +103,7 @@ commentsPreview.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\YouTube\YouTubeParserController::commentsPreview
- * @see app/Http/Controllers/YouTube/YouTubeParserController.php:42
+ * @see app/Http/Controllers/YouTube/YouTubeParserController.php:38
  * @route '/youtube/search/comments-preview'
  */
 commentsPreview.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -112,7 +112,7 @@ commentsPreview.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => (
 })
 /**
 * @see \App\Http\Controllers\YouTube\YouTubeParserController::commentsPreview
- * @see app/Http/Controllers/YouTube/YouTubeParserController.php:42
+ * @see app/Http/Controllers/YouTube/YouTubeParserController.php:38
  * @route '/youtube/search/comments-preview'
  */
 commentsPreview.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -122,7 +122,7 @@ commentsPreview.head = (options?: RouteQueryOptions): RouteDefinition<'head'> =>
 
     /**
 * @see \App\Http\Controllers\YouTube\YouTubeParserController::commentsPreview
- * @see app/Http/Controllers/YouTube/YouTubeParserController.php:42
+ * @see app/Http/Controllers/YouTube/YouTubeParserController.php:38
  * @route '/youtube/search/comments-preview'
  */
     const commentsPreviewForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -132,7 +132,7 @@ commentsPreview.head = (options?: RouteQueryOptions): RouteDefinition<'head'> =>
 
             /**
 * @see \App\Http\Controllers\YouTube\YouTubeParserController::commentsPreview
- * @see app/Http/Controllers/YouTube/YouTubeParserController.php:42
+ * @see app/Http/Controllers/YouTube/YouTubeParserController.php:38
  * @route '/youtube/search/comments-preview'
  */
         commentsPreviewForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -141,7 +141,7 @@ commentsPreview.head = (options?: RouteQueryOptions): RouteDefinition<'head'> =>
         })
             /**
 * @see \App\Http\Controllers\YouTube\YouTubeParserController::commentsPreview
- * @see app/Http/Controllers/YouTube/YouTubeParserController.php:42
+ * @see app/Http/Controllers/YouTube/YouTubeParserController.php:38
  * @route '/youtube/search/comments-preview'
  */
         commentsPreviewForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({

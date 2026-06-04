@@ -4,14 +4,12 @@ namespace App\Modules\YouTube\Parser\Contracts;
 
 use App\Modules\YouTube\DTO\Request\YouTubeCommentsQueryDTO;
 use App\Modules\YouTube\DTO\Request\YouTubeParserStartDTO;
+use App\Modules\YouTube\DTO\Result\YouTubeCommentsResultDTO;
 use App\Modules\YouTube\DTO\Result\YouTubeParserRunStatusDTO;
 
 interface YouTubeParserApplicationServiceInterface
 {
-    /**
-     * @return array<string, mixed>
-     */
-    public function comments(YouTubeCommentsQueryDTO $query): array;
+    public function comments(YouTubeCommentsQueryDTO $query): YouTubeCommentsResultDTO;
 
     public function start(YouTubeParserStartDTO $input): YouTubeParserRunStatusDTO;
 

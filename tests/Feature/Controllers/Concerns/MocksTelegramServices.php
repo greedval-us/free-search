@@ -5,9 +5,9 @@ namespace Tests\Feature\Controllers\Concerns;
 use App\Modules\Telegram\Analytics\Contracts\TelegramAnalyticsApplicationServiceInterface;
 use App\Modules\Telegram\Analytics\Contracts\TelegramAnalyticsRangeResolverInterface;
 use App\Modules\Telegram\DTO\Result\AnalyticsSummaryResultDTO;
-use App\Modules\Telegram\DTO\Result\ParserRunStatusDTO;
 use App\Modules\Telegram\DTO\Result\SearchCommentsResultDTO;
 use App\Modules\Telegram\DTO\Result\SearchMessagesResultDTO;
+use App\Modules\Telegram\DTO\Result\TelegramParserRunStatusDTO;
 use App\Modules\Telegram\Parser\Contracts\TelegramParserApplicationServiceInterface;
 use App\Modules\Telegram\Search\Contracts\TelegramSearchApplicationServiceInterface;
 use App\Modules\Telegram\Support\Contracts\TelegramMediaResponderInterface;
@@ -48,14 +48,14 @@ trait MocksTelegramServices
         });
     }
 
-    private function mockTelegramParserStart(ParserRunStatusDTO $result): void
+    private function mockTelegramParserStart(TelegramParserRunStatusDTO $result): void
     {
         $this->mock(TelegramParserApplicationServiceInterface::class, function ($mock) use ($result): void {
             $mock->shouldReceive('start')->once()->andReturn($result);
         });
     }
 
-    private function mockTelegramParserStatus(?ParserRunStatusDTO $result): void
+    private function mockTelegramParserStatus(?TelegramParserRunStatusDTO $result): void
     {
         $this->mock(TelegramParserApplicationServiceInterface::class, function ($mock) use ($result): void {
             $mock->shouldReceive('status')->once()->andReturn($result);

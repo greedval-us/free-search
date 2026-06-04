@@ -8,7 +8,10 @@ use App\Modules\YouTube\DTO\Request\YouTubeAnalyticsLookupDTO;
 use App\Modules\YouTube\DTO\Request\YouTubeCommentsQueryDTO;
 use App\Modules\YouTube\DTO\Request\YouTubeParserStartDTO;
 use App\Modules\YouTube\DTO\Request\YouTubeSearchQueryDTO;
+use App\Modules\YouTube\DTO\Result\YouTubeAnalyticsResultDTO;
+use App\Modules\YouTube\DTO\Result\YouTubeCommentsResultDTO;
 use App\Modules\YouTube\DTO\Result\YouTubeParserRunStatusDTO;
+use App\Modules\YouTube\DTO\Result\YouTubeSearchResultDTO;
 use App\Modules\YouTube\Parser\Contracts\YouTubeParserApplicationServiceInterface;
 use App\Modules\YouTube\Search\Contracts\YouTubeSearchApplicationServiceInterface;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -35,12 +38,12 @@ class YouTubeControllerIsolationTest extends TestCase
                         && $query->type === 'video'
                         && $query->maxResults === 3
                 ))
-                ->andReturn([
+                ->andReturn(new YouTubeSearchResultDTO([
                     'items' => [
                         ['id' => 'video-1', 'title' => 'Open source intelligence'],
                     ],
                     'nextPageToken' => 'next-token',
-                ]);
+                ]));
         });
 
         $this
@@ -81,10 +84,10 @@ class YouTubeControllerIsolationTest extends TestCase
                     fn (YouTubeAnalyticsLookupDTO $query): bool => $query->mode === 'video'
                         && $query->videoId === 'video123'
                 ))
-                ->andReturn([
+                ->andReturn(new YouTubeAnalyticsResultDTO([
                     'videoId' => 'video123',
                     'views' => 1234,
-                ]);
+                ]));
         });
 
         $this
@@ -110,9 +113,9 @@ class YouTubeControllerIsolationTest extends TestCase
                         && $query->maxResults === 4
                         && $query->order === 'time'
                 ))
-                ->andReturn([
+                ->andReturn(new YouTubeCommentsResultDTO([
                     'items' => [['id' => 'comment-1']],
-                ]);
+                ]));
         });
 
         $this
@@ -138,9 +141,9 @@ class YouTubeControllerIsolationTest extends TestCase
                         && $query->maxResults === 4
                         && $query->order === 'time'
                 ))
-                ->andReturn([
+                ->andReturn(new YouTubeCommentsResultDTO([
                     'items' => [['id' => 'comment-preview-1']],
-                ]);
+                ]));
         });
 
         $this

@@ -5,6 +5,7 @@ namespace App\Modules\YouTube\Actions\Request;
 use App\Modules\YouTube\Actions\AbstractYouTubeAction;
 use App\Modules\YouTube\Core\Contracts\YouTubeGatewayInterface;
 use App\Modules\YouTube\DTO\Request\YouTubeSearchQueryDTO;
+use App\Modules\YouTube\DTO\Result\YouTubeSearchResultDTO;
 use App\Modules\YouTube\Presenters\YouTubeSearchItemPresenter;
 use App\Modules\YouTube\Presenters\YouTubeVideoPresenter;
 use App\Modules\YouTube\Support\YouTubeChannelResolver;
@@ -21,10 +22,7 @@ class SearchVideosAction extends AbstractYouTubeAction
         parent::__construct($gateway);
     }
 
-    /**
-     * @return array<string, mixed>
-     */
-    public function handle(YouTubeSearchQueryDTO $query): array
+    public function handle(YouTubeSearchQueryDTO $query): YouTubeSearchResultDTO
     {
         $params = $query->toArray();
         $params = $this->resolveChannelFilter($params);
@@ -34,7 +32,7 @@ class SearchVideosAction extends AbstractYouTubeAction
             ? $this->videosById($this->extractVideoIds($payload))
             : [];
 
-        return [
+        return new YouTubeSearchResultDTO([
             'items' => collect($payload['items'] ?? [])
                 ->map(fn (array $item): array => $this->searchItemPresenter->present($item, $detailsById, $type))
                 ->values()
@@ -45,7 +43,7 @@ class SearchVideosAction extends AbstractYouTubeAction
                 'total' => (int) Arr::get($payload, 'pageInfo.totalResults', 0),
                 'perPage' => (int) Arr::get($payload, 'pageInfo.resultsPerPage', 0),
             ],
-        ];
+        ]);
     }
 
     /**

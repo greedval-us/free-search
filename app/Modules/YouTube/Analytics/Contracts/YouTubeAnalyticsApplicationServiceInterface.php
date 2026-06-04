@@ -3,11 +3,9 @@
 namespace App\Modules\YouTube\Analytics\Contracts;
 
 use App\Modules\YouTube\DTO\Request\YouTubeAnalyticsLookupDTO;
+use App\Modules\YouTube\DTO\Result\YouTubeAnalyticsResultDTO;
 
 interface YouTubeAnalyticsApplicationServiceInterface
 {
-    /**
-     * @return array<string, mixed>
-     */
-    public function summary(YouTubeAnalyticsLookupDTO $query): array;
+    public function summary(YouTubeAnalyticsLookupDTO $query): YouTubeAnalyticsResultDTO;
 }

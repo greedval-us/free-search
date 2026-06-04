@@ -32,17 +32,18 @@ class YouTubeParserController extends Controller
 
     public function comments(YouTubeParserRequest $request): JsonResponse
     {
-        try {
-            return $this->jsonData($this->parserApplicationService->comments($request->toDTO()));
-        } catch (RuntimeException $exception) {
-            return $this->jsonError($exception->getMessage(), $this->statusCodeFromException($exception));
-        }
+        return $this->commentsResponse($request);
     }
 
     public function commentsPreview(YouTubeParserRequest $request): JsonResponse
     {
+        return $this->commentsResponse($request);
+    }
+
+    private function commentsResponse(YouTubeParserRequest $request): JsonResponse
+    {
         try {
-            return $this->jsonData($this->parserApplicationService->comments($request->toDTO()));
+            return $this->jsonDataFrom($this->parserApplicationService->comments($request->toDTO()));
         } catch (RuntimeException $exception) {
             return $this->jsonError($exception->getMessage(), $this->statusCodeFromException($exception));
         }
@@ -90,5 +91,4 @@ class YouTubeParserController extends Controller
 
         return $this->streamJsonDownload($payload, $filename);
     }
-
 }
