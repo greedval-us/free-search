@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { computed } from 'vue';
-import ParserControlPanel from '@/components/ui/parser/ParserControlPanel.vue';
-import ParserProgressPanel from '@/components/ui/parser/ParserProgressPanel.vue';
+import ParserTabLayout from '@/components/ui/parser/ParserTabLayout.vue';
 import { useI18n } from '@/composables/useI18n';
+import { useStageLabel } from '@/composables/useStageLabel';
 import { useBlueskyParser } from '../composables/useBlueskyParser';
 
 const { t } = useI18n();
@@ -29,45 +29,9 @@ const {
     downloadJson,
 } = useBlueskyParser(t);
 
-const stageLabel = computed(() => {
-    if (stage.value === 'profile') {
-        return t('bluesky.parser.progress.stage.profile');
-    }
-
-    if (stage.value === 'feed') {
-        return t('bluesky.parser.progress.stage.feed');
-    }
-
-    if (stage.value === 'followers') {
-        return t('bluesky.parser.progress.stage.followers');
-    }
-
-    if (stage.value === 'follows') {
-        return t('bluesky.parser.progress.stage.follows');
-    }
-
-    if (stage.value === 'interactions') {
-        return t('bluesky.parser.progress.stage.interactions');
-    }
-
-    if (stage.value === 'finishing') {
-        return t('bluesky.parser.progress.stage.finishing');
-    }
-
-    if (stage.value === 'completed') {
-        return t('bluesky.parser.progress.stage.completed');
-    }
-
-    if (stage.value === 'failed') {
-        return t('bluesky.parser.progress.stage.failed');
-    }
-
-    if (stage.value === 'stopped') {
-        return t('bluesky.parser.progress.stage.stopped');
-    }
-
-    return t('bluesky.parser.progress.stage.idle');
-});
+const stageLabel = useStageLabel(stage, (value) =>
+    t(`bluesky.parser.progress.stage.${value}`)
+);
 
 const progressStats = computed(() => [
     {
@@ -98,7 +62,7 @@ const progressStats = computed(() => [
 </script>
 
 <template>
-    <ParserControlPanel
+    <ParserTabLayout
         :title="t('bluesky.parser.title')"
         :help-label="t('bluesky.help.label')"
         :help-text="t('bluesky.parser.help.overview')"
@@ -114,6 +78,11 @@ const progressStats = computed(() => [
         :stop-label="t('bluesky.parser.stop')"
         :download-label="t('bluesky.parser.download')"
         :download-json-label="t('bluesky.parser.downloadJson')"
+        :progress-title="t('bluesky.parser.progress.title')"
+        :stage-label="stageLabel"
+        :progress="progress"
+        :stats="progressStats"
+        stats-grid-class="md:grid-cols-2 xl:grid-cols-3"
         @update:settings-collapsed="settingsCollapsed = $event"
         @start="start"
         @stop="stop"
@@ -142,13 +111,5 @@ const progressStats = computed(() => [
         <template #afterActions>
             <p v-if="error" class="text-sm text-destructive">{{ error }}</p>
         </template>
-    </ParserControlPanel>
-
-    <ParserProgressPanel
-        :title="t('bluesky.parser.progress.title')"
-        :stage-label="stageLabel"
-        :progress="progress"
-        :stats="progressStats"
-        stats-grid-class="md:grid-cols-2 xl:grid-cols-3"
-    />
+    </ParserTabLayout>
 </template>

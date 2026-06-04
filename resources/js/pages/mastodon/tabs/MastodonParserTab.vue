@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { computed } from 'vue';
-import ParserControlPanel from '@/components/ui/parser/ParserControlPanel.vue';
-import ParserProgressPanel from '@/components/ui/parser/ParserProgressPanel.vue';
+import ParserTabLayout from '@/components/ui/parser/ParserTabLayout.vue';
 import { useI18n } from '@/composables/useI18n';
+import { useStageLabel } from '@/composables/useStageLabel';
 import { useMastodonParser } from '../composables/useMastodonParser';
 
 const { t } = useI18n();
@@ -25,33 +25,9 @@ const {
     downloadJson,
 } = useMastodonParser(t);
 
-const stageLabel = computed(() => {
-    if (stage.value === 'statuses') {
-        return t('mastodon.parser.progress.stage.statuses');
-    }
-
-    if (stage.value === 'comments') {
-        return t('mastodon.parser.progress.stage.comments');
-    }
-
-    if (stage.value === 'finishing') {
-        return t('mastodon.parser.progress.stage.finishing');
-    }
-
-    if (stage.value === 'completed') {
-        return t('mastodon.parser.progress.stage.completed');
-    }
-
-    if (stage.value === 'failed') {
-        return t('mastodon.parser.progress.stage.failed');
-    }
-
-    if (stage.value === 'stopped') {
-        return t('mastodon.parser.progress.stage.stopped');
-    }
-
-    return t('mastodon.parser.progress.stage.idle');
-});
+const stageLabel = useStageLabel(stage, (value) =>
+    t(`mastodon.parser.progress.stage.${value}`)
+);
 
 const progressStats = computed(() => [
     {
@@ -66,7 +42,7 @@ const progressStats = computed(() => [
 </script>
 
 <template>
-    <ParserControlPanel
+    <ParserTabLayout
         :title="t('mastodon.parser.title')"
         :help-label="t('mastodon.help.label')"
         :help-text="t('mastodon.parser.help.overview')"
@@ -82,6 +58,10 @@ const progressStats = computed(() => [
         :stop-label="t('mastodon.parser.stop')"
         :download-label="t('mastodon.parser.download')"
         :download-json-label="t('mastodon.parser.downloadJson')"
+        :progress-title="t('mastodon.parser.progress.title')"
+        :stage-label="stageLabel"
+        :progress="progress"
+        :stats="progressStats"
         @update:settings-collapsed="settingsCollapsed = $event"
         @start="start"
         @stop="stop"
@@ -113,12 +93,5 @@ const progressStats = computed(() => [
         <template #afterActions>
             <p v-if="error" class="text-sm text-destructive">{{ error }}</p>
         </template>
-    </ParserControlPanel>
-
-    <ParserProgressPanel
-        :title="t('mastodon.parser.progress.title')"
-        :stage-label="stageLabel"
-        :progress="progress"
-        :stats="progressStats"
-    />
+    </ParserTabLayout>
 </template>

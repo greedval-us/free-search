@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import IntelAdvancedFilters from '@/components/ui/IntelAdvancedFilters.vue';
-import IntelResultPanel from '@/components/ui/IntelResultPanel.vue';
-import SearchControlPanel from '@/components/ui/search/SearchControlPanel.vue';
+import SearchTabLayout from '@/components/ui/search/SearchTabLayout.vue';
 import { useI18n } from '@/composables/useI18n';
 import MastodonSearchResults from '../components/MastodonSearchResults.vue';
 import { useMastodonSearch } from '../composables/useMastodonSearch';
@@ -37,7 +36,7 @@ const {
 </script>
 
 <template>
-    <SearchControlPanel
+    <SearchTabLayout
         :title="t('mastodon.search.title')"
         :help-label="t('mastodon.help.label')"
         :help-text="t('mastodon.search.hint')"
@@ -51,6 +50,7 @@ const {
         :advanced-hide-aria="t('mastodon.search.advancedAriaHide')"
         :submit-label="t('mastodon.search.submit')"
         :searching-label="t('mastodon.search.searching')"
+        :error="error"
         @update:collapsed="searchPanelCollapsed = $event"
         @update:show-advanced="showAdvanced = $event"
         @submit="runSearch(false)"
@@ -273,14 +273,7 @@ const {
                 </label>
             </IntelAdvancedFilters>
         </template>
-        <template #afterActions>
-            <p v-if="error" class="mt-3 text-sm text-destructive">
-                {{ error }}
-            </p>
-        </template>
-    </SearchControlPanel>
-
-    <IntelResultPanel>
+        <template #results>
         <MastodonSearchResults
             :result="result"
             :loading="loading"
@@ -297,5 +290,6 @@ const {
             :toggle-hashtag-statuses="toggleHashtagStatuses"
             :load-more-hashtag-statuses="loadMoreHashtagStatuses"
         />
-    </IntelResultPanel>
+        </template>
+    </SearchTabLayout>
 </template>

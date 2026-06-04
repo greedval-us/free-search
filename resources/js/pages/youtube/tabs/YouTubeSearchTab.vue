@@ -1,8 +1,7 @@
 ﻿<script setup lang="ts">
 import { ExternalLink } from 'lucide-vue-next';
 import { computed, onMounted, ref } from 'vue';
-import IntelResultPanel from '@/components/ui/IntelResultPanel.vue';
-import SearchControlPanel from '@/components/ui/search/SearchControlPanel.vue';
+import SearchTabLayout from '@/components/ui/search/SearchTabLayout.vue';
 import { useI18n } from '@/composables/useI18n';
 import {
     getRepeatQueryParams,
@@ -306,7 +305,7 @@ onMounted(() => {
 </script>
 
 <template>
-    <SearchControlPanel
+    <SearchTabLayout
         :title="t('youtube.search.title')"
         :help-label="t('youtube.help.label')"
         :help-text="t('youtube.search.hint')"
@@ -320,6 +319,7 @@ onMounted(() => {
         :advanced-hide-aria="t('youtube.search.advancedAriaHide')"
         :submit-label="t('youtube.search.submit')"
         :searching-label="t('youtube.common.loading')"
+        :error="error"
         @update:collapsed="searchPanelCollapsed = $event"
         @update:show-advanced="showAdvanced = $event"
         @submit="runSearch(false)"
@@ -573,14 +573,7 @@ onMounted(() => {
                 </p>
             </div>
         </template>
-        <template #afterActions>
-            <p v-if="error" class="mt-3 text-sm text-destructive">
-                {{ error }}
-            </p>
-        </template>
-    </SearchControlPanel>
-
-    <IntelResultPanel>
+        <template #results>
         <div class="mb-3 flex items-center justify-between">
             <h2 class="text-sm font-semibold">
                 {{ t('youtube.search.resultTitle') }}
@@ -870,7 +863,8 @@ onMounted(() => {
                 </article>
             </div>
         </div>
-
+        </template>
+        <template #footer>
         <div
             v-if="result?.pagination.nextPageToken"
             class="mt-4 flex justify-center"
@@ -887,5 +881,6 @@ onMounted(() => {
                 }}
             </button>
         </div>
-    </IntelResultPanel>
+        </template>
+    </SearchTabLayout>
 </template>

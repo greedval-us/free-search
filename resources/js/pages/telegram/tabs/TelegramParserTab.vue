@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { computed } from 'vue';
-import ParserControlPanel from '@/components/ui/parser/ParserControlPanel.vue';
-import ParserProgressPanel from '@/components/ui/parser/ParserProgressPanel.vue';
+import ParserTabLayout from '@/components/ui/parser/ParserTabLayout.vue';
 import { useI18n } from '@/composables/useI18n';
+import { useStageLabel } from '@/composables/useStageLabel';
 import { useTelegramParser } from '../composables/useTelegramParser';
 
 const { t } = useI18n();
@@ -27,33 +27,9 @@ const {
     downloadJson,
 } = useTelegramParser(t);
 
-const stageLabel = computed(() => {
-    if (stage.value === 'messages') {
-        return t('telegram.parser.progress.stage.messages');
-    }
-
-    if (stage.value === 'comments') {
-        return t('telegram.parser.progress.stage.comments');
-    }
-
-    if (stage.value === 'finishing') {
-        return t('telegram.parser.progress.stage.finishing');
-    }
-
-    if (stage.value === 'completed') {
-        return t('telegram.parser.progress.stage.completed');
-    }
-
-    if (stage.value === 'failed') {
-        return t('telegram.parser.progress.stage.failed');
-    }
-
-    if (stage.value === 'stopped') {
-        return t('telegram.parser.progress.stage.stopped');
-    }
-
-    return t('telegram.parser.progress.stage.idle');
-});
+const stageLabel = useStageLabel(stage, (value) =>
+    t(`telegram.parser.progress.stage.${value}`)
+);
 
 const progressStats = computed(() => [
     {
@@ -68,7 +44,7 @@ const progressStats = computed(() => [
 </script>
 
 <template>
-    <ParserControlPanel
+    <ParserTabLayout
         :title="t('telegram.parser.title')"
         :help-label="t('telegram.help.label')"
         :help-text="t('telegram.parser.help.overview')"
@@ -84,6 +60,10 @@ const progressStats = computed(() => [
         :stop-label="t('telegram.parser.stop')"
         :download-label="t('telegram.parser.download')"
         :download-json-label="t('telegram.parser.downloadJson')"
+        :progress-title="t('telegram.parser.progress.title')"
+        :stage-label="stageLabel"
+        :progress="progress"
+        :stats="progressStats"
         @update:settings-collapsed="settingsCollapsed = $event"
         @start="start"
         @stop="stop"
@@ -179,12 +159,5 @@ const progressStats = computed(() => [
 
             <p v-if="error" class="text-sm text-destructive">{{ error }}</p>
         </template>
-    </ParserControlPanel>
-
-    <ParserProgressPanel
-        :title="t('telegram.parser.progress.title')"
-        :stage-label="stageLabel"
-        :progress="progress"
-        :stats="progressStats"
-    />
+    </ParserTabLayout>
 </template>

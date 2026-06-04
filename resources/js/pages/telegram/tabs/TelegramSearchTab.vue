@@ -1,8 +1,7 @@
 ﻿<script setup lang="ts">
 import { computed, onMounted } from 'vue';
 import IntelAdvancedFilters from '@/components/ui/IntelAdvancedFilters.vue';
-import IntelResultPanel from '@/components/ui/IntelResultPanel.vue';
-import SearchControlPanel from '@/components/ui/search/SearchControlPanel.vue';
+import SearchTabLayout from '@/components/ui/search/SearchTabLayout.vue';
 import { useI18n } from '@/composables/useI18n';
 import {
     getRepeatQueryParams,
@@ -119,7 +118,7 @@ onMounted(() => {
 </script>
 
 <template>
-    <SearchControlPanel
+    <SearchTabLayout
         :title="t('telegram.search.title')"
         :help-label="t('telegram.help.label')"
         :help-text="t('telegram.search.help.overview')"
@@ -133,6 +132,7 @@ onMounted(() => {
         :advanced-hide-aria="t('telegram.search.advancedAriaHide')"
         :submit-label="t('telegram.search.find')"
         :searching-label="t('telegram.search.searching')"
+        :error="error"
         @update:collapsed="searchPanelCollapsed = $event"
         @update:show-advanced="showAdvanced = $event"
         @submit="searchMessages(false)"
@@ -227,14 +227,7 @@ onMounted(() => {
                 </label>
             </IntelAdvancedFilters>
         </template>
-        <template #afterActions>
-            <p v-if="error" class="mt-3 text-sm text-destructive">
-                {{ error }}
-            </p>
-        </template>
-    </SearchControlPanel>
-
-    <IntelResultPanel>
+        <template #results>
         <div class="mb-3 flex items-center justify-between">
             <h2 class="text-sm font-semibold">
                 {{ t('telegram.messages.title') }}
@@ -632,7 +625,8 @@ onMounted(() => {
                 </article>
             </div>
         </div>
-
+        </template>
+        <template #footer>
         <div v-if="hasMore" class="mt-4 flex justify-center">
             <button
                 :disabled="loadingMore"
@@ -646,5 +640,6 @@ onMounted(() => {
                 }}
             </button>
         </div>
-    </IntelResultPanel>
+        </template>
+    </SearchTabLayout>
 </template>

@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { computed } from 'vue';
-import ParserControlPanel from '@/components/ui/parser/ParserControlPanel.vue';
-import ParserProgressPanel from '@/components/ui/parser/ParserProgressPanel.vue';
+import ParserTabLayout from '@/components/ui/parser/ParserTabLayout.vue';
 import { useI18n } from '@/composables/useI18n';
+import { useStageLabel } from '@/composables/useStageLabel';
 import { useYouTubeParser } from '../composables/useYouTubeParser';
 
 const { t } = useI18n();
@@ -25,33 +25,9 @@ const {
     downloadJson,
 } = useYouTubeParser(t);
 
-const stageLabel = computed(() => {
-    if (stage.value === 'comments') {
-        return t('youtube.parser.progress.stage.comments');
-    }
-
-    if (stage.value === 'replies') {
-        return t('youtube.parser.progress.stage.replies');
-    }
-
-    if (stage.value === 'finishing') {
-        return t('youtube.parser.progress.stage.finishing');
-    }
-
-    if (stage.value === 'completed') {
-        return t('youtube.parser.progress.stage.completed');
-    }
-
-    if (stage.value === 'failed') {
-        return t('youtube.parser.progress.stage.failed');
-    }
-
-    if (stage.value === 'stopped') {
-        return t('youtube.parser.progress.stage.stopped');
-    }
-
-    return t('youtube.parser.progress.stage.idle');
-});
+const stageLabel = useStageLabel(stage, (value) =>
+    t(`youtube.parser.progress.stage.${value}`)
+);
 
 const progressStats = computed(() => [
     {
@@ -66,7 +42,7 @@ const progressStats = computed(() => [
 </script>
 
 <template>
-    <ParserControlPanel
+    <ParserTabLayout
         :title="t('youtube.parser.title')"
         :help-label="t('youtube.help.label')"
         :help-text="t('youtube.parser.help.overview')"
@@ -82,6 +58,10 @@ const progressStats = computed(() => [
         :stop-label="t('youtube.parser.stop')"
         :download-label="t('youtube.parser.download')"
         :download-json-label="t('youtube.parser.downloadJson')"
+        :progress-title="t('youtube.parser.progress.title')"
+        :stage-label="stageLabel"
+        :progress="progress"
+        :stats="progressStats"
         @update:settings-collapsed="settingsCollapsed = $event"
         @start="start"
         @stop="stop"
@@ -106,12 +86,5 @@ const progressStats = computed(() => [
         <template #afterActions>
             <p v-if="error" class="text-sm text-destructive">{{ error }}</p>
         </template>
-    </ParserControlPanel>
-
-    <ParserProgressPanel
-        :title="t('youtube.parser.progress.title')"
-        :stage-label="stageLabel"
-        :progress="progress"
-        :stats="progressStats"
-    />
+    </ParserTabLayout>
 </template>
