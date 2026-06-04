@@ -1,9 +1,10 @@
 import type { Component } from 'vue';
 import { MODULE_TAB_ICONS } from '@/lib/navigation/tab-icons';
 import BlueskyAnalyticsTab from './tabs/BlueskyAnalyticsTab.vue';
+import BlueskyParserTab from './tabs/BlueskyParserTab.vue';
 import BlueskySearchTab from './tabs/BlueskySearchTab.vue';
 
-export type BlueskyTabValue = 'search';
+export type BlueskyTabValue = 'search' | 'analytics' | 'parser';
 
 export type BlueskyTabDefinition = {
     key: BlueskyTabValue;
@@ -26,5 +27,12 @@ export const BLUESKY_TABS: readonly BlueskyTabDefinition[] = [
         icon: MODULE_TAB_ICONS.analytics,
         component: BlueskyAnalyticsTab,
         accessKey: 'bluesky.analytics',
+    },
+    {
+        key: 'parser',
+        labelKey: 'bluesky.tabs.parser',
+        icon: MODULE_TAB_ICONS.parser,
+        component: BlueskyParserTab,
+        accessKey: 'bluesky.parser',
     },
 ] as const;

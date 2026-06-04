@@ -1,190 +1,232 @@
-{
-    "headTitle": "Bluesky",
-    "help": {
-        "label": "Что это за данные?"
-    },
-    "tabs": {
-        "search": "Поиск",
-        "analytics": "Аналитика"
-    },
-    "search": {
-        "title": "Поиск Bluesky",
-        "collapsed": "Панель поиска свернута",
-        "filters": "Поиск по публичным постам и аккаунтам Bluesky с OSINT-фильтрами",
-        "hint": "Использует авторизованный Bluesky API с вашим app password. Можно искать посты, аккаунты или оба типа сразу, с фильтрами по языку, автору, ссылкам, тегам и датам.",
-        "query": "Запрос",
-        "type": "Тип поиска",
-        "sort": "Сортировка",
-        "limit": "Лимит",
-        "author": "Автор",
-        "mentions": "Упоминает",
-        "domain": "Домен",
-        "url": "Ссылка содержит",
-        "tag": "Хэштег",
-        "since": "Дата с",
-        "until": "Дата по",
-        "language": "Язык",
-        "languagePlaceholder": "например: en",
-        "authorPlaceholder": "например: analyst.bsky.social",
-        "mentionsPlaceholder": "например: did:plc:abc123",
-        "domainPlaceholder": "например: example.org",
-        "urlPlaceholder": "например: https://example.org/report",
-        "tagPlaceholder": "например: osint",
-        "placeholder": "например: osint investigations",
-        "advancedAriaShow": "Показать дополнительные фильтры",
-        "advancedAriaHide": "Скрыть дополнительные фильтры",
-        "submit": "Найти",
-        "searching": "Ищем...",
-        "resultTitle": "Результаты",
-        "shown": "Показано",
-        "empty": "Выполните поиск, чтобы увидеть результаты Bluesky.",
-        "noMatches": "По текущим фильтрам ничего не найдено.",
-        "loadMore": "Показать еще",
-        "loadingMore": "Загрузка...",
-        "noText": "[Без текста]",
-        "noBio": "Описание профиля отсутствует."
-    },
-    "analytics": {
-        "title": "Аналитика Bluesky",
-        "collapsed": "Панель аналитики свернута",
-        "hint": "Собирает снимок аккаунта или хэштега: активность, амплификацию и паттерны контента.",
-        "mode": "Режим",
-        "modes": {
-            "account": "Аккаунт",
-            "hashtag": "Хэштег"
-        },
-        "target": "Цель",
-        "accountPlaceholder": "например: analyst.bsky.social",
-        "hashtagPlaceholder": "например: osint",
-        "limit": "Постов на страницу",
-        "pages": "Страниц",
-        "dateFrom": "Дата с",
-        "dateTo": "Дата по",
-        "resolveProfile": "Разрешать профиль",
-        "refresh": "Запустить аналитику",
-        "loading": "Анализируем...",
-        "report": "Открыть отчет",
-        "downloadReport": "Скачать отчет",
-        "accountProfile": "Профиль аккаунта",
-        "hashtagProfile": "Профиль хэштега",
-        "sample": "Выборка",
-        "sampleTarget": "Распознанная цель",
-        "sampledPosts": "Постов в выборке",
-        "pagesRequested": "Запрошено страниц",
-        "pagesLoaded": "Загружено страниц",
-        "timeline": "Динамика",
-        "topPosts": "Лучшие посты",
-        "topDomains": "Топ доменов",
-        "topTags": "Топ хэштегов",
-        "topAuthors": "Топ авторов",
-        "topMentions": "Топ упоминаний",
-        "topLanguages": "Топ языков",
-        "noTimeline": "Точки динамики отсутствуют.",
-        "noTopPosts": "В текущей выборке нет топ-постов.",
-        "noDomains": "Внешние домены не обнаружены.",
-        "noTags": "Хэштеги не обнаружены.",
-        "noAuthors": "Авторы не обнаружены.",
-        "noMentions": "Упоминания не обнаружены.",
-        "noLanguages": "Распределение языков отсутствует.",
-        "usesInSample": "упоминаний в выборке",
-        "mentionsInSample": "упоминаний в выборке",
-        "metrics": {
-            "posts": "Посты",
-            "authors": "Авторы",
-            "languages": "Языки",
-            "mediaPosts": "Посты с медиа",
-            "linkPosts": "Посты со ссылками",
-            "replyPosts": "Ответы",
-            "repliesTotal": "Всего ответов",
-            "repostsTotal": "Всего репостов",
-            "likesTotal": "Всего лайков",
-            "quotesTotal": "Всего цитат"
-        },
-        "empty": {
-            "title": "Аналитика готова",
-            "description": "Выберите аккаунт или хэштег и запустите аналитику, чтобы собрать снимок активности Bluesky."
-        },
-        "errors": {
-            "requestFailed": "Ошибка запроса аналитики."
-        }
-    },
-    "sections": {
-        "posts": "Посты",
-        "actors": "Аккаунты"
-    },
-    "metrics": {
-        "likes": "Лайки",
-        "reposts": "Репосты",
-        "replies": "Ответы",
-        "quotes": "Цитаты",
-        "uses": "Употребления",
-        "media": "Медиа",
-        "postType": "Тип поста",
-        "followers": "Подписчики",
-        "following": "Подписки",
-        "posts": "Посты",
-        "languages": "Языки",
-        "hashtags": "Хэштеги",
-        "domains": "Домены"
-    },
-    "options": {
-        "type": {
-            "posts": "Посты",
-            "actors": "Аккаунты",
-            "all": "Все"
-        },
-        "sort": {
-            "latest": "Свежие",
-            "top": "Топ"
-        }
-    },
-    "common": {
-        "openPost": "Открыть пост",
-        "openProfile": "Открыть профиль",
-        "openMedia": "Открыть медиа",
-        "openSearch": "Открыть поиск"
-    },
-    "osint": {
-        "title": "OSINT-детали",
-        "indexedAt": "Индексировано",
-        "replyRoot": "Корневой пост треда",
-        "replyParent": "Родительский пост",
-        "links": "Внешние ссылки",
-        "mentions": "Упомянутые DID",
-        "labels": "Метки модерации"
-    },
-    "engagement": {
-        "likes": "Поставили лайк",
-        "reposts": "Сделали репост",
-        "thread": "Контекст треда",
-        "showLikes": "Показать лайки",
-        "hideLikes": "Скрыть лайки",
-        "showReposts": "Показать репосты",
-        "hideReposts": "Скрыть репосты",
-        "showThread": "Показать ответы",
-        "hideThread": "Скрыть ответы",
-        "ancestors": "Предыдущие посты",
-        "replies": "Ответы",
-        "loading": "Загружаем взаимодействия...",
-        "emptyLikes": "Лайки не найдены.",
-        "emptyReposts": "Репосты не найдены.",
-        "emptyThread": "Данные по треду не найдены."
-    },
-    "accounts": {
-        "showPosts": "Показать посты",
-        "hidePosts": "Скрыть посты",
-        "showFollowers": "Показать подписчиков",
-        "hideFollowers": "Скрыть подписчиков",
-        "showFollows": "Показать подписки",
-        "hideFollows": "Скрыть подписки",
-        "postsSection": "Посты аккаунта",
-        "followersSection": "Подписчики",
-        "followsSection": "Подписки",
-        "emptyPosts": "Посты не найдены.",
-        "emptyFollowers": "Подписчики не найдены.",
-        "emptyFollows": "Подписки не найдены."
-    },
-    "errors": {
-        "requestFailed": "Ошибка запроса."
-    }
+﻿{
+    "headTitle":  "Bluesky",
+    "help":  {
+                 "label":  "Что это за данные?"
+             },
+    "tabs":  {
+                 "search":  "Поиск",
+                 "analytics":  "Аналитика",
+                 "parser":  "Parser"
+             },
+    "search":  {
+                   "title":  "Поиск Bluesky",
+                   "collapsed":  "Панель поиска свернута",
+                   "filters":  "Поиск по публичным постам и аккаунтам Bluesky с OSINT-фильтрами",
+                   "hint":  "Использует авторизованный Bluesky API с вашим app password. Можно искать посты, аккаунты или оба типа сразу, с фильтрами по языку, автору, ссылкам, тегам и датам.",
+                   "query":  "Запрос",
+                   "type":  "Тип поиска",
+                   "sort":  "Сортировка",
+                   "limit":  "Лимит",
+                   "author":  "Автор",
+                   "mentions":  "Упоминает",
+                   "domain":  "Домен",
+                   "url":  "Ссылка содержит",
+                   "tag":  "Хэштег",
+                   "since":  "Дата с",
+                   "until":  "Дата по",
+                   "language":  "Язык",
+                   "languagePlaceholder":  "например: en",
+                   "authorPlaceholder":  "например: analyst.bsky.social",
+                   "mentionsPlaceholder":  "например: did:plc:abc123",
+                   "domainPlaceholder":  "например: example.org",
+                   "urlPlaceholder":  "например: https://example.org/report",
+                   "tagPlaceholder":  "например: osint",
+                   "placeholder":  "например: osint investigations",
+                   "advancedAriaShow":  "Показать дополнительные фильтры",
+                   "advancedAriaHide":  "Скрыть дополнительные фильтры",
+                   "submit":  "Найти",
+                   "searching":  "Ищем...",
+                   "resultTitle":  "Результаты",
+                   "shown":  "Показано",
+                   "empty":  "Выполните поиск, чтобы увидеть результаты Bluesky.",
+                   "noMatches":  "По текущим фильтрам ничего не найдено.",
+                   "loadMore":  "Показать еще",
+                   "loadingMore":  "Загрузка...",
+                   "noText":  "[Без текста]",
+                   "noBio":  "Описание профиля отсутствует."
+               },
+    "analytics":  {
+                      "title":  "Аналитика Bluesky",
+                      "collapsed":  "Панель аналитики свернута",
+                      "hint":  "Собирает снимок аккаунта или хэштега: активность, амплификацию и паттерны контента.",
+                      "mode":  "Режим",
+                      "modes":  {
+                                    "account":  "Аккаунт",
+                                    "hashtag":  "Хэштег"
+                                },
+                      "target":  "Цель",
+                      "accountPlaceholder":  "например: analyst.bsky.social",
+                      "hashtagPlaceholder":  "например: osint",
+                      "limit":  "Постов на страницу",
+                      "pages":  "Страниц",
+                      "dateFrom":  "Дата с",
+                      "dateTo":  "Дата по",
+                      "resolveProfile":  "Разрешать профиль",
+                      "refresh":  "Запустить аналитику",
+                      "loading":  "Анализируем...",
+                      "report":  "Открыть отчет",
+                      "downloadReport":  "Скачать отчет",
+                      "accountProfile":  "Профиль аккаунта",
+                      "hashtagProfile":  "Профиль хэштега",
+                      "sample":  "Выборка",
+                      "sampleTarget":  "Распознанная цель",
+                      "sampledPosts":  "Постов в выборке",
+                      "pagesRequested":  "Запрошено страниц",
+                      "pagesLoaded":  "Загружено страниц",
+                      "timeline":  "Динамика",
+                      "topPosts":  "Лучшие посты",
+                      "topDomains":  "Топ доменов",
+                      "topTags":  "Топ хэштегов",
+                      "topAuthors":  "Топ авторов",
+                      "topMentions":  "Топ упоминаний",
+                      "topLanguages":  "Топ языков",
+                      "noTimeline":  "Точки динамики отсутствуют.",
+                      "noTopPosts":  "В текущей выборке нет топ-постов.",
+                      "noDomains":  "Внешние домены не обнаружены.",
+                      "noTags":  "Хэштеги не обнаружены.",
+                      "noAuthors":  "Авторы не обнаружены.",
+                      "noMentions":  "Упоминания не обнаружены.",
+                      "noLanguages":  "Распределение языков отсутствует.",
+                      "usesInSample":  "упоминаний в выборке",
+                      "mentionsInSample":  "упоминаний в выборке",
+                      "metrics":  {
+                                      "posts":  "Посты",
+                                      "authors":  "Авторы",
+                                      "languages":  "Языки",
+                                      "mediaPosts":  "Посты с медиа",
+                                      "linkPosts":  "Посты со ссылками",
+                                      "replyPosts":  "Ответы",
+                                      "repliesTotal":  "Всего ответов",
+                                      "repostsTotal":  "Всего репостов",
+                                      "likesTotal":  "Всего лайков",
+                                      "quotesTotal":  "Всего цитат"
+                                  },
+                      "empty":  {
+                                    "title":  "Аналитика готова",
+                                    "description":  "Выберите аккаунт или хэштег и запустите аналитику, чтобы собрать снимок активности Bluesky."
+                                },
+                      "errors":  {
+                                     "requestFailed":  "Ошибка запроса аналитики."
+                                 }
+                  },
+    "sections":  {
+                     "posts":  "Посты",
+                     "actors":  "Аккаунты"
+                 },
+    "metrics":  {
+                    "likes":  "Лайки",
+                    "reposts":  "Репосты",
+                    "replies":  "Ответы",
+                    "quotes":  "Цитаты",
+                    "uses":  "Употребления",
+                    "media":  "Медиа",
+                    "postType":  "Тип поста",
+                    "followers":  "Подписчики",
+                    "following":  "Подписки",
+                    "posts":  "Посты",
+                    "languages":  "Языки",
+                    "hashtags":  "Хэштеги",
+                    "domains":  "Домены"
+                },
+    "options":  {
+                    "type":  {
+                                 "posts":  "Посты",
+                                 "actors":  "Аккаунты",
+                                 "all":  "Все"
+                             },
+                    "sort":  {
+                                 "latest":  "Свежие",
+                                 "top":  "Топ"
+                             }
+                },
+    "common":  {
+                   "openPost":  "Открыть пост",
+                   "openProfile":  "Открыть профиль",
+                   "openMedia":  "Открыть медиа",
+                   "openSearch":  "Открыть поиск"
+               },
+    "osint":  {
+                  "title":  "OSINT-детали",
+                  "indexedAt":  "Индексировано",
+                  "replyRoot":  "Корневой пост треда",
+                  "replyParent":  "Родительский пост",
+                  "links":  "Внешние ссылки",
+                  "mentions":  "Упомянутые DID",
+                  "labels":  "Метки модерации"
+              },
+    "engagement":  {
+                       "likes":  "Поставили лайк",
+                       "reposts":  "Сделали репост",
+                       "thread":  "Контекст треда",
+                       "showLikes":  "Показать лайки",
+                       "hideLikes":  "Скрыть лайки",
+                       "showReposts":  "Показать репосты",
+                       "hideReposts":  "Скрыть репосты",
+                       "showThread":  "Показать ответы",
+                       "hideThread":  "Скрыть ответы",
+                       "ancestors":  "Предыдущие посты",
+                       "replies":  "Ответы",
+                       "loading":  "Загружаем взаимодействия...",
+                       "emptyLikes":  "Лайки не найдены.",
+                       "emptyReposts":  "Репосты не найдены.",
+                       "emptyThread":  "Данные по треду не найдены."
+                   },
+    "accounts":  {
+                     "showPosts":  "Показать посты",
+                     "hidePosts":  "Скрыть посты",
+                     "showFollowers":  "Показать подписчиков",
+                     "hideFollowers":  "Скрыть подписчиков",
+                     "showFollows":  "Показать подписки",
+                     "hideFollows":  "Скрыть подписки",
+                     "postsSection":  "Посты аккаунта",
+                     "followersSection":  "Подписчики",
+                     "followsSection":  "Подписки",
+                     "emptyPosts":  "Посты не найдены.",
+                     "emptyFollowers":  "Подписчики не найдены.",
+                     "emptyFollows":  "Подписки не найдены."
+                 },
+    "errors":  {
+                   "requestFailed":  "Ошибка запроса."
+               },
+    "parser":  {
+                   "title":  "Bluesky Parser",
+                   "subtitle":  "Collect a full account snapshot: profile, authored posts, replies, followers, follows, and reactions.",
+                   "collapsed":  "Parser panel is collapsed",
+                   "actor":  "Actor",
+                   "actorPlaceholder":  "for example: analyst.bsky.social",
+                   "hint":  "Use the parser when you need a downloadable account snapshot for deeper OSINT work. It will walk the account feed, social graph, reply activity, and visible reactions.",
+                   "collecting":  "Collecting...",
+                   "start":  "Start parser",
+                   "stop":  "Stop",
+                   "download":  "Download Excel",
+                   "downloadJson":  "Download JSON",
+                   "help":  {
+                                "overview":  "Builds a downloadable Bluesky account dataset: profile, posts, authored replies, incoming replies, followers, follows, likes, and reposts."
+                            },
+                   "progress":  {
+                                    "title":  "Progress",
+                                    "posts":  "Posts",
+                                    "authoredReplies":  "Authored replies",
+                                    "receivedReplies":  "Received replies",
+                                    "followers":  "Followers",
+                                    "follows":  "Following",
+                                    "reactions":  "Reactions",
+                                    "stage":  {
+                                                  "idle":  "Idle",
+                                                  "profile":  "Resolving profile",
+                                                  "feed":  "Collecting feed",
+                                                  "followers":  "Collecting followers",
+                                                  "follows":  "Collecting following",
+                                                  "interactions":  "Collecting interactions",
+                                                  "finishing":  "Finalizing export",
+                                                  "completed":  "Completed",
+                                                  "failed":  "Failed",
+                                                  "stopped":  "Stopped"
+                                              }
+                                },
+                   "errors":  {
+                                  "actorRequired":  "Actor is required.",
+                                  "failed":  "Parser request failed."
+                              }
+               }
 }

@@ -5,7 +5,8 @@
     },
     "tabs": {
         "search": "Search",
-        "analytics": "Analytics"
+        "analytics": "Analytics",
+        "parser": "Parser"
     },
     "search": {
         "title": "Bluesky Search",
@@ -106,6 +107,47 @@
         },
         "errors": {
             "requestFailed": "Analytics request failed."
+        }
+    },
+    "parser": {
+        "title": "Bluesky Parser",
+        "subtitle": "Collect a full account snapshot: profile, authored posts, replies, followers, follows, and reactions.",
+        "collapsed": "Parser panel is collapsed",
+        "actor": "Actor",
+        "actorPlaceholder": "for example: analyst.bsky.social",
+        "hint": "Use the parser when you need a downloadable account snapshot for deeper OSINT work. It will walk the account feed, social graph, reply activity, and visible reactions.",
+        "collecting": "Collecting...",
+        "start": "Start parser",
+        "stop": "Stop",
+        "download": "Download Excel",
+        "downloadJson": "Download JSON",
+        "help": {
+            "overview": "Builds a downloadable Bluesky account dataset: profile, posts, authored replies, incoming replies, followers, follows, likes, and reposts."
+        },
+        "progress": {
+            "title": "Progress",
+            "posts": "Posts",
+            "authoredReplies": "Authored replies",
+            "receivedReplies": "Received replies",
+            "followers": "Followers",
+            "follows": "Following",
+            "reactions": "Reactions",
+            "stage": {
+                "idle": "Idle",
+                "profile": "Resolving profile",
+                "feed": "Collecting feed",
+                "followers": "Collecting followers",
+                "follows": "Collecting following",
+                "interactions": "Collecting interactions",
+                "finishing": "Finalizing export",
+                "completed": "Completed",
+                "failed": "Failed",
+                "stopped": "Stopped"
+            }
+        },
+        "errors": {
+            "actorRequired": "Actor is required.",
+            "failed": "Parser request failed."
         }
     },
     "sections": {

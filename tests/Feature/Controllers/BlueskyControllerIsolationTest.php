@@ -5,11 +5,14 @@ namespace Tests\Feature\Controllers;
 use App\Models\User;
 use App\Modules\Bluesky\Analytics\Contracts\BlueskyAnalyticsApplicationServiceInterface;
 use App\Modules\Bluesky\DTO\Request\BlueskyAnalyticsQueryDTO;
+use App\Modules\Bluesky\DTO\Request\BlueskyParserStartDTO;
 use App\Modules\Bluesky\DTO\Result\BlueskyAnalyticsResultDTO;
+use App\Modules\Bluesky\DTO\Result\BlueskyParserRunStatusDTO;
 use App\Modules\Bluesky\DTO\Request\BlueskySearchQueryDTO;
 use App\Modules\Bluesky\DTO\Result\BlueskyActorListResultDTO;
 use App\Modules\Bluesky\DTO\Result\BlueskySearchResultDTO;
 use App\Modules\Bluesky\DTO\Result\BlueskyThreadResultDTO;
+use App\Modules\Bluesky\Parser\Contracts\BlueskyParserApplicationServiceInterface;
 use App\Modules\Bluesky\Search\Contracts\BlueskySearchApplicationServiceInterface;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Mockery;
@@ -303,6 +306,46 @@ class BlueskyControllerIsolationTest extends TestCase
             ->assertOk()
             ->assertJsonPath('data.meta.resolvedTarget', '#osint')
             ->assertJsonPath('data.summary.totalLikes', 31);
+    }
+
+    public function test_bluesky_parser_start_controller_passes_authenticated_user_to_service(): void
+    {
+        $user = $this->createSubscribedUser();
+
+        $this->mock(BlueskyParserApplicationServiceInterface::class, function ($mock) use ($user): void {
+            $mock->shouldReceive('start')
+                ->once()
+                ->with(Mockery::on(
+                    fn (BlueskyParserStartDTO $input): bool => $input->userId === $user->id
+                        && $input->actor === 'analyst.bsky.social'
+                ))
+                ->andReturn(new BlueskyParserRunStatusDTO([
+                    'ok' => true,
+                    'runId' => 'bsky-run-1',
+                    'status' => 'queued',
+                ]));
+        });
+
+        $this
+            ->actingAs($user)
+            ->postJson(route('bluesky.parser.start'), ['actor' => '@analyst.bsky.social'])
+            ->assertOk()
+            ->assertJsonPath('runId', 'bsky-run-1')
+            ->assertJsonPath('status', 'queued');
+    }
+
+    public function test_bluesky_parser_status_controller_returns_not_found_for_missing_run(): void
+    {
+        $user = $this->createSubscribedUser();
+
+        $this->mock(BlueskyParserApplicationServiceInterface::class, function ($mock) use ($user): void {
+            $mock->shouldReceive('status')->once()->with($user->id, 'missing-run')->andReturn(null);
+        });
+
+        $this
+            ->actingAs($user)
+            ->getJson(route('bluesky.parser.status', ['runId' => 'missing-run']))
+            ->assertNotFound();
     }
 
     public function test_bluesky_analytics_report_renders_html_response(): void

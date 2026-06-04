@@ -137,6 +137,19 @@ class FeatureAccessServiceTest extends TestCase
         $this->assertSame(0, $this->usage($user, 'telegram.parser'));
     }
 
+    public function test_bluesky_parser_start_uses_its_own_quota_pool(): void
+    {
+        $user = $this->createSubscribedUser();
+
+        $decision = $this->service()->consume($user, 'bluesky.parser.start');
+
+        $this->assertTrue($decision->allowed);
+        $this->assertSame('bluesky.parser', $decision->feature);
+        $this->assertSame(5, $decision->limit);
+        $this->assertSame(1, $this->usage($user, 'bluesky.parser'));
+        $this->assertSame(0, $this->usage($user, 'parser'));
+    }
+
     public function test_expired_subscription_falls_back_to_free(): void
     {
         $user = User::factory()->create();

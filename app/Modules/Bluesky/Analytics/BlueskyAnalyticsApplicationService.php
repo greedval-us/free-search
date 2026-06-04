@@ -8,12 +8,12 @@ use App\Modules\Bluesky\DTO\Request\BlueskyAnalyticsQueryDTO;
 use App\Modules\Bluesky\DTO\Result\BlueskyAnalyticsResultDTO;
 use App\Modules\Bluesky\Presenters\BlueskyActorPresenter;
 use App\Modules\Bluesky\Presenters\BlueskyPostPresenter;
+use App\Modules\Bluesky\Support\BlueskyActorResolver;
 use Illuminate\Support\Collection;
 use RuntimeException;
 
 final class BlueskyAnalyticsApplicationService implements BlueskyAnalyticsApplicationServiceInterface
 {
-    private const SEARCH_PICK_LIMIT = 10;
     private const TOP_POSTS_LIMIT = 8;
     private const TOP_VALUES_LIMIT = 10;
 
@@ -21,6 +21,7 @@ final class BlueskyAnalyticsApplicationService implements BlueskyAnalyticsApplic
         private readonly BlueskyGatewayInterface $gateway,
         private readonly BlueskyPostPresenter $postPresenter,
         private readonly BlueskyActorPresenter $actorPresenter,
+        private readonly BlueskyActorResolver $actorResolver,
     ) {
     }
 
@@ -180,34 +181,7 @@ final class BlueskyAnalyticsApplicationService implements BlueskyAnalyticsApplic
      */
     private function resolveAccount(string $target, bool $resolve): array
     {
-        $actor = ltrim(trim($target), '@');
-
-        if ($actor === '') {
-            return [];
-        }
-
-        $profiles = collect($this->gateway->getProfiles([$actor])['profiles'] ?? [])
-            ->map(fn (array $item): array => $this->actorPresenter->present($item));
-
-        if ($profiles->isNotEmpty()) {
-            return $profiles->first() ?? [];
-        }
-
-        if (! $resolve) {
-            return [];
-        }
-
-        $actors = collect($this->gateway->searchActors([
-            'q' => $actor,
-            'limit' => self::SEARCH_PICK_LIMIT,
-        ])['actors'] ?? [])
-            ->map(fn (array $item): array => $this->actorPresenter->present($item));
-
-        $needle = strtolower($actor);
-        $exact = $actors->first(fn (array $item): bool => strtolower((string) ($item['handle'] ?? '')) === $needle
-            || strtolower((string) ($item['did'] ?? '')) === $needle);
-
-        return is_array($exact) ? $exact : ($actors->first() ?? []);
+        return $this->actorResolver->resolve($target, $resolve);
     }
 
     /**
