@@ -1,4 +1,4 @@
-export type BlueskyTabValue = 'search';
+export type BlueskyTabValue = 'search' | 'analytics';
 
 export enum BlueskySearchType {
     All = 'all',
@@ -225,4 +225,74 @@ export type BlueskyActorDetailsState = {
     postsNextCursor: string | null;
     followersNextCursor: string | null;
     followsNextCursor: string | null;
+};
+
+export type BlueskyHashtagProfile = {
+    id: string;
+    name: string;
+    url: string;
+    history: Array<{
+        day: string;
+        uses: number;
+        accounts: number;
+    }>;
+};
+
+export type BlueskyAnalyticsPayload = {
+    profile: BlueskyActor | BlueskyHashtagProfile | null;
+    meta: {
+        mode: 'account' | 'hashtag' | string;
+        target: string;
+        resolvedTarget: string;
+        pagesRequested: number;
+        pagesLoaded: number;
+        sampledPosts: number;
+    };
+    summary: {
+        postsCount: number;
+        uniqueAuthorsCount: number;
+        uniqueLanguagesCount: number;
+        postsWithMediaCount: number;
+        postsWithLinksCount: number;
+        replyPostsCount: number;
+        totalReplies: number;
+        totalReposts: number;
+        totalLikes: number;
+        totalQuotes: number;
+    };
+    timeline: Array<{
+        day: string;
+        posts: number;
+        postsWithMedia: number;
+        postsWithLinks: number;
+        replies: number;
+        reposts: number;
+        likes: number;
+        quotes: number;
+    }>;
+    topDomains: Array<{
+        domain: string;
+        count: number;
+    }>;
+    topTags: Array<{
+        tag: string;
+        count: number;
+    }>;
+    topAuthors: Array<
+        BlueskyActor & {
+            count: number;
+        }
+    >;
+    topMentions: Array<{
+        did: string;
+        handle: string;
+        displayName: string;
+        url: string;
+        count: number;
+    }>;
+    topLanguages: Array<{
+        language: string;
+        count: number;
+    }>;
+    topPosts: BlueskyPost[];
 };

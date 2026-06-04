@@ -4,7 +4,8 @@
         "label": "What is this data?"
     },
     "tabs": {
-        "search": "Search"
+        "search": "Search",
+        "analytics": "Analytics"
     },
     "search": {
         "title": "Bluesky Search",
@@ -43,6 +44,70 @@
         "noText": "[No text]",
         "noBio": "No profile description available."
     },
+    "analytics": {
+        "title": "Bluesky Analytics",
+        "collapsed": "Analytics panel is collapsed",
+        "hint": "Build a snapshot of an account or hashtag sample to measure activity, amplification, and content patterns.",
+        "mode": "Mode",
+        "modes": {
+            "account": "Account",
+            "hashtag": "Hashtag"
+        },
+        "target": "Target",
+        "accountPlaceholder": "for example: analyst.bsky.social",
+        "hashtagPlaceholder": "for example: osint",
+        "limit": "Posts per page",
+        "pages": "Pages",
+        "dateFrom": "Date from",
+        "dateTo": "Date to",
+        "resolveProfile": "Resolve profile details",
+        "refresh": "Run analytics",
+        "loading": "Analyzing...",
+        "report": "Open report",
+        "downloadReport": "Download report",
+        "accountProfile": "Account profile",
+        "hashtagProfile": "Hashtag profile",
+        "sample": "Sample",
+        "sampleTarget": "Resolved target",
+        "sampledPosts": "Sampled posts",
+        "pagesRequested": "Pages requested",
+        "pagesLoaded": "Pages loaded",
+        "timeline": "Timeline",
+        "topPosts": "Top posts",
+        "topDomains": "Top domains",
+        "topTags": "Top hashtags",
+        "topAuthors": "Top authors",
+        "topMentions": "Top mentions",
+        "topLanguages": "Top languages",
+        "noTimeline": "No timeline points available.",
+        "noTopPosts": "No top posts in the current sample.",
+        "noDomains": "No external domains detected.",
+        "noTags": "No hashtags detected.",
+        "noAuthors": "No authors detected.",
+        "noMentions": "No mentions detected.",
+        "noLanguages": "No language distribution detected.",
+        "usesInSample": "uses in sample",
+        "mentionsInSample": "mentions in sample",
+        "metrics": {
+            "posts": "Posts",
+            "authors": "Authors",
+            "languages": "Languages",
+            "mediaPosts": "Posts with media",
+            "linkPosts": "Posts with links",
+            "replyPosts": "Replies",
+            "repliesTotal": "Replies total",
+            "repostsTotal": "Reposts total",
+            "likesTotal": "Likes total",
+            "quotesTotal": "Quotes total"
+        },
+        "empty": {
+            "title": "Analytics is ready",
+            "description": "Choose an account or hashtag and run analytics to build a Bluesky activity snapshot."
+        },
+        "errors": {
+            "requestFailed": "Analytics request failed."
+        }
+    },
     "sections": {
         "posts": "Posts",
         "actors": "Accounts"
@@ -52,6 +117,7 @@
         "reposts": "Reposts",
         "replies": "Replies",
         "quotes": "Quotes",
+        "uses": "Uses",
         "media": "Media",
         "postType": "Post type",
         "followers": "Followers",
@@ -75,7 +141,8 @@
     "common": {
         "openPost": "Open post",
         "openProfile": "Open profile",
-        "openMedia": "Open media"
+        "openMedia": "Open media",
+        "openSearch": "Open search"
     },
     "osint": {
         "title": "OSINT details",

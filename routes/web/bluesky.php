@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Bluesky\BlueskyAnalyticsController;
 use App\Http\Controllers\Bluesky\BlueskySearchController;
 use Illuminate\Support\Facades\Route;
 
@@ -8,6 +9,16 @@ Route::inertia('bluesky', 'Bluesky')
     ->name('bluesky');
 
 Route::prefix('bluesky')->name('bluesky.')->group(function (): void {
+    Route::prefix('analytics')->name('analytics.')->group(function (): void {
+        Route::get('summary', [BlueskyAnalyticsController::class, 'summary'])
+            ->middleware(['feature.access', 'throttle:30,1'])
+            ->name('summary');
+
+        Route::get('report', [BlueskyAnalyticsController::class, 'report'])
+            ->middleware(['feature.access', 'throttle:20,1'])
+            ->name('report');
+    });
+
     Route::prefix('search')->name('search.')->group(function (): void {
         Route::get('', [BlueskySearchController::class, 'search'])
             ->middleware('throttle:45,1')

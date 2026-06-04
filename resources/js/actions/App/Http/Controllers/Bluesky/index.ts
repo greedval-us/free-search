@@ -1,6 +1,8 @@
+import BlueskyAnalyticsController from './BlueskyAnalyticsController'
 import BlueskySearchController from './BlueskySearchController'
 const Bluesky = {
-    BlueskySearchController: Object.assign(BlueskySearchController, BlueskySearchController),
+    BlueskyAnalyticsController: Object.assign(BlueskyAnalyticsController, BlueskyAnalyticsController),
+BlueskySearchController: Object.assign(BlueskySearchController, BlueskySearchController),
 }
 
 export default Bluesky

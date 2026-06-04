@@ -3,6 +3,9 @@
 namespace Tests\Feature\Controllers;
 
 use App\Models\User;
+use App\Modules\Bluesky\Analytics\Contracts\BlueskyAnalyticsApplicationServiceInterface;
+use App\Modules\Bluesky\DTO\Request\BlueskyAnalyticsQueryDTO;
+use App\Modules\Bluesky\DTO\Result\BlueskyAnalyticsResultDTO;
 use App\Modules\Bluesky\DTO\Request\BlueskySearchQueryDTO;
 use App\Modules\Bluesky\DTO\Result\BlueskyActorListResultDTO;
 use App\Modules\Bluesky\DTO\Result\BlueskySearchResultDTO;
@@ -11,10 +14,12 @@ use App\Modules\Bluesky\Search\Contracts\BlueskySearchApplicationServiceInterfac
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Mockery;
 use RuntimeException;
+use Tests\Feature\Concerns\CreatesSubscribedUser;
 use Tests\TestCase;
 
 class BlueskyControllerIsolationTest extends TestCase
 {
+    use CreatesSubscribedUser;
     use RefreshDatabase;
 
     public function test_bluesky_search_controller_returns_service_payload(): void
@@ -229,5 +234,124 @@ class BlueskyControllerIsolationTest extends TestCase
             ->assertOk()
             ->assertJsonPath('data.ancestors.0.id', 'at://did:plc:parent/app.bsky.feed.post/1')
             ->assertJsonPath('data.replies.0.id', 'at://did:plc:reply/app.bsky.feed.post/2');
+    }
+
+    public function test_bluesky_analytics_controller_returns_summary_payload(): void
+    {
+        $user = $this->createSubscribedUser();
+
+        $this->mock(BlueskyAnalyticsApplicationServiceInterface::class, function ($mock): void {
+            $mock->shouldReceive('summary')
+                ->once()
+                ->with(Mockery::on(
+                    fn (BlueskyAnalyticsQueryDTO $query): bool => $query->mode === 'hashtag'
+                        && $query->target === 'osint'
+                        && $query->limit === 10
+                        && $query->pages === 3
+                        && $query->dateFrom === '2026-06-01'
+                        && $query->dateTo === '2026-06-03'
+                        && $query->resolve === true
+                ))
+                ->andReturn(new BlueskyAnalyticsResultDTO(
+                    profile: [
+                        'id' => 'osint',
+                        'name' => 'osint',
+                        'url' => 'https://bsky.app/search?q=%23osint',
+                        'history' => [],
+                    ],
+                    meta: [
+                        'mode' => 'hashtag',
+                        'target' => 'osint',
+                        'resolvedTarget' => '#osint',
+                        'pagesRequested' => 3,
+                        'pagesLoaded' => 2,
+                        'sampledPosts' => 12,
+                    ],
+                    summary: [
+                        'postsCount' => 12,
+                        'uniqueAuthorsCount' => 5,
+                        'uniqueLanguagesCount' => 2,
+                        'postsWithMediaCount' => 4,
+                        'postsWithLinksCount' => 6,
+                        'replyPostsCount' => 1,
+                        'totalReplies' => 10,
+                        'totalReposts' => 22,
+                        'totalLikes' => 31,
+                        'totalQuotes' => 7,
+                    ],
+                    timeline: [],
+                    topDomains: [],
+                    topTags: [],
+                    topAuthors: [],
+                    topMentions: [],
+                    topLanguages: [],
+                    topPosts: [],
+                ));
+        });
+
+        $this
+            ->actingAs($user)
+            ->getJson(route('bluesky.analytics.summary', [
+                'mode' => 'hashtag',
+                'target' => 'osint',
+                'limit' => 10,
+                'pages' => 3,
+                'dateFrom' => '2026-06-01',
+                'dateTo' => '2026-06-03',
+                'resolve' => true,
+            ]))
+            ->assertOk()
+            ->assertJsonPath('data.meta.resolvedTarget', '#osint')
+            ->assertJsonPath('data.summary.totalLikes', 31);
+    }
+
+    public function test_bluesky_analytics_report_renders_html_response(): void
+    {
+        $user = $this->createSubscribedUser();
+
+        $this->mock(BlueskyAnalyticsApplicationServiceInterface::class, function ($mock): void {
+            $mock->shouldReceive('summary')
+                ->once()
+                ->andReturn(new BlueskyAnalyticsResultDTO(
+                    profile: null,
+                    meta: [
+                        'mode' => 'account',
+                        'target' => 'analyst.bsky.social',
+                        'resolvedTarget' => 'analyst.bsky.social',
+                        'pagesRequested' => 3,
+                        'pagesLoaded' => 1,
+                        'sampledPosts' => 4,
+                    ],
+                    summary: [
+                        'postsCount' => 4,
+                        'uniqueAuthorsCount' => 1,
+                        'uniqueLanguagesCount' => 1,
+                        'postsWithMediaCount' => 0,
+                        'postsWithLinksCount' => 1,
+                        'replyPostsCount' => 0,
+                        'totalReplies' => 2,
+                        'totalReposts' => 3,
+                        'totalLikes' => 5,
+                        'totalQuotes' => 1,
+                    ],
+                    timeline: [],
+                    topDomains: [],
+                    topTags: [],
+                    topAuthors: [],
+                    topMentions: [],
+                    topLanguages: [],
+                    topPosts: [],
+                ));
+        });
+
+        $this
+            ->actingAs($user)
+            ->get(route('bluesky.analytics.report', [
+                'mode' => 'account',
+                'target' => 'analyst.bsky.social',
+                'locale' => 'en',
+            ]))
+            ->assertOk()
+            ->assertSee('Bluesky Analytics Report');
     }
 }

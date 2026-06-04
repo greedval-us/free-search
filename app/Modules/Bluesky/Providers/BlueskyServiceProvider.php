@@ -2,6 +2,8 @@
 
 namespace App\Modules\Bluesky\Providers;
 
+use App\Modules\Bluesky\Analytics\BlueskyAnalyticsApplicationService;
+use App\Modules\Bluesky\Analytics\Contracts\BlueskyAnalyticsApplicationServiceInterface;
 use App\Modules\Bluesky\BlueskyApiClient;
 use App\Modules\Bluesky\Core\Contracts\BlueskyGatewayInterface;
 use App\Modules\Bluesky\Search\BlueskySearchApplicationService;
@@ -35,6 +37,7 @@ final class BlueskyServiceProvider extends BindingsServiceProvider
     {
         return [
             BlueskyGatewayInterface::class => BlueskyApiClient::class,
+            BlueskyAnalyticsApplicationServiceInterface::class => BlueskyAnalyticsApplicationService::class,
             BlueskySearchApplicationServiceInterface::class => BlueskySearchApplicationService::class,
         ];
     }
