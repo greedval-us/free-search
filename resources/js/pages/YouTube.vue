@@ -4,10 +4,15 @@ import { YOUTUBE_TABS } from './youtube/tabs';
 
 defineOptions({
     layout: {
-        breadcrumbs: [{ title: 'YouTube', href: '/youtube' }],
+        breadcrumbs: [
+            {
+                title: 'YouTube',
+                titleKey: 'youtube.headTitle',
+                href: '/youtube',
+            },
+        ],
     },
 });
-
 </script>
 
 <template>

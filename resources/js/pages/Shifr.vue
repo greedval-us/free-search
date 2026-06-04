@@ -11,6 +11,7 @@ defineOptions({
         breadcrumbs: [
             {
                 title: 'Shifr',
+                titleKey: 'shifr.headTitle',
                 href: '/shifr',
             },
         ],

@@ -3,6 +3,7 @@ import type { LucideIcon } from 'lucide-vue-next';
 
 export type BreadcrumbItem = {
     title: string;
+    titleKey?: string;
     href: NonNullable<InertiaLinkProps['href']>;
 };
 

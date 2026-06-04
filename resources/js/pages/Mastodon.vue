@@ -4,10 +4,15 @@ import { MASTODON_TABS } from './mastodon/tabs';
 
 defineOptions({
     layout: {
-        breadcrumbs: [{ title: 'Mastodon', href: '/mastodon' }],
+        breadcrumbs: [
+            {
+                title: 'Mastodon',
+                titleKey: 'mastodon.headTitle',
+                href: '/mastodon',
+            },
+        ],
     },
 });
-
 </script>
 
 <template>

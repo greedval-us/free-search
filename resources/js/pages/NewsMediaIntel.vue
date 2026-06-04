@@ -22,7 +22,11 @@ import type { NewsResult } from './news-media-intel/types';
 defineOptions({
     layout: {
         breadcrumbs: [
-            { title: 'News & Media Intel', href: '/news-media-intel' },
+            {
+                title: 'News & Media Intel',
+                titleKey: 'newsMediaIntel.headTitle',
+                href: '/news-media-intel',
+            },
         ],
     },
 });

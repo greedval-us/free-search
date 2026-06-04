@@ -11,6 +11,7 @@ defineOptions({
         breadcrumbs: [
             {
                 title: 'Site Intel',
+                titleKey: 'siteIntel.headTitle',
                 href: '/site-intel',
             },
         ],

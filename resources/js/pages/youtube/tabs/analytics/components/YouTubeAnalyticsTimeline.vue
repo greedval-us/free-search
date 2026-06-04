@@ -175,7 +175,7 @@ const clearHover = () => {
                 class="h-auto w-full"
                 :viewBox="`0 0 ${chartWidth} ${chartHeight}`"
                 role="img"
-                aria-label="Timeline chart"
+                :aria-label="t('youtube.analytics.timelineChartLabel')"
                 @mousemove="onMove"
                 @mouseleave="clearHover"
             >

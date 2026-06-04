@@ -545,8 +545,16 @@ const ui = computed(() => ({
 defineOptions({
     layout: {
         breadcrumbs: [
-            { title: 'Dashboard', href: dashboard() },
-            { title: 'Wiki / Modules', href: '/wiki/modules' },
+            {
+                title: 'Dashboard',
+                titleKey: 'navigation.dashboard',
+                href: dashboard(),
+            },
+            {
+                title: 'Wiki / Modules',
+                titleKey: 'navigation.modulesWiki',
+                href: '/wiki/modules',
+            },
         ],
     },
 });

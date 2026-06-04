@@ -7,12 +7,12 @@ defineOptions({
         breadcrumbs: [
             {
                 title: 'Telegram',
+                titleKey: 'telegram.headTitle',
                 href: '/telegram',
             },
         ],
     },
 });
-
 </script>
 
 <template>

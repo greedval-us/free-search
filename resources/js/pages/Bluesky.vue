@@ -4,10 +4,15 @@ import { BLUESKY_TABS } from './bluesky/tabs';
 
 defineOptions({
     layout: {
-        breadcrumbs: [{ title: 'Bluesky', href: '/bluesky' }],
+        breadcrumbs: [
+            {
+                title: 'Bluesky',
+                titleKey: 'bluesky.headTitle',
+                href: '/bluesky',
+            },
+        ],
     },
 });
-
 </script>
 
 <template>

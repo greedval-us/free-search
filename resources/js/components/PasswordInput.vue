@@ -3,6 +3,7 @@ import { Eye, EyeOff } from 'lucide-vue-next';
 import { ref, useTemplateRef } from 'vue';
 import type { HTMLAttributes } from 'vue';
 import { Input } from '@/components/ui/input';
+import { useI18n } from '@/composables/useI18n';
 import { cn } from '@/lib/utils';
 
 defineOptions({ inheritAttrs: false });
@@ -11,6 +12,7 @@ const props = defineProps<{
     class?: HTMLAttributes['class'];
 }>();
 
+const { t } = useI18n();
 const showPassword = ref(false);
 const inputRef = useTemplateRef('inputRef');
 
@@ -36,7 +38,11 @@ defineExpose({
                     'absolute inset-y-0 right-0 flex items-center rounded-r-md px-3 text-muted-foreground hover:text-foreground focus-visible:ring-[3px] focus-visible:ring-ring focus-visible:outline-none'
                 )
             "
-            :aria-label="showPassword ? 'Hide password' : 'Show password'"
+            :aria-label="
+                showPassword
+                    ? t('common.hidePassword')
+                    : t('common.showPassword')
+            "
             :tabindex="-1"
         >
             <EyeOff v-if="showPassword" class="size-4" />
