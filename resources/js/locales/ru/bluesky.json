@@ -6,7 +6,7 @@
     "tabs":  {
                  "search":  "Поиск",
                  "analytics":  "Аналитика",
-                 "parser":  "Parser"
+                 "parser":  "Парсер"
              },
     "search":  {
                    "title":  "Поиск Bluesky",
@@ -189,44 +189,44 @@
                    "requestFailed":  "Ошибка запроса."
                },
     "parser":  {
-                   "title":  "Bluesky Parser",
-                   "subtitle":  "Collect a full account snapshot: profile, authored posts, replies, followers, follows, and reactions.",
-                   "collapsed":  "Parser panel is collapsed",
-                   "actor":  "Actor",
-                   "actorPlaceholder":  "for example: analyst.bsky.social",
-                   "hint":  "Use the parser when you need a downloadable account snapshot for deeper OSINT work. It will walk the account feed, social graph, reply activity, and visible reactions.",
-                   "collecting":  "Collecting...",
-                   "start":  "Start parser",
-                   "stop":  "Stop",
-                   "download":  "Download Excel",
-                   "downloadJson":  "Download JSON",
+                   "title":  "Парсер Bluesky",
+                   "subtitle":  "Собирает полный снимок аккаунта: профиль, посты автора, ответы, подписчиков, подписки и реакции.",
+                   "collapsed":  "Панель парсера свернута",
+                   "actor":  "Аккаунт",
+                   "actorPlaceholder":  "например: analyst.bsky.social",
+                   "hint":  "Используйте парсер, когда нужен скачиваемый снимок аккаунта для более глубокого OSINT-анализа. Он пройдет по ленте аккаунта, социальному графу, ответам и видимым реакциям.",
+                   "collecting":  "Собираем...",
+                   "start":  "Запустить парсер",
+                   "stop":  "Остановить",
+                   "download":  "Скачать Excel",
+                   "downloadJson":  "Скачать JSON",
                    "help":  {
-                                "overview":  "Builds a downloadable Bluesky account dataset: profile, posts, authored replies, incoming replies, followers, follows, likes, and reposts."
+                                "overview":  "Собирает скачиваемый датасет аккаунта Bluesky: профиль, посты, ответы автора, входящие ответы, подписчиков, подписки, лайки и репосты."
                             },
                    "progress":  {
-                                    "title":  "Progress",
-                                    "posts":  "Posts",
-                                    "authoredReplies":  "Authored replies",
-                                    "receivedReplies":  "Received replies",
-                                    "followers":  "Followers",
-                                    "follows":  "Following",
-                                    "reactions":  "Reactions",
+                                    "title":  "Прогресс",
+                                    "posts":  "Посты",
+                                    "authoredReplies":  "Ответы автора",
+                                    "receivedReplies":  "Входящие ответы",
+                                    "followers":  "Подписчики",
+                                    "follows":  "Подписки",
+                                    "reactions":  "Реакции",
                                     "stage":  {
-                                                  "idle":  "Idle",
-                                                  "profile":  "Resolving profile",
-                                                  "feed":  "Collecting feed",
-                                                  "followers":  "Collecting followers",
-                                                  "follows":  "Collecting following",
-                                                  "interactions":  "Collecting interactions",
-                                                  "finishing":  "Finalizing export",
-                                                  "completed":  "Completed",
-                                                  "failed":  "Failed",
-                                                  "stopped":  "Stopped"
+                                                  "idle":  "Ожидание",
+                                                  "profile":  "Определяем профиль",
+                                                  "feed":  "Собираем ленту",
+                                                  "followers":  "Собираем подписчиков",
+                                                  "follows":  "Собираем подписки",
+                                                  "interactions":  "Собираем взаимодействия",
+                                                  "finishing":  "Готовим экспорт",
+                                                  "completed":  "Завершено",
+                                                  "failed":  "Ошибка",
+                                                  "stopped":  "Остановлено"
                                               }
                                 },
                    "errors":  {
-                                  "actorRequired":  "Actor is required.",
-                                  "failed":  "Parser request failed."
+                                  "actorRequired":  "Укажите аккаунт.",
+                                  "failed":  "Ошибка запроса парсера."
                               }
                }
 }

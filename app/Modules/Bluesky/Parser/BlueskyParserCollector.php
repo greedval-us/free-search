@@ -106,7 +106,7 @@ final class BlueskyParserCollector
         if ($actorId === '') {
             return $this->lifecycleManager->markFailed(
                 run: $run,
-                message: 'Bluesky actor was not found.',
+                message: __('bluesky.parser.errors.actor_not_found'),
                 stage: BlueskyParserStage::Failed->value,
             );
         }

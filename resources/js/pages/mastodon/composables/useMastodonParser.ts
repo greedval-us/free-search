@@ -112,6 +112,7 @@ export const useMastodonParser = (t: TranslateFn) => {
         }
 
         const activeRunId = runId.value;
+
         if (!activeRunId) {
             return;
         }
