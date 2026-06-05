@@ -4,7 +4,7 @@ namespace App\Modules\Shifr\DTO\Classic;
 
 use App\Modules\Shifr\DTO\Contracts\ShifrResultDataInterface;
 
-class CaesarCipherResultDTO implements ShifrResultDataInterface
+final class CaesarCipherResultDTO implements ShifrResultDataInterface
 {
     public function __construct(
         public readonly string $original,

@@ -4,6 +4,7 @@ namespace Tests\Feature\Controllers;
 
 use App\Models\User;
 use App\Modules\NewsMediaIntel\Application\Contracts\NewsMediaIntelServiceInterface;
+use App\Modules\NewsMediaIntel\Domain\DTO\NewsMediaIntelLookupDTO;
 use App\Modules\NewsMediaIntel\Domain\DTO\NewsMediaIntelResultDTO;
 use App\Modules\NewsMediaIntel\Domain\DTO\SentimentSummaryDTO;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -20,7 +21,7 @@ class NewsMediaIntelControllerIsolationTest extends TestCase
         $this->mock(NewsMediaIntelServiceInterface::class, function ($mock): void {
             $mock->shouldReceive('monitor')
                 ->once()
-                ->with('acme')
+                ->withArgs(fn (NewsMediaIntelLookupDTO $lookup): bool => $lookup->query === 'acme')
                 ->andReturn(new NewsMediaIntelResultDTO(
                     query: 'acme',
                     mentions: [],

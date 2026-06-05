@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { useI18n } from '@/composables/useI18n';
+import type { MastodonAccount, MastodonAccountDetailsState } from '../types';
 import MastodonAccountCard from './MastodonAccountCard.vue';
 import MastodonStatusCard from './MastodonStatusCard.vue';
-import type { MastodonAccount, MastodonAccountDetailsState } from '../types';
 
 defineProps<{
     accounts: MastodonAccount[];
@@ -21,9 +21,7 @@ const { t } = useI18n();
 
 <template>
     <section v-if="accounts.length > 0" class="space-y-3">
-        <div
-            class="text-xs font-semibold tracking-wide text-muted-foreground uppercase"
-        >
+        <div class="intel-subsection-title">
             {{ t('mastodon.sections.accounts') }}
         </div>
 
@@ -36,7 +34,7 @@ const { t } = useI18n();
             <template #actions>
                 <button
                     type="button"
-                    class="cursor-pointer rounded-full border border-input px-2 py-1 text-xs text-foreground hover:bg-accent"
+                    class="intel-action"
                     @click="toggleAccountStatuses(account)"
                 >
                     {{
@@ -48,7 +46,7 @@ const { t } = useI18n();
 
                 <button
                     type="button"
-                    class="cursor-pointer rounded-full border border-input px-2 py-1 text-xs text-foreground hover:bg-accent"
+                    class="intel-action"
                     @click="toggleAccountFollowers(account)"
                 >
                     {{
@@ -62,7 +60,7 @@ const { t } = useI18n();
             <template #details>
                 <div
                     v-if="ensureAccountDetailsState(account.id).statusesOpen"
-                    class="rounded-lg border border-border/70 bg-card/60 p-3"
+                    class="intel-subsection"
                 >
                     <p
                         v-if="
@@ -86,9 +84,7 @@ const { t } = useI18n();
                     </p>
 
                     <div v-else class="space-y-2">
-                        <div
-                            class="text-[11px] font-semibold tracking-wide text-muted-foreground uppercase"
-                        >
+                        <div class="intel-subsection-title">
                             {{ t('mastodon.accounts.postsSection') }}
                         </div>
 
@@ -140,7 +136,7 @@ const { t } = useI18n();
 
                 <div
                     v-if="ensureAccountDetailsState(account.id).followersOpen"
-                    class="rounded-lg border border-border/70 bg-card/60 p-3"
+                    class="intel-subsection"
                 >
                     <p
                         v-if="
@@ -164,9 +160,7 @@ const { t } = useI18n();
                     </p>
 
                     <div v-else class="space-y-2">
-                        <div
-                            class="text-[11px] font-semibold tracking-wide text-muted-foreground uppercase"
-                        >
+                        <div class="intel-subsection-title">
                             {{ t('mastodon.accounts.followersSection') }}
                         </div>
 

@@ -1,11 +1,16 @@
 <script setup lang="ts">
+import { useI18n } from '@/composables/useI18n';
+
 defineProps<{ text: string }>();
+
+const { t } = useI18n();
 </script>
 
 <template>
     <span class="group relative inline-flex">
         <span
             class="inline-flex h-5 w-5 cursor-help items-center justify-center rounded-full border border-border text-[11px] font-semibold text-muted-foreground"
+            :aria-label="t('shifr.help.label')"
             >?</span
         >
         <span

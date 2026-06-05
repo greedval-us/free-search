@@ -12,6 +12,7 @@ defineOptions({
         breadcrumbs: [
             {
                 title: 'Appearance settings',
+                titleKey: 'settings.appearancePage.title',
                 href: edit(),
             },
         ],

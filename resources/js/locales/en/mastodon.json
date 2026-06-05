@@ -15,13 +15,13 @@
         "hint": "Use an account handle like @analyst@mastodon.social. The parser walks through the account timeline, then loads reply threads under each original post.",
         "account": "Account",
         "accountPlaceholder": "for example: @analyst@mastodon.social",
-        "start": "Start parser",
+        "start": "Start collection",
         "stop": "Stop",
         "collecting": "Collecting data...",
         "download": "Download Excel",
         "downloadJson": "Download JSON",
         "help": {
-            "overview": "Build an export with the account timeline and reply threads under each original post."
+            "overview": "Build an export with the account timeline and reply threads for each original post."
         },
         "progress": {
             "title": "Parser progress",
@@ -59,13 +59,14 @@
         "pages": "Pages to sample",
         "dateFrom": "Date from",
         "dateTo": "Date to",
+        "targetHint": "Use an account or hashtag to assemble a compact Mastodon sample for review.",
         "run": "Run analytics",
         "refresh": "Refresh",
         "report": "Open report",
         "downloadReport": "Download report",
         "loading": "Building analytics...",
         "empty": {
-            "title": "Mastodon analytics is ready",
+            "title": "Choose a target to begin",
             "description": "Run analytics to build a sample-based summary for an account or hashtag."
         },
         "accountProfile": "Account profile",
@@ -128,6 +129,7 @@
         "resultTitle": "Results",
         "shown": "Shown",
         "empty": "Run a search to view Mastodon results.",
+        "noMatches": "No results matched the current filters.",
         "loadMore": "Load more",
         "loadingMore": "Loading...",
         "noText": "[No text]",

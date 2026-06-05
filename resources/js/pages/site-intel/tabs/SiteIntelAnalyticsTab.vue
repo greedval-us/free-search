@@ -1,10 +1,13 @@
 ﻿<script setup lang="ts">
 import { BarChart3, Download, FileText } from 'lucide-vue-next';
 import { onMounted } from 'vue';
-import HelpTooltip from '@/components/ui/HelpTooltip.vue';
+import EmptyState from '@/components/ui/EmptyState.vue';
 import IntelResultPanel from '@/components/ui/IntelResultPanel.vue';
 import IntelSearchForm from '@/components/ui/IntelSearchForm.vue';
 import IntelSearchPanel from '@/components/ui/IntelSearchPanel.vue';
+import InfoCard from '@/components/ui/InfoCard.vue';
+import MetricCard from '@/components/ui/MetricCard.vue';
+import PageHeader from '@/components/ui/PageHeader.vue';
 import { useI18n } from '@/composables/useI18n';
 import {
     getRepeatQueryParams,
@@ -28,7 +31,6 @@ const {
     downloadReport,
 } = useSiteIntelAnalytics(t);
 const {
-    scoreBadgeClass,
     formatDateTime,
     signalLabel,
     clampPercent,
@@ -69,21 +71,13 @@ onMounted(() => {
 
 <template>
     <IntelSearchPanel>
-        <div class="flex items-center justify-between gap-3">
-            <div class="space-y-1">
-                <div class="flex items-center gap-2 text-sm font-semibold">
-                    <BarChart3 class="h-4 w-4 text-cyan-400" />
-                    <span>{{ t('siteIntel.analytics.title') }}</span>
-                    <HelpTooltip
-                        :label="t('siteIntel.help.label')"
-                        :text="t('siteIntel.analytics.help.overview')"
-                    />
-                </div>
-                <p class="text-xs text-muted-foreground">
-                    {{ t('siteIntel.analytics.description') }}
-                </p>
-            </div>
-        </div>
+        <PageHeader
+            :icon="BarChart3"
+            :title="t('siteIntel.analytics.title')"
+            :description="t('siteIntel.analytics.description')"
+            :help-label="t('siteIntel.help.label')"
+            :help-text="t('siteIntel.analytics.help.overview')"
+        />
 
         <IntelSearchForm
             v-model="form.target"
@@ -100,7 +94,7 @@ onMounted(() => {
                 <button
                     type="button"
                     :disabled="!canUseReportActions"
-                    class="inline-flex h-10 cursor-pointer items-center gap-2 rounded-md bg-primary px-4 text-sm font-semibold text-primary-foreground hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-60"
+                    class="intel-button-primary"
                     @click="openReport"
                 >
                     <FileText class="h-4 w-4" />
@@ -110,7 +104,7 @@ onMounted(() => {
                 <button
                     type="button"
                     :disabled="!canUseReportActions"
-                    class="inline-flex h-10 cursor-pointer items-center gap-2 rounded-md border border-input bg-background px-4 text-sm font-medium hover:bg-accent disabled:cursor-not-allowed disabled:opacity-60"
+                    class="intel-button-secondary"
                     @click="downloadReport"
                 >
                     <Download class="h-4 w-4" />
@@ -121,58 +115,39 @@ onMounted(() => {
     </IntelSearchPanel>
 
     <IntelResultPanel>
-        <div v-if="!result" class="intel-empty">
-            {{ t('siteIntel.analytics.empty') }}
-        </div>
+        <EmptyState v-if="!result" :text="t('siteIntel.analytics.empty')" />
 
         <div
             v-else
             class="intel-scroll min-h-0 flex-1 space-y-3 overflow-y-auto pr-1"
         >
             <div class="grid gap-2 sm:grid-cols-2 xl:grid-cols-4">
-                <div class="rounded-lg border p-3" :class="scoreBadgeClass">
-                    <p class="text-xs">
-                        {{ t('siteIntel.analytics.overallScore') }}
-                    </p>
-                    <p class="mt-1 text-xl font-semibold">
-                        {{ result.overview.score.value }}
-                    </p>
-                </div>
-                <div
-                    class="rounded-lg border border-border/70 bg-background/60 p-3"
-                >
-                    <p class="text-xs text-muted-foreground">
-                        {{ t('siteIntel.analytics.healthScore') }}
-                    </p>
-                    <p class="mt-1 text-xl font-semibold">
-                        {{ result.overview.healthScore }}
-                    </p>
-                </div>
-                <div
-                    class="rounded-lg border border-border/70 bg-background/60 p-3"
-                >
-                    <p class="text-xs text-muted-foreground">
-                        {{ t('siteIntel.analytics.domainRiskScore') }}
-                    </p>
-                    <p class="mt-1 text-xl font-semibold">
-                        {{ result.overview.domainRiskScore }}
-                    </p>
-                </div>
-                <div
-                    class="rounded-lg border border-border/70 bg-background/60 p-3"
-                >
-                    <p class="text-xs text-muted-foreground">
-                        {{ t('siteIntel.common.checkedAt') }}
-                    </p>
-                    <p class="mt-1 text-sm font-semibold">
-                        {{ formatDateTime(result.checkedAt) }}
-                    </p>
-                </div>
+                <MetricCard
+                    :title="t('siteIntel.analytics.overallScore')"
+                    :value="result.overview.score.value"
+                    :tone="
+                        result.overview.score.level === 'high'
+                            ? 'positive'
+                            : result.overview.score.level === 'medium'
+                              ? 'warning'
+                              : 'danger'
+                    "
+                />
+                <MetricCard
+                    :title="t('siteIntel.analytics.healthScore')"
+                    :value="result.overview.healthScore"
+                />
+                <MetricCard
+                    :title="t('siteIntel.analytics.domainRiskScore')"
+                    :value="result.overview.domainRiskScore"
+                />
+                <MetricCard
+                    :title="t('siteIntel.common.checkedAt')"
+                    :value="formatDateTime(result.checkedAt)"
+                />
             </div>
 
-            <div
-                class="rounded-lg border border-border/70 bg-background/60 p-3 text-xs"
-            >
+            <InfoCard :title="t('siteIntel.analytics.targetSummary')">
                 <p class="font-semibold">
                     {{ t('siteIntel.analytics.targetSummary') }}
                 </p>
@@ -188,47 +163,24 @@ onMounted(() => {
                         result.target.domain
                     }}</span>
                 </p>
-            </div>
+            </InfoCard>
 
             <div class="grid gap-2 xl:grid-cols-3">
-                <div
-                    class="rounded-lg border border-border/70 bg-background/60 p-3 text-xs"
-                >
-                    <p class="font-semibold">
-                        {{ t('siteIntel.analytics.headersCoverage') }}
-                    </p>
-                    <p class="mt-1 text-muted-foreground">
-                        {{ result.overview.headersCoverage.present }}/{{
-                            result.overview.headersCoverage.total
-                        }}
-                        ({{ result.overview.headersCoverage.percent }}%)
-                    </p>
-                </div>
-                <div
-                    class="rounded-lg border border-border/70 bg-background/60 p-3 text-xs"
-                >
-                    <p class="font-semibold">
-                        {{ t('siteIntel.analytics.redirects') }}
-                    </p>
-                    <p class="mt-1 text-muted-foreground">
-                        {{ result.overview.redirects }}
-                    </p>
-                </div>
-                <div
-                    class="rounded-lg border border-border/70 bg-background/60 p-3 text-xs"
-                >
-                    <p class="font-semibold">
-                        {{ t('siteIntel.analytics.daysToDomainExpiry') }}
-                    </p>
-                    <p class="mt-1 text-muted-foreground">
-                        {{ result.overview.daysToDomainExpiry ?? '-' }}
-                    </p>
-                </div>
+                <MetricCard
+                    :title="t('siteIntel.analytics.headersCoverage')"
+                    :value="`${result.overview.headersCoverage.present}/${result.overview.headersCoverage.total} (${result.overview.headersCoverage.percent}%)`"
+                />
+                <MetricCard
+                    :title="t('siteIntel.analytics.redirects')"
+                    :value="result.overview.redirects"
+                />
+                <MetricCard
+                    :title="t('siteIntel.analytics.daysToDomainExpiry')"
+                    :value="result.overview.daysToDomainExpiry ?? '-'"
+                />
             </div>
 
-            <div
-                class="rounded-lg border border-border/70 bg-background/60 p-3 text-xs"
-            >
+            <InfoCard :title="t('siteIntel.analytics.dnsStats')">
                 <p class="mb-2 font-semibold">
                     {{ t('siteIntel.analytics.dnsStats') }}
                 </p>
@@ -238,7 +190,7 @@ onMounted(() => {
                     {{ result.overview.dnsStats.ns }}, MX:
                     {{ result.overview.dnsStats.mx }}
                 </p>
-            </div>
+            </InfoCard>
 
             <div class="grid gap-2 xl:grid-cols-2">
                 <SiteIntelMetricBars
@@ -271,18 +223,11 @@ onMounted(() => {
                 />
             </div>
 
-            <div
-                class="rounded-lg border border-border/70 bg-background/60 p-3 text-xs"
+            <InfoCard
+                :title="t('siteIntel.analytics.additionalSnapshotMetrics')"
+                :help-label="t('siteIntel.help.label')"
+                :help-text="t('siteIntel.analytics.help.snapshotMetrics')"
             >
-                <div class="mb-2 flex items-center gap-2">
-                    <p class="font-semibold">
-                        {{ t('siteIntel.analytics.additionalSnapshotMetrics') }}
-                    </p>
-                    <HelpTooltip
-                        :label="t('siteIntel.help.label')"
-                        :text="t('siteIntel.analytics.help.snapshotMetrics')"
-                    />
-                </div>
                 <div class="grid gap-2 sm:grid-cols-2 xl:grid-cols-4">
                     <p>
                         {{ t('siteIntel.analytics.snapshotHttpFinalStatus') }}:
@@ -322,7 +267,12 @@ onMounted(() => {
                     <p>
                         {{ t('siteIntel.analytics.snapshotEmailSecurity') }}:
                         <span class="text-muted-foreground"
-                            >{{ emailSecurityScore }}/2 (SPF + DMARC)</span
+                            >{{ emailSecurityScore }}/2
+                            {{
+                                t(
+                                    'siteIntel.analytics.snapshotEmailSecurityDetails'
+                                )
+                            }}</span
                         >
                     </p>
                     <p>
@@ -338,24 +288,17 @@ onMounted(() => {
                         }}</span>
                     </p>
                 </div>
-            </div>
+            </InfoCard>
 
             <div class="grid gap-2 xl:grid-cols-2">
-                <div
-                    class="rounded-lg border border-border/70 bg-background/60 p-3 text-xs"
+                <InfoCard
+                    :title="t('siteIntel.analytics.riskSignals')"
+                    :help-label="t('siteIntel.help.label')"
+                    :help-text="t('siteIntel.analytics.help.riskSignals')"
                 >
-                    <div class="mb-2 flex items-center gap-2">
-                        <p class="font-semibold">
-                            {{ t('siteIntel.analytics.riskSignals') }}
-                        </p>
-                        <HelpTooltip
-                            :label="t('siteIntel.help.label')"
-                            :text="t('siteIntel.analytics.help.riskSignals')"
-                        />
-                    </div>
                     <p
                         v-if="result.overview.signals.risks.length === 0"
-                        class="text-emerald-300"
+                        class="intel-status-positive"
                     >
                         {{ t('siteIntel.analytics.noRiskSignals') }}
                     </p>
@@ -370,22 +313,13 @@ onMounted(() => {
                             {{ signalLabel(signal, 'risk') }}
                         </li>
                     </ul>
-                </div>
+                </InfoCard>
 
-                <div
-                    class="rounded-lg border border-border/70 bg-background/60 p-3 text-xs"
+                <InfoCard
+                    :title="t('siteIntel.analytics.strengthSignals')"
+                    :help-label="t('siteIntel.help.label')"
+                    :help-text="t('siteIntel.analytics.help.strengthSignals')"
                 >
-                    <div class="mb-2 flex items-center gap-2">
-                        <p class="font-semibold">
-                            {{ t('siteIntel.analytics.strengthSignals') }}
-                        </p>
-                        <HelpTooltip
-                            :label="t('siteIntel.help.label')"
-                            :text="
-                                t('siteIntel.analytics.help.strengthSignals')
-                            "
-                        />
-                    </div>
                     <p
                         v-if="result.overview.signals.strengths.length === 0"
                         class="text-muted-foreground"
@@ -403,26 +337,19 @@ onMounted(() => {
                             {{ signalLabel(signal, 'strength') }}
                         </li>
                     </ul>
-                </div>
+                </InfoCard>
             </div>
 
-            <div
-                class="rounded-lg border border-border/70 bg-background/60 p-3 text-xs"
+            <InfoCard
+                :title="t('siteIntel.analytics.recommendations')"
+                :help-label="t('siteIntel.help.label')"
+                :help-text="t('siteIntel.analytics.help.recommendations')"
             >
-                <div class="mb-2 flex items-center gap-2">
-                    <p class="font-semibold">
-                        {{ t('siteIntel.analytics.recommendations') }}
-                    </p>
-                    <HelpTooltip
-                        :label="t('siteIntel.help.label')"
-                        :text="t('siteIntel.analytics.help.recommendations')"
-                    />
-                </div>
                 <ul class="space-y-2 text-muted-foreground">
                     <li
                         v-for="item in recommendationsWithImpact"
                         :key="item.key"
-                        class="rounded border border-border/60 p-2"
+                        class="intel-list-card"
                     >
                         <div
                             class="mb-1 flex items-center justify-between gap-2"
@@ -449,7 +376,7 @@ onMounted(() => {
                         </div>
                     </li>
                 </ul>
-            </div>
+            </InfoCard>
         </div>
     </IntelResultPanel>
 </template>

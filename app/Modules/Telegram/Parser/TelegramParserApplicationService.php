@@ -5,7 +5,7 @@ namespace App\Modules\Telegram\Parser;
 use App\Modules\ParserSupport\ParserRunStateMachine;
 use App\Modules\ParserSupport\ParserRunStatusPayloadBuilder;
 use App\Modules\Telegram\DTO\Request\TelegramParserStartDTO;
-use App\Modules\Telegram\DTO\Result\ParserRunStatusDTO;
+use App\Modules\Telegram\DTO\Result\TelegramParserRunStatusDTO;
 use App\Modules\Telegram\Parser\Contracts\TelegramParserApplicationServiceInterface;
 
 class TelegramParserApplicationService implements TelegramParserApplicationServiceInterface
@@ -19,14 +19,14 @@ class TelegramParserApplicationService implements TelegramParserApplicationServi
     ) {
     }
 
-    public function start(TelegramParserStartDTO $input): ParserRunStatusDTO
+    public function start(TelegramParserStartDTO $input): TelegramParserRunStatusDTO
     {
         $run = $this->runStore->create($input->userId, $input->toContext());
 
         return $this->presentRun($run);
     }
 
-    public function status(int $userId, string $runId): ?ParserRunStatusDTO
+    public function status(int $userId, string $runId): ?TelegramParserRunStatusDTO
     {
         $nowTs = now()->timestamp;
         $run = $this->runStore->mutate(
@@ -42,7 +42,7 @@ class TelegramParserApplicationService implements TelegramParserApplicationServi
         return is_array($run) ? $this->presentRun($run) : null;
     }
 
-    public function stop(int $userId, string $runId): ?ParserRunStatusDTO
+    public function stop(int $userId, string $runId): ?TelegramParserRunStatusDTO
     {
         $run = $this->runStore->mutate(
             $userId,
@@ -69,9 +69,9 @@ class TelegramParserApplicationService implements TelegramParserApplicationServi
     /**
      * @param array<string, mixed> $run
      */
-    private function presentRun(array $run): ParserRunStatusDTO
+    private function presentRun(array $run): TelegramParserRunStatusDTO
     {
-        return new ParserRunStatusDTO(
+        return new TelegramParserRunStatusDTO(
             $this->statusPayloadBuilder->build(
                 run: $run,
                 statsMap: [

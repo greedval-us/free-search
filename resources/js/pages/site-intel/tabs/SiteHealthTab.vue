@@ -1,10 +1,14 @@
 ﻿<script setup lang="ts">
 import { Activity } from 'lucide-vue-next';
-import { computed, onMounted } from 'vue';
-import HelpTooltip from '@/components/ui/HelpTooltip.vue';
+import { onMounted } from 'vue';
+import EmptyState from '@/components/ui/EmptyState.vue';
 import IntelResultPanel from '@/components/ui/IntelResultPanel.vue';
 import IntelSearchForm from '@/components/ui/IntelSearchForm.vue';
 import IntelSearchPanel from '@/components/ui/IntelSearchPanel.vue';
+import InfoCard from '@/components/ui/InfoCard.vue';
+import KeyValueList from '@/components/ui/KeyValueList.vue';
+import MetricCard from '@/components/ui/MetricCard.vue';
+import PageHeader from '@/components/ui/PageHeader.vue';
 import { useI18n } from '@/composables/useI18n';
 import {
     getRepeatQueryParams,
@@ -15,20 +19,6 @@ import { useSiteHealth } from '../composables/useSiteHealth';
 
 const { t } = useI18n();
 const { form, loading, error, result, canCheck, check } = useSiteHealth(t);
-
-const scoreBadgeClass = computed(() => {
-    const level = result.value?.score.level;
-
-    if (level === 'high') {
-        return 'border-emerald-500/40 bg-emerald-500/10 text-emerald-300';
-    }
-
-    if (level === 'medium') {
-        return 'border-amber-500/40 bg-amber-500/10 text-amber-300';
-    }
-
-    return 'border-rose-500/40 bg-rose-500/10 text-rose-300';
-});
 
 const formatDateTime = (value: string | null) => {
     if (!value) {
@@ -79,21 +69,13 @@ onMounted(() => {
 
 <template>
     <IntelSearchPanel>
-        <div class="flex items-center justify-between gap-3">
-            <div class="space-y-1">
-                <div class="flex items-center gap-2 text-sm font-semibold">
-                    <Activity class="h-4 w-4 text-cyan-400" />
-                    <span>{{ t('siteIntel.siteHealth.title') }}</span>
-                    <HelpTooltip
-                        :label="t('siteIntel.help.label')"
-                        :text="t('siteIntel.siteHealth.help.overview')"
-                    />
-                </div>
-                <p class="text-xs text-muted-foreground">
-                    {{ t('siteIntel.siteHealth.description') }}
-                </p>
-            </div>
-        </div>
+        <PageHeader
+            :icon="Activity"
+            :title="t('siteIntel.siteHealth.title')"
+            :description="t('siteIntel.siteHealth.description')"
+            :help-label="t('siteIntel.help.label')"
+            :help-text="t('siteIntel.siteHealth.help.overview')"
+        />
 
         <IntelSearchForm
             v-model="form.target"
@@ -109,132 +91,97 @@ onMounted(() => {
     </IntelSearchPanel>
 
     <IntelResultPanel>
-        <div v-if="!result" class="intel-empty">
-            {{ t('siteIntel.siteHealth.empty') }}
-        </div>
+        <EmptyState v-if="!result" :text="t('siteIntel.siteHealth.empty')" />
 
         <div
             v-else
             class="intel-scroll min-h-0 flex-1 space-y-3 overflow-y-auto pr-1"
         >
             <div class="grid gap-2 sm:grid-cols-2 xl:grid-cols-4">
-                <div
-                    class="rounded-lg border border-border/70 bg-background/60 p-3"
-                >
-                    <p class="text-xs text-muted-foreground">
-                        {{ t('siteIntel.common.checkedAt') }}
-                    </p>
-                    <p class="mt-1 text-sm font-semibold">
-                        {{ formatDateTime(result.checkedAt) }}
-                    </p>
-                </div>
-                <div
-                    class="rounded-lg border border-border/70 bg-background/60 p-3"
-                >
-                    <p class="text-xs text-muted-foreground">
-                        {{ t('siteIntel.siteHealth.finalStatus') }}
-                    </p>
-                    <p class="mt-1 text-xl font-semibold">
-                        {{ result.http.finalStatus || '-' }}
-                    </p>
-                </div>
-                <div
-                    class="rounded-lg border border-border/70 bg-background/60 p-3"
-                >
-                    <p class="text-xs text-muted-foreground">
-                        {{ t('siteIntel.siteHealth.redirects') }}
-                    </p>
-                    <p class="mt-1 text-xl font-semibold">
-                        {{ result.http.totalRedirects }}
-                    </p>
-                </div>
-                <div class="rounded-lg border p-3" :class="scoreBadgeClass">
-                    <p class="text-xs">{{ t('siteIntel.siteHealth.score') }}</p>
-                    <p class="mt-1 text-xl font-semibold">
-                        {{ result.score.value }}
-                    </p>
-                </div>
+                <MetricCard
+                    :title="t('siteIntel.common.checkedAt')"
+                    :value="formatDateTime(result.checkedAt)"
+                />
+                <MetricCard
+                    :title="t('siteIntel.siteHealth.finalStatus')"
+                    :value="result.http.finalStatus || '-'"
+                />
+                <MetricCard
+                    :title="t('siteIntel.siteHealth.redirects')"
+                    :value="result.http.totalRedirects"
+                />
+                <MetricCard
+                    :title="t('siteIntel.siteHealth.score')"
+                    :value="result.score.value"
+                    :tone="
+                        result.score.level === 'high'
+                            ? 'positive'
+                            : result.score.level === 'medium'
+                              ? 'warning'
+                              : 'danger'
+                    "
+                />
             </div>
 
-            <div
-                class="rounded-lg border border-border/70 bg-background/60 p-3 text-xs"
-            >
-                <p class="font-semibold">
-                    {{ t('siteIntel.siteHealth.finalUrl') }}
-                </p>
+            <InfoCard :title="t('siteIntel.siteHealth.finalUrl')">
                 <p class="mt-1 break-all text-muted-foreground">
                     {{ result.http.finalUrl }}
                 </p>
-            </div>
+            </InfoCard>
 
-            <div
-                class="rounded-lg border border-border/70 bg-background/60 p-3 text-xs"
+            <InfoCard
+                :title="t('siteIntel.siteHealth.dns')"
+                :help-label="t('siteIntel.help.label')"
+                :help-text="t('siteIntel.siteHealth.help.dns')"
             >
-                <div class="mb-2 flex items-center gap-2">
-                    <p class="font-semibold">
-                        {{ t('siteIntel.siteHealth.dns') }}
-                    </p>
-                    <HelpTooltip
-                        :label="t('siteIntel.help.label')"
-                        :text="t('siteIntel.siteHealth.help.dns')"
-                    />
-                </div>
-                <p>
-                    {{ t('siteIntel.siteHealth.aRecords') }}:
-                    {{ result.dns.a.join(', ') || '-' }}
-                </p>
-                <p class="mt-1">
-                    {{ t('siteIntel.siteHealth.aaaaRecords') }}:
-                    {{ result.dns.aaaa.join(', ') || '-' }}
-                </p>
-            </div>
+                <KeyValueList
+                    :items="[
+                        {
+                            label: t('siteIntel.siteHealth.aRecords'),
+                            value: result.dns.a.join(', ') || '-',
+                        },
+                        {
+                            label: t('siteIntel.siteHealth.aaaaRecords'),
+                            value: result.dns.aaaa.join(', ') || '-',
+                        },
+                    ]"
+                />
+            </InfoCard>
 
-            <div
-                class="rounded-lg border border-border/70 bg-background/60 p-3 text-xs"
+            <InfoCard
+                :title="t('siteIntel.siteHealth.ssl')"
+                :help-label="t('siteIntel.help.label')"
+                :help-text="t('siteIntel.siteHealth.help.ssl')"
             >
-                <div class="mb-2 flex items-center gap-2">
-                    <p class="font-semibold">
-                        {{ t('siteIntel.siteHealth.ssl') }}
-                    </p>
-                    <HelpTooltip
-                        :label="t('siteIntel.help.label')"
-                        :text="t('siteIntel.siteHealth.help.ssl')"
-                    />
-                </div>
-                <p>
-                    {{ t('siteIntel.siteHealth.sslAvailable') }}:
-                    {{
-                        result.ssl.available
-                            ? t('siteIntel.common.yes')
-                            : t('siteIntel.common.no')
-                    }}
-                </p>
-                <p class="mt-1">
-                    {{ t('siteIntel.siteHealth.sslIssuer') }}:
-                    {{ result.ssl.issuer || '-' }}
-                </p>
-                <p class="mt-1">
-                    {{ t('siteIntel.siteHealth.sslSubject') }}:
-                    {{ result.ssl.subject || '-' }}
-                </p>
-                <p class="mt-1">
-                    {{ t('siteIntel.siteHealth.sslValidTo') }}:
-                    {{ formatDateTime(result.ssl.validTo) }}
-                </p>
-            </div>
+                <KeyValueList
+                    :items="[
+                        {
+                            label: t('siteIntel.siteHealth.sslAvailable'),
+                            value: result.ssl.available
+                                ? t('siteIntel.common.yes')
+                                : t('siteIntel.common.no'),
+                        },
+                        {
+                            label: t('siteIntel.siteHealth.sslIssuer'),
+                            value: result.ssl.issuer || '-',
+                        },
+                        {
+                            label: t('siteIntel.siteHealth.sslSubject'),
+                            value: result.ssl.subject || '-',
+                        },
+                        {
+                            label: t('siteIntel.siteHealth.sslValidTo'),
+                            value: formatDateTime(result.ssl.validTo),
+                        },
+                    ]"
+                />
+            </InfoCard>
 
-            <div
-                class="rounded-lg border border-border/70 bg-background/60 p-3 text-xs"
+            <InfoCard
+                :title="t('siteIntel.siteHealth.securityHeaders')"
+                :help-label="t('siteIntel.help.label')"
+                :help-text="t('siteIntel.siteHealth.help.securityHeaders')"
             >
-                <div class="mb-2 flex items-center gap-2">
-                    <p class="font-semibold">
-                        {{ t('siteIntel.siteHealth.securityHeaders') }}
-                    </p>
-                    <HelpTooltip
-                        :label="t('siteIntel.help.label')"
-                        :text="t('siteIntel.siteHealth.help.securityHeaders')"
-                    />
-                </div>
                 <div class="space-y-1">
                     <p
                         v-for="(headerInfo, headerName) in result.headers"
@@ -246,33 +193,26 @@ onMounted(() => {
                         >:
                         <span
                             v-if="headerInfo.present"
-                            class="text-emerald-300"
+                            class="intel-status-positive"
                             >{{ t('siteIntel.common.present') }}</span
                         >
-                        <span v-else class="text-rose-300">{{
+                        <span v-else class="intel-status-danger">{{
                             t('siteIntel.common.missing')
                         }}</span>
                     </p>
                 </div>
-            </div>
+            </InfoCard>
 
-            <div
-                class="rounded-lg border border-border/70 bg-background/60 p-3 text-xs"
+            <InfoCard
+                :title="t('siteIntel.siteHealth.httpChain')"
+                :help-label="t('siteIntel.help.label')"
+                :help-text="t('siteIntel.siteHealth.help.httpChain')"
             >
-                <div class="mb-2 flex items-center gap-2">
-                    <p class="font-semibold">
-                        {{ t('siteIntel.siteHealth.httpChain') }}
-                    </p>
-                    <HelpTooltip
-                        :label="t('siteIntel.help.label')"
-                        :text="t('siteIntel.siteHealth.help.httpChain')"
-                    />
-                </div>
                 <div class="space-y-2">
                     <div
                         v-for="(step, index) in result.http.chain"
                         :key="`${step.url}-${index}`"
-                        class="rounded-md border border-border/50 bg-background/40 p-2"
+                        class="intel-list-card"
                     >
                         <p class="font-medium break-all">{{ step.url }}</p>
                         <p class="mt-1 text-muted-foreground">
@@ -289,17 +229,12 @@ onMounted(() => {
                         </p>
                     </div>
                 </div>
-            </div>
+            </InfoCard>
 
-            <div
-                class="rounded-lg border border-border/70 bg-background/60 p-3 text-xs"
-            >
-                <p class="mb-2 font-semibold">
-                    {{ t('siteIntel.siteHealth.healthSignals') }}
-                </p>
+            <InfoCard :title="t('siteIntel.siteHealth.healthSignals')">
                 <p
                     v-if="result.score.signals.length === 0"
-                    class="text-emerald-300"
+                    class="intel-status-positive"
                 >
                     {{ t('siteIntel.siteHealth.noHealthSignals') }}
                 </p>
@@ -311,7 +246,7 @@ onMounted(() => {
                         {{ signalLabel(signal) }}
                     </li>
                 </ul>
-            </div>
+            </InfoCard>
         </div>
     </IntelResultPanel>
 </template>

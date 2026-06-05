@@ -3,9 +3,9 @@
     "private": true,
     "type": "module",
     "scripts": {
-        "build": "vite build",
-        "build:ssr": "vite build && vite build --ssr",
-        "dev": "vite",
+        "build": "vite build --configLoader native",
+        "build:ssr": "vite build --configLoader native && vite build --configLoader native --ssr",
+        "dev": "vite --configLoader native",
         "format": "prettier --write resources/",
         "format:check": "prettier --check resources/",
         "lint": "eslint . --fix",

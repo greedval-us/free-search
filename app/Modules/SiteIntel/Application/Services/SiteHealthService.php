@@ -6,6 +6,7 @@ use App\Modules\SiteIntel\Application\Contracts\SiteHealthServiceInterface;
 use App\Modules\SiteIntel\Application\Contracts\SiteHealthDnsResolverInterface;
 use App\Modules\SiteIntel\Application\Contracts\SiteHealthHttpInspectorInterface;
 use App\Modules\SiteIntel\Application\Contracts\SiteHealthSslInspectorInterface;
+use App\Modules\SiteIntel\DTO\Result\SiteHealthResultDTO;
 use App\Modules\SiteIntel\Application\Services\SiteHealth\SiteHealthScoreCalculator;
 use App\Modules\SiteIntel\Application\Services\SiteHealth\SiteHealthSecurityHeadersExtractor;
 use Carbon\Carbon;
@@ -22,10 +23,7 @@ final class SiteHealthService implements SiteHealthServiceInterface
     ) {
     }
 
-    /**
-     * @return array<string, mixed>
-     */
-    public function check(string $url): array
+    public function check(string $url): SiteHealthResultDTO
     {
         $host = (string) parse_url($url, PHP_URL_HOST);
         if ($host === '') {
@@ -42,7 +40,7 @@ final class SiteHealthService implements SiteHealthServiceInterface
         $securityHeaders = $this->securityHeadersExtractor->extract(is_array($finalHeaders) ? $finalHeaders : []);
         $score = $this->scoreCalculator->calculate($dns, $http, $ssl, $securityHeaders);
 
-        return [
+        return new SiteHealthResultDTO([
             'target' => [
                 'input' => $url,
                 'host' => $host,
@@ -58,6 +56,6 @@ final class SiteHealthService implements SiteHealthServiceInterface
             'headers' => $securityHeaders,
             'ssl' => $ssl,
             'score' => $score,
-        ];
+        ]);
     }
 }

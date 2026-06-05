@@ -1,16 +1,8 @@
 <script setup lang="ts">
-import {
-    ChevronDown,
-    ChevronUp,
-    Database,
-    Download,
-    LoaderCircle,
-    Square,
-    Wrench,
-} from 'lucide-vue-next';
 import { computed } from 'vue';
-import HelpTooltip from '@/components/ui/HelpTooltip.vue';
+import ParserTabLayout from '@/components/ui/parser/ParserTabLayout.vue';
 import { useI18n } from '@/composables/useI18n';
+import { useStageLabel } from '@/composables/useStageLabel';
 import { useTelegramParser } from '../composables/useTelegramParser';
 
 const { t } = useI18n();
@@ -35,103 +27,80 @@ const {
     downloadJson,
 } = useTelegramParser(t);
 
-const stageLabel = computed(() => {
-    if (stage.value === 'messages') {
-        return t('telegram.parser.progress.stage.messages');
-    }
+const stageLabel = useStageLabel(stage, (value) =>
+    t(`telegram.parser.progress.stage.${value}`)
+);
 
-    if (stage.value === 'comments') {
-        return t('telegram.parser.progress.stage.comments');
-    }
-
-    if (stage.value === 'finishing') {
-        return t('telegram.parser.progress.stage.finishing');
-    }
-
-    if (stage.value === 'completed') {
-        return t('telegram.parser.progress.stage.completed');
-    }
-
-    if (stage.value === 'failed') {
-        return t('telegram.parser.progress.stage.failed');
-    }
-
-    if (stage.value === 'stopped') {
-        return t('telegram.parser.progress.stage.stopped');
-    }
-
-    return t('telegram.parser.progress.stage.idle');
-});
+const progressStats = computed(() => [
+    {
+        label: t('telegram.parser.progress.messages'),
+        value: processedMessages.value,
+    },
+    {
+        label: t('telegram.parser.progress.comments'),
+        value: processedComments.value,
+    },
+]);
 </script>
 
 <template>
-    <section class="intel-panel-strong sticky top-0 z-10 shrink-0">
-        <div class="flex items-center justify-between gap-3">
-            <div class="space-y-1">
-                <div class="flex items-center gap-2 text-sm font-semibold">
-                    <Wrench class="h-4 w-4 text-cyan-400" />
-                    <span>{{ t('telegram.parser.title') }}</span>
-                    <HelpTooltip
-                        :label="t('telegram.help.label')"
-                        :text="t('telegram.parser.help.overview')"
-                    />
-                </div>
-                <p class="text-xs text-muted-foreground">
-                    {{
-                        settingsCollapsed
-                            ? t('telegram.parser.collapsed')
-                            : t('telegram.parser.subtitle')
-                    }}
-                </p>
-            </div>
-
-            <button
-                type="button"
-                class="inline-flex h-9 w-9 cursor-pointer items-center justify-center rounded-full border border-input text-sm text-foreground transition hover:bg-accent"
-                @click="settingsCollapsed = !settingsCollapsed"
-            >
-                <ChevronDown v-if="settingsCollapsed" class="h-4 w-4" />
-                <ChevronUp v-else class="h-4 w-4" />
-            </button>
-        </div>
-
-        <div v-if="!settingsCollapsed" class="mt-3 space-y-3">
+    <ParserTabLayout
+        :title="t('telegram.parser.title')"
+        :help-label="t('telegram.help.label')"
+        :help-text="t('telegram.parser.help.overview')"
+        :subtitle="t('telegram.parser.subtitle')"
+        :collapsed-text="t('telegram.parser.collapsed')"
+        :settings-collapsed="settingsCollapsed"
+        :loading="loading"
+        :can-start="canStart"
+        :download-url="downloadUrl"
+        :download-json-url="downloadJsonUrl"
+        :start-label="t('telegram.parser.start')"
+        :collecting-label="t('telegram.parser.collecting')"
+        :stop-label="t('telegram.parser.stop')"
+        :download-label="t('telegram.parser.download')"
+        :download-json-label="t('telegram.parser.downloadJson')"
+        :progress-title="t('telegram.parser.progress.title')"
+        :stage-label="stageLabel"
+        :progress="progress"
+        :stats="progressStats"
+        @update:settings-collapsed="settingsCollapsed = $event"
+        @start="start"
+        @stop="stop"
+        @download="download"
+        @download-json="downloadJson"
+    >
+        <template #fields>
             <div class="grid gap-3 md:grid-cols-2 xl:grid-cols-12">
-                <label class="block min-w-0 xl:col-span-3">
-                    <span
-                        class="mb-1 block truncate text-xs font-medium text-muted-foreground"
-                        >{{ t('telegram.parser.filters.channel') }}</span
-                    >
+                <label class="intel-field xl:col-span-3">
+                    <span class="intel-label">{{
+                        t('telegram.parser.filters.channel')
+                    }}</span>
                     <input
                         v-model="form.chatUsername"
                         type="text"
-                        class="h-10 w-full rounded-md border border-input bg-background px-3 text-sm"
-                        placeholder="durov"
+                        class="intel-input"
+                        :placeholder="t('telegram.search.placeholderChannel')"
                     />
                 </label>
 
-                <label class="block min-w-0 xl:col-span-3">
-                    <span
-                        class="mb-1 block truncate text-xs font-medium text-muted-foreground"
-                        >{{ t('telegram.parser.filters.keyword') }}</span
-                    >
+                <label class="intel-field xl:col-span-3">
+                    <span class="intel-label">{{
+                        t('telegram.parser.filters.keyword')
+                    }}</span>
                     <input
                         v-model="form.keyword"
                         type="text"
-                        class="h-10 w-full rounded-md border border-input bg-background px-3 text-sm"
+                        class="intel-input"
                         :placeholder="t('telegram.search.placeholderKeyword')"
                     />
                 </label>
 
-                <label class="block min-w-0 xl:col-span-2">
-                    <span
-                        class="mb-1 block truncate text-xs font-medium text-muted-foreground"
-                        >{{ t('telegram.parser.filters.period') }}</span
-                    >
-                    <select
-                        v-model="form.period"
-                        class="h-10 w-full rounded-md border border-input bg-background px-3 text-sm"
-                    >
+                <label class="intel-field xl:col-span-2">
+                    <span class="intel-label">{{
+                        t('telegram.parser.filters.period')
+                    }}</span>
+                    <select v-model="form.period" class="intel-select">
                         <option value="day">
                             {{ t('telegram.parser.periods.day') }}
                         </option>
@@ -147,80 +116,32 @@ const stageLabel = computed(() => {
                     </select>
                 </label>
 
-                <label class="block min-w-0 xl:col-span-2">
-                    <span
-                        class="mb-1 block truncate text-xs font-medium text-muted-foreground"
-                        >{{ t('telegram.parser.filters.from') }}</span
-                    >
+                <label class="intel-field xl:col-span-2">
+                    <span class="intel-label">{{
+                        t('telegram.parser.filters.from')
+                    }}</span>
                     <input
                         v-model="form.dateFrom"
                         type="date"
-                        class="h-10 w-full rounded-md border border-input bg-background px-3 text-sm disabled:opacity-50"
+                        class="intel-input"
                         :disabled="keywordActive || !customPeriod"
                     />
                 </label>
 
-                <label class="block min-w-0 xl:col-span-2">
-                    <span
-                        class="mb-1 block truncate text-xs font-medium text-muted-foreground"
-                        >{{ t('telegram.parser.filters.to') }}</span
-                    >
+                <label class="intel-field xl:col-span-2">
+                    <span class="intel-label">{{
+                        t('telegram.parser.filters.to')
+                    }}</span>
                     <input
                         v-model="form.dateTo"
                         type="date"
-                        class="h-10 w-full rounded-md border border-input bg-background px-3 text-sm disabled:opacity-50"
+                        class="intel-input"
                         :disabled="keywordActive || !customPeriod"
                     />
                 </label>
             </div>
-
-            <div class="flex flex-wrap items-center gap-2">
-                <button
-                    type="button"
-                    class="inline-flex h-10 cursor-pointer items-center gap-2 rounded-md bg-primary px-4 text-sm font-semibold text-primary-foreground disabled:cursor-not-allowed disabled:opacity-60"
-                    :disabled="!canStart"
-                    @click="start"
-                >
-                    <LoaderCircle v-if="loading" class="h-4 w-4 animate-spin" />
-                    <Database v-else class="h-4 w-4" />
-                    {{
-                        loading
-                            ? t('telegram.parser.collecting')
-                            : t('telegram.parser.start')
-                    }}
-                </button>
-
-                <button
-                    type="button"
-                    class="inline-flex h-10 cursor-pointer items-center gap-2 rounded-md border border-input px-4 text-sm font-semibold text-foreground disabled:cursor-not-allowed disabled:opacity-60"
-                    :disabled="!loading"
-                    @click="stop"
-                >
-                    <Square class="h-4 w-4" />
-                    {{ t('telegram.parser.stop') }}
-                </button>
-
-                <button
-                    type="button"
-                    class="inline-flex h-10 cursor-pointer items-center gap-2 rounded-md border border-cyan-400/50 bg-cyan-400/10 px-4 text-sm font-semibold text-cyan-200 hover:bg-cyan-400/15 disabled:cursor-not-allowed disabled:opacity-60"
-                    :disabled="!downloadUrl || loading"
-                    @click="download"
-                >
-                    <Download class="h-4 w-4" />
-                    {{ t('telegram.parser.download') }}
-                </button>
-
-                <button
-                    type="button"
-                    class="inline-flex h-10 cursor-pointer items-center gap-2 rounded-md border border-emerald-400/50 bg-emerald-400/10 px-4 text-sm font-semibold text-emerald-200 hover:bg-emerald-400/15 disabled:cursor-not-allowed disabled:opacity-60"
-                    :disabled="!downloadJsonUrl || loading"
-                    @click="downloadJson"
-                >
-                    <Download class="h-4 w-4" />
-                    {{ t('telegram.parser.downloadJson') }}
-                </button>
-            </div>
-
+        </template>
+        <template #afterActions>
             <div
                 v-if="keywordActive"
                 class="rounded-md border border-amber-500/40 bg-amber-500/10 p-3 text-xs text-amber-300"
@@ -229,49 +150,6 @@ const stageLabel = computed(() => {
             </div>
 
             <p v-if="error" class="text-sm text-destructive">{{ error }}</p>
-        </div>
-    </section>
-
-    <section class="intel-panel-strong">
-        <div class="flex items-center justify-between gap-3">
-            <h3 class="text-sm font-semibold">
-                {{ t('telegram.parser.progress.title') }}
-            </h3>
-            <span
-                class="rounded-full border border-border px-2 py-1 text-xs text-muted-foreground"
-                >{{ stageLabel }}</span
-            >
-        </div>
-
-        <div class="mt-3 h-3 overflow-hidden rounded-full bg-muted">
-            <div
-                class="h-full bg-cyan-400 transition-all"
-                :style="{ width: `${Math.max(0, Math.min(100, progress))}%` }"
-            />
-        </div>
-
-        <div class="mt-3 grid gap-3 md:grid-cols-2">
-            <article
-                class="rounded-lg border border-border/70 bg-background/70 p-3"
-            >
-                <p class="text-xs text-muted-foreground">
-                    {{ t('telegram.parser.progress.messages') }}
-                </p>
-                <p class="mt-1 text-xl font-semibold">
-                    {{ processedMessages }}
-                </p>
-            </article>
-
-            <article
-                class="rounded-lg border border-border/70 bg-background/70 p-3"
-            >
-                <p class="text-xs text-muted-foreground">
-                    {{ t('telegram.parser.progress.comments') }}
-                </p>
-                <p class="mt-1 text-xl font-semibold">
-                    {{ processedComments }}
-                </p>
-            </article>
-        </div>
-    </section>
+        </template>
+    </ParserTabLayout>
 </template>

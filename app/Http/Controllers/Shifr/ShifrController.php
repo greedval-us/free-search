@@ -56,15 +56,11 @@ final class ShifrController extends Controller
 
     public function classic(ShifrClassicCipherRequest $request): JsonResponse
     {
-        $this->applyRequestLocale($request->locale());
-
-        $result = $this->classicCipherService->process($request->toDto());
-
-        if ($result === null) {
-            return $this->jsonError(__('Unsupported cipher/direction pair or missing required settings.'), 422);
-        }
-
-        return $this->jsonDataFrom($result);
+        return $this->respondWithOptionalData(
+            $request,
+            fn () => $this->classicCipherService->process($request->toDto()),
+            __('Unsupported cipher/direction pair or missing required settings.')
+        );
     }
 
     /**
@@ -75,5 +71,24 @@ final class ShifrController extends Controller
         $this->applyRequestLocale($request->locale());
 
         return $this->jsonDataFrom($resolver());
+    }
+
+    /**
+     * @param callable(): ShifrResultDataInterface|null $resolver
+     */
+    private function respondWithOptionalData(
+        AbstractShifrRequest $request,
+        callable $resolver,
+        string $notSupportedMessage,
+    ): JsonResponse {
+        $this->applyRequestLocale($request->locale());
+
+        $result = $resolver();
+
+        if ($result === null) {
+            return $this->jsonError($notSupportedMessage, 422);
+        }
+
+        return $this->jsonDataFrom($result);
     }
 }

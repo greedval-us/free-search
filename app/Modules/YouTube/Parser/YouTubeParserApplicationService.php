@@ -7,6 +7,7 @@ use App\Modules\ParserSupport\ParserRunStatusPayloadBuilder;
 use App\Modules\YouTube\Actions\Request\VideoCommentsAction;
 use App\Modules\YouTube\DTO\Request\YouTubeCommentsQueryDTO;
 use App\Modules\YouTube\DTO\Request\YouTubeParserStartDTO;
+use App\Modules\YouTube\DTO\Result\YouTubeCommentsResultDTO;
 use App\Modules\YouTube\DTO\Result\YouTubeParserRunStatusDTO;
 use App\Modules\YouTube\Parser\Contracts\YouTubeParserApplicationServiceInterface;
 
@@ -22,10 +23,7 @@ class YouTubeParserApplicationService implements YouTubeParserApplicationService
     ) {
     }
 
-    /**
-     * @return array<string, mixed>
-     */
-    public function comments(YouTubeCommentsQueryDTO $query): array
+    public function comments(YouTubeCommentsQueryDTO $query): YouTubeCommentsResultDTO
     {
         return $this->videoCommentsAction->handle($query);
     }

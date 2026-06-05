@@ -6,6 +6,7 @@ use App\Modules\YouTube\Actions\AbstractYouTubeAction;
 use App\Modules\YouTube\Analytics\YouTubeAnalyticsReportBuilder;
 use App\Modules\YouTube\Core\Contracts\YouTubeGatewayInterface;
 use App\Modules\YouTube\DTO\Request\YouTubeAnalyticsLookupDTO;
+use App\Modules\YouTube\DTO\Result\YouTubeAnalyticsResultDTO;
 use App\Modules\YouTube\Presenters\YouTubeChannelPresenter;
 use App\Modules\YouTube\Presenters\YouTubeVideoPresenter;
 use App\Modules\YouTube\Support\YouTubeChannelResolver;
@@ -25,10 +26,7 @@ class AnalyticsSummaryAction extends AbstractYouTubeAction
         parent::__construct($gateway);
     }
 
-    /**
-     * @return array<string, mixed>
-     */
-    public function handle(YouTubeAnalyticsLookupDTO $query): array
+    public function handle(YouTubeAnalyticsLookupDTO $query): YouTubeAnalyticsResultDTO
     {
         $params = $query->toArray();
 
@@ -44,10 +42,7 @@ class AnalyticsSummaryAction extends AbstractYouTubeAction
         return $this->videoSummary($params['videoId']);
     }
 
-    /**
-     * @return array<string, mixed>
-     */
-    private function videoSummary(string $videoId): array
+    private function videoSummary(string $videoId): YouTubeAnalyticsResultDTO
     {
         $video = $this->videosById([$videoId])[$videoId] ?? null;
 
@@ -68,10 +63,7 @@ class AnalyticsSummaryAction extends AbstractYouTubeAction
         );
     }
 
-    /**
-     * @return array<string, mixed>
-     */
-    private function channelSummary(string $channelId, int $periodDays, string $dateFrom, string $dateTo): array
+    private function channelSummary(string $channelId, int $periodDays, string $dateFrom, string $dateTo): YouTubeAnalyticsResultDTO
     {
         $resolvedChannelId = $this->channelResolver->resolve($channelId);
         $range = $this->resolveDateRange($periodDays, $dateFrom, $dateTo);
@@ -86,18 +78,14 @@ class AnalyticsSummaryAction extends AbstractYouTubeAction
         );
     }
 
-    /**
-     * @param  array<int, array<string, mixed>>  $videos
-     * @return array<string, mixed>
-     */
     private function summaryPayload(
         string $mode,
         array $videos,
         ?array $video,
         ?array $channel,
         ?string $channelId = null,
-    ): array {
-        return [
+    ): YouTubeAnalyticsResultDTO {
+        return new YouTubeAnalyticsResultDTO([
             'mode' => $mode,
             ...($channelId !== null ? ['channelId' => $channelId] : []),
             'video' => $video,
@@ -108,15 +96,12 @@ class AnalyticsSummaryAction extends AbstractYouTubeAction
             'insights' => $this->reportBuilder->insights($videos, $video),
             'topTags' => $this->reportBuilder->topTags($videos),
             'topVideos' => $this->reportBuilder->topBy($videos, 'views', 50),
-        ];
+        ]);
     }
 
-    /**
-     * @return array<string, mixed>
-     */
-    private function emptySummary(string $mode): array
+    private function emptySummary(string $mode): YouTubeAnalyticsResultDTO
     {
-        return [
+        return new YouTubeAnalyticsResultDTO([
             'mode' => $mode,
             'video' => null,
             'channel' => null,
@@ -126,7 +111,7 @@ class AnalyticsSummaryAction extends AbstractYouTubeAction
             'insights' => [],
             'topTags' => [],
             'topVideos' => [],
-        ];
+        ]);
     }
 
     /**

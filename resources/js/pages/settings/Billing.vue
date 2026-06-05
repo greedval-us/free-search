@@ -17,6 +17,7 @@ defineOptions({
         breadcrumbs: [
             {
                 title: 'Billing',
+                titleKey: 'settings.billingPage.title',
                 href: '/settings/billing',
             },
         ],
@@ -101,7 +102,7 @@ const formatDate = (value: string | null | undefined): string => {
 
                 <Button class="mt-5 w-full" type="button" disabled>
                     <CreditCard class="h-4 w-4" />
-                    TODO
+                    {{ t('settings.billingPage.upgradesSoon') }}
                 </Button>
             </article>
         </section>

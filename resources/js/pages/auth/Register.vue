@@ -15,8 +15,8 @@ const { t } = useI18n();
 
 defineOptions({
     layout: {
-        title: 'Create account',
-        description: 'Register to start monitoring and analytics workflows',
+        title: 'auth.register.title',
+        description: 'auth.register.description',
     },
 });
 </script>
@@ -32,7 +32,7 @@ defineOptions({
     >
         <div class="grid gap-6">
             <div class="grid gap-2">
-                <Label for="name" class="text-slate-200">{{
+                <Label for="name" class="auth-field-label">{{
                     t('auth.register.name')
                 }}</Label>
                 <Input
@@ -46,13 +46,13 @@ defineOptions({
                     pattern="[A-Za-z0-9\s.\'-]+"
                     title="Use Latin letters, numbers, spaces and . ' - only"
                     :placeholder="t('auth.register.namePlaceholder')"
-                    class="border-slate-700 bg-slate-900/80 text-slate-100 placeholder:text-slate-400"
+                    class="auth-input-skin"
                 />
                 <InputError :message="errors.name" />
             </div>
 
             <div class="grid gap-2">
-                <Label for="email" class="text-slate-200">{{
+                <Label for="email" class="auth-field-label">{{
                     t('auth.register.email')
                 }}</Label>
                 <Input
@@ -63,13 +63,13 @@ defineOptions({
                     autocomplete="email"
                     name="email"
                     :placeholder="t('auth.register.emailPlaceholder')"
-                    class="border-slate-700 bg-slate-900/80 text-slate-100 placeholder:text-slate-400"
+                    class="auth-input-skin"
                 />
                 <InputError :message="errors.email" />
             </div>
 
             <div class="grid gap-2">
-                <Label for="password" class="text-slate-200">{{
+                <Label for="password" class="auth-field-label">{{
                     t('auth.register.password')
                 }}</Label>
                 <PasswordInput
@@ -79,13 +79,13 @@ defineOptions({
                     autocomplete="new-password"
                     name="password"
                     :placeholder="t('auth.register.passwordPlaceholder')"
-                    class="border-slate-700 bg-slate-900/80 text-slate-100 placeholder:text-slate-400"
+                    class="auth-input-skin"
                 />
                 <InputError :message="errors.password" />
             </div>
 
             <div class="grid gap-2">
-                <Label for="password_confirmation" class="text-slate-200">{{
+                <Label for="password_confirmation" class="auth-field-label">{{
                     t('auth.register.confirmPassword')
                 }}</Label>
                 <PasswordInput
@@ -95,14 +95,14 @@ defineOptions({
                     autocomplete="new-password"
                     name="password_confirmation"
                     :placeholder="t('auth.register.confirmPassword')"
-                    class="border-slate-700 bg-slate-900/80 text-slate-100 placeholder:text-slate-400"
+                    class="auth-input-skin"
                 />
                 <InputError :message="errors.password_confirmation" />
             </div>
 
             <Button
                 type="submit"
-                class="mt-2 w-full bg-cyan-400 text-slate-950 hover:bg-cyan-300"
+                class="auth-button-primary mt-2"
                 tabindex="5"
                 :disabled="processing"
                 data-test="register-user-button"
@@ -116,7 +116,7 @@ defineOptions({
             {{ t('auth.register.hasAccount') }}
             <TextLink
                 :href="login()"
-                class="text-cyan-300 underline underline-offset-4 hover:text-cyan-200"
+                class="auth-link underline underline-offset-4"
                 :tabindex="6"
                 >{{ t('auth.register.signIn') }}</TextLink
             >

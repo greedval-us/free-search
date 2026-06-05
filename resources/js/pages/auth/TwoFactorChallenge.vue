@@ -9,6 +9,7 @@ import {
     InputOTPGroup,
     InputOTPSlot,
 } from '@/components/ui/input-otp';
+import Spinner from '@/components/ui/spinner/Spinner.vue';
 import { useI18n } from '@/composables/useI18n';
 import { store } from '@/routes/two-factor/login';
 import type { TwoFactorConfigContent } from '@/types';
@@ -61,9 +62,16 @@ const toggleRecoveryMode = (clearErrors: () => void): void => {
             >
                 <input type="hidden" name="code" :value="code" />
                 <div
-                    class="flex flex-col items-center justify-center space-y-3 text-center"
+                    class="rounded-2xl border border-slate-800/80 bg-slate-950/30 p-4"
                 >
-                    <div class="flex w-full items-center justify-center">
+                    <div
+                        class="flex flex-col items-center justify-center space-y-3 text-center"
+                    >
+                        <p
+                            class="text-[0.68rem] font-semibold tracking-[0.18em] text-slate-400 uppercase"
+                        >
+                            {{ t('auth.twoFactor.oneTimeCode') }}
+                        </p>
                         <InputOTP
                             id="otp"
                             v-model="code"
@@ -82,9 +90,14 @@ const toggleRecoveryMode = (clearErrors: () => void): void => {
                     </div>
                     <InputError :message="errors.code" />
                 </div>
-                <Button type="submit" class="w-full" :disabled="processing">{{
-                    t('auth.twoFactor.authCode.submit')
-                }}</Button>
+                <Button
+                    type="submit"
+                    class="auth-button-primary"
+                    :disabled="processing"
+                >
+                    <Spinner v-if="processing" class="mr-2" />
+                    {{ t('auth.twoFactor.authCode.submit') }}
+                </Button>
                 <div class="text-center text-sm text-muted-foreground">
                     <span>{{ t('auth.twoFactor.orYouCan') }} </span>
                     <button
@@ -111,11 +124,17 @@ const toggleRecoveryMode = (clearErrors: () => void): void => {
                     :placeholder="t('auth.twoFactor.recoveryCode.placeholder')"
                     :autofocus="showRecoveryInput"
                     required
+                    class="auth-input-skin"
                 />
                 <InputError :message="errors.recovery_code" />
-                <Button type="submit" class="w-full" :disabled="processing">{{
-                    t('auth.twoFactor.recoveryCode.submit')
-                }}</Button>
+                <Button
+                    type="submit"
+                    class="auth-button-primary"
+                    :disabled="processing"
+                >
+                    <Spinner v-if="processing" class="mr-2" />
+                    {{ t('auth.twoFactor.recoveryCode.submit') }}
+                </Button>
 
                 <div class="text-center text-sm text-muted-foreground">
                     <span>{{ t('auth.twoFactor.orYouCan') }} </span>

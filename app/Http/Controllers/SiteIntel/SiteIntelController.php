@@ -32,9 +32,7 @@ class SiteIntelController extends Controller
             return $this->jsonError(__('Invalid target URL or domain.'), 422);
         }
 
-        $data = $this->siteHealthService->check($url);
-
-        return $this->jsonData($data);
+        return $this->jsonDataFrom($this->siteHealthService->check($url));
     }
 
     public function domainLite(DomainLiteLookupRequest $request): JsonResponse
@@ -44,9 +42,7 @@ class SiteIntelController extends Controller
             return $this->jsonError(__('Invalid domain.'), 422);
         }
 
-        $data = $this->domainLiteService->lookup($domain);
-
-        return $this->jsonData($data);
+        return $this->jsonDataFrom($this->domainLiteService->lookup($domain));
     }
 
     public function analytics(SiteIntelAnalyticsRequest $request): JsonResponse
@@ -58,9 +54,7 @@ class SiteIntelController extends Controller
             return $this->jsonError(__('Invalid target URL or domain.'), 422);
         }
 
-        $data = $this->siteIntelAnalyticsService->analyze($url, $domain);
-
-        return $this->jsonData($data);
+        return $this->jsonDataFrom($this->siteIntelAnalyticsService->analyze($url, $domain));
     }
 
     public function seoAudit(SeoAuditRequest $request): JsonResponse
@@ -70,9 +64,7 @@ class SiteIntelController extends Controller
             return $this->jsonError(__('Invalid target URL or domain.'), 422);
         }
 
-        $data = $this->seoAuditService->audit($url, $request->crawlLimit(), $request->platformType());
-
-        return $this->jsonData($data);
+        return $this->jsonDataFrom($this->seoAuditService->audit($url, $request->crawlLimit(), $request->platformType()));
     }
 
     public function seoReport(SeoAuditRequest $request): View|Response
@@ -85,7 +77,7 @@ class SiteIntelController extends Controller
         return $this->localizedHtmlReportResponse(
             locale: $request->locale(),
             view: 'reports.site-intel.seo-audit',
-            report: $this->seoAuditService->audit($url, $request->crawlLimit(), $request->platformType()),
+            report: $this->seoAuditService->audit($url, $request->crawlLimit(), $request->platformType())->toArray(),
             download: $request->boolean('download'),
             filenamePrefix: 'site-intel-seo-audit',
             filenameTarget: (string) parse_url($url, PHP_URL_HOST),
@@ -104,7 +96,7 @@ class SiteIntelController extends Controller
         return $this->localizedHtmlReportResponse(
             locale: $request->locale(),
             view: 'reports.site-intel.analytics',
-            report: $this->siteIntelAnalyticsService->analyze($url, $domain),
+            report: $this->siteIntelAnalyticsService->analyze($url, $domain)->toArray(),
             download: $request->boolean('download'),
             filenamePrefix: 'site-intel-analytics',
             filenameTarget: $domain,

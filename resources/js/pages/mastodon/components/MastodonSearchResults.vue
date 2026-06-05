@@ -1,8 +1,6 @@
 <script setup lang="ts">
+import SearchResultsPanel from '@/components/ui/SearchResultsPanel.vue';
 import { useI18n } from '@/composables/useI18n';
-import MastodonAccountResultsSection from './MastodonAccountResultsSection.vue';
-import MastodonHashtagResultsSection from './MastodonHashtagResultsSection.vue';
-import MastodonStatusResultsSection from './MastodonStatusResultsSection.vue';
 import type {
     MastodonAccount,
     MastodonAccountDetailsState,
@@ -10,6 +8,9 @@ import type {
     MastodonSearchPayload,
     MastodonStatusContextState,
 } from '../types';
+import MastodonAccountResultsSection from './MastodonAccountResultsSection.vue';
+import MastodonHashtagResultsSection from './MastodonHashtagResultsSection.vue';
+import MastodonStatusResultsSection from './MastodonStatusResultsSection.vue';
 
 defineProps<{
     result: MastodonSearchPayload | null;
@@ -36,22 +37,23 @@ const { t } = useI18n();
 </script>
 
 <template>
-    <div class="mb-3 flex items-center justify-between">
-        <h2 class="text-sm font-semibold">
-            {{ t('mastodon.search.resultTitle') }}
-        </h2>
-        <p class="text-xs text-muted-foreground">
-            {{ t('mastodon.search.shown') }}: {{ totalShown }}
-        </p>
-    </div>
-
-    <div
-        class="intel-scroll min-h-0 flex-1 space-y-4 overflow-y-auto overscroll-contain pr-1"
+    <SearchResultsPanel
+        :title="t('mastodon.search.resultTitle')"
+        :shown-label="t('mastodon.search.shown')"
+        :total-shown="totalShown"
+        :loading="loading"
+        :has-result="result !== null"
+        :has-matches="
+            result
+                ? result.statuses.length > 0 ||
+                  result.accounts.length > 0 ||
+                  result.hashtags.length > 0
+                : false
+        "
+        :loading-text="t('mastodon.search.searching')"
+        :empty-text="t('mastodon.search.empty')"
+        :no-matches-text="t('mastodon.search.noMatches')"
     >
-        <div v-if="!loading && !result" class="intel-empty">
-            {{ t('mastodon.search.empty') }}
-        </div>
-
         <MastodonStatusResultsSection
             :statuses="result?.statuses ?? []"
             :format-date="formatDate"
@@ -76,5 +78,5 @@ const { t } = useI18n();
             :toggle-hashtag-statuses="toggleHashtagStatuses"
             :load-more-hashtag-statuses="loadMoreHashtagStatuses"
         />
-    </div>
+    </SearchResultsPanel>
 </template>

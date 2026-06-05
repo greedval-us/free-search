@@ -5,6 +5,8 @@ return [
         'free' => [
             'analytics' => 0,
             'parser' => 0,
+            'bluesky.analytics' => 0,
+            'bluesky.parser' => 0,
             'mastodon.analytics' => 0,
             'mastodon.parser' => 0,
             'site-intel.analytics' => 0,
@@ -17,6 +19,8 @@ return [
         'plus' => [
             'analytics' => 10,
             'parser' => 5,
+            'bluesky.analytics' => 10,
+            'bluesky.parser' => 5,
             'mastodon.analytics' => 10,
             'mastodon.parser' => 5,
             'site-intel.analytics' => 10,
@@ -29,6 +33,8 @@ return [
         'pro' => [
             'analytics' => 100,
             'parser' => 50,
+            'bluesky.analytics' => 100,
+            'bluesky.parser' => 50,
             'mastodon.analytics' => 100,
             'mastodon.parser' => 50,
             'site-intel.analytics' => 100,
@@ -41,6 +47,16 @@ return [
     ],
 
     'resources' => [
+        'bluesky.analytics' => [
+            'module' => 'bluesky',
+            'capability' => 'analytics',
+            'quota_key' => 'bluesky.analytics',
+        ],
+        'bluesky.parser' => [
+            'module' => 'bluesky',
+            'capability' => 'parser',
+            'quota_key' => 'bluesky.parser',
+        ],
         'mastodon.analytics' => [
             'module' => 'mastodon',
             'capability' => 'analytics',
@@ -89,6 +105,12 @@ return [
     ],
 
     'page_resources' => [
+        'bluesky' => [
+            'tabs' => [
+                'analytics' => 'bluesky.analytics',
+                'parser' => 'bluesky.parser',
+            ],
+        ],
         'mastodon' => [
             'tabs' => [
                 'analytics' => 'mastodon.analytics',
@@ -122,6 +144,13 @@ return [
     ],
 
     'protected_routes' => [
+        'bluesky.analytics.summary' => ['resource' => 'bluesky.analytics', 'counts' => true],
+        'bluesky.analytics.report' => ['resource' => 'bluesky.analytics', 'counts' => false],
+        'bluesky.parser.start' => ['resource' => 'bluesky.parser', 'counts' => true],
+        'bluesky.parser.status' => ['resource' => 'bluesky.parser', 'counts' => false],
+        'bluesky.parser.stop' => ['resource' => 'bluesky.parser', 'counts' => false],
+        'bluesky.parser.download-excel' => ['resource' => 'bluesky.parser', 'counts' => false],
+        'bluesky.parser.download-json' => ['resource' => 'bluesky.parser', 'counts' => false],
         'mastodon.analytics.summary' => ['resource' => 'mastodon.analytics', 'counts' => true],
         'mastodon.analytics.report' => ['resource' => 'mastodon.analytics', 'counts' => false],
         'mastodon.parser.start' => ['resource' => 'mastodon.parser', 'counts' => true],

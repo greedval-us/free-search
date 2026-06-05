@@ -5,6 +5,7 @@ import { useI18n } from '@/composables/useI18n';
 import { dashboard } from '@/routes';
 
 type Param = {
+    label: string;
     name: string;
     description: string;
     why: string;
@@ -12,7 +13,8 @@ type Param = {
 };
 type Stream = { name: string; items: string[] };
 type ModuleDoc = {
-    route: string;
+    route: string | null;
+    status: 'live' | 'planned';
     title: string;
     purpose: string;
     scenarios: string[];
@@ -27,43 +29,36 @@ const isRu = computed(() => locale.value === 'ru');
 const ruModules: ModuleDoc[] = [
     {
         route: '/telegram',
+        status: 'live',
         title: 'Telegram',
         purpose: 'Оперативный сбор и аналитика данных Telegram-каналов.',
         scenarios: [
             'Мониторинг инфополя',
-            'Поиск аномалий активности',
-            'Сбор хронологии доказательств',
+            'Проверка активности канала или автора',
         ],
         params: [
             {
+                label: 'Канал или чат',
                 name: 'chatUsername',
-                description: 'Имя канала/чата.',
-                why: 'Определяет источник данных.',
+                description: 'Ссылка, username или короткое имя канала/чата.',
+                why: 'Нужно, чтобы модуль понял, откуда собирать данные.',
                 example: 'durov',
             },
             {
+                label: 'Ключевая тема',
                 name: 'keyword',
-                description: 'Ключевое слово или фраза.',
-                why: 'Сужает выборку и снижает шум.',
+                description:
+                    'Слово или фраза, по которым нужно искать сообщения.',
+                why: 'Помогает отсеять лишний шум и сосредоточиться на нужной теме.',
                 example: 'санкции',
             },
             {
-                name: 'fromUsername/authorId',
-                description: 'Фильтр по автору.',
-                why: 'Нужен для анализа конкретного автора.',
-                example: '123456789',
-            },
-            {
+                label: 'Период',
                 name: 'dateFrom/dateTo',
-                description: 'Период анализа.',
-                why: 'Ограничивает данные нужным интервалом.',
+                description:
+                    'Интервал времени, в рамках которого нужен поиск или анализ.',
+                why: 'Позволяет не смешивать старые и актуальные данные.',
                 example: '2026-05-01 .. 2026-05-07',
-            },
-            {
-                name: 'limit',
-                description: 'Лимит сообщений.',
-                why: 'Баланс между скоростью и полнотой.',
-                example: '20',
             },
         ],
         outputs: [
@@ -86,8 +81,8 @@ const ruModules: ModuleDoc[] = [
                 items: [
                     'Ключевые показатели за период',
                     'Профиль канала/группы',
-                    'Anti-fraud: риск, триггеры, причины',
-                    'Графики, топ-посты, лидеры мнений',
+                    'Риск-флаги и объяснение подозрительной активности',
+                    'Графики, топ-посты и активные авторы',
                     'Открытие/скачивание отчета',
                 ],
             },
@@ -96,7 +91,7 @@ const ruModules: ModuleDoc[] = [
                 items: [
                     'Статусы запуска и выполнения',
                     'Прогресс и счетчики обработки',
-                    'Сбор по периодам и keyword-режиму',
+                    'Сбор по периодам и по ключевой теме',
                     'Выгрузки в Excel и JSON',
                 ],
             },
@@ -104,56 +99,41 @@ const ruModules: ModuleDoc[] = [
     },
     {
         route: '/youtube',
+        status: 'live',
         title: 'YouTube',
         purpose:
             'Поиск, аналитика и сбор комментариев по YouTube-видео и каналам.',
-        scenarios: [
-            'Мониторинг видеоповестки',
-            'Анализ каналов и вовлеченности',
-            'Сбор комментариев для дальнейшей проверки',
-        ],
+        scenarios: ['Мониторинг видеоповестки', 'Анализ канала или видео'],
         params: [
             {
+                label: 'Что искать',
                 name: 'q',
-                description: 'Поисковый запрос.',
-                why: 'Определяет тему, видео, канал или плейлист для поиска.',
+                description:
+                    'Тема, фраза или название, по которым нужно найти видео, каналы или плейлисты.',
+                why: 'Это основной ориентир для поиска.',
                 example: 'osint tutorial',
             },
             {
-                name: 'type',
-                description: 'Тип результата: video, channel или playlist.',
-                why: 'Позволяет сузить выдачу под нужную сущность.',
-                example: 'video',
-            },
-            {
+                label: 'Канал',
                 name: 'channelId',
-                description: 'ID канала YouTube.',
-                why: 'Ограничивает поиск или аналитику конкретным каналом.',
+                description: 'ID канала, @handle или имя канала.',
+                why: 'Используется, когда нужно искать или анализировать данные только по одному каналу.',
                 example: 'UC_x5XG1OV2P6uZZ5FSM9Ttw',
             },
             {
+                label: 'Видео',
                 name: 'videoId',
-                description: 'ID или ссылка на видео.',
-                why: 'Используется для аналитики видео и сбора комментариев.',
+                description: 'ID ролика или полная ссылка на него.',
+                why: 'Нужно для точечной аналитики видео и сбора комментариев.',
                 example: 'dQw4w9WgXcQ',
             },
             {
-                name: 'publishedAfter/publishedBefore',
-                description: 'Период публикации для поиска.',
-                why: 'Фильтрует выдачу по нужному временному окну.',
+                label: 'Период',
+                name: 'publishedAfter/publishedBefore или periodDays',
+                description:
+                    'Период публикации или окно аналитики, за которое нужны данные.',
+                why: 'Помогает смотреть только нужный временной отрезок.',
                 example: '2026-05-01 .. 2026-05-07',
-            },
-            {
-                name: 'dateFrom/dateTo или periodDays',
-                description: 'Период аналитики канала.',
-                why: 'Задает окно расчета метрик и таймлайна.',
-                example: '7',
-            },
-            {
-                name: 'limit/pageToken',
-                description: 'Лимит и токен пагинации.',
-                why: 'Управляют объемом выдачи и переходом к следующей странице.',
-                example: '10',
             },
         ],
         outputs: [
@@ -166,27 +146,27 @@ const ruModules: ModuleDoc[] = [
             {
                 name: 'Поиск',
                 items: [
-                    'Результаты YouTube Data API: заголовок, описание, канал, дата публикации, превью',
-                    'Метрики видео: просмотры, лайки, комментарии, engagement rate',
-                    'Фильтры по региону, языку, safe search, длительности, качеству и субтитрам',
-                    'Пагинация через nextPageToken',
+                    'Результаты поиска: заголовок, описание, канал, дата публикации и превью',
+                    'Метрики видео: просмотры, лайки, комментарии и уровень вовлеченности',
+                    'Фильтры по региону, языку, безопасному поиску, длительности, качеству и субтитрам',
+                    'Постраничная загрузка больших выборок',
                 ],
             },
             {
                 name: 'Аналитика',
                 items: [
                     'Режимы video и channel',
-                    'Суммарные метрики: views, likes, comments, средние и медианные значения',
+                    'Суммарные метрики: просмотры, лайки, комментарии, средние и медианные значения',
                     'Распределения по времени, длительности, качеству и наличию субтитров',
                     'Лидеры по просмотрам, лайкам, комментариям и вовлеченности',
-                    'HTML-отчет с возможностью скачивания',
+                    'Готовый отчет с возможностью скачать',
                 ],
             },
             {
                 name: 'Парсер',
                 items: [
-                    'Получение комментариев и ответов по videoId',
-                    'Сортировка по relevance или time и поиск внутри комментариев',
+                    'Получение комментариев и ответов по выбранному видео',
+                    'Сортировка по релевантности или дате и поиск внутри комментариев',
                     'Фоновый запуск, статус, остановка и прогресс выполнения',
                     'Экспорт результатов в Excel и JSON',
                 ],
@@ -194,7 +174,124 @@ const ruModules: ModuleDoc[] = [
         ],
     },
     {
+        route: '/bluesky',
+        status: 'live',
+        title: 'Bluesky',
+        purpose:
+            'Поиск по постам и профилям Bluesky, а также аналитика по авторам и темам.',
+        scenarios: [
+            'Поиск обсуждений по теме',
+            'Проверка профиля и его активности',
+        ],
+        params: [
+            {
+                label: 'Что искать',
+                name: 'q/text',
+                description:
+                    'Тема, фраза или ключевые слова для поиска по постам.',
+                why: 'Помогает быстро найти релевантные обсуждения.',
+                example: 'osint',
+            },
+            {
+                label: 'Автор или профиль',
+                name: 'author/actor',
+                description: 'Имя профиля, handle или ссылка на автора.',
+                why: 'Нужно для точечной проверки конкретного аккаунта.',
+                example: '@analyst.bsky.social',
+            },
+            {
+                label: 'Фильтр по языку или теме',
+                name: 'lang/tag',
+                description: 'Дополнительные фильтры для уточнения выборки.',
+                why: 'Помогают быстрее сузить поиск до полезных результатов.',
+                example: 'ru',
+            },
+        ],
+        outputs: [
+            'Посты, профили и связанные сущности',
+            'Метрики вовлеченности и связи',
+            'Аналитическая сводка по выбранной цели',
+        ],
+        streams: [
+            {
+                name: 'Поиск',
+                items: [
+                    'Посты по теме, тегам, доменам и упоминаниям',
+                    'Профили авторов и базовые метрики',
+                    'Раскрытие лайков, репостов и тредов',
+                ],
+            },
+            {
+                name: 'Аналитика',
+                items: [
+                    'Профиль аккаунта или хэштега',
+                    'Топ-посты и заметные сигналы',
+                    'Ключевые показатели по выбранной цели',
+                ],
+            },
+        ],
+    },
+    {
+        route: '/mastodon',
+        status: 'live',
+        title: 'Mastodon',
+        purpose:
+            'Поиск по аккаунтам, постам и хэштегам Mastodon с возможностью аналитики и разбора контекста.',
+        scenarios: [
+            'Проверка аккаунта или инстанса',
+            'Мониторинг хэштега или темы',
+        ],
+        params: [
+            {
+                label: 'Что искать',
+                name: 'q',
+                description: 'Тема, имя аккаунта, хэштег или текст для поиска.',
+                why: 'Это базовая точка входа для результатов.',
+                example: 'disinformation',
+            },
+            {
+                label: 'Аккаунт',
+                name: 'account',
+                description:
+                    'Аккаунт в формате handle, например @name@instance.',
+                why: 'Нужен для анализа конкретного автора.',
+                example: '@analyst@mastodon.social',
+            },
+            {
+                label: 'Инстанс',
+                name: 'instance',
+                description: 'Фильтры по серверу Mastodon и языку контента.',
+                why: 'Помогают сократить шум и уточнить источник данных.',
+                example: 'mastodon.social',
+            },
+        ],
+        outputs: [
+            'Аккаунты, посты и хэштеги из поиска',
+            'Контекст обсуждений и ответы',
+            'Аналитика по аккаунту или хэштегу',
+        ],
+        streams: [
+            {
+                name: 'Поиск',
+                items: [
+                    'Посты, аккаунты и хэштеги',
+                    'Загрузка контекста поста и связанных обсуждений',
+                    'Переход к постам и подписчикам аккаунта',
+                ],
+            },
+            {
+                name: 'Аналитика',
+                items: [
+                    'Профиль аккаунта или хэштега',
+                    'Топ-посты и базовые метрики',
+                    'Более понятные состояния и подсказки для пользователя',
+                ],
+            },
+        ],
+    },
+    {
         route: '/site-intel',
+        status: 'live',
         title: 'Site Intel',
         purpose: 'Техническая разведка сайта и домена.',
         scenarios: [
@@ -204,13 +301,19 @@ const ruModules: ModuleDoc[] = [
         ],
         params: [
             {
+                label: 'Сайт или домен',
                 name: 'target/domain',
-                description: 'URL или домен.',
-                why: 'Цель анализа.',
+                description:
+                    'Адрес сайта, страницы или домена, который нужно проверить.',
+                why: 'Это основная цель технического анализа.',
                 example: 'example.com',
             },
         ],
-        outputs: ['DNS/SSL/headers', 'WHOIS/DNS сводки', 'SEO findings'],
+        outputs: [
+            'Проверка DNS, SSL и защитных настроек сайта',
+            'Сводка по домену и DNS-записям',
+            'SEO-находки и рекомендации',
+        ],
         streams: [
             {
                 name: 'Режимы',
@@ -225,48 +328,64 @@ const ruModules: ModuleDoc[] = [
     },
     {
         route: '/news-media-intel',
+        status: 'live',
         title: 'News & Media Intel',
-        purpose: 'Public media mention monitoring.',
-        scenarios: ['Reputation watch', 'Event tracking'],
+        purpose: 'Мониторинг публичных упоминаний в новостях и медиа.',
+        scenarios: ['Репутационный мониторинг', 'Отслеживание событий'],
         params: [
             {
+                label: 'Что отслеживать',
                 name: 'query',
-                description: 'Topic/person/brand.',
-                why: 'Monitoring target.',
-                example: 'war',
+                description: 'Тема, имя, бренд, организация или событие.',
+                why: 'Определяет фокус мониторинга новостей и медиа.',
+                example: 'санкции',
             },
         ],
-        outputs: ['Mentions feed', 'Sentiment', 'Timeline'],
+        outputs: ['Лента упоминаний', 'Тональность', 'Таймлайн'],
         streams: [
             {
-                name: 'Lookup',
+                name: 'Мониторинг',
                 items: [
-                    'Mentions feed',
-                    'Topic summary',
-                    'Sentiment',
-                    'Timeline',
+                    'Лента упоминаний',
+                    'Сводка по темам',
+                    'Тональность',
+                    'Таймлайн',
                 ],
             },
         ],
     },
     {
         route: '/shifr',
+        status: 'live',
         title: 'Shifr',
-        purpose: 'Technical toolbox for transformations.',
-        scenarios: ['Hash/Decode', 'IOC extraction', 'JWT and classic ciphers'],
+        purpose:
+            'Технический набор инструментов для преобразования артефактов.',
+        scenarios: [
+            'Хеширование и декодирование',
+            'Извлечение IOC',
+            'JWT и классические шифры',
+        ],
         params: [
             {
+                label: 'Режим и входные данные',
                 name: 'tab/input',
-                description: 'Mode and input.',
-                why: 'Define operation behavior.',
+                description:
+                    'Какую операцию нужно выполнить и какие данные подать на вход.',
+                why: 'От этого зависит, какой именно инструмент будет запущен.',
                 example: 'hash + text',
             },
         ],
-        outputs: ['Structured operation result'],
+        outputs: ['Структурированный результат операции'],
         streams: [
             {
-                name: 'Modes',
-                items: ['Hash/HMAC', 'Transform', 'IOC', 'Classic', 'JWT'],
+                name: 'Режимы',
+                items: [
+                    'Хеширование и HMAC',
+                    'Преобразование и декодирование',
+                    'IOC',
+                    'Классические шифры',
+                    'Проверка JWT',
+                ],
             },
         ],
     },
@@ -275,74 +394,349 @@ const ruModules: ModuleDoc[] = [
 const enModules: ModuleDoc[] = [
     {
         route: '/telegram',
+        status: 'live',
         title: 'Telegram',
         purpose: 'Operational collection and analytics for Telegram channels.',
         scenarios: [
             'Information field monitoring',
-            'Activity anomaly detection',
-            'Evidence timeline collection',
+            'Channel or author activity review',
         ],
         params: [
-            { name: 'chatUsername', description: 'Channel/chat name.', why: 'Defines the data source.', example: 'durov' },
-            { name: 'keyword', description: 'Keyword or phrase.', why: 'Narrows the sample and reduces noise.', example: 'sanctions' },
-            { name: 'fromUsername/authorId', description: 'Author filter.', why: 'Needed for specific author analysis.', example: '123456789' },
-            { name: 'dateFrom/dateTo', description: 'Analysis period.', why: 'Limits data to the required interval.', example: '2026-05-01 .. 2026-05-07' },
-            { name: 'limit', description: 'Message limit.', why: 'Balances speed and completeness.', example: '20' },
+            {
+                label: 'Channel or chat',
+                name: 'chatUsername',
+                description: 'Channel link, username, or short chat name.',
+                why: 'Tells the module where to collect data from.',
+                example: 'durov',
+            },
+            {
+                label: 'Key topic',
+                name: 'keyword',
+                description: 'Word or phrase to look for in messages.',
+                why: 'Helps reduce noise and keep the results focused.',
+                example: 'sanctions',
+            },
+            {
+                label: 'Time period',
+                name: 'dateFrom/dateTo',
+                description: 'Time window for search or analytics.',
+                why: 'Keeps the dataset limited to the relevant period.',
+                example: '2026-05-01 .. 2026-05-07',
+            },
         ],
         outputs: ['Search results', 'Analytics metrics', 'Exportable reports'],
         streams: [
-            { name: 'Search', items: ['Messages: text/date/author/views/forwards/replies', 'Media data', 'Reactions and gifts', 'Paginated comments'] },
-            { name: 'Analytics', items: ['Period KPIs', 'Channel/group profile', 'Anti-fraud: risk/triggers/reasons', 'Charts/top posts/opinion leaders', 'Open/download report'] },
-            { name: 'Parser', items: ['Run and status states', 'Progress and processing counters', 'Period and keyword collection modes', 'Excel and JSON exports'] },
+            {
+                name: 'Search',
+                items: [
+                    'Messages: text/date/author/views/forwards/replies',
+                    'Media data',
+                    'Reactions and gifts',
+                    'Paginated comments',
+                ],
+            },
+            {
+                name: 'Analytics',
+                items: [
+                    'Period KPIs',
+                    'Channel/group profile',
+                    'Risk flags with explanations',
+                    'Charts, top posts, and active voices',
+                    'Open/download report',
+                ],
+            },
+            {
+                name: 'Parser',
+                items: [
+                    'Run and status states',
+                    'Progress and processing counters',
+                    'Collection by date range or key topic',
+                    'Excel and JSON exports',
+                ],
+            },
         ],
     },
     {
         route: '/youtube',
+        status: 'live',
         title: 'YouTube',
-        purpose: 'Search, analytics, and comment collection for YouTube videos and channels.',
-        scenarios: ['Video agenda monitoring', 'Channel and engagement analytics', 'Comment collection for further validation'],
+        purpose:
+            'Search, analytics, and comment collection for YouTube videos and channels.',
+        scenarios: ['Video agenda monitoring', 'Channel or video analysis'],
         params: [
-            { name: 'q', description: 'Search query.', why: 'Defines topic/video/channel/playlist.', example: 'osint tutorial' },
-            { name: 'type', description: 'Result type: video, channel, playlist.', why: 'Limits output to the required entity.', example: 'video' },
-            { name: 'channelId', description: 'YouTube channel ID.', why: 'Limits search/analytics to a specific channel.', example: 'UC_x5XG1OV2P6uZZ5FSM9Ttw' },
-            { name: 'videoId', description: 'Video ID or URL.', why: 'Used for video analytics and comments.', example: 'dQw4w9WgXcQ' },
-            { name: 'publishedAfter/publishedBefore', description: 'Publication period for search.', why: 'Filters results by time window.', example: '2026-05-01 .. 2026-05-07' },
-            { name: 'dateFrom/dateTo or periodDays', description: 'Channel analytics period.', why: 'Sets the metrics timeline window.', example: '7' },
-            { name: 'limit/pageToken', description: 'Limit and pagination token.', why: 'Controls output volume and next pages.', example: '10' },
+            {
+                label: 'What to search for',
+                name: 'q',
+                description:
+                    'Topic, phrase, or title used to find videos, channels, or playlists.',
+                why: 'This is the main starting point for the search.',
+                example: 'osint tutorial',
+            },
+            {
+                label: 'Channel',
+                name: 'channelId',
+                description: 'Channel ID, @handle, or channel name.',
+                why: 'Useful when search or analytics should stay within one channel.',
+                example: 'UC_x5XG1OV2P6uZZ5FSM9Ttw',
+            },
+            {
+                label: 'Video',
+                name: 'videoId',
+                description: 'Video ID or full video URL.',
+                why: 'Needed for focused video analytics and comment collection.',
+                example: 'dQw4w9WgXcQ',
+            },
+            {
+                label: 'Time period',
+                name: 'publishedAfter/publishedBefore or periodDays',
+                description:
+                    'Publication period or analytics window for the data you want to review.',
+                why: 'Keeps the result set focused on the right time range.',
+                example: '2026-05-01 .. 2026-05-07',
+            },
         ],
-        outputs: ['Videos/channels/playlists from search', 'Video/channel analytics summary', 'Comments and replies', 'HTML report and Excel/JSON exports'],
+        outputs: [
+            'Videos/channels/playlists from search',
+            'Video/channel analytics summary',
+            'Comments and replies',
+            'HTML report and Excel/JSON exports',
+        ],
         streams: [
-            { name: 'Search', items: ['YouTube Data API results: title/description/channel/date/preview', 'Video metrics: views/likes/comments/engagement rate', 'Filters: region/language/safe search/duration/quality/captions', 'Pagination via nextPageToken'] },
-            { name: 'Analytics', items: ['Modes: video and channel', 'Aggregated metrics: views/likes/comments/avg/median', 'Distributions by time/duration/quality/captions', 'Leaders by views/likes/comments/engagement', 'Downloadable HTML report'] },
-            { name: 'Parser', items: ['Comments and replies by videoId', 'Sorting by relevance/time and comment search', 'Background run/status/stop/progress', 'Excel and JSON exports'] },
+            {
+                name: 'Search',
+                items: [
+                    'Search results: title, description, channel, publication date, and preview',
+                    'Video metrics: views, likes, comments, and engagement level',
+                    'Filters: region, language, safe search, duration, quality, and captions',
+                    'Paged loading for large result sets',
+                ],
+            },
+            {
+                name: 'Analytics',
+                items: [
+                    'Modes: video and channel',
+                    'Aggregated metrics: views, likes, comments, averages, and median values',
+                    'Distributions by time/duration/quality/captions',
+                    'Leaders by views/likes/comments/engagement',
+                    'Downloadable report',
+                ],
+            },
+            {
+                name: 'Parser',
+                items: [
+                    'Comments and replies for the selected video',
+                    'Sorting by relevance or date and comment search',
+                    'Background run/status/stop/progress',
+                    'Excel and JSON exports',
+                ],
+            },
+        ],
+    },
+    {
+        route: '/bluesky',
+        status: 'live',
+        title: 'Bluesky',
+        purpose:
+            'Search across Bluesky posts and profiles with analytics for authors and topics.',
+        scenarios: [
+            'Topic discussion discovery',
+            'Profile and activity review',
+        ],
+        params: [
+            {
+                label: 'What to search for',
+                name: 'q/text',
+                description:
+                    'Topic, phrase, or keywords used to search across posts.',
+                why: 'This is the main starting point for discovery.',
+                example: 'osint',
+            },
+            {
+                label: 'Author or profile',
+                name: 'author/actor',
+                description: 'Profile handle, account name, or profile URL.',
+                why: 'Useful when reviewing one specific source.',
+                example: '@analyst.bsky.social',
+            },
+            {
+                label: 'Language or topic filter',
+                name: 'lang/tag',
+                description: 'Extra filters that help narrow the result set.',
+                why: 'Makes it easier to reduce noise quickly.',
+                example: 'ru',
+            },
+        ],
+        outputs: [
+            'Posts, profiles, and linked entities',
+            'Engagement and relationship signals',
+            'Analytics summary for the selected target',
+        ],
+        streams: [
+            {
+                name: 'Search',
+                items: [
+                    'Posts by topic, tag, domain, and mentions',
+                    'Author profiles with basic metrics',
+                    'Expandable likes, reposts, and threads',
+                ],
+            },
+            {
+                name: 'Analytics',
+                items: [
+                    'Account or hashtag profile',
+                    'Top posts and notable signals',
+                    'Key metrics for the selected target',
+                ],
+            },
+        ],
+    },
+    {
+        route: '/mastodon',
+        status: 'live',
+        title: 'Mastodon',
+        purpose:
+            'Search across Mastodon accounts, posts, and hashtags with contextual review and analytics.',
+        scenarios: [
+            'Account or instance review',
+            'Hashtag or topic monitoring',
+        ],
+        params: [
+            {
+                label: 'What to search for',
+                name: 'q',
+                description:
+                    'Topic, account, hashtag, or text query used for search.',
+                why: 'This defines the starting point for the result set.',
+                example: 'disinformation',
+            },
+            {
+                label: 'Account',
+                name: 'account',
+                description:
+                    'Account handle in a format such as @name@instance.',
+                why: 'Needed for focused analysis of one author.',
+                example: '@analyst@mastodon.social',
+            },
+            {
+                label: 'Instance',
+                name: 'instance',
+                description: 'Server filter for the dataset.',
+                why: 'Helps narrow the search to the most relevant source.',
+                example: 'mastodon.social',
+            },
+        ],
+        outputs: [
+            'Accounts, posts, and hashtags from search',
+            'Thread context and replies',
+            'Account or hashtag analytics',
+        ],
+        streams: [
+            {
+                name: 'Search',
+                items: [
+                    'Posts, accounts, and hashtags',
+                    'Context loading for posts and linked discussions',
+                    'Access to account posts and followers',
+                ],
+            },
+            {
+                name: 'Analytics',
+                items: [
+                    'Account or hashtag profile',
+                    'Top posts and basic metrics',
+                    'Cleaner empty states and user-facing hints',
+                ],
+            },
         ],
     },
     {
         route: '/site-intel',
+        status: 'live',
         title: 'Site Intel',
         purpose: 'Technical intelligence for website and domain.',
-        scenarios: ['Availability and security checks', 'SEO audit', 'Domain analytics'],
-        params: [{ name: 'target/domain', description: 'URL or domain.', why: 'Analysis target.', example: 'example.com' }],
-        outputs: ['DNS/SSL/headers', 'WHOIS/DNS summaries', 'SEO findings'],
-        streams: [{ name: 'Modes', items: ['Site health', 'Domain lite', 'Analytics', 'SEO audit'] }],
+        scenarios: [
+            'Availability and security checks',
+            'SEO audit',
+            'Domain analytics',
+        ],
+        params: [
+            {
+                label: 'Website or domain',
+                name: 'target/domain',
+                description: 'Website, page URL, or domain to inspect.',
+                why: 'This is the target of the technical analysis.',
+                example: 'example.com',
+            },
+        ],
+        outputs: [
+            'DNS, SSL, and website security checks',
+            'Domain and DNS summary',
+            'SEO findings and recommendations',
+        ],
+        streams: [
+            {
+                name: 'Modes',
+                items: ['Site health', 'Domain lite', 'Analytics', 'SEO audit'],
+            },
+        ],
     },
     {
         route: '/news-media-intel',
+        status: 'live',
         title: 'News & Media Intel',
-        purpose: 'Public media mention monitoring.',
-        scenarios: ['Reputation watch', 'Event tracking'],
-        params: [{ name: 'query', description: 'Topic/person/brand.', why: 'Monitoring target.', example: 'war' }],
-        outputs: ['Mentions feed', 'Sentiment', 'Timeline'],
-        streams: [{ name: 'Lookup', items: ['Mentions feed', 'Topic summary', 'Sentiment', 'Timeline'] }],
+        purpose: 'Public news and media mention monitoring.',
+        scenarios: ['Reputation monitoring', 'Event tracking'],
+        params: [
+            {
+                label: 'Monitoring target',
+                name: 'query',
+                description: 'Topic, person, brand, organization, or event.',
+                why: 'Defines what the news monitoring should focus on.',
+                example: 'sanctions',
+            },
+        ],
+        outputs: ['Mentions feed', 'Sentiment snapshot', 'Timeline'],
+        streams: [
+            {
+                name: 'Monitoring',
+                items: [
+                    'Mentions feed',
+                    'Topic summary',
+                    'Sentiment snapshot',
+                    'Timeline',
+                ],
+            },
+        ],
     },
     {
         route: '/shifr',
+        status: 'live',
         title: 'Shifr',
-        purpose: 'Technical toolbox for transformations.',
+        purpose: 'Technical toolkit for artifact transformations.',
         scenarios: ['Hash/decode', 'IOC extraction', 'JWT and classic ciphers'],
-        params: [{ name: 'tab/input', description: 'Mode and input.', why: 'Defines operation behavior.', example: 'hash + text' }],
+        params: [
+            {
+                label: 'Mode and input data',
+                name: 'tab/input',
+                description:
+                    'Choose the operation and provide the source data.',
+                why: 'This determines which tool runs and how it behaves.',
+                example: 'hash + text',
+            },
+        ],
         outputs: ['Structured operation result'],
-        streams: [{ name: 'Modes', items: ['Hash/HMAC', 'Transform', 'IOC', 'Classic', 'JWT'] }],
+        streams: [
+            {
+                name: 'Modes',
+                items: [
+                    'Hashing and HMAC',
+                    'Transform and decode',
+                    'IOC extraction',
+                    'Classic ciphers',
+                    'JWT checks',
+                ],
+            },
+        ],
     },
 ];
 
@@ -351,22 +745,35 @@ const modules = computed(() => (isRu.value ? ruModules : enModules));
 const ui = computed(() => ({
     title: isRu.value ? 'Вики модулей' : 'Modules Wiki',
     subtitle: isRu.value
-        ? 'Подробное описание параметров и формируемых данных по каждому модулю.'
-        : 'Detailed parameters and produced datasets for each module.',
-    purpose: isRu.value ? 'Зачем нужен модуль' : 'Purpose',
-    scenarios: isRu.value ? 'Когда использовать' : 'When to use',
-    params: isRu.value ? 'Параметры' : 'Parameters',
-    outputs: isRu.value ? 'Результат' : 'Output',
-    streams: isRu.value ? 'Какие данные формируются' : 'Produced data',
+        ? 'Короткое объяснение для пользователя: что делает модуль, в каких задачах он помогает и что нужно ввести для старта.'
+        : 'A short user-facing guide to what each module does, when it helps, and what you need to enter to get started.',
+    purpose: isRu.value ? 'Что делает модуль' : 'What the module does',
+    scenarios: isRu.value ? 'Для каких задач подходит' : 'Best for',
+    params: isRu.value ? 'Что нужно ввести' : 'What to enter',
+    outputs: isRu.value ? 'Что получится на выходе' : 'What you get back',
+    streams: isRu.value
+        ? 'Что можно посмотреть внутри'
+        : 'What you can review inside',
     open: isRu.value ? 'Открыть модуль' : 'Open module',
-    example: isRu.value ? 'Пример' : 'Example',
+    planned: isRu.value ? 'В разработке' : 'In development',
+    why: isRu.value ? 'Когда это полезно' : 'When this helps',
+    example: isRu.value ? 'Например' : 'For example',
+    details: isRu.value ? 'Подробнее' : 'More details',
 }));
 
 defineOptions({
     layout: {
         breadcrumbs: [
-            { title: 'Dashboard', href: dashboard() },
-            { title: 'Wiki / Modules', href: '/wiki/modules' },
+            {
+                title: 'Dashboard',
+                titleKey: 'navigation.dashboard',
+                href: dashboard(),
+            },
+            {
+                title: 'Wiki / Modules',
+                titleKey: 'navigation.modulesWiki',
+                href: '/wiki/modules',
+            },
         ],
     },
 });
@@ -388,22 +795,36 @@ defineOptions({
                 <div class="grid grid-cols-1 gap-4 lg:grid-cols-2">
                     <article
                         v-for="m in modules"
-                        :key="m.route"
+                        :key="m.route ?? `${m.title}-${m.status}`"
                         class="intel-surface rounded-xl p-4"
                     >
                         <div
                             class="mb-3 flex items-start justify-between gap-3"
                         >
-                            <h2 class="text-lg font-semibold">{{ m.title }}</h2>
+                            <div>
+                                <h2 class="text-lg font-semibold">
+                                    {{ m.title }}
+                                </h2>
+                                <p class="mt-1 text-xs text-muted-foreground">
+                                    {{ m.purpose }}
+                                </p>
+                            </div>
                             <a
+                                v-if="m.status === 'live' && m.route"
                                 :href="m.route"
                                 class="inline-flex rounded-md border border-primary/30 bg-primary/10 px-2.5 py-1 text-xs font-medium text-primary"
                             >
                                 {{ ui.open }}
                             </a>
+                            <span
+                                v-else
+                                class="inline-flex rounded-md border border-border/70 bg-background/60 px-2.5 py-1 text-xs font-medium text-muted-foreground"
+                            >
+                                {{ ui.planned }}
+                            </span>
                         </div>
 
-                        <div class="space-y-4 text-sm">
+                        <div class="space-y-3 text-sm">
                             <div>
                                 <p class="intel-title font-medium">
                                     {{ ui.purpose }}
@@ -437,13 +858,15 @@ defineOptions({
                                         class="intel-section rounded-lg p-3"
                                     >
                                         <p class="text-sm font-semibold">
-                                            {{ p.name }}
+                                            {{ p.label }}
                                         </p>
                                         <p class="mt-1 text-muted-foreground">
                                             {{ p.description }}
                                         </p>
-                                        <p class="mt-1 text-muted-foreground">
-                                            {{ p.why }}
+                                        <p
+                                            class="mt-1 text-xs text-muted-foreground"
+                                        >
+                                            {{ ui.why }}: {{ p.why }}
                                         </p>
                                         <p class="mt-1 text-xs text-primary">
                                             {{ ui.example }}:
@@ -455,23 +878,33 @@ defineOptions({
                                 </div>
                             </div>
 
-                            <div>
-                                <p class="intel-title font-medium">
-                                    {{ ui.outputs }}
-                                </p>
+                            <details class="wiki-details group">
+                                <summary class="wiki-summary">
+                                    <span class="intel-title font-medium">{{
+                                        ui.outputs
+                                    }}</span>
+                                    <span class="wiki-summary-action">{{
+                                        ui.details
+                                    }}</span>
+                                </summary>
                                 <ul
-                                    class="mt-1 list-disc space-y-1 pl-5 text-muted-foreground"
+                                    class="mt-2 list-disc space-y-1 pl-5 text-muted-foreground"
                                 >
                                     <li v-for="o in m.outputs" :key="o">
                                         {{ o }}
                                     </li>
                                 </ul>
-                            </div>
+                            </details>
 
-                            <div>
-                                <p class="intel-title font-medium">
-                                    {{ ui.streams }}
-                                </p>
+                            <details class="wiki-details group">
+                                <summary class="wiki-summary">
+                                    <span class="intel-title font-medium">{{
+                                        ui.streams
+                                    }}</span>
+                                    <span class="wiki-summary-action">{{
+                                        ui.details
+                                    }}</span>
+                                </summary>
                                 <div class="mt-2 space-y-2">
                                     <div
                                         v-for="s in m.streams"
@@ -493,7 +926,7 @@ defineOptions({
                                         </ul>
                                     </div>
                                 </div>
-                            </div>
+                            </details>
                         </div>
                     </article>
                 </div>
@@ -501,3 +934,33 @@ defineOptions({
         </section>
     </div>
 </template>
+
+<style scoped>
+.wiki-details {
+    border-top: 1px solid rgb(148 163 184 / 0.12);
+    padding-top: 0.75rem;
+}
+
+.wiki-summary {
+    display: flex;
+    cursor: pointer;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+    list-style: none;
+}
+
+.wiki-summary::-webkit-details-marker {
+    display: none;
+}
+
+.wiki-summary-action {
+    color: rgb(148 163 184 / 0.9);
+    font-size: 0.75rem;
+    transition: color 0.2s ease;
+}
+
+.group[open] .wiki-summary-action {
+    color: rgb(45 212 191 / 0.95);
+}
+</style>

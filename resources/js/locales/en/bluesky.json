@@ -1,0 +1,233 @@
+{
+    "headTitle": "Bluesky",
+    "help": {
+        "label": "What is this data?"
+    },
+    "tabs": {
+        "search": "Search",
+        "analytics": "Analytics",
+        "parser": "Parser"
+    },
+    "search": {
+        "title": "Bluesky Search",
+        "collapsed": "Search panel is collapsed",
+        "filters": "Search public Bluesky posts and accounts with OSINT-friendly filters",
+        "hint": "Uses authenticated Bluesky API search with your configured app password. Search posts, actors, or both and refine by language, author, links, tags, and dates.",
+        "query": "Query",
+        "type": "Search type",
+        "sort": "Sort",
+        "limit": "Limit",
+        "author": "Author",
+        "mentions": "Mentions",
+        "domain": "Domain",
+        "url": "Link contains",
+        "tag": "Hashtag",
+        "since": "Date from",
+        "until": "Date to",
+        "language": "Language",
+        "languagePlaceholder": "for example: en",
+        "authorPlaceholder": "for example: analyst.bsky.social",
+        "mentionsPlaceholder": "for example: did:plc:abc123",
+        "domainPlaceholder": "for example: example.org",
+        "urlPlaceholder": "for example: https://example.org/report",
+        "tagPlaceholder": "for example: osint",
+        "placeholder": "for example: osint investigations",
+        "advancedAriaShow": "Show advanced filters",
+        "advancedAriaHide": "Hide advanced filters",
+        "submit": "Search",
+        "searching": "Searching...",
+        "resultTitle": "Results",
+        "shown": "Shown",
+        "empty": "Run a search to view Bluesky results.",
+        "noMatches": "No results matched the current filters.",
+        "loadMore": "Load more",
+        "loadingMore": "Loading...",
+        "noText": "[No text]",
+        "noBio": "No profile description available."
+    },
+    "analytics": {
+        "title": "Bluesky Analytics",
+        "collapsed": "Analytics panel is collapsed",
+        "hint": "Build a snapshot of an account or hashtag sample to measure activity, amplification, and content patterns.",
+        "mode": "Mode",
+        "modes": {
+            "account": "Account",
+            "hashtag": "Hashtag"
+        },
+        "target": "Target",
+        "accountPlaceholder": "for example: analyst.bsky.social",
+        "hashtagPlaceholder": "for example: osint",
+        "limit": "Posts per page",
+        "pages": "Pages",
+        "dateFrom": "Date from",
+        "dateTo": "Date to",
+        "resolveProfile": "Resolve profile details",
+        "targetHint": "Use an account handle or hashtag to build a focused Bluesky sample for review.",
+        "refresh": "Refresh",
+        "loading": "Refreshing analytics...",
+        "report": "Open report",
+        "downloadReport": "Download report",
+        "accountProfile": "Account profile",
+        "hashtagProfile": "Hashtag profile",
+        "sample": "Sample",
+        "sampleTarget": "Resolved target",
+        "sampledPosts": "Sampled posts",
+        "pagesRequested": "Pages requested",
+        "pagesLoaded": "Pages loaded",
+        "timeline": "Timeline",
+        "topPosts": "Top posts",
+        "topDomains": "Top domains",
+        "topTags": "Top hashtags",
+        "topAuthors": "Top authors",
+        "topMentions": "Top mentions",
+        "topLanguages": "Top languages",
+        "noTimeline": "No timeline points available.",
+        "noTopPosts": "No top posts in the current sample.",
+        "noDomains": "No external domains detected.",
+        "noTags": "No hashtags detected.",
+        "noAuthors": "No authors detected.",
+        "noMentions": "No mentions detected.",
+        "noLanguages": "No language distribution detected.",
+        "usesInSample": "uses in sample",
+        "mentionsInSample": "mentions in sample",
+        "metrics": {
+            "posts": "Posts",
+            "authors": "Authors",
+            "languages": "Languages",
+            "mediaPosts": "Posts with media",
+            "linkPosts": "Posts with links",
+            "replyPosts": "Replies",
+            "repliesTotal": "Replies total",
+            "repostsTotal": "Reposts total",
+            "likesTotal": "Likes total",
+            "quotesTotal": "Quotes total"
+        },
+        "empty": {
+            "title": "Choose a target to begin",
+            "description": "Choose an account or hashtag and run analytics to build a Bluesky activity snapshot."
+        },
+        "errors": {
+            "requestFailed": "Analytics request failed."
+        }
+    },
+    "parser": {
+        "title": "Bluesky Parser",
+        "subtitle": "Collect a full account snapshot: profile, authored posts, replies, followers, follows, and reactions.",
+        "collapsed": "Parser panel is collapsed",
+        "actor": "Actor",
+        "actorPlaceholder": "for example: analyst.bsky.social",
+        "hint": "Use the parser when you need a downloadable account snapshot for deeper OSINT work. It will walk the account feed, social graph, reply activity, and visible reactions.",
+        "collecting": "Collecting...",
+        "start": "Start collection",
+        "stop": "Stop",
+        "download": "Download Excel",
+        "downloadJson": "Download JSON",
+        "help": {
+            "overview": "Build a downloadable Bluesky account dataset with profile details, posts, replies, followers, follows, likes, and reposts."
+        },
+        "progress": {
+            "title": "Progress",
+            "posts": "Posts",
+            "authoredReplies": "Authored replies",
+            "receivedReplies": "Received replies",
+            "followers": "Followers",
+            "follows": "Following",
+            "reactions": "Reactions",
+            "stage": {
+                "idle": "Idle",
+                "profile": "Resolving profile",
+                "feed": "Collecting feed",
+                "followers": "Collecting followers",
+                "follows": "Collecting following",
+                "interactions": "Collecting interactions",
+                "finishing": "Finalizing export",
+                "completed": "Completed",
+                "failed": "Failed",
+                "stopped": "Stopped"
+            }
+        },
+        "errors": {
+            "actorRequired": "Actor is required.",
+            "failed": "Parser request failed."
+        }
+    },
+    "sections": {
+        "posts": "Posts",
+        "actors": "Accounts"
+    },
+    "metrics": {
+        "likes": "Likes",
+        "reposts": "Reposts",
+        "replies": "Replies",
+        "quotes": "Quotes",
+        "uses": "Uses",
+        "media": "Media",
+        "postType": "Post type",
+        "followers": "Followers",
+        "following": "Following",
+        "posts": "Posts",
+        "languages": "Languages",
+        "hashtags": "Hashtags",
+        "domains": "Domains"
+    },
+    "options": {
+        "type": {
+            "posts": "Posts",
+            "actors": "Accounts",
+            "all": "All"
+        },
+        "sort": {
+            "latest": "Latest",
+            "top": "Top"
+        }
+    },
+    "common": {
+        "openPost": "Open post",
+        "openProfile": "Open profile",
+        "openMedia": "Open media",
+        "openSearch": "Open search"
+    },
+    "osint": {
+        "title": "OSINT details",
+        "indexedAt": "Indexed at",
+        "replyRoot": "Reply root",
+        "replyParent": "Reply parent",
+        "links": "External links",
+        "mentions": "Mentioned DIDs",
+        "labels": "Moderation labels"
+    },
+    "engagement": {
+        "likes": "Liked by",
+        "reposts": "Reposted by",
+        "thread": "Thread context",
+        "showLikes": "Show likes",
+        "hideLikes": "Hide likes",
+        "showReposts": "Show reposts",
+        "hideReposts": "Hide reposts",
+        "showThread": "Show replies",
+        "hideThread": "Hide replies",
+        "ancestors": "Earlier posts",
+        "replies": "Replies",
+        "loading": "Loading interaction data...",
+        "emptyLikes": "No likes found.",
+        "emptyReposts": "No reposts found.",
+        "emptyThread": "No thread details found."
+    },
+    "accounts": {
+        "showPosts": "Show posts",
+        "hidePosts": "Hide posts",
+        "showFollowers": "Show followers",
+        "hideFollowers": "Hide followers",
+        "showFollows": "Show follows",
+        "hideFollows": "Hide follows",
+        "postsSection": "Account posts",
+        "followersSection": "Followers",
+        "followsSection": "Following",
+        "emptyPosts": "No posts found.",
+        "emptyFollowers": "No followers found.",
+        "emptyFollows": "No follows found."
+    },
+    "errors": {
+        "requestFailed": "Request failed."
+    }
+}

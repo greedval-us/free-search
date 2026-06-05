@@ -536,7 +536,7 @@ const linkGraphFilters = reactive({
                 >
                     <p class="mb-2 font-semibold">
                         {{ t('siteIntel.seoAudit.crawlBudgetTitle') }}:
-                        2xx/3xx/4xx/5xx
+                        {{ t('siteIntel.seoAudit.statusBuckets') }}
                     </p>
                     <div class="space-y-2">
                         <div v-for="item in crawlStatusBars" :key="item.key">
@@ -1039,7 +1039,7 @@ const linkGraphFilters = reactive({
                         }}</span>
                     </p>
                     <p>
-                        2xx/3xx/4xx/5xx:
+                        {{ t('siteIntel.seoAudit.statusBuckets') }}:
                         <span class="text-muted-foreground"
                             >{{ result.crawlBudget.statusBuckets['2xx'] }}/{{
                                 result.crawlBudget.statusBuckets['3xx']
@@ -1053,7 +1053,7 @@ const linkGraphFilters = reactive({
 
             <div class="space-y-2">
                 <p class="text-sm font-semibold">
-                    {{ t('siteIntel.seoAudit.linkGraphTitle') }} (graph)
+                    {{ t('siteIntel.seoAudit.linkGraphPanelTitle') }}
                 </p>
                 <div class="flex flex-wrap gap-3 text-xs text-muted-foreground">
                     <label class="inline-flex items-center gap-2">

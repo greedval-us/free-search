@@ -4,7 +4,7 @@ namespace App\Modules\Shifr\DTO\Classic;
 
 use App\Modules\Shifr\DTO\Contracts\ShifrResultDataInterface;
 
-class AtbashResultDTO implements ShifrResultDataInterface
+final class AtbashResultDTO implements ShifrResultDataInterface
 {
     public function __construct(
         public readonly string $original,

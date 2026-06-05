@@ -57,7 +57,7 @@ const hasDetails = computed(() => Boolean(slots.details));
 </script>
 
 <template>
-    <article class="rounded-md border border-border/70 bg-background/70 p-3">
+    <article class="intel-result-card">
         <div class="flex items-start gap-3">
             <img
                 v-if="account.avatar"
@@ -104,7 +104,7 @@ const hasDetails = computed(() => Boolean(slots.details));
                     <div
                         v-for="field in account.fields"
                         :key="`${account.id}-${field.name}-${field.value}`"
-                        class="rounded-md border border-border/70 bg-card/60 p-2 text-[11px]"
+                        class="intel-stat"
                     >
                         <div class="font-medium text-foreground">
                             {{ field.name }}
@@ -124,8 +124,8 @@ const hasDetails = computed(() => Boolean(slots.details));
                         rel="noopener noreferrer"
                         :class="
                             compact
-                                ? 'cursor-pointer rounded-full border border-input px-2 py-1 text-[11px] text-primary hover:bg-accent'
-                                : 'cursor-pointer rounded-full border border-input px-2 py-1 text-xs text-primary hover:bg-accent'
+                                ? 'intel-link-pill text-[11px]'
+                                : 'intel-link-pill'
                         "
                     >
                         <ExternalLink class="mr-1 inline h-3 w-3" />

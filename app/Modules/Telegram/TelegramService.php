@@ -12,13 +12,13 @@ use App\Modules\Telegram\DTO\Request\SearchParticipantsDTO;
 use App\Modules\Telegram\DTO\Response\Messages\ChannelMessagesDTO;
 use App\Modules\Telegram\DTO\Response\Participants\ChannelParticipantsDTO;
 use App\Modules\Telegram\DTO\Response\Info\ChannelInfoDTO;
+use App\Facades\MadelineProto;
 use danog\MadelineProto\API;
 use Illuminate\Support\Facades\Log;
 
 class TelegramService implements TelegramGatewayInterface
 {
     public function __construct(
-        private readonly API $madeline,
         private readonly InfoAction $infoAction,
         private readonly MessagesAction $messagesAction,
         private readonly ParticipantsAction $participantsAction,
@@ -132,7 +132,7 @@ class TelegramService implements TelegramGatewayInterface
     public function getMessageMedia(string $channel, int $messageId): ?array
     {
         try {
-            $response = $this->madeline->channels->getMessages([
+            $response = $this->madeline()->channels->getMessages([
                 'channel' => $channel,
                 'id' => [$messageId],
             ]);
@@ -149,7 +149,7 @@ class TelegramService implements TelegramGatewayInterface
                 return null;
             }
 
-            $downloadInfo = $this->madeline->getDownloadInfo($media);
+            $downloadInfo = $this->madeline()->getDownloadInfo($media);
             if (!is_array($downloadInfo) || empty($downloadInfo)) {
                 return null;
             }
@@ -171,7 +171,15 @@ class TelegramService implements TelegramGatewayInterface
 
     public function downloadMediaToFile(array $media, string $path): string
     {
-        return $this->madeline->downloadToFile($media, $path);
+        return $this->madeline()->downloadToFile($media, $path);
+    }
+
+    private function madeline(): API
+    {
+        /** @var API $madeline */
+        $madeline = MadelineProto::getFacadeRoot();
+
+        return $madeline;
     }
 
     private function isValidInfoResponse(?array $data): bool

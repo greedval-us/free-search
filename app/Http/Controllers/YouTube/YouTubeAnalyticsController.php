@@ -22,7 +22,7 @@ class YouTubeAnalyticsController extends Controller
         try {
             $query = $request->toDTO();
 
-            return $this->jsonData($this->service->summary($query));
+            return $this->jsonDataFrom($this->service->summary($query));
         } catch (RuntimeException $exception) {
             return $this->jsonError($exception->getMessage(), $this->statusCodeFromException($exception));
         }
@@ -31,7 +31,7 @@ class YouTubeAnalyticsController extends Controller
     public function report(YouTubeAnalyticsRequest $request): View|Response
     {
         $query = $request->toDTO();
-        $report = $this->service->summary($query);
+        $report = $this->service->summary($query)->toArray();
         $target = $query->mode === 'video'
             ? $query->videoId
             : $query->channelId;
@@ -45,5 +45,4 @@ class YouTubeAnalyticsController extends Controller
             filenameTarget: $target !== '' ? $target : 'report',
         );
     }
-
 }

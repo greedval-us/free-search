@@ -10,9 +10,9 @@ use App\Modules\Telegram\DTO\Request\SearchMessagesQueryDTO;
 use App\Modules\Telegram\DTO\Request\TelegramAnalyticsParamsDTO;
 use App\Modules\Telegram\DTO\Request\TelegramParserStartDTO;
 use App\Modules\Telegram\DTO\Result\AnalyticsSummaryResultDTO;
-use App\Modules\Telegram\DTO\Result\ParserRunStatusDTO;
 use App\Modules\Telegram\DTO\Result\SearchCommentsResultDTO;
 use App\Modules\Telegram\DTO\Result\SearchMessagesResultDTO;
+use App\Modules\Telegram\DTO\Result\TelegramParserRunStatusDTO;
 use App\Modules\Telegram\Parser\Contracts\TelegramParserApplicationServiceInterface;
 use App\Modules\Telegram\Search\Contracts\TelegramSearchApplicationServiceInterface;
 use Carbon\Carbon;
@@ -152,7 +152,7 @@ class TelegramControllerIsolationTest extends TestCase
                         && $input->period === 'week'
                         && $input->keyword === 'risk'
                 ))
-                ->andReturn(new ParserRunStatusDTO([
+                ->andReturn(new TelegramParserRunStatusDTO([
                     'ok' => true,
                     'runId' => 'tg-run-1',
                     'status' => 'queued',

@@ -1,16 +1,7 @@
 ﻿<script setup lang="ts">
-import {
-    BarChart3,
-    ChevronDown,
-    ChevronUp,
-    Download,
-    ExternalLink,
-    FileText,
-    RefreshCw,
-    Tags,
-} from 'lucide-vue-next';
+import { ExternalLink, Tags } from 'lucide-vue-next';
 import { onMounted } from 'vue';
-import HelpTooltip from '@/components/ui/HelpTooltip.vue';
+import AnalyticsControlPanel from '@/components/ui/analytics/AnalyticsControlPanel.vue';
 import IntelResultPanel from '@/components/ui/IntelResultPanel.vue';
 import MetricCard from '@/components/ui/MetricCard.vue';
 import SectionCard from '@/components/ui/SectionCard.vue';
@@ -55,47 +46,32 @@ onMounted(() => {
 </script>
 
 <template>
-    <section class="intel-panel-strong sticky top-0 z-10 shrink-0">
-        <div class="flex items-center justify-between gap-3">
-            <div class="space-y-1">
-                <div class="flex items-center gap-2 text-sm font-semibold">
-                    <BarChart3 class="h-4 w-4 text-cyan-400" />
-                    <span>{{ t('youtube.analytics.title') }}</span>
-                    <HelpTooltip
-                        :label="t('youtube.analytics.help.label')"
-                        :text="t('youtube.analytics.hint')"
-                    />
-                </div>
-                <p class="text-xs text-muted-foreground">
-                    {{
-                        panelCollapsed
-                            ? t('youtube.analytics.collapsed')
-                            : t('youtube.analytics.hint')
-                    }}
-                </p>
-            </div>
-
-            <button
-                type="button"
-                class="inline-flex h-9 w-9 cursor-pointer items-center justify-center rounded-full border border-input text-sm text-foreground transition hover:bg-accent"
-                @click="panelCollapsed = !panelCollapsed"
-            >
-                <ChevronDown v-if="panelCollapsed" class="h-4 w-4" />
-                <ChevronUp v-else class="h-4 w-4" />
-            </button>
-        </div>
-
-        <div v-if="!panelCollapsed" class="mt-3 space-y-2.5">
+    <AnalyticsControlPanel
+        :title="t('youtube.analytics.title')"
+        :help-label="t('youtube.analytics.help.label')"
+        :help-text="t('youtube.analytics.hint')"
+        :subtitle="t('youtube.analytics.hint')"
+        :collapsed-text="t('youtube.analytics.collapsed')"
+        :collapsed="panelCollapsed"
+        :loading="loading"
+        :can-run="canRun"
+        :can-use-report-actions="canUseReportActions"
+        :run-label="t('youtube.analytics.refresh')"
+        :loading-label="t('youtube.common.loading')"
+        :report-label="t('youtube.analytics.report')"
+        :download-report-label="t('youtube.analytics.downloadReport')"
+        @update:collapsed="panelCollapsed = $event"
+        @run="runAnalytics"
+        @open-report="openReport"
+        @download-report="downloadReport"
+    >
+        <template #fields>
             <div class="grid gap-2.5 md:grid-cols-2 xl:grid-cols-12">
-                <label class="block min-w-0 xl:col-span-2">
-                    <span
-                        class="mb-1 block truncate text-xs font-medium text-muted-foreground"
-                        >{{ t('youtube.analytics.mode') }}</span
-                    >
-                    <select
-                        v-model="form.mode"
-                        class="h-10 w-full rounded-md border border-input bg-background px-3 text-sm"
-                    >
+                <label class="intel-field xl:col-span-2">
+                    <span class="intel-label">{{
+                        t('youtube.analytics.mode')
+                    }}</span>
+                    <select v-model="form.mode" class="intel-select">
                         <option value="channel">
                             {{ t('youtube.options.mode.channel') }}
                         </option>
@@ -107,28 +83,27 @@ onMounted(() => {
 
                 <label
                     v-if="form.mode === 'video'"
-                    class="block min-w-0 xl:col-span-10"
+                    class="intel-field xl:col-span-10"
                 >
-                    <span
-                        class="mb-1 block truncate text-xs font-medium text-muted-foreground"
-                        >{{ t('youtube.analytics.videoId') }}</span
-                    >
+                    <span class="intel-label">{{
+                        t('youtube.analytics.videoId')
+                    }}</span>
                     <input
                         v-model="form.videoId"
                         type="text"
-                        class="h-10 w-full rounded-md border border-input bg-background px-3 text-sm"
+                        class="intel-input"
+                        :placeholder="t('youtube.analytics.videoIdPlaceholder')"
                     />
                 </label>
 
-                <label v-else class="block min-w-0 xl:col-span-4">
-                    <span
-                        class="mb-1 block truncate text-xs font-medium text-muted-foreground"
-                        >{{ t('youtube.analytics.channelId') }}</span
-                    >
+                <label v-else class="intel-field xl:col-span-4">
+                    <span class="intel-label">{{
+                        t('youtube.analytics.channelId')
+                    }}</span>
                     <input
                         v-model="form.channelId"
                         type="text"
-                        class="h-10 w-full rounded-md border border-input bg-background px-3 text-sm"
+                        class="intel-input"
                         :placeholder="t('youtube.analytics.channelPlaceholder')"
                     />
                 </label>
@@ -137,10 +112,9 @@ onMounted(() => {
                     v-if="form.mode === 'channel'"
                     class="min-w-0 xl:col-span-2"
                 >
-                    <span
-                        class="mb-1 block truncate text-xs font-medium text-muted-foreground"
-                        >{{ t('youtube.analytics.period') }}</span
-                    >
+                    <span class="intel-label">{{
+                        t('youtube.analytics.period')
+                    }}</span>
                     <div
                         class="grid h-10 grid-cols-3 gap-1 rounded-md border border-input bg-background p-1"
                     >
@@ -165,95 +139,53 @@ onMounted(() => {
 
                 <label
                     v-if="form.mode === 'channel'"
-                    class="block min-w-0 xl:col-span-2"
+                    class="intel-field xl:col-span-2"
                 >
-                    <span
-                        class="mb-1 block truncate text-xs font-medium text-muted-foreground"
-                        >{{ t('youtube.analytics.dateFrom') }}</span
-                    >
+                    <span class="intel-label">{{
+                        t('youtube.analytics.dateFrom')
+                    }}</span>
                     <input
                         v-model="form.dateFrom"
                         type="date"
                         :min="dateLimits.fromMin ?? undefined"
                         :max="dateLimits.fromMax ?? undefined"
-                        class="h-10 w-full rounded-md border border-input bg-background px-3 text-sm"
+                        class="intel-input"
                     />
                 </label>
 
                 <label
                     v-if="form.mode === 'channel'"
-                    class="block min-w-0 xl:col-span-2"
+                    class="intel-field xl:col-span-2"
                 >
-                    <span
-                        class="mb-1 block truncate text-xs font-medium text-muted-foreground"
-                        >{{ t('youtube.analytics.dateTo') }}</span
-                    >
+                    <span class="intel-label">{{
+                        t('youtube.analytics.dateTo')
+                    }}</span>
                     <input
                         v-model="form.dateTo"
                         type="date"
                         :min="dateLimits.toMin ?? undefined"
                         :max="dateLimits.toMax ?? undefined"
-                        class="h-10 w-full rounded-md border border-input bg-background px-3 text-sm"
+                        class="intel-input"
                     />
                 </label>
             </div>
-
-            <div
-                class="flex flex-wrap items-end justify-between gap-2.5 rounded-md border border-border/70 bg-background/60 p-2.5"
-            >
-                <p class="text-[11px] text-muted-foreground">
-                    {{
-                        form.mode === 'channel'
-                            ? t('youtube.analytics.period')
-                            : t('youtube.analytics.videoId')
-                    }}
-                </p>
-                <div class="flex w-full flex-wrap justify-end gap-2 md:w-auto">
-                    <button
-                        type="button"
-                        :disabled="loading || !canRun"
-                        class="inline-flex h-10 cursor-pointer items-center gap-2 rounded-md border border-input bg-background px-4 text-sm font-medium hover:bg-accent disabled:cursor-not-allowed disabled:opacity-60"
-                        @click="runAnalytics"
-                    >
-                        <RefreshCw
-                            class="h-4 w-4"
-                            :class="{ 'animate-spin': loading }"
-                        />
-                        {{
-                            loading
-                                ? t('youtube.common.loading')
-                                : t('youtube.analytics.refresh')
-                        }}
-                    </button>
-
-                    <button
-                        type="button"
-                        :disabled="!canUseReportActions"
-                        class="inline-flex h-10 cursor-pointer items-center gap-2 rounded-md bg-primary px-4 text-sm font-semibold text-primary-foreground hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-60"
-                        @click="openReport"
-                    >
-                        <FileText class="h-4 w-4" />
-                        {{ t('youtube.analytics.report') }}
-                    </button>
-
-                    <button
-                        type="button"
-                        :disabled="!canUseReportActions"
-                        class="inline-flex h-10 cursor-pointer items-center gap-2 rounded-md border border-input bg-background px-4 text-sm font-medium hover:bg-accent disabled:cursor-not-allowed disabled:opacity-60"
-                        @click="downloadReport"
-                    >
-                        <Download class="h-4 w-4" />
-                        {{ t('youtube.analytics.downloadReport') }}
-                    </button>
-                </div>
-            </div>
-
+        </template>
+        <template #toolbarLeading>
+            <p class="intel-inline-note">
+                {{
+                    form.mode === 'channel'
+                        ? t('youtube.analytics.periodHint')
+                        : t('youtube.analytics.videoIdHint')
+                }}
+            </p>
+        </template>
+        <template #afterActions>
             <p v-if="error" class="text-sm text-destructive">{{ error }}</p>
             <p v-else-if="customPeriodTooLong" class="text-sm text-destructive">
                 {{ t('youtube.analytics.customPeriodTooLong') }}
             </p>
-        </div>
-    </section>
+        </template>
+    </AnalyticsControlPanel>
 
     <IntelResultPanel>
         <div class="intel-scroll min-h-0 flex-1 space-y-4 overflow-y-auto pr-1">

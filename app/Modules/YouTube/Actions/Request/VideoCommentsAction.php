@@ -5,6 +5,7 @@ namespace App\Modules\YouTube\Actions\Request;
 use App\Modules\YouTube\Actions\AbstractYouTubeAction;
 use App\Modules\YouTube\Core\Contracts\YouTubeGatewayInterface;
 use App\Modules\YouTube\DTO\Request\YouTubeCommentsQueryDTO;
+use App\Modules\YouTube\DTO\Result\YouTubeCommentsResultDTO;
 use App\Modules\YouTube\Presenters\YouTubeCommentThreadPresenter;
 use Illuminate\Support\Arr;
 
@@ -17,14 +18,11 @@ class VideoCommentsAction extends AbstractYouTubeAction
         parent::__construct($gateway);
     }
 
-    /**
-     * @return array<string, mixed>
-     */
-    public function handle(YouTubeCommentsQueryDTO $query): array
+    public function handle(YouTubeCommentsQueryDTO $query): YouTubeCommentsResultDTO
     {
         $payload = $this->gateway->commentThreads($query->toArray());
 
-        return [
+        return new YouTubeCommentsResultDTO([
             'items' => collect($payload['items'] ?? [])
                 ->map(fn (array $item): array => $this->commentThreadPresenter->present($item))
                 ->values()
@@ -34,6 +32,6 @@ class VideoCommentsAction extends AbstractYouTubeAction
                 'total' => (int) Arr::get($payload, 'pageInfo.totalResults', 0),
                 'perPage' => (int) Arr::get($payload, 'pageInfo.resultsPerPage', 0),
             ],
-        ];
+        ]);
     }
 }

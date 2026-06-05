@@ -20,11 +20,11 @@
     },
     "siteHealth": {
         "title": "Проверка сайта",
-        "description": "Проверка внешнего контура сайта в продуктовом формате: DNS, SSL, redirects, status и базовое hardening-покрытие.",
+        "description": "Быстрая проверка внешнего контура сайта: DNS, SSL, редиректы, статус и базовые защитные настройки.",
         "target": "URL или домен",
         "placeholder": "example.com или https://example.com",
-        "check": "Анализировать",
-        "checking": "Анализ...",
+        "check": "Проверить",
+        "checking": "Проверяем...",
         "empty": "Запустите проверку, чтобы увидеть состояние сайта.",
         "finalStatus": "Финальный статус",
         "redirects": "Редиректы",
@@ -53,7 +53,7 @@
             "permissions_policy": "Permissions-Policy"
         },
         "help": {
-            "overview": "Быстро оценивайте доверие и устойчивость внешнего сайта по техническим сигналам, важным для triage и мониторинга.",
+            "overview": "Быстро оценивайте доверие и устойчивость внешнего сайта по техническим сигналам, важным для мониторинга и первичной проверки.",
             "dns": "A/AAAA-записи показывают, резолвится ли домен по IPv4 и IPv6.",
             "ssl": "Показывает данные сертификата и срок его действия для HTTPS.",
             "securityHeaders": "Проверка базовых защитных заголовков браузерной безопасности.",
@@ -82,12 +82,12 @@
     },
     "domainLite": {
         "title": "Домен Lite",
-        "description": "Короткий доменный baseline: WHOIS/DNS-профиль и практичный риск-скор для быстрой сортировки.",
+        "description": "Краткая доменная сводка: WHOIS/DNS-профиль и практическая оценка риска для быстрой проверки.",
         "whois": "WHOIS",
         "domain": "Домен",
         "placeholder": "example.com",
-        "check": "Анализировать",
-        "checking": "Анализ...",
+        "check": "Проверить",
+        "checking": "Проверяем...",
         "empty": "Запустите проверку, чтобы увидеть сводку по домену.",
         "mxCount": "MX-записей",
         "riskScore": "Оценка риска",
@@ -120,10 +120,10 @@
         "riskImpactPoints": "Вклад в баллы",
         "whoisSample": "Фрагмент WHOIS",
         "help": {
-            "overview": "Используйте Domain Lite, чтобы валидировать владение, lifecycle и почтовую безопасность до глубокого анализа.",
+            "overview": "Используйте Domain Lite, чтобы проверить владение доменом, его жизненный цикл и почтовую безопасность до более глубокого анализа.",
             "dns": "DNS-блок содержит инфраструктурные и почтовые записи (A/AAAA/NS/MX/SPF/DMARC).",
             "whois": "WHOIS показывает регистрационные данные: регистратор и даты жизненного цикла домена.",
-            "risk": "Risk score растёт при слабых или отсутствующих DNS/WHOIS-сигналах."
+            "risk": "Оценка риска растет, если DNS или WHOIS дают слабые либо отсутствующие сигналы."
         },
         "signal": {
             "no_a_or_aaaa_records": "Нет A/AAAA записей",
@@ -153,10 +153,10 @@
         "title": "Аналитика Site Intel",
         "description": "Сводная аналитика по здоровью сайта и доменным рискам в одном снимке.",
         "target": "URL или домен",
-        "placeholder": "example.com or https://example.com",
-        "analyze": "Анализировать",
-        "analyzing": "Анализ...",
-        "empty": "Запустите анализ, чтобы увидеть сводный итог.",
+        "placeholder": "example.com или https://example.com",
+        "analyze": "Обновить данные",
+        "analyzing": "Обновляем данные...",
+        "empty": "Обновите данные, чтобы увидеть сводный итог по сайту и домену.",
         "overallScore": "Общий балл",
         "healthScore": "Балл Site Health",
         "domainRiskScore": "Балл доменного риска",
@@ -186,6 +186,7 @@
         "snapshotWhoisRegistrar": "WHOIS регистратор",
         "snapshotWhoisCountry": "WHOIS страна",
         "snapshotDays": "дней",
+        "snapshotEmailSecurityDetails": "(SPF + DMARC)",
         "recommendationMaintain": "поддерживать",
         "scoreUnit": "балла",
         "help": {
@@ -201,7 +202,7 @@
         },
         "errors": {
             "targetRequired": "Введите URL или домен.",
-            "analyzeFailed": "Не удалось выполнить аналитику."
+            "analyzeFailed": "Не удалось загрузить сводную аналитику. Повторите попытку через несколько секунд."
         },
         "recommendation": {
             "improve_security_headers": "Улучшите security-заголовки (CSP, HSTS, X-Frame-Options и т.д.).",
@@ -259,9 +260,9 @@
         "description": "Проверка индексируемости, метатегов, robots/sitemap, ссылок и технических SEO-сигналов.",
         "target": "URL или домен",
         "placeholder": "example.com или https://example.com/page",
-        "analyze": "Анализировать",
-        "analyzing": "Анализ...",
-        "empty": "Запустите SEO-аудит, чтобы увидеть технические проблемы и приоритетные рекомендации.",
+        "analyze": "Проверить",
+        "analyzing": "Проверяем...",
+        "empty": "Запустите SEO-аудит, чтобы увидеть технические проблемы и приоритетные рекомендации по сайту.",
         "score": "SEO балл",
         "httpStatus": "HTTP статус",
         "ttfb": "TTFB (приблизительно)",
@@ -316,7 +317,7 @@
         },
         "errors": {
             "targetRequired": "Введите URL или домен.",
-            "analyzeFailed": "Не удалось выполнить SEO-аудит."
+            "analyzeFailed": "Не удалось выполнить SEO-аудит. Повторите попытку через несколько секунд."
         },
         "signal": {
             "title_length_out_of_range": "Длина title вне рекомендованного диапазона",
@@ -380,8 +381,8 @@
             "reduce_bot_5xx_errors": "Проанализируйте и снизьте 5xx-ошибки для ботов."
         },
         "crawlLimit": "Лимит краулинга",
-        "report": "Открыть отчет",
-        "downloadReport": "Скачать отчет",
+        "report": "Открыть отчёт",
+        "downloadReport": "Скачать отчёт",
         "crawlTitle": "Инсайты краулинга",
         "crawlScanned": "Просканировано страниц",
         "crawlPagesWithHreflang": "Страниц с hreflang",
@@ -402,6 +403,8 @@
         "contentQualityTitle": "Качество контента",
         "accessibilityTitle": "Доступность",
         "linkGraphTitle": "Граф ссылок",
+        "linkGraphPanelTitle": "Граф ссылок",
+        "statusBuckets": "Статусы ответов",
         "wordCount": "Количество слов",
         "textHtmlRatio": "Соотношение text/HTML",
         "thinContent": "Тонкий контент",

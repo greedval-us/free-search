@@ -1,13 +1,13 @@
 {
     "headTitle": "News & Media Intel",
-    "title": "News / Media Intel",
-    "description": "Mentions monitoring with topic extraction, sentiment and timeline.",
-    "empty": "Enter query to monitor mentions.",
+    "title": "News & Media Intel",
+    "description": "Monitor public mentions, topics, sentiment, and timeline shifts in one place.",
+    "empty": "Enter a query to start monitoring mentions.",
     "form": {
         "query": "Query",
-        "placeholder": "person or company",
-        "search": "Monitor",
-        "searching": "Monitoring..."
+        "placeholder": "person, company, or topic",
+        "search": "Monitor mentions",
+        "searching": "Monitoring mentions..."
     },
     "summary": {
         "mentions": "Mentions",
@@ -33,11 +33,11 @@
     },
     "errors": {
         "queryRequired": "Enter query (minimum 2 characters).",
-        "lookupFailed": "Unable to complete news/media lookup."
+        "lookupFailed": "Unable to complete the news and media lookup."
     },
     "help": {
         "label": "About block",
-        "overview": "News and media monitoring aggregates mentions from public feeds, then builds topics, timeline and sentiment snapshot.",
+        "overview": "News and media monitoring collects mentions from public feeds, then builds topics, a timeline, and a sentiment snapshot.",
         "topics": "Topics are extracted from titles and snippets with stop-word filtering. They are heuristic indicators, not a linguistic model.",
         "timeline": "Timeline groups mention counts by publication date to highlight spikes and event windows.",
         "mentions": "Mentions are deduplicated by URL. Long headlines and links are wrapped to stay inside the card."

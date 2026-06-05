@@ -15,6 +15,7 @@ use App\Modules\SiteIntel\Application\Services\SeoAudit\SeoAuditQualityAnalyzer;
 use App\Modules\SiteIntel\Application\Services\SeoAudit\SeoAuditInternationalAnalyzer;
 use App\Modules\SiteIntel\Application\Services\SeoAudit\SeoAuditCrawlBudgetAnalyzer;
 use App\Modules\SiteIntel\Application\Services\SeoAudit\SeoAuditProfileResolver;
+use App\Modules\SiteIntel\DTO\Result\SeoAuditResultDTO;
 use Carbon\Carbon;
 
 final class SeoAuditService implements SeoAuditServiceInterface
@@ -35,10 +36,7 @@ final class SeoAuditService implements SeoAuditServiceInterface
     ) {
     }
 
-    /**
-     * @return array<string, mixed>
-     */
-    public function audit(string $url, int $crawlLimit = 8, ?string $platformType = null): array
+    public function audit(string $url, int $crawlLimit = 8, ?string $platformType = null): SeoAuditResultDTO
     {
         $final = $this->httpFetcher->fetch($url);
         $html = (string) ($final['body'] ?? '');
@@ -106,7 +104,7 @@ final class SeoAuditService implements SeoAuditServiceInterface
             $sitemapAudit,
         );
 
-        return [
+        return new SeoAuditResultDTO([
             'target' => [
                 'input' => $url,
                 'finalUrl' => $finalUrl,
@@ -136,7 +134,7 @@ final class SeoAuditService implements SeoAuditServiceInterface
             'sitemapAudit' => $sitemapAudit,
             'score' => $score,
             'recommendations' => $recommendations,
-        ];
+        ]);
     }
 
     /**

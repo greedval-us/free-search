@@ -18,7 +18,7 @@ class YouTubeSearchController extends Controller
     public function videos(YouTubeSearchRequest $request): JsonResponse
     {
         try {
-            return $this->jsonData($this->service->searchVideos($request->toDTO()));
+            return $this->jsonDataFrom($this->service->searchVideos($request->toDTO()));
         } catch (RuntimeException $exception) {
             return $this->jsonError($exception->getMessage(), $this->statusCodeFromException($exception));
         }

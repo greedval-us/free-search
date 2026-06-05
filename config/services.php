@@ -50,4 +50,13 @@ return [
         'retry_attempts' => (int) env('MASTODON_API_RETRY_ATTEMPTS', 2),
         'retry_delay_milliseconds' => (int) env('MASTODON_API_RETRY_DELAY_MILLISECONDS', 250),
     ],
+
+    'bluesky' => [
+        'identifier' => env('BLUESKY_IDENTIFIER'),
+        'app_password' => env('BLUESKY_APP_PASSWORD'),
+        'pds_url' => env('BLUESKY_PDS_URL', 'https://bsky.social'),
+        'timeout_seconds' => (int) env('BLUESKY_TIMEOUT_SECONDS', 20),
+        'retry_attempts' => (int) env('BLUESKY_RETRY_ATTEMPTS', 2),
+        'retry_delay_milliseconds' => (int) env('BLUESKY_RETRY_DELAY_MILLISECONDS', 250),
+    ],
 ];

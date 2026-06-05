@@ -2,7 +2,9 @@
 
 namespace App\Modules\YouTube\Parser;
 
+use App\Modules\YouTube\DTO\Parser\YouTubeParserStateDTO;
 use App\Modules\YouTube\Core\Contracts\YouTubeGatewayInterface;
+use App\Modules\YouTube\Enums\YouTubeParserStage;
 use App\Modules\YouTube\Presenters\YouTubeCommentThreadPresenter;
 use Illuminate\Support\Arr;
 
@@ -14,6 +16,7 @@ class YouTubeParserCollector
     public function __construct(
         private readonly YouTubeGatewayInterface $gateway,
         private readonly YouTubeCommentThreadPresenter $commentThreadPresenter,
+        private readonly YouTubeParserSnapshotBuilder $snapshotBuilder,
     ) {
     }
 
@@ -23,17 +26,17 @@ class YouTubeParserCollector
      */
     public function advance(array $run): array
     {
-        if (($run['status'] ?? null) !== 'running') {
-            return $run;
+        $state = YouTubeParserStateDTO::fromArray($run);
+
+        if (! $state->isRunning()) {
+            return $state->toArray();
         }
 
-        $stage = (string) ($run['stage'] ?? 'comments');
-
-        return match ($stage) {
-            'comments' => $this->advanceComments($run),
-            'replies' => $this->advanceReplies($run),
-            'finishing' => $this->finish($run),
-            default => $run,
+        return match ($state->stage()) {
+            YouTubeParserStage::Comments => $this->advanceComments($state),
+            YouTubeParserStage::Replies => $this->advanceReplies($state),
+            YouTubeParserStage::Finishing => $this->finish($state),
+            default => $state->toArray(),
         };
     }
 
@@ -43,52 +46,35 @@ class YouTubeParserCollector
      */
     public function buildResultSnapshot(array $run): array
     {
-        $context = is_array($run['context'] ?? null) ? $run['context'] : [];
-        $stats = is_array($run['stats'] ?? null) ? $run['stats'] : [];
-        $data = is_array($run['data'] ?? null) ? $run['data'] : [];
+        $state = YouTubeParserStateDTO::fromArray($run);
 
-        return [
-            'videoId' => (string) ($context['videoId'] ?? ''),
-            'commentsCount' => (int) ($stats['processedComments'] ?? 0),
-            'repliesCount' => (int) ($stats['processedReplies'] ?? 0),
-            'commentsIndex' => array_values(is_array($data['commentsIndex'] ?? null) ? $data['commentsIndex'] : []),
-            'repliesIndex' => array_values(is_array($data['repliesIndex'] ?? null) ? $data['repliesIndex'] : []),
-        ];
+        return $this->snapshotBuilder->build($state->videoId(), $state->data())->toArray();
     }
 
     /**
      * @param array<string, mixed> $run
      * @return array<string, mixed>
      */
-    private function advanceComments(array $run): array
+    private function advanceComments(YouTubeParserStateDTO $state): array
     {
-        $context = is_array($run['context'] ?? null) ? $run['context'] : [];
-        $cursor = is_array($run['cursor'] ?? null) ? $run['cursor'] : [];
-        $data = is_array($run['data'] ?? null) ? $run['data'] : [];
-        $stats = is_array($run['stats'] ?? null) ? $run['stats'] : [];
+        $cursor = $state->cursor();
+        $data = $state->data();
 
         $params = [
-            'videoId' => (string) ($context['videoId'] ?? ''),
+            'videoId' => $state->videoId(),
             'maxResults' => self::THREADS_LIMIT,
         ];
 
-        $pageToken = trim((string) ($cursor['commentsPageToken'] ?? ''));
-        if ($pageToken !== '') {
+        $pageToken = $cursor->commentsPageToken();
+        if ($pageToken !== null) {
             $params['pageToken'] = $pageToken;
         }
 
         $payload = $this->gateway->commentThreads($params);
         $items = is_array($payload['items'] ?? null) ? $payload['items'] : [];
 
-        $commentIds = is_array($data['commentIds'] ?? null) ? $data['commentIds'] : [];
-        $replyIds = is_array($data['replyIds'] ?? null) ? $data['replyIds'] : [];
-        $threadParentMap = is_array($data['threadParentMap'] ?? null) ? $data['threadParentMap'] : [];
-        $commentsIndex = is_array($data['commentsIndex'] ?? null) ? $data['commentsIndex'] : [];
-        $repliesIndex = is_array($data['repliesIndex'] ?? null) ? $data['repliesIndex'] : [];
-        $replyThreadIds = is_array($cursor['replyThreadIds'] ?? null) ? array_values($cursor['replyThreadIds']) : [];
-
         foreach ($items as $item) {
-            if (!is_array($item)) {
+            if (! is_array($item)) {
                 continue;
             }
 
@@ -100,196 +86,125 @@ class YouTubeParserCollector
                 continue;
             }
 
-            if (!isset($commentIds[$commentId])) {
-                $commentIds[$commentId] = true;
-                $commentsIndex[] = [
-                    'commentId' => $commentId,
-                    'threadId' => $threadId,
-                    'videoId' => (string) ($presented['videoId'] ?? ''),
-                    'author' => (string) ($presented['author'] ?? ''),
-                    'authorChannelUrl' => (string) ($presented['authorChannelUrl'] ?? ''),
-                    'text' => (string) ($presented['text'] ?? ''),
-                    'likeCount' => (int) ($presented['likeCount'] ?? 0),
-                    'publishedAt' => (string) ($presented['publishedAt'] ?? ''),
-                    'updatedAt' => (string) ($presented['updatedAt'] ?? ''),
-                    'replyCount' => (int) ($presented['replyCount'] ?? 0),
-                ];
-                $stats['processedComments'] = (int) ($stats['processedComments'] ?? 0) + 1;
-            }
-
-            $threadParentMap[$threadId] = $commentId;
+            $data->appendCommentThread($presented, (string) ($presented['videoId'] ?? ''));
 
             $replyCount = (int) ($presented['replyCount'] ?? 0);
             $embeddedReplies = is_array($presented['replies'] ?? null) ? $presented['replies'] : [];
 
-            if ($replyCount > count($embeddedReplies) && !in_array($threadId, $replyThreadIds, true)) {
-                $replyThreadIds[] = $threadId;
+            if ($replyCount > count($embeddedReplies)) {
+                $cursor->addReplyThreadId($threadId);
             }
 
             foreach ($embeddedReplies as $reply) {
-                if (!is_array($reply)) {
+                if (! is_array($reply)) {
                     continue;
                 }
 
-                $replyId = (string) ($reply['id'] ?? '');
-                if ($replyId === '' || isset($replyIds[$replyId])) {
-                    continue;
-                }
-
-                $replyIds[$replyId] = true;
-                $repliesIndex[] = [
-                    'replyId' => $replyId,
-                    'parentCommentId' => $commentId,
-                    'threadId' => $threadId,
-                    'author' => (string) ($reply['author'] ?? ''),
-                    'authorChannelUrl' => '',
-                    'text' => (string) ($reply['text'] ?? ''),
-                    'likeCount' => (int) ($reply['likeCount'] ?? 0),
-                    'publishedAt' => (string) ($reply['publishedAt'] ?? ''),
-                    'updatedAt' => (string) ($reply['publishedAt'] ?? ''),
-                ];
-                $stats['processedReplies'] = (int) ($stats['processedReplies'] ?? 0) + 1;
+                $data->appendEmbeddedReply($reply, $commentId, $threadId);
             }
         }
 
-        $cursor['commentsPage'] = (int) ($cursor['commentsPage'] ?? 0) + 1;
-        $cursor['commentsTotalHint'] = (int) Arr::get($payload, 'pageInfo.totalResults', $cursor['commentsTotalHint'] ?? 0);
+        $cursor->incrementCommentsPage();
+        $cursor->setCommentsTotalHint((int) Arr::get($payload, 'pageInfo.totalResults', $cursor->commentsTotalHint()));
 
         $nextPageToken = trim((string) ($payload['nextPageToken'] ?? ''));
         if ($nextPageToken !== '') {
-            $cursor['commentsPageToken'] = $nextPageToken;
-            $totalHint = max(0, (int) ($cursor['commentsTotalHint'] ?? 0));
+            $cursor->setCommentsPageToken($nextPageToken);
+            $totalHint = $cursor->commentsTotalHint();
             if ($totalHint > 0) {
-                $run['progress'] = min(65, max(2, (int) floor((count($commentsIndex) / $totalHint) * 65)));
+                $state->setProgress(min(65, max(2, (int) floor(($data->commentsCount() / $totalHint) * 65))));
             } else {
-                $run['progress'] = min(65, 2 + ((int) $cursor['commentsPage'] * 6));
+                $state->setProgress(min(65, 2 + ($cursor->commentsPage() * 6)));
             }
         } else {
-            $cursor['commentsPageToken'] = '';
-            $run['stage'] = count($replyThreadIds) > 0 ? 'replies' : 'finishing';
-            $run['progress'] = count($replyThreadIds) > 0 ? 70 : 95;
+            $cursor->setCommentsPageToken(null);
+            $state->setStage(count($cursor->replyThreadIds()) > 0 ? YouTubeParserStage::Replies : YouTubeParserStage::Finishing);
+            $state->setProgress(count($cursor->replyThreadIds()) > 0 ? 70 : 95);
         }
 
-        $cursor['replyThreadIds'] = $replyThreadIds;
-        $data['commentIds'] = $commentIds;
-        $data['replyIds'] = $replyIds;
-        $data['threadParentMap'] = $threadParentMap;
-        $data['commentsIndex'] = $commentsIndex;
-        $data['repliesIndex'] = $repliesIndex;
-        $run['cursor'] = $cursor;
-        $run['data'] = $data;
-        $run['stats'] = $stats;
-
-        return $run;
+        return $state->toArray();
     }
 
     /**
      * @param array<string, mixed> $run
      * @return array<string, mixed>
      */
-    private function advanceReplies(array $run): array
+    private function advanceReplies(YouTubeParserStateDTO $state): array
     {
-        $cursor = is_array($run['cursor'] ?? null) ? $run['cursor'] : [];
-        $data = is_array($run['data'] ?? null) ? $run['data'] : [];
-        $stats = is_array($run['stats'] ?? null) ? $run['stats'] : [];
+        $cursor = $state->cursor();
+        $data = $state->data();
 
-        $replyThreadIds = is_array($cursor['replyThreadIds'] ?? null) ? array_values($cursor['replyThreadIds']) : [];
-        $threadIndex = (int) ($cursor['replyThreadIndex'] ?? 0);
+        $replyThreadIds = $cursor->replyThreadIds();
+        $threadIndex = $cursor->replyThreadIndex();
         if ($threadIndex >= count($replyThreadIds)) {
-            $run['stage'] = 'finishing';
-            $run['progress'] = 95;
+            $state->setStage(YouTubeParserStage::Finishing);
+            $state->setProgress(95);
 
-            return $run;
+            return $state->toArray();
         }
 
         $threadId = (string) $replyThreadIds[$threadIndex];
-        $threadParentMap = is_array($data['threadParentMap'] ?? null) ? $data['threadParentMap'] : [];
-        $parentCommentId = (string) ($threadParentMap[$threadId] ?? '');
+        $parentCommentId = $data->threadParentId($threadId);
         if ($parentCommentId === '') {
-            $cursor['replyThreadIndex'] = $threadIndex + 1;
-            $cursor['replyPageToken'] = '';
-            $run['cursor'] = $cursor;
+            $cursor->setReplyThreadIndex($threadIndex + 1);
+            $cursor->setReplyPageToken(null);
 
-            return $run;
+            return $state->toArray();
         }
 
         $params = [
             'parentId' => $parentCommentId,
             'maxResults' => self::REPLIES_LIMIT,
         ];
-        $replyPageToken = trim((string) ($cursor['replyPageToken'] ?? ''));
-        if ($replyPageToken !== '') {
+        $replyPageToken = $cursor->replyPageToken();
+        if ($replyPageToken !== null) {
             $params['pageToken'] = $replyPageToken;
         }
 
         $payload = $this->gateway->comments($params);
         $items = is_array($payload['items'] ?? null) ? $payload['items'] : [];
-        $replyIds = is_array($data['replyIds'] ?? null) ? $data['replyIds'] : [];
-        $repliesIndex = is_array($data['repliesIndex'] ?? null) ? $data['repliesIndex'] : [];
 
         foreach ($items as $item) {
-            if (!is_array($item)) {
+            if (! is_array($item)) {
                 continue;
             }
 
             $replyId = (string) ($item['id'] ?? '');
-            if ($replyId === '' || isset($replyIds[$replyId])) {
-                continue;
-            }
-
             $snippet = is_array($item['snippet'] ?? null) ? $item['snippet'] : [];
-            $replyIds[$replyId] = true;
-            $repliesIndex[] = [
-                'replyId' => $replyId,
-                'parentCommentId' => $parentCommentId,
-                'threadId' => $threadId,
-                'author' => (string) ($snippet['authorDisplayName'] ?? ''),
-                'authorChannelUrl' => (string) ($snippet['authorChannelUrl'] ?? ''),
-                'text' => (string) ($snippet['textDisplay'] ?? ''),
-                'likeCount' => (int) ($snippet['likeCount'] ?? 0),
-                'publishedAt' => (string) ($snippet['publishedAt'] ?? ''),
-                'updatedAt' => (string) ($snippet['updatedAt'] ?? ''),
-            ];
-            $stats['processedReplies'] = (int) ($stats['processedReplies'] ?? 0) + 1;
+
+            $data->appendReplySnippet($snippet, $replyId, $parentCommentId, $threadId);
         }
 
         $nextPageToken = trim((string) ($payload['nextPageToken'] ?? ''));
         if ($nextPageToken !== '') {
-            $cursor['replyPageToken'] = $nextPageToken;
+            $cursor->setReplyPageToken($nextPageToken);
         } else {
-            $cursor['replyThreadIndex'] = $threadIndex + 1;
-            $cursor['replyPageToken'] = '';
+            $cursor->setReplyThreadIndex($threadIndex + 1);
+            $cursor->setReplyPageToken(null);
         }
 
-        $processedThreads = min((int) ($cursor['replyThreadIndex'] ?? 0), count($replyThreadIds));
+        $processedThreads = min($cursor->replyThreadIndex(), count($replyThreadIds));
         $totalThreads = max(1, count($replyThreadIds));
-        $run['progress'] = min(99, 70 + (int) floor(($processedThreads / $totalThreads) * 29));
+        $state->setProgress(min(99, 70 + (int) floor(($processedThreads / $totalThreads) * 29)));
         if ($processedThreads >= count($replyThreadIds) && $nextPageToken === '') {
-            $run['stage'] = 'finishing';
-            $run['progress'] = 95;
+            $state->setStage(YouTubeParserStage::Finishing);
+            $state->setProgress(95);
         }
 
-        $data['replyIds'] = $replyIds;
-        $data['repliesIndex'] = $repliesIndex;
-        $run['data'] = $data;
-        $run['cursor'] = $cursor;
-        $run['stats'] = $stats;
-
-        return $run;
+        return $state->toArray();
     }
 
     /**
      * @param array<string, mixed> $run
      * @return array<string, mixed>
      */
-    private function finish(array $run): array
+    private function finish(YouTubeParserStateDTO $state): array
     {
-        $run['result'] = $this->buildResultSnapshot($run);
-        $run['status'] = 'completed';
-        $run['stage'] = 'completed';
-        $run['progress'] = 100;
-        $run['error'] = null;
+        $state->complete(
+            result: $this->snapshotBuilder->build($state->videoId(), $state->data())->toArray(),
+            stage: YouTubeParserStage::Completed,
+        );
 
-        return $run;
+        return $state->toArray();
     }
 }

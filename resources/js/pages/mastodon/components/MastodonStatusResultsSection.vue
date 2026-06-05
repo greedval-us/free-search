@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { useI18n } from '@/composables/useI18n';
+import type { MastodonStatus, MastodonStatusContextState } from '../types';
 import MastodonReplyThread from './MastodonReplyThread.vue';
 import MastodonStatusCard from './MastodonStatusCard.vue';
-import type { MastodonStatus, MastodonStatusContextState } from '../types';
 
 defineProps<{
     statuses: MastodonStatus[];
@@ -16,9 +16,7 @@ const { t } = useI18n();
 
 <template>
     <section v-if="statuses.length > 0" class="space-y-3">
-        <div
-            class="text-xs font-semibold tracking-wide text-muted-foreground uppercase"
-        >
+        <div class="intel-subsection-title">
             {{ t('mastodon.sections.statuses') }}
         </div>
         <MastodonStatusCard
@@ -33,7 +31,7 @@ const { t } = useI18n();
                 <button
                     v-if="status.repliesCount > 0"
                     type="button"
-                    class="cursor-pointer rounded-full border border-input px-3 py-1 text-xs font-medium text-foreground hover:bg-accent"
+                    class="intel-action"
                     @click="toggleContext(status.id)"
                 >
                     {{
@@ -47,7 +45,7 @@ const { t } = useI18n();
             <template #details>
                 <div
                     v-if="ensureContextState(status.id).open"
-                    class="rounded-lg border border-border/70 bg-card/60 p-3"
+                    class="intel-subsection"
                 >
                     <p
                         v-if="ensureContextState(status.id).loading"
@@ -71,9 +69,7 @@ const { t } = useI18n();
                             "
                             class="space-y-2"
                         >
-                            <div
-                                class="text-[11px] font-semibold tracking-wide text-muted-foreground uppercase"
-                            >
+                            <div class="intel-subsection-title">
                                 {{ t('mastodon.comments.ancestors') }}
                             </div>
                             <article
@@ -100,9 +96,7 @@ const { t } = useI18n();
                         </div>
 
                         <div class="space-y-2">
-                            <div
-                                class="text-[11px] font-semibold tracking-wide text-muted-foreground uppercase"
-                            >
+                            <div class="intel-subsection-title">
                                 {{ t('mastodon.comments.replies') }}
                             </div>
 

@@ -447,6 +447,84 @@ telegram.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 /**
 * @see \Inertia\Controller::__invoke
  * @see vendor/inertiajs/inertia-laravel/src/Controller.php:13
+ * @route '/bluesky'
+ */
+export const bluesky = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+    url: bluesky.url(options),
+    method: 'get',
+})
+
+bluesky.definition = {
+    methods: ["get","head"],
+    url: '/bluesky',
+} satisfies RouteDefinition<["get","head"]>
+
+/**
+* @see \Inertia\Controller::__invoke
+ * @see vendor/inertiajs/inertia-laravel/src/Controller.php:13
+ * @route '/bluesky'
+ */
+bluesky.url = (options?: RouteQueryOptions) => {
+    return bluesky.definition.url + queryParams(options)
+}
+
+/**
+* @see \Inertia\Controller::__invoke
+ * @see vendor/inertiajs/inertia-laravel/src/Controller.php:13
+ * @route '/bluesky'
+ */
+bluesky.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+    url: bluesky.url(options),
+    method: 'get',
+})
+/**
+* @see \Inertia\Controller::__invoke
+ * @see vendor/inertiajs/inertia-laravel/src/Controller.php:13
+ * @route '/bluesky'
+ */
+bluesky.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
+    url: bluesky.url(options),
+    method: 'head',
+})
+
+    /**
+* @see \Inertia\Controller::__invoke
+ * @see vendor/inertiajs/inertia-laravel/src/Controller.php:13
+ * @route '/bluesky'
+ */
+    const blueskyForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+        action: bluesky.url(options),
+        method: 'get',
+    })
+
+            /**
+* @see \Inertia\Controller::__invoke
+ * @see vendor/inertiajs/inertia-laravel/src/Controller.php:13
+ * @route '/bluesky'
+ */
+        blueskyForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+            action: bluesky.url(options),
+            method: 'get',
+        })
+            /**
+* @see \Inertia\Controller::__invoke
+ * @see vendor/inertiajs/inertia-laravel/src/Controller.php:13
+ * @route '/bluesky'
+ */
+        blueskyForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+            action: bluesky.url({
+                        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
+                            _method: 'HEAD',
+                            ...(options?.query ?? options?.mergeQuery ?? {}),
+                        }
+                    }),
+            method: 'get',
+        })
+    
+    bluesky.form = blueskyForm
+/**
+* @see \Inertia\Controller::__invoke
+ * @see vendor/inertiajs/inertia-laravel/src/Controller.php:13
  * @route '/mastodon'
  */
 export const mastodon = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({

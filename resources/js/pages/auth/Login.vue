@@ -17,8 +17,8 @@ const { t } = useI18n();
 
 defineOptions({
     layout: {
-        title: 'Sign in',
-        description: 'Use your account to access Telegram analytics dashboard',
+        title: 'auth.login.title',
+        description: 'auth.login.description',
     },
 });
 
@@ -32,10 +32,7 @@ defineProps<{
 <template>
     <Head :title="t('auth.login.title')" />
 
-    <div
-        v-if="status"
-        class="mb-4 rounded-lg border border-emerald-300/30 bg-emerald-400/10 p-3 text-center text-sm font-medium text-emerald-200"
-    >
+    <div v-if="status" class="auth-status auth-status-success">
         {{ status }}
     </div>
 
@@ -47,7 +44,7 @@ defineProps<{
     >
         <div class="grid gap-6">
             <div class="grid gap-2">
-                <Label for="email" class="text-slate-200">{{
+                <Label for="email" class="auth-field-label">{{
                     t('auth.login.email')
                 }}</Label>
                 <Input
@@ -59,20 +56,20 @@ defineProps<{
                     :tabindex="1"
                     autocomplete="email"
                     :placeholder="t('auth.login.emailPlaceholder')"
-                    class="border-slate-700 bg-slate-900/80 text-slate-100 placeholder:text-slate-400"
+                    class="auth-input-skin"
                 />
                 <InputError :message="errors.email" />
             </div>
 
             <div class="grid gap-2">
                 <div class="flex items-center justify-between">
-                    <Label for="password" class="text-slate-200">{{
+                    <Label for="password" class="auth-field-label">{{
                         t('auth.login.password')
                     }}</Label>
                     <TextLink
                         v-if="canResetPassword"
                         :href="request()"
-                        class="text-sm text-cyan-300 hover:text-cyan-200"
+                        class="auth-link text-sm"
                         :tabindex="5"
                     >
                         {{ t('auth.login.forgotPassword') }}
@@ -85,7 +82,7 @@ defineProps<{
                     :tabindex="2"
                     autocomplete="current-password"
                     :placeholder="t('auth.login.passwordPlaceholder')"
-                    class="border-slate-700 bg-slate-900/80 text-slate-100 placeholder:text-slate-400"
+                    class="auth-input-skin"
                 />
                 <InputError :message="errors.password" />
             </div>
@@ -102,7 +99,7 @@ defineProps<{
 
             <Button
                 type="submit"
-                class="mt-4 w-full bg-cyan-400 text-slate-950 hover:bg-cyan-300"
+                class="auth-button-primary mt-4"
                 :tabindex="4"
                 :disabled="processing"
                 data-test="login-button"
@@ -114,12 +111,9 @@ defineProps<{
 
         <div class="text-center text-sm text-slate-300" v-if="canRegister">
             {{ t('auth.login.noAccount') }}
-            <TextLink
-                :href="register()"
-                :tabindex="5"
-                class="text-cyan-300 hover:text-cyan-200"
-                >{{ t('auth.login.createOne') }}</TextLink
-            >
+            <TextLink :href="register()" :tabindex="5" class="auth-link">{{
+                t('auth.login.createOne')
+            }}</TextLink>
         </div>
     </Form>
 </template>

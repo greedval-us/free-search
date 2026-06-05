@@ -6,7 +6,7 @@ use App\Modules\Telegram\Support\TelegramConfig;
 
 trait ResolvesTelegramConfig
 {
-    private function telegramConfig(): TelegramConfig
+    protected function telegramConfig(): TelegramConfig
     {
         return app(TelegramConfig::class);
     }
