@@ -11,9 +11,8 @@ const { t } = useI18n();
 
 defineOptions({
     layout: {
-        title: 'Verify email',
-        description:
-            'Please verify your email address by clicking on the link we just emailed to you.',
+        title: 'auth.verifyEmail.title',
+        description: 'auth.verifyEmail.description',
     },
 });
 
@@ -27,7 +26,7 @@ defineProps<{
 
     <div
         v-if="status === 'verification-link-sent'"
-        class="mb-4 text-center text-sm font-medium text-green-600"
+        class="auth-status auth-status-success"
     >
         {{ t('auth.verifyEmail.statusMessage') }}
     </div>
@@ -37,12 +36,16 @@ defineProps<{
         class="space-y-6 text-center"
         v-slot="{ processing }"
     >
-        <Button :disabled="processing" variant="secondary">
+        <Button :disabled="processing" class="auth-button-primary">
             <Spinner v-if="processing" />
             {{ t('auth.verifyEmail.submit') }}
         </Button>
 
-        <TextLink :href="logout()" as="button" class="mx-auto block text-sm">
+        <TextLink
+            :href="logout()"
+            as="button"
+            class="auth-link mx-auto block text-sm"
+        >
             {{ t('auth.verifyEmail.logout') }}
         </TextLink>
     </Form>

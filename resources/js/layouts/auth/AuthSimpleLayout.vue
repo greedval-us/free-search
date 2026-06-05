@@ -13,7 +13,7 @@ defineProps<{
 </script>
 
 <template>
-    <div class="relative min-h-svh overflow-hidden bg-slate-950 text-slate-100">
+    <div class="auth-stage">
         <div class="pointer-events-none absolute inset-0">
             <div
                 class="absolute -top-32 left-1/2 h-80 w-80 -translate-x-1/2 rounded-full bg-cyan-500/35 blur-3xl"
@@ -27,34 +27,23 @@ defineProps<{
             <div class="grid-pattern absolute inset-0 opacity-30" />
         </div>
 
-        <div
-            class="relative mx-auto flex min-h-svh w-full max-w-6xl items-center px-6 py-10 sm:px-8 lg:px-10"
-        >
-            <div class="grid w-full gap-6 lg:grid-cols-[1fr_1.05fr]">
-                <section
-                    class="hidden rounded-[2rem] border border-slate-800/90 bg-slate-900/72 p-8 shadow-[0_30px_100px_-50px_rgba(8,145,178,0.5)] backdrop-blur lg:block xl:p-10"
-                >
-                    <p
-                        class="inline-flex rounded-full border border-cyan-300/35 bg-cyan-300/10 px-3 py-1 text-xs font-medium text-cyan-200"
-                    >
-                        Uraboros
-                    </p>
+        <div class="auth-stage-grid">
+            <div class="auth-stage-layout">
+                <section class="auth-story-panel">
+                    <p class="auth-chip">Uraboros</p>
                     <h2
                         class="mt-5 text-3xl leading-tight font-semibold text-slate-100 xl:text-4xl"
                     >
-                        Telegram Intelligence Platform
+                        {{ t('auth.layout.platformTitle') }}
                     </h2>
                     <p
                         class="mt-4 text-sm leading-relaxed text-slate-300 xl:text-base"
                     >
-                        Unified access point for search, monitoring, and OSINT
-                        workflows based on Telegram data.
+                        {{ t('auth.layout.platformText') }}
                     </p>
                 </section>
 
-                <section
-                    class="relative rounded-[2rem] border border-slate-800/90 bg-slate-900/78 p-6 shadow-[0_30px_100px_-48px_rgba(8,145,178,0.55)] backdrop-blur sm:p-8"
-                >
+                <section class="auth-form-panel">
                     <button
                         type="button"
                         class="absolute top-4 right-4 rounded-lg border border-slate-700 bg-slate-800/80 px-2.5 py-1.5 text-xs font-medium text-slate-200 transition hover:border-cyan-300/40 hover:text-cyan-100"
@@ -96,7 +85,6 @@ defineProps<{
                                 </p>
                             </div>
                         </div>
-
                         <slot />
                     </div>
                 </section>

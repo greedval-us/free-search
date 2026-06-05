@@ -28,13 +28,13 @@ defineOptions({
     >
         <div class="space-y-6">
             <div class="grid gap-2">
-                <Label htmlFor="password">{{
+                <Label htmlFor="password" class="auth-field-label">{{
                     t('auth.confirmPassword.password')
                 }}</Label>
                 <PasswordInput
                     id="password"
                     name="password"
-                    class="mt-1 block w-full"
+                    class="auth-input-skin mt-1 block w-full"
                     required
                     autocomplete="current-password"
                     autofocus
@@ -45,7 +45,7 @@ defineOptions({
 
             <div class="flex items-center">
                 <Button
-                    class="w-full"
+                    class="auth-button-primary"
                     :disabled="processing"
                     data-test="confirm-password-button"
                 >

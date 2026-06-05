@@ -9,6 +9,7 @@
     "fail": "FAIL",
     "loadingLabel": "Loading",
     "breadcrumbLabel": "Breadcrumb",
+    "workspace": "Workspace",
     "showPassword": "Show password",
     "hidePassword": "Hide password",
     "saved": "Saved.",

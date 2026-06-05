@@ -471,14 +471,16 @@ const toggleLocale = () => setLocale(locale.value === 'ru' ? 'en' : 'ru');
         linear-gradient(180deg, #08101d 0%, #04070f 100%);
     color: #e6ecff;
     font-family: 'Space Grotesk', 'Manrope', 'Segoe UI', sans-serif;
+    perspective: 1200px;
 }
 
 .bg-layer {
     position: absolute;
     border-radius: 9999px;
-    filter: blur(80px);
+    filter: blur(96px);
     opacity: 0.42;
     pointer-events: none;
+    animation: ambient-float 14s ease-in-out infinite alternate;
 }
 
 .bg-layer-a {
@@ -495,6 +497,7 @@ const toggleLocale = () => setLocale(locale.value === 'ru' ? 'en' : 'ru');
     right: -8rem;
     bottom: -6rem;
     background: #f59e0b;
+    animation-delay: -4s;
 }
 
 .mesh-overlay {
@@ -506,6 +509,7 @@ const toggleLocale = () => setLocale(locale.value === 'ru' ? 'en' : 'ru');
     background-size: 44px 44px;
     mask-image: radial-gradient(circle at center, black 45%, transparent 100%);
     pointer-events: none;
+    opacity: 0.7;
 }
 
 .content-wrap {
@@ -521,6 +525,32 @@ const toggleLocale = () => setLocale(locale.value === 'ru' ? 'en' : 'ru');
     align-items: center;
     gap: 1rem;
     margin-bottom: 1.3rem;
+    padding: 0.9rem 1rem;
+    border: 1px solid rgba(148, 163, 184, 0.16);
+    border-radius: 1.25rem;
+    background: linear-gradient(
+        180deg,
+        rgba(9, 15, 29, 0.82),
+        rgba(9, 15, 29, 0.56)
+    );
+    box-shadow: 0 30px 80px -48px rgba(0, 0, 0, 0.65);
+    backdrop-filter: blur(16px);
+    position: sticky;
+    top: 1rem;
+    z-index: 10;
+}
+
+.topbar::after {
+    content: '';
+    position: absolute;
+    inset: auto 1.25rem 0;
+    height: 1px;
+    background: linear-gradient(
+        90deg,
+        transparent,
+        rgba(125, 211, 252, 0.52),
+        transparent
+    );
 }
 
 .brand-mark {
@@ -544,7 +574,7 @@ const toggleLocale = () => setLocale(locale.value === 'ru' ? 'en' : 'ru');
 
 .locale-btn,
 .btn {
-    border-radius: 0.75rem;
+    border-radius: 0.95rem;
     border: 1px solid rgba(148, 163, 184, 0.28);
     color: #e8edf8;
     font-size: 0.86rem;
@@ -579,13 +609,15 @@ const toggleLocale = () => setLocale(locale.value === 'ru' ? 'en' : 'ru');
     background: linear-gradient(135deg, #14b8a6, #2dd4bf);
     color: #041018;
     border-color: transparent;
-    box-shadow: 0 12px 24px rgba(45, 212, 191, 0.22);
+    box-shadow:
+        0 18px 34px rgba(45, 212, 191, 0.24),
+        inset 0 1px 0 rgba(255, 255, 255, 0.24);
 }
 
 .btn:hover,
 .locale-btn:hover,
 .module-card:hover {
-    transform: translateY(-1px);
+    transform: translateY(-2px) scale(1.01);
     border-color: rgba(125, 211, 252, 0.62);
 }
 
@@ -598,17 +630,50 @@ const toggleLocale = () => setLocale(locale.value === 'ru' ? 'en' : 'ru');
     border: 1px solid rgba(148, 163, 184, 0.2);
     background: linear-gradient(
         155deg,
-        rgba(15, 23, 42, 0.9),
-        rgba(9, 14, 27, 0.8)
+        rgba(18, 28, 49, 0.94),
+        rgba(9, 14, 27, 0.78)
     );
     border-radius: 1.35rem;
     padding: 1.2rem;
-    backdrop-filter: blur(9px);
+    backdrop-filter: blur(14px);
+    box-shadow:
+        0 30px 85px -48px rgba(3, 7, 18, 0.8),
+        inset 0 1px 0 rgba(255, 255, 255, 0.05);
+    position: relative;
+    overflow: hidden;
+}
+
+.panel::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+        130deg,
+        rgba(255, 255, 255, 0.08),
+        transparent 28%,
+        transparent 62%,
+        rgba(56, 189, 248, 0.08)
+    );
+    pointer-events: none;
+}
+
+.panel::after {
+    content: '';
+    position: absolute;
+    inset: auto 0 0;
+    height: 0.9rem;
+    background: radial-gradient(
+        60% 120% at 50% 0%,
+        rgba(34, 211, 238, 0.12),
+        transparent 72%
+    );
+    pointer-events: none;
 }
 
 .hero {
     display: grid;
     gap: 1rem;
+    position: relative;
 }
 
 .hero-copy {
@@ -618,8 +683,9 @@ const toggleLocale = () => setLocale(locale.value === 'ru' ? 'en' : 'ru');
 .hero-title {
     margin: 0.9rem 0 0;
     font-size: clamp(1.7rem, 4.2vw, 3rem);
-    line-height: 1.1;
+    line-height: 1.04;
     max-width: 14ch;
+    text-wrap: balance;
 }
 
 .hero-text {
@@ -653,13 +719,20 @@ const toggleLocale = () => setLocale(locale.value === 'ru' ? 'en' : 'ru');
 .hero-metrics {
     display: grid;
     gap: 0.7rem;
+    align-content: end;
 }
 
 .metric {
     border: 1px solid rgba(148, 163, 184, 0.2);
     border-radius: 1rem;
-    background: rgba(7, 13, 25, 0.58);
+    background: linear-gradient(
+        180deg,
+        rgba(11, 18, 34, 0.72),
+        rgba(7, 13, 25, 0.5)
+    );
     padding: 0.9rem;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04);
+    transform: translateZ(0);
 }
 
 .metric-value {
@@ -704,14 +777,34 @@ const toggleLocale = () => setLocale(locale.value === 'ru' ? 'en' : 'ru');
     gap: 0.8rem;
     border: 1px solid rgba(148, 163, 184, 0.18);
     border-radius: 1rem;
-    background: rgba(6, 11, 22, 0.52);
+    background: linear-gradient(
+        180deg,
+        rgba(8, 13, 25, 0.68),
+        rgba(6, 11, 22, 0.5)
+    );
     padding: 1rem;
     text-decoration: none;
     color: inherit;
     transition:
         transform 0.2s ease,
         border-color 0.2s ease,
-        background-color 0.2s ease;
+        background-color 0.2s ease,
+        box-shadow 0.2s ease;
+    box-shadow: 0 16px 34px -28px rgba(0, 0, 0, 0.55);
+}
+
+.module-card:hover,
+.workflow-card:hover,
+.support-card:hover,
+.metric:hover {
+    box-shadow:
+        0 22px 44px -30px rgba(4, 10, 24, 0.7),
+        0 8px 20px -16px rgba(34, 211, 238, 0.28);
+}
+
+.module-card:hover {
+    transform: translateY(-4px);
+    border-color: rgba(125, 211, 252, 0.34);
 }
 
 .module-head {
@@ -765,8 +858,21 @@ const toggleLocale = () => setLocale(locale.value === 'ru' ? 'en' : 'ru');
 .workflow-card {
     border: 1px solid rgba(148, 163, 184, 0.18);
     border-radius: 1rem;
-    background: rgba(6, 11, 22, 0.48);
+    background: linear-gradient(
+        180deg,
+        rgba(10, 16, 30, 0.72),
+        rgba(6, 11, 22, 0.48)
+    );
     padding: 1rem;
+    transition:
+        transform 0.24s ease,
+        box-shadow 0.24s ease,
+        border-color 0.24s ease;
+}
+
+.workflow-card:hover {
+    transform: translateY(-4px);
+    border-color: rgba(125, 211, 252, 0.42);
 }
 
 .workflow-index {
@@ -831,8 +937,21 @@ const toggleLocale = () => setLocale(locale.value === 'ru' ? 'en' : 'ru');
 .support-card {
     border: 1px solid rgba(148, 163, 184, 0.18);
     border-radius: 1rem;
-    background: rgba(6, 11, 22, 0.48);
+    background: linear-gradient(
+        180deg,
+        rgba(10, 16, 30, 0.72),
+        rgba(6, 11, 22, 0.48)
+    );
     padding: 1rem;
+    transition:
+        transform 0.24s ease,
+        border-color 0.24s ease,
+        box-shadow 0.24s ease;
+}
+
+.support-card:hover {
+    transform: translateY(-4px);
+    border-color: rgba(125, 211, 252, 0.4);
 }
 
 .support-card h4 {
@@ -888,6 +1007,15 @@ const toggleLocale = () => setLocale(locale.value === 'ru' ? 'en' : 'ru');
     }
 }
 
+@keyframes ambient-float {
+    from {
+        transform: translate3d(0, 0, 0) scale(1);
+    }
+    to {
+        transform: translate3d(1rem, -1rem, 0) scale(1.06);
+    }
+}
+
 @media (min-width: 900px) {
     .content-wrap {
         padding: 2.2rem 1.6rem 2.8rem;
@@ -908,6 +1036,30 @@ const toggleLocale = () => setLocale(locale.value === 'ru' ? 'en' : 'ru');
 
     .split {
         grid-template-columns: 1.1fr 0.9fr;
+    }
+}
+
+@media (min-width: 1180px) {
+    .modules-grid {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 720px) {
+    .topbar {
+        position: static;
+        padding: 0.9rem;
+    }
+
+    .topbar,
+    .topbar-actions,
+    .hero-actions {
+        flex-wrap: wrap;
+    }
+
+    .topbar-actions {
+        width: 100%;
+        justify-content: flex-start;
     }
 }
 </style>

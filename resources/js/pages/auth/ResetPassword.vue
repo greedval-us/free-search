@@ -14,8 +14,8 @@ const { t } = useI18n();
 
 defineOptions({
     layout: {
-        title: 'Reset password',
-        description: 'Please enter your new password below',
+        title: 'auth.resetPassword.title',
+        description: 'auth.resetPassword.description',
     },
 });
 
@@ -38,28 +38,30 @@ const inputEmail = ref(props.email);
     >
         <div class="grid gap-6">
             <div class="grid gap-2">
-                <Label for="email">{{ t('auth.resetPassword.email') }}</Label>
+                <Label for="email" class="auth-field-label">{{
+                    t('auth.resetPassword.email')
+                }}</Label>
                 <Input
                     id="email"
                     type="email"
                     name="email"
                     autocomplete="email"
                     v-model="inputEmail"
-                    class="mt-1 block w-full"
+                    class="auth-input-skin mt-1 block w-full"
                     readonly
                 />
                 <InputError :message="errors.email" class="mt-2" />
             </div>
 
             <div class="grid gap-2">
-                <Label for="password">{{
+                <Label for="password" class="auth-field-label">{{
                     t('auth.resetPassword.password')
                 }}</Label>
                 <PasswordInput
                     id="password"
                     name="password"
                     autocomplete="new-password"
-                    class="mt-1 block w-full"
+                    class="auth-input-skin mt-1 block w-full"
                     autofocus
                     :placeholder="t('auth.resetPassword.passwordPlaceholder')"
                 />
@@ -67,14 +69,14 @@ const inputEmail = ref(props.email);
             </div>
 
             <div class="grid gap-2">
-                <Label for="password_confirmation">
+                <Label for="password_confirmation" class="auth-field-label">
                     {{ t('auth.resetPassword.confirmPassword') }}
                 </Label>
                 <PasswordInput
                     id="password_confirmation"
                     name="password_confirmation"
                     autocomplete="new-password"
-                    class="mt-1 block w-full"
+                    class="auth-input-skin mt-1 block w-full"
                     :placeholder="
                         t('auth.resetPassword.confirmPasswordPlaceholder')
                     "
@@ -84,7 +86,7 @@ const inputEmail = ref(props.email);
 
             <Button
                 type="submit"
-                class="mt-4 w-full"
+                class="auth-button-primary mt-4"
                 :disabled="processing"
                 data-test="reset-password-button"
             >
