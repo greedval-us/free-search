@@ -3,6 +3,7 @@ import { Head } from '@inertiajs/vue3';
 import { Newspaper } from 'lucide-vue-next';
 import { computed, onMounted, ref } from 'vue';
 import EmptyState from '@/components/ui/EmptyState.vue';
+import InfoCard from '@/components/ui/InfoCard.vue';
 import IntelModuleLayout from '@/components/ui/IntelModuleLayout.vue';
 import IntelResultPanel from '@/components/ui/IntelResultPanel.vue';
 import IntelSearchForm from '@/components/ui/IntelSearchForm.vue';
@@ -184,6 +185,7 @@ onMounted(() => {
                     <MetricCard
                         :title="t('newsMediaIntel.summary.positive')"
                         :value="result.sentiment.positive"
+                        tone="positive"
                     />
                     <MetricCard
                         :title="t('newsMediaIntel.summary.neutral')"
@@ -192,10 +194,11 @@ onMounted(() => {
                     <MetricCard
                         :title="t('newsMediaIntel.summary.negative')"
                         :value="result.sentiment.negative"
+                        tone="danger"
                     />
                 </div>
 
-                <SectionCard :title="t('newsMediaIntel.topics.title')">
+                <InfoCard :title="t('newsMediaIntel.topics.title')">
                     <p class="mb-2 text-xs text-muted-foreground">
                         {{ t('newsMediaIntel.help.topics') }}
                     </p>
@@ -234,9 +237,9 @@ onMounted(() => {
                             </div>
                         </div>
                     </div>
-                </SectionCard>
+                </InfoCard>
 
-                <SectionCard :title="t('newsMediaIntel.timeline.title')">
+                <InfoCard :title="t('newsMediaIntel.timeline.title')">
                     <p class="mb-2 text-xs text-muted-foreground">
                         {{ t('newsMediaIntel.help.timeline') }}
                     </p>
@@ -247,16 +250,19 @@ onMounted(() => {
                         <p
                             v-for="point in timelineChart"
                             :key="`timeline-list-${point.date}`"
+                            class="intel-data-row text-sm"
                         >
-                            {{ point.date }}:
-                            <span class="text-muted-foreground">{{
+                            <span class="intel-data-label"
+                                >{{ point.date }}:</span
+                            >
+                            <span class="intel-data-value">{{
                                 point.mentions
                             }}</span>
                         </p>
                     </div>
-                </SectionCard>
+                </InfoCard>
 
-                <SectionCard :title="t('newsMediaIntel.mentions.title')">
+                <InfoCard :title="t('newsMediaIntel.mentions.title')">
                     <p class="mb-2 text-xs text-muted-foreground">
                         {{ t('newsMediaIntel.help.mentions') }}
                     </p>
@@ -302,7 +308,7 @@ onMounted(() => {
                             </a>
                         </article>
                     </div>
-                </SectionCard>
+                </InfoCard>
             </div>
         </IntelResultPanel>
     </IntelModuleLayout>

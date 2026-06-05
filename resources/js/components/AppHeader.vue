@@ -53,7 +53,8 @@ const auth = computed(() => page.props.auth);
 const { isCurrentUrl, whenCurrentUrl } = useCurrentUrl();
 const { t } = useI18n();
 
-const activeItemStyles = 'bg-cyan-500/15 text-cyan-700 dark:text-cyan-100';
+const activeItemStyles =
+    'bg-cyan-500/15 text-cyan-700 shadow-[0_10px_30px_-20px_rgba(8,145,178,0.95)] dark:text-cyan-100';
 
 const mainNavItems = computed<NavItem[]>(() => buildHeaderNavItems(t));
 
@@ -74,7 +75,7 @@ const rightNavItems = computed<NavItem[]>(() => [
 <template>
     <div>
         <div
-            class="border-b border-sidebar-border/80 bg-background/80 backdrop-blur"
+            class="border-b border-sidebar-border/80 bg-background/85 backdrop-blur"
         >
             <div class="mx-auto flex h-16 items-center px-4 md:max-w-7xl">
                 <!-- Mobile Menu -->
@@ -91,7 +92,7 @@ const rightNavItems = computed<NavItem[]>(() => [
                         </SheetTrigger>
                         <SheetContent
                             side="left"
-                            class="w-[300px] border-sidebar-border bg-card/95 p-6 text-foreground"
+                            class="w-[300px] rounded-r-3xl border-sidebar-border bg-card/95 p-6 text-foreground shadow-2xl"
                         >
                             <SheetTitle class="sr-only">{{
                                 t('navigation.menu')
@@ -155,7 +156,7 @@ const rightNavItems = computed<NavItem[]>(() => [
                 <div class="hidden h-full lg:flex lg:flex-1">
                     <NavigationMenu class="ml-10 flex h-full items-stretch">
                         <NavigationMenuList
-                            class="flex h-full items-stretch space-x-2"
+                            class="flex h-full items-stretch space-x-2 rounded-full border border-sidebar-border/70 bg-card/55 px-2 py-1 backdrop-blur"
                         >
                             <NavigationMenuItem
                                 v-for="(item, index) in mainNavItems"
@@ -169,7 +170,7 @@ const rightNavItems = computed<NavItem[]>(() => [
                                             item.href,
                                             activeItemStyles
                                         ),
-                                        'h-9 cursor-pointer px-3',
+                                        'h-9 cursor-pointer rounded-full px-3.5',
                                     ]"
                                     :href="item.href"
                                 >
@@ -190,7 +191,9 @@ const rightNavItems = computed<NavItem[]>(() => [
                 </div>
 
                 <div class="ml-auto flex items-center space-x-2">
-                    <div class="relative flex items-center space-x-1">
+                    <div
+                        class="relative flex items-center space-x-1 rounded-full border border-sidebar-border/70 bg-card/50 px-1.5 py-1 backdrop-blur"
+                    >
                         <Button
                             variant="ghost"
                             size="icon"
@@ -272,7 +275,7 @@ const rightNavItems = computed<NavItem[]>(() => [
 
         <div
             v-if="props.breadcrumbs.length > 1"
-            class="flex w-full border-b border-sidebar-border/70 bg-background/70"
+            class="flex w-full border-b border-sidebar-border/70 bg-background/72 backdrop-blur"
         >
             <div
                 class="mx-auto flex h-12 w-full items-center justify-start px-4 text-muted-foreground md:max-w-7xl"

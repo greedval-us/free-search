@@ -16,13 +16,13 @@ defineProps<{
     <div class="relative min-h-svh overflow-hidden bg-slate-950 text-slate-100">
         <div class="pointer-events-none absolute inset-0">
             <div
-                class="absolute -top-32 left-1/2 h-80 w-80 -translate-x-1/2 rounded-full bg-cyan-500/30 blur-3xl"
+                class="absolute -top-32 left-1/2 h-80 w-80 -translate-x-1/2 rounded-full bg-cyan-500/35 blur-3xl"
             />
             <div
-                class="absolute bottom-0 left-0 h-72 w-72 rounded-full bg-emerald-500/20 blur-3xl"
+                class="absolute bottom-0 left-0 h-72 w-72 rounded-full bg-emerald-500/24 blur-3xl"
             />
             <div
-                class="absolute top-1/3 right-0 h-72 w-72 rounded-full bg-indigo-500/25 blur-3xl"
+                class="absolute top-1/3 right-0 h-72 w-72 rounded-full bg-sky-500/18 blur-3xl"
             />
             <div class="grid-pattern absolute inset-0 opacity-30" />
         </div>
@@ -32,7 +32,7 @@ defineProps<{
         >
             <div class="grid w-full gap-6 lg:grid-cols-[1fr_1.05fr]">
                 <section
-                    class="hidden rounded-3xl border border-slate-800/90 bg-slate-900/70 p-8 shadow-2xl backdrop-blur lg:block xl:p-10"
+                    class="hidden rounded-[2rem] border border-slate-800/90 bg-slate-900/72 p-8 shadow-[0_30px_100px_-50px_rgba(8,145,178,0.5)] backdrop-blur lg:block xl:p-10"
                 >
                     <p
                         class="inline-flex rounded-full border border-cyan-300/35 bg-cyan-300/10 px-3 py-1 text-xs font-medium text-cyan-200"
@@ -53,7 +53,7 @@ defineProps<{
                 </section>
 
                 <section
-                    class="relative rounded-3xl border border-slate-800/90 bg-slate-900/75 p-6 shadow-2xl backdrop-blur sm:p-8"
+                    class="relative rounded-[2rem] border border-slate-800/90 bg-slate-900/78 p-6 shadow-[0_30px_100px_-48px_rgba(8,145,178,0.55)] backdrop-blur sm:p-8"
                 >
                     <button
                         type="button"

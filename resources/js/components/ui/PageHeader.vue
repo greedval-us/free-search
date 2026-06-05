@@ -16,8 +16,14 @@ defineProps<{
         <div class="flex items-center gap-2 text-sm font-semibold">
             <component :is="icon" v-if="icon" class="h-4 w-4 text-primary" />
             <span>{{ title }}</span>
-            <HelpTooltip v-if="helpLabel && helpText" :label="helpLabel" :text="helpText" />
+            <HelpTooltip
+                v-if="helpLabel && helpText"
+                :label="helpLabel"
+                :text="helpText"
+            />
         </div>
-        <p v-if="description" class="text-xs text-muted-foreground">{{ description }}</p>
+        <p v-if="description" class="text-xs leading-relaxed text-muted-foreground">
+            {{ description }}
+        </p>
     </div>
 </template>

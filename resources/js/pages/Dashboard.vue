@@ -14,6 +14,8 @@ import {
     Trash2,
 } from 'lucide-vue-next';
 import { computed, onBeforeUnmount, onMounted } from 'vue';
+import EmptyState from '@/components/ui/EmptyState.vue';
+import MetricCard from '@/components/ui/MetricCard.vue';
 import { useI18n } from '@/composables/useI18n';
 import { dashboard as dashboardRoute } from '@/routes';
 
@@ -159,6 +161,33 @@ const quickActions = computed(() => {
     ] as ModuleCard[];
 });
 
+const summaryCards = computed(() => [
+    {
+        key: 'total',
+        icon: Search,
+        title: t('dashboard.summary.total'),
+        value: props.dashboard.summary.total_actions,
+    },
+    {
+        key: 'last7',
+        icon: Flame,
+        title: t('dashboard.summary.last7'),
+        value: props.dashboard.summary.actions_last_7_days,
+    },
+    {
+        key: 'last30',
+        icon: BarChart3,
+        title: t('dashboard.summary.last30'),
+        value: props.dashboard.summary.actions_last_30_days,
+    },
+    {
+        key: 'activeDays',
+        icon: Compass,
+        title: t('dashboard.summary.activeDays'),
+        value: props.dashboard.summary.active_days_last_30_days,
+    },
+]);
+
 const topDay = computed(() => {
     if (props.dashboard.chart.length === 0) {
         return null;
@@ -182,6 +211,29 @@ const topDay = computed(() => {
 const lastQuery = computed(() => {
     return props.dashboard.activity_feed[0] ?? null;
 });
+
+const insightItems = computed(() => [
+    {
+        key: 'topDay',
+        label: t('dashboard.insights.topDay'),
+        value: topDay.value
+            ? `${weekDay(topDay.value.date)} (${topDay.value.count})`
+            : t('dashboard.common.na'),
+    },
+    {
+        key: 'lastQuery',
+        label: t('dashboard.insights.lastQuery'),
+        value: lastQuery.value?.query_preview ?? t('dashboard.common.na'),
+        valueClass: 'break-words',
+    },
+    {
+        key: 'favorite',
+        label: t('dashboard.insights.favorite'),
+        value: props.dashboard.favorite_module
+            ? moduleLabel(props.dashboard.favorite_module.key)
+            : t('dashboard.common.na'),
+    },
+]);
 
 const quotaLabel = (quota: { limit: number; remaining: number }): string => {
     if (!quota || quota.limit === 0) {
@@ -274,6 +326,21 @@ const saveQueryForm = useForm({
     request_log_id: 0,
 });
 
+const filterActions = computed(() => [
+    {
+        key: 'apply',
+        label: t('dashboard.filters.apply'),
+        icon: Search,
+        action: applyFilters,
+    },
+    {
+        key: 'reset',
+        label: t('dashboard.filters.reset'),
+        icon: RotateCcw,
+        action: resetFilters,
+    },
+]);
+
 const applyFilters = (): void => {
     router.get('/dashboard', filterForm.data(), {
         preserveScroll: true,
@@ -353,9 +420,7 @@ onBeforeUnmount(() => {
         <div
             class="intel-scroll min-h-0 flex-1 space-y-4 overflow-x-hidden overflow-y-auto pr-1 [scrollbar-gutter:stable_both-edges]"
         >
-            <section
-                class="relative overflow-hidden rounded-2xl border border-sidebar-border/70 bg-card/75 p-4 shadow-xl backdrop-blur sm:p-5"
-            >
+            <section class="intel-hero-panel sm:p-5">
                 <div
                     class="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(56,189,248,0.14),transparent_45%),radial-gradient(circle_at_bottom_left,rgba(16,185,129,0.1),transparent_42%)]"
                 />
@@ -363,9 +428,7 @@ onBeforeUnmount(() => {
                     class="relative flex flex-wrap items-center justify-between gap-4"
                 >
                     <div class="space-y-1">
-                        <p
-                            class="text-xs tracking-wide text-muted-foreground uppercase"
-                        >
+                        <p class="intel-kicker">
                             {{ t('dashboard.header.kicker') }}
                         </p>
                         <h1 class="text-xl font-semibold sm:text-2xl">
@@ -389,9 +452,7 @@ onBeforeUnmount(() => {
             <section class="intel-panel">
                 <div class="flex flex-wrap items-center justify-between gap-3">
                     <div>
-                        <p
-                            class="text-xs tracking-wide text-muted-foreground uppercase"
-                        >
+                        <p class="intel-kicker">
                             {{ t('dashboard.plan.title') }}
                         </p>
                         <h2 class="mt-1 text-lg font-semibold uppercase">
@@ -400,7 +461,7 @@ onBeforeUnmount(() => {
                     </div>
                     <Link
                         href="/settings/billing"
-                        class="inline-flex h-9 items-center gap-2 rounded-md border border-sidebar-border/70 bg-background/50 px-3 text-sm transition hover:border-primary/40 hover:bg-background/80"
+                        class="intel-button-ghost h-9 rounded-xl px-3 text-sm"
                     >
                         <CreditCard class="h-4 w-4" />
                         {{ t('dashboard.plan.manage') }}
@@ -410,11 +471,9 @@ onBeforeUnmount(() => {
                     <div
                         v-for="group in quotaGroups"
                         :key="group.module"
-                        class="rounded-md border border-sidebar-border/70 bg-background/40 p-3"
+                        class="intel-list-item"
                     >
-                        <p
-                            class="text-xs font-medium text-muted-foreground uppercase"
-                        >
+                        <p class="intel-kicker">
                             {{ quotaModuleLabel(group.module) }}
                         </p>
                         <dl class="mt-2 space-y-1.5 text-sm">
@@ -439,67 +498,25 @@ onBeforeUnmount(() => {
                 class="grid grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-4 xl:grid-cols-4"
             >
                 <article
+                    v-for="card in summaryCards"
+                    :key="card.key"
                     class="intel-panel transition hover:-translate-y-0.5 hover:border-primary/40"
                 >
                     <div class="flex items-center gap-2 text-muted-foreground">
-                        <Search class="h-4 w-4" />
-                        <span class="text-xs tracking-wide uppercase">{{
-                            t('dashboard.summary.total')
+                        <component :is="card.icon" class="h-4 w-4" />
+                        <span class="intel-kicker !tracking-wide">{{
+                            card.title
                         }}</span>
                     </div>
                     <p class="mt-3 text-2xl font-semibold sm:text-3xl">
-                        {{ dashboard.summary.total_actions }}
-                    </p>
-                </article>
-
-                <article
-                    class="intel-panel transition hover:-translate-y-0.5 hover:border-primary/40"
-                >
-                    <div class="flex items-center gap-2 text-muted-foreground">
-                        <Flame class="h-4 w-4" />
-                        <span class="text-xs tracking-wide uppercase">{{
-                            t('dashboard.summary.last7')
-                        }}</span>
-                    </div>
-                    <p class="mt-3 text-2xl font-semibold sm:text-3xl">
-                        {{ dashboard.summary.actions_last_7_days }}
-                    </p>
-                </article>
-
-                <article
-                    class="intel-panel transition hover:-translate-y-0.5 hover:border-primary/40"
-                >
-                    <div class="flex items-center gap-2 text-muted-foreground">
-                        <BarChart3 class="h-4 w-4" />
-                        <span class="text-xs tracking-wide uppercase">{{
-                            t('dashboard.summary.last30')
-                        }}</span>
-                    </div>
-                    <p class="mt-3 text-2xl font-semibold sm:text-3xl">
-                        {{ dashboard.summary.actions_last_30_days }}
-                    </p>
-                </article>
-
-                <article
-                    class="intel-panel transition hover:-translate-y-0.5 hover:border-primary/40"
-                >
-                    <div class="flex items-center gap-2 text-muted-foreground">
-                        <Compass class="h-4 w-4" />
-                        <span class="text-xs tracking-wide uppercase">{{
-                            t('dashboard.summary.activeDays')
-                        }}</span>
-                    </div>
-                    <p class="mt-3 text-2xl font-semibold sm:text-3xl">
-                        {{ dashboard.summary.active_days_last_30_days }}
+                        {{ card.value }}
                     </p>
                 </article>
             </section>
 
             <section class="grid gap-4 xl:grid-cols-2">
                 <article class="intel-panel">
-                    <h2
-                        class="text-sm font-semibold tracking-wide text-muted-foreground uppercase"
-                    >
+                    <h2 class="intel-section-heading">
                         {{ t('dashboard.sections.quickActions') }}
                     </h2>
                     <div class="mt-3 grid grid-cols-1 gap-2 sm:grid-cols-2">
@@ -507,13 +524,13 @@ onBeforeUnmount(() => {
                             v-for="action in quickActions"
                             :key="`quick-${action.key}`"
                             :href="action.url"
-                            class="group flex items-center justify-between gap-3 rounded-lg border border-sidebar-border/70 bg-background/40 px-3 py-2 text-sm font-medium transition hover:border-primary/40 hover:bg-background/65"
+                            class="group flex items-center justify-between gap-3 rounded-xl border border-sidebar-border/70 bg-background/40 px-3 py-2.5 text-sm font-medium transition hover:border-primary/40 hover:bg-background/65"
                         >
                             <span class="truncate">{{
                                 moduleLabel(action.key)
                             }}</span>
                             <span
-                                class="rounded-full bg-primary/10 px-2 py-0.5 text-[11px] text-muted-foreground transition group-hover:text-foreground"
+                                class="intel-badge-count transition group-hover:text-foreground"
                             >
                                 {{ action.count }}
                             </span>
@@ -522,48 +539,20 @@ onBeforeUnmount(() => {
                 </article>
 
                 <article class="intel-panel">
-                    <h2
-                        class="text-sm font-semibold tracking-wide text-muted-foreground uppercase"
-                    >
+                    <h2 class="intel-section-heading">
                         {{ t('dashboard.sections.insights') }}
                     </h2>
                     <div class="mt-3 space-y-2 text-sm">
-                        <p>
+                        <p
+                            v-for="item in insightItems"
+                            :key="item.key"
+                            class="intel-data-row text-sm"
+                        >
                             <span class="text-muted-foreground"
-                                >{{ t('dashboard.insights.topDay') }}:</span
+                                >{{ item.label }}:</span
                             >
-                            <span class="ml-1 font-medium">
-                                {{
-                                    topDay
-                                        ? `${weekDay(topDay.date)} (${topDay.count})`
-                                        : t('dashboard.common.na')
-                                }}
-                            </span>
-                        </p>
-                        <p>
-                            <span class="text-muted-foreground"
-                                >{{ t('dashboard.insights.lastQuery') }}:</span
-                            >
-                            <span class="ml-1 font-medium break-words">
-                                {{
-                                    lastQuery
-                                        ? lastQuery.query_preview
-                                        : t('dashboard.common.na')
-                                }}
-                            </span>
-                        </p>
-                        <p>
-                            <span class="text-muted-foreground"
-                                >{{ t('dashboard.insights.favorite') }}:</span
-                            >
-                            <span class="ml-1 font-medium">
-                                {{
-                                    dashboard.favorite_module
-                                        ? moduleLabel(
-                                              dashboard.favorite_module.key
-                                          )
-                                        : t('dashboard.common.na')
-                                }}
+                            <span class="font-medium" :class="item.valueClass">
+                                {{ item.value }}
                             </span>
                         </p>
                     </div>
@@ -573,15 +562,13 @@ onBeforeUnmount(() => {
             <section class="grid min-h-0 gap-4 lg:grid-cols-2 2xl:grid-cols-3">
                 <article class="intel-panel min-h-0">
                     <div class="flex items-center justify-between">
-                        <h2
-                            class="text-sm font-semibold tracking-wide text-muted-foreground uppercase"
-                        >
+                        <h2 class="intel-section-heading">
                             {{ t('dashboard.sections.favorite') }}
                         </h2>
                     </div>
                     <div
                         v-if="dashboard.favorite_module"
-                        class="mt-3 rounded-lg border border-sidebar-border/70 bg-background/40 p-3"
+                        class="intel-list-item mt-3"
                     >
                         <p class="text-base font-semibold">
                             {{ moduleLabel(dashboard.favorite_module.key) }}
@@ -596,9 +583,7 @@ onBeforeUnmount(() => {
                         {{ t('dashboard.favorite.empty') }}
                     </p>
 
-                    <h3
-                        class="mt-4 text-xs tracking-wide text-muted-foreground uppercase"
-                    >
+                    <h3 class="intel-kicker mt-4">
                         {{ t('dashboard.sections.topModules') }}
                     </h3>
                     <ul
@@ -607,7 +592,7 @@ onBeforeUnmount(() => {
                         <li
                             v-for="module in dashboard.modules"
                             :key="`${module.key}-${module.count}`"
-                            class="rounded-lg border border-sidebar-border/70 bg-background/40 p-3"
+                            class="intel-list-item"
                         >
                             <div
                                 class="flex items-center justify-between gap-2"
@@ -637,10 +622,9 @@ onBeforeUnmount(() => {
                                             "
                                         />
                                     </button>
-                                    <span
-                                        class="rounded-full bg-primary/15 px-2 py-0.5 text-xs"
-                                        >{{ module.count }}</span
-                                    >
+                                    <span class="intel-badge-count text-xs">
+                                        {{ module.count }}
+                                    </span>
                                 </div>
                             </div>
                             <p class="mt-1 text-xs text-muted-foreground">
@@ -666,9 +650,7 @@ onBeforeUnmount(() => {
                 <article
                     class="intel-panel min-h-0 lg:col-span-2 2xl:col-span-1"
                 >
-                    <h2
-                        class="text-sm font-semibold tracking-wide text-muted-foreground uppercase"
-                    >
+                    <h2 class="intel-section-heading">
                         {{ t('dashboard.sections.weekly') }}
                     </h2>
                     <div class="intel-scroll mt-4 overflow-x-auto pb-1">
@@ -706,9 +688,7 @@ onBeforeUnmount(() => {
                 </article>
 
                 <article class="intel-panel min-h-0">
-                    <h2
-                        class="text-sm font-semibold tracking-wide text-muted-foreground uppercase"
-                    >
+                    <h2 class="intel-section-heading">
                         {{ t('dashboard.sections.savedQueries') }}
                     </h2>
                     <ul
@@ -717,7 +697,7 @@ onBeforeUnmount(() => {
                         <li
                             v-for="saved in dashboard.saved_queries"
                             :key="`saved-${saved.id}`"
-                            class="rounded-lg border border-sidebar-border/70 bg-background/40 p-3"
+                            class="intel-list-item"
                         >
                             <p class="font-medium">
                                 {{ moduleLabel(saved.module_key) }}
@@ -752,7 +732,7 @@ onBeforeUnmount(() => {
                         </li>
                         <li
                             v-if="dashboard.saved_queries.length === 0"
-                            class="flex items-center gap-2 rounded-lg border border-dashed border-sidebar-border/80 bg-background/30 p-3 text-sm text-muted-foreground"
+                            class="intel-empty-row"
                         >
                             <History class="h-4 w-4" />
                             {{ t('dashboard.saved.empty') }}
@@ -762,9 +742,7 @@ onBeforeUnmount(() => {
             </section>
 
             <section class="intel-panel min-h-0">
-                <h2
-                    class="text-sm font-semibold tracking-wide text-muted-foreground uppercase"
-                >
+                <h2 class="intel-section-heading">
                     {{ t('dashboard.sections.recentQueries') }}
                 </h2>
 
@@ -773,7 +751,7 @@ onBeforeUnmount(() => {
                 >
                     <select
                         v-model="filterForm.module_key"
-                        class="h-9 rounded-md border border-input bg-background px-2 text-sm transition outline-none focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50"
+                        class="intel-filter-control"
                         :aria-label="t('dashboard.filters.moduleLabel')"
                     >
                         <option value="">
@@ -791,14 +769,14 @@ onBeforeUnmount(() => {
                     <input
                         v-model="filterForm.query"
                         type="text"
-                        class="h-9 rounded-md border border-input bg-background px-2 text-sm transition outline-none focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50"
+                        class="intel-filter-control"
                         :aria-label="t('dashboard.filters.queryLabel')"
                         :placeholder="t('dashboard.filters.queryPlaceholder')"
                     />
 
                     <select
                         v-model="filterForm.period"
-                        class="h-9 rounded-md border border-input bg-background px-2 text-sm transition outline-none focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50"
+                        class="intel-filter-control"
                         :aria-label="t('dashboard.filters.periodLabel')"
                     >
                         <option value="7d">
@@ -815,34 +793,28 @@ onBeforeUnmount(() => {
                     <input
                         v-model="filterForm.date_from"
                         type="date"
-                        class="h-9 rounded-md border border-input bg-background px-2 text-sm transition outline-none focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50"
+                        class="intel-filter-control"
                         :aria-label="t('dashboard.filters.dateFromLabel')"
                     />
 
                     <input
                         v-model="filterForm.date_to"
                         type="date"
-                        class="h-9 rounded-md border border-input bg-background px-2 text-sm transition outline-none focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50"
+                        class="intel-filter-control"
                         :aria-label="t('dashboard.filters.dateToLabel')"
                     />
                 </div>
 
                 <div class="mt-2 flex flex-wrap gap-2">
                     <button
+                        v-for="button in filterActions"
+                        :key="button.key"
                         type="button"
-                        class="inline-flex h-8 items-center gap-1 rounded-md border border-sidebar-border/70 bg-background/50 px-3 py-1.5 text-xs transition hover:border-primary/40 hover:bg-background/80"
-                        @click="applyFilters"
+                        class="intel-button-ghost h-8 rounded-xl"
+                        @click="button.action"
                     >
-                        <Search class="h-3.5 w-3.5" />
-                        {{ t('dashboard.filters.apply') }}
-                    </button>
-                    <button
-                        type="button"
-                        class="inline-flex h-8 items-center gap-1 rounded-md border border-sidebar-border/70 bg-background/50 px-3 py-1.5 text-xs transition hover:border-primary/40 hover:bg-background/80"
-                        @click="resetFilters"
-                    >
-                        <RotateCcw class="h-3.5 w-3.5" />
-                        {{ t('dashboard.filters.reset') }}
+                        <component :is="button.icon" class="h-3.5 w-3.5" />
+                        {{ button.label }}
                     </button>
                 </div>
 
@@ -852,7 +824,7 @@ onBeforeUnmount(() => {
                     <li
                         v-for="row in dashboard.activity_feed"
                         :key="`${row.request_log_id}-${row.module_key}-${row.at}`"
-                        class="rounded-lg border border-sidebar-border/70 bg-background/40 p-3"
+                        class="intel-list-item"
                     >
                         <p class="font-medium">
                             {{ moduleLabel(row.module_key) }}
@@ -883,7 +855,7 @@ onBeforeUnmount(() => {
                     </li>
                     <li
                         v-if="dashboard.activity_feed.length === 0"
-                        class="flex items-center gap-2 rounded-lg border border-dashed border-sidebar-border/80 bg-background/30 p-3 text-sm text-muted-foreground"
+                        class="intel-empty-row"
                     >
                         <History class="h-4 w-4" />
                         {{ t('dashboard.recent.empty') }}

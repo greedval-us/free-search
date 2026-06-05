@@ -1,10 +1,14 @@
 ﻿<script setup lang="ts">
 import { Globe } from 'lucide-vue-next';
-import { computed, onMounted } from 'vue';
-import HelpTooltip from '@/components/ui/HelpTooltip.vue';
+import { onMounted } from 'vue';
+import EmptyState from '@/components/ui/EmptyState.vue';
 import IntelResultPanel from '@/components/ui/IntelResultPanel.vue';
 import IntelSearchForm from '@/components/ui/IntelSearchForm.vue';
 import IntelSearchPanel from '@/components/ui/IntelSearchPanel.vue';
+import InfoCard from '@/components/ui/InfoCard.vue';
+import KeyValueList from '@/components/ui/KeyValueList.vue';
+import MetricCard from '@/components/ui/MetricCard.vue';
+import PageHeader from '@/components/ui/PageHeader.vue';
 import { useI18n } from '@/composables/useI18n';
 import {
     getRepeatQueryParams,
@@ -15,20 +19,6 @@ import { useDomainLite } from '../composables/useDomainLite';
 
 const { t } = useI18n();
 const { form, loading, error, result, canLookup, lookup } = useDomainLite(t);
-
-const riskBadgeClass = computed(() => {
-    const level = result.value?.risk.level;
-
-    if (level === 'low') {
-        return 'border-emerald-500/40 bg-emerald-500/10 text-emerald-300';
-    }
-
-    if (level === 'medium') {
-        return 'border-amber-500/40 bg-amber-500/10 text-amber-300';
-    }
-
-    return 'border-rose-500/40 bg-rose-500/10 text-rose-300';
-});
 
 const formatDateTime = (value: string | null) => {
     if (!value) {
@@ -80,21 +70,13 @@ onMounted(() => {
 
 <template>
     <IntelSearchPanel>
-        <div class="flex items-center justify-between gap-3">
-            <div class="space-y-1">
-                <div class="flex items-center gap-2 text-sm font-semibold">
-                    <Globe class="h-4 w-4 text-cyan-400" />
-                    <span>{{ t('siteIntel.domainLite.title') }}</span>
-                    <HelpTooltip
-                        :label="t('siteIntel.help.label')"
-                        :text="t('siteIntel.domainLite.help.overview')"
-                    />
-                </div>
-                <p class="text-xs text-muted-foreground">
-                    {{ t('siteIntel.domainLite.description') }}
-                </p>
-            </div>
-        </div>
+        <PageHeader
+            :icon="Globe"
+            :title="t('siteIntel.domainLite.title')"
+            :description="t('siteIntel.domainLite.description')"
+            :help-label="t('siteIntel.help.label')"
+            :help-text="t('siteIntel.domainLite.help.overview')"
+        />
 
         <IntelSearchForm
             v-model="form.domain"
@@ -110,217 +92,185 @@ onMounted(() => {
     </IntelSearchPanel>
 
     <IntelResultPanel>
-        <div v-if="!result" class="intel-empty">
-            {{ t('siteIntel.domainLite.empty') }}
-        </div>
+        <EmptyState v-if="!result" :text="t('siteIntel.domainLite.empty')" />
 
         <div
             v-else
             class="intel-scroll min-h-0 flex-1 space-y-3 overflow-y-auto pr-1"
         >
             <div class="grid gap-2 sm:grid-cols-2 xl:grid-cols-4">
-                <div
-                    class="rounded-lg border border-border/70 bg-background/60 p-3"
-                >
-                    <p class="text-xs text-muted-foreground">
-                        {{ t('siteIntel.common.checkedAt') }}
-                    </p>
-                    <p class="mt-1 text-sm font-semibold">
-                        {{ formatDateTime(result.checkedAt) }}
-                    </p>
-                </div>
-                <div
-                    class="rounded-lg border border-border/70 bg-background/60 p-3"
-                >
-                    <p class="text-xs text-muted-foreground">
-                        {{ t('siteIntel.domainLite.whois') }}
-                    </p>
-                    <p class="mt-1 text-sm font-semibold">
-                        {{
-                            result.whois.available
-                                ? t('siteIntel.common.available')
-                                : t('siteIntel.common.unavailable')
-                        }}
-                    </p>
-                </div>
-                <div
-                    class="rounded-lg border border-border/70 bg-background/60 p-3"
-                >
-                    <p class="text-xs text-muted-foreground">
-                        {{ t('siteIntel.domainLite.mxCount') }}
-                    </p>
-                    <p class="mt-1 text-xl font-semibold">
-                        {{ result.dns.mx.length }}
-                    </p>
-                </div>
-                <div class="rounded-lg border p-3" :class="riskBadgeClass">
-                    <p class="text-xs">
-                        {{ t('siteIntel.domainLite.riskScore') }}
-                    </p>
-                    <p class="mt-1 text-xl font-semibold">
-                        {{ result.risk.score }}
-                    </p>
-                    <p class="mt-1 text-[11px] leading-relaxed opacity-90">
-                        {{ t('siteIntel.domainLite.riskScoreHint') }}
-                    </p>
-                </div>
+                <MetricCard
+                    :title="t('siteIntel.common.checkedAt')"
+                    :value="formatDateTime(result.checkedAt)"
+                />
+                <MetricCard
+                    :title="t('siteIntel.domainLite.whois')"
+                    :value="
+                        result.whois.available
+                            ? t('siteIntel.common.available')
+                            : t('siteIntel.common.unavailable')
+                    "
+                />
+                <MetricCard
+                    :title="t('siteIntel.domainLite.mxCount')"
+                    :value="result.dns.mx.length"
+                />
+                <MetricCard
+                    :title="t('siteIntel.domainLite.riskScore')"
+                    :value="result.risk.score"
+                    :caption="t('siteIntel.domainLite.riskScoreHint')"
+                    :tone="
+                        result.risk.level === 'low'
+                            ? 'positive'
+                            : result.risk.level === 'medium'
+                              ? 'warning'
+                              : 'danger'
+                    "
+                />
             </div>
 
-            <div
-                class="rounded-lg border border-border/70 bg-background/60 p-3 text-xs"
+            <InfoCard
+                :title="t('siteIntel.domainLite.dnsSummary')"
+                :help-label="t('siteIntel.help.label')"
+                :help-text="t('siteIntel.domainLite.help.dns')"
             >
-                <div class="mb-2 flex items-center gap-2">
-                    <p class="font-semibold">
-                        {{ t('siteIntel.domainLite.dnsSummary') }}
-                    </p>
-                    <HelpTooltip
-                        :label="t('siteIntel.help.label')"
-                        :text="t('siteIntel.domainLite.help.dns')"
-                    />
-                </div>
-                <p>
-                    {{ t('siteIntel.domainLite.aRecords') }}:
-                    {{ result.dns.a.join(', ') || '-' }}
-                </p>
-                <p class="mt-1">
-                    {{ t('siteIntel.domainLite.aaaaRecords') }}:
-                    {{ result.dns.aaaa.join(', ') || '-' }}
-                </p>
-                <p class="mt-1">
-                    {{ t('siteIntel.domainLite.nsRecords') }}:
-                    {{ result.dns.ns.join(', ') || '-' }}
-                </p>
-                <p class="mt-1">
-                    {{ t('siteIntel.domainLite.mxRecords') }}:
-                    {{
-                        result.dns.mx
-                            .map(
-                                (record) =>
-                                    `${record.host} (${record.priority})`
-                            )
-                            .join(', ') || '-'
-                    }}
-                </p>
-                <p class="mt-1">
-                    {{ t('siteIntel.domainLite.spf') }}:
-                    {{
-                        result.dns.emailSecurity.hasSpf
-                            ? t('siteIntel.common.yes')
-                            : t('siteIntel.common.no')
-                    }}
-                </p>
-                <p class="mt-1">
-                    {{ t('siteIntel.domainLite.dmarc') }}:
-                    {{
-                        result.dns.emailSecurity.hasDmarc
-                            ? t('siteIntel.common.yes')
-                            : t('siteIntel.common.no')
-                    }}
-                </p>
-            </div>
+                <KeyValueList
+                    :items="[
+                        {
+                            label: t('siteIntel.domainLite.aRecords'),
+                            value: result.dns.a.join(', ') || '-',
+                        },
+                        {
+                            label: t('siteIntel.domainLite.aaaaRecords'),
+                            value: result.dns.aaaa.join(', ') || '-',
+                        },
+                        {
+                            label: t('siteIntel.domainLite.nsRecords'),
+                            value: result.dns.ns.join(', ') || '-',
+                        },
+                        {
+                            label: t('siteIntel.domainLite.mxRecords'),
+                            value:
+                                result.dns.mx
+                                    .map(
+                                        (record) =>
+                                            `${record.host} (${record.priority})`
+                                    )
+                                    .join(', ') || '-',
+                        },
+                        {
+                            label: t('siteIntel.domainLite.spf'),
+                            value: result.dns.emailSecurity.hasSpf
+                                ? t('siteIntel.common.yes')
+                                : t('siteIntel.common.no'),
+                        },
+                        {
+                            label: t('siteIntel.domainLite.dmarc'),
+                            value: result.dns.emailSecurity.hasDmarc
+                                ? t('siteIntel.common.yes')
+                                : t('siteIntel.common.no'),
+                        },
+                    ]"
+                />
+            </InfoCard>
 
-            <div
-                class="rounded-lg border border-border/70 bg-background/60 p-3 text-xs"
+            <InfoCard
+                :title="t('siteIntel.domainLite.whois')"
+                :help-label="t('siteIntel.help.label')"
+                :help-text="t('siteIntel.domainLite.help.whois')"
             >
-                <div class="mb-2 flex items-center gap-2">
-                    <p class="font-semibold">
-                        {{ t('siteIntel.domainLite.whois') }}
-                    </p>
-                    <HelpTooltip
-                        :label="t('siteIntel.help.label')"
-                        :text="t('siteIntel.domainLite.help.whois')"
-                    />
-                </div>
-                <p>
-                    {{ t('siteIntel.domainLite.whoisServer') }}:
-                    {{ result.whois.server || '-' }}
-                </p>
-                <p class="mt-1">
-                    {{ t('siteIntel.domainLite.createdAt') }}:
-                    {{ formatDateTime(result.whois.createdAt) }}
-                </p>
-                <p class="mt-1">
-                    {{ t('siteIntel.domainLite.updatedAt') }}:
-                    {{ formatDateTime(result.whois.updatedAt) }}
-                </p>
-                <p class="mt-1">
-                    {{ t('siteIntel.domainLite.expiresAt') }}:
-                    {{ formatDateTime(result.whois.expiresAt) }}
-                </p>
-                <p class="mt-1">
-                    {{ t('siteIntel.domainLite.domainAgeDays') }}:
-                    {{ formatDays(result.whois.timing.domainAgeDays) }}
-                </p>
-                <p class="mt-1">
-                    {{ t('siteIntel.domainLite.daysToExpiry') }}:
-                    {{ formatDays(result.whois.timing.daysToExpiry) }}
-                </p>
-                <p class="mt-1">
-                    {{ t('siteIntel.domainLite.registrar') }}:
-                    {{ result.whois.registrar || '-' }}
-                </p>
-                <p class="mt-1">
-                    {{ t('siteIntel.domainLite.country') }}:
-                    {{ result.whois.country || '-' }}
-                </p>
-            </div>
+                <KeyValueList
+                    :items="[
+                        {
+                            label: t('siteIntel.domainLite.whoisServer'),
+                            value: result.whois.server || '-',
+                        },
+                        {
+                            label: t('siteIntel.domainLite.createdAt'),
+                            value: formatDateTime(result.whois.createdAt),
+                        },
+                        {
+                            label: t('siteIntel.domainLite.updatedAt'),
+                            value: formatDateTime(result.whois.updatedAt),
+                        },
+                        {
+                            label: t('siteIntel.domainLite.expiresAt'),
+                            value: formatDateTime(result.whois.expiresAt),
+                        },
+                        {
+                            label: t('siteIntel.domainLite.domainAgeDays'),
+                            value: formatDays(
+                                result.whois.timing.domainAgeDays
+                            ),
+                        },
+                        {
+                            label: t('siteIntel.domainLite.daysToExpiry'),
+                            value: formatDays(result.whois.timing.daysToExpiry),
+                        },
+                        {
+                            label: t('siteIntel.domainLite.registrar'),
+                            value: result.whois.registrar || '-',
+                        },
+                        {
+                            label: t('siteIntel.domainLite.country'),
+                            value: result.whois.country || '-',
+                        },
+                    ]"
+                />
+            </InfoCard>
 
-            <div
-                class="rounded-lg border border-border/70 bg-background/60 p-3 text-xs"
-            >
-                <p class="mb-2 font-semibold">
-                    {{ t('siteIntel.domainLite.emailSecurity') }}
-                </p>
-                <p>
-                    {{ t('siteIntel.domainLite.spf') }}:
-                    {{
-                        result.dns.emailSecurity.hasSpf
-                            ? t('siteIntel.common.yes')
-                            : t('siteIntel.common.no')
-                    }}
-                </p>
-                <p class="mt-1">
-                    {{ t('siteIntel.domainLite.spfPolicy') }}:
-                    {{ result.dns.emailSecurity.spfPolicy.allQualifier ?? '-' }}
-                </p>
-                <p class="mt-1">
-                    {{ t('siteIntel.domainLite.spfIncludeCount') }}:
-                    {{ result.dns.emailSecurity.spfPolicy.includeCount }}
-                </p>
-                <p class="mt-1">
-                    {{ t('siteIntel.domainLite.dmarcPolicy') }}:
-                    {{ result.dns.emailSecurity.dmarcPolicy.policy ?? '-' }}
-                </p>
-                <p class="mt-1">
-                    {{ t('siteIntel.domainLite.dmarcPct') }}:
-                    {{ result.dns.emailSecurity.dmarcPolicy.percentage ?? '-' }}
-                </p>
-                <p class="mt-1">
-                    {{ t('siteIntel.domainLite.dnssec') }}:
-                    {{
-                        result.dns.dnssec.enabled
-                            ? t('siteIntel.common.yes')
-                            : t('siteIntel.common.no')
-                    }}
-                    (DNSKEY: {{ result.dns.dnssec.dnskeyCount }})
-                </p>
-            </div>
+            <InfoCard :title="t('siteIntel.domainLite.emailSecurity')">
+                <KeyValueList
+                    :items="[
+                        {
+                            label: t('siteIntel.domainLite.spf'),
+                            value: result.dns.emailSecurity.hasSpf
+                                ? t('siteIntel.common.yes')
+                                : t('siteIntel.common.no'),
+                        },
+                        {
+                            label: t('siteIntel.domainLite.spfPolicy'),
+                            value:
+                                result.dns.emailSecurity.spfPolicy
+                                    .allQualifier ?? '-',
+                        },
+                        {
+                            label: t('siteIntel.domainLite.spfIncludeCount'),
+                            value: result.dns.emailSecurity.spfPolicy
+                                .includeCount,
+                        },
+                        {
+                            label: t('siteIntel.domainLite.dmarcPolicy'),
+                            value:
+                                result.dns.emailSecurity.dmarcPolicy.policy ??
+                                '-',
+                        },
+                        {
+                            label: t('siteIntel.domainLite.dmarcPct'),
+                            value:
+                                result.dns.emailSecurity.dmarcPolicy
+                                    .percentage ?? '-',
+                        },
+                        {
+                            label: t('siteIntel.domainLite.dnssec'),
+                            value: `${
+                                result.dns.dnssec.enabled
+                                    ? t('siteIntel.common.yes')
+                                    : t('siteIntel.common.no')
+                            } (DNSKEY: ${result.dns.dnssec.dnskeyCount})`,
+                        },
+                    ]"
+                />
+            </InfoCard>
 
-            <div
-                class="rounded-lg border border-border/70 bg-background/60 p-3 text-xs"
+            <InfoCard
+                :title="t('siteIntel.domainLite.riskSignals')"
+                :help-label="t('siteIntel.help.label')"
+                :help-text="t('siteIntel.domainLite.help.risk')"
             >
-                <div class="mb-2 flex items-center gap-2">
-                    <p class="font-semibold">
-                        {{ t('siteIntel.domainLite.riskSignals') }}
-                    </p>
-                    <HelpTooltip
-                        :label="t('siteIntel.help.label')"
-                        :text="t('siteIntel.domainLite.help.risk')"
-                    />
-                </div>
                 <p
                     v-if="result.risk.signals.length === 0"
-                    class="text-emerald-300"
+                    class="intel-status-positive"
                 >
                     {{ t('siteIntel.domainLite.noRiskSignals') }}
                 </p>
@@ -332,17 +282,12 @@ onMounted(() => {
                         {{ signalLabel(signal) }}
                     </li>
                 </ul>
-            </div>
+            </InfoCard>
 
-            <div
-                class="rounded-lg border border-border/70 bg-background/60 p-3 text-xs"
-            >
-                <p class="mb-2 font-semibold">
-                    {{ t('siteIntel.domainLite.riskBreakdown') }}
-                </p>
+            <InfoCard :title="t('siteIntel.domainLite.riskBreakdown')">
                 <p
                     v-if="result.risk.breakdown.length === 0"
-                    class="text-emerald-300"
+                    class="intel-status-positive"
                 >
                     {{ t('siteIntel.domainLite.noRiskBreakdown') }}
                 </p>
@@ -350,7 +295,7 @@ onMounted(() => {
                     <div
                         v-for="entry in result.risk.breakdown"
                         :key="`${entry.key}-${entry.points}`"
-                        class="rounded border border-border/50 bg-background/40 px-2 py-1.5"
+                        class="intel-list-card"
                     >
                         <p class="font-medium">{{ signalLabel(entry.key) }}</p>
                         <p class="text-muted-foreground">
@@ -359,20 +304,17 @@ onMounted(() => {
                         </p>
                     </div>
                 </div>
-            </div>
+            </InfoCard>
 
-            <div
+            <InfoCard
                 v-if="result.whois.sample"
-                class="rounded-lg border border-border/70 bg-background/60 p-3 text-xs"
+                :title="t('siteIntel.domainLite.whoisSample')"
             >
-                <p class="mb-2 font-semibold">
-                    {{ t('siteIntel.domainLite.whoisSample') }}
-                </p>
                 <pre
                     class="overflow-x-auto text-[11px] whitespace-pre-wrap text-muted-foreground"
                     >{{ result.whois.sample }}</pre
                 >
-            </div>
+            </InfoCard>
         </div>
     </IntelResultPanel>
 </template>
