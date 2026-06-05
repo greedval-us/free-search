@@ -27,7 +27,7 @@ const { t } = useI18n();
         <article
             v-for="hashtag in hashtags"
             :key="hashtag.name"
-            class="rounded-lg border border-border/80 bg-background/70 p-3"
+            class="intel-result-card"
         >
             <div class="flex items-center justify-between gap-3">
                 <div>
@@ -196,7 +196,7 @@ const { t } = useI18n();
                                     ensureHashtagDetailsState(hashtag.name)
                                         .loadingMore
                                 "
-                                class="cursor-pointer rounded-md border border-input bg-background px-3 py-2 text-xs font-medium hover:bg-accent disabled:cursor-not-allowed disabled:opacity-60"
+                                class="intel-expand-button"
                                 @click="loadMoreHashtagStatuses(hashtag.name)"
                             >
                                 {{

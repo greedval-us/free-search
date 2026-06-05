@@ -65,7 +65,7 @@ const { t } = useI18n();
             <button
                 type="button"
                 :disabled="state.loadingMore"
-                class="cursor-pointer rounded-md border border-input bg-background px-3 py-2 text-xs font-medium hover:bg-accent disabled:cursor-not-allowed disabled:opacity-60"
+                class="intel-expand-button"
                 @click="loadMore(post, true)"
             >
                 {{

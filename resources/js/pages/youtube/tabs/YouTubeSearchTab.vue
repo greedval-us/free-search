@@ -574,7 +574,7 @@ onMounted(() => {
                     <article
                         v-for="video in result?.items ?? []"
                         :key="video.id"
-                        class="relative rounded-lg border border-border/80 bg-background/70 p-3"
+                        class="intel-result-card relative"
                     >
                         <div class="flex gap-3">
                             <img
@@ -634,7 +634,7 @@ onMounted(() => {
                                         :href="video.url"
                                         target="_blank"
                                         rel="noopener noreferrer"
-                                        class="cursor-pointer rounded-full border border-input px-2 py-1 text-xs text-primary hover:bg-accent"
+                                        class="intel-link-pill"
                                     >
                                         <ExternalLink
                                             class="mr-1 inline h-3 w-3"
@@ -644,7 +644,7 @@ onMounted(() => {
                                     <button
                                         v-if="canUseVideoActions(video)"
                                         type="button"
-                                        class="cursor-pointer rounded-full border border-input px-3 py-1 text-xs font-medium text-foreground hover:bg-accent"
+                                        class="intel-action"
                                         @click="toggleComments(video)"
                                     >
                                         {{
@@ -662,7 +662,7 @@ onMounted(() => {
                                         canUseVideoActions(video) &&
                                         ensureCommentState(video.id).open
                                     "
-                                    class="mt-3 rounded-lg border border-border/70 bg-card/60 p-3"
+                                    class="intel-subsection mt-3"
                                 >
                                     <p
                                         v-if="
@@ -695,7 +695,7 @@ onMounted(() => {
                                                 video.id
                                             ).items"
                                             :key="comment.id"
-                                            class="rounded-md border border-border/70 bg-background/70 p-2"
+                                            class="intel-list-card"
                                         >
                                             <div
                                                 class="mb-1 flex flex-wrap items-center gap-2 text-[11px] text-muted-foreground"
@@ -746,7 +746,7 @@ onMounted(() => {
                                             >
                                                 <button
                                                     type="button"
-                                                    class="cursor-pointer rounded-full border border-input px-2.5 py-1 text-[11px] font-medium text-foreground hover:bg-accent"
+                                                    class="intel-action text-[11px]"
                                                     @click="
                                                         toggleReplies(
                                                             video.id,
@@ -780,7 +780,7 @@ onMounted(() => {
                                                 <article
                                                     v-for="reply in comment.replies"
                                                     :key="reply.id"
-                                                    class="rounded-md border border-border/60 bg-background/80 p-2"
+                                                    class="intel-list-card"
                                                 >
                                                     <div
                                                         class="mb-1 flex flex-wrap items-center gap-2 text-[11px] text-muted-foreground"
@@ -838,7 +838,7 @@ onMounted(() => {
                                                     ensureCommentState(video.id)
                                                         .loadingMore
                                                 "
-                                                class="cursor-pointer rounded-md border border-input bg-background px-3 py-1 text-xs font-medium hover:bg-accent disabled:cursor-not-allowed disabled:opacity-60"
+                                                class="intel-expand-button px-3 py-1"
                                                 @click="
                                                     loadComments(video, true)
                                                 "
@@ -870,7 +870,7 @@ onMounted(() => {
             >
                 <button
                     :disabled="loadingMore"
-                    class="cursor-pointer rounded-md border border-input bg-background px-4 py-2 text-sm font-medium hover:bg-accent disabled:cursor-not-allowed disabled:opacity-60"
+                    class="intel-button-secondary h-auto px-4 py-2"
                     @click="runSearch(true)"
                 >
                     {{

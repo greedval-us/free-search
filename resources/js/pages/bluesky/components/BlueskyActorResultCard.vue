@@ -100,7 +100,7 @@ const { t } = useI18n();
                         <button
                             type="button"
                             :disabled="state.postsLoadingMore"
-                            class="cursor-pointer rounded-md border border-input bg-background px-3 py-2 text-xs font-medium hover:bg-accent disabled:cursor-not-allowed disabled:opacity-60"
+                            class="intel-expand-button"
                             @click="loadActorPosts(actor, true)"
                         >
                             {{
@@ -145,7 +145,7 @@ const { t } = useI18n();
                         <button
                             type="button"
                             :disabled="state.followersLoadingMore"
-                            class="cursor-pointer rounded-md border border-input bg-background px-3 py-2 text-xs font-medium hover:bg-accent disabled:cursor-not-allowed disabled:opacity-60"
+                            class="intel-expand-button"
                             @click="loadActorFollowers(actor, true)"
                         >
                             {{
@@ -190,7 +190,7 @@ const { t } = useI18n();
                         <button
                             type="button"
                             :disabled="state.followsLoadingMore"
-                            class="cursor-pointer rounded-md border border-input bg-background px-3 py-2 text-xs font-medium hover:bg-accent disabled:cursor-not-allowed disabled:opacity-60"
+                            class="intel-expand-button"
                             @click="loadActorFollows(actor, true)"
                         >
                             {{

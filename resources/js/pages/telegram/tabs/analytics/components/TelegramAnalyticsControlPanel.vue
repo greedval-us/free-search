@@ -97,7 +97,7 @@ const inputValue = (event: Event) => (event.target as HTMLInputElement).value;
                 <input
                     :value="chatUsername"
                     type="text"
-                    class="h-10 w-full rounded-md border border-input bg-background px-3 text-sm"
+                    class="intel-input"
                     :placeholder="t('telegram.search.placeholderChannel')"
                     @input="emit('update:chatUsername', inputValue($event))"
                 />
@@ -111,7 +111,7 @@ const inputValue = (event: Event) => (event.target as HTMLInputElement).value;
                 <input
                     :value="keyword"
                     type="text"
-                    class="h-10 w-full rounded-md border border-input bg-background px-3 text-sm"
+                    class="intel-input"
                     :placeholder="t('telegram.search.placeholderKeyword')"
                     @input="emit('update:keyword', inputValue($event))"
                 />
@@ -123,13 +123,13 @@ const inputValue = (event: Event) => (event.target as HTMLInputElement).value;
                     >{{ t('telegram.analytics.filters.period') }}</span
                 >
                 <div
-                    class="grid h-10 grid-cols-3 gap-1 rounded-md border border-input bg-background p-1"
+                    class="grid h-10 grid-cols-3 gap-1 rounded-xl border border-input bg-background p-1"
                 >
                     <button
                         v-for="period in periods"
                         :key="period"
                         type="button"
-                        class="cursor-pointer rounded-md px-2 text-xs transition"
+                        class="cursor-pointer rounded-lg px-2 text-xs transition"
                         :class="
                             periodDays === period && !dateFrom && !dateTo
                                 ? 'bg-primary/15 text-primary'
@@ -152,7 +152,7 @@ const inputValue = (event: Event) => (event.target as HTMLInputElement).value;
                     type="date"
                     :min="dateLimits.fromMin ?? undefined"
                     :max="dateLimits.fromMax ?? undefined"
-                    class="h-10 w-full rounded-md border border-input bg-background px-3 text-sm"
+                    class="intel-input"
                     @input="emit('update:dateFrom', inputValue($event))"
                 />
             </label>
@@ -167,14 +167,14 @@ const inputValue = (event: Event) => (event.target as HTMLInputElement).value;
                     type="date"
                     :min="dateLimits.toMin ?? undefined"
                     :max="dateLimits.toMax ?? undefined"
-                    class="h-10 w-full rounded-md border border-input bg-background px-3 text-sm"
+                    class="intel-input"
                     @input="emit('update:dateTo', inputValue($event))"
                 />
             </label>
         </div>
 
         <div
-            class="flex flex-wrap items-end justify-between gap-3 rounded-md border border-border/70 bg-background/60 p-2.5"
+            class="flex flex-wrap items-end justify-between gap-3 rounded-xl border border-border/70 bg-background/60 p-2.5"
         >
             <div class="min-w-0 flex-1">
                 <p
@@ -187,7 +187,7 @@ const inputValue = (event: Event) => (event.target as HTMLInputElement).value;
                         v-for="priority in priorities"
                         :key="priority"
                         type="button"
-                        class="h-8 cursor-pointer rounded-md border px-2.5 text-xs font-medium transition"
+                        class="h-8 cursor-pointer rounded-lg border px-2.5 text-xs font-medium transition"
                         :class="
                             scorePriority === priority
                                 ? 'border-primary/50 bg-primary/15 text-primary'
@@ -203,7 +203,7 @@ const inputValue = (event: Event) => (event.target as HTMLInputElement).value;
             <div class="flex w-full flex-wrap justify-end gap-2 md:w-auto">
                 <button
                     type="button"
-                    class="inline-flex h-10 cursor-pointer items-center gap-2 rounded-md border border-input bg-background px-3 text-sm text-foreground transition hover:bg-accent"
+                    class="intel-button-secondary px-3"
                     @click="emit('update:collapsed', true)"
                 >
                     <Settings class="h-4 w-4" />
@@ -213,7 +213,7 @@ const inputValue = (event: Event) => (event.target as HTMLInputElement).value;
                 <button
                     type="button"
                     :disabled="loading || !canLoadAnalytics"
-                    class="inline-flex h-10 cursor-pointer items-center gap-2 rounded-md border border-input bg-background px-4 text-sm font-medium hover:bg-accent disabled:cursor-not-allowed disabled:opacity-60"
+                    class="intel-button-secondary"
                     @click="emit('load')"
                 >
                     <RefreshCw
@@ -230,7 +230,7 @@ const inputValue = (event: Event) => (event.target as HTMLInputElement).value;
                 <button
                     type="button"
                     :disabled="!canUseReportActions"
-                    class="inline-flex h-10 cursor-pointer items-center gap-2 rounded-md bg-primary px-4 text-sm font-semibold text-primary-foreground hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-60"
+                    class="intel-button-primary"
                     @click="emit('openReport')"
                 >
                     <FileText class="h-4 w-4" />
@@ -240,7 +240,7 @@ const inputValue = (event: Event) => (event.target as HTMLInputElement).value;
                 <button
                     type="button"
                     :disabled="!canUseReportActions"
-                    class="inline-flex h-10 cursor-pointer items-center gap-2 rounded-md border border-input bg-background px-4 text-sm font-medium hover:bg-accent disabled:cursor-not-allowed disabled:opacity-60"
+                    class="intel-button-secondary"
                     @click="emit('downloadReport')"
                 >
                     <Download class="h-4 w-4" />

@@ -42,7 +42,7 @@ const mediaPreviewUrl = (post: BlueskyPost): string => {
 </script>
 
 <template>
-    <article class="rounded-lg border border-border/80 bg-background/70 p-4">
+    <article class="intel-result-card-strong">
         <div class="flex items-start justify-between gap-3">
             <div class="min-w-0 space-y-1">
                 <div class="flex flex-wrap items-center gap-2">
@@ -92,7 +92,7 @@ const mediaPreviewUrl = (post: BlueskyPost): string => {
                     :href="image.fullsize || image.thumb"
                     target="_blank"
                     rel="noopener noreferrer"
-                    class="overflow-hidden rounded-md border border-border/70"
+                    class="overflow-hidden rounded-lg border border-border/70"
                 >
                     <img
                         :src="image.thumb || image.fullsize"
@@ -333,7 +333,7 @@ const mediaPreviewUrl = (post: BlueskyPost): string => {
                         <div
                             v-for="ancestor in threadState.ancestors"
                             :key="ancestor.id"
-                            class="rounded-md border border-border/70 bg-background/70 p-3"
+                            class="intel-list-card"
                         >
                             <div class="mb-1 flex flex-wrap items-center gap-2">
                                 <a
@@ -368,7 +368,7 @@ const mediaPreviewUrl = (post: BlueskyPost): string => {
                         <div
                             v-for="reply in threadState.replies"
                             :key="reply.id"
-                            class="rounded-md border border-border/70 bg-background/70 p-3"
+                            class="intel-list-card"
                         >
                             <div class="mb-1 flex flex-wrap items-center gap-2">
                                 <a
@@ -397,7 +397,7 @@ const mediaPreviewUrl = (post: BlueskyPost): string => {
                                 <div
                                     v-for="child in reply.replies"
                                     :key="child.id"
-                                    class="rounded-md border border-border/70 bg-background/60 p-3"
+                                    class="intel-list-card"
                                 >
                                     <div
                                         class="mb-1 flex flex-wrap items-center gap-2"

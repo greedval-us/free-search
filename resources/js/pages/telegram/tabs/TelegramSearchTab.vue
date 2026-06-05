@@ -245,7 +245,7 @@ onMounted(() => {
                         v-for="item in items"
                         :key="item.id"
                         :data-post-id="item.id"
-                        class="relative rounded-lg border border-border/80 bg-background/70 p-3"
+                        class="intel-result-card relative"
                     >
                         <div
                             class="mb-2 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-muted-foreground"
@@ -291,7 +291,7 @@ onMounted(() => {
                                 :href="item.telegramUrl"
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                class="cursor-pointer rounded-full border border-input px-2 py-1 text-xs text-primary hover:bg-accent"
+                                class="intel-link-pill"
                             >
                                 {{ t('telegram.messages.openInTelegram') }}
                             </a>
@@ -309,7 +309,7 @@ onMounted(() => {
                             <button
                                 v-if="item.media.hasMedia"
                                 type="button"
-                                class="cursor-pointer rounded-full border border-input px-3 py-1 text-xs font-medium text-foreground hover:bg-accent"
+                                class="intel-action"
                                 @click="toggleMedia(item.id)"
                             >
                                 {{
@@ -376,7 +376,7 @@ onMounted(() => {
                                         <p
                                             v-for="senderId in reaction.senderIds"
                                             :key="`${item.id}-${reaction.key}-sender-${senderId}`"
-                                            class="rounded-md border border-input/70 bg-background/70 px-2 py-1 text-xs"
+                                            class="intel-list-card"
                                         >
                                             {{ t('telegram.popover.id') }}:
                                             {{ senderId }}
@@ -390,9 +390,7 @@ onMounted(() => {
                                 :key="`${item.id}-${gift.key}`"
                                 class="relative inline-flex items-center gap-1"
                             >
-                                <span
-                                    class="rounded-full border border-amber-400/40 bg-amber-400/10 px-2 py-1 text-xs text-amber-600 dark:text-amber-300"
-                                >
+                                <span class="intel-warning-badge">
                                     {{ gift.label }}
                                 </span>
 
@@ -442,7 +440,7 @@ onMounted(() => {
                                         <p
                                             v-for="senderId in gift.senderIds"
                                             :key="`${item.id}-${gift.key}-sender-${senderId}`"
-                                            class="rounded-md border border-amber-400/30 bg-background/70 px-2 py-1 text-xs"
+                                            class="intel-list-card"
                                         >
                                             {{ t('telegram.popover.id') }}:
                                             {{ senderId }}
@@ -454,7 +452,7 @@ onMounted(() => {
                             <button
                                 v-if="(item.repliesCount ?? 0) > 0"
                                 type="button"
-                                class="cursor-pointer rounded-full border border-input px-3 py-1 text-xs font-medium text-foreground hover:bg-accent"
+                                class="intel-action"
                                 @click="toggleComments(item.id)"
                             >
                                 {{
@@ -468,7 +466,7 @@ onMounted(() => {
 
                         <div
                             v-if="item.media.hasMedia && isMediaOpen(item.id)"
-                            class="mt-3 overflow-hidden rounded-lg border border-border/70 bg-card/60 p-3"
+                            class="intel-subsection mt-3 overflow-hidden"
                         >
                             <img
                                 v-if="item.media.type === 'photo'"
@@ -507,7 +505,7 @@ onMounted(() => {
                                     :href="getMediaUrl(item.id)"
                                     target="_blank"
                                     rel="noopener noreferrer"
-                                    class="cursor-pointer rounded-md border border-input px-3 py-1 text-xs font-medium text-primary hover:bg-accent"
+                                    class="intel-button-secondary h-auto rounded-lg px-3 py-1 text-xs"
                                 >
                                     {{ t('telegram.messages.openFile') }}
                                 </a>
@@ -516,14 +514,12 @@ onMounted(() => {
 
                         <div
                             v-if="getCommentState(item.id).open"
-                            class="mt-3 rounded-lg border border-border/70 bg-card/60 p-3"
+                            class="intel-subsection mt-3"
                         >
                             <div class="mb-2 flex items-center justify-between">
                                 <p class="text-[11px] text-muted-foreground">
                                     {{ t('telegram.comments.title') }}:
-                                    {{
-                                        getCommentState(item.id).items.length
-                                    }}
+                                    {{ getCommentState(item.id).items.length }}
                                     /
                                     {{
                                         getCommentState(item.id).total ||
@@ -566,7 +562,7 @@ onMounted(() => {
                                     v-for="comment in getCommentState(item.id)
                                         .items"
                                     :key="`${item.id}-comment-${comment.id}`"
-                                    class="rounded-md border border-border/70 bg-background/70 p-2"
+                                    class="intel-list-card"
                                 >
                                     <div
                                         class="mb-1 flex flex-wrap items-center gap-2 text-[11px] text-muted-foreground"
@@ -603,7 +599,7 @@ onMounted(() => {
                                 <button
                                     type="button"
                                     :disabled="getCommentState(item.id).loading"
-                                    class="cursor-pointer rounded-md border border-input px-3 py-1 text-xs font-medium text-foreground hover:bg-accent disabled:cursor-not-allowed disabled:opacity-60"
+                                    class="intel-expand-button px-3 py-1"
                                     @click="loadComments(item.id, true)"
                                 >
                                     {{ t('telegram.comments.loadMore') }}
@@ -638,7 +634,7 @@ onMounted(() => {
             <div v-if="hasMore" class="mt-4 flex justify-center">
                 <button
                     :disabled="loadingMore"
-                    class="cursor-pointer rounded-md border border-input bg-background px-4 py-2 text-sm font-medium hover:bg-accent disabled:cursor-not-allowed disabled:opacity-60"
+                    class="intel-button-secondary h-auto px-4 py-2"
                     @click="searchMessages(true)"
                 >
                     {{

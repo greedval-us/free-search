@@ -393,6 +393,30 @@
         @apply rounded-xl border border-sidebar-border/70 bg-background/40 p-3;
     }
 
+    .intel-result-card {
+        @apply rounded-xl border border-border/80 bg-background/70 p-3;
+    }
+
+    .intel-result-card-strong {
+        @apply rounded-xl border border-border/80 bg-background/70 p-4;
+    }
+
+    .intel-expand-button {
+        @apply cursor-pointer rounded-xl border border-input bg-background px-3 py-2 text-xs font-medium hover:bg-accent disabled:cursor-not-allowed disabled:opacity-60;
+    }
+
+    .intel-link-pill {
+        @apply cursor-pointer rounded-full border border-input px-2 py-1 text-xs text-primary hover:bg-accent;
+    }
+
+    .intel-accent-badge {
+        @apply rounded-full border border-cyan-500/30 bg-cyan-500/10 px-2 py-1 text-xs text-cyan-700;
+    }
+
+    .intel-warning-badge {
+        @apply rounded-full border border-amber-400/40 bg-amber-400/10 px-2 py-1 text-xs text-amber-600 dark:text-amber-300;
+    }
+
     .intel-badge-count {
         @apply rounded-full bg-primary/10 px-2 py-0.5 text-[11px] text-muted-foreground;
     }

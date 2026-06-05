@@ -69,7 +69,7 @@ const hasDetails = computed(() => Boolean(slots.details));
 </script>
 
 <template>
-    <article class="rounded-md border border-border/70 bg-background/70 p-3">
+    <article class="intel-result-card">
         <div class="mb-2 flex items-center gap-3">
             <img
                 v-if="status.account.avatar"
@@ -92,7 +92,7 @@ const hasDetails = computed(() => Boolean(slots.details));
 
         <p
             v-if="status.spoilerText"
-            class="mb-2 rounded-md border border-amber-500/30 bg-amber-500/10 px-2 py-1 text-[11px] text-amber-700"
+            class="intel-warning-badge mb-2 rounded-md"
         >
             {{ status.spoilerText }}
         </p>
