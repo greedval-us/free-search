@@ -60,18 +60,6 @@ const addNestedParams = (
     });
 };
 
-const clearParamFamily = (params: URLSearchParams, key: string) => {
-    const toDelete = new Set<string>();
-
-    params.forEach((_, paramKey) => {
-        if (paramKey === key || paramKey.startsWith(`${key}[`)) {
-            toDelete.add(paramKey);
-        }
-    });
-
-    toDelete.forEach((paramKey) => params.delete(paramKey));
-};
-
 export const queryParams = (options?: RouteQueryOptions) => {
     if (!options || (!options.query && !options.mergeQuery)) {
         return "";
@@ -89,19 +77,26 @@ export const queryParams = (options?: RouteQueryOptions) => {
     for (const key in query) {
         const queryValue = query[key];
 
-        if (includeExisting) {
-            clearParamFamily(params, key);
-        }
-
         if (queryValue === undefined || queryValue === null) {
+            params.delete(key);
             continue;
         }
 
         if (Array.isArray(queryValue)) {
+            if (params.has(`${key}[]`)) {
+                params.delete(`${key}[]`);
+            }
+
             queryValue.forEach((value) => {
                 params.append(`${key}[]`, value.toString());
             });
         } else if (typeof queryValue === "object") {
+            params.forEach((_, paramKey) => {
+                if (paramKey.startsWith(`${key}[`)) {
+                    params.delete(paramKey);
+                }
+            });
+
             addNestedParams(queryValue, key, params);
         } else {
             params.set(key, getValue(queryValue));
@@ -121,12 +116,10 @@ export const addUrlDefault = (
     key: string,
     value: string | number | boolean,
 ) => {
-    const previousDefaults = urlDefaults;
+    const params = urlDefaults();
+    params[key] = value;
 
-    urlDefaults = () => ({
-        ...previousDefaults(),
-        [key]: value,
-    });
+    urlDefaults = () => params;
 };
 
 export const applyUrlDefaults = <T extends UrlDefaults | undefined>(
