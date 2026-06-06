@@ -8,7 +8,6 @@ import type {
     MastodonHashtagDetailsState,
     MastodonSearchForm,
     MastodonSearchPayload,
-    MastodonStatus,
     MastodonStatusContextPayload,
     MastodonStatusContextState,
     MastodonTagTimelinePayload,

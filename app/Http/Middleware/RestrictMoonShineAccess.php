@@ -15,16 +15,12 @@ class RestrictMoonShineAccess
      */
     public function handle(Request $request, Closure $next): Response
     {
-        $enforce = (bool) env('MOONSHINE_ENFORCE_IP_ALLOWLIST', false);
+        $enforce = (bool) config('moonshine.security.enforce_ip_allowlist', false);
         if (!$enforce || !app()->environment('production')) {
             return $next($request);
         }
 
-        $allowed = collect(explode(',', (string) env('MOONSHINE_ALLOWED_IPS', '')))
-            ->map(static fn (string $ip): string => trim($ip))
-            ->filter(static fn (string $ip): bool => $ip !== '')
-            ->values()
-            ->all();
+        $allowed = config('moonshine.security.allowed_ips', []);
 
         if ($allowed === []) {
             abort(403);

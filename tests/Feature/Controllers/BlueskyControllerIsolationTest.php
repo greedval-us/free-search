@@ -350,6 +350,8 @@ class BlueskyControllerIsolationTest extends TestCase
 
     public function test_bluesky_analytics_report_renders_html_response(): void
     {
+        $this->skipOnWindowsBladeLock();
+
         $user = $this->createSubscribedUser();
 
         $this->mock(BlueskyAnalyticsApplicationServiceInterface::class, function ($mock): void {

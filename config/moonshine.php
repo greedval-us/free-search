@@ -84,6 +84,22 @@ return [
         'pipelines' => [],
     ],
 
+    'security' => [
+        'enforce_ip_allowlist' => env('MOONSHINE_ENFORCE_IP_ALLOWLIST', false),
+        'allowed_ips' => array_values(array_filter(array_map(
+            static fn (string $ip): string => trim($ip),
+            explode(',', (string) env('MOONSHINE_ALLOWED_IPS', ''))
+        ))),
+        'login_max_attempts' => max(1, (int) env('MOONSHINE_LOGIN_MAX_ATTEMPTS', 3)),
+        'login_decay_seconds' => max(15, (int) env('MOONSHINE_LOGIN_DECAY_SECONDS', 60)),
+    ],
+
+    'alerts' => [
+        'login_channel' => env('MOONSHINE_LOGIN_ALERT_CHANNEL', 'stack'),
+        'login_email_enabled' => env('MOONSHINE_LOGIN_ALERT_EMAIL_ENABLED', false),
+        'login_email' => env('MOONSHINE_LOGIN_ALERT_EMAIL', ''),
+    ],
+
     // Authentication and profile
     'user_fields' => [
         'username' => 'email',

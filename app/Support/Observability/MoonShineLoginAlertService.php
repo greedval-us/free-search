@@ -18,7 +18,7 @@ final class MoonShineLoginAlertService
 
     private function writeAuditLog(MoonShineLoginContext $context): void
     {
-        Log::channel((string) env('MOONSHINE_LOGIN_ALERT_CHANNEL', 'stack'))->warning('MoonShine admin login', [
+        Log::channel((string) config('moonshine.alerts.login_channel', 'stack'))->warning('MoonShine admin login', [
             'admin_id' => $context->adminId,
             'admin_email' => $context->adminEmail !== '' ? $context->adminEmail : null,
             'ip' => $context->ip,
@@ -30,8 +30,8 @@ final class MoonShineLoginAlertService
 
     private function sendEmailIfEnabled(MoonShineLoginContext $context): void
     {
-        $notify = (bool) env('MOONSHINE_LOGIN_ALERT_EMAIL_ENABLED', false);
-        $target = trim((string) env('MOONSHINE_LOGIN_ALERT_EMAIL', ''));
+        $notify = (bool) config('moonshine.alerts.login_email_enabled', false);
+        $target = trim((string) config('moonshine.alerts.login_email', ''));
         if (!$notify || $target === '') {
             return;
         }

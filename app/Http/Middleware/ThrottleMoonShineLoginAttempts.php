@@ -22,8 +22,8 @@ class ThrottleMoonShineLoginAttempts
             return $next($request);
         }
 
-        $maxAttempts = max(1, (int) env('MOONSHINE_LOGIN_MAX_ATTEMPTS', 3));
-        $decaySeconds = max(15, (int) env('MOONSHINE_LOGIN_DECAY_SECONDS', 60));
+        $maxAttempts = max(1, (int) config('moonshine.security.login_max_attempts', 3));
+        $decaySeconds = max(15, (int) config('moonshine.security.login_decay_seconds', 60));
         $key = $this->throttleKey($request);
 
         if (RateLimiter::tooManyAttempts($key, $maxAttempts)) {

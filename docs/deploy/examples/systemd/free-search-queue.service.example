@@ -1,0 +1,17 @@
+[Unit]
+Description=Free Search Laravel Queue Worker
+After=network.target
+
+[Service]
+User=www-data
+Group=www-data
+Restart=always
+RestartSec=5
+WorkingDirectory=/var/www/free-search
+ExecStart=/usr/bin/php artisan queue:work --queue=default --sleep=3 --tries=1 --max-time=3600
+Environment=APP_ENV=production
+KillSignal=SIGTERM
+TimeoutStopSec=30
+
+[Install]
+WantedBy=multi-user.target

@@ -14,10 +14,12 @@ use App\Modules\Mastodon\Search\Contracts\MastodonSearchApplicationServiceInterf
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Mockery;
 use RuntimeException;
+use Tests\Feature\Concerns\CreatesSubscribedUser;
 use Tests\TestCase;
 
 class MastodonControllerIsolationTest extends TestCase
 {
+    use CreatesSubscribedUser;
     use RefreshDatabase;
 
     public function test_mastodon_search_controller_returns_service_payload(): void
@@ -277,7 +279,7 @@ class MastodonControllerIsolationTest extends TestCase
 
     public function test_mastodon_analytics_controller_returns_summary_payload(): void
     {
-        $user = User::factory()->create();
+        $user = $this->createSubscribedUser();
 
         $this->mock(MastodonAnalyticsApplicationServiceInterface::class, function ($mock): void {
             $mock->shouldReceive('summary')
@@ -348,6 +350,8 @@ class MastodonControllerIsolationTest extends TestCase
 
     public function test_mastodon_analytics_report_renders_html_response(): void
     {
+        $this->skipOnWindowsBladeLock();
+
         $user = User::factory()->create();
 
         $this->mock(MastodonAnalyticsApplicationServiceInterface::class, function ($mock): void {

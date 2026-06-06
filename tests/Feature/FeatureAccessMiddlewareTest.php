@@ -6,6 +6,7 @@ use App\Models\FeatureUsageDaily;
 use App\Models\RequestLog;
 use App\Models\User;
 use App\Modules\YouTube\DTO\Request\YouTubeCommentsQueryDTO;
+use App\Modules\YouTube\DTO\Result\YouTubeCommentsResultDTO;
 use App\Modules\YouTube\Parser\Contracts\YouTubeParserApplicationServiceInterface;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Config;
@@ -234,12 +235,12 @@ class FeatureAccessMiddlewareTest extends TestCase
             $mock->shouldReceive('comments')
                 ->once()
                 ->with(Mockery::type(YouTubeCommentsQueryDTO::class))
-                ->andReturn([
+                ->andReturn(new YouTubeCommentsResultDTO([
                     'items' => [],
                     'pagination' => [
                         'nextPageToken' => null,
                     ],
-                ]);
+                ]));
         });
 
         $this
@@ -285,12 +286,12 @@ class FeatureAccessMiddlewareTest extends TestCase
             $mock->shouldReceive('comments')
                 ->once()
                 ->with(Mockery::type(YouTubeCommentsQueryDTO::class))
-                ->andReturn([
+                ->andReturn(new YouTubeCommentsResultDTO([
                     'items' => [],
                     'pagination' => [
                         'nextPageToken' => null,
                     ],
-                ]);
+                ]));
         });
 
         $this

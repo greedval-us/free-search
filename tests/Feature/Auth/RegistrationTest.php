@@ -19,6 +19,8 @@ class RegistrationTest extends TestCase
 
     public function test_registration_screen_can_be_rendered()
     {
+        $this->skipOnWindowsBladeLock();
+
         $response = $this->get(route('register'));
 
         $response->assertOk();
@@ -28,9 +30,9 @@ class RegistrationTest extends TestCase
     {
         $response = $this->post(route('register.store'), [
             'name' => 'Test User',
-            'email' => 'test@example.com',
-            'password' => 'password',
-            'password_confirmation' => 'password',
+            'email' => 'test@gmail.com',
+            'password' => 'StrongPass123!',
+            'password_confirmation' => 'StrongPass123!',
         ]);
 
         $this->assertAuthenticated();
@@ -41,7 +43,7 @@ class RegistrationTest extends TestCase
     {
         $response = $this->from(route('register'))->post(route('register.store'), [
             'name' => 'Тестовый Пользователь',
-            'email' => 'test@example.com',
+            'email' => 'test@gmail.com',
             'password' => 'password',
             'password_confirmation' => 'password',
         ]);
@@ -69,7 +71,7 @@ class RegistrationTest extends TestCase
     {
         $response = $this->from(route('register'))->post(route('register.store'), [
             'name' => 'Test User',
-            'email' => 'test@example.com',
+            'email' => 'test@gmail.com',
             'password' => 'password',
             'password_confirmation' => 'password',
         ]);

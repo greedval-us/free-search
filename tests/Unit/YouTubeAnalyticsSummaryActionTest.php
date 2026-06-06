@@ -27,7 +27,7 @@ class YouTubeAnalyticsSummaryActionTest extends TestCase
             new YouTubeChannelResolver($gateway, new YouTubeChannelInputNormalizer()),
         );
 
-        $summary = $action->handle(new YouTubeAnalyticsLookupDTO('channel', '', '@yoj996', 3));
+        $summary = $action->handle(new YouTubeAnalyticsLookupDTO('channel', '', '@yoj996', 3, '', ''))->toArray();
 
         $this->assertSame(FakeYouTubeAnalyticsGateway::CHANNEL_ID, $summary['channelId']);
         $this->assertSame('Resolved channel', $summary['channel']['title']);

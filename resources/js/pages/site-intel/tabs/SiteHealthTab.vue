@@ -2,10 +2,10 @@
 import { Activity } from 'lucide-vue-next';
 import { onMounted } from 'vue';
 import EmptyState from '@/components/ui/EmptyState.vue';
+import InfoCard from '@/components/ui/InfoCard.vue';
 import IntelResultPanel from '@/components/ui/IntelResultPanel.vue';
 import IntelSearchForm from '@/components/ui/IntelSearchForm.vue';
 import IntelSearchPanel from '@/components/ui/IntelSearchPanel.vue';
-import InfoCard from '@/components/ui/InfoCard.vue';
 import KeyValueList from '@/components/ui/KeyValueList.vue';
 import MetricCard from '@/components/ui/MetricCard.vue';
 import PageHeader from '@/components/ui/PageHeader.vue';

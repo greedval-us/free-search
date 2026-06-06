@@ -24,25 +24,34 @@ const resolveWayfinderCommand = () => {
     return 'php artisan wayfinder:generate';
 };
 
-export default defineConfig({
-    plugins: [
-        laravel({
-            input: ['resources/css/app.css', 'resources/js/app.ts'],
-            refresh: true,
-        }),
-        inertia(),
-        tailwindcss(),
-        vue({
-            template: {
-                transformAssetUrls: {
-                    base: null,
-                    includeAbsolute: false,
+export default defineConfig(({ command }) => {
+    const shouldRunWayfinder =
+        command === 'serve' || process.env.WAYFINDER_DURING_BUILD === 'true';
+
+    return {
+        plugins: [
+            laravel({
+                input: ['resources/css/app.css', 'resources/js/app.ts'],
+                refresh: true,
+            }),
+            inertia(),
+            tailwindcss(),
+            vue({
+                template: {
+                    transformAssetUrls: {
+                        base: null,
+                        includeAbsolute: false,
+                    },
                 },
-            },
-        }),
-        wayfinder({
-            formVariants: true,
-            command: resolveWayfinderCommand(),
-        }),
-    ],
+            }),
+            ...(shouldRunWayfinder
+                ? [
+                      wayfinder({
+                          formVariants: true,
+                          command: resolveWayfinderCommand(),
+                      }),
+                  ]
+                : []),
+        ],
+    };
 });

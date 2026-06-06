@@ -140,6 +140,11 @@ class FakeBlueskySearchGateway implements BlueskyGatewayInterface
         return ['likes' => []];
     }
 
+    public function getProfiles(array $actors): array
+    {
+        return ['profiles' => []];
+    }
+
     public function getRepostedBy(string $uri, int $limit, ?string $cursor = null): array
     {
         return ['repostedBy' => []];
@@ -148,5 +153,20 @@ class FakeBlueskySearchGateway implements BlueskyGatewayInterface
     public function getPostThread(string $uri, int $depth = 6, int $parentHeight = 6): array
     {
         return ['thread' => []];
+    }
+
+    public function getAuthorFeed(string $actor, int $limit, ?string $cursor = null, ?string $filter = null): array
+    {
+        return ['feed' => []];
+    }
+
+    public function getFollowers(string $actor, int $limit, ?string $cursor = null): array
+    {
+        return ['followers' => []];
+    }
+
+    public function getFollows(string $actor, int $limit, ?string $cursor = null): array
+    {
+        return ['follows' => []];
     }
 }

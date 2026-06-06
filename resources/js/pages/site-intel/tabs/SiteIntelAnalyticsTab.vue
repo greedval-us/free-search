@@ -2,10 +2,10 @@
 import { BarChart3, Download, FileText } from 'lucide-vue-next';
 import { onMounted } from 'vue';
 import EmptyState from '@/components/ui/EmptyState.vue';
+import InfoCard from '@/components/ui/InfoCard.vue';
 import IntelResultPanel from '@/components/ui/IntelResultPanel.vue';
 import IntelSearchForm from '@/components/ui/IntelSearchForm.vue';
 import IntelSearchPanel from '@/components/ui/IntelSearchPanel.vue';
-import InfoCard from '@/components/ui/InfoCard.vue';
 import MetricCard from '@/components/ui/MetricCard.vue';
 import PageHeader from '@/components/ui/PageHeader.vue';
 import { useI18n } from '@/composables/useI18n';
