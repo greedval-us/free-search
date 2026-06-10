@@ -6,6 +6,7 @@ use App\Models\FeatureUsageDaily;
 use App\Models\RequestLog;
 use App\Models\User;
 use App\Modules\YouTube\DTO\Request\YouTubeCommentsQueryDTO;
+use App\Modules\YouTube\DTO\Result\YouTubeCommentsResultDTO;
 use App\Modules\YouTube\Parser\Contracts\YouTubeParserApplicationServiceInterface;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Config;
@@ -234,12 +235,12 @@ class FeatureAccessMiddlewareTest extends TestCase
             $mock->shouldReceive('comments')
                 ->once()
                 ->with(Mockery::type(YouTubeCommentsQueryDTO::class))
-                ->andReturn([
+                ->andReturn(new YouTubeCommentsResultDTO([
                     'items' => [],
                     'pagination' => [
                         'nextPageToken' => null,
                     ],
-                ]);
+                ]));
         });
 
         $this
@@ -255,12 +256,20 @@ class FeatureAccessMiddlewareTest extends TestCase
         ]);
     }
 
-    public function test_youtube_search_comments_preview_route_is_denied_for_free_user(): void
+    public function test_youtube_search_comments_preview_route_is_allowed_for_free_user(): void
     {
         $user = User::factory()->create();
 
         $this->mock(YouTubeParserApplicationServiceInterface::class, function ($mock): void {
-            $mock->shouldNotReceive('comments');
+            $mock->shouldReceive('comments')
+                ->once()
+                ->with(Mockery::type(YouTubeCommentsQueryDTO::class))
+                ->andReturn(new YouTubeCommentsResultDTO([
+                    'items' => [],
+                    'pagination' => [
+                        'nextPageToken' => null,
+                    ],
+                ]));
         });
 
         $this
@@ -268,7 +277,7 @@ class FeatureAccessMiddlewareTest extends TestCase
             ->getJson(route('youtube.search.comments-preview', [
                 'videoId' => 'video123',
             ]))
-            ->assertForbidden();
+            ->assertOk();
     }
 
     public function test_youtube_search_comments_preview_route_is_allowed_even_when_parser_quota_is_exhausted(): void
@@ -285,12 +294,12 @@ class FeatureAccessMiddlewareTest extends TestCase
             $mock->shouldReceive('comments')
                 ->once()
                 ->with(Mockery::type(YouTubeCommentsQueryDTO::class))
-                ->andReturn([
+                ->andReturn(new YouTubeCommentsResultDTO([
                     'items' => [],
                     'pagination' => [
                         'nextPageToken' => null,
                     ],
-                ]);
+                ]));
         });
 
         $this

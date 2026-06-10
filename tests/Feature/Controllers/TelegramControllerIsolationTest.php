@@ -69,6 +69,42 @@ class TelegramControllerIsolationTest extends TestCase
             ->assertJsonPath('pagination.limit', 7);
     }
 
+    public function test_telegram_search_messages_controller_passes_numeric_author_id_as_local_filter(): void
+    {
+        $user = User::factory()->create();
+
+        $this->mockTelegramControllerBaseDeps();
+        $this->mock(TelegramSearchApplicationServiceInterface::class, function ($mock): void {
+            $mock->shouldReceive('messages')
+                ->once()
+                ->with(Mockery::on(
+                    fn (SearchMessagesQueryDTO $query): bool => $query->chatUsername === 'channel'
+                        && ($query->filter['authorId'] ?? null) === 777
+                        && ! array_key_exists('from_id', $query->filter)
+                ))
+                ->andReturn(new SearchMessagesResultDTO(
+                    ok: true,
+                    items: [],
+                    pagination: [
+                        'limit' => 20,
+                        'offsetId' => 0,
+                        'nextOffsetId' => null,
+                        'hasMore' => false,
+                        'total' => 0,
+                    ],
+                ));
+        });
+
+        $this
+            ->actingAs($user)
+            ->getJson(route('telegram.search.messages', [
+                'chatUsername' => '@channel',
+                'fromUsername' => '777',
+            ]))
+            ->assertOk()
+            ->assertJsonPath('ok', true);
+    }
+
     public function test_telegram_search_comments_controller_returns_dto_payload(): void
     {
         $user = User::factory()->create();

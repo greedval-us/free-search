@@ -51,5 +51,4 @@ const footerNavItems = computed<NavItem[]>(() => buildFooterNavItems(t));
             <NavUser />
         </SidebarFooter>
     </Sidebar>
-    <slot />
 </template>
