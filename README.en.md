@@ -17,11 +17,12 @@ The main goal is to deliver useful analytics quickly while keeping architecture 
 
 ## Core Modules
 
-- Telegram OSINT (search, parser, analytics)
-- Site intelligence (`site-health`, `seo-audit`, `domain-lite`)
-- Email intelligence
+- Telegram OSINT (`search`, `parser`, `analytics`)
+- YouTube (`search`, `parser`, `analytics`)
+- Bluesky (`search`, `parser`, `analytics`)
+- Mastodon (`search`, `parser`, `analytics`)
+- Site intelligence (`site-health`, `seo-audit`, `domain-lite`, `analytics`)
 - News/media intelligence
-- YouTube search/parser/analytics
 - Shifr toolkit
 
 ## Architecture Principles

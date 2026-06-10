@@ -17,11 +17,12 @@ Free Search - модульная OSINT-платформа на Laravel + Inertia
 
 ## Основные модули
 
-- Telegram OSINT (поиск, парсер, аналитика)
-- Site intelligence (`site-health`, `seo-audit`, `domain-lite`)
-- Email intelligence
+- Telegram OSINT (`search`, `parser`, `analytics`)
+- YouTube (`search`, `parser`, `analytics`)
+- Bluesky (`search`, `parser`, `analytics`)
+- Mastodon (`search`, `parser`, `analytics`)
+- Site intelligence (`site-health`, `seo-audit`, `domain-lite`, `analytics`)
 - News/media intelligence
-- YouTube search/parser/analytics
 - Shifr toolkit
 
 ## Архитектурные принципы
