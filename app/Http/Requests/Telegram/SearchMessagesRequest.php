@@ -70,7 +70,17 @@ class SearchMessagesRequest extends FormRequest
 
         $fromUsername = trim((string) ($validated['fromUsername'] ?? ''));
         if ($fromUsername !== '') {
-            $filter['from_id'] = ltrim($fromUsername, '@');
+            $normalizedAuthor = ltrim($fromUsername, '@');
+
+            if (ctype_digit($normalizedAuthor)) {
+                $authorId = (int) $normalizedAuthor;
+
+                if ($authorId > 0) {
+                    $filter['authorId'] = $authorId;
+                }
+            } elseif ($normalizedAuthor !== '') {
+                $filter['from_id'] = $normalizedAuthor;
+            }
         }
 
         if (!empty($validated['dateFrom'])) {
