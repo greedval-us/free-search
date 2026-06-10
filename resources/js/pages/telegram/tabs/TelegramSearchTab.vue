@@ -323,7 +323,7 @@ onMounted(() => {
                             <div
                                 v-for="reaction in item.reactions"
                                 :key="`${item.id}-${reaction.key}`"
-                                class="inline-flex flex-wrap items-center gap-1"
+                                class="inline-flex items-center gap-1"
                             >
                                 <span
                                     class="rounded-full border border-input px-2 py-1 text-xs"
@@ -355,41 +355,12 @@ onMounted(() => {
                                     />
                                     <ChevronDown v-else class="h-3.5 w-3.5" />
                                 </button>
-
-                                <div
-                                    v-if="
-                                        isSenderPopoverOpen(
-                                            item.id,
-                                            'reaction',
-                                            reaction.key
-                                        )
-                                    "
-                                    class="mt-2 basis-full rounded-lg border border-border bg-card/95 p-3 shadow-xl"
-                                >
-                                    <p class="mb-2 text-xs font-semibold">
-                                        {{ t('telegram.popover.reactionIds') }}
-                                        {{ reaction.emoji }}
-                                    </p>
-
-                                    <div
-                                        class="intel-scroll max-h-52 space-y-1 overflow-y-auto pr-1"
-                                    >
-                                        <p
-                                            v-for="senderId in reaction.senderIds"
-                                            :key="`${item.id}-${reaction.key}-sender-${senderId}`"
-                                            class="intel-list-card"
-                                        >
-                                            {{ t('telegram.popover.id') }}:
-                                            {{ senderId }}
-                                        </p>
-                                    </div>
-                                </div>
                             </div>
 
                             <div
                                 v-for="gift in item.gifts.entries"
                                 :key="`${item.id}-${gift.key}`"
-                                class="inline-flex flex-wrap items-center gap-1"
+                                class="inline-flex items-center gap-1"
                             >
                                 <span class="intel-warning-badge">
                                     {{ gift.label }}
@@ -419,7 +390,62 @@ onMounted(() => {
                                     />
                                     <ChevronDown v-else class="h-3.5 w-3.5" />
                                 </button>
+                            </div>
 
+                            <button
+                                v-if="(item.repliesCount ?? 0) > 0"
+                                type="button"
+                                class="intel-action"
+                                @click="toggleComments(item.id)"
+                            >
+                                {{
+                                    commentsToggleLabel(
+                                        item.id,
+                                        item.repliesCount
+                                    )
+                                }}
+                            </button>
+                        </div>
+
+                        <div class="mt-2 space-y-2">
+                            <template
+                                v-for="reaction in item.reactions"
+                                :key="`${item.id}-${reaction.key}-popover`"
+                            >
+                                <div
+                                    v-if="
+                                        isSenderPopoverOpen(
+                                            item.id,
+                                            'reaction',
+                                            reaction.key
+                                        )
+                                    "
+                                    class="rounded-lg border border-border bg-card/95 p-3 shadow-xl"
+                                >
+                                    <p class="mb-2 text-xs font-semibold">
+                                        {{ t('telegram.popover.reactionIds') }}
+                                        {{ reaction.emoji }}
+                                    </p>
+
+                                    <div
+                                        class="intel-scroll max-h-52 space-y-1 overflow-y-auto pr-1"
+                                    >
+                                        <p
+                                            v-for="senderId in reaction.senderIds"
+                                            :key="`${item.id}-${reaction.key}-sender-${senderId}`"
+                                            class="intel-list-card"
+                                        >
+                                            {{ t('telegram.popover.id') }}:
+                                            {{ senderId }}
+                                        </p>
+                                    </div>
+                                </div>
+                            </template>
+
+                            <template
+                                v-for="gift in item.gifts.entries"
+                                :key="`${item.id}-${gift.key}-popover`"
+                            >
                                 <div
                                     v-if="
                                         isSenderPopoverOpen(
@@ -428,7 +454,7 @@ onMounted(() => {
                                             gift.key
                                         )
                                     "
-                                    class="mt-2 basis-full rounded-lg border border-amber-400/40 bg-card/95 p-3 shadow-xl"
+                                    class="rounded-lg border border-amber-400/40 bg-card/95 p-3 shadow-xl"
                                 >
                                     <p class="mb-2 text-xs font-semibold">
                                         {{ t('telegram.popover.giftIds') }}
@@ -448,21 +474,7 @@ onMounted(() => {
                                         </p>
                                     </div>
                                 </div>
-                            </div>
-
-                            <button
-                                v-if="(item.repliesCount ?? 0) > 0"
-                                type="button"
-                                class="intel-action"
-                                @click="toggleComments(item.id)"
-                            >
-                                {{
-                                    commentsToggleLabel(
-                                        item.id,
-                                        item.repliesCount
-                                    )
-                                }}
-                            </button>
+                            </template>
                         </div>
 
                         <div
