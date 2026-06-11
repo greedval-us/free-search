@@ -1,7 +1,7 @@
 import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFormDefinition } from './../../wayfinder'
 /**
 * @see \App\Http\Controllers\Settings\BillingController::edit
- * @see app/Http/Controllers/Settings/BillingController.php:15
+ * @see app/Http/Controllers/Settings/BillingController.php:22
  * @route '/settings/billing'
  */
 export const edit = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -16,7 +16,7 @@ edit.definition = {
 
 /**
 * @see \App\Http\Controllers\Settings\BillingController::edit
- * @see app/Http/Controllers/Settings/BillingController.php:15
+ * @see app/Http/Controllers/Settings/BillingController.php:22
  * @route '/settings/billing'
  */
 edit.url = (options?: RouteQueryOptions) => {
@@ -25,7 +25,7 @@ edit.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\Settings\BillingController::edit
- * @see app/Http/Controllers/Settings/BillingController.php:15
+ * @see app/Http/Controllers/Settings/BillingController.php:22
  * @route '/settings/billing'
  */
 edit.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -34,7 +34,7 @@ edit.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
 })
 /**
 * @see \App\Http\Controllers\Settings\BillingController::edit
- * @see app/Http/Controllers/Settings/BillingController.php:15
+ * @see app/Http/Controllers/Settings/BillingController.php:22
  * @route '/settings/billing'
  */
 edit.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -44,7 +44,7 @@ edit.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 
     /**
 * @see \App\Http\Controllers\Settings\BillingController::edit
- * @see app/Http/Controllers/Settings/BillingController.php:15
+ * @see app/Http/Controllers/Settings/BillingController.php:22
  * @route '/settings/billing'
  */
     const editForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -54,7 +54,7 @@ edit.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 
             /**
 * @see \App\Http\Controllers\Settings\BillingController::edit
- * @see app/Http/Controllers/Settings/BillingController.php:15
+ * @see app/Http/Controllers/Settings/BillingController.php:22
  * @route '/settings/billing'
  */
         editForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -63,7 +63,7 @@ edit.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
         })
             /**
 * @see \App\Http\Controllers\Settings\BillingController::edit
- * @see app/Http/Controllers/Settings/BillingController.php:15
+ * @see app/Http/Controllers/Settings/BillingController.php:22
  * @route '/settings/billing'
  */
         editForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -77,8 +77,64 @@ edit.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
         })
     
     edit.form = editForm
+/**
+* @see \App\Http\Controllers\Settings\BillingController::activateToken
+ * @see app/Http/Controllers/Settings/BillingController.php:33
+ * @route '/settings/billing/activate-token'
+ */
+export const activateToken = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
+    url: activateToken.url(options),
+    method: 'post',
+})
+
+activateToken.definition = {
+    methods: ["post"],
+    url: '/settings/billing/activate-token',
+} satisfies RouteDefinition<["post"]>
+
+/**
+* @see \App\Http\Controllers\Settings\BillingController::activateToken
+ * @see app/Http/Controllers/Settings/BillingController.php:33
+ * @route '/settings/billing/activate-token'
+ */
+activateToken.url = (options?: RouteQueryOptions) => {
+    return activateToken.definition.url + queryParams(options)
+}
+
+/**
+* @see \App\Http\Controllers\Settings\BillingController::activateToken
+ * @see app/Http/Controllers/Settings/BillingController.php:33
+ * @route '/settings/billing/activate-token'
+ */
+activateToken.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
+    url: activateToken.url(options),
+    method: 'post',
+})
+
+    /**
+* @see \App\Http\Controllers\Settings\BillingController::activateToken
+ * @see app/Http/Controllers/Settings/BillingController.php:33
+ * @route '/settings/billing/activate-token'
+ */
+    const activateTokenForm = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+        action: activateToken.url(options),
+        method: 'post',
+    })
+
+            /**
+* @see \App\Http\Controllers\Settings\BillingController::activateToken
+ * @see app/Http/Controllers/Settings/BillingController.php:33
+ * @route '/settings/billing/activate-token'
+ */
+        activateTokenForm.post = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+            action: activateToken.url(options),
+            method: 'post',
+        })
+    
+    activateToken.form = activateTokenForm
 const billing = {
     edit: Object.assign(edit, edit),
+activateToken: Object.assign(activateToken, activateToken),
 }
 
 export default billing

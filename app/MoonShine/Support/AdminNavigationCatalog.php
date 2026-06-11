@@ -12,6 +12,7 @@ use App\MoonShine\Resources\MoonShineUser\MoonShineUserResource;
 use App\MoonShine\Resources\MoonShineUserRole\MoonShineUserRoleResource;
 use App\MoonShine\Resources\QueueJob\QueueJobResource;
 use App\MoonShine\Resources\RequestLog\RequestLogResource;
+use App\MoonShine\Resources\SubscriptionActivationToken\SubscriptionActivationTokenResource;
 use App\MoonShine\Resources\UserSubscription\UserSubscriptionResource;
 
 final class AdminNavigationCatalog
@@ -35,6 +36,7 @@ final class AdminNavigationCatalog
                 'title' => static fn (): string => __('admin_panel.navigation.operations'),
                 'resources' => [
                     UserSubscriptionResource::class,
+                    SubscriptionActivationTokenResource::class,
                     FeatureUsageDailyResource::class,
                     QueueJobResource::class,
                     FailedJobResource::class,

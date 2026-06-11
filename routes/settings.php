@@ -18,6 +18,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     Route::get('settings/security', [SecurityController::class, 'edit'])->name('security.edit');
     Route::get('settings/billing', [BillingController::class, 'edit'])->name('billing.edit');
+    Route::post('settings/billing/activate-token', [BillingController::class, 'activateToken'])->name('billing.activate-token');
     Route::get('settings/placeholder', [PlaceholderController::class, 'show'])->name('settings.placeholder');
 
     Route::put('settings/password', [SecurityController::class, 'update'])

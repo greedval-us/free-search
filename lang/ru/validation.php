@@ -34,5 +34,14 @@ return [
         'password' => 'пароль',
         'password_confirmation' => 'подтверждение пароля',
         'accept_service_rules' => 'правила сервиса',
+        'activation_token' => 'токен активации',
+    ],
+
+    'custom' => [
+        'activation_token' => [
+            'invalid' => 'Указан неверный токен активации.',
+            'used' => 'Этот токен уже был использован.',
+            'expired' => 'Срок действия этого токена уже истёк.',
+        ],
     ],
 ];

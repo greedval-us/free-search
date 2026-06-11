@@ -16,6 +16,7 @@ return [
         'admin_audit_log' => 'Журнал аудита админки',
         'user_subscriptions' => 'Подписки пользователей',
         'feature_usage_daily' => 'Дневное использование квот',
+        'subscription_activation_tokens' => 'Токены активации подписки',
     ],
 
     'fields' => [
@@ -58,9 +59,16 @@ return [
         'admin' => 'Админ',
         'target' => 'Цель',
         'target_id' => 'ID цели',
-        'changed_fields' => 'Измененных полей',
-        'changed_keys' => 'Измененные ключи',
+        'changed_fields' => 'Изменённых полей',
+        'changed_keys' => 'Изменённые ключи',
         'change_details' => 'Детали изменений',
+        'activation_token' => 'Токен активации',
+        'duration_days' => 'Длительность (дней)',
+        'expires_at' => 'Действует до',
+        'used_at' => 'Использован',
+        'used_by' => 'Использовал пользователь',
+        'note' => 'Примечание',
+        'token_status' => 'Статус токена',
     ],
 
     'tags' => [
@@ -77,6 +85,8 @@ return [
         'plus_users' => 'Plus пользователи',
         'pro_users' => 'Pro пользователи',
         'active_subscriptions' => 'Активные подписки',
+        'available_tokens' => 'Доступные токены',
+        'used_tokens' => 'Использованные токены',
     ],
 
     'values' => [
@@ -95,6 +105,9 @@ return [
         'false' => 'false',
         'complex' => '[сложный объект]',
         'unknown' => 'неизвестно',
+        'available' => 'доступен',
+        'used' => 'использован',
+        'generated_after_save' => 'Будет сгенерирован после сохранения',
     ],
 
     'quota_modules' => [

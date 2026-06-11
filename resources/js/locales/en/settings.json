@@ -110,6 +110,14 @@
             "upgradePro": "Upgrade to Pro",
             "customAccess": "Custom terms"
         },
+        "token": {
+            "title": "Have an activation token?",
+            "description": "Enter a one-time token to activate a subscription on your account right away.",
+            "label": "Activation token",
+            "placeholder": "For example: ABCD-EFGH-JKLM-NPQR",
+            "button": "Activate",
+            "success": "Subscription activated successfully."
+        },
         "reason": {
             "planTitle": "This feature is locked by plan",
             "planText": "Your current plan does not include this capability. Choose Plus or Pro to unlock broader access.",

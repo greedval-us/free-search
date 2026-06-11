@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Head, Link } from '@inertiajs/vue3';
+import { Head, Link, useForm } from '@inertiajs/vue3';
 import {
     Check,
     CreditCard,
@@ -16,6 +16,7 @@ const props = defineProps<{
     plans: Record<string, Record<string, number>>;
     reason?: string | null;
     feature?: string | null;
+    tokenStatus?: string | null;
 }>();
 
 defineOptions({
@@ -131,6 +132,17 @@ const footerAction = computed(() => {
         label: t('settings.billingPage.footer.customAccess'),
     };
 });
+
+const activationForm = useForm({
+    activation_token: '',
+});
+
+const submitActivationToken = (): void => {
+    activationForm.post('/settings/billing/activate-token', {
+        preserveScroll: true,
+        onSuccess: () => activationForm.reset('activation_token'),
+    });
+};
 </script>
 
 <template>
@@ -324,6 +336,64 @@ const footerAction = computed(() => {
                         </Link>
                     </Button>
                 </div>
+            </div>
+        </section>
+
+        <section class="rounded-2xl border border-sidebar-border/70 bg-background/40 p-5">
+            <div class="flex flex-col gap-5 lg:flex-row lg:items-end lg:justify-between">
+                <div class="max-w-2xl">
+                    <h2 class="text-lg font-semibold">
+                        {{ t('settings.billingPage.token.title') }}
+                    </h2>
+                    <p class="mt-1 text-sm leading-6 text-muted-foreground">
+                        {{ t('settings.billingPage.token.description') }}
+                    </p>
+                </div>
+
+                <form
+                    class="w-full max-w-xl space-y-3"
+                    @submit.prevent="submitActivationToken"
+                >
+                    <label
+                        for="activation_token"
+                        class="text-sm font-medium text-foreground"
+                    >
+                        {{ t('settings.billingPage.token.label') }}
+                    </label>
+
+                    <div class="flex flex-col gap-3 sm:flex-row">
+                        <input
+                            id="activation_token"
+                            v-model="activationForm.activation_token"
+                            type="text"
+                            class="h-11 w-full rounded-xl border border-sidebar-border/70 bg-background/70 px-4 text-sm outline-none transition focus:border-primary"
+                            :placeholder="t('settings.billingPage.token.placeholder')"
+                            autocomplete="off"
+                        />
+
+                        <Button
+                            type="submit"
+                            class="h-11 rounded-xl px-6"
+                            :disabled="activationForm.processing"
+                        >
+                            {{ t('settings.billingPage.token.button') }}
+                        </Button>
+                    </div>
+
+                    <p
+                        v-if="activationForm.errors.activation_token"
+                        class="text-sm text-destructive"
+                    >
+                        {{ activationForm.errors.activation_token }}
+                    </p>
+
+                    <p
+                        v-else-if="tokenStatus === 'success'"
+                        class="text-sm text-emerald-300"
+                    >
+                        {{ t('settings.billingPage.token.success') }}
+                    </p>
+                </form>
             </div>
         </section>
     </div>

@@ -34,5 +34,14 @@ return [
         'password' => 'password',
         'password_confirmation' => 'password confirmation',
         'accept_service_rules' => 'service rules',
+        'activation_token' => 'activation token',
+    ],
+
+    'custom' => [
+        'activation_token' => [
+            'invalid' => 'The activation token is invalid.',
+            'used' => 'This activation token has already been used.',
+            'expired' => 'This activation token has expired.',
+        ],
     ],
 ];

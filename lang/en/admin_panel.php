@@ -16,6 +16,7 @@ return [
         'admin_audit_log' => 'Admin Audit Log',
         'user_subscriptions' => 'User subscriptions',
         'feature_usage_daily' => 'Daily feature usage',
+        'subscription_activation_tokens' => 'Subscription activation tokens',
     ],
 
     'fields' => [
@@ -61,6 +62,13 @@ return [
         'changed_fields' => 'Changed fields',
         'changed_keys' => 'Changed keys',
         'change_details' => 'Change details',
+        'activation_token' => 'Activation token',
+        'duration_days' => 'Duration (days)',
+        'expires_at' => 'Expires at',
+        'used_at' => 'Used at',
+        'used_by' => 'Used by user',
+        'note' => 'Note',
+        'token_status' => 'Token status',
     ],
 
     'tags' => [
@@ -77,6 +85,8 @@ return [
         'plus_users' => 'Plus users',
         'pro_users' => 'Pro users',
         'active_subscriptions' => 'Active subscriptions',
+        'available_tokens' => 'Available tokens',
+        'used_tokens' => 'Used tokens',
     ],
 
     'values' => [
@@ -95,6 +105,9 @@ return [
         'false' => 'false',
         'complex' => '[complex]',
         'unknown' => 'unknown',
+        'available' => 'available',
+        'used' => 'used',
+        'generated_after_save' => 'Will be generated after save',
     ],
 
     'quota_modules' => [
