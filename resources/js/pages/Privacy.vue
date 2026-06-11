@@ -6,10 +6,6 @@ import ru from '@/locales/ru';
 import { useI18n } from '@/composables/useI18n';
 import { home } from '@/routes';
 
-defineOptions({
-    layout: null,
-});
-
 type PrivacyContent = {
     metaTitle: string;
     eyebrow: string;

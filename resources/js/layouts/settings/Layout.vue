@@ -53,7 +53,7 @@ const toggleLocale = () => {
         />
 
         <div class="flex min-h-0 flex-1 flex-col lg:flex-row lg:space-x-12">
-            <aside class="w-full max-w-xl lg:w-48">
+            <aside class="w-full max-w-xl lg:w-56">
                 <nav
                     class="flex flex-col space-y-1 space-x-0"
                     :aria-label="t('settings.title')"
@@ -91,9 +91,9 @@ const toggleLocale = () => {
 
             <Separator class="my-6 lg:hidden" />
 
-            <div class="min-h-0 flex-1 md:max-w-2xl">
+            <div class="min-h-0 min-w-0 flex-1">
                 <section
-                    class="intel-scroll max-h-[72vh] max-w-xl space-y-12 overflow-y-auto pr-1 [scrollbar-gutter:stable]"
+                    class="intel-scroll max-h-[72vh] w-full max-w-6xl space-y-12 overflow-y-auto pr-1 [scrollbar-gutter:stable]"
                 >
                     <slot />
                 </section>

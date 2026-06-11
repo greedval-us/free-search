@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Settings\BillingController;
+use App\Http\Controllers\Settings\PlaceholderController;
 use App\Http\Controllers\Settings\ProfileController;
 use App\Http\Controllers\Settings\SecurityController;
 use Illuminate\Support\Facades\Route;
@@ -17,6 +18,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     Route::get('settings/security', [SecurityController::class, 'edit'])->name('security.edit');
     Route::get('settings/billing', [BillingController::class, 'edit'])->name('billing.edit');
+    Route::get('settings/placeholder', [PlaceholderController::class, 'show'])->name('settings.placeholder');
 
     Route::put('settings/password', [SecurityController::class, 'update'])
         ->middleware('throttle:6,1')
