@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { Head, Link } from '@inertiajs/vue3';
 import { computed } from 'vue';
+import CookieNotice from '@/components/CookieNotice.vue';
 import { useI18n } from '@/composables/useI18n';
 import { dashboard, login, register } from '@/routes';
 
@@ -25,7 +26,7 @@ withDefaults(
     }
 );
 
-const { locale, setLocale } = useI18n();
+const { locale, setLocale, t } = useI18n();
 
 const copy = computed(() => {
     if (locale.value === 'ru') {
@@ -290,6 +291,10 @@ const toggleLocale = () => setLocale(locale.value === 'ru' ? 'en' : 'ru');
                         {{ locale.toUpperCase() }}
                     </button>
 
+                    <Link href="/privacy" class="btn btn-ghost">
+                        {{ t('common.privacyPolicy') }}
+                    </Link>
+
                     <Link
                         v-if="$page.props.auth.user"
                         :href="dashboard()"
@@ -453,6 +458,8 @@ const toggleLocale = () => setLocale(locale.value === 'ru' ? 'en' : 'ru');
                 </section>
             </main>
         </div>
+
+        <CookieNotice />
     </div>
 </template>
 

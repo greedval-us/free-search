@@ -12,6 +12,7 @@ import settings from './settings.json';
 import welcome from './welcome.json';
 import auth from './auth.json';
 import shifr from './shifr.json';
+import privacy from './privacy.json';
 
 const en = {
     telegram,
@@ -28,6 +29,7 @@ const en = {
     welcome,
     auth,
     shifr,
+    privacy,
 };
 
 export default en;
