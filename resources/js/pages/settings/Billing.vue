@@ -1,12 +1,9 @@
 <script setup lang="ts">
 import { Head, Link } from '@inertiajs/vue3';
 import {
-    BadgeCheck,
     Check,
     CreditCard,
-    ShieldCheck,
     Sparkles,
-    Zap,
 } from 'lucide-vue-next';
 import { computed } from 'vue';
 import Heading from '@/components/Heading.vue';
@@ -84,21 +81,6 @@ const planCards = computed(() =>
     }))
 );
 
-const compareRows = computed(() => [
-    {
-        label: t('settings.billingPage.compare.analytics'),
-        values: planCards.value.map((plan) => plan.analytics),
-    },
-    {
-        label: t('settings.billingPage.compare.parser'),
-        values: planCards.value.map((plan) => plan.parser),
-    },
-    {
-        label: t('settings.billingPage.compare.seoAudit'),
-        values: planCards.value.map((plan) => plan.seoAudit),
-    },
-]);
-
 const reasonCard = computed(() => {
     if (props.reason === 'plan') {
         return {
@@ -128,24 +110,6 @@ const reasonCard = computed(() => {
 
     return null;
 });
-
-const summaryItems = computed(() => [
-    {
-        icon: ShieldCheck,
-        label: t('settings.billingPage.summary.currentPlan'),
-        value: t(`settings.billingPage.plans.${currentPlan.value}.name`),
-    },
-    {
-        icon: BadgeCheck,
-        label: t('settings.billingPage.summary.renewal'),
-        value: formatDate(props.access.subscription?.ends_at),
-    },
-    {
-        icon: Zap,
-        label: t('settings.billingPage.summary.analytics'),
-        value: String(props.access.features.analytics?.remaining ?? 0),
-    },
-]);
 
 const footerAction = computed(() => {
     if (currentPlan.value === 'free') {
@@ -214,22 +178,6 @@ const footerAction = computed(() => {
                     </div>
                 </div>
             </div>
-
-            <div class="grid gap-3 p-5 md:grid-cols-3">
-                <article
-                    v-for="item in summaryItems"
-                    :key="item.label"
-                    class="rounded-xl border border-sidebar-border/70 bg-background/50 p-4"
-                >
-                    <div class="flex items-center gap-2 text-muted-foreground">
-                        <component :is="item.icon" class="h-4 w-4" />
-                        <span class="text-xs tracking-wide uppercase">
-                            {{ item.label }}
-                        </span>
-                    </div>
-                    <p class="mt-3 text-lg font-semibold">{{ item.value }}</p>
-                </article>
-            </div>
         </section>
 
         <section
@@ -253,7 +201,7 @@ const footerAction = computed(() => {
             <article
                 v-for="plan in planCards"
                 :key="plan.key"
-                class="relative overflow-hidden rounded-2xl border border-sidebar-border/70 bg-background/40 p-5 shadow-lg"
+                class="relative flex h-full flex-col overflow-hidden rounded-2xl border border-sidebar-border/70 bg-background/40 p-5 shadow-lg"
                 :class="[
                     plan.isCurrent
                         ? 'border-primary/60 ring-1 ring-primary/30'
@@ -320,7 +268,7 @@ const footerAction = computed(() => {
                     </div>
                 </div>
 
-                <div class="mt-5">
+                <div class="mt-auto pt-5">
                     <Button
                         v-if="plan.isCurrent"
                         class="w-full rounded-xl"
@@ -348,56 +296,6 @@ const footerAction = computed(() => {
                     </Button>
                 </div>
             </article>
-        </section>
-
-        <section class="rounded-2xl border border-sidebar-border/70 bg-background/40 p-5">
-            <div class="flex flex-wrap items-end justify-between gap-3">
-                <div>
-                    <h2 class="text-lg font-semibold">
-                        {{ t('settings.billingPage.compareTitle') }}
-                    </h2>
-                    <p class="mt-1 text-sm leading-6 text-muted-foreground">
-                        {{ t('settings.billingPage.compareDescription') }}
-                    </p>
-                </div>
-            </div>
-
-            <div class="mt-4 overflow-x-auto">
-                <table class="min-w-full text-sm">
-                    <thead>
-                        <tr class="border-b border-sidebar-border/70 text-left">
-                            <th class="px-0 py-3 font-medium text-muted-foreground">
-                                {{ t('settings.billingPage.compare.metric') }}
-                            </th>
-                            <th
-                                v-for="plan in planCards"
-                                :key="plan.key"
-                                class="px-4 py-3 font-medium"
-                            >
-                                {{ plan.name }}
-                            </th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr
-                            v-for="row in compareRows"
-                            :key="row.label"
-                            class="border-b border-sidebar-border/50 last:border-b-0"
-                        >
-                            <td class="px-0 py-3 text-muted-foreground">
-                                {{ row.label }}
-                            </td>
-                            <td
-                                v-for="(value, index) in row.values"
-                                :key="`${row.label}-${index}`"
-                                class="px-4 py-3 font-semibold"
-                            >
-                                {{ value }}
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
         </section>
 
         <section

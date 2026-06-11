@@ -94,6 +94,9 @@
         "payButton": "Pay now",
         "compareTitle": "Quota comparison",
         "compareDescription": "Compare the key daily limits side by side without reading long conditions.",
+        "moduleLimitsTitle": "Module limits",
+        "moduleLimitsDescription": "Values come from the current plan configuration and can change together with product settings.",
+        "dailyLimit": "per day",
         "compare": {
             "metric": "Metric",
             "analytics": "Shared analytics limit per day",
