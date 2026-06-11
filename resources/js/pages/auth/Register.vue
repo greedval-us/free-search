@@ -100,6 +100,32 @@ defineOptions({
                 <InputError :message="errors.password_confirmation" />
             </div>
 
+            <div class="grid gap-2">
+                <div class="flex items-start gap-3 rounded-xl border border-slate-700/70 bg-slate-900/30 p-3">
+                    <input
+                        id="accept_service_rules"
+                        name="accept_service_rules"
+                        type="checkbox"
+                        value="1"
+                        required
+                        class="mt-0.5 h-4 w-4 rounded border-slate-500 bg-slate-950 text-cyan-400 focus:ring-cyan-400"
+                    />
+                    <Label
+                        for="accept_service_rules"
+                        class="auth-field-label leading-6 text-slate-200"
+                    >
+                        {{ t('auth.register.acceptPrefix') }}
+                        <TextLink
+                            href="/terms"
+                            class="auth-link underline underline-offset-4"
+                        >
+                            {{ t('auth.register.acceptLink') }}
+                        </TextLink>
+                    </Label>
+                </div>
+                <InputError :message="errors.accept_service_rules" />
+            </div>
+
             <Button
                 type="submit"
                 class="auth-button-primary mt-2"

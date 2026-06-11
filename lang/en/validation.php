@@ -2,6 +2,7 @@
 
 return [
     'required' => 'The :attribute field is required.',
+    'accepted' => 'The :attribute must be accepted.',
     'string' => 'The :attribute must be a string.',
     'email' => 'The :attribute must be a valid email address.',
     'max' => [
@@ -32,5 +33,6 @@ return [
         'email' => 'email',
         'password' => 'password',
         'password_confirmation' => 'password confirmation',
+        'accept_service_rules' => 'service rules',
     ],
 ];

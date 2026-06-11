@@ -13,6 +13,7 @@ import welcome from './welcome.json';
 import auth from './auth.json';
 import shifr from './shifr.json';
 import privacy from './privacy.json';
+import terms from './terms.json';
 
 const ru = {
     telegram,
@@ -30,6 +31,7 @@ const ru = {
     auth,
     shifr,
     privacy,
+    terms,
 };
 
 export default ru;

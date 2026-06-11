@@ -2,6 +2,7 @@
 
 return [
     'required' => 'Поле :attribute обязательно для заполнения.',
+    'accepted' => 'Необходимо принять :attribute.',
     'string' => 'Поле :attribute должно быть строкой.',
     'email' => 'Поле :attribute должно быть корректным email-адресом.',
     'max' => [
@@ -32,5 +33,6 @@ return [
         'email' => 'email',
         'password' => 'пароль',
         'password_confirmation' => 'подтверждение пароля',
+        'accept_service_rules' => 'правила сервиса',
     ],
 ];
