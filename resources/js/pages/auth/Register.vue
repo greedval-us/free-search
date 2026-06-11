@@ -33,7 +33,7 @@ defineOptions({
         <div class="grid gap-6">
             <div class="grid gap-2">
                 <Label for="name" class="auth-field-label">{{
-                    t('auth.register.name')
+                    t('auth.register.login')
                 }}</Label>
                 <Input
                     id="name"
@@ -41,11 +41,11 @@ defineOptions({
                     required
                     autofocus
                     :tabindex="1"
-                    autocomplete="name"
+                    autocomplete="username"
                     name="name"
                     pattern="[A-Za-z0-9\s.\'-]+"
                     title="Use Latin letters, numbers, spaces and . ' - only"
-                    :placeholder="t('auth.register.namePlaceholder')"
+                    :placeholder="t('auth.register.loginPlaceholder')"
                     class="auth-input-skin"
                 />
                 <InputError :message="errors.name" />
