@@ -69,8 +69,17 @@ jobs:
           php-version: '8.3'
           tools: composer:v2
 
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+
       - name: Install PHP dependencies
         run: composer install --no-interaction --prefer-dist --optimize-autoloader
+
+      - name: Install Node dependencies
+        run: npm ci
 
       - name: Prepare environment
         run: |
@@ -78,6 +87,9 @@ jobs:
           mkdir -p database
           touch database/database.sqlite
           php artisan key:generate
+
+      - name: Build assets
+        run: npm run build
 
       - name: Run test suite
         run: php artisan test
