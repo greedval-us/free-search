@@ -44,7 +44,7 @@ defineOptions({
                     autocomplete="username"
                     name="name"
                     pattern="[A-Za-z0-9\s.\'-]+"
-                    title="Use Latin letters, numbers, spaces and . ' - only"
+                    :title="t('auth.register.loginRule')"
                     :placeholder="t('auth.register.loginPlaceholder')"
                     class="auth-input-skin"
                 />
@@ -101,7 +101,9 @@ defineOptions({
             </div>
 
             <div class="grid gap-2">
-                <div class="flex items-start gap-3 rounded-xl border border-slate-700/70 bg-slate-900/30 p-3">
+                <div
+                    class="flex items-start gap-3 rounded-xl border border-slate-700/70 bg-slate-900/30 p-3"
+                >
                     <input
                         id="accept_service_rules"
                         name="accept_service_rules"

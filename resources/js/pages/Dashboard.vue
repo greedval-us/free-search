@@ -14,8 +14,6 @@ import {
     Trash2,
 } from 'lucide-vue-next';
 import { computed, onBeforeUnmount, onMounted } from 'vue';
-import EmptyState from '@/components/ui/EmptyState.vue';
-import MetricCard from '@/components/ui/MetricCard.vue';
 import { useI18n } from '@/composables/useI18n';
 import { dashboard as dashboardRoute } from '@/routes';
 

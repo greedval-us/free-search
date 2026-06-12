@@ -10,7 +10,6 @@ import IntelSearchForm from '@/components/ui/IntelSearchForm.vue';
 import IntelSearchPanel from '@/components/ui/IntelSearchPanel.vue';
 import MetricCard from '@/components/ui/MetricCard.vue';
 import PageHeader from '@/components/ui/PageHeader.vue';
-import SectionCard from '@/components/ui/SectionCard.vue';
 import { useI18n } from '@/composables/useI18n';
 import { useIntelLookup } from '@/composables/useIntelLookup';
 import {

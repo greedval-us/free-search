@@ -23,8 +23,7 @@ const hasConsent = (): boolean => {
 
 const acceptCookies = (): void => {
     if (typeof document !== 'undefined') {
-        document.cookie =
-            `${COOKIE_NAME}=true; path=/; max-age=${COOKIE_MAX_AGE}; SameSite=Lax`;
+        document.cookie = `${COOKIE_NAME}=true; path=/; max-age=${COOKIE_MAX_AGE}; SameSite=Lax`;
     }
 
     visible.value = false;
@@ -57,13 +56,13 @@ onMounted(() => {
                         <p class="cookie-title">
                             {{ t('common.cookies.title') }}
                         </p>
-                    <p class="cookie-text">
-                        {{ t('common.cookies.text') }}
-                    </p>
-                    <Link href="/privacy" class="cookie-link">
-                        {{ t('common.cookies.details') }}
-                    </Link>
-                </div>
+                        <p class="cookie-text">
+                            {{ t('common.cookies.text') }}
+                        </p>
+                        <Link href="/privacy" class="cookie-link">
+                            {{ t('common.cookies.details') }}
+                        </Link>
+                    </div>
 
                     <Button
                         type="button"

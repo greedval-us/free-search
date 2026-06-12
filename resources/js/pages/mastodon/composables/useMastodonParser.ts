@@ -79,10 +79,13 @@ export const useMastodonParser = (t: TranslateFn) => {
     };
 
     const stopRunRequest = (activeRunId: string) =>
-        apiRequest<ParserStatusResponse>(`/mastodon/parser/stop/${activeRunId}`, {
-            method: 'POST',
-            headers: requestHeaders(),
-        });
+        apiRequest<ParserStatusResponse>(
+            `/mastodon/parser/stop/${activeRunId}`,
+            {
+                method: 'POST',
+                headers: requestHeaders(),
+            }
+        );
 
     const stopSilently = () => {
         if (pollTimer.value !== null) {

@@ -149,4 +149,24 @@ class FakeBlueskySearchGateway implements BlueskyGatewayInterface
     {
         return ['thread' => []];
     }
+
+    public function getProfiles(array $actors): array
+    {
+        return ['profiles' => []];
+    }
+
+    public function getAuthorFeed(string $actor, int $limit, ?string $cursor = null, ?string $filter = null): array
+    {
+        return ['feed' => []];
+    }
+
+    public function getFollowers(string $actor, int $limit, ?string $cursor = null): array
+    {
+        return ['followers' => []];
+    }
+
+    public function getFollows(string $actor, int $limit, ?string $cursor = null): array
+    {
+        return ['follows' => []];
+    }
 }

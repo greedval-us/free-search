@@ -27,11 +27,8 @@ defineOptions({
 
 const { t } = useI18n();
 
-const replaceToken = (
-    template: string,
-    token: string,
-    value: string
-): string => template.replace(`:${token}`, value);
+const replaceToken = (template: string, token: string, value: string): string =>
+    template.replace(`:${token}`, value);
 
 const planLabel = computed(() => {
     if (!props.placeholder.plan) {

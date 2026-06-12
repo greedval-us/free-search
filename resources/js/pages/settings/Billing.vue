@@ -1,10 +1,6 @@
 <script setup lang="ts">
 import { Head, Link, useForm } from '@inertiajs/vue3';
-import {
-    Check,
-    CreditCard,
-    Sparkles,
-} from 'lucide-vue-next';
+import { Check, CreditCard, Sparkles } from 'lucide-vue-next';
 import { computed } from 'vue';
 import Heading from '@/components/Heading.vue';
 import { Button } from '@/components/ui/button';
@@ -36,11 +32,8 @@ const { t, locale } = useI18n();
 const planKeys = ['free', 'plus', 'pro'] as const;
 const currentPlan = computed(() => props.access.plan);
 
-const replaceToken = (
-    template: string,
-    token: string,
-    value: string
-): string => template.replace(`:${token}`, value);
+const replaceToken = (template: string, token: string, value: string): string =>
+    template.replace(`:${token}`, value);
 
 const featureLabel = computed(() => {
     if (!props.feature) {
@@ -163,13 +156,17 @@ const submitActivationToken = (): void => {
             >
                 <div class="flex flex-wrap items-start justify-between gap-4">
                     <div class="space-y-2">
-                        <p class="text-xs tracking-[0.2em] text-cyan-200 uppercase">
+                        <p
+                            class="text-xs tracking-[0.2em] text-cyan-200 uppercase"
+                        >
                             {{ t('settings.billingPage.hero.badge') }}
                         </p>
                         <h2 class="text-2xl font-semibold sm:text-3xl">
                             {{ t('settings.billingPage.hero.title') }}
                         </h2>
-                        <p class="max-w-2xl text-sm leading-6 text-muted-foreground">
+                        <p
+                            class="max-w-2xl text-sm leading-6 text-muted-foreground"
+                        >
                             {{ t('settings.billingPage.hero.text') }}
                         </p>
                     </div>
@@ -177,11 +174,17 @@ const submitActivationToken = (): void => {
                     <div
                         class="rounded-2xl border border-cyan-400/20 bg-slate-950/35 p-4 text-right"
                     >
-                        <p class="text-xs tracking-wide text-muted-foreground uppercase">
+                        <p
+                            class="text-xs tracking-wide text-muted-foreground uppercase"
+                        >
                             {{ t('settings.billingPage.currentPlan') }}
                         </p>
                         <p class="mt-2 text-2xl font-semibold uppercase">
-                            {{ t(`settings.billingPage.plans.${currentPlan}.name`) }}
+                            {{
+                                t(
+                                    `settings.billingPage.plans.${currentPlan}.name`
+                                )
+                            }}
                         </p>
                         <p class="mt-1 text-sm text-muted-foreground">
                             {{ t('settings.billingPage.validUntil') }}:
@@ -209,8 +212,12 @@ const submitActivationToken = (): void => {
             </div>
         </section>
 
-        <section class="rounded-2xl border border-sidebar-border/70 bg-background/40 p-5">
-            <div class="flex flex-col gap-5 lg:flex-row lg:items-end lg:justify-between">
+        <section
+            class="rounded-2xl border border-sidebar-border/70 bg-background/40 p-5"
+        >
+            <div
+                class="flex flex-col gap-5 lg:flex-row lg:items-end lg:justify-between"
+            >
                 <div class="max-w-2xl">
                     <h2 class="text-lg font-semibold">
                         {{ t('settings.billingPage.token.title') }}
@@ -236,8 +243,10 @@ const submitActivationToken = (): void => {
                             id="activation_token"
                             v-model="activationForm.activation_token"
                             type="text"
-                            class="h-11 w-full rounded-xl border border-sidebar-border/70 bg-background/70 px-4 text-sm outline-none transition focus:border-primary"
-                            :placeholder="t('settings.billingPage.token.placeholder')"
+                            class="h-11 w-full rounded-xl border border-sidebar-border/70 bg-background/70 px-4 text-sm transition outline-none focus:border-primary"
+                            :placeholder="
+                                t('settings.billingPage.token.placeholder')
+                            "
                             autocomplete="off"
                         />
 
@@ -288,7 +297,9 @@ const submitActivationToken = (): void => {
 
                 <div class="space-y-3">
                     <div>
-                        <p class="text-xs tracking-[0.2em] text-muted-foreground uppercase">
+                        <p
+                            class="text-xs tracking-[0.2em] text-muted-foreground uppercase"
+                        >
                             {{ plan.tagline }}
                         </p>
                         <h3 class="mt-2 text-2xl font-semibold">
@@ -320,14 +331,20 @@ const submitActivationToken = (): void => {
                         <li class="flex items-start gap-2">
                             <Check class="mt-0.5 h-4 w-4 text-emerald-300" />
                             <span>
-                                {{ t('settings.billingPage.compare.seoAudit') }}:
+                                {{
+                                    t('settings.billingPage.compare.seoAudit')
+                                }}:
                                 {{ plan.seoAudit }}
                             </span>
                         </li>
                     </ul>
 
-                    <div class="rounded-xl border border-sidebar-border/70 bg-background/50 p-4">
-                        <p class="text-xs tracking-wide text-muted-foreground uppercase">
+                    <div
+                        class="rounded-xl border border-sidebar-border/70 bg-background/50 p-4"
+                    >
+                        <p
+                            class="text-xs tracking-wide text-muted-foreground uppercase"
+                        >
                             {{ t('settings.billingPage.includes') }}
                         </p>
                         <ul class="mt-3 space-y-2 text-sm leading-6">

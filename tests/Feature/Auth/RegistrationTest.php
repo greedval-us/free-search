@@ -28,9 +28,10 @@ class RegistrationTest extends TestCase
     {
         $response = $this->post(route('register.store'), [
             'name' => 'Test User',
-            'email' => 'test@example.com',
-            'password' => 'password',
-            'password_confirmation' => 'password',
+            'email' => 'test@laravel.com',
+            'password' => 'StrongPass123!',
+            'password_confirmation' => 'StrongPass123!',
+            'accept_service_rules' => '1',
         ]);
 
         $this->assertAuthenticated();
@@ -42,8 +43,9 @@ class RegistrationTest extends TestCase
         $response = $this->from(route('register'))->post(route('register.store'), [
             'name' => 'Тестовый Пользователь',
             'email' => 'test@example.com',
-            'password' => 'password',
-            'password_confirmation' => 'password',
+            'password' => 'StrongPass123!',
+            'password_confirmation' => 'StrongPass123!',
+            'accept_service_rules' => '1',
         ]);
 
         $this->assertGuest();
@@ -56,8 +58,9 @@ class RegistrationTest extends TestCase
         $response = $this->from(route('register'))->post(route('register.store'), [
             'name' => 'Test User',
             'email' => 'invalid-email',
-            'password' => 'password',
-            'password_confirmation' => 'password',
+            'password' => 'StrongPass123!',
+            'password_confirmation' => 'StrongPass123!',
+            'accept_service_rules' => '1',
         ]);
 
         $this->assertGuest();
@@ -72,6 +75,7 @@ class RegistrationTest extends TestCase
             'email' => 'test@example.com',
             'password' => 'password',
             'password_confirmation' => 'password',
+            'accept_service_rules' => '1',
         ]);
 
         $this->assertGuest();

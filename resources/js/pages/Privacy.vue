@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import { Head, Link } from '@inertiajs/vue3';
 import { computed } from 'vue';
+import { useI18n } from '@/composables/useI18n';
 import en from '@/locales/en';
 import ru from '@/locales/ru';
-import { useI18n } from '@/composables/useI18n';
 import { home } from '@/routes';
 
 type PrivacyContent = {
@@ -32,8 +32,8 @@ type PrivacyContent = {
 
 const { locale, setLocale } = useI18n();
 
-const content = computed<PrivacyContent>(() =>
-    (locale.value === 'ru' ? ru.privacy : en.privacy) as PrivacyContent
+const content = computed<PrivacyContent>(
+    () => (locale.value === 'ru' ? ru.privacy : en.privacy) as PrivacyContent
 );
 
 const sections = computed(() => [
@@ -108,7 +108,12 @@ const sections = computed(() => [
     min-height: 100vh;
     overflow: hidden;
     background:
-        radial-gradient(120% 140% at 10% 0%, #143252 0%, #0a1325 52%, #04070f 100%),
+        radial-gradient(
+            120% 140% at 10% 0%,
+            #143252 0%,
+            #0a1325 52%,
+            #04070f 100%
+        ),
         linear-gradient(180deg, #07101d 0%, #04070f 100%);
     color: #e7edf8;
 }

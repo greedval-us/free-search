@@ -57,10 +57,13 @@ export const useBlueskyParser = (t: TranslateFn) => {
     const pollTimer = ref<number | null>(null);
     const pollRequestInFlight = ref(false);
 
-    const canStart = computed(() => form.actor.trim().length > 0 && !loading.value);
+    const canStart = computed(
+        () => form.actor.trim().length > 0 && !loading.value
+    );
 
     const csrfToken = () =>
-        document.querySelector<HTMLMetaElement>('meta[name="csrf-token"]')?.content ?? '';
+        document.querySelector<HTMLMetaElement>('meta[name="csrf-token"]')
+            ?.content ?? '';
 
     const requestHeaders = (contentType?: 'application/json') => ({
         ...(contentType ? { 'Content-Type': contentType } : {}),
@@ -96,10 +99,13 @@ export const useBlueskyParser = (t: TranslateFn) => {
     };
 
     const stopRunRequest = (activeRunId: string) =>
-        apiRequest<ParserStatusResponse>(`/bluesky/parser/stop/${activeRunId}`, {
-            method: 'POST',
-            headers: requestHeaders(),
-        });
+        apiRequest<ParserStatusResponse>(
+            `/bluesky/parser/stop/${activeRunId}`,
+            {
+                method: 'POST',
+                headers: requestHeaders(),
+            }
+        );
 
     const stopSilently = () => {
         if (pollTimer.value !== null) {
@@ -160,16 +166,21 @@ export const useBlueskyParser = (t: TranslateFn) => {
         progress.value = 1;
 
         try {
-            const response = await apiRequest<ParserStatusResponse>('/bluesky/parser/start', {
-                method: 'POST',
-                headers: requestHeaders('application/json'),
-                body: {
-                    actor: form.actor.trim(),
-                },
-            });
+            const response = await apiRequest<ParserStatusResponse>(
+                '/bluesky/parser/start',
+                {
+                    method: 'POST',
+                    headers: requestHeaders('application/json'),
+                    body: {
+                        actor: form.actor.trim(),
+                    },
+                }
+            );
 
             if (!response.ok || !response.data.runId) {
-                throw new Error(response.message ?? t('bluesky.parser.errors.failed'));
+                throw new Error(
+                    response.message ?? t('bluesky.parser.errors.failed')
+                );
             }
 
             runId.value = response.data.runId;
@@ -183,15 +194,19 @@ export const useBlueskyParser = (t: TranslateFn) => {
                 pollRequestInFlight.value = true;
 
                 try {
-                    const statusResponse = await apiRequest<ParserStatusResponse>(
-                        `/bluesky/parser/status/${runId.value}`,
-                        {
-                            method: 'GET',
-                        }
-                    );
+                    const statusResponse =
+                        await apiRequest<ParserStatusResponse>(
+                            `/bluesky/parser/status/${runId.value}`,
+                            {
+                                method: 'GET',
+                            }
+                        );
 
                     if (!statusResponse.ok) {
-                        throw new Error(statusResponse.message ?? t('bluesky.parser.errors.failed'));
+                        throw new Error(
+                            statusResponse.message ??
+                                t('bluesky.parser.errors.failed')
+                        );
                     }
 
                     const statusPayload = statusResponse.data;
@@ -227,7 +242,9 @@ export const useBlueskyParser = (t: TranslateFn) => {
         } catch (exception) {
             stage.value = 'failed';
             error.value =
-                exception instanceof Error ? exception.message : t('bluesky.parser.errors.failed');
+                exception instanceof Error
+                    ? exception.message
+                    : t('bluesky.parser.errors.failed');
         } finally {
             if (stage.value === 'failed') {
                 loading.value = false;
