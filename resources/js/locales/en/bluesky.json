@@ -161,6 +161,7 @@
         "replies": "Replies",
         "quotes": "Quotes",
         "uses": "Uses",
+        "accounts": "Accounts",
         "media": "Media",
         "postType": "Post type",
         "followers": "Followers",
@@ -189,6 +190,9 @@
     },
     "osint": {
         "title": "OSINT details",
+        "did": "DID",
+        "cid": "CID",
+        "atUri": "AT URI",
         "indexedAt": "Indexed at",
         "replyRoot": "Reply root",
         "replyParent": "Reply parent",

@@ -27,10 +27,19 @@ class YouTubeAnalyticsSummaryActionTest extends TestCase
             new YouTubeChannelResolver($gateway, new YouTubeChannelInputNormalizer()),
         );
 
-        $summary = $action->handle(new YouTubeAnalyticsLookupDTO('channel', '', '@yoj996', 3));
+        $summary = $action->handle(new YouTubeAnalyticsLookupDTO(
+            mode: 'channel',
+            videoId: '',
+            channelId: '@yoj996',
+            periodDays: 3,
+            dateFrom: '',
+            dateTo: '',
+        ));
 
-        $this->assertSame(FakeYouTubeAnalyticsGateway::CHANNEL_ID, $summary['channelId']);
-        $this->assertSame('Resolved channel', $summary['channel']['title']);
+        $payload = $summary->toArray();
+
+        $this->assertSame(FakeYouTubeAnalyticsGateway::CHANNEL_ID, $payload['channelId']);
+        $this->assertSame('Resolved channel', $payload['channel']['title']);
         $this->assertSame(FakeYouTubeAnalyticsGateway::CHANNEL_ID, $gateway->searchCalls[0]['channelId']);
     }
 }

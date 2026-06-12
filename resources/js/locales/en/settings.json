@@ -69,7 +69,7 @@
     "billingPage": {
         "title": "Plan & billing",
         "heading": "Plan & billing",
-        "description": "Review your current plan and available upgrades.",
+        "description": "Compare plans, review quotas, and pick the option that matches your workload.",
         "currentPlan": "Current plan",
         "validUntil": "Valid until",
         "noExpiry": "No active paid subscription",
@@ -77,7 +77,119 @@
         "analytics": "Analytics requests per day",
         "parser": "Parser requests per day",
         "backDashboard": "Back to dashboard",
-        "upgradesSoon": "Upgrades coming soon"
+        "hero": {
+            "badge": "PLANS",
+            "title": "Ready-made plans for different levels of usage",
+            "text": "The page already shows the current plan, main quotas, and upgrade paths. Payment is not connected yet, so pay buttons lead to a reusable placeholder screen."
+        },
+        "summary": {
+            "currentPlan": "Account plan",
+            "renewal": "Period end",
+            "analytics": "Remaining shared analytics quota"
+        },
+        "popular": "Popular choice",
+        "includes": "What is included",
+        "currentButton": "Current plan",
+        "freeButton": "Base access",
+        "payButton": "Pay now",
+        "compareTitle": "Quota comparison",
+        "compareDescription": "Compare the key daily limits side by side without reading long conditions.",
+        "moduleLimitsTitle": "Module limits",
+        "moduleLimitsDescription": "Values come from the current plan configuration and can change together with product settings.",
+        "dailyLimit": "per day",
+        "compare": {
+            "metric": "Metric",
+            "analytics": "Shared analytics limit per day",
+            "parser": "Shared parser limit per day",
+            "seoAudit": "SEO audit / Site Intel per day"
+        },
+        "supportTitle": "Need broader access than your current plan?",
+        "supportText": "Choose the plan that fits you best and continue. Payment is temporarily unavailable, but it will be available soon.",
+        "footer": {
+            "upgradePlus": "Upgrade to Plus",
+            "upgradePro": "Upgrade to Pro",
+            "customAccess": "Custom terms"
+        },
+        "token": {
+            "title": "Have an activation token?",
+            "description": "Enter a one-time token to activate a subscription on your account right away.",
+            "label": "Activation token",
+            "placeholder": "For example: ABCD-EFGH-JKLM-NPQR",
+            "button": "Activate",
+            "success": "Subscription activated successfully."
+        },
+        "reason": {
+            "planTitle": "This feature is locked by plan",
+            "planText": "Your current plan does not include this capability. Choose Plus or Pro to unlock broader access.",
+            "planTextWithFeature": "Your current plan does not include this capability: :feature. Choose Plus or Pro to unlock broader access.",
+            "quotaTitle": "Quota limit reached",
+            "quotaText": "You have reached the limit of your current plan. A higher plan gives you more daily quota.",
+            "quotaTextWithFeature": "You have reached the quota for: :feature. A higher plan gives you more daily quota."
+        },
+        "plans": {
+            "free": {
+                "name": "Free",
+                "price": "$0",
+                "tagline": "Starter",
+                "description": "Best for exploring the interface and basic platform navigation.",
+                "highlights": {
+                    "first": "Suitable for demos and onboarding.",
+                    "second": "No practical quota for paid OSINT workflows.",
+                    "third": "A safe entry point for team familiarization."
+                }
+            },
+            "plus": {
+                "name": "Plus",
+                "price": "$12 / mo",
+                "tagline": "Working pace",
+                "description": "Designed for individual recurring work with moderate daily load.",
+                "highlights": {
+                    "first": "Daily quotas for analytics and parser actions.",
+                    "second": "A good fit for analysts running several cases in parallel.",
+                    "third": "Balanced plan for day-to-day OSINT work."
+                }
+            },
+            "pro": {
+                "name": "Pro",
+                "price": "$49 / mo",
+                "tagline": "Team capacity",
+                "description": "For intensive usage, higher request volume, and steady investigative workloads.",
+                "highlights": {
+                    "first": "Maximum daily quotas for deeper operational work.",
+                    "second": "A strong choice for teams that need quota headroom.",
+                    "third": "Best suited for continuous analytical usage."
+                }
+            }
+        }
+    },
+    "placeholderPage": {
+        "title": "Temporarily unavailable",
+        "heading": "Coming soon",
+        "description": "This section is temporarily unavailable. We are preparing it for launch.",
+        "back": "Go back",
+        "genericPlan": "selected plan",
+        "generic": {
+            "badge": "SOON",
+            "title": "This section will be available soon",
+            "description": "This feature is temporarily unavailable, but we are already working on it.",
+            "bullets": {
+                "first": "For now, you can go back and continue using the service.",
+                "second": "As soon as the section is ready, it will appear here automatically.",
+                "third": "Thank you for your patience."
+            },
+            "note": "This section will appear in one of the upcoming updates."
+        },
+        "checkout": {
+            "badge": "PAYMENT SOON",
+            "title": "Payment for the “:plan” plan is coming soon",
+            "description": "Online payment is temporarily unavailable, but we are already preparing it.",
+            "bullets": {
+                "first": "Your selected plan is saved, and you will be able to complete it a little later.",
+                "second": "For now, you can go back and compare the available plans.",
+                "third": "We will add payment in one of the next updates."
+            },
+            "note": "Thank you for your interest. Payment will be available very soon."
+        }
     },
     "deleteAccount": {
         "title": "Delete account",

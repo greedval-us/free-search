@@ -14,15 +14,16 @@ use App\Modules\Mastodon\Search\Contracts\MastodonSearchApplicationServiceInterf
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Mockery;
 use RuntimeException;
+use Tests\Feature\Controllers\Concerns\CreatesPaidUser;
 use Tests\TestCase;
 
 class MastodonControllerIsolationTest extends TestCase
 {
-    use RefreshDatabase;
+    use CreatesPaidUser, RefreshDatabase;
 
     public function test_mastodon_search_controller_returns_service_payload(): void
     {
-        $user = User::factory()->create();
+        $user = $this->paidUser();
 
         $this->mock(MastodonSearchApplicationServiceInterface::class, function ($mock): void {
             $mock->shouldReceive('search')
@@ -82,7 +83,7 @@ class MastodonControllerIsolationTest extends TestCase
 
     public function test_mastodon_search_controller_maps_runtime_exception_to_json_error(): void
     {
-        $user = User::factory()->create();
+        $user = $this->paidUser();
 
         $this->mock(MastodonSearchApplicationServiceInterface::class, function ($mock): void {
             $mock->shouldReceive('search')
@@ -277,7 +278,7 @@ class MastodonControllerIsolationTest extends TestCase
 
     public function test_mastodon_analytics_controller_returns_summary_payload(): void
     {
-        $user = User::factory()->create();
+        $user = $this->paidUser();
 
         $this->mock(MastodonAnalyticsApplicationServiceInterface::class, function ($mock): void {
             $mock->shouldReceive('summary')
@@ -348,7 +349,7 @@ class MastodonControllerIsolationTest extends TestCase
 
     public function test_mastodon_analytics_report_renders_html_response(): void
     {
-        $user = User::factory()->create();
+        $user = $this->paidUser();
 
         $this->mock(MastodonAnalyticsApplicationServiceInterface::class, function ($mock): void {
             $mock->shouldReceive('summary')

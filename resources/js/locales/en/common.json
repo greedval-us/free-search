@@ -13,6 +13,13 @@
     "showPassword": "Show password",
     "hidePassword": "Hide password",
     "saved": "Saved.",
+    "cookies": {
+        "title": "We use cookies",
+        "text": "This site uses cookies for sign-in, interface preferences, and stable service operation. By continuing to use the site, you agree to their use.",
+        "accept": "Got it",
+        "details": "Learn more"
+    },
+    "privacyPolicy": "Privacy policy",
     "cancel": "Cancel",
     "yes": "Yes",
     "no": "No"

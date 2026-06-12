@@ -1,0 +1,52 @@
+{
+    "metaTitle": "Service Rules",
+    "eyebrow": "SERVICE RULES",
+    "title": "Service Usage Rules",
+    "subtitle": "These rules describe the basic terms of using the platform, acceptable usage scenarios, and the restrictions accepted by the user during registration.",
+    "lastUpdated": "Last updated: June 11, 2026",
+    "backHome": "Back to home",
+    "sections": {
+        "general": {
+            "title": "1. General Terms",
+            "items": [
+                "The service is provided for lawful use within the functionality made available to the user through the platform interface.",
+                "Users must use the service in good faith and must not take actions that may disrupt the site, infrastructure, or other users' accounts."
+            ]
+        },
+        "account": {
+            "title": "2. User Account",
+            "items": [
+                "The user is responsible for the accuracy of the data provided during registration and for keeping their credentials secure.",
+                "The user must not share account access with third parties without lawful grounds and must keep the password confidential."
+            ]
+        },
+        "usage": {
+            "title": "3. Acceptable Use",
+            "items": [
+                "The service must not be used for unlawful activity, infringement of third-party rights, bypassing access restrictions, abusing the platform's technical capabilities, or harming the infrastructure.",
+                "Attempts to gain unauthorized access to data, code, administrative areas, internal APIs, or other users' accounts are prohibited."
+            ]
+        },
+        "content": {
+            "title": "4. User Data and Queries",
+            "items": [
+                "The user is responsible for the data they enter into service forms, save in queries, or otherwise use within the available functionality.",
+                "The operator may limit or block actions that create excessive load, violate security requirements, or conflict with the intended purpose of the service."
+            ]
+        },
+        "liability": {
+            "title": "5. Limitation of Liability",
+            "items": [
+                "The operator takes reasonable measures to keep the service available and stable, but does not guarantee uninterrupted operation, error-free output, or suitability of the results for a specific user task.",
+                "The user is solely responsible for assessing the legality and appropriateness of using information obtained through the service."
+            ]
+        },
+        "changes": {
+            "title": "6. Changes to the Rules",
+            "items": [
+                "The operator may update these rules at any time.",
+                "The current version is published on this page and applies from the moment of publication unless stated otherwise."
+            ]
+        }
+    }
+}

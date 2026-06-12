@@ -1,6 +1,10 @@
 import { computed, ref } from 'vue';
 import { apiRequest } from '@/lib/api';
-import type { BlueskyActor, BlueskyAnalyticsPayload, BlueskyHashtagProfile } from '../types';
+import type {
+    BlueskyActor,
+    BlueskyAnalyticsPayload,
+    BlueskyHashtagProfile,
+} from '../types';
 
 type TranslateFn = (key: string) => string;
 
@@ -13,7 +17,10 @@ const DEFAULT_PAGES = 3;
 const PAGES_MIN = 1;
 const PAGES_MAX = 5;
 
-export const useBlueskyAnalytics = (t: TranslateFn, locale: { value: string }) => {
+export const useBlueskyAnalytics = (
+    t: TranslateFn,
+    locale: { value: string }
+) => {
     const form = ref({
         mode: 'account' as AnalyticsMode,
         target: '',
@@ -30,7 +37,9 @@ export const useBlueskyAnalytics = (t: TranslateFn, locale: { value: string }) =
     const panelCollapsed = ref(false);
 
     const canRun = computed(() => form.value.target.trim().length > 0);
-    const canUseReportActions = computed(() => result.value !== null && canRun.value);
+    const canUseReportActions = computed(
+        () => result.value !== null && canRun.value
+    );
     const isAccountMode = computed(() => form.value.mode === 'account');
     const accountProfile = computed(() =>
         result.value?.meta.mode === 'account' && result.value.profile
@@ -43,7 +52,12 @@ export const useBlueskyAnalytics = (t: TranslateFn, locale: { value: string }) =
             : null
     );
 
-    const clampNumber = (value: number, min: number, max: number, fallback: number) => {
+    const clampNumber = (
+        value: number,
+        min: number,
+        max: number,
+        fallback: number
+    ) => {
         if (!Number.isFinite(value)) {
             return fallback;
         }
@@ -52,11 +66,21 @@ export const useBlueskyAnalytics = (t: TranslateFn, locale: { value: string }) =
     };
 
     const clampLimit = () => {
-        form.value.limit = clampNumber(form.value.limit, LIMIT_MIN, LIMIT_MAX, DEFAULT_LIMIT);
+        form.value.limit = clampNumber(
+            form.value.limit,
+            LIMIT_MIN,
+            LIMIT_MAX,
+            DEFAULT_LIMIT
+        );
     };
 
     const clampPages = () => {
-        form.value.pages = clampNumber(form.value.pages, PAGES_MIN, PAGES_MAX, DEFAULT_PAGES);
+        form.value.pages = clampNumber(
+            form.value.pages,
+            PAGES_MIN,
+            PAGES_MAX,
+            DEFAULT_PAGES
+        );
     };
 
     const runAnalytics = async () => {
@@ -67,23 +91,27 @@ export const useBlueskyAnalytics = (t: TranslateFn, locale: { value: string }) =
         loading.value = true;
         error.value = null;
 
-        const response = await apiRequest<BlueskyAnalyticsPayload>('/bluesky/analytics/summary', {
-            query: {
-                mode: form.value.mode,
-                target: form.value.target.trim(),
-                limit: form.value.limit,
-                pages: form.value.pages,
-                dateFrom: form.value.dateFrom || undefined,
-                dateTo: form.value.dateTo || undefined,
-                resolve: form.value.resolve ? 'true' : 'false',
-                locale: locale.value,
-            },
-        });
+        const response = await apiRequest<BlueskyAnalyticsPayload>(
+            '/bluesky/analytics/summary',
+            {
+                query: {
+                    mode: form.value.mode,
+                    target: form.value.target.trim(),
+                    limit: form.value.limit,
+                    pages: form.value.pages,
+                    dateFrom: form.value.dateFrom || undefined,
+                    dateTo: form.value.dateTo || undefined,
+                    resolve: form.value.resolve ? 'true' : 'false',
+                    locale: locale.value,
+                },
+            }
+        );
 
         loading.value = false;
 
         if (!response.ok) {
-            error.value = response.message ?? t('bluesky.analytics.errors.requestFailed');
+            error.value =
+                response.message ?? t('bluesky.analytics.errors.requestFailed');
 
             return;
         }
@@ -117,7 +145,11 @@ export const useBlueskyAnalytics = (t: TranslateFn, locale: { value: string }) =
     };
 
     const downloadReport = () => {
-        window.open(`${reportUrl.value}&download=1`, '_blank', 'noopener,noreferrer');
+        window.open(
+            `${reportUrl.value}&download=1`,
+            '_blank',
+            'noopener,noreferrer'
+        );
     };
 
     return {

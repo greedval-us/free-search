@@ -1,0 +1,83 @@
+{
+    "metaTitle": "Privacy Policy",
+    "eyebrow": "PRIVACY POLICY",
+    "title": "Personal Data Processing Policy",
+    "subtitle": "This document explains what data the site processes, why it is used, and how users can manage their data.",
+    "lastUpdated": "Last updated: June 11, 2026",
+    "noticeTitle": "Fill in the operator details before publication",
+    "noticeText": "Before publishing this page in production, replace the placeholders with the actual operator details, contact email, and mailing address for requests.",
+    "backHome": "Back to home",
+    "sectionLabels": {
+        "general": "1. General Provisions",
+        "operator": "2. Operator Information",
+        "data": "3. What Data We Process",
+        "purposes": "4. Purposes of Processing",
+        "legalBasis": "5. Legal Basis for Processing",
+        "cookies": "6. Cookies and Technical Data",
+        "sharing": "7. Data Sharing",
+        "rights": "8. Data Subject Rights",
+        "security": "9. Security Measures",
+        "retention": "10. Data Retention",
+        "contacts": "11. Personal Data Requests",
+        "changes": "12. Policy Changes"
+    },
+    "general": [
+        "This policy describes how Uraboros and its related web interfaces process and protect users' personal data.",
+        "The policy applies to all information the operator may receive when a user accesses the site, registers an account, signs in, or uses the service functionality."
+    ],
+    "operator": [
+        "Personal data operator: [INSERT FULL LEGAL ENTITY NAME OR INDIVIDUAL ENTREPRENEUR NAME].",
+        "Operator address: [INSERT LEGAL OR MAILING ADDRESS].",
+        "Email for personal data requests: [INSERT EMAIL ADDRESS]."
+    ],
+    "data": [
+        "Account data: login, email, password hash, registration date, and email verification status.",
+        "Session and authentication data: session id, sign-in data, and recent activity details.",
+        "Technical data: IP address, User-Agent, browser and device details, cookies, and interface preferences.",
+        "Service usage data: query history, saved queries, technical service logs, and user activity within the interface.",
+        "Any other data voluntarily entered by the user into service forms while using the platform."
+    ],
+    "purposes": [
+        "User registration, account creation, and account maintenance.",
+        "Authentication, session support, and sign-in security.",
+        "Providing service functionality, including saved queries, settings, and activity history.",
+        "Ensuring stable site operation, diagnosing errors, preventing abuse, and protecting the infrastructure.",
+        "Complying with applicable legal obligations."
+    ],
+    "legalBasis": [
+        "Personal data is processed based on the data subject's consent, and where processing is necessary to perform an agreement with the user, provide access to the service functionality, or comply with legal obligations.",
+        "By using the site and submitting data through its forms, the user confirms acceptance of this policy where the relevant processing basis applies."
+    ],
+    "cookies": [
+        "The site uses functional cookies and other technical identifiers required for sign-in, storing interface preferences, and ensuring proper site operation.",
+        "Cookies may be used to store theme preferences, interface state, and confirmation that the user has acknowledged site notices.",
+        "Users may restrict cookies in browser settings, but this may affect the availability of certain site features."
+    ],
+    "sharing": [
+        "Personal data is not disclosed to third parties without lawful grounds, except where required by applicable law or necessary for site operation.",
+        "The operator may engage technical contractors and infrastructure providers for hosting, email delivery, site protection, and service reliability. In such cases, data is shared only to the extent necessary for the relevant purpose.",
+        "If the site involves cross-border personal data transfer, the operator undertakes to account for the legal requirements applicable to such transfer."
+    ],
+    "rights": [
+        "Users may request information about the processing of their personal data and may request correction, blocking, or deletion if the data is incomplete, outdated, inaccurate, unlawfully obtained, or no longer necessary for the declared purpose.",
+        "Users may withdraw consent where processing is based on consent and may request deletion of their account and related data.",
+        "To exercise these rights, users may contact the operator using the details provided in this policy."
+    ],
+    "security": [
+        "The operator applies reasonable organizational and technical measures to protect personal data against unauthorized access, modification, disclosure, blocking, destruction, or other unlawful actions.",
+        "Such measures may include access controls, authentication mechanisms, security event logging, backups, and software maintenance."
+    ],
+    "retention": [
+        "Personal data is stored no longer than necessary for the purposes of processing unless a longer retention period is required by law.",
+        "Account data is retained for the lifetime of the user's account and afterwards for the period necessary to meet the operator's legal obligations.",
+        "Technical logs, cookies, and related support data are retained for the period necessary for service operation, security, and internal retention procedures."
+    ],
+    "contacts": [
+        "Requests regarding personal data processing should be sent to: [INSERT EMAIL ADDRESS].",
+        "The request should preferably include information sufficient to identify the user, a description of the request, and a reply contact."
+    ],
+    "changes": [
+        "The operator may amend this policy from time to time.",
+        "The current version of the policy is published on this page and becomes effective upon publication unless stated otherwise."
+    ]
+}

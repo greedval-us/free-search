@@ -120,6 +120,7 @@
         "replies": "Ответы",
         "quotes": "Цитаты",
         "uses": "Употребления",
+        "accounts": "Аккаунты",
         "media": "Медиа",
         "postType": "Тип поста",
         "followers": "Подписчики",
@@ -148,6 +149,9 @@
     },
     "osint": {
         "title": "OSINT-детали",
+        "did": "DID",
+        "cid": "CID",
+        "atUri": "AT URI",
         "indexedAt": "Индексировано",
         "replyRoot": "Корневой пост треда",
         "replyParent": "Родительский пост",

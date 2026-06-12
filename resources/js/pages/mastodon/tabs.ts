@@ -13,22 +13,24 @@ export type MastodonTabDefinition = {
     accessKey?: string;
 };
 
-export const MASTODON_TABS: readonly MastodonTabDefinition[] = createModuleTabs([
-    {
-        key: 'search',
-        labelKey: 'mastodon.tabs.search',
-        component: MastodonSearchTab,
-    },
-    {
-        key: 'analytics',
-        labelKey: 'mastodon.tabs.analytics',
-        component: MastodonAnalyticsTab,
-        accessKey: 'mastodon.analytics',
-    },
-    {
-        key: 'parser',
-        labelKey: 'mastodon.tabs.parser',
-        component: MastodonParserTab,
-        accessKey: 'mastodon.parser',
-    },
-]) as readonly MastodonTabDefinition[];
+export const MASTODON_TABS: readonly MastodonTabDefinition[] = createModuleTabs(
+    [
+        {
+            key: 'search',
+            labelKey: 'mastodon.tabs.search',
+            component: MastodonSearchTab,
+        },
+        {
+            key: 'analytics',
+            labelKey: 'mastodon.tabs.analytics',
+            component: MastodonAnalyticsTab,
+            accessKey: 'mastodon.analytics',
+        },
+        {
+            key: 'parser',
+            labelKey: 'mastodon.tabs.parser',
+            component: MastodonParserTab,
+            accessKey: 'mastodon.parser',
+        },
+    ]
+) as readonly MastodonTabDefinition[];

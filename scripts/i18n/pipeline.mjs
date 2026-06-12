@@ -4,14 +4,18 @@ import path from 'node:path';
 const projectRoot = process.cwd();
 const localesDir = path.join(projectRoot, 'resources', 'js', 'locales');
 const sourceDir = path.join(projectRoot, 'resources', 'js');
-const localeFiles = ['en.json', 'ru.json'];
+const localeDirectories = ['en', 'ru'];
 const sourceExtensions = new Set(['.vue', '.ts', '.tsx', '.js']);
 const rawTextLineIgnoreToken = 'i18n-ignore-line';
 const mode = process.argv.includes('--strict') ? 'strict' : 'relaxed';
 
 const rawTextAllowList = new Set([
   'Uraboros',
+  'URABOROS',
   'durov',
+  'DID',
+  'CID',
+  'AT URI',
   'HSTS',
   'CSP',
   'DNS',
@@ -47,6 +51,24 @@ const readJsonFile = async (filePath) => {
   const content = await fs.readFile(filePath, 'utf8');
 
   return JSON.parse(content);
+};
+
+const readLocaleDirectory = async (directoryPath) => {
+  const entries = await fs.readdir(directoryPath, { withFileTypes: true });
+  const locale = {};
+
+  for (const entry of entries) {
+    if (!entry.isFile() || path.extname(entry.name) !== '.json') {
+      continue;
+    }
+
+    const filePath = path.join(directoryPath, entry.name);
+    const namespace = path.basename(entry.name, '.json');
+
+    locale[namespace] = await readJsonFile(filePath);
+  }
+
+  return locale;
 };
 
 const flattenObject = (obj, prefix = '', acc = new Map()) => {
@@ -254,10 +276,9 @@ const typeLabel = (value) => {
 const run = async () => {
   const localeEntries = [];
 
-  for (const localeFile of localeFiles) {
-    const localePath = path.join(localesDir, localeFile);
-    const localeName = localeFile.replace('.json', '');
-    const parsed = await readJsonFile(localePath);
+  for (const localeName of localeDirectories) {
+    const localePath = path.join(localesDir, localeName);
+    const parsed = await readLocaleDirectory(localePath);
     const flattened = flattenObject(parsed);
 
     localeEntries.push({

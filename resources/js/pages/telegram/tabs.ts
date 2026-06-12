@@ -13,22 +13,24 @@ export type TelegramTabDefinition = {
     accessKey?: string;
 };
 
-export const TELEGRAM_TABS: readonly TelegramTabDefinition[] = createModuleTabs([
-    {
-        key: 'search',
-        labelKey: 'telegram.tabs.search',
-        component: TelegramSearchTab,
-    },
-    {
-        key: 'analytics',
-        labelKey: 'telegram.tabs.analytics',
-        component: TelegramAnalyticsTab,
-        accessKey: 'telegram.analytics',
-    },
-    {
-        key: 'parser',
-        labelKey: 'telegram.tabs.parser',
-        component: TelegramParserTab,
-        accessKey: 'telegram.parser',
-    },
-]) as readonly TelegramTabDefinition[];
+export const TELEGRAM_TABS: readonly TelegramTabDefinition[] = createModuleTabs(
+    [
+        {
+            key: 'search',
+            labelKey: 'telegram.tabs.search',
+            component: TelegramSearchTab,
+        },
+        {
+            key: 'analytics',
+            labelKey: 'telegram.tabs.analytics',
+            component: TelegramAnalyticsTab,
+            accessKey: 'telegram.analytics',
+        },
+        {
+            key: 'parser',
+            labelKey: 'telegram.tabs.parser',
+            component: TelegramParserTab,
+            accessKey: 'telegram.parser',
+        },
+    ]
+) as readonly TelegramTabDefinition[];

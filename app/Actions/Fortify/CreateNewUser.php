@@ -36,6 +36,9 @@ class CreateNewUser implements CreatesNewUsers
                 Password::min(10)->mixedCase()->numbers()->symbols(),
                 'confirmed',
             ],
+            'accept_service_rules' => [
+                'accepted',
+            ],
         ])->validate();
 
         return User::create([

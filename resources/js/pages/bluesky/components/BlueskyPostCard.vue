@@ -181,15 +181,21 @@ const mediaPreviewUrl = (post: BlueskyPost): string => {
             </p>
             <div class="grid gap-2 md:grid-cols-2">
                 <p>
-                    <span class="text-muted-foreground">DID:</span>
+                    <span class="text-muted-foreground"
+                        >{{ t('bluesky.osint.did') }}:</span
+                    >
                     {{ post.author.did || '-' }}
                 </p>
                 <p>
-                    <span class="text-muted-foreground">CID:</span>
+                    <span class="text-muted-foreground"
+                        >{{ t('bluesky.osint.cid') }}:</span
+                    >
                     {{ post.cid || '-' }}
                 </p>
                 <p>
-                    <span class="text-muted-foreground">AT URI:</span>
+                    <span class="text-muted-foreground"
+                        >{{ t('bluesky.osint.atUri') }}:</span
+                    >
                     {{ post.uri || '-' }}
                 </p>
                 <p>
