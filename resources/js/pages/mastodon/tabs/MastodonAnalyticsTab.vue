@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { Tags } from 'lucide-vue-next';
-import { computed, ref } from 'vue';
+import { computed, onMounted, ref } from 'vue';
 import AnalyticsActionEmptyState from '@/components/ui/analytics/AnalyticsActionEmptyState.vue';
 import AnalyticsChipSection from '@/components/ui/analytics/AnalyticsChipSection.vue';
 import AnalyticsControlPanel from '@/components/ui/analytics/AnalyticsControlPanel.vue';
@@ -13,6 +13,12 @@ import HashtagProfileCard from '@/components/ui/HashtagProfileCard.vue';
 import IntelResultPanel from '@/components/ui/IntelResultPanel.vue';
 import SectionCard from '@/components/ui/SectionCard.vue';
 import { useI18n } from '@/composables/useI18n';
+import {
+    getRepeatQueryParams,
+    isRepeatAutorunEnabled,
+    readRepeatQueryInt,
+    readRepeatQueryParam,
+} from '@/composables/useRepeatQuery';
 import { apiRequest } from '@/lib/api';
 import MastodonAccountCard from '../components/MastodonAccountCard.vue';
 import MastodonStatusCard from '../components/MastodonStatusCard.vue';
@@ -72,6 +78,18 @@ const clampNumber = (
     }
 
     return Math.min(max, Math.max(min, Math.trunc(value)));
+};
+
+const readRepeatBoolean = (value: string): boolean | null => {
+    if (value === '1' || value === 'true') {
+        return true;
+    }
+
+    if (value === '0' || value === 'false') {
+        return false;
+    }
+
+    return null;
 };
 
 const runAnalytics = async () => {
@@ -142,6 +160,61 @@ const downloadReport = () => {
         'noopener,noreferrer'
     );
 };
+
+onMounted(() => {
+    const params = getRepeatQueryParams();
+
+    if (!params) {
+        return;
+    }
+
+    const tab = readRepeatQueryParam(params, ['tab']);
+
+    if (tab !== 'analytics') {
+        return;
+    }
+
+    const mode = readRepeatQueryParam(params, ['mode']);
+    const target = readRepeatQueryParam(params, ['target']);
+    const limit = readRepeatQueryInt(params, 'limit');
+    const pages = readRepeatQueryInt(params, 'pages');
+    const dateFrom = readRepeatQueryParam(params, ['dateFrom']);
+    const dateTo = readRepeatQueryParam(params, ['dateTo']);
+    const resolve = readRepeatQueryParam(params, ['resolve']);
+    const resolveValue = readRepeatBoolean(resolve);
+
+    if (mode === 'account' || mode === 'hashtag') {
+        form.value.mode = mode;
+    }
+
+    if (target !== '') {
+        form.value.target = target;
+    }
+
+    if (limit !== null) {
+        form.value.limit = clampNumber(limit, 1, 20, 10);
+    }
+
+    if (pages !== null) {
+        form.value.pages = clampNumber(pages, 1, 5, 3);
+    }
+
+    if (dateFrom !== '') {
+        form.value.dateFrom = dateFrom;
+    }
+
+    if (dateTo !== '') {
+        form.value.dateTo = dateTo;
+    }
+
+    if (resolveValue !== null) {
+        form.value.resolve = resolveValue;
+    }
+
+    if (isRepeatAutorunEnabled(params) && canRun.value) {
+        void runAnalytics();
+    }
+});
 
 const primaryMetrics = computed(() =>
     result.value

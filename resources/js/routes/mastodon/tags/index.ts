@@ -1,7 +1,7 @@
 import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFormDefinition, applyUrlDefaults } from './../../../wayfinder'
 /**
 * @see \App\Http\Controllers\Mastodon\MastodonSearchController::statuses
- * @see app/Http/Controllers/Mastodon/MastodonSearchController.php:60
+ * @see app/Http/Controllers/Mastodon/MastodonSearchController.php:40
  * @route '/mastodon/tags/{tagName}/statuses'
  */
 export const statuses = (args: { tagName: string | number } | [tagName: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -16,7 +16,7 @@ statuses.definition = {
 
 /**
 * @see \App\Http\Controllers\Mastodon\MastodonSearchController::statuses
- * @see app/Http/Controllers/Mastodon/MastodonSearchController.php:60
+ * @see app/Http/Controllers/Mastodon/MastodonSearchController.php:40
  * @route '/mastodon/tags/{tagName}/statuses'
  */
 statuses.url = (args: { tagName: string | number } | [tagName: string | number ] | string | number, options?: RouteQueryOptions) => {
@@ -44,7 +44,7 @@ statuses.url = (args: { tagName: string | number } | [tagName: string | number ]
 
 /**
 * @see \App\Http\Controllers\Mastodon\MastodonSearchController::statuses
- * @see app/Http/Controllers/Mastodon/MastodonSearchController.php:60
+ * @see app/Http/Controllers/Mastodon/MastodonSearchController.php:40
  * @route '/mastodon/tags/{tagName}/statuses'
  */
 statuses.get = (args: { tagName: string | number } | [tagName: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -53,7 +53,7 @@ statuses.get = (args: { tagName: string | number } | [tagName: string | number ]
 })
 /**
 * @see \App\Http\Controllers\Mastodon\MastodonSearchController::statuses
- * @see app/Http/Controllers/Mastodon/MastodonSearchController.php:60
+ * @see app/Http/Controllers/Mastodon/MastodonSearchController.php:40
  * @route '/mastodon/tags/{tagName}/statuses'
  */
 statuses.head = (args: { tagName: string | number } | [tagName: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -63,7 +63,7 @@ statuses.head = (args: { tagName: string | number } | [tagName: string | number 
 
     /**
 * @see \App\Http\Controllers\Mastodon\MastodonSearchController::statuses
- * @see app/Http/Controllers/Mastodon/MastodonSearchController.php:60
+ * @see app/Http/Controllers/Mastodon/MastodonSearchController.php:40
  * @route '/mastodon/tags/{tagName}/statuses'
  */
     const statusesForm = (args: { tagName: string | number } | [tagName: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -73,7 +73,7 @@ statuses.head = (args: { tagName: string | number } | [tagName: string | number 
 
             /**
 * @see \App\Http\Controllers\Mastodon\MastodonSearchController::statuses
- * @see app/Http/Controllers/Mastodon/MastodonSearchController.php:60
+ * @see app/Http/Controllers/Mastodon/MastodonSearchController.php:40
  * @route '/mastodon/tags/{tagName}/statuses'
  */
         statusesForm.get = (args: { tagName: string | number } | [tagName: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -82,7 +82,7 @@ statuses.head = (args: { tagName: string | number } | [tagName: string | number 
         })
             /**
 * @see \App\Http\Controllers\Mastodon\MastodonSearchController::statuses
- * @see app/Http/Controllers/Mastodon/MastodonSearchController.php:60
+ * @see app/Http/Controllers/Mastodon/MastodonSearchController.php:40
  * @route '/mastodon/tags/{tagName}/statuses'
  */
         statusesForm.head = (args: { tagName: string | number } | [tagName: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({

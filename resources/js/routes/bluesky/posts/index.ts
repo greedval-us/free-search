@@ -1,7 +1,7 @@
 import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFormDefinition } from './../../../wayfinder'
 /**
 * @see \App\Http\Controllers\Bluesky\BlueskySearchController::likes
- * @see app/Http/Controllers/Bluesky/BlueskySearchController.php:33
+ * @see app/Http/Controllers/Bluesky/BlueskySearchController.php:25
  * @route '/bluesky/posts/likes'
  */
 export const likes = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -16,7 +16,7 @@ likes.definition = {
 
 /**
 * @see \App\Http\Controllers\Bluesky\BlueskySearchController::likes
- * @see app/Http/Controllers/Bluesky/BlueskySearchController.php:33
+ * @see app/Http/Controllers/Bluesky/BlueskySearchController.php:25
  * @route '/bluesky/posts/likes'
  */
 likes.url = (options?: RouteQueryOptions) => {
@@ -25,7 +25,7 @@ likes.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\Bluesky\BlueskySearchController::likes
- * @see app/Http/Controllers/Bluesky/BlueskySearchController.php:33
+ * @see app/Http/Controllers/Bluesky/BlueskySearchController.php:25
  * @route '/bluesky/posts/likes'
  */
 likes.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -34,7 +34,7 @@ likes.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
 })
 /**
 * @see \App\Http\Controllers\Bluesky\BlueskySearchController::likes
- * @see app/Http/Controllers/Bluesky/BlueskySearchController.php:33
+ * @see app/Http/Controllers/Bluesky/BlueskySearchController.php:25
  * @route '/bluesky/posts/likes'
  */
 likes.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -44,7 +44,7 @@ likes.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 
     /**
 * @see \App\Http\Controllers\Bluesky\BlueskySearchController::likes
- * @see app/Http/Controllers/Bluesky/BlueskySearchController.php:33
+ * @see app/Http/Controllers/Bluesky/BlueskySearchController.php:25
  * @route '/bluesky/posts/likes'
  */
     const likesForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -54,7 +54,7 @@ likes.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 
             /**
 * @see \App\Http\Controllers\Bluesky\BlueskySearchController::likes
- * @see app/Http/Controllers/Bluesky/BlueskySearchController.php:33
+ * @see app/Http/Controllers/Bluesky/BlueskySearchController.php:25
  * @route '/bluesky/posts/likes'
  */
         likesForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -63,7 +63,7 @@ likes.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
         })
             /**
 * @see \App\Http\Controllers\Bluesky\BlueskySearchController::likes
- * @see app/Http/Controllers/Bluesky/BlueskySearchController.php:33
+ * @see app/Http/Controllers/Bluesky/BlueskySearchController.php:25
  * @route '/bluesky/posts/likes'
  */
         likesForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -79,7 +79,7 @@ likes.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     likes.form = likesForm
 /**
 * @see \App\Http\Controllers\Bluesky\BlueskySearchController::reposts
- * @see app/Http/Controllers/Bluesky/BlueskySearchController.php:44
+ * @see app/Http/Controllers/Bluesky/BlueskySearchController.php:32
  * @route '/bluesky/posts/reposts'
  */
 export const reposts = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -94,7 +94,7 @@ reposts.definition = {
 
 /**
 * @see \App\Http\Controllers\Bluesky\BlueskySearchController::reposts
- * @see app/Http/Controllers/Bluesky/BlueskySearchController.php:44
+ * @see app/Http/Controllers/Bluesky/BlueskySearchController.php:32
  * @route '/bluesky/posts/reposts'
  */
 reposts.url = (options?: RouteQueryOptions) => {
@@ -103,7 +103,7 @@ reposts.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\Bluesky\BlueskySearchController::reposts
- * @see app/Http/Controllers/Bluesky/BlueskySearchController.php:44
+ * @see app/Http/Controllers/Bluesky/BlueskySearchController.php:32
  * @route '/bluesky/posts/reposts'
  */
 reposts.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -112,7 +112,7 @@ reposts.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
 })
 /**
 * @see \App\Http\Controllers\Bluesky\BlueskySearchController::reposts
- * @see app/Http/Controllers/Bluesky/BlueskySearchController.php:44
+ * @see app/Http/Controllers/Bluesky/BlueskySearchController.php:32
  * @route '/bluesky/posts/reposts'
  */
 reposts.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -122,7 +122,7 @@ reposts.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 
     /**
 * @see \App\Http\Controllers\Bluesky\BlueskySearchController::reposts
- * @see app/Http/Controllers/Bluesky/BlueskySearchController.php:44
+ * @see app/Http/Controllers/Bluesky/BlueskySearchController.php:32
  * @route '/bluesky/posts/reposts'
  */
     const repostsForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -132,7 +132,7 @@ reposts.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 
             /**
 * @see \App\Http\Controllers\Bluesky\BlueskySearchController::reposts
- * @see app/Http/Controllers/Bluesky/BlueskySearchController.php:44
+ * @see app/Http/Controllers/Bluesky/BlueskySearchController.php:32
  * @route '/bluesky/posts/reposts'
  */
         repostsForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -141,7 +141,7 @@ reposts.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
         })
             /**
 * @see \App\Http\Controllers\Bluesky\BlueskySearchController::reposts
- * @see app/Http/Controllers/Bluesky/BlueskySearchController.php:44
+ * @see app/Http/Controllers/Bluesky/BlueskySearchController.php:32
  * @route '/bluesky/posts/reposts'
  */
         repostsForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -157,7 +157,7 @@ reposts.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     reposts.form = repostsForm
 /**
 * @see \App\Http\Controllers\Bluesky\BlueskySearchController::thread
- * @see app/Http/Controllers/Bluesky/BlueskySearchController.php:55
+ * @see app/Http/Controllers/Bluesky/BlueskySearchController.php:39
  * @route '/bluesky/posts/thread'
  */
 export const thread = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -172,7 +172,7 @@ thread.definition = {
 
 /**
 * @see \App\Http\Controllers\Bluesky\BlueskySearchController::thread
- * @see app/Http/Controllers/Bluesky/BlueskySearchController.php:55
+ * @see app/Http/Controllers/Bluesky/BlueskySearchController.php:39
  * @route '/bluesky/posts/thread'
  */
 thread.url = (options?: RouteQueryOptions) => {
@@ -181,7 +181,7 @@ thread.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\Bluesky\BlueskySearchController::thread
- * @see app/Http/Controllers/Bluesky/BlueskySearchController.php:55
+ * @see app/Http/Controllers/Bluesky/BlueskySearchController.php:39
  * @route '/bluesky/posts/thread'
  */
 thread.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -190,7 +190,7 @@ thread.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
 })
 /**
 * @see \App\Http\Controllers\Bluesky\BlueskySearchController::thread
- * @see app/Http/Controllers/Bluesky/BlueskySearchController.php:55
+ * @see app/Http/Controllers/Bluesky/BlueskySearchController.php:39
  * @route '/bluesky/posts/thread'
  */
 thread.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -200,7 +200,7 @@ thread.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 
     /**
 * @see \App\Http\Controllers\Bluesky\BlueskySearchController::thread
- * @see app/Http/Controllers/Bluesky/BlueskySearchController.php:55
+ * @see app/Http/Controllers/Bluesky/BlueskySearchController.php:39
  * @route '/bluesky/posts/thread'
  */
     const threadForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -210,7 +210,7 @@ thread.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 
             /**
 * @see \App\Http\Controllers\Bluesky\BlueskySearchController::thread
- * @see app/Http/Controllers/Bluesky/BlueskySearchController.php:55
+ * @see app/Http/Controllers/Bluesky/BlueskySearchController.php:39
  * @route '/bluesky/posts/thread'
  */
         threadForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -219,7 +219,7 @@ thread.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
         })
             /**
 * @see \App\Http\Controllers\Bluesky\BlueskySearchController::thread
- * @see app/Http/Controllers/Bluesky/BlueskySearchController.php:55
+ * @see app/Http/Controllers/Bluesky/BlueskySearchController.php:39
  * @route '/bluesky/posts/thread'
  */
         threadForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({

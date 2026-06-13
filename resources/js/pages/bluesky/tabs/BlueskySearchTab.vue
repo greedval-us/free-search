@@ -1,7 +1,14 @@
 <script setup lang="ts">
+import { onMounted } from 'vue';
 import IntelAdvancedFilters from '@/components/ui/IntelAdvancedFilters.vue';
 import SearchTabLayout from '@/components/ui/search/SearchTabLayout.vue';
 import { useI18n } from '@/composables/useI18n';
+import {
+    getRepeatQueryParams,
+    isRepeatAutorunEnabled,
+    readRepeatQueryInt,
+    readRepeatQueryParam,
+} from '@/composables/useRepeatQuery';
 import BlueskySearchResults from '../components/BlueskySearchResults.vue';
 import { useBlueskySearch } from '../composables/useBlueskySearch';
 import { BlueskySearchSort, BlueskySearchType } from '../types';
@@ -42,6 +49,90 @@ const {
     loadActorFollowers,
     loadActorFollows,
 } = useBlueskySearch(t);
+
+onMounted(() => {
+    const params = getRepeatQueryParams();
+
+    if (!params) {
+        return;
+    }
+
+    const tab = readRepeatQueryParam(params, ['tab']);
+
+    if (tab !== '' && tab !== 'search') {
+        return;
+    }
+
+    const q = readRepeatQueryParam(params, ['q']);
+    const type = readRepeatQueryParam(params, ['type']);
+    const limit = readRepeatQueryInt(params, 'limit');
+    const sort = readRepeatQueryParam(params, ['sort']);
+    const language = readRepeatQueryParam(params, ['language']);
+    const author = readRepeatQueryParam(params, ['author']);
+    const mentions = readRepeatQueryParam(params, ['mentions']);
+    const domain = readRepeatQueryParam(params, ['domain']);
+    const url = readRepeatQueryParam(params, ['url']);
+    const tag = readRepeatQueryParam(params, ['tag']);
+    const since = readRepeatQueryParam(params, ['since']);
+    const until = readRepeatQueryParam(params, ['until']);
+
+    if (q !== '') {
+        form.value.q = q;
+    }
+
+    if (
+        type === searchTypes.Posts ||
+        type === searchTypes.Actors ||
+        type === searchTypes.All
+    ) {
+        form.value.type = type;
+    }
+
+    if (limit !== null) {
+        form.value.limit = limit;
+        clampLimit();
+    }
+
+    if (sort === searchSorts.Latest || sort === searchSorts.Top) {
+        form.value.sort = sort;
+    }
+
+    if (language !== '') {
+        form.value.language = language;
+    }
+
+    if (author !== '') {
+        form.value.author = author;
+    }
+
+    if (mentions !== '') {
+        form.value.mentions = mentions;
+    }
+
+    if (domain !== '') {
+        form.value.domain = domain;
+    }
+
+    if (url !== '') {
+        form.value.url = url;
+    }
+
+    if (tag !== '') {
+        form.value.tag = tag;
+    }
+
+    if (since !== '') {
+        form.value.since = since;
+    }
+
+    if (until !== '') {
+        form.value.until = until;
+    }
+
+    if (isRepeatAutorunEnabled(params) && canSearch.value) {
+        void runSearch(false);
+    }
+});
 </script>
 
 <template>

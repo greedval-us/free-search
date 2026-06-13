@@ -1,7 +1,14 @@
 <script setup lang="ts">
+import { onMounted } from 'vue';
 import IntelAdvancedFilters from '@/components/ui/IntelAdvancedFilters.vue';
 import SearchTabLayout from '@/components/ui/search/SearchTabLayout.vue';
 import { useI18n } from '@/composables/useI18n';
+import {
+    getRepeatQueryParams,
+    isRepeatAutorunEnabled,
+    readRepeatQueryInt,
+    readRepeatQueryParam,
+} from '@/composables/useRepeatQuery';
 import MastodonSearchResults from '../components/MastodonSearchResults.vue';
 import { useMastodonSearch } from '../composables/useMastodonSearch';
 
@@ -33,6 +40,104 @@ const {
     toggleHashtagStatuses,
     loadMoreHashtagStatuses,
 } = useMastodonSearch(t);
+
+const readRepeatBoolean = (value: string): boolean | null => {
+    if (value === '1' || value === 'true') {
+        return true;
+    }
+
+    if (value === '0' || value === 'false') {
+        return false;
+    }
+
+    return null;
+};
+
+onMounted(() => {
+    const params = getRepeatQueryParams();
+
+    if (!params) {
+        return;
+    }
+
+    const tab = readRepeatQueryParam(params, ['tab']);
+
+    if (tab !== '' && tab !== 'search') {
+        return;
+    }
+
+    const q = readRepeatQueryParam(params, ['q']);
+    const type = readRepeatQueryParam(params, ['type']);
+    const limit = readRepeatQueryInt(params, 'limit');
+    const resolve = readRepeatQueryParam(params, ['resolve']);
+    const author = readRepeatQueryParam(params, ['author']);
+    const dateFrom = readRepeatQueryParam(params, ['dateFrom']);
+    const dateTo = readRepeatQueryParam(params, ['dateTo']);
+    const language = readRepeatQueryParam(params, ['language']);
+    const hasMedia = readRepeatQueryParam(params, ['hasMedia']);
+    const hasLinks = readRepeatQueryParam(params, ['hasLinks']);
+    const hasReplies = readRepeatQueryParam(params, ['hasReplies']);
+    const instanceDomain = readRepeatQueryParam(params, ['instanceDomain']);
+    const resolveValue = readRepeatBoolean(resolve);
+
+    if (q !== '') {
+        form.value.q = q;
+    }
+
+    if (
+        type === 'statuses' ||
+        type === 'accounts' ||
+        type === 'hashtags' ||
+        type === 'all'
+    ) {
+        form.value.type = type;
+    }
+
+    if (limit !== null) {
+        form.value.limit = limit;
+        clampLimit();
+    }
+
+    if (resolveValue !== null) {
+        form.value.resolve = resolveValue;
+    }
+
+    if (author !== '') {
+        form.value.author = author;
+    }
+
+    if (dateFrom !== '') {
+        form.value.dateFrom = dateFrom;
+    }
+
+    if (dateTo !== '') {
+        form.value.dateTo = dateTo;
+    }
+
+    if (language !== '') {
+        form.value.language = language;
+    }
+
+    if (hasMedia !== '') {
+        form.value.hasMedia = hasMedia;
+    }
+
+    if (hasLinks !== '') {
+        form.value.hasLinks = hasLinks;
+    }
+
+    if (hasReplies !== '') {
+        form.value.hasReplies = hasReplies;
+    }
+
+    if (instanceDomain !== '') {
+        form.value.instanceDomain = instanceDomain;
+    }
+
+    if (isRepeatAutorunEnabled(params) && canSearch.value) {
+        void runSearch(false);
+    }
+});
 </script>
 
 <template>

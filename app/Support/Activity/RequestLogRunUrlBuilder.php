@@ -14,19 +14,8 @@ class RequestLogRunUrlBuilder
         }
 
         $normalizedPath = '/'.ltrim($path, '/');
-        $moduleUrl = $this->buildModuleUrl($normalizedPath, $payload);
 
-        if ($moduleUrl !== null) {
-            return $moduleUrl;
-        }
-
-        $queryString = http_build_query($this->extractScalarPayload($payload));
-
-        if ($queryString === '') {
-            return $normalizedPath;
-        }
-
-        return $normalizedPath.'?'.$queryString;
+        return $this->buildModuleUrl($normalizedPath, $payload);
     }
 
     /**
@@ -62,25 +51,6 @@ class RequestLogRunUrlBuilder
         }
 
         return $this->buildUrl($definition['base'], $resolved);
-    }
-
-    /**
-     * @param array<string, mixed> $payload
-     */
-    private function extractScalarPayload(array $payload): array
-    {
-        $result = [];
-        foreach ($payload as $key => $value) {
-            if (!is_string($key)) {
-                continue;
-            }
-
-            if (is_scalar($value) || $value === null) {
-                $result[$key] = $value;
-            }
-        }
-
-        return $result;
     }
 
     /**

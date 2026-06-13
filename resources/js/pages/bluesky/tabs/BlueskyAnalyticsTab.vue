@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { Tags } from 'lucide-vue-next';
-import { computed } from 'vue';
+import { computed, onMounted } from 'vue';
 import AnalyticsActionEmptyState from '@/components/ui/analytics/AnalyticsActionEmptyState.vue';
 import AnalyticsChipSection from '@/components/ui/analytics/AnalyticsChipSection.vue';
 import AnalyticsControlPanel from '@/components/ui/analytics/AnalyticsControlPanel.vue';
@@ -36,7 +36,12 @@ const {
     runAnalytics,
     openReport,
     downloadReport,
+    initializeFromRepeatQuery,
 } = useBlueskyAnalytics(t, locale);
+
+onMounted(() => {
+    initializeFromRepeatQuery();
+});
 
 const fmt = (value: number) => new Intl.NumberFormat().format(value ?? 0);
 const formatDate = (value: string) =>

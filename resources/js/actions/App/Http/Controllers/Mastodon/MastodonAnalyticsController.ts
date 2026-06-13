@@ -1,7 +1,7 @@
 import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFormDefinition } from './../../../../../wayfinder'
 /**
 * @see \App\Http\Controllers\Mastodon\MastodonAnalyticsController::summary
- * @see app/Http/Controllers/Mastodon/MastodonAnalyticsController.php:23
+ * @see app/Http/Controllers/Mastodon/MastodonAnalyticsController.php:19
  * @route '/mastodon/analytics/summary'
  */
 export const summary = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -16,7 +16,7 @@ summary.definition = {
 
 /**
 * @see \App\Http\Controllers\Mastodon\MastodonAnalyticsController::summary
- * @see app/Http/Controllers/Mastodon/MastodonAnalyticsController.php:23
+ * @see app/Http/Controllers/Mastodon/MastodonAnalyticsController.php:19
  * @route '/mastodon/analytics/summary'
  */
 summary.url = (options?: RouteQueryOptions) => {
@@ -25,7 +25,7 @@ summary.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\Mastodon\MastodonAnalyticsController::summary
- * @see app/Http/Controllers/Mastodon/MastodonAnalyticsController.php:23
+ * @see app/Http/Controllers/Mastodon/MastodonAnalyticsController.php:19
  * @route '/mastodon/analytics/summary'
  */
 summary.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -34,7 +34,7 @@ summary.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
 })
 /**
 * @see \App\Http\Controllers\Mastodon\MastodonAnalyticsController::summary
- * @see app/Http/Controllers/Mastodon/MastodonAnalyticsController.php:23
+ * @see app/Http/Controllers/Mastodon/MastodonAnalyticsController.php:19
  * @route '/mastodon/analytics/summary'
  */
 summary.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -44,7 +44,7 @@ summary.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 
     /**
 * @see \App\Http\Controllers\Mastodon\MastodonAnalyticsController::summary
- * @see app/Http/Controllers/Mastodon/MastodonAnalyticsController.php:23
+ * @see app/Http/Controllers/Mastodon/MastodonAnalyticsController.php:19
  * @route '/mastodon/analytics/summary'
  */
     const summaryForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -54,7 +54,7 @@ summary.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 
             /**
 * @see \App\Http\Controllers\Mastodon\MastodonAnalyticsController::summary
- * @see app/Http/Controllers/Mastodon/MastodonAnalyticsController.php:23
+ * @see app/Http/Controllers/Mastodon/MastodonAnalyticsController.php:19
  * @route '/mastodon/analytics/summary'
  */
         summaryForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -63,7 +63,7 @@ summary.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
         })
             /**
 * @see \App\Http\Controllers\Mastodon\MastodonAnalyticsController::summary
- * @see app/Http/Controllers/Mastodon/MastodonAnalyticsController.php:23
+ * @see app/Http/Controllers/Mastodon/MastodonAnalyticsController.php:19
  * @route '/mastodon/analytics/summary'
  */
         summaryForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -79,7 +79,7 @@ summary.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     summary.form = summaryForm
 /**
 * @see \App\Http\Controllers\Mastodon\MastodonAnalyticsController::report
- * @see app/Http/Controllers/Mastodon/MastodonAnalyticsController.php:32
+ * @see app/Http/Controllers/Mastodon/MastodonAnalyticsController.php:24
  * @route '/mastodon/analytics/report'
  */
 export const report = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -94,7 +94,7 @@ report.definition = {
 
 /**
 * @see \App\Http\Controllers\Mastodon\MastodonAnalyticsController::report
- * @see app/Http/Controllers/Mastodon/MastodonAnalyticsController.php:32
+ * @see app/Http/Controllers/Mastodon/MastodonAnalyticsController.php:24
  * @route '/mastodon/analytics/report'
  */
 report.url = (options?: RouteQueryOptions) => {
@@ -103,7 +103,7 @@ report.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\Mastodon\MastodonAnalyticsController::report
- * @see app/Http/Controllers/Mastodon/MastodonAnalyticsController.php:32
+ * @see app/Http/Controllers/Mastodon/MastodonAnalyticsController.php:24
  * @route '/mastodon/analytics/report'
  */
 report.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -112,7 +112,7 @@ report.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
 })
 /**
 * @see \App\Http\Controllers\Mastodon\MastodonAnalyticsController::report
- * @see app/Http/Controllers/Mastodon/MastodonAnalyticsController.php:32
+ * @see app/Http/Controllers/Mastodon/MastodonAnalyticsController.php:24
  * @route '/mastodon/analytics/report'
  */
 report.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -122,7 +122,7 @@ report.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 
     /**
 * @see \App\Http\Controllers\Mastodon\MastodonAnalyticsController::report
- * @see app/Http/Controllers/Mastodon/MastodonAnalyticsController.php:32
+ * @see app/Http/Controllers/Mastodon/MastodonAnalyticsController.php:24
  * @route '/mastodon/analytics/report'
  */
     const reportForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -132,7 +132,7 @@ report.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 
             /**
 * @see \App\Http\Controllers\Mastodon\MastodonAnalyticsController::report
- * @see app/Http/Controllers/Mastodon/MastodonAnalyticsController.php:32
+ * @see app/Http/Controllers/Mastodon/MastodonAnalyticsController.php:24
  * @route '/mastodon/analytics/report'
  */
         reportForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -141,7 +141,7 @@ report.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
         })
             /**
 * @see \App\Http\Controllers\Mastodon\MastodonAnalyticsController::report
- * @see app/Http/Controllers/Mastodon/MastodonAnalyticsController.php:32
+ * @see app/Http/Controllers/Mastodon/MastodonAnalyticsController.php:24
  * @route '/mastodon/analytics/report'
  */
         reportForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({

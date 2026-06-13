@@ -1,4 +1,10 @@
 import { computed, ref } from 'vue';
+import {
+    getRepeatQueryParams,
+    isRepeatAutorunEnabled,
+    readRepeatQueryInt,
+    readRepeatQueryParam,
+} from '@/composables/useRepeatQuery';
 import { apiRequest } from '@/lib/api';
 import type {
     BlueskyActor,
@@ -83,6 +89,18 @@ export const useBlueskyAnalytics = (
         );
     };
 
+    const readRepeatBoolean = (value: string): boolean | null => {
+        if (value === '1' || value === 'true') {
+            return true;
+        }
+
+        if (value === '0' || value === 'false') {
+            return false;
+        }
+
+        return null;
+    };
+
     const runAnalytics = async () => {
         if (!canRun.value) {
             return;
@@ -152,6 +170,63 @@ export const useBlueskyAnalytics = (
         );
     };
 
+    const initializeFromRepeatQuery = () => {
+        const params = getRepeatQueryParams();
+
+        if (!params) {
+            return;
+        }
+
+        const tab = readRepeatQueryParam(params, ['tab']);
+
+        if (tab !== 'analytics') {
+            return;
+        }
+
+        const mode = readRepeatQueryParam(params, ['mode']);
+        const target = readRepeatQueryParam(params, ['target']);
+        const limit = readRepeatQueryInt(params, 'limit');
+        const pages = readRepeatQueryInt(params, 'pages');
+        const dateFrom = readRepeatQueryParam(params, ['dateFrom']);
+        const dateTo = readRepeatQueryParam(params, ['dateTo']);
+        const resolve = readRepeatQueryParam(params, ['resolve']);
+        const resolveValue = readRepeatBoolean(resolve);
+
+        if (mode === 'account' || mode === 'hashtag') {
+            form.value.mode = mode;
+        }
+
+        if (target !== '') {
+            form.value.target = target;
+        }
+
+        if (limit !== null) {
+            form.value.limit = limit;
+            clampLimit();
+        }
+
+        if (pages !== null) {
+            form.value.pages = pages;
+            clampPages();
+        }
+
+        if (dateFrom !== '') {
+            form.value.dateFrom = dateFrom;
+        }
+
+        if (dateTo !== '') {
+            form.value.dateTo = dateTo;
+        }
+
+        if (resolveValue !== null) {
+            form.value.resolve = resolveValue;
+        }
+
+        if (isRepeatAutorunEnabled(params) && canRun.value) {
+            void runAnalytics();
+        }
+    };
+
     return {
         limitMax: LIMIT_MAX,
         form,
@@ -169,5 +244,6 @@ export const useBlueskyAnalytics = (
         runAnalytics,
         openReport,
         downloadReport,
+        initializeFromRepeatQuery,
     };
 };

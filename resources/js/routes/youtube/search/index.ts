@@ -1,7 +1,7 @@
 import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFormDefinition } from './../../../wayfinder'
 /**
 * @see \App\Http\Controllers\YouTube\YouTubeSearchController::videos
- * @see app/Http/Controllers/YouTube/YouTubeSearchController.php:18
+ * @see app/Http/Controllers/YouTube/YouTubeSearchController.php:14
  * @route '/youtube/search/videos'
  */
 export const videos = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -16,7 +16,7 @@ videos.definition = {
 
 /**
 * @see \App\Http\Controllers\YouTube\YouTubeSearchController::videos
- * @see app/Http/Controllers/YouTube/YouTubeSearchController.php:18
+ * @see app/Http/Controllers/YouTube/YouTubeSearchController.php:14
  * @route '/youtube/search/videos'
  */
 videos.url = (options?: RouteQueryOptions) => {
@@ -25,7 +25,7 @@ videos.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\YouTube\YouTubeSearchController::videos
- * @see app/Http/Controllers/YouTube/YouTubeSearchController.php:18
+ * @see app/Http/Controllers/YouTube/YouTubeSearchController.php:14
  * @route '/youtube/search/videos'
  */
 videos.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -34,7 +34,7 @@ videos.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
 })
 /**
 * @see \App\Http\Controllers\YouTube\YouTubeSearchController::videos
- * @see app/Http/Controllers/YouTube/YouTubeSearchController.php:18
+ * @see app/Http/Controllers/YouTube/YouTubeSearchController.php:14
  * @route '/youtube/search/videos'
  */
 videos.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -44,7 +44,7 @@ videos.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 
     /**
 * @see \App\Http\Controllers\YouTube\YouTubeSearchController::videos
- * @see app/Http/Controllers/YouTube/YouTubeSearchController.php:18
+ * @see app/Http/Controllers/YouTube/YouTubeSearchController.php:14
  * @route '/youtube/search/videos'
  */
     const videosForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -54,7 +54,7 @@ videos.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 
             /**
 * @see \App\Http\Controllers\YouTube\YouTubeSearchController::videos
- * @see app/Http/Controllers/YouTube/YouTubeSearchController.php:18
+ * @see app/Http/Controllers/YouTube/YouTubeSearchController.php:14
  * @route '/youtube/search/videos'
  */
         videosForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -63,7 +63,7 @@ videos.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
         })
             /**
 * @see \App\Http\Controllers\YouTube\YouTubeSearchController::videos
- * @see app/Http/Controllers/YouTube/YouTubeSearchController.php:18
+ * @see app/Http/Controllers/YouTube/YouTubeSearchController.php:14
  * @route '/youtube/search/videos'
  */
         videosForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -79,7 +79,7 @@ videos.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     videos.form = videosForm
 /**
 * @see \App\Http\Controllers\YouTube\YouTubeParserController::commentsPreview
- * @see app/Http/Controllers/YouTube/YouTubeParserController.php:38
+ * @see app/Http/Controllers/YouTube/YouTubeParserController.php:35
  * @route '/youtube/search/comments-preview'
  */
 export const commentsPreview = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -94,7 +94,7 @@ commentsPreview.definition = {
 
 /**
 * @see \App\Http\Controllers\YouTube\YouTubeParserController::commentsPreview
- * @see app/Http/Controllers/YouTube/YouTubeParserController.php:38
+ * @see app/Http/Controllers/YouTube/YouTubeParserController.php:35
  * @route '/youtube/search/comments-preview'
  */
 commentsPreview.url = (options?: RouteQueryOptions) => {
@@ -103,7 +103,7 @@ commentsPreview.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\YouTube\YouTubeParserController::commentsPreview
- * @see app/Http/Controllers/YouTube/YouTubeParserController.php:38
+ * @see app/Http/Controllers/YouTube/YouTubeParserController.php:35
  * @route '/youtube/search/comments-preview'
  */
 commentsPreview.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -112,7 +112,7 @@ commentsPreview.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => (
 })
 /**
 * @see \App\Http\Controllers\YouTube\YouTubeParserController::commentsPreview
- * @see app/Http/Controllers/YouTube/YouTubeParserController.php:38
+ * @see app/Http/Controllers/YouTube/YouTubeParserController.php:35
  * @route '/youtube/search/comments-preview'
  */
 commentsPreview.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -122,7 +122,7 @@ commentsPreview.head = (options?: RouteQueryOptions): RouteDefinition<'head'> =>
 
     /**
 * @see \App\Http\Controllers\YouTube\YouTubeParserController::commentsPreview
- * @see app/Http/Controllers/YouTube/YouTubeParserController.php:38
+ * @see app/Http/Controllers/YouTube/YouTubeParserController.php:35
  * @route '/youtube/search/comments-preview'
  */
     const commentsPreviewForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -132,7 +132,7 @@ commentsPreview.head = (options?: RouteQueryOptions): RouteDefinition<'head'> =>
 
             /**
 * @see \App\Http\Controllers\YouTube\YouTubeParserController::commentsPreview
- * @see app/Http/Controllers/YouTube/YouTubeParserController.php:38
+ * @see app/Http/Controllers/YouTube/YouTubeParserController.php:35
  * @route '/youtube/search/comments-preview'
  */
         commentsPreviewForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -141,7 +141,7 @@ commentsPreview.head = (options?: RouteQueryOptions): RouteDefinition<'head'> =>
         })
             /**
 * @see \App\Http\Controllers\YouTube\YouTubeParserController::commentsPreview
- * @see app/Http/Controllers/YouTube/YouTubeParserController.php:38
+ * @see app/Http/Controllers/YouTube/YouTubeParserController.php:35
  * @route '/youtube/search/comments-preview'
  */
         commentsPreviewForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
