@@ -2,6 +2,7 @@
 
 namespace Tests\Feature\Controllers\Concerns;
 
+use App\Exceptions\PublicException;
 use App\Modules\SiteIntel\Application\Contracts\DomainLiteServiceInterface;
 use App\Modules\SiteIntel\Application\Contracts\SeoAuditServiceInterface;
 use App\Modules\SiteIntel\Application\Contracts\SiteHealthServiceInterface;
@@ -20,6 +21,16 @@ trait MocksSiteIntelServices
                 ->once()
                 ->with($url)
                 ->andReturn(new SiteHealthResultDTO($result));
+        });
+    }
+
+    private function mockSiteHealthPublicError(string $url, string $message, int $statusCode): void
+    {
+        $this->mock(SiteHealthServiceInterface::class, function ($mock) use ($url, $message, $statusCode): void {
+            $mock->shouldReceive('check')
+                ->once()
+                ->with($url)
+                ->andThrow(new PublicException($message, $statusCode, 'test_public_error'));
         });
     }
 

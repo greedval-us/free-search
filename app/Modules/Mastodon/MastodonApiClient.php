@@ -2,13 +2,14 @@
 
 namespace App\Modules\Mastodon;
 
+use App\Exceptions\Public\ExternalServiceRequestException;
+use App\Exceptions\Public\ExternalServiceUnavailableException;
+use App\Exceptions\Public\IntegrationMisconfiguredException;
 use App\Modules\Mastodon\Core\Contracts\MastodonGatewayInterface;
 use App\Modules\Mastodon\Support\MastodonApiConfig;
 use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Http\Client\PendingRequest;
-use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Http;
-use RuntimeException;
 
 final class MastodonApiClient implements MastodonGatewayInterface
 {
@@ -93,30 +94,33 @@ final class MastodonApiClient implements MastodonGatewayInterface
     private function request(string $endpoint, array $query): \Illuminate\Http\Client\Response
     {
         if ($this->config->apiToken() === '') {
-            throw new RuntimeException('MASTODON_API_TOKEN is not configured.');
+            throw new IntegrationMisconfiguredException('errors.api.mastodon.not_configured', 'mastodon_not_configured');
         }
 
         $baseUrl = $this->config->baseUrl();
 
         if (! $this->isValidBaseUrl($baseUrl)) {
-            throw new RuntimeException(
-                sprintf(
-                    'MASTODON_API_BASE_URL must be a valid http(s) Mastodon instance URL, got "%s".',
-                    $baseUrl
-                )
-            );
+            throw new IntegrationMisconfiguredException('errors.api.mastodon.invalid_base_url', 'mastodon_invalid_base_url');
         }
 
         try {
             $response = $this->http()->get($endpoint, $query);
         } catch (ConnectionException $exception) {
-            throw new RuntimeException('Could not connect to Mastodon API. Check instance URL and network access.', 503, $exception);
+            throw new ExternalServiceUnavailableException(
+                'errors.api.mastodon.unavailable',
+                'mastodon_unavailable',
+                previous: $exception,
+            );
         }
 
         if ($response->failed()) {
-            $message = (string) Arr::get($response->json(), 'error', 'Mastodon API request failed.');
+            $status = $response->status();
 
-            throw new RuntimeException($message, $response->status());
+            throw new ExternalServiceRequestException(
+                $status === 429 ? 'errors.api.mastodon.rate_limited' : 'errors.api.mastodon.request_failed',
+                $status,
+                $status === 429 ? 'mastodon_rate_limited' : 'mastodon_request_failed',
+            );
         }
 
         return $response;

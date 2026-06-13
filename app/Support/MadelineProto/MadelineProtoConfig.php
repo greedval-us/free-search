@@ -2,7 +2,7 @@
 
 namespace App\Support\MadelineProto;
 
-use RuntimeException;
+use App\Exceptions\Public\IntegrationMisconfiguredException;
 
 final class MadelineProtoConfig
 {
@@ -30,7 +30,7 @@ final class MadelineProtoConfig
     public function apiId(): int
     {
         if ($this->apiId === null) {
-            throw new RuntimeException('TELEGRAM_API_ID is not set in configuration.');
+            throw new IntegrationMisconfiguredException('errors.api.telegram.not_configured', 'telegram_not_configured');
         }
 
         return $this->apiId;
@@ -39,7 +39,7 @@ final class MadelineProtoConfig
     public function apiHash(): string
     {
         if ($this->apiHash === null || $this->apiHash === '') {
-            throw new RuntimeException('TELEGRAM_API_HASH is not set in configuration.');
+            throw new IntegrationMisconfiguredException('errors.api.telegram.not_configured', 'telegram_not_configured');
         }
 
         return $this->apiHash;

@@ -31,6 +31,22 @@ class SiteIntelControllerIsolationTest extends TestCase
             ->assertJsonPath('data.status', 'ok');
     }
 
+    public function test_site_health_controller_returns_public_error_without_technical_details(): void
+    {
+        $user = User::factory()->create();
+
+        $this->mockSiteHealthPublicError('https://example.com/', 'Invalid target URL or domain.', 422);
+
+        $this
+            ->actingAs($user)
+            ->getJson(route('site-intel.site-health', ['target' => 'example.com']))
+            ->assertStatus(422)
+            ->assertJson([
+                'ok' => false,
+                'message' => 'Invalid target URL or domain.',
+            ]);
+    }
+
     public function test_domain_lite_controller_uses_normalized_domain(): void
     {
         $user = User::factory()->create();

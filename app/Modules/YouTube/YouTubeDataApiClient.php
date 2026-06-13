@@ -2,13 +2,14 @@
 
 namespace App\Modules\YouTube;
 
+use App\Exceptions\Public\ExternalServiceRequestException;
+use App\Exceptions\Public\ExternalServiceUnavailableException;
+use App\Exceptions\Public\IntegrationMisconfiguredException;
 use App\Modules\YouTube\Core\Contracts\YouTubeGatewayInterface;
 use App\Modules\YouTube\Support\YouTubeApiConfig;
 use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Http\Client\PendingRequest;
-use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Http;
-use RuntimeException;
 
 class YouTubeDataApiClient implements YouTubeGatewayInterface
 {
@@ -68,7 +69,7 @@ class YouTubeDataApiClient implements YouTubeGatewayInterface
         $key = $this->config->apiKey();
 
         if ($key === '') {
-            throw new RuntimeException('YOUTUBE_DATA_API_KEY is not configured.');
+            throw new IntegrationMisconfiguredException('errors.api.youtube.not_configured', 'youtube_not_configured');
         }
 
         try {
@@ -78,13 +79,21 @@ class YouTubeDataApiClient implements YouTubeGatewayInterface
                     'key' => $key,
                 ]);
         } catch (ConnectionException $exception) {
-            throw new RuntimeException('Could not connect to YouTube API. Check internet connection and API key restrictions.', 503, previous: $exception);
+            throw new ExternalServiceUnavailableException(
+                'errors.api.youtube.unavailable',
+                'youtube_unavailable',
+                previous: $exception,
+            );
         }
 
         if ($response->failed()) {
-            $message = (string) Arr::get($response->json(), 'error.message', 'YouTube API request failed.');
+            $status = $response->status();
 
-            throw new RuntimeException($message, $response->status());
+            throw new ExternalServiceRequestException(
+                $status === 429 ? 'errors.api.youtube.rate_limited' : 'errors.api.youtube.request_failed',
+                $status,
+                $status === 429 ? 'youtube_rate_limited' : 'youtube_request_failed',
+            );
         }
 
         return $response->json() ?? [];

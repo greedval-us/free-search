@@ -2,19 +2,15 @@
 
 namespace App\Http\Controllers\Bluesky;
 
-use App\Http\Controllers\Concerns\ResolvesHttpStatusCodeFromException;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Bluesky\BlueskyAnalyticsRequest;
 use App\Modules\Bluesky\Analytics\Contracts\BlueskyAnalyticsApplicationServiceInterface;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Response;
 use Illuminate\View\View;
-use RuntimeException;
 
 final class BlueskyAnalyticsController extends Controller
 {
-    use ResolvesHttpStatusCodeFromException;
-
     public function __construct(
         private readonly BlueskyAnalyticsApplicationServiceInterface $service,
     ) {
@@ -22,11 +18,7 @@ final class BlueskyAnalyticsController extends Controller
 
     public function summary(BlueskyAnalyticsRequest $request): JsonResponse
     {
-        try {
-            return $this->jsonDataFrom($this->service->summary($request->toDTO()));
-        } catch (RuntimeException $exception) {
-            return $this->jsonError($exception->getMessage(), $this->statusCodeFromException($exception));
-        }
+        return $this->jsonDataFrom($this->service->summary($request->toDTO()));
     }
 
     public function report(BlueskyAnalyticsRequest $request): View|Response

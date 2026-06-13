@@ -23,15 +23,15 @@ final class SubscriptionActivationService
                 ->first();
 
             if ($token === null) {
-                throw new SubscriptionActivationException(SubscriptionActivationException::INVALID);
+                throw SubscriptionActivationException::invalid();
             }
 
             if ($token->used_at !== null) {
-                throw new SubscriptionActivationException(SubscriptionActivationException::USED);
+                throw SubscriptionActivationException::used();
             }
 
             if ($token->expires_at !== null && $token->expires_at->isPast()) {
-                throw new SubscriptionActivationException(SubscriptionActivationException::EXPIRED);
+                throw SubscriptionActivationException::expired();
             }
 
             $now = CarbonImmutable::now(config('app.timezone'));

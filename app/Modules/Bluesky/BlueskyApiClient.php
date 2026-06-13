@@ -2,13 +2,14 @@
 
 namespace App\Modules\Bluesky;
 
+use App\Exceptions\Public\ExternalServiceRequestException;
+use App\Exceptions\Public\ExternalServiceUnavailableException;
+use App\Exceptions\Public\IntegrationMisconfiguredException;
 use App\Modules\Bluesky\Core\Contracts\BlueskyGatewayInterface;
 use App\Modules\Bluesky\Support\BlueskyApiConfig;
 use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Http\Client\PendingRequest;
-use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Http;
-use RuntimeException;
 
 final class BlueskyApiClient implements BlueskyGatewayInterface
 {
@@ -122,11 +123,21 @@ final class BlueskyApiClient implements BlueskyGatewayInterface
                 ->withToken($this->accessJwt())
                 ->get($endpoint, $query);
         } catch (ConnectionException $exception) {
-            throw new RuntimeException('Could not connect to Bluesky API. Check PDS URL and network access.', 503, $exception);
+            throw new ExternalServiceUnavailableException(
+                'errors.api.bluesky.unavailable',
+                'bluesky_unavailable',
+                previous: $exception,
+            );
         }
 
         if ($response->failed()) {
-            throw new RuntimeException($this->resolveErrorMessage($response->json()), $response->status());
+            $status = $response->status();
+
+            throw new ExternalServiceRequestException(
+                $status === 429 ? 'errors.api.bluesky.rate_limited' : 'errors.api.bluesky.request_failed',
+                $status,
+                $status === 429 ? 'bluesky_rate_limited' : 'bluesky_request_failed',
+            );
         }
 
         return $response;
@@ -144,18 +155,29 @@ final class BlueskyApiClient implements BlueskyGatewayInterface
                 'password' => $this->config->appPassword(),
             ]);
         } catch (ConnectionException $exception) {
-            throw new RuntimeException('Could not create Bluesky session. Check PDS URL and network access.', 503, $exception);
+            throw new ExternalServiceUnavailableException(
+                'errors.api.bluesky.unavailable',
+                'bluesky_session_unavailable',
+                previous: $exception,
+            );
         }
 
         if ($response->failed()) {
-            throw new RuntimeException($this->resolveErrorMessage($response->json(), 'Bluesky authentication failed.'), $response->status());
+            throw new ExternalServiceRequestException(
+                'errors.api.bluesky.authentication_failed',
+                $response->status(),
+                'bluesky_authentication_failed',
+            );
         }
 
         $session = $response->json() ?? [];
         $accessJwt = trim((string) ($session['accessJwt'] ?? ''));
 
         if ($accessJwt === '') {
-            throw new RuntimeException('Bluesky session response did not contain an access token.');
+            throw new ExternalServiceUnavailableException(
+                'errors.api.bluesky.authentication_failed',
+                'bluesky_missing_access_token',
+            );
         }
 
         $this->session = $session;
@@ -179,31 +201,16 @@ final class BlueskyApiClient implements BlueskyGatewayInterface
     private function guardConfig(): void
     {
         if ($this->config->identifier() === '') {
-            throw new RuntimeException('BLUESKY_IDENTIFIER is not configured.');
+            throw new IntegrationMisconfiguredException('errors.api.bluesky.not_configured', 'bluesky_not_configured');
         }
 
         if ($this->config->appPassword() === '') {
-            throw new RuntimeException('BLUESKY_APP_PASSWORD is not configured.');
+            throw new IntegrationMisconfiguredException('errors.api.bluesky.not_configured', 'bluesky_not_configured');
         }
 
         if (! $this->isValidBaseUrl($this->config->pdsUrl())) {
-            throw new RuntimeException(sprintf(
-                'BLUESKY_PDS_URL must be a valid http(s) URL, got "%s".',
-                $this->config->pdsUrl()
-            ));
+            throw new IntegrationMisconfiguredException('errors.api.bluesky.invalid_base_url', 'bluesky_invalid_base_url');
         }
-    }
-
-    /**
-     * @param array<string, mixed>|null $payload
-     */
-    private function resolveErrorMessage(?array $payload, string $fallback = 'Bluesky API request failed.'): string
-    {
-        return trim((string) (
-            Arr::get($payload, 'message')
-            ?: Arr::get($payload, 'error')
-            ?: $fallback
-        ));
     }
 
     private function isValidBaseUrl(string $baseUrl): bool

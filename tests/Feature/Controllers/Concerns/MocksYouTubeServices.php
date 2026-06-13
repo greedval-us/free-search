@@ -2,6 +2,7 @@
 
 namespace Tests\Feature\Controllers\Concerns;
 
+use App\Exceptions\PublicException;
 use App\Modules\YouTube\Analytics\Contracts\YouTubeAnalyticsApplicationServiceInterface;
 use App\Modules\YouTube\DTO\Result\YouTubeAnalyticsResultDTO;
 use App\Modules\YouTube\DTO\Result\YouTubeCommentsResultDTO;
@@ -9,8 +10,6 @@ use App\Modules\YouTube\DTO\Result\YouTubeParserRunStatusDTO;
 use App\Modules\YouTube\DTO\Result\YouTubeSearchResultDTO;
 use App\Modules\YouTube\Parser\Contracts\YouTubeParserApplicationServiceInterface;
 use App\Modules\YouTube\Search\Contracts\YouTubeSearchApplicationServiceInterface;
-use RuntimeException;
-
 trait MocksYouTubeServices
 {
     private function mockYouTubeSearch(YouTubeSearchResultDTO $result): void
@@ -25,7 +24,7 @@ trait MocksYouTubeServices
         $this->mock(YouTubeSearchApplicationServiceInterface::class, function ($mock) use ($message, $statusCode): void {
             $mock->shouldReceive('searchVideos')
                 ->once()
-                ->andThrow(new RuntimeException($message, $statusCode));
+                ->andThrow(new PublicException($message, $statusCode, 'test_public_error'));
         });
     }
 

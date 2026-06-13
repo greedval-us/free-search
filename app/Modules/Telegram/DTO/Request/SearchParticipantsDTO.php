@@ -2,6 +2,8 @@
 
 namespace App\Modules\Telegram\DTO\Request;
 
+use App\Exceptions\Domain\DomainValidationException;
+
 class SearchParticipantsDTO
 {
     private const DEFAULT_FILTER = 'channelParticipantsRecent';
@@ -28,12 +30,16 @@ class SearchParticipantsDTO
     {
         $chatUsername = trim((string) ($params['chatUsername'] ?? $params['chat'] ?? ''));
         if ($chatUsername === '') {
-            throw new \InvalidArgumentException('Participants search requires non-empty "chatUsername" or "chat".');
+            throw DomainValidationException::because(
+                'Participants search requires non-empty "chatUsername" or "chat".'
+            );
         }
 
         $filter = (string) ($params['filter'] ?? self::DEFAULT_FILTER);
         if (!in_array($filter, self::ALLOWED_FILTERS, true)) {
-            throw new \InvalidArgumentException("Unsupported participants filter: {$filter}");
+            throw DomainValidationException::because(
+                "Unsupported participants filter: {$filter}"
+            );
         }
 
         $limit = max(1, min((int) ($params['limit'] ?? 100), 200));

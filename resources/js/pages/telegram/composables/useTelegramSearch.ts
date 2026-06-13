@@ -1,6 +1,6 @@
 import { nextTick, reactive, ref } from 'vue';
 import TelegramSearchController from '@/actions/App/Http/Controllers/Telegram/TelegramSearchController';
-import { apiRequest } from '@/lib/api';
+import { apiRequest, resolveClientErrorMessage } from '@/lib/api';
 import type {
     CommentsResponse,
     CommentState,
@@ -135,10 +135,10 @@ export const useTelegramSearch = (t: TranslateFn) => {
             nextOffsetId.value = payload.pagination.nextOffsetId;
             hasMore.value = payload.pagination.hasMore;
         } catch (exception) {
-            error.value =
-                exception instanceof Error
-                    ? exception.message
-                    : t('telegram.errors.unknownSearchError');
+            error.value = resolveClientErrorMessage(
+                exception,
+                t('telegram.errors.unknownSearchError')
+            );
         } finally {
             loading.value = false;
             loadingMore.value = false;
@@ -279,10 +279,10 @@ export const useTelegramSearch = (t: TranslateFn) => {
                 state.nextOffsetId = payload?.pagination?.nextOffsetId ?? null;
                 state.loaded = true;
             } catch (exception) {
-                state.error =
-                    exception instanceof Error
-                        ? exception.message
-                        : t('telegram.errors.commentsFailed');
+                state.error = resolveClientErrorMessage(
+                    exception,
+                    t('telegram.errors.commentsFailed')
+                );
 
                 if (!append) {
                     state.items = [];

@@ -2,6 +2,7 @@
 
 namespace App\Modules\Bluesky\Analytics;
 
+use App\Exceptions\Public\PublicResourceNotFoundException;
 use App\Modules\Bluesky\Analytics\Contracts\BlueskyAnalyticsApplicationServiceInterface;
 use App\Modules\Bluesky\Core\Contracts\BlueskyGatewayInterface;
 use App\Modules\Bluesky\DTO\Request\BlueskyAnalyticsQueryDTO;
@@ -10,7 +11,6 @@ use App\Modules\Bluesky\Presenters\BlueskyActorPresenter;
 use App\Modules\Bluesky\Presenters\BlueskyPostPresenter;
 use App\Modules\Bluesky\Support\BlueskyActorResolver;
 use Illuminate\Support\Collection;
-use RuntimeException;
 
 final class BlueskyAnalyticsApplicationService implements BlueskyAnalyticsApplicationServiceInterface
 {
@@ -38,7 +38,7 @@ final class BlueskyAnalyticsApplicationService implements BlueskyAnalyticsApplic
         $actor = (string) ($profile['handle'] ?? $profile['did'] ?? '');
 
         if ($actor === '') {
-            throw new RuntimeException('Bluesky account was not found.', 404);
+            throw new PublicResourceNotFoundException('errors.api.bluesky.account_not_found', 'bluesky_account_not_found');
         }
 
         [$posts, $pagesLoaded] = $this->collectAuthorFeedPosts(
@@ -65,7 +65,7 @@ final class BlueskyAnalyticsApplicationService implements BlueskyAnalyticsApplic
         $tag = ltrim(trim($query->target), '#');
 
         if ($tag === '') {
-            throw new RuntimeException('Bluesky hashtag was not found.', 404);
+            throw new PublicResourceNotFoundException('errors.api.bluesky.hashtag_not_found', 'bluesky_hashtag_not_found');
         }
 
         [$posts, $pagesLoaded] = $this->collectTagPosts(

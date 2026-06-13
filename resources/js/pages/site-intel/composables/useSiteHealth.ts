@@ -1,5 +1,5 @@
 import { computed, reactive, ref } from 'vue';
-import { apiRequest } from '@/lib/api';
+import { apiRequest, resolveClientErrorMessage } from '@/lib/api';
 import type { SiteHealthResult } from '../types';
 
 type TranslateFn = (key: string) => string;
@@ -47,10 +47,10 @@ export const useSiteHealth = (t: TranslateFn) => {
 
             result.value = apiResult.data;
         } catch (exception) {
-            error.value =
-                exception instanceof Error
-                    ? exception.message
-                    : t('siteIntel.siteHealth.errors.checkFailed');
+            error.value = resolveClientErrorMessage(
+                exception,
+                t('siteIntel.siteHealth.errors.checkFailed')
+            );
         } finally {
             loading.value = false;
         }

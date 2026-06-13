@@ -2,6 +2,8 @@
 
 namespace App\Modules\Telegram\DTO\Request;
 
+use App\Exceptions\Domain\DomainValidationException;
+
 class SearchMessagesDTO
 {
     public function __construct(
@@ -27,7 +29,9 @@ class SearchMessagesDTO
         $peer = (string) ($params['peer'] ?? $params['chatUsername'] ?? $params['chat'] ?? '');
         $peer = trim($peer);
         if ($peer === '') {
-            throw new \InvalidArgumentException('Messages search requires non-empty "peer" or "chatUsername".');
+            throw DomainValidationException::because(
+                'Messages search requires non-empty "peer" or "chatUsername".'
+            );
         }
 
         $limit = (int) ($params['limit'] ?? 20);
@@ -41,7 +45,9 @@ class SearchMessagesDTO
         $maxDate = max(0, (int) ($params['max_date'] ?? 0));
 
         if ($maxDate > 0 && $minDate > $maxDate) {
-            throw new \InvalidArgumentException('"min_date" must be less than or equal to "max_date".');
+            throw DomainValidationException::because(
+                '"min_date" must be less than or equal to "max_date".'
+            );
         }
 
         return new self(

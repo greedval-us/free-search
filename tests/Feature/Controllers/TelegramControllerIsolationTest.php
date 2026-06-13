@@ -2,6 +2,7 @@
 
 namespace Tests\Feature\Controllers;
 
+use App\Exceptions\PublicException;
 use App\Models\User;
 use App\Modules\Telegram\Analytics\Contracts\TelegramAnalyticsApplicationServiceInterface;
 use App\Modules\Telegram\Analytics\Contracts\TelegramAnalyticsRangeResolverInterface;
@@ -67,6 +68,31 @@ class TelegramControllerIsolationTest extends TestCase
             ->assertJsonPath('ok', true)
             ->assertJsonPath('items.0.id', 100)
             ->assertJsonPath('pagination.limit', 7);
+    }
+
+    public function test_telegram_search_messages_controller_hides_internal_exception_message(): void
+    {
+        $user = User::factory()->create();
+
+        $this->mockTelegramControllerBaseDeps();
+        $this->mock(TelegramSearchApplicationServiceInterface::class, function ($mock): void {
+            $mock->shouldReceive('messages')
+                ->once()
+                ->andThrow(new \RuntimeException('TELEGRAM_API_ID is not set in configuration.', 503));
+        });
+
+        $this
+            ->actingAs($user)
+            ->getJson(route('telegram.search.messages', [
+                'chatUsername' => '@channel',
+                'q' => 'hello',
+            ]))
+            ->assertStatus(500)
+            ->assertJson([
+                'ok' => false,
+                'message' => __('errors.api.generic'),
+                'code' => 'internal_error',
+            ]);
     }
 
     public function test_telegram_search_messages_controller_passes_numeric_author_id_as_local_filter(): void

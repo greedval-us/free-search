@@ -1,5 +1,5 @@
 import { computed, reactive, ref } from 'vue';
-import { apiRequest } from '@/lib/api';
+import { apiRequest, resolveClientErrorMessage } from '@/lib/api';
 import type { SiteIntelSeoAuditResult } from '../types';
 
 type TranslateFn = (key: string) => string;
@@ -54,10 +54,10 @@ export const useSeoAudit = (t: TranslateFn) => {
 
             result.value = apiResult.data;
         } catch (exception) {
-            error.value =
-                exception instanceof Error
-                    ? exception.message
-                    : t('siteIntel.seoAudit.errors.analyzeFailed');
+            error.value = resolveClientErrorMessage(
+                exception,
+                t('siteIntel.seoAudit.errors.analyzeFailed')
+            );
         } finally {
             loading.value = false;
         }

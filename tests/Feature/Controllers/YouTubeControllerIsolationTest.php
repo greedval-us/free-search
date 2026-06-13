@@ -57,7 +57,7 @@ class YouTubeControllerIsolationTest extends TestCase
             ->assertJsonPath('data.nextPageToken', 'next-token');
     }
 
-    public function test_youtube_search_controller_maps_runtime_exception_to_json_error(): void
+    public function test_youtube_search_controller_maps_public_exception_to_json_error(): void
     {
         $user = User::factory()->create();
 
@@ -70,6 +70,27 @@ class YouTubeControllerIsolationTest extends TestCase
             ->assertJson([
                 'ok' => false,
                 'message' => 'YouTube quota exceeded.',
+            ]);
+    }
+
+    public function test_youtube_search_controller_hides_internal_runtime_exception_message(): void
+    {
+        $user = User::factory()->create();
+
+        $this->mock(YouTubeSearchApplicationServiceInterface::class, function ($mock): void {
+            $mock->shouldReceive('searchVideos')
+                ->once()
+                ->andThrow(new \RuntimeException('YOUTUBE_DATA_API_KEY is not configured.', 503));
+        });
+
+        $this
+            ->actingAs($user)
+            ->getJson(route('youtube.search.videos', ['q' => 'open source']))
+            ->assertStatus(500)
+            ->assertJson([
+                'ok' => false,
+                'message' => __('errors.api.generic'),
+                'code' => 'internal_error',
             ]);
     }
 

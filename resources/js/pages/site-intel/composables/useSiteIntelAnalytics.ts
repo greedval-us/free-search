@@ -1,5 +1,5 @@
 import { computed, reactive, ref } from 'vue';
-import { apiRequest } from '@/lib/api';
+import { apiRequest, resolveClientErrorMessage } from '@/lib/api';
 import type { SiteIntelAnalyticsResult } from '../types';
 
 type TranslateFn = (key: string) => string;
@@ -50,10 +50,10 @@ export const useSiteIntelAnalytics = (t: TranslateFn) => {
 
             result.value = apiResult.data;
         } catch (exception) {
-            error.value =
-                exception instanceof Error
-                    ? exception.message
-                    : t('siteIntel.analytics.errors.analyzeFailed');
+            error.value = resolveClientErrorMessage(
+                exception,
+                t('siteIntel.analytics.errors.analyzeFailed')
+            );
         } finally {
             loading.value = false;
         }

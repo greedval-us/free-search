@@ -4,7 +4,7 @@ import {
     isRepeatAutorunEnabled,
     readRepeatQueryParam,
 } from '@/composables/useRepeatQuery';
-import { apiRequest } from '@/lib/api';
+import { apiRequest, resolveClientErrorMessage } from '@/lib/api';
 
 type ParserStage =
     | 'idle'
@@ -228,10 +228,10 @@ export const useYouTubeParser = (t: TranslateFn) => {
                     }
                 } catch (pollError) {
                     loading.value = false;
-                    error.value =
-                        pollError instanceof Error
-                            ? pollError.message
-                            : t('youtube.parser.errors.failed');
+                    error.value = resolveClientErrorMessage(
+                        pollError,
+                        t('youtube.parser.errors.failed')
+                    );
                     stopSilently();
 
                     return;
@@ -249,10 +249,10 @@ export const useYouTubeParser = (t: TranslateFn) => {
             }, POLL_INTERVAL_MS);
         } catch (exception) {
             stage.value = 'failed';
-            error.value =
-                exception instanceof Error
-                    ? exception.message
-                    : t('youtube.parser.errors.failed');
+            error.value = resolveClientErrorMessage(
+                exception,
+                t('youtube.parser.errors.failed')
+            );
         } finally {
             if (stage.value === 'failed') {
                 loading.value = false;

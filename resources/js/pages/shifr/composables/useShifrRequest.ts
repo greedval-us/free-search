@@ -1,6 +1,6 @@
 import { computed, ref } from 'vue';
 import type { Ref } from 'vue';
-import { apiRequest } from '@/lib/api';
+import { apiRequest, resolveClientErrorMessage } from '@/lib/api';
 
 export interface ShifrRequestState {
     loading: Ref<boolean>;
@@ -53,10 +53,10 @@ export const useShifrRequest = (
 
             result.value = apiResult.data;
         } catch (exception) {
-            error.value =
-                exception instanceof Error
-                    ? exception.message
-                    : requestFailedMessage();
+            error.value = resolveClientErrorMessage(
+                exception,
+                requestFailedMessage()
+            );
         } finally {
             loading.value = false;
         }
