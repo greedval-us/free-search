@@ -2,7 +2,9 @@
 
 namespace App\Modules\YouTube;
 
-use App\Exceptions\PublicException;
+use App\Exceptions\Public\ExternalServiceRequestException;
+use App\Exceptions\Public\ExternalServiceUnavailableException;
+use App\Exceptions\Public\IntegrationMisconfiguredException;
 use App\Modules\YouTube\Core\Contracts\YouTubeGatewayInterface;
 use App\Modules\YouTube\Support\YouTubeApiConfig;
 use Illuminate\Http\Client\ConnectionException;
@@ -67,7 +69,7 @@ class YouTubeDataApiClient implements YouTubeGatewayInterface
         $key = $this->config->apiKey();
 
         if ($key === '') {
-            throw new PublicException('errors.api.youtube.not_configured', 503, 'youtube_not_configured');
+            throw new IntegrationMisconfiguredException('errors.api.youtube.not_configured', 'youtube_not_configured');
         }
 
         try {
@@ -77,9 +79,8 @@ class YouTubeDataApiClient implements YouTubeGatewayInterface
                     'key' => $key,
                 ]);
         } catch (ConnectionException $exception) {
-            throw new PublicException(
+            throw new ExternalServiceUnavailableException(
                 'errors.api.youtube.unavailable',
-                503,
                 'youtube_unavailable',
                 previous: $exception,
             );
@@ -88,7 +89,7 @@ class YouTubeDataApiClient implements YouTubeGatewayInterface
         if ($response->failed()) {
             $status = $response->status();
 
-            throw new PublicException(
+            throw new ExternalServiceRequestException(
                 $status === 429 ? 'errors.api.youtube.rate_limited' : 'errors.api.youtube.request_failed',
                 $status,
                 $status === 429 ? 'youtube_rate_limited' : 'youtube_request_failed',

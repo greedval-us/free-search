@@ -2,7 +2,7 @@
 
 namespace App\Modules\YouTube\Support;
 
-use App\Exceptions\PublicException;
+use App\Exceptions\Public\PublicResourceNotFoundException;
 use App\Modules\YouTube\Core\Contracts\YouTubeGatewayInterface;
 use Illuminate\Support\Arr;
 
@@ -41,7 +41,7 @@ class YouTubeChannelResolver
             return $byUsername;
         }
 
-        throw new PublicException('errors.api.youtube.channel_not_found', 404, 'youtube_channel_not_found');
+        throw new PublicResourceNotFoundException('errors.api.youtube.channel_not_found', 'youtube_channel_not_found');
     }
 
     /**

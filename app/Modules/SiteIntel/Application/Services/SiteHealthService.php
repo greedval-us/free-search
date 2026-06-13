@@ -2,6 +2,7 @@
 
 namespace App\Modules\SiteIntel\Application\Services;
 
+use App\Exceptions\Public\PublicValidationException;
 use App\Modules\SiteIntel\Application\Contracts\SiteHealthServiceInterface;
 use App\Modules\SiteIntel\Application\Contracts\SiteHealthDnsResolverInterface;
 use App\Modules\SiteIntel\Application\Contracts\SiteHealthHttpInspectorInterface;
@@ -10,7 +11,6 @@ use App\Modules\SiteIntel\DTO\Result\SiteHealthResultDTO;
 use App\Modules\SiteIntel\Application\Services\SiteHealth\SiteHealthScoreCalculator;
 use App\Modules\SiteIntel\Application\Services\SiteHealth\SiteHealthSecurityHeadersExtractor;
 use Carbon\Carbon;
-use RuntimeException;
 
 final class SiteHealthService implements SiteHealthServiceInterface
 {
@@ -27,7 +27,7 @@ final class SiteHealthService implements SiteHealthServiceInterface
     {
         $host = (string) parse_url($url, PHP_URL_HOST);
         if ($host === '') {
-            throw new RuntimeException('Invalid target host.');
+            throw new PublicValidationException('errors.api.site_intel.invalid_target', 'site_intel_invalid_target');
         }
 
         $dns = $this->dnsResolver->resolve($host);

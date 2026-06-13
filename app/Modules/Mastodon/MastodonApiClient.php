@@ -2,7 +2,9 @@
 
 namespace App\Modules\Mastodon;
 
-use App\Exceptions\PublicException;
+use App\Exceptions\Public\ExternalServiceRequestException;
+use App\Exceptions\Public\ExternalServiceUnavailableException;
+use App\Exceptions\Public\IntegrationMisconfiguredException;
 use App\Modules\Mastodon\Core\Contracts\MastodonGatewayInterface;
 use App\Modules\Mastodon\Support\MastodonApiConfig;
 use Illuminate\Http\Client\ConnectionException;
@@ -92,21 +94,20 @@ final class MastodonApiClient implements MastodonGatewayInterface
     private function request(string $endpoint, array $query): \Illuminate\Http\Client\Response
     {
         if ($this->config->apiToken() === '') {
-            throw new PublicException('errors.api.mastodon.not_configured', 503, 'mastodon_not_configured');
+            throw new IntegrationMisconfiguredException('errors.api.mastodon.not_configured', 'mastodon_not_configured');
         }
 
         $baseUrl = $this->config->baseUrl();
 
         if (! $this->isValidBaseUrl($baseUrl)) {
-            throw new PublicException('errors.api.mastodon.invalid_base_url', 503, 'mastodon_invalid_base_url');
+            throw new IntegrationMisconfiguredException('errors.api.mastodon.invalid_base_url', 'mastodon_invalid_base_url');
         }
 
         try {
             $response = $this->http()->get($endpoint, $query);
         } catch (ConnectionException $exception) {
-            throw new PublicException(
+            throw new ExternalServiceUnavailableException(
                 'errors.api.mastodon.unavailable',
-                503,
                 'mastodon_unavailable',
                 previous: $exception,
             );
@@ -115,7 +116,7 @@ final class MastodonApiClient implements MastodonGatewayInterface
         if ($response->failed()) {
             $status = $response->status();
 
-            throw new PublicException(
+            throw new ExternalServiceRequestException(
                 $status === 429 ? 'errors.api.mastodon.rate_limited' : 'errors.api.mastodon.request_failed',
                 $status,
                 $status === 429 ? 'mastodon_rate_limited' : 'mastodon_request_failed',

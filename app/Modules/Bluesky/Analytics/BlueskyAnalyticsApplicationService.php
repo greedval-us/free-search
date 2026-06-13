@@ -2,7 +2,7 @@
 
 namespace App\Modules\Bluesky\Analytics;
 
-use App\Exceptions\PublicException;
+use App\Exceptions\Public\PublicResourceNotFoundException;
 use App\Modules\Bluesky\Analytics\Contracts\BlueskyAnalyticsApplicationServiceInterface;
 use App\Modules\Bluesky\Core\Contracts\BlueskyGatewayInterface;
 use App\Modules\Bluesky\DTO\Request\BlueskyAnalyticsQueryDTO;
@@ -38,7 +38,7 @@ final class BlueskyAnalyticsApplicationService implements BlueskyAnalyticsApplic
         $actor = (string) ($profile['handle'] ?? $profile['did'] ?? '');
 
         if ($actor === '') {
-            throw new PublicException('errors.api.bluesky.account_not_found', 404, 'bluesky_account_not_found');
+            throw new PublicResourceNotFoundException('errors.api.bluesky.account_not_found', 'bluesky_account_not_found');
         }
 
         [$posts, $pagesLoaded] = $this->collectAuthorFeedPosts(
@@ -65,7 +65,7 @@ final class BlueskyAnalyticsApplicationService implements BlueskyAnalyticsApplic
         $tag = ltrim(trim($query->target), '#');
 
         if ($tag === '') {
-            throw new PublicException('errors.api.bluesky.hashtag_not_found', 404, 'bluesky_hashtag_not_found');
+            throw new PublicResourceNotFoundException('errors.api.bluesky.hashtag_not_found', 'bluesky_hashtag_not_found');
         }
 
         [$posts, $pagesLoaded] = $this->collectTagPosts(

@@ -42,14 +42,8 @@ final class BillingController extends Controller
                 (string) $validated['activation_token'],
             );
         } catch (SubscriptionActivationException $exception) {
-            $message = match ($exception->reason) {
-                SubscriptionActivationException::USED => __('validation.custom.activation_token.used'),
-                SubscriptionActivationException::EXPIRED => __('validation.custom.activation_token.expired'),
-                default => __('validation.custom.activation_token.invalid'),
-            };
-
             throw ValidationException::withMessages([
-                'activation_token' => $message,
+                'activation_token' => __($exception->messageKey()),
             ]);
         }
 

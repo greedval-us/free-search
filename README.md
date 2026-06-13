@@ -28,6 +28,7 @@ Free Search - модульная OSINT-платформа на Laravel + Inertia
 ## Архитектурные принципы
 
 - Стандарт модульной архитектуры: [docs/architecture/modules.md](docs/architecture/modules.md)
+- Стандарт обработки ошибок: [docs/errors.md](docs/errors.md)
 - Генерация каркаса модуля: `php artisan app:make-module ModuleName`
 
 Коротко:

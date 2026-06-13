@@ -9,6 +9,12 @@ return [
         'not_found' => 'The requested resource was not found.',
         'too_many_requests' => 'Too many requests. Please wait a bit and try again.',
         'service_unavailable' => 'The service is temporarily unavailable. Please try again later.',
+        'telegram' => [
+            'not_configured' => 'Telegram integration is temporarily unavailable.',
+        ],
+        'site_intel' => [
+            'invalid_target' => 'Invalid target URL or domain.',
+        ],
         'youtube' => [
             'not_configured' => 'YouTube integration is temporarily unavailable.',
             'unavailable' => 'Could not connect to YouTube right now. Please try again later.',

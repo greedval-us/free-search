@@ -2,7 +2,9 @@
 
 namespace App\Modules\Bluesky;
 
-use App\Exceptions\PublicException;
+use App\Exceptions\Public\ExternalServiceRequestException;
+use App\Exceptions\Public\ExternalServiceUnavailableException;
+use App\Exceptions\Public\IntegrationMisconfiguredException;
 use App\Modules\Bluesky\Core\Contracts\BlueskyGatewayInterface;
 use App\Modules\Bluesky\Support\BlueskyApiConfig;
 use Illuminate\Http\Client\ConnectionException;
@@ -121,9 +123,8 @@ final class BlueskyApiClient implements BlueskyGatewayInterface
                 ->withToken($this->accessJwt())
                 ->get($endpoint, $query);
         } catch (ConnectionException $exception) {
-            throw new PublicException(
+            throw new ExternalServiceUnavailableException(
                 'errors.api.bluesky.unavailable',
-                503,
                 'bluesky_unavailable',
                 previous: $exception,
             );
@@ -132,7 +133,7 @@ final class BlueskyApiClient implements BlueskyGatewayInterface
         if ($response->failed()) {
             $status = $response->status();
 
-            throw new PublicException(
+            throw new ExternalServiceRequestException(
                 $status === 429 ? 'errors.api.bluesky.rate_limited' : 'errors.api.bluesky.request_failed',
                 $status,
                 $status === 429 ? 'bluesky_rate_limited' : 'bluesky_request_failed',
@@ -154,16 +155,15 @@ final class BlueskyApiClient implements BlueskyGatewayInterface
                 'password' => $this->config->appPassword(),
             ]);
         } catch (ConnectionException $exception) {
-            throw new PublicException(
+            throw new ExternalServiceUnavailableException(
                 'errors.api.bluesky.unavailable',
-                503,
                 'bluesky_session_unavailable',
                 previous: $exception,
             );
         }
 
         if ($response->failed()) {
-            throw new PublicException(
+            throw new ExternalServiceRequestException(
                 'errors.api.bluesky.authentication_failed',
                 $response->status(),
                 'bluesky_authentication_failed',
@@ -174,9 +174,8 @@ final class BlueskyApiClient implements BlueskyGatewayInterface
         $accessJwt = trim((string) ($session['accessJwt'] ?? ''));
 
         if ($accessJwt === '') {
-            throw new PublicException(
+            throw new ExternalServiceUnavailableException(
                 'errors.api.bluesky.authentication_failed',
-                503,
                 'bluesky_missing_access_token',
             );
         }
@@ -202,15 +201,15 @@ final class BlueskyApiClient implements BlueskyGatewayInterface
     private function guardConfig(): void
     {
         if ($this->config->identifier() === '') {
-            throw new PublicException('errors.api.bluesky.not_configured', 503, 'bluesky_not_configured');
+            throw new IntegrationMisconfiguredException('errors.api.bluesky.not_configured', 'bluesky_not_configured');
         }
 
         if ($this->config->appPassword() === '') {
-            throw new PublicException('errors.api.bluesky.not_configured', 503, 'bluesky_not_configured');
+            throw new IntegrationMisconfiguredException('errors.api.bluesky.not_configured', 'bluesky_not_configured');
         }
 
         if (! $this->isValidBaseUrl($this->config->pdsUrl())) {
-            throw new PublicException('errors.api.bluesky.invalid_base_url', 503, 'bluesky_invalid_base_url');
+            throw new IntegrationMisconfiguredException('errors.api.bluesky.invalid_base_url', 'bluesky_invalid_base_url');
         }
     }
 

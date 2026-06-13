@@ -2,7 +2,7 @@
 
 namespace App\Modules\Mastodon\Analytics;
 
-use App\Exceptions\PublicException;
+use App\Exceptions\Public\PublicResourceNotFoundException;
 use App\Modules\Mastodon\Analytics\Contracts\MastodonAnalyticsApplicationServiceInterface;
 use App\Modules\Mastodon\Core\Contracts\MastodonGatewayInterface;
 use App\Modules\Mastodon\DTO\Request\MastodonAnalyticsQueryDTO;
@@ -38,7 +38,7 @@ final class MastodonAnalyticsApplicationService implements MastodonAnalyticsAppl
         $accountId = (string) ($resolvedAccount['id'] ?? '');
 
         if ($accountId === '') {
-            throw new PublicException('errors.api.mastodon.account_not_found', 404, 'mastodon_account_not_found');
+            throw new PublicResourceNotFoundException('errors.api.mastodon.account_not_found', 'mastodon_account_not_found');
         }
 
         [$statuses, $pagesLoaded] = $this->collectStatuses(
@@ -64,7 +64,7 @@ final class MastodonAnalyticsApplicationService implements MastodonAnalyticsAppl
         $tagName = (string) ($resolvedTag['name'] ?? trim(ltrim($query->target, '#')));
 
         if ($tagName === '') {
-            throw new PublicException('errors.api.mastodon.hashtag_not_found', 404, 'mastodon_hashtag_not_found');
+            throw new PublicResourceNotFoundException('errors.api.mastodon.hashtag_not_found', 'mastodon_hashtag_not_found');
         }
 
         [$statuses, $pagesLoaded] = $this->collectStatuses(
