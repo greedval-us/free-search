@@ -2,6 +2,7 @@
 
 namespace App\Modules\Mastodon\Analytics;
 
+use App\Exceptions\PublicException;
 use App\Modules\Mastodon\Analytics\Contracts\MastodonAnalyticsApplicationServiceInterface;
 use App\Modules\Mastodon\Core\Contracts\MastodonGatewayInterface;
 use App\Modules\Mastodon\DTO\Request\MastodonAnalyticsQueryDTO;
@@ -9,7 +10,6 @@ use App\Modules\Mastodon\DTO\Result\MastodonAnalyticsResultDTO;
 use App\Modules\Mastodon\Presenters\MastodonAccountPresenter;
 use App\Modules\Mastodon\Presenters\MastodonHashtagPresenter;
 use App\Modules\Mastodon\Presenters\MastodonStatusPresenter;
-use RuntimeException;
 
 final class MastodonAnalyticsApplicationService implements MastodonAnalyticsApplicationServiceInterface
 {
@@ -38,7 +38,7 @@ final class MastodonAnalyticsApplicationService implements MastodonAnalyticsAppl
         $accountId = (string) ($resolvedAccount['id'] ?? '');
 
         if ($accountId === '') {
-            throw new RuntimeException('Mastodon account was not found.', 404);
+            throw new PublicException('errors.api.mastodon.account_not_found', 404, 'mastodon_account_not_found');
         }
 
         [$statuses, $pagesLoaded] = $this->collectStatuses(
@@ -64,7 +64,7 @@ final class MastodonAnalyticsApplicationService implements MastodonAnalyticsAppl
         $tagName = (string) ($resolvedTag['name'] ?? trim(ltrim($query->target, '#')));
 
         if ($tagName === '') {
-            throw new RuntimeException('Mastodon hashtag was not found.', 404);
+            throw new PublicException('errors.api.mastodon.hashtag_not_found', 404, 'mastodon_hashtag_not_found');
         }
 
         [$statuses, $pagesLoaded] = $this->collectStatuses(

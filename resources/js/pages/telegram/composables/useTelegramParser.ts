@@ -1,5 +1,5 @@
 import { computed, onBeforeUnmount, onMounted, reactive, ref } from 'vue';
-import { apiRequest } from '@/lib/api';
+import { apiRequest, resolveClientErrorMessage } from '@/lib/api';
 
 type ParserPeriod = 'day' | 'week' | 'month' | 'custom';
 type ParserStage =
@@ -288,10 +288,10 @@ export const useTelegramParser = (t: TranslateFn) => {
                     }
                 } catch (pollError) {
                     loading.value = false;
-                    error.value =
-                        pollError instanceof Error
-                            ? pollError.message
-                            : t('telegram.parser.errors.failed');
+                    error.value = resolveClientErrorMessage(
+                        pollError,
+                        t('telegram.parser.errors.failed')
+                    );
                     stopSilently();
 
                     return;
@@ -309,10 +309,10 @@ export const useTelegramParser = (t: TranslateFn) => {
             }, POLL_INTERVAL_MS);
         } catch (exception) {
             stage.value = 'failed';
-            error.value =
-                exception instanceof Error
-                    ? exception.message
-                    : t('telegram.parser.errors.failed');
+            error.value = resolveClientErrorMessage(
+                exception,
+                t('telegram.parser.errors.failed')
+            );
         } finally {
             if (stage.value === 'failed') {
                 loading.value = false;

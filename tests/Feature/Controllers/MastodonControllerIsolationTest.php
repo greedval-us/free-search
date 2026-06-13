@@ -2,6 +2,7 @@
 
 namespace Tests\Feature\Controllers;
 
+use App\Exceptions\PublicException;
 use App\Models\User;
 use App\Modules\Mastodon\Analytics\Contracts\MastodonAnalyticsApplicationServiceInterface;
 use App\Modules\Mastodon\DTO\Request\MastodonAnalyticsQueryDTO;
@@ -13,7 +14,6 @@ use App\Modules\Mastodon\DTO\Result\MastodonTagTimelineResultDTO;
 use App\Modules\Mastodon\Search\Contracts\MastodonSearchApplicationServiceInterface;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Mockery;
-use RuntimeException;
 use Tests\Feature\Controllers\Concerns\CreatesPaidUser;
 use Tests\TestCase;
 
@@ -81,14 +81,14 @@ class MastodonControllerIsolationTest extends TestCase
             ->assertJsonPath('data.pagination.limit', 5);
     }
 
-    public function test_mastodon_search_controller_maps_runtime_exception_to_json_error(): void
+    public function test_mastodon_search_controller_maps_public_exception_to_json_error(): void
     {
         $user = $this->paidUser();
 
         $this->mock(MastodonSearchApplicationServiceInterface::class, function ($mock): void {
             $mock->shouldReceive('search')
                 ->once()
-                ->andThrow(new RuntimeException('Mastodon quota exceeded.', 429));
+                ->andThrow(new PublicException('Mastodon quota exceeded.', 429, 'test_public_error'));
         });
 
         $this

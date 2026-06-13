@@ -2,9 +2,9 @@
 
 namespace App\Modules\YouTube\Support;
 
+use App\Exceptions\PublicException;
 use App\Modules\YouTube\Core\Contracts\YouTubeGatewayInterface;
 use Illuminate\Support\Arr;
-use RuntimeException;
 
 class YouTubeChannelResolver
 {
@@ -41,7 +41,7 @@ class YouTubeChannelResolver
             return $byUsername;
         }
 
-        throw new RuntimeException('YouTube channel not found. Use a channel ID like UC..., @handle, or legacy username.', 404);
+        throw new PublicException('errors.api.youtube.channel_not_found', 404, 'youtube_channel_not_found');
     }
 
     /**

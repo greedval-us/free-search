@@ -1,5 +1,5 @@
 import { computed, reactive, ref } from 'vue';
-import { apiRequest } from '@/lib/api';
+import { apiRequest, resolveClientErrorMessage } from '@/lib/api';
 import type { DomainLiteResult } from '../types';
 
 type TranslateFn = (key: string) => string;
@@ -47,10 +47,10 @@ export const useDomainLite = (t: TranslateFn) => {
 
             result.value = apiResult.data;
         } catch (exception) {
-            error.value =
-                exception instanceof Error
-                    ? exception.message
-                    : t('siteIntel.domainLite.errors.lookupFailed');
+            error.value = resolveClientErrorMessage(
+                exception,
+                t('siteIntel.domainLite.errors.lookupFailed')
+            );
         } finally {
             loading.value = false;
         }

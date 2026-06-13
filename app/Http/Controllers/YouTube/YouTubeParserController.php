@@ -4,7 +4,6 @@ namespace App\Http\Controllers\YouTube;
 
 use App\Http\Controllers\Concerns\HandlesParserDownloads;
 use App\Http\Controllers\Concerns\ResolvesAuthenticatedUserId;
-use App\Http\Controllers\Concerns\ResolvesHttpStatusCodeFromException;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\YouTube\YouTubeParserRequest;
 use App\Http\Requests\YouTube\YouTubeParserStartRequest;
@@ -13,7 +12,6 @@ use App\Modules\YouTube\Parser\Contracts\YouTubeParserApplicationServiceInterfac
 use App\Modules\YouTube\Parser\Contracts\YouTubeParserExportBuilderInterface;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use RuntimeException;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
@@ -21,7 +19,6 @@ class YouTubeParserController extends Controller
 {
     use HandlesParserDownloads;
     use ResolvesAuthenticatedUserId;
-    use ResolvesHttpStatusCodeFromException;
 
     public function __construct(
         private readonly YouTubeParserApplicationServiceInterface $parserApplicationService,
@@ -42,11 +39,7 @@ class YouTubeParserController extends Controller
 
     private function commentsResponse(YouTubeParserRequest $request): JsonResponse
     {
-        try {
-            return $this->jsonDataFrom($this->parserApplicationService->comments($request->toDTO()));
-        } catch (RuntimeException $exception) {
-            return $this->jsonError($exception->getMessage(), $this->statusCodeFromException($exception));
-        }
+        return $this->jsonDataFrom($this->parserApplicationService->comments($request->toDTO()));
     }
 
     public function start(YouTubeParserStartRequest $request): JsonResponse

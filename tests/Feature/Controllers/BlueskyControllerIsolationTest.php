@@ -2,6 +2,7 @@
 
 namespace Tests\Feature\Controllers;
 
+use App\Exceptions\PublicException;
 use App\Models\User;
 use App\Modules\Bluesky\Analytics\Contracts\BlueskyAnalyticsApplicationServiceInterface;
 use App\Modules\Bluesky\DTO\Request\BlueskyAnalyticsQueryDTO;
@@ -16,7 +17,6 @@ use App\Modules\Bluesky\Parser\Contracts\BlueskyParserApplicationServiceInterfac
 use App\Modules\Bluesky\Search\Contracts\BlueskySearchApplicationServiceInterface;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Mockery;
-use RuntimeException;
 use Tests\Feature\Concerns\CreatesSubscribedUser;
 use Tests\TestCase;
 
@@ -95,14 +95,14 @@ class BlueskyControllerIsolationTest extends TestCase
             ->assertJsonPath('data.pagination.posts.nextCursor', 'cursor-2');
     }
 
-    public function test_bluesky_search_controller_maps_runtime_exception_to_json_error(): void
+    public function test_bluesky_search_controller_maps_public_exception_to_json_error(): void
     {
         $user = User::factory()->create();
 
         $this->mock(BlueskySearchApplicationServiceInterface::class, function ($mock): void {
             $mock->shouldReceive('search')
                 ->once()
-                ->andThrow(new RuntimeException('Bluesky rate limit exceeded.', 429));
+                ->andThrow(new PublicException('Bluesky rate limit exceeded.', 429, 'test_public_error'));
         });
 
         $this

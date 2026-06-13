@@ -1,5 +1,5 @@
 import { computed, reactive, ref } from 'vue';
-import { apiRequest } from '@/lib/api';
+import { apiRequest, resolveClientErrorMessage } from '@/lib/api';
 import type { TelegramAnalyticsSummary } from '../types';
 
 type TranslateFn = (key: string) => string;
@@ -304,10 +304,10 @@ export const useTelegramAnalytics = (t: TranslateFn) => {
                 }
             }
         } catch (exception) {
-            error.value =
-                exception instanceof Error
-                    ? exception.message
-                    : t('telegram.analytics.errors.loadFailed');
+            error.value = resolveClientErrorMessage(
+                exception,
+                t('telegram.analytics.errors.loadFailed')
+            );
             payload.value = null;
         } finally {
             loading.value = false;
