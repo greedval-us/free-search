@@ -37,7 +37,7 @@ class SearchMessagesRequest extends FormRequest
             $dateTo = $this->input('dateTo');
 
             if ($dateFrom && $dateTo && $dateFrom > $dateTo) {
-                $validator->errors()->add('dateFrom', __('Date "from" must be less than or equal to date "to".'));
+                $validator->errors()->add('dateFrom', __('errors.validation.date_from_before_or_equal_date_to'));
             }
         });
     }

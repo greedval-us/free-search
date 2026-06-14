@@ -29,7 +29,7 @@ class SiteIntelController extends Controller
     {
         $url = $request->normalizedUrl();
         if ($url === null) {
-            return $this->jsonError(__('Invalid target URL or domain.'), 422);
+            return $this->jsonError(__('errors.api.site_intel.invalid_target'), 422);
         }
 
         return $this->jsonDataFrom($this->siteHealthService->check($url));
@@ -39,7 +39,7 @@ class SiteIntelController extends Controller
     {
         $domain = $request->normalizedDomain();
         if ($domain === null) {
-            return $this->jsonError(__('Invalid domain.'), 422);
+            return $this->jsonError(__('errors.api.site_intel.invalid_domain'), 422);
         }
 
         return $this->jsonDataFrom($this->domainLiteService->lookup($domain));
@@ -51,7 +51,7 @@ class SiteIntelController extends Controller
         $domain = $request->normalizedDomain();
 
         if ($url === null || $domain === null) {
-            return $this->jsonError(__('Invalid target URL or domain.'), 422);
+            return $this->jsonError(__('errors.api.site_intel.invalid_target'), 422);
         }
 
         return $this->jsonDataFrom($this->siteIntelAnalyticsService->analyze($url, $domain));
@@ -61,7 +61,7 @@ class SiteIntelController extends Controller
     {
         $url = $request->normalizedUrl();
         if ($url === null) {
-            return $this->jsonError(__('Invalid target URL or domain.'), 422);
+            return $this->jsonError(__('errors.api.site_intel.invalid_target'), 422);
         }
 
         return $this->jsonDataFrom($this->seoAuditService->audit($url, $request->crawlLimit(), $request->platformType()));
@@ -71,7 +71,7 @@ class SiteIntelController extends Controller
     {
         $url = $request->normalizedUrl();
         if ($url === null) {
-            abort(422, __('Invalid target URL or domain.'));
+            abort(422, __('errors.api.site_intel.invalid_target'));
         }
 
         return $this->localizedHtmlReportResponse(
@@ -90,7 +90,7 @@ class SiteIntelController extends Controller
         $domain = $request->normalizedDomain();
 
         if ($url === null || $domain === null) {
-            abort(422, __('Invalid target URL or domain.'));
+            abort(422, __('errors.api.site_intel.invalid_target'));
         }
 
         return $this->localizedHtmlReportResponse(

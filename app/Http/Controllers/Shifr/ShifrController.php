@@ -59,7 +59,7 @@ final class ShifrController extends Controller
         return $this->respondWithOptionalData(
             $request,
             fn () => $this->classicCipherService->process($request->toDto()),
-            __('Unsupported cipher/direction pair or missing required settings.')
+            __('errors.api.shifr.unsupported_cipher_configuration')
         );
     }
 

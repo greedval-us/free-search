@@ -1,6 +1,21 @@
 <?php
 
 return [
+    'validation' => [
+        'date_from_before_or_equal_date_to' => 'Дата "от" должна быть меньше или равна дате "до".',
+        'custom_period_max_days' => 'Пользовательский период не может быть длиннее :days дней.',
+        'custom_period_requires_both_dates' => 'Укажите обе даты для пользовательского периода.',
+        'custom_range_requires_both_dates' => 'Укажите обе даты для пользовательского диапазона.',
+        'custom_parser_range_max_days' => 'Пользовательский диапазон парсера не может превышать :days дней.',
+        'custom_analytics_range_max_days' => 'Пользовательский диапазон аналитики не может превышать :days дней.',
+        'shifr_transform_only_direction' => 'Для этого шифра направление должно быть transform.',
+        'shifr_transform_only_for_rot' => 'Направление transform доступно только для ROT-шифров.',
+    ],
+    'access' => [
+        'feature_denied' => 'Доступ к функции запрещён.',
+        'feature_paid_only' => 'Эта функция доступна только на тарифах Plus и Pro.',
+        'feature_daily_limit_reached' => 'Дневной лимит для этой функции исчерпан.',
+    ],
     'api' => [
         'generic' => 'Что-то пошло не так. Попробуйте ещё раз позже.',
         'validation' => 'Проверьте введённые данные и попробуйте снова.',
@@ -14,9 +29,14 @@ return [
             'load_messages_failed' => 'Не удалось загрузить сообщения для текущего запроса.',
             'author_peer_resolve_failed' => 'Не удалось определить Telegram peer для указанного ID автора.',
             'parser_messages_failed' => 'Не удалось загрузить сообщения для парсера.',
+            'media_temp_file_failed' => 'Не удалось подготовить временный файл для медиа.',
         ],
         'site_intel' => [
             'invalid_target' => 'Некорректный URL или домен цели.',
+            'invalid_domain' => 'Некорректный домен.',
+        ],
+        'shifr' => [
+            'unsupported_cipher_configuration' => 'Неподдерживаемая пара шифр/направление или отсутствуют обязательные параметры.',
         ],
         'youtube' => [
             'not_configured' => 'Интеграция с YouTube временно недоступна.',
