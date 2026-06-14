@@ -30,7 +30,7 @@ class SearchMessagesDTO
         $peer = trim($peer);
         if ($peer === '') {
             throw DomainValidationException::because(
-                'Messages search requires non-empty "peer" or "chatUsername".'
+                __('errors.domain.telegram.messages_peer_required')
             );
         }
 
@@ -46,7 +46,7 @@ class SearchMessagesDTO
 
         if ($maxDate > 0 && $minDate > $maxDate) {
             throw DomainValidationException::because(
-                '"min_date" must be less than or equal to "max_date".'
+                __('errors.domain.telegram.messages_min_date_invalid')
             );
         }
 

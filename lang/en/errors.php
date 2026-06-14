@@ -16,6 +16,19 @@ return [
         'feature_paid_only' => 'This feature is available on Plus and Pro plans.',
         'feature_daily_limit_reached' => 'Daily limit reached for this feature.',
     ],
+    'domain' => [
+        'telegram' => [
+            'messages_peer_required' => 'Messages search requires non-empty "peer" or "chatUsername".',
+            'messages_min_date_invalid' => '"min_date" must be less than or equal to "max_date".',
+            'participants_chat_required' => 'Participants search requires non-empty "chatUsername" or "chat".',
+            'participants_filter_unsupported' => 'Unsupported participants filter: :filter',
+        ],
+        'shifr' => [
+            'jwt_token_parts_invalid' => 'Token must have 3 parts separated by dots.',
+            'jwt_unsupported_algorithm' => 'Unsupported or non-HS algorithm.',
+            'jwt_hmac_check_performed' => 'HMAC signature check performed.',
+        ],
+    ],
     'api' => [
         'generic' => 'Something went wrong. Please try again later.',
         'validation' => 'Please check the entered data and try again.',

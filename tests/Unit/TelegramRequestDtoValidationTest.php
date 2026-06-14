@@ -12,7 +12,7 @@ class TelegramRequestDtoValidationTest extends TestCase
     public function test_search_messages_dto_requires_peer(): void
     {
         $this->expectException(DomainValidationException::class);
-        $this->expectExceptionMessage('Messages search requires non-empty "peer" or "chatUsername".');
+        $this->expectExceptionMessage(__('errors.domain.telegram.messages_peer_required'));
 
         SearchMessagesDTO::fromArray([]);
     }
@@ -20,7 +20,7 @@ class TelegramRequestDtoValidationTest extends TestCase
     public function test_search_messages_dto_rejects_inverted_date_range(): void
     {
         $this->expectException(DomainValidationException::class);
-        $this->expectExceptionMessage('"min_date" must be less than or equal to "max_date".');
+        $this->expectExceptionMessage(__('errors.domain.telegram.messages_min_date_invalid'));
 
         SearchMessagesDTO::fromArray([
             'peer' => '@channel',
@@ -32,7 +32,7 @@ class TelegramRequestDtoValidationTest extends TestCase
     public function test_search_participants_dto_requires_chat_username(): void
     {
         $this->expectException(DomainValidationException::class);
-        $this->expectExceptionMessage('Participants search requires non-empty "chatUsername" or "chat".');
+        $this->expectExceptionMessage(__('errors.domain.telegram.participants_chat_required'));
 
         SearchParticipantsDTO::fromArray([]);
     }
@@ -40,7 +40,7 @@ class TelegramRequestDtoValidationTest extends TestCase
     public function test_search_participants_dto_rejects_unsupported_filter(): void
     {
         $this->expectException(DomainValidationException::class);
-        $this->expectExceptionMessage('Unsupported participants filter: unsupported');
+        $this->expectExceptionMessage(__('errors.domain.telegram.participants_filter_unsupported', ['filter' => 'unsupported']));
 
         SearchParticipantsDTO::fromArray([
             'chatUsername' => 'channel',

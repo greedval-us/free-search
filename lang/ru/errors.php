@@ -16,6 +16,19 @@ return [
         'feature_paid_only' => 'Эта функция доступна только на тарифах Plus и Pro.',
         'feature_daily_limit_reached' => 'Дневной лимит для этой функции исчерпан.',
     ],
+    'domain' => [
+        'telegram' => [
+            'messages_peer_required' => 'Для поиска сообщений требуется непустой "peer" или "chatUsername".',
+            'messages_min_date_invalid' => '"min_date" должен быть меньше или равен "max_date".',
+            'participants_chat_required' => 'Для поиска участников требуется непустой "chatUsername" или "chat".',
+            'participants_filter_unsupported' => 'Неподдерживаемый фильтр участников: :filter',
+        ],
+        'shifr' => [
+            'jwt_token_parts_invalid' => 'Токен должен состоять из 3 частей, разделённых точками.',
+            'jwt_unsupported_algorithm' => 'Неподдерживаемый алгоритм или алгоритм не из семейства HS.',
+            'jwt_hmac_check_performed' => 'Проверка HMAC-подписи выполнена.',
+        ],
+    ],
     'api' => [
         'generic' => 'Что-то пошло не так. Попробуйте ещё раз позже.',
         'validation' => 'Проверьте введённые данные и попробуйте снова.',
