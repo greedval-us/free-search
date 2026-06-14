@@ -28,7 +28,7 @@ class SearchTelegramMessagesAction
         if ($dto === null) {
             return new SearchMessagesResultDTO(
                 ok: false,
-                message: __('Failed to load messages for the current query.'),
+                message: __('errors.api.telegram.load_messages_failed'),
                 items: [],
                 pagination: [
                     'limit' => $query->limit,
@@ -83,7 +83,7 @@ class SearchTelegramMessagesAction
         if ($resolvedPeer === null) {
             return new SearchMessagesResultDTO(
                 ok: false,
-                message: __('Failed to resolve Telegram peer for the specified author ID.'),
+                message: __('errors.api.telegram.author_peer_resolve_failed'),
                 items: [],
                 pagination: [
                     'limit' => $query->limit,

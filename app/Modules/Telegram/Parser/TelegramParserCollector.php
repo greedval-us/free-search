@@ -97,7 +97,7 @@ class TelegramParserCollector
 
         $dto = $this->telegramService->getMessages($filter);
         if ($dto === null) {
-            return $this->fail($run, __('Failed to load messages for parser.'));
+            return $this->fail($run, __('errors.api.telegram.parser_messages_failed'));
         }
 
         $cursor['messagesPage'] = (int) ($cursor['messagesPage'] ?? 0) + 1;

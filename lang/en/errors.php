@@ -11,6 +11,9 @@ return [
         'service_unavailable' => 'The service is temporarily unavailable. Please try again later.',
         'telegram' => [
             'not_configured' => 'Telegram integration is temporarily unavailable.',
+            'load_messages_failed' => 'Failed to load messages for the current query.',
+            'author_peer_resolve_failed' => 'Failed to resolve Telegram peer for the specified author ID.',
+            'parser_messages_failed' => 'Failed to load messages for parser.',
         ],
         'site_intel' => [
             'invalid_target' => 'Invalid target URL or domain.',

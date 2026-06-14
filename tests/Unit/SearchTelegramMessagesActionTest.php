@@ -71,7 +71,7 @@ class SearchTelegramMessagesActionTest extends TestCase
         $payload = $result->toArray();
 
         $this->assertFalse($payload['ok']);
-        $this->assertSame('Failed to resolve Telegram peer for the specified author ID.', $payload['message']);
+        $this->assertSame(__('errors.api.telegram.author_peer_resolve_failed'), $payload['message']);
         $this->assertSame([], $payload['items']);
         $this->assertSame(2, $payload['pagination']['limit']);
         $this->assertSame(null, $payload['pagination']['nextOffsetId']);

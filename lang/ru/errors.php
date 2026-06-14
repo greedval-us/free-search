@@ -11,6 +11,9 @@ return [
         'service_unavailable' => 'Сервис временно недоступен. Попробуйте ещё раз позже.',
         'telegram' => [
             'not_configured' => 'Интеграция с Telegram временно недоступна.',
+            'load_messages_failed' => 'Не удалось загрузить сообщения для текущего запроса.',
+            'author_peer_resolve_failed' => 'Не удалось определить Telegram peer для указанного ID автора.',
+            'parser_messages_failed' => 'Не удалось загрузить сообщения для парсера.',
         ],
         'site_intel' => [
             'invalid_target' => 'Некорректный URL или домен цели.',
