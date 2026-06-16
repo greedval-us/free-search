@@ -32,7 +32,7 @@ class TelegramMediaResponder implements TelegramMediaResponderInterface
 
         $tempFile = tempnam($directory, 'tgm_');
         if ($tempFile === false) {
-            abort(500, 'Не удалось подготовить временный файл.');
+            abort(500, __('errors.api.telegram.media_temp_file_failed'));
         }
 
         $downloadPath = $tempFile;

@@ -45,13 +45,13 @@ class TelegramParserStartRequest extends FormRequest
             $dateTo = $this->input('dateTo');
 
             if (!$dateFrom || !$dateTo) {
-                $validator->errors()->add('dateTo', __('Please provide both dates for a custom period.'));
+                $validator->errors()->add('dateTo', __('errors.validation.custom_period_requires_both_dates'));
 
                 return;
             }
 
             if ($dateFrom > $dateTo) {
-                $validator->errors()->add('dateFrom', __('Date "from" must be less than or equal to date "to".'));
+                $validator->errors()->add('dateFrom', __('errors.validation.date_from_before_or_equal_date_to'));
 
                 return;
             }
@@ -62,7 +62,7 @@ class TelegramParserStartRequest extends FormRequest
             if ($to->diffInDays($from) > ($this->customRangeMaxDays() - 1)) {
                 $validator->errors()->add(
                     'dateTo',
-                    __('The custom parser range cannot exceed :days days.', [
+                    __('errors.validation.custom_parser_range_max_days', [
                         'days' => $this->customRangeMaxDays(),
                     ])
                 );

@@ -54,7 +54,7 @@ final class FeatureAccessService implements FeatureAccessServiceInterface
                 limit: $limit,
                 used: 0,
                 counts: $policy->counts,
-                message: __('This feature is available on Plus and Pro plans.')
+                message: __('errors.access.feature_paid_only')
             );
         }
 
@@ -68,7 +68,7 @@ final class FeatureAccessService implements FeatureAccessServiceInterface
                     limit: $limit,
                     used: $used,
                     counts: $policy->counts,
-                    message: __('Daily limit reached for this feature.')
+                    message: __('errors.access.feature_daily_limit_reached')
                 );
             }
 
@@ -102,7 +102,7 @@ final class FeatureAccessService implements FeatureAccessServiceInterface
                 limit: $limit,
                 used: $this->usageCounter->usedToday($user, $policy->quotaKey),
                 counts: $policy->counts,
-                message: __('Daily limit reached for this feature.')
+                message: __('errors.access.feature_daily_limit_reached')
             );
         }
 

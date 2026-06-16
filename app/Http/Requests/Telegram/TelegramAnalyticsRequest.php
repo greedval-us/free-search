@@ -44,11 +44,11 @@ class TelegramAnalyticsRequest extends LocalizedFormRequest
             $dateTo = $this->input('dateTo');
 
             if (($dateFrom && !$dateTo) || (!$dateFrom && $dateTo)) {
-                $validator->errors()->add('dateTo', __('Please provide both dates for a custom range.'));
+                $validator->errors()->add('dateTo', __('errors.validation.custom_range_requires_both_dates'));
             }
 
             if ($dateFrom && $dateTo && $dateFrom > $dateTo) {
-                $validator->errors()->add('dateFrom', __('Date "from" must be less than or equal to date "to".'));
+                $validator->errors()->add('dateFrom', __('errors.validation.date_from_before_or_equal_date_to'));
             }
 
             if ($dateFrom && $dateTo) {
@@ -58,7 +58,7 @@ class TelegramAnalyticsRequest extends LocalizedFormRequest
                 if ($rangeEnd->diffInDays($rangeStart) > ($this->customRangeMaxDays() - 1)) {
                     $validator->errors()->add(
                         'dateTo',
-                        __('The custom analytics range cannot exceed :days days.', [
+                        __('errors.validation.custom_analytics_range_max_days', [
                             'days' => $this->customRangeMaxDays(),
                         ])
                     );

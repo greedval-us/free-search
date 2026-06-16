@@ -1,8 +1,10 @@
 <script setup lang="ts">
-import { Head, Link } from '@inertiajs/vue3';
+import { Link } from '@inertiajs/vue3';
 import { computed } from 'vue';
 import CookieNotice from '@/components/CookieNotice.vue';
+import SeoHead from '@/components/SeoHead.vue';
 import { useI18n } from '@/composables/useI18n';
+import { useSeoPage } from '@/composables/useSeoPage';
 import { dashboard, login, register } from '@/routes';
 
 type LandingModule = {
@@ -27,6 +29,11 @@ withDefaults(
 );
 
 const { locale, setLocale, t } = useI18n();
+const {
+    path: seoPath,
+    title: seoTitle,
+    description: seoDescription,
+} = useSeoPage('welcome', locale);
 
 const copy = computed(() => {
     if (locale.value === 'ru') {
@@ -261,13 +268,11 @@ const copy = computed(() => {
     };
 });
 
-const pageTitle = computed(() => copy.value.headTitle);
-
 const toggleLocale = () => setLocale(locale.value === 'ru' ? 'en' : 'ru');
 </script>
 
 <template>
-    <Head :title="pageTitle" />
+    <SeoHead :title="seoTitle" :description="seoDescription" :path="seoPath" />
 
     <div class="page-root">
         <div class="bg-layer bg-layer-a" />

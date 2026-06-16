@@ -13,7 +13,7 @@ final class InspectJwtAction
         $parts = explode('.', $token);
 
         if (count($parts) !== 3) {
-            return JwtInspectResultDTO::invalidFormat('Token must have 3 parts separated by dots.');
+            return JwtInspectResultDTO::invalidFormat(__('errors.domain.shifr.jwt_token_parts_invalid'));
         }
 
         [$headerB64, $payloadB64, $signatureB64] = $parts;
@@ -74,14 +74,14 @@ final class InspectJwtAction
         ];
 
         if (!isset($map[$alg])) {
-            return ['verified' => null, 'reason' => 'Unsupported or non-HS algorithm.'];
+            return ['verified' => null, 'reason' => __('errors.domain.shifr.jwt_unsupported_algorithm')];
         }
 
         $expected = hash_hmac($map[$alg], $signingInput, $secret, true);
 
         return [
             'verified' => hash_equals($expected, $signatureRaw),
-            'reason' => 'HMAC signature check performed.',
+            'reason' => __('errors.domain.shifr.jwt_hmac_check_performed'),
         ];
     }
 

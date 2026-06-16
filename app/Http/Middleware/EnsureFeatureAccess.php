@@ -42,7 +42,7 @@ final class EnsureFeatureAccess
         }
 
         $status = $decision->limit <= 0 ? Response::HTTP_FORBIDDEN : Response::HTTP_TOO_MANY_REQUESTS;
-        $message = $decision->message ?? __('Feature access denied.');
+        $message = $decision->message ?? __('errors.access.feature_denied');
         $request->attributes->set('feature_access_denied', true);
 
         if ($request->expectsJson()) {

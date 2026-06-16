@@ -31,14 +31,14 @@ class SearchParticipantsDTO
         $chatUsername = trim((string) ($params['chatUsername'] ?? $params['chat'] ?? ''));
         if ($chatUsername === '') {
             throw DomainValidationException::because(
-                'Participants search requires non-empty "chatUsername" or "chat".'
+                __('errors.domain.telegram.participants_chat_required')
             );
         }
 
         $filter = (string) ($params['filter'] ?? self::DEFAULT_FILTER);
         if (!in_array($filter, self::ALLOWED_FILTERS, true)) {
             throw DomainValidationException::because(
-                "Unsupported participants filter: {$filter}"
+                __('errors.domain.telegram.participants_filter_unsupported', ['filter' => $filter])
             );
         }
 

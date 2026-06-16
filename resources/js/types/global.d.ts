@@ -17,6 +17,17 @@ declare module '@inertiajs/core' {
     export interface InertiaConfig {
         sharedPageProps: {
             name: string;
+            seo: {
+                siteUrl: string;
+                pages: Record<
+                    string,
+                    {
+                        path: string;
+                        title: Record<string, string>;
+                        description: Record<string, string>;
+                    }
+                >;
+            };
             auth: Auth;
             sidebarOpen: boolean;
             [key: string]: unknown;

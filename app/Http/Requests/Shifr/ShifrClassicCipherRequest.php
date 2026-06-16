@@ -64,11 +64,11 @@ final class ShifrClassicCipherRequest extends AbstractShifrRequest
             }
 
             if ($this->isTransformOnlyCipher($cipher) && $direction !== ShifrCipherDirection::Transform->value) {
-                $validator->errors()->add('direction', __('For this cipher direction must be transform.'));
+                $validator->errors()->add('direction', __('errors.validation.shifr_transform_only_direction'));
             }
 
             if (!$this->isTransformOnlyCipher($cipher) && $direction === ShifrCipherDirection::Transform->value) {
-                $validator->errors()->add('direction', __('Transform direction is only available for ROT ciphers.'));
+                $validator->errors()->add('direction', __('errors.validation.shifr_transform_only_for_rot'));
             }
         });
     }

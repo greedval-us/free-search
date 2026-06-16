@@ -1,6 +1,34 @@
 <?php
 
 return [
+    'validation' => [
+        'date_from_before_or_equal_date_to' => 'Date "from" must be less than or equal to date "to".',
+        'custom_period_max_days' => 'Custom period cannot be longer than :days days.',
+        'custom_period_requires_both_dates' => 'Please provide both dates for a custom period.',
+        'custom_range_requires_both_dates' => 'Please provide both dates for a custom range.',
+        'custom_parser_range_max_days' => 'The custom parser range cannot exceed :days days.',
+        'custom_analytics_range_max_days' => 'The custom analytics range cannot exceed :days days.',
+        'shifr_transform_only_direction' => 'For this cipher direction must be transform.',
+        'shifr_transform_only_for_rot' => 'Transform direction is only available for ROT ciphers.',
+    ],
+    'access' => [
+        'feature_denied' => 'Feature access denied.',
+        'feature_paid_only' => 'This feature is available on Plus and Pro plans.',
+        'feature_daily_limit_reached' => 'Daily limit reached for this feature.',
+    ],
+    'domain' => [
+        'telegram' => [
+            'messages_peer_required' => 'Messages search requires non-empty "peer" or "chatUsername".',
+            'messages_min_date_invalid' => '"min_date" must be less than or equal to "max_date".',
+            'participants_chat_required' => 'Participants search requires non-empty "chatUsername" or "chat".',
+            'participants_filter_unsupported' => 'Unsupported participants filter: :filter',
+        ],
+        'shifr' => [
+            'jwt_token_parts_invalid' => 'Token must have 3 parts separated by dots.',
+            'jwt_unsupported_algorithm' => 'Unsupported or non-HS algorithm.',
+            'jwt_hmac_check_performed' => 'HMAC signature check performed.',
+        ],
+    ],
     'api' => [
         'generic' => 'Something went wrong. Please try again later.',
         'validation' => 'Please check the entered data and try again.',
@@ -11,9 +39,17 @@ return [
         'service_unavailable' => 'The service is temporarily unavailable. Please try again later.',
         'telegram' => [
             'not_configured' => 'Telegram integration is temporarily unavailable.',
+            'load_messages_failed' => 'Failed to load messages for the current query.',
+            'author_peer_resolve_failed' => 'Failed to resolve Telegram peer for the specified author ID.',
+            'parser_messages_failed' => 'Failed to load messages for parser.',
+            'media_temp_file_failed' => 'Failed to prepare a temporary media file.',
         ],
         'site_intel' => [
             'invalid_target' => 'Invalid target URL or domain.',
+            'invalid_domain' => 'Invalid domain.',
+        ],
+        'shifr' => [
+            'unsupported_cipher_configuration' => 'Unsupported cipher/direction pair or missing required settings.',
         ],
         'youtube' => [
             'not_configured' => 'YouTube integration is temporarily unavailable.',

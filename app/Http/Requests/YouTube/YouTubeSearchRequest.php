@@ -45,7 +45,7 @@ class YouTubeSearchRequest extends FormRequest
             $to = $this->input('publishedBefore');
 
             if ($from && $to && $from > $to) {
-                $validator->errors()->add('publishedAfter', __('Date "from" must be less than or equal to date "to".'));
+                $validator->errors()->add('publishedAfter', __('errors.validation.date_from_before_or_equal_date_to'));
             }
         });
     }

@@ -4,13 +4,8 @@ use App\Http\Controllers\Dashboard\ModulePinController;
 use App\Http\Controllers\Dashboard\SavedQueryController;
 use App\Http\Controllers\DashboardController;
 use Illuminate\Support\Facades\Route;
-use Laravel\Fortify\Features;
 
-Route::inertia('/', 'Welcome', [
-    'canRegister' => Features::enabled(Features::registration()),
-])->name('home');
-Route::inertia('privacy', 'Privacy')->name('privacy');
-Route::inertia('terms', 'Terms')->name('terms');
+require __DIR__.'/web/public.php';
 
 Route::middleware(['auth', 'verified'])->group(function (): void {
     Route::get('dashboard', DashboardController::class)->name('dashboard');

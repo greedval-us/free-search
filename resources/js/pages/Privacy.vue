@@ -1,7 +1,9 @@
 <script setup lang="ts">
-import { Head, Link } from '@inertiajs/vue3';
+import { Link } from '@inertiajs/vue3';
 import { computed } from 'vue';
+import SeoHead from '@/components/SeoHead.vue';
 import { useI18n } from '@/composables/useI18n';
+import { useSeoPage } from '@/composables/useSeoPage';
 import en from '@/locales/en';
 import ru from '@/locales/ru';
 import { home } from '@/routes';
@@ -31,6 +33,11 @@ type PrivacyContent = {
 };
 
 const { locale, setLocale } = useI18n();
+const {
+    path: seoPath,
+    title: seoTitle,
+    description: seoDescription,
+} = useSeoPage('privacy', locale);
 
 const content = computed<PrivacyContent>(
     () => (locale.value === 'ru' ? ru.privacy : en.privacy) as PrivacyContent
@@ -53,7 +60,7 @@ const sections = computed(() => [
 </script>
 
 <template>
-    <Head :title="content.metaTitle" />
+    <SeoHead :title="seoTitle" :description="seoDescription" :path="seoPath" />
 
     <div class="privacy-root">
         <div class="privacy-ambient privacy-ambient-a" />

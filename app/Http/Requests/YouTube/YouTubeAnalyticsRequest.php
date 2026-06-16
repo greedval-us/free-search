@@ -55,14 +55,14 @@ class YouTubeAnalyticsRequest extends LocalizedFormRequest
             }
 
             if ($from->greaterThan($to)) {
-                $validator->errors()->add('dateFrom', __('Date "from" must be less than or equal to date "to".'));
+                $validator->errors()->add('dateFrom', __('errors.validation.date_from_before_or_equal_date_to'));
                 return;
             }
 
             if ($from->diffInDays($to) > ($this->youtubeModuleConfig()->analyticsCustomRangeMaxDays() - 1)) {
                 $validator->errors()->add(
                     'dateTo',
-                    __('Custom period cannot be longer than :days days.', ['days' => $this->youtubeModuleConfig()->analyticsCustomRangeMaxDays()])
+                    __('errors.validation.custom_period_max_days', ['days' => $this->youtubeModuleConfig()->analyticsCustomRangeMaxDays()])
                 );
             }
         });
