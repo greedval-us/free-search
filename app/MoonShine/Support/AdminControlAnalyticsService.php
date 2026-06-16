@@ -11,6 +11,7 @@ use App\Models\User;
 use App\Models\UserSubscription;
 use Carbon\CarbonImmutable;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\DB;
 
 final class AdminControlAnalyticsService
 {
@@ -127,19 +128,24 @@ final class AdminControlAnalyticsService
     {
         $moduleLabelExpression = "COALESCE(NULLIF(module_key, ''), 'unknown')";
 
-        $query = RequestLog::query()
+        $source = RequestLog::query()
             ->selectRaw("{$moduleLabelExpression} as module_label")
+            ->select('user_id', 'status_code');
+
+        if ($days > 0) {
+            $source->where('created_at', '>=', CarbonImmutable::now()->subDays($days));
+        }
+
+        $query = DB::query()
+            ->fromSub($source, 'module_requests')
+            ->select('module_label')
             ->selectRaw('COUNT(*) as requests_count')
             ->selectRaw('COUNT(DISTINCT user_id) as users_count')
             ->selectRaw('SUM(CASE WHEN status_code BETWEEN 400 AND 499 THEN 1 ELSE 0 END) as errors_4xx')
             ->selectRaw('SUM(CASE WHEN status_code BETWEEN 500 AND 599 THEN 1 ELSE 0 END) as errors_5xx')
-            ->groupByRaw($moduleLabelExpression)
-            ->orderByRaw('COUNT(*) DESC')
+            ->groupBy('module_label')
+            ->orderByDesc('requests_count')
             ->limit($limit);
-
-        if ($days > 0) {
-            $query->where('created_at', '>=', CarbonImmutable::now()->subDays($days));
-        }
 
         /** @var Collection<int, object> $rows */
         $rows = $query->get();
