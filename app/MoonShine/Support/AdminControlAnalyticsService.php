@@ -125,14 +125,16 @@ final class AdminControlAnalyticsService
      */
     public function topModules(int $days = 30, int $limit = 8): array
     {
+        $moduleLabelExpression = "COALESCE(NULLIF(module_key, ''), 'unknown')";
+
         $query = RequestLog::query()
-            ->selectRaw("COALESCE(NULLIF(module_key, ''), 'unknown') as module_label")
+            ->selectRaw("{$moduleLabelExpression} as module_label")
             ->selectRaw('COUNT(*) as requests_count')
             ->selectRaw('COUNT(DISTINCT user_id) as users_count')
             ->selectRaw('SUM(CASE WHEN status_code BETWEEN 400 AND 499 THEN 1 ELSE 0 END) as errors_4xx')
             ->selectRaw('SUM(CASE WHEN status_code BETWEEN 500 AND 599 THEN 1 ELSE 0 END) as errors_5xx')
-            ->groupByRaw("COALESCE(NULLIF(module_key, ''), 'unknown')")
-            ->orderByDesc('requests_count')
+            ->groupByRaw($moduleLabelExpression)
+            ->orderByRaw('COUNT(*) DESC')
             ->limit($limit);
 
         if ($days > 0) {
