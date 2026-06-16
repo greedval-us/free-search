@@ -24,7 +24,11 @@ type TermsContent = {
 };
 
 const { locale, setLocale } = useI18n();
-const seo = useSeoPage('terms', locale);
+const {
+    path: seoPath,
+    title: seoTitle,
+    description: seoDescription,
+} = useSeoPage('terms', locale);
 
 const content = computed<TermsContent>(
     () => (locale.value === 'ru' ? ru.terms : en.terms) as TermsContent
@@ -34,11 +38,7 @@ const sections = computed(() => Object.values(content.value.sections));
 </script>
 
 <template>
-    <SeoHead
-        :title="seo.title"
-        :description="seo.description"
-        :path="seo.path"
-    />
+    <SeoHead :title="seoTitle" :description="seoDescription" :path="seoPath" />
 
     <div class="terms-root">
         <div class="terms-ambient terms-ambient-a" />

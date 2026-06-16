@@ -25,9 +25,7 @@ const props = withDefaults(
 const page = usePage();
 
 const siteName = computed(() => String(page.props.name ?? 'Uraboros'));
-const sharedSeo = computed(
-    () => (page.props.seo ?? {}) as SharedSeoProps
-);
+const sharedSeo = computed(() => (page.props.seo ?? {}) as SharedSeoProps);
 
 const normalizedSiteUrl = computed(() => {
     const raw = String(sharedSeo.value.siteUrl ?? '').trim();
@@ -61,11 +59,7 @@ const imageUrl = computed(() => {
             :content="description"
         />
         <meta head-key="robots" name="robots" :content="robots" />
-        <meta
-            head-key="googlebot"
-            name="googlebot"
-            :content="robots"
-        />
+        <meta head-key="googlebot" name="googlebot" :content="robots" />
         <link
             v-if="canonicalUrl"
             head-key="canonical"
@@ -98,7 +92,11 @@ const imageUrl = computed(() => {
             :content="imageUrl"
         />
 
-        <meta head-key="twitter:card" name="twitter:card" content="summary_large_image" />
+        <meta
+            head-key="twitter:card"
+            name="twitter:card"
+            content="summary_large_image"
+        />
         <meta head-key="twitter:title" name="twitter:title" :content="title" />
         <meta
             head-key="twitter:description"

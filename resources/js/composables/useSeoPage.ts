@@ -1,5 +1,6 @@
 import { usePage } from '@inertiajs/vue3';
-import { computed, type Ref } from 'vue';
+import { computed } from 'vue';
+import type { Ref } from 'vue';
 
 type SeoPageConfig = {
     path: string;
@@ -25,15 +26,15 @@ export function useSeoPage(key: string, locale: Ref<string>) {
     const path = computed(() => config.value?.path ?? '/');
     const title = computed(
         () =>
-            config.value?.title[locale.value]
-            ?? config.value?.title[fallbackLocale]
-            ?? String(page.props.name ?? 'Uraboros')
+            config.value?.title[locale.value] ??
+            config.value?.title[fallbackLocale] ??
+            String(page.props.name ?? 'Uraboros')
     );
     const description = computed(
         () =>
-            config.value?.description[locale.value]
-            ?? config.value?.description[fallbackLocale]
-            ?? ''
+            config.value?.description[locale.value] ??
+            config.value?.description[fallbackLocale] ??
+            ''
     );
 
     return {

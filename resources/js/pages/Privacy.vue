@@ -33,7 +33,11 @@ type PrivacyContent = {
 };
 
 const { locale, setLocale } = useI18n();
-const seo = useSeoPage('privacy', locale);
+const {
+    path: seoPath,
+    title: seoTitle,
+    description: seoDescription,
+} = useSeoPage('privacy', locale);
 
 const content = computed<PrivacyContent>(
     () => (locale.value === 'ru' ? ru.privacy : en.privacy) as PrivacyContent
@@ -56,11 +60,7 @@ const sections = computed(() => [
 </script>
 
 <template>
-    <SeoHead
-        :title="seo.title"
-        :description="seo.description"
-        :path="seo.path"
-    />
+    <SeoHead :title="seoTitle" :description="seoDescription" :path="seoPath" />
 
     <div class="privacy-root">
         <div class="privacy-ambient privacy-ambient-a" />

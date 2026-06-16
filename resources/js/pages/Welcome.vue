@@ -29,7 +29,11 @@ withDefaults(
 );
 
 const { locale, setLocale, t } = useI18n();
-const seo = useSeoPage('welcome', locale);
+const {
+    path: seoPath,
+    title: seoTitle,
+    description: seoDescription,
+} = useSeoPage('welcome', locale);
 
 const copy = computed(() => {
     if (locale.value === 'ru') {
@@ -268,11 +272,7 @@ const toggleLocale = () => setLocale(locale.value === 'ru' ? 'en' : 'ru');
 </script>
 
 <template>
-    <SeoHead
-        :title="seo.title"
-        :description="seo.description"
-        :path="seo.path"
-    />
+    <SeoHead :title="seoTitle" :description="seoDescription" :path="seoPath" />
 
     <div class="page-root">
         <div class="bg-layer bg-layer-a" />
