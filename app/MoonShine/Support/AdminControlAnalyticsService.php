@@ -169,6 +169,7 @@ final class AdminControlAnalyticsService
 
         $start = CarbonImmutable::today()->subDays($days - 1);
 
+        /** @var Collection<string, object> $requestRows */
         $requestRows = RequestLog::query()
             ->selectRaw('date(created_at) as day')
             ->selectRaw('COUNT(*) as requests_count')
@@ -178,6 +179,7 @@ final class AdminControlAnalyticsService
             ->get()
             ->keyBy('day');
 
+        /** @var Collection<string, object> $userRows */
         $userRows = User::query()
             ->selectRaw('date(created_at) as day')
             ->selectRaw('COUNT(*) as registrations_count')
