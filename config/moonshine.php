@@ -49,6 +49,14 @@ return [
     'page_prefix' => env('MOONSHINE_PAGE_PREFIX', 'page'),
     'resource_prefix' => env('MOONSHINE_RESOURCE_PREFIX', 'resource'),
     'home_route' => 'moonshine.index',
+    'access' => [
+        'enforce_ip_allowlist' => (bool) env('MOONSHINE_ENFORCE_IP_ALLOWLIST', false),
+        'allowed_ips' => collect(explode(',', (string) env('MOONSHINE_ALLOWED_IPS', '')))
+            ->map(static fn (string $ip): string => trim($ip))
+            ->filter(static fn (string $ip): bool => $ip !== '')
+            ->values()
+            ->all(),
+    ],
 
     // Error handling
     'not_found_exception' => MoonShineNotFoundException::class,
