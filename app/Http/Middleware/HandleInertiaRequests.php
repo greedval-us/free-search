@@ -41,6 +41,10 @@ class HandleInertiaRequests extends Middleware
         return [
             ...parent::share($request),
             'name' => config('app.name'),
+            'seo' => [
+                'siteUrl' => $request->getSchemeAndHttpHost(),
+                'pages' => config('seo.pages', []),
+            ],
             'auth' => [
                 'user' => $request->user()?->only([
                     'id',

@@ -1,7 +1,9 @@
 <script setup lang="ts">
-import { Head, Link } from '@inertiajs/vue3';
+import { Link } from '@inertiajs/vue3';
 import { computed } from 'vue';
+import SeoHead from '@/components/SeoHead.vue';
 import { useI18n } from '@/composables/useI18n';
+import { useSeoPage } from '@/composables/useSeoPage';
 import en from '@/locales/en';
 import ru from '@/locales/ru';
 import { home } from '@/routes';
@@ -22,6 +24,7 @@ type TermsContent = {
 };
 
 const { locale, setLocale } = useI18n();
+const seo = useSeoPage('terms', locale);
 
 const content = computed<TermsContent>(
     () => (locale.value === 'ru' ? ru.terms : en.terms) as TermsContent
@@ -31,7 +34,11 @@ const sections = computed(() => Object.values(content.value.sections));
 </script>
 
 <template>
-    <Head :title="content.metaTitle" />
+    <SeoHead
+        :title="seo.title"
+        :description="seo.description"
+        :path="seo.path"
+    />
 
     <div class="terms-root">
         <div class="terms-ambient terms-ambient-a" />
