@@ -130,7 +130,7 @@ final class AdminControlAnalyticsService
 
         $source = RequestLog::query()
             ->selectRaw("{$moduleLabelExpression} as module_label")
-            ->select('user_id', 'status_code');
+            ->addSelect('user_id', 'status_code');
 
         if ($days > 0) {
             $source->where('created_at', '>=', CarbonImmutable::now()->subDays($days));
