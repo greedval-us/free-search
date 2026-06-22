@@ -15,6 +15,32 @@ class RequestPayloadSanitizer
         'token',
         'secret',
         'api_key',
+        'access_token',
+        'refresh_token',
+        'authorization',
+        'cookie',
+        'session',
+        'recovery_code',
+        'two_factor_secret',
+        'two_factor_recovery_codes',
+    ];
+
+    /**
+     * @var array<int, string>
+     */
+    private array $maskedKeyFragments = [
+        'password',
+        'token',
+        'secret',
+        'authorization',
+        'cookie',
+        'session',
+        'recovery_code',
+        'private_key',
+        'client_secret',
+        'api_key',
+        'access_key',
+        'otp',
     ];
 
     /**
@@ -29,7 +55,7 @@ class RequestPayloadSanitizer
                 continue;
             }
 
-            if (in_array($key, $this->maskedKeys, true)) {
+            if ($this->shouldMaskKey($key)) {
                 $result[$key] = '***';
 
                 continue;
@@ -50,5 +76,21 @@ class RequestPayloadSanitizer
 
         return $result;
     }
-}
 
+    private function shouldMaskKey(string $key): bool
+    {
+        $normalized = strtolower(trim($key));
+
+        if (in_array($normalized, $this->maskedKeys, true)) {
+            return true;
+        }
+
+        foreach ($this->maskedKeyFragments as $fragment) {
+            if (str_contains($normalized, $fragment)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+}

@@ -4,14 +4,16 @@ namespace App\Modules\SiteIntel\Infrastructure\Clients;
 
 use App\Modules\SiteIntel\Application\Contracts\SiteHealthHttpInspectorInterface;
 use App\Modules\SiteIntel\Application\Support\SiteIntelConfig;
+use App\Modules\SiteIntel\Support\SiteIntelTargetGuard;
 use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Support\Facades\Http;
 
 final class SiteHealthHttpInspector implements SiteHealthHttpInspectorInterface
 {
-    public function __construct(private readonly SiteIntelConfig $config)
-    {
-    }
+    public function __construct(
+        private readonly SiteIntelConfig $config,
+        private readonly SiteIntelTargetGuard $targetGuard,
+    ) {}
 
     /**
      * @return array<string, mixed>
@@ -24,6 +26,7 @@ final class SiteHealthHttpInspector implements SiteHealthHttpInspectorInterface
         $finalStatus = 0;
 
         for ($step = 0; $step <= $this->maxRedirects(); $step++) {
+            $this->targetGuard->assertSafeUrl($currentUrl);
             $startedAt = microtime(true);
 
             try {
@@ -80,6 +83,7 @@ final class SiteHealthHttpInspector implements SiteHealthHttpInspectorInterface
                 break;
             }
 
+            $this->targetGuard->assertSafeUrl($resolved);
             $currentUrl = $resolved;
         }
 

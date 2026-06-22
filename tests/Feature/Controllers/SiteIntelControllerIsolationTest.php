@@ -101,4 +101,18 @@ class SiteIntelControllerIsolationTest extends TestCase
             ->assertJsonPath('data.target', 'https://example.com/')
             ->assertJsonPath('data.crawl.limit', 12);
     }
+
+    public function test_site_health_controller_rejects_private_ip_targets(): void
+    {
+        $user = User::factory()->create();
+
+        $this
+            ->actingAs($user)
+            ->getJson(route('site-intel.site-health', ['target' => '127.0.0.1']))
+            ->assertStatus(422)
+            ->assertJson([
+                'ok' => false,
+                'message' => __('errors.api.site_intel.invalid_target'),
+            ]);
+    }
 }
