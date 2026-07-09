@@ -6,6 +6,7 @@ export type ApiEnvelope<TData = unknown> = {
     ok: boolean;
     data?: TData;
     message?: string;
+    code?: string;
     errors?: ApiFieldErrors;
     meta?: ApiMeta;
 };

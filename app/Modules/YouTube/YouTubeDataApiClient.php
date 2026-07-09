@@ -7,6 +7,7 @@ use App\Exceptions\Public\ExternalServiceUnavailableException;
 use App\Exceptions\Public\IntegrationMisconfiguredException;
 use App\Modules\YouTube\Core\Contracts\YouTubeGatewayInterface;
 use App\Modules\YouTube\Support\YouTubeApiConfig;
+use App\Support\Observability\ExternalServiceLogger;
 use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Http\Client\PendingRequest;
 use Illuminate\Support\Facades\Http;
@@ -15,6 +16,7 @@ class YouTubeDataApiClient implements YouTubeGatewayInterface
 {
     public function __construct(
         private readonly YouTubeApiConfig $config,
+        private readonly ExternalServiceLogger $externalServiceLogger,
     ) {
     }
 
@@ -69,6 +71,7 @@ class YouTubeDataApiClient implements YouTubeGatewayInterface
         $key = $this->config->apiKey();
 
         if ($key === '') {
+            $this->externalServiceLogger->logMisconfiguration('youtube', $endpoint);
             throw new IntegrationMisconfiguredException('errors.api.youtube.not_configured', 'youtube_not_configured');
         }
 
@@ -79,6 +82,9 @@ class YouTubeDataApiClient implements YouTubeGatewayInterface
                     'key' => $key,
                 ]);
         } catch (ConnectionException $exception) {
+            $this->externalServiceLogger->logConnectionFailure('youtube', $endpoint, $exception, [
+                'query' => $query,
+            ]);
             throw new ExternalServiceUnavailableException(
                 'errors.api.youtube.unavailable',
                 'youtube_unavailable',
@@ -88,6 +94,9 @@ class YouTubeDataApiClient implements YouTubeGatewayInterface
 
         if ($response->failed()) {
             $status = $response->status();
+            $this->externalServiceLogger->logHttpFailure('youtube', $endpoint, $status, [
+                'query' => $query,
+            ], $response->body());
 
             throw new ExternalServiceRequestException(
                 $status === 429 ? 'errors.api.youtube.rate_limited' : 'errors.api.youtube.request_failed',

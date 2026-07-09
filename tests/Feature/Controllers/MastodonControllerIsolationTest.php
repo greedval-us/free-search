@@ -98,6 +98,7 @@ class MastodonControllerIsolationTest extends TestCase
             ->assertJson([
                 'ok' => false,
                 'message' => 'Mastodon quota exceeded.',
+                'code' => 'test_public_error',
             ]);
     }
 

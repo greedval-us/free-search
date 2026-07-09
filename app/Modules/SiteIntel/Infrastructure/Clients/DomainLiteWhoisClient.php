@@ -4,17 +4,29 @@ namespace App\Modules\SiteIntel\Infrastructure\Clients;
 
 use App\Modules\SiteIntel\Application\Contracts\DomainLiteWhoisClientInterface;
 use App\Modules\SiteIntel\Application\Support\SiteIntelConfig;
+use App\Support\Observability\ExternalServiceLogger;
 
 final class DomainLiteWhoisClient implements DomainLiteWhoisClientInterface
 {
-    public function __construct(private readonly SiteIntelConfig $config)
-    {
-    }
+    public function __construct(
+        private readonly SiteIntelConfig $config,
+        private readonly ExternalServiceLogger $externalServiceLogger,
+    ) {}
 
     public function query(string $server, string $domain): ?string
     {
         $socket = @fsockopen($server, 43, $errorNumber, $errorString, $this->connectTimeoutSeconds());
         if ($socket === false) {
+            $this->externalServiceLogger->logConnectionFailure(
+                'whois',
+                'query',
+                new \RuntimeException(trim($errorString) !== '' ? $errorString : 'Unable to connect to WHOIS server.'),
+                [
+                    'server' => $server,
+                    'domain' => $domain,
+                    'errorNumber' => $errorNumber,
+                ]
+            );
             return null;
         }
 

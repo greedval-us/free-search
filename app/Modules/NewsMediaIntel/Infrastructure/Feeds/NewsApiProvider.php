@@ -6,6 +6,7 @@ use App\Modules\NewsMediaIntel\Application\Contracts\NewsFeedProviderInterface;
 use App\Modules\NewsMediaIntel\Application\Support\NewsMediaIntelConfig;
 use App\Modules\NewsMediaIntel\Enums\NewsFeedSource;
 use App\Modules\NewsMediaIntel\Domain\DTO\NewsMentionDTO;
+use App\Support\Observability\ExternalServiceLogger;
 use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Support\Facades\Http;
 
@@ -13,6 +14,7 @@ final class NewsApiProvider implements NewsFeedProviderInterface
 {
     public function __construct(
         private readonly NewsMediaIntelConfig $config,
+        private readonly ExternalServiceLogger $externalServiceLogger,
     ) {
     }
 
@@ -28,6 +30,9 @@ final class NewsApiProvider implements NewsFeedProviderInterface
     {
         $apiKey = $this->config->newsApiKey();
         if (trim($apiKey) === '') {
+            $this->externalServiceLogger->logFallback('newsapi', 'fetch', 'missing_api_key', [
+                'query' => $query,
+            ]);
             return [];
         }
 
@@ -44,11 +49,23 @@ final class NewsApiProvider implements NewsFeedProviderInterface
                 'sortBy' => 'publishedAt',
                 'pageSize' => $pageSize,
             ]);
-        } catch (ConnectionException) {
+        } catch (ConnectionException $exception) {
+            $this->externalServiceLogger->logConnectionFailure('newsapi', 'fetch', $exception, [
+                'query' => $query,
+                'baseUrl' => $baseUrl,
+                'language' => $language,
+                'pageSize' => $pageSize,
+            ]);
             return [];
         }
 
         if (!$response->ok()) {
+            $this->externalServiceLogger->logHttpFailure('newsapi', 'fetch', $response->status(), [
+                'query' => $query,
+                'baseUrl' => $baseUrl,
+                'language' => $language,
+                'pageSize' => $pageSize,
+            ], $response->body());
             return [];
         }
 

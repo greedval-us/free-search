@@ -68,6 +68,15 @@ export const useMastodonParser = (t: TranslateFn) => {
         downloadJsonUrl.value = null;
     };
 
+    const clearPolling = () => {
+        if (pollTimer.value !== null) {
+            window.clearTimeout(pollTimer.value);
+            pollTimer.value = null;
+        }
+
+        pollRequestInFlight.value = false;
+    };
+
     const applyPayload = (payload: ParserStatusResponse) => {
         stage.value = payload.stage;
         progress.value = payload.progress;
@@ -88,12 +97,7 @@ export const useMastodonParser = (t: TranslateFn) => {
         );
 
     const stopSilently = () => {
-        if (pollTimer.value !== null) {
-            window.clearTimeout(pollTimer.value);
-            pollTimer.value = null;
-        }
-
-        pollRequestInFlight.value = false;
+        clearPolling();
         const activeRunId = runId.value;
 
         if (activeRunId) {
@@ -102,12 +106,7 @@ export const useMastodonParser = (t: TranslateFn) => {
     };
 
     const stop = () => {
-        if (pollTimer.value !== null) {
-            window.clearTimeout(pollTimer.value);
-            pollTimer.value = null;
-        }
-
-        pollRequestInFlight.value = false;
+        clearPolling();
         loading.value = false;
 
         if (stage.value !== 'completed' && stage.value !== 'failed') {
@@ -194,7 +193,7 @@ export const useMastodonParser = (t: TranslateFn) => {
 
                     if (TERMINAL_STATUSES.includes(statusPayload.status)) {
                         loading.value = false;
-                        stopSilently();
+                        clearPolling();
 
                         return;
                     }
@@ -204,7 +203,7 @@ export const useMastodonParser = (t: TranslateFn) => {
                         pollError,
                         t('mastodon.parser.errors.failed')
                     );
-                    stopSilently();
+                    clearPolling();
 
                     return;
                 } finally {

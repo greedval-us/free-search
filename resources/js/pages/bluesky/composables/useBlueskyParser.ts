@@ -84,6 +84,15 @@ export const useBlueskyParser = (t: TranslateFn) => {
         downloadJsonUrl.value = null;
     };
 
+    const clearPolling = () => {
+        if (pollTimer.value !== null) {
+            window.clearTimeout(pollTimer.value);
+            pollTimer.value = null;
+        }
+
+        pollRequestInFlight.value = false;
+    };
+
     const applyPayload = (payload: ParserStatusResponse) => {
         stage.value = payload.stage;
         progress.value = payload.progress;
@@ -108,12 +117,7 @@ export const useBlueskyParser = (t: TranslateFn) => {
         );
 
     const stopSilently = () => {
-        if (pollTimer.value !== null) {
-            window.clearTimeout(pollTimer.value);
-            pollTimer.value = null;
-        }
-
-        pollRequestInFlight.value = false;
+        clearPolling();
         const activeRunId = runId.value;
 
         if (activeRunId) {
@@ -122,12 +126,7 @@ export const useBlueskyParser = (t: TranslateFn) => {
     };
 
     const stop = () => {
-        if (pollTimer.value !== null) {
-            window.clearTimeout(pollTimer.value);
-            pollTimer.value = null;
-        }
-
-        pollRequestInFlight.value = false;
+        clearPolling();
         loading.value = false;
 
         if (stage.value !== 'completed' && stage.value !== 'failed') {
@@ -214,7 +213,7 @@ export const useBlueskyParser = (t: TranslateFn) => {
 
                     if (TERMINAL_STATUSES.includes(statusPayload.status)) {
                         loading.value = false;
-                        stopSilently();
+                        clearPolling();
 
                         return;
                     }
@@ -224,7 +223,7 @@ export const useBlueskyParser = (t: TranslateFn) => {
                         pollError,
                         t('bluesky.parser.errors.failed')
                     );
-                    stopSilently();
+                    clearPolling();
 
                     return;
                 } finally {

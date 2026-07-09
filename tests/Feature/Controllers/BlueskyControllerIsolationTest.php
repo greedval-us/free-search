@@ -112,6 +112,7 @@ class BlueskyControllerIsolationTest extends TestCase
             ->assertJson([
                 'ok' => false,
                 'message' => 'Bluesky rate limit exceeded.',
+                'code' => 'test_public_error',
             ]);
     }
 
