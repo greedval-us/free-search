@@ -3,6 +3,7 @@
 namespace App\Modules\Telegram\Actions;
 
 use App\Facades\MadelineProto;
+use App\Support\MadelineProto\MadelineProtoManager;
 use Illuminate\Support\Facades\Log;
 
 abstract class AbstractTelegramAction
@@ -12,7 +13,10 @@ abstract class AbstractTelegramAction
 
     protected function madeline(): \danog\MadelineProto\API
     {
-        return MadelineProto::getFacadeRoot();
+        /** @var MadelineProtoManager $manager */
+        $manager = MadelineProto::getFacadeRoot();
+
+        return $manager->client();
     }
 
     protected function logContext(): string
