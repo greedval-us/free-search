@@ -7,6 +7,7 @@ use App\Exceptions\Public\ExternalServiceUnavailableException;
 use App\Exceptions\Public\IntegrationMisconfiguredException;
 use App\Modules\Bluesky\Core\Contracts\BlueskyGatewayInterface;
 use App\Modules\Bluesky\Support\BlueskyApiConfig;
+use App\Support\Observability\ExternalServiceLogger;
 use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Http\Client\PendingRequest;
 use Illuminate\Support\Facades\Http;
@@ -20,6 +21,7 @@ final class BlueskyApiClient implements BlueskyGatewayInterface
 
     public function __construct(
         private readonly BlueskyApiConfig $config,
+        private readonly ExternalServiceLogger $externalServiceLogger,
     ) {
     }
 
@@ -123,6 +125,10 @@ final class BlueskyApiClient implements BlueskyGatewayInterface
                 ->withToken($this->accessJwt())
                 ->get($endpoint, $query);
         } catch (ConnectionException $exception) {
+            $this->externalServiceLogger->logConnectionFailure('bluesky', $endpoint, $exception, [
+                'query' => $query,
+                'baseUrl' => $this->config->pdsUrl(),
+            ]);
             throw new ExternalServiceUnavailableException(
                 'errors.api.bluesky.unavailable',
                 'bluesky_unavailable',
@@ -132,6 +138,10 @@ final class BlueskyApiClient implements BlueskyGatewayInterface
 
         if ($response->failed()) {
             $status = $response->status();
+            $this->externalServiceLogger->logHttpFailure('bluesky', $endpoint, $status, [
+                'query' => $query,
+                'baseUrl' => $this->config->pdsUrl(),
+            ], $response->body());
 
             throw new ExternalServiceRequestException(
                 $status === 429 ? 'errors.api.bluesky.rate_limited' : 'errors.api.bluesky.request_failed',
@@ -155,6 +165,12 @@ final class BlueskyApiClient implements BlueskyGatewayInterface
                 'password' => $this->config->appPassword(),
             ]);
         } catch (ConnectionException $exception) {
+            $this->externalServiceLogger->logConnectionFailure(
+                'bluesky',
+                'createSession',
+                $exception,
+                ['baseUrl' => $this->config->pdsUrl()]
+            );
             throw new ExternalServiceUnavailableException(
                 'errors.api.bluesky.unavailable',
                 'bluesky_session_unavailable',
@@ -163,6 +179,13 @@ final class BlueskyApiClient implements BlueskyGatewayInterface
         }
 
         if ($response->failed()) {
+            $this->externalServiceLogger->logHttpFailure(
+                'bluesky',
+                'createSession',
+                $response->status(),
+                ['baseUrl' => $this->config->pdsUrl()],
+                $response->body()
+            );
             throw new ExternalServiceRequestException(
                 'errors.api.bluesky.authentication_failed',
                 $response->status(),
@@ -174,6 +197,12 @@ final class BlueskyApiClient implements BlueskyGatewayInterface
         $accessJwt = trim((string) ($session['accessJwt'] ?? ''));
 
         if ($accessJwt === '') {
+            $this->externalServiceLogger->logFallback(
+                'bluesky',
+                'createSession',
+                'missing_access_token',
+                ['baseUrl' => $this->config->pdsUrl()]
+            );
             throw new ExternalServiceUnavailableException(
                 'errors.api.bluesky.authentication_failed',
                 'bluesky_missing_access_token',
@@ -201,14 +230,19 @@ final class BlueskyApiClient implements BlueskyGatewayInterface
     private function guardConfig(): void
     {
         if ($this->config->identifier() === '') {
+            $this->externalServiceLogger->logMisconfiguration('bluesky', 'request');
             throw new IntegrationMisconfiguredException('errors.api.bluesky.not_configured', 'bluesky_not_configured');
         }
 
         if ($this->config->appPassword() === '') {
+            $this->externalServiceLogger->logMisconfiguration('bluesky', 'request');
             throw new IntegrationMisconfiguredException('errors.api.bluesky.not_configured', 'bluesky_not_configured');
         }
 
         if (! $this->isValidBaseUrl($this->config->pdsUrl())) {
+            $this->externalServiceLogger->logMisconfiguration('bluesky', 'request', [
+                'baseUrl' => $this->config->pdsUrl(),
+            ]);
             throw new IntegrationMisconfiguredException('errors.api.bluesky.invalid_base_url', 'bluesky_invalid_base_url');
         }
     }

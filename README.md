@@ -1,5 +1,7 @@
 # Free Search
 
+Telegram multi-session guide: [docs/telegram-sessions.md](docs/telegram-sessions.md)
+
 Free Search - модульная OSINT-платформа на Laravel + Inertia + Vue с пользовательским интерфейсом, аналитическими модулями и отдельной админ-панелью на MoonShine.
 
 ## Что это за проект

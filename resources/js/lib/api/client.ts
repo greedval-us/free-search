@@ -77,6 +77,7 @@ export const apiRequest = async <TData = unknown>(
             const errorPayload = normalizeErrorPayload({
                 message: envelope?.message ?? fallbackMessage,
                 status: response.status,
+                code: envelope?.code,
                 errors: envelope?.errors,
                 meta: envelope?.meta,
             });

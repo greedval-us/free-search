@@ -89,13 +89,17 @@ export const useTelegramParser = (t: TranslateFn) => {
         downloadJsonUrl.value = null;
     };
 
-    const stop = () => {
+    const clearPolling = () => {
         if (pollTimer.value !== null) {
             window.clearTimeout(pollTimer.value);
             pollTimer.value = null;
         }
 
         pollRequestInFlight.value = false;
+    };
+
+    const stop = () => {
+        clearPolling();
 
         loading.value = false;
 
@@ -138,12 +142,7 @@ export const useTelegramParser = (t: TranslateFn) => {
     };
 
     const stopSilently = () => {
-        if (pollTimer.value !== null) {
-            window.clearTimeout(pollTimer.value);
-            pollTimer.value = null;
-        }
-
-        pollRequestInFlight.value = false;
+        clearPolling();
 
         const activeRunId = runId.value;
 
@@ -270,7 +269,7 @@ export const useTelegramParser = (t: TranslateFn) => {
                         downloadUrl.value = statusPayload.downloadUrl;
                         downloadJsonUrl.value = statusPayload.downloadJsonUrl;
                         loading.value = false;
-                        stopSilently();
+                        clearPolling();
 
                         return;
                     }
@@ -282,7 +281,7 @@ export const useTelegramParser = (t: TranslateFn) => {
                         downloadUrl.value = statusPayload.downloadUrl;
                         downloadJsonUrl.value = statusPayload.downloadJsonUrl;
                         loading.value = false;
-                        stopSilently();
+                        clearPolling();
 
                         return;
                     }
@@ -292,7 +291,7 @@ export const useTelegramParser = (t: TranslateFn) => {
                         pollError,
                         t('telegram.parser.errors.failed')
                     );
-                    stopSilently();
+                    clearPolling();
 
                     return;
                 } finally {

@@ -9,9 +9,11 @@ class ParticipantsAction extends AbstractTelegramAction
 {
     public function execute(array $filter): ?array
     {
+        $client = $this->madeline();
+
         try {
             return $this->executeWithRetry(
-                callback: fn () => $this->madeline()->channels->getParticipants($filter),
+                callback: fn () => $client->channels->getParticipants($filter),
                 context: $filter
             );
         } catch (\Throwable $e) {

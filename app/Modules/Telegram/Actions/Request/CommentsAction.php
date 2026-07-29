@@ -15,6 +15,7 @@ class CommentsAction extends AbstractTelegramAction
         int $offsetId = 0
     ): array {
         $results = [];
+        $client = $this->madeline();
         $postIds = array_values(
             array_filter(
                 array_unique(array_map('intval', $postIds)),
@@ -29,7 +30,7 @@ class CommentsAction extends AbstractTelegramAction
         foreach ($postIds as $postId) {
             try {
                 $post = $this->executeWithRetry(
-                    callback: fn () => $this->madeline()->channels->getMessages([
+                    callback: fn () => $client->channels->getMessages([
                         'channel' => $channelId,
                         'id' => [$postId],
                     ]),
@@ -41,6 +42,7 @@ class CommentsAction extends AbstractTelegramAction
                 }
 
                 $commentsPage = $this->loadComments(
+                    client: $client,
                     channelId: $channelId,
                     postId: $postId,
                     limit: $commentsPerRequest,
@@ -75,6 +77,7 @@ class CommentsAction extends AbstractTelegramAction
     }
 
     private function loadComments(
+        \danog\MadelineProto\API $client,
         string $channelId,
         int $postId,
         int $limit,
@@ -90,7 +93,7 @@ class CommentsAction extends AbstractTelegramAction
 
         for ($page = 1; $page <= $maxPages; $page++) {
             $response = $this->executeWithRetry(
-                callback: fn () => $this->madeline()->messages->getReplies([
+                callback: fn () => $client->messages->getReplies([
                     'peer' => $channelId,
                     'msg_id' => $postId,
                     'offset_id' => $nextOffsetId,

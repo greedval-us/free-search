@@ -64,13 +64,17 @@ export const useYouTubeParser = (t: TranslateFn) => {
         downloadJsonUrl.value = null;
     };
 
-    const stopSilently = () => {
+    const clearPolling = () => {
         if (pollTimer.value !== null) {
             window.clearTimeout(pollTimer.value);
             pollTimer.value = null;
         }
 
         pollRequestInFlight.value = false;
+    };
+
+    const stopSilently = () => {
+        clearPolling();
         const activeRunId = runId.value;
 
         if (activeRunId) {
@@ -90,12 +94,7 @@ export const useYouTubeParser = (t: TranslateFn) => {
     };
 
     const stop = () => {
-        if (pollTimer.value !== null) {
-            window.clearTimeout(pollTimer.value);
-            pollTimer.value = null;
-        }
-
-        pollRequestInFlight.value = false;
+        clearPolling();
         loading.value = false;
 
         if (stage.value !== 'completed' && stage.value !== 'failed') {
@@ -222,7 +221,7 @@ export const useYouTubeParser = (t: TranslateFn) => {
                         downloadUrl.value = statusPayload.downloadUrl;
                         downloadJsonUrl.value = statusPayload.downloadJsonUrl;
                         loading.value = false;
-                        stopSilently();
+                        clearPolling();
 
                         return;
                     }
@@ -232,7 +231,7 @@ export const useYouTubeParser = (t: TranslateFn) => {
                         pollError,
                         t('youtube.parser.errors.failed')
                     );
-                    stopSilently();
+                    clearPolling();
 
                     return;
                 } finally {

@@ -57,7 +57,7 @@ class TelegramMessagePresenter
             return null;
         }
 
-        return sprintf('https://t.me/%s/%d', $chatUsername, $messageId);
+        return sprintf('https://telegram.me/%s/%d', $chatUsername, $messageId);
     }
 
     private function extractMediaSummary(object $message): array

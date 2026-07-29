@@ -6,6 +6,8 @@ use App\Exceptions\Public\IntegrationMisconfiguredException;
 
 final class MadelineProtoConfig
 {
+    private const DEFAULT_SESSION_NAME = 'default';
+
     /**
      * @param array<string, mixed> $config
      */
@@ -47,20 +49,85 @@ final class MadelineProtoConfig
 
     public function sessionFilePath(): string
     {
+        return $this->sessionFilePathFor(self::DEFAULT_SESSION_NAME);
+    }
+
+    public function sessionDirectoryPath(): string
+    {
         $base = trim($this->sessionPath);
         $base = str_replace('\\', '/', $base);
         $base = trim($base, '/');
 
-        return storage_path($base . '/session.madeline');
+        return storage_path($base);
+    }
+
+    public function sessionFilePathFor(string $sessionName): string
+    {
+        $normalized = $this->normalizeSessionName($sessionName);
+
+        if ($normalized === self::DEFAULT_SESSION_NAME) {
+            return $this->sessionDirectoryPath() . DIRECTORY_SEPARATOR . 'session.madeline';
+        }
+
+        return $this->sessionDirectoryPath() . DIRECTORY_SEPARATOR . sprintf('session.%s.madeline', $normalized);
     }
 
     public function logFilePath(): string
+    {
+        return $this->logFilePathFor(self::DEFAULT_SESSION_NAME);
+    }
+
+    public function logFilePathFor(string $sessionName): string
     {
         $path = trim($this->logPath);
         $path = str_replace('\\', '/', $path);
         $path = ltrim($path, '/');
 
-        return storage_path($path);
+        $basePath = storage_path($path);
+        $normalized = $this->normalizeSessionName($sessionName);
+
+        if ($normalized === self::DEFAULT_SESSION_NAME) {
+            return $basePath;
+        }
+
+        $extension = pathinfo($basePath, PATHINFO_EXTENSION);
+        $filename = pathinfo($basePath, PATHINFO_FILENAME);
+        $directory = dirname($basePath);
+
+        if ($extension === '') {
+            return $directory . DIRECTORY_SEPARATOR . sprintf('%s-%s', $filename, $normalized);
+        }
+
+        return $directory . DIRECTORY_SEPARATOR . sprintf('%s-%s.%s', $filename, $normalized, $extension);
+    }
+
+    public function sessionPoolStateFilePath(): string
+    {
+        return $this->sessionDirectoryPath() . DIRECTORY_SEPARATOR . 'session-pool.state';
+    }
+
+    public function normalizeSessionName(string $sessionName): string
+    {
+        $normalized = strtolower(trim($sessionName));
+        $normalized = preg_replace('/[^a-z0-9_-]+/', '-', $normalized) ?? '';
+        $normalized = trim($normalized, '-_');
+
+        return $normalized !== '' ? $normalized : self::DEFAULT_SESSION_NAME;
+    }
+
+    public function sessionNameFromFilePath(string $path): ?string
+    {
+        $basename = basename($path);
+
+        if ($basename === 'session.madeline') {
+            return self::DEFAULT_SESSION_NAME;
+        }
+
+        if (!preg_match('/^session\.([a-z0-9_-]+)\.madeline$/i', $basename, $matches)) {
+            return null;
+        }
+
+        return $this->normalizeSessionName((string) $matches[1]);
     }
 
     private static function nullableInt(mixed $value): ?int

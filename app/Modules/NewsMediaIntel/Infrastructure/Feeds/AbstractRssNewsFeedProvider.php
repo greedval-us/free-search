@@ -4,6 +4,7 @@ namespace App\Modules\NewsMediaIntel\Infrastructure\Feeds;
 
 use App\Modules\NewsMediaIntel\Application\Support\NewsMediaIntelConfig;
 use App\Modules\NewsMediaIntel\Domain\DTO\NewsMentionDTO;
+use App\Support\Observability\ExternalServiceLogger;
 use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Support\Facades\Http;
 use SimpleXMLElement;
@@ -12,6 +13,7 @@ abstract class AbstractRssNewsFeedProvider
 {
     public function __construct(
         protected readonly NewsMediaIntelConfig $config,
+        protected readonly ExternalServiceLogger $externalServiceLogger,
     ) {
     }
 
@@ -41,17 +43,26 @@ abstract class AbstractRssNewsFeedProvider
             $response = Http::withHeaders([
                 'Accept' => $acceptHeader,
             ])->timeout($timeoutSeconds)->get($url);
-        } catch (ConnectionException) {
+        } catch (ConnectionException $exception) {
+            $this->externalServiceLogger->logConnectionFailure($source, 'fetchRss', $exception, [
+                'url' => $url,
+            ]);
             return [];
         }
 
         if (!$response->ok()) {
+            $this->externalServiceLogger->logHttpFailure($source, 'fetchRss', $response->status(), [
+                'url' => $url,
+            ], $response->body());
             return [];
         }
 
         libxml_use_internal_errors(true);
         $rss = simplexml_load_string((string) $response->body());
         if (!$rss instanceof SimpleXMLElement) {
+            $this->externalServiceLogger->logFallback($source, 'fetchRss', 'invalid_xml', [
+                'url' => $url,
+            ]);
             return [];
         }
 

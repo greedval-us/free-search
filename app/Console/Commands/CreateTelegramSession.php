@@ -3,6 +3,7 @@
 namespace App\Console\Commands;
 
 use App\Facades\MadelineProto;
+use App\Support\MadelineProto\MadelineProtoManager;
 use Illuminate\Console\Command;
 
 class CreateTelegramSession extends Command
@@ -12,23 +13,24 @@ class CreateTelegramSession extends Command
      *
      * @var string
      */
-    protected $signature = 'app:create-telegram-session';
+    protected $signature = 'app:create-telegram-session {name=default : Session name to create or refresh}';
 
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = 'Command description';
+    protected $description = 'Create or refresh a named Telegram MadelineProto session';
 
     /**
      * Execute the console command.
      */
     public function handle()
     {
-        $madelineProto = $this->getMadelineProto();
+        $sessionName = (string) $this->argument('name');
+        $madelineProto = $this->getMadelineProto()->client($sessionName);
 
-        $this->info('Starting Telegram authentication process...');
+        $this->info(sprintf('Starting Telegram authentication process for session "%s"...', $sessionName));
 
         try {
             $phoneNumber = $this->ask('Enter your phone number (in international format, e.g. +1234567890):');
@@ -48,7 +50,10 @@ class CreateTelegramSession extends Command
                 $authorization = $madelineProto->completeSignup($firstName, $lastName);
             }
 
-            $this->info('Successfully logged in! Session file created.');
+            $availableSessions = $this->getMadelineProto()->availableSessionNames();
+
+            $this->info(sprintf('Successfully logged in. Session "%s" is ready.', $sessionName));
+            $this->line('Active Telegram sessions: ' . implode(', ', $availableSessions));
 
         } catch (\Exception $e) {
             $this->error('Authentication failed: ' . $e->getMessage());
@@ -58,7 +63,7 @@ class CreateTelegramSession extends Command
         return 0;
     }
 
-    protected function getMadelineProto()
+    protected function getMadelineProto(): MadelineProtoManager
     {
         return MadelineProto::getFacadeRoot();
     }

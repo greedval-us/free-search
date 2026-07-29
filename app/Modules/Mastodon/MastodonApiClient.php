@@ -7,6 +7,7 @@ use App\Exceptions\Public\ExternalServiceUnavailableException;
 use App\Exceptions\Public\IntegrationMisconfiguredException;
 use App\Modules\Mastodon\Core\Contracts\MastodonGatewayInterface;
 use App\Modules\Mastodon\Support\MastodonApiConfig;
+use App\Support\Observability\ExternalServiceLogger;
 use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Http\Client\PendingRequest;
 use Illuminate\Support\Facades\Http;
@@ -15,6 +16,7 @@ final class MastodonApiClient implements MastodonGatewayInterface
 {
     public function __construct(
         private readonly MastodonApiConfig $config,
+        private readonly ExternalServiceLogger $externalServiceLogger,
     ) {
     }
 
@@ -94,18 +96,26 @@ final class MastodonApiClient implements MastodonGatewayInterface
     private function request(string $endpoint, array $query): \Illuminate\Http\Client\Response
     {
         if ($this->config->apiToken() === '') {
+            $this->externalServiceLogger->logMisconfiguration('mastodon', $endpoint);
             throw new IntegrationMisconfiguredException('errors.api.mastodon.not_configured', 'mastodon_not_configured');
         }
 
         $baseUrl = $this->config->baseUrl();
 
         if (! $this->isValidBaseUrl($baseUrl)) {
+            $this->externalServiceLogger->logMisconfiguration('mastodon', $endpoint, [
+                'baseUrl' => $baseUrl,
+            ]);
             throw new IntegrationMisconfiguredException('errors.api.mastodon.invalid_base_url', 'mastodon_invalid_base_url');
         }
 
         try {
             $response = $this->http()->get($endpoint, $query);
         } catch (ConnectionException $exception) {
+            $this->externalServiceLogger->logConnectionFailure('mastodon', $endpoint, $exception, [
+                'query' => $query,
+                'baseUrl' => $baseUrl,
+            ]);
             throw new ExternalServiceUnavailableException(
                 'errors.api.mastodon.unavailable',
                 'mastodon_unavailable',
@@ -115,6 +125,10 @@ final class MastodonApiClient implements MastodonGatewayInterface
 
         if ($response->failed()) {
             $status = $response->status();
+            $this->externalServiceLogger->logHttpFailure('mastodon', $endpoint, $status, [
+                'query' => $query,
+                'baseUrl' => $baseUrl,
+            ], $response->body());
 
             throw new ExternalServiceRequestException(
                 $status === 429 ? 'errors.api.mastodon.rate_limited' : 'errors.api.mastodon.request_failed',

@@ -5,6 +5,7 @@ namespace App\Modules\SiteIntel\Infrastructure\Clients;
 use App\Modules\SiteIntel\Application\Contracts\SeoAuditHttpFetcherInterface;
 use App\Modules\SiteIntel\Application\Support\SiteIntelConfig;
 use App\Modules\SiteIntel\Support\SiteIntelTargetGuard;
+use App\Support\Observability\ExternalServiceLogger;
 use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Support\Facades\Http;
 
@@ -13,6 +14,7 @@ final class SeoAuditHttpFetcher implements SeoAuditHttpFetcherInterface
     public function __construct(
         private readonly SiteIntelConfig $config,
         private readonly SiteIntelTargetGuard $targetGuard,
+        private readonly ExternalServiceLogger $externalServiceLogger,
     ) {}
 
     /**
@@ -40,6 +42,9 @@ final class SeoAuditHttpFetcher implements SeoAuditHttpFetcherInterface
                     ->timeout($this->config->httpTimeoutSeconds())
                     ->get($currentUrl);
             } catch (ConnectionException $exception) {
+                $this->externalServiceLogger->logConnectionFailure('site-intel', 'seo-audit-fetch', $exception, [
+                    'url' => $currentUrl,
+                ]);
                 return [
                     'url' => $currentUrl,
                     'status' => 0,
@@ -67,6 +72,10 @@ final class SeoAuditHttpFetcher implements SeoAuditHttpFetcherInterface
 
             $resolved = $this->resolveRedirectUrl($currentUrl, $location);
             if ($resolved === null) {
+                $this->externalServiceLogger->logFallback('site-intel', 'seo-audit-fetch', 'redirect_resolution_failed', [
+                    'url' => $currentUrl,
+                    'location' => $location,
+                ]);
                 break;
             }
 

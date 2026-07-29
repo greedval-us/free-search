@@ -5,6 +5,7 @@ namespace App\Modules\SiteIntel\Infrastructure\Clients;
 use App\Modules\SiteIntel\Application\Contracts\SiteHealthHttpInspectorInterface;
 use App\Modules\SiteIntel\Application\Support\SiteIntelConfig;
 use App\Modules\SiteIntel\Support\SiteIntelTargetGuard;
+use App\Support\Observability\ExternalServiceLogger;
 use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Support\Facades\Http;
 
@@ -13,6 +14,7 @@ final class SiteHealthHttpInspector implements SiteHealthHttpInspectorInterface
     public function __construct(
         private readonly SiteIntelConfig $config,
         private readonly SiteIntelTargetGuard $targetGuard,
+        private readonly ExternalServiceLogger $externalServiceLogger,
     ) {}
 
     /**
@@ -41,6 +43,9 @@ final class SiteHealthHttpInspector implements SiteHealthHttpInspectorInterface
                     ->timeout($this->timeoutSeconds())
                     ->get($currentUrl);
             } catch (ConnectionException $exception) {
+                $this->externalServiceLogger->logConnectionFailure('site-intel', 'site-health-http', $exception, [
+                    'url' => $currentUrl,
+                ]);
                 $chain[] = [
                     'url' => $currentUrl,
                     'status' => 0,
@@ -80,6 +85,10 @@ final class SiteHealthHttpInspector implements SiteHealthHttpInspectorInterface
 
             $resolved = $this->resolveRedirectUrl($currentUrl, $location);
             if ($resolved === null) {
+                $this->externalServiceLogger->logFallback('site-intel', 'site-health-http', 'redirect_resolution_failed', [
+                    'url' => $currentUrl,
+                    'location' => $location,
+                ]);
                 break;
             }
 

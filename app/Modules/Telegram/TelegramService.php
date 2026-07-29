@@ -13,6 +13,7 @@ use App\Modules\Telegram\DTO\Response\Messages\ChannelMessagesDTO;
 use App\Modules\Telegram\DTO\Response\Participants\ChannelParticipantsDTO;
 use App\Modules\Telegram\DTO\Response\Info\ChannelInfoDTO;
 use App\Facades\MadelineProto;
+use App\Support\MadelineProto\MadelineProtoManager;
 use danog\MadelineProto\API;
 use Illuminate\Support\Facades\Log;
 
@@ -131,8 +132,10 @@ class TelegramService implements TelegramGatewayInterface
 
     public function getMessageMedia(string $channel, int $messageId): ?array
     {
+        $client = $this->madeline();
+
         try {
-            $response = $this->madeline()->channels->getMessages([
+            $response = $client->channels->getMessages([
                 'channel' => $channel,
                 'id' => [$messageId],
             ]);
@@ -149,7 +152,7 @@ class TelegramService implements TelegramGatewayInterface
                 return null;
             }
 
-            $downloadInfo = $this->madeline()->getDownloadInfo($media);
+            $downloadInfo = $client->getDownloadInfo($media);
             if (!is_array($downloadInfo) || empty($downloadInfo)) {
                 return null;
             }
@@ -176,10 +179,10 @@ class TelegramService implements TelegramGatewayInterface
 
     private function madeline(): API
     {
-        /** @var API $madeline */
-        $madeline = MadelineProto::getFacadeRoot();
+        /** @var MadelineProtoManager $manager */
+        $manager = MadelineProto::getFacadeRoot();
 
-        return $madeline;
+        return $manager->client();
     }
 
     private function isValidInfoResponse(?array $data): bool

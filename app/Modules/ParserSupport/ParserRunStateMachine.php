@@ -49,7 +49,7 @@ class ParserRunStateMachine
      */
     public function stop(array $state, callable $snapshotBuilder): array
     {
-        if (($state['status'] ?? null) === 'completed') {
+        if (($state['status'] ?? null) !== 'running') {
             return $state;
         }
 
@@ -64,4 +64,3 @@ class ParserRunStateMachine
         return $state;
     }
 }
-

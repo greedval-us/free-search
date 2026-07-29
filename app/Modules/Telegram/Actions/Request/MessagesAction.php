@@ -8,9 +8,11 @@ class MessagesAction extends AbstractTelegramAction
 {
     public function execute(array $filter): ?array
     {
+        $client = $this->madeline();
+
         try {
             return $this->executeWithRetry(
-                callback: fn () => $this->madeline()->messages->search($filter),
+                callback: fn () => $client->messages->search($filter),
                 context: $filter
             );
         } catch (\Throwable $e) {

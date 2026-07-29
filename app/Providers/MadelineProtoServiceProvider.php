@@ -2,12 +2,10 @@
 
 namespace App\Providers;
 
-use danog\MadelineProto\API;
-use danog\MadelineProto\Logger;
-use danog\MadelineProto\Settings;
-use danog\MadelineProto\Settings\AppInfo;
-use danog\MadelineProto\Settings\Logger as LoggerSettings;
 use App\Support\MadelineProto\MadelineProtoConfig;
+use App\Support\MadelineProto\MadelineProtoClientFactory;
+use App\Support\MadelineProto\MadelineProtoManager;
+use App\Support\MadelineProto\MadelineProtoSessionPool;
 use Illuminate\Support\ServiceProvider;
 
 class MadelineProtoServiceProvider extends ServiceProvider
@@ -21,23 +19,9 @@ class MadelineProtoServiceProvider extends ServiceProvider
             )
         );
 
-        $this->app->singleton(API::class, function (): API {
-            $config = $this->app->make(MadelineProtoConfig::class);
-
-            $settings = (new Settings)
-                ->setAppInfo(
-                    (new AppInfo)
-                        ->setApiId($config->apiId())
-                        ->setApiHash($config->apiHash())
-                )
-                ->setLogger(
-                    (new LoggerSettings)
-                        ->setType(Logger::FILE_LOGGER)
-                        ->setExtra($config->logFilePath())
-                );
-
-            return new API($config->sessionFilePath(), $settings);
-        });
+        $this->app->singleton(MadelineProtoClientFactory::class);
+        $this->app->singleton(MadelineProtoSessionPool::class);
+        $this->app->singleton(MadelineProtoManager::class);
     }
 
     public function boot(): void

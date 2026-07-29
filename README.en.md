@@ -100,6 +100,9 @@ OSINT config:
 - sectioned under `config/osint/*.php`
 - values loaded from `.env` with safe defaults
 
+Telegram multi-session setup:
+- see [docs/telegram-sessions.md](docs/telegram-sessions.md)
+
 ## Authentication and Access
 
 Web authentication:
