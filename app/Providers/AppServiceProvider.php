@@ -5,8 +5,10 @@ namespace App\Providers;
 use App\Support\Observability\MoonShineLoginAlertService;
 use App\Support\Observability\MoonShineLoginContext;
 use Carbon\CarbonImmutable;
+use Illuminate\Auth\Notifications\VerifyEmail;
 use Illuminate\Auth\Events\Login;
 use Illuminate\Http\Request;
+use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
@@ -29,6 +31,7 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
         $this->configureDefaults();
+        $this->configureAuthMail();
         $this->configureMoonShineLoginAlerts();
     }
 
@@ -52,6 +55,31 @@ class AppServiceProvider extends ServiceProvider
                 ->uncompromised()
             : null,
         );
+    }
+
+    /**
+     * Configure branded authentication emails.
+     */
+    protected function configureAuthMail(): void
+    {
+        VerifyEmail::toMailUsing(function (object $notifiable, string $url): MailMessage {
+            return (new MailMessage)
+                ->subject(__('mail.verify_email.subject'))
+                ->view('emails.verify-email', [
+                    'actionUrl' => $url,
+                    'appName' => config('app.name', 'Uraboros'),
+                    'appUrl' => config('app.url'),
+                    'preheader' => __('mail.verify_email.preheader'),
+                    'title' => __('mail.verify_email.title'),
+                    'intro' => __('mail.verify_email.intro'),
+                    'buttonText' => __('mail.verify_email.button'),
+                    'expiry' => __('mail.verify_email.expiry'),
+                    'fallback' => __('mail.verify_email.fallback'),
+                    'security' => __('mail.verify_email.security'),
+                    'ignore' => __('mail.verify_email.ignore'),
+                    'signature' => __('mail.verify_email.signature'),
+                ]);
+        });
     }
 
     /**
