@@ -5,6 +5,7 @@ namespace App\Providers;
 use App\Support\Observability\MoonShineLoginAlertService;
 use App\Support\Observability\MoonShineLoginContext;
 use Carbon\CarbonImmutable;
+use Illuminate\Auth\Notifications\ResetPassword;
 use Illuminate\Auth\Notifications\VerifyEmail;
 use Illuminate\Auth\Events\Login;
 use Illuminate\Http\Request;
@@ -78,6 +79,32 @@ class AppServiceProvider extends ServiceProvider
                     'security' => __('mail.verify_email.security'),
                     'ignore' => __('mail.verify_email.ignore'),
                     'signature' => __('mail.verify_email.signature'),
+                ]);
+        });
+
+        ResetPassword::toMailUsing(function (object $notifiable, string $token): MailMessage {
+            $url = url(route('password.reset', [
+                'token' => $token,
+                'email' => $notifiable->getEmailForPasswordReset(),
+            ], false));
+
+            return (new MailMessage)
+                ->subject(__('mail.reset_password.subject'))
+                ->view('emails.reset-password', [
+                    'actionUrl' => $url,
+                    'appName' => config('app.name', 'Uraboros'),
+                    'appUrl' => config('app.url'),
+                    'preheader' => __('mail.reset_password.preheader'),
+                    'title' => __('mail.reset_password.title'),
+                    'intro' => __('mail.reset_password.intro'),
+                    'buttonText' => __('mail.reset_password.button'),
+                    'expiry' => __('mail.reset_password.expiry', [
+                        'count' => config('auth.passwords.'.config('fortify.passwords', 'users').'.expire'),
+                    ]),
+                    'fallback' => __('mail.reset_password.fallback'),
+                    'security' => __('mail.reset_password.security'),
+                    'ignore' => __('mail.reset_password.ignore'),
+                    'signature' => __('mail.reset_password.signature'),
                 ]);
         });
     }
