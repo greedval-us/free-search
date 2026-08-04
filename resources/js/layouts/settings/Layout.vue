@@ -25,6 +25,10 @@ const sidebarNavItems = computed<NavItem[]>(() => [
         href: editSecurity(),
     },
     {
+        title: t('settings.notifications'),
+        href: '/settings/notifications',
+    },
+    {
         title: t('settings.appearance'),
         href: editAppearance(),
     },
@@ -76,6 +80,7 @@ const { isCurrentOrParentUrl } = useCurrentUrl();
                         button-class="group relative h-10 w-10 rounded-md border border-input bg-background text-foreground transition hover:bg-accent hover:text-accent-foreground"
                         locale-button-size="default"
                         locale-button-class="w-full justify-start"
+                        :show-notifications="false"
                     />
                 </nav>
             </aside>

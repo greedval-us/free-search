@@ -8,6 +8,7 @@ type Props = {
     buttonClass?: string;
     localeButtonClass?: string;
     localeButtonSize?: 'default' | 'sm' | 'lg' | 'icon';
+    showNotifications?: boolean;
 };
 
 withDefaults(defineProps<Props>(), {
@@ -16,6 +17,7 @@ withDefaults(defineProps<Props>(), {
         'group relative h-8 w-8 rounded-md border border-input bg-background text-foreground transition hover:bg-accent hover:text-accent-foreground',
     localeButtonClass: 'h-8 px-2.5 text-xs',
     localeButtonSize: 'sm',
+    showNotifications: true,
 });
 
 const { locale, setLocale, t } = useI18n();
@@ -27,7 +29,10 @@ const toggleLocale = () => {
 
 <template>
     <div :class="containerClass">
-        <NotificationBell :button-class="buttonClass" />
+        <NotificationBell
+            v-if="showNotifications"
+            :button-class="buttonClass"
+        />
         <Button
             type="button"
             variant="outline"

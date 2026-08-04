@@ -1,5 +1,83 @@
 import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFormDefinition } from './../../wayfinder'
 /**
+* @see \App\Http\Controllers\Settings\NotificationsController::notifications
+ * @see app/Http/Controllers/Settings/NotificationsController.php:17
+ * @route '/settings/notifications'
+ */
+export const notifications = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+    url: notifications.url(options),
+    method: 'get',
+})
+
+notifications.definition = {
+    methods: ["get","head"],
+    url: '/settings/notifications',
+} satisfies RouteDefinition<["get","head"]>
+
+/**
+* @see \App\Http\Controllers\Settings\NotificationsController::notifications
+ * @see app/Http/Controllers/Settings/NotificationsController.php:17
+ * @route '/settings/notifications'
+ */
+notifications.url = (options?: RouteQueryOptions) => {
+    return notifications.definition.url + queryParams(options)
+}
+
+/**
+* @see \App\Http\Controllers\Settings\NotificationsController::notifications
+ * @see app/Http/Controllers/Settings/NotificationsController.php:17
+ * @route '/settings/notifications'
+ */
+notifications.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+    url: notifications.url(options),
+    method: 'get',
+})
+/**
+* @see \App\Http\Controllers\Settings\NotificationsController::notifications
+ * @see app/Http/Controllers/Settings/NotificationsController.php:17
+ * @route '/settings/notifications'
+ */
+notifications.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
+    url: notifications.url(options),
+    method: 'head',
+})
+
+    /**
+* @see \App\Http\Controllers\Settings\NotificationsController::notifications
+ * @see app/Http/Controllers/Settings/NotificationsController.php:17
+ * @route '/settings/notifications'
+ */
+    const notificationsForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+        action: notifications.url(options),
+        method: 'get',
+    })
+
+            /**
+* @see \App\Http\Controllers\Settings\NotificationsController::notifications
+ * @see app/Http/Controllers/Settings/NotificationsController.php:17
+ * @route '/settings/notifications'
+ */
+        notificationsForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+            action: notifications.url(options),
+            method: 'get',
+        })
+            /**
+* @see \App\Http\Controllers\Settings\NotificationsController::notifications
+ * @see app/Http/Controllers/Settings/NotificationsController.php:17
+ * @route '/settings/notifications'
+ */
+        notificationsForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+            action: notifications.url({
+                        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
+                            _method: 'HEAD',
+                            ...(options?.query ?? options?.mergeQuery ?? {}),
+                        }
+                    }),
+            method: 'get',
+        })
+    
+    notifications.form = notificationsForm
+/**
 * @see \App\Http\Controllers\Settings\PlaceholderController::placeholder
  * @see app/Http/Controllers/Settings/PlaceholderController.php:12
  * @route '/settings/placeholder'
@@ -78,7 +156,8 @@ placeholder.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     
     placeholder.form = placeholderForm
 const settings = {
-    placeholder: Object.assign(placeholder, placeholder),
+    notifications: Object.assign(notifications, notifications),
+placeholder: Object.assign(placeholder, placeholder),
 }
 
 export default settings
