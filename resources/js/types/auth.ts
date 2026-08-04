@@ -27,9 +27,25 @@ export type AccountAccess = {
     features: Record<string, FeatureAccess>;
 };
 
+export type AppNotification = {
+    id: string;
+    title: string;
+    body: string;
+    url: string | null;
+    kind: string;
+    read_at: string | null;
+    created_at: string | null;
+};
+
+export type AuthNotifications = {
+    unreadCount: number;
+    items: AppNotification[];
+};
+
 export type Auth = {
     user: User;
     access: AccountAccess;
+    notifications: AuthNotifications;
 };
 
 export type TwoFactorConfigContent = {

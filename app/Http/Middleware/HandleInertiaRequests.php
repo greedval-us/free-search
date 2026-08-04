@@ -3,6 +3,7 @@
 namespace App\Http\Middleware;
 
 use App\Services\Access\AccountAccessSummaryService;
+use Illuminate\Notifications\DatabaseNotification;
 use Illuminate\Http\Request;
 use Inertia\Middleware;
 
@@ -38,6 +39,8 @@ class HandleInertiaRequests extends Middleware
      */
     public function share(Request $request): array
     {
+        $user = $request->user();
+
         return [
             ...parent::share($request),
             'name' => config('app.name'),
@@ -46,7 +49,7 @@ class HandleInertiaRequests extends Middleware
                 'pages' => config('seo.pages', []),
             ],
             'auth' => [
-                'user' => $request->user()?->only([
+                'user' => $user?->only([
                     'id',
                     'name',
                     'email',
@@ -54,7 +57,25 @@ class HandleInertiaRequests extends Middleware
                     'account_type',
                     'created_at',
                 ]),
-                'access' => $this->accessSummaryService->forUser($request->user()),
+                'access' => $this->accessSummaryService->forUser($user),
+                'notifications' => [
+                    'unreadCount' => $user?->unreadNotifications()->count() ?? 0,
+                    'items' => $user?->notifications()
+                        ->latest()
+                        ->limit(8)
+                        ->get()
+                        ->map(fn (DatabaseNotification $notification): array => [
+                            'id' => $notification->id,
+                            'title' => (string) ($notification->data['title'] ?? class_basename($notification->type)),
+                            'body' => (string) ($notification->data['body'] ?? $notification->data['message'] ?? ''),
+                            'url' => $notification->data['url'] ?? null,
+                            'kind' => (string) ($notification->data['kind'] ?? 'info'),
+                            'read_at' => $notification->read_at?->toIso8601String(),
+                            'created_at' => $notification->created_at?->toIso8601String(),
+                        ])
+                        ->values()
+                        ->all() ?? [],
+                ],
             ],
             'sidebarOpen' => ! $request->hasCookie('sidebar_state') || $request->cookie('sidebar_state') === 'true',
         ];

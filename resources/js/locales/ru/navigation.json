@@ -11,5 +11,10 @@
     "shifr": "Шифр",
     "modulesWiki": "Вики модулей",
     "repository": "Репозиторий",
-    "documentation": "Документация"
+    "documentation": "Документация",
+    "notifications": "Уведомления",
+    "notificationsUnread": "Непрочитанных: {count}",
+    "notificationsEmpty": "Новых уведомлений нет",
+    "notificationsPlaceholder": "Здесь будут появляться важные обновления, события и новости сервиса для пользователей.",
+    "markAllNotificationsRead": "Отметить все"
 }

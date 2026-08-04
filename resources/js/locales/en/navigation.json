@@ -11,5 +11,10 @@
     "shifr": "Cipher",
     "modulesWiki": "Modules Wiki",
     "repository": "Repository",
-    "documentation": "Documentation"
+    "documentation": "Documentation",
+    "notifications": "Notifications",
+    "notificationsUnread": "{count} unread",
+    "notificationsEmpty": "No new notifications",
+    "notificationsPlaceholder": "Important updates, events, and product news for users will appear here.",
+    "markAllNotificationsRead": "Mark all read"
 }
