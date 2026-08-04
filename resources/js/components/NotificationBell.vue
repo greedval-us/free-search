@@ -26,7 +26,7 @@ const page = usePage();
 const { t } = useI18n();
 const notifications = computed(() => page.props.auth.notifications);
 const hasUnreadNotifications = computed(
-    () => (notifications.value?.unreadCount ?? 0) > 0,
+    () => (notifications.value?.unreadCount ?? 0) > 0
 );
 const notificationItems = computed(() => notifications.value?.items ?? []);
 
@@ -41,15 +41,15 @@ const markAllNotificationsRead = () => {
         {
             preserveScroll: true,
             preserveState: true,
-        },
+        }
     );
 };
 
 const unreadNotificationsLabel = computed(() =>
     t('navigation.notificationsUnread').replace(
         '{count}',
-        String(notifications.value?.unreadCount ?? 0),
-    ),
+        String(notifications.value?.unreadCount ?? 0)
+    )
 );
 
 const formatNotificationDate = (value: string | null) => {
@@ -68,7 +68,7 @@ const notificationCardStyles = (notification: AppNotification) =>
         'block rounded-2xl border p-3 text-left transition',
         notification.read_at
             ? 'border-slate-200/70 bg-white/70 hover:border-cyan-200 hover:bg-cyan-50/60 dark:border-slate-800 dark:bg-slate-900/65 dark:hover:border-cyan-800 dark:hover:bg-slate-900'
-            : 'border-cyan-200/80 bg-cyan-50/80 shadow-[0_12px_30px_-24px_rgba(8,145,178,0.8)] hover:border-cyan-300 dark:border-cyan-900/60 dark:bg-cyan-950/20',
+            : 'border-cyan-200/80 bg-cyan-50/80 shadow-[0_12px_30px_-24px_rgba(8,145,178,0.8)] hover:border-cyan-300 dark:border-cyan-900/60 dark:bg-cyan-950/20'
     );
 </script>
 
@@ -124,10 +124,14 @@ const notificationCardStyles = (notification: AppNotification) =>
                 >
                     <component
                         :is="notification.url ? Link : 'div'"
-                        v-bind="notification.url ? { href: notification.url } : {}"
+                        v-bind="
+                            notification.url ? { href: notification.url } : {}
+                        "
                         :class="notificationCardStyles(notification)"
                     >
-                        <div class="mb-1 flex items-start justify-between gap-3">
+                        <div
+                            class="mb-1 flex items-start justify-between gap-3"
+                        >
                             <p class="text-sm font-medium text-foreground">
                                 {{ notification.title }}
                             </p>
@@ -143,10 +147,14 @@ const notificationCardStyles = (notification: AppNotification) =>
                             {{ notification.body }}
                         </p>
                         <p
-                            v-if="formatNotificationDate(notification.created_at)"
+                            v-if="
+                                formatNotificationDate(notification.created_at)
+                            "
                             class="mt-2 text-xs text-slate-500"
                         >
-                            {{ formatNotificationDate(notification.created_at) }}
+                            {{
+                                formatNotificationDate(notification.created_at)
+                            }}
                         </p>
                     </component>
                 </template>

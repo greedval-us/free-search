@@ -31,7 +31,7 @@ const formattedPeriodStart = computed(() =>
         day: 'numeric',
         month: 'long',
         year: 'numeric',
-    }).format(new Date(props.periodStart)),
+    }).format(new Date(props.periodStart))
 );
 
 const formatNotificationDate = (value: string | null) => {
