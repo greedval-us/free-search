@@ -3,13 +3,16 @@
 namespace App\Http\Middleware;
 
 use App\Services\Access\AccountAccessSummaryService;
-use Illuminate\Notifications\DatabaseNotification;
+use App\Support\Notifications\UserNotificationPresenter;
 use Illuminate\Http\Request;
 use Inertia\Middleware;
 
 class HandleInertiaRequests extends Middleware
 {
-    public function __construct(private readonly AccountAccessSummaryService $accessSummaryService) {}
+    public function __construct(
+        private readonly AccountAccessSummaryService $accessSummaryService,
+        private readonly UserNotificationPresenter $userNotificationPresenter,
+    ) {}
 
     /**
      * The root template that's loaded on the first page visit.
@@ -60,21 +63,11 @@ class HandleInertiaRequests extends Middleware
                 'access' => $this->accessSummaryService->forUser($user),
                 'notifications' => [
                     'unreadCount' => $user?->unreadNotifications()->count() ?? 0,
-                    'items' => $user?->notifications()
-                        ->latest()
-                        ->limit(8)
-                        ->get()
-                        ->map(fn (DatabaseNotification $notification): array => [
-                            'id' => $notification->id,
-                            'title' => (string) ($notification->data['title'] ?? class_basename($notification->type)),
-                            'body' => (string) ($notification->data['body'] ?? $notification->data['message'] ?? ''),
-                            'url' => $notification->data['url'] ?? null,
-                            'kind' => (string) ($notification->data['kind'] ?? 'info'),
-                            'read_at' => $notification->read_at?->toIso8601String(),
-                            'created_at' => $notification->created_at?->toIso8601String(),
-                        ])
-                        ->values()
-                        ->all() ?? [],
+                    'items' => $user
+                        ? $this->userNotificationPresenter->presentCollection(
+                            $user->notifications()->latest()->limit(8)->get()
+                        )
+                        : [],
                 ],
             ],
             'sidebarOpen' => ! $request->hasCookie('sidebar_state') || $request->cookie('sidebar_state') === 'true',

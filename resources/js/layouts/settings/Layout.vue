@@ -1,7 +1,8 @@
 <script setup lang="ts">
-import { Link, usePage } from '@inertiajs/vue3';
+import { Link } from '@inertiajs/vue3';
 import { computed } from 'vue';
 import Heading from '@/components/Heading.vue';
+import WorkspaceToolbarControls from '@/components/WorkspaceToolbarControls.vue';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 import { useCurrentUrl } from '@/composables/useCurrentUrl';
@@ -12,7 +13,7 @@ import { edit as editProfile } from '@/routes/profile';
 import { edit as editSecurity } from '@/routes/security';
 import type { NavItem } from '@/types';
 
-const { locale, setLocale, t } = useI18n();
+const { t } = useI18n();
 
 const sidebarNavItems = computed<NavItem[]>(() => [
     {
@@ -34,13 +35,6 @@ const sidebarNavItems = computed<NavItem[]>(() => [
 ]);
 
 const { isCurrentOrParentUrl } = useCurrentUrl();
-const page = usePage();
-
-const isAuthenticated = computed(() => Boolean(page.props.auth?.user));
-
-const toggleLocale = () => {
-    setLocale(locale.value === 'ru' ? 'en' : 'ru');
-};
 </script>
 
 <template>
@@ -77,15 +71,12 @@ const toggleLocale = () => {
                         </Link>
                     </Button>
 
-                    <Button
-                        v-if="isAuthenticated"
-                        type="button"
-                        variant="outline"
-                        class="mt-2 w-full justify-start"
-                        @click="toggleLocale"
-                    >
-                        {{ t('common.language') }}: {{ locale.toUpperCase() }}
-                    </Button>
+                    <WorkspaceToolbarControls
+                        container-class="mt-2 flex items-center gap-2"
+                        button-class="group relative h-10 w-10 rounded-md border border-input bg-background text-foreground transition hover:bg-accent hover:text-accent-foreground"
+                        locale-button-size="default"
+                        locale-button-class="w-full justify-start"
+                    />
                 </nav>
             </aside>
 

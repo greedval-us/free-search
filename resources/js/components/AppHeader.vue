@@ -1,10 +1,11 @@
 <script setup lang="ts">
-import { Link, router, usePage } from '@inertiajs/vue3';
-import { Bell, BookOpen, Folder, Menu, Search } from 'lucide-vue-next';
+import { Link, usePage } from '@inertiajs/vue3';
+import { BookOpen, Folder, Menu, Search } from 'lucide-vue-next';
 import { computed } from 'vue';
 import AppLogo from '@/components/AppLogo.vue';
 import AppLogoIcon from '@/components/AppLogoIcon.vue';
 import Breadcrumbs from '@/components/Breadcrumbs.vue';
+import NotificationBell from '@/components/NotificationBell.vue';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import {
@@ -36,10 +37,9 @@ import { useCurrentUrl } from '@/composables/useCurrentUrl';
 import { useI18n } from '@/composables/useI18n';
 import { getInitials } from '@/composables/useInitials';
 import { buildHeaderNavItems } from '@/lib/navigation/modules';
-import { cn } from '@/lib/utils';
 import { toUrl } from '@/lib/utils';
 import { dashboard } from '@/routes';
-import type { AppNotification, BreadcrumbItem, NavItem } from '@/types';
+import type { BreadcrumbItem, NavItem } from '@/types';
 
 type Props = {
     breadcrumbs?: BreadcrumbItem[];
@@ -53,10 +53,6 @@ const page = usePage();
 const auth = computed(() => page.props.auth);
 const { isCurrentUrl, whenCurrentUrl } = useCurrentUrl();
 const { t } = useI18n();
-const notifications = computed(() => auth.value.notifications);
-const hasUnreadNotifications = computed(
-    () => notifications.value.unreadCount > 0,
-);
 
 const activeItemStyles =
     'bg-cyan-500/15 text-cyan-700 shadow-[0_10px_30px_-20px_rgba(8,145,178,0.95)] dark:text-cyan-100';
@@ -75,47 +71,6 @@ const rightNavItems = computed<NavItem[]>(() => [
         icon: BookOpen,
     },
 ]);
-
-const markAllNotificationsRead = () => {
-    if (!hasUnreadNotifications.value) {
-        return;
-    }
-
-    router.post(
-        '/notifications/read-all',
-        {},
-        {
-            preserveScroll: true,
-            preserveState: true,
-        },
-    );
-};
-
-const unreadNotificationsLabel = computed(() =>
-    t('navigation.notificationsUnread').replace(
-        '{count}',
-        String(notifications.value.unreadCount),
-    ),
-);
-
-const formatNotificationDate = (value: string | null) => {
-    if (!value) {
-        return '';
-    }
-
-    return new Intl.DateTimeFormat(undefined, {
-        dateStyle: 'short',
-        timeStyle: 'short',
-    }).format(new Date(value));
-};
-
-const notificationCardStyles = (notification: AppNotification) =>
-    cn(
-        'block rounded-2xl border p-3 text-left transition',
-        notification.read_at
-            ? 'border-slate-200/70 bg-white/70 hover:border-cyan-200 hover:bg-cyan-50/60 dark:border-slate-800 dark:bg-slate-900/65 dark:hover:border-cyan-800 dark:hover:bg-slate-900'
-            : 'border-cyan-200/80 bg-cyan-50/80 shadow-[0_12px_30px_-24px_rgba(8,145,178,0.8)] hover:border-cyan-300 dark:border-cyan-900/60 dark:bg-cyan-950/20',
-    );
 </script>
 
 <template>
@@ -251,172 +206,7 @@ const notificationCardStyles = (notification: AppNotification) =>
                             />
                         </Button>
 
-                        <DropdownMenu>
-                            <DropdownMenuTrigger :as-child="true">
-                                <Button
-                                    variant="ghost"
-                                    size="icon"
-                                    class="group relative h-9 w-9 cursor-pointer"
-                                >
-                                    <Bell
-                                        class="size-5 opacity-80 group-hover:opacity-100"
-                                    />
-                                    <span
-                                        v-if="hasUnreadNotifications"
-                                        class="absolute top-1.5 right-1.5 inline-flex h-2.5 w-2.5 rounded-full bg-emerald-400 ring-2 ring-background"
-                                    />
-                                    <span class="sr-only">{{
-                                        t('navigation.notifications')
-                                    }}</span>
-                                </Button>
-                            </DropdownMenuTrigger>
-                            <DropdownMenuContent
-                                align="end"
-                                class="w-[22rem] rounded-3xl p-2"
-                            >
-                                <div
-                                    class="flex items-center justify-between gap-4 px-3 py-2"
-                                >
-                                    <div>
-                                        <p
-                                            class="text-sm font-semibold text-foreground"
-                                        >
-                                            {{ t('navigation.notifications') }}
-                                        </p>
-                                        <p
-                                            class="text-xs text-muted-foreground"
-                                        >
-                                            {{
-                                                hasUnreadNotifications
-                                                    ? unreadNotificationsLabel
-                                                    : t(
-                                                          'navigation.notificationsEmpty',
-                                                      )
-                                            }}
-                                        </p>
-                                    </div>
-
-                                    <Button
-                                        v-if="hasUnreadNotifications"
-                                        variant="ghost"
-                                        size="sm"
-                                        class="h-8 rounded-full px-3 text-xs"
-                                        @click="markAllNotificationsRead"
-                                    >
-                                        {{
-                                            t(
-                                                'navigation.markAllNotificationsRead',
-                                            )
-                                        }}
-                                    </Button>
-                                </div>
-
-                                <div class="max-h-[26rem] space-y-2 overflow-y-auto p-2">
-                                    <div
-                                        v-if="notifications.items.length === 0"
-                                        class="rounded-2xl border border-dashed border-slate-300/70 bg-slate-50/80 p-4 text-sm text-muted-foreground dark:border-slate-800 dark:bg-slate-950/40"
-                                    >
-                                        {{
-                                            t(
-                                                'navigation.notificationsPlaceholder',
-                                            )
-                                        }}
-                                    </div>
-
-                                    <template
-                                        v-for="notification in notifications.items"
-                                        :key="notification.id"
-                                    >
-                                        <Link
-                                            v-if="notification.url"
-                                            :href="notification.url"
-                                            :class="
-                                                notificationCardStyles(
-                                                    notification,
-                                                )
-                                            "
-                                        >
-                                            <div
-                                                class="mb-1 flex items-start justify-between gap-3"
-                                            >
-                                                <p
-                                                    class="text-sm font-medium text-foreground"
-                                                >
-                                                    {{ notification.title }}
-                                                </p>
-                                                <span
-                                                    v-if="!notification.read_at"
-                                                    class="mt-1 inline-flex h-2 w-2 shrink-0 rounded-full bg-cyan-500"
-                                                />
-                                            </div>
-                                            <p
-                                                v-if="notification.body"
-                                                class="text-sm leading-6 text-muted-foreground"
-                                            >
-                                                {{ notification.body }}
-                                            </p>
-                                            <p
-                                                v-if="
-                                                    formatNotificationDate(
-                                                        notification.created_at,
-                                                    )
-                                                "
-                                                class="mt-2 text-xs text-slate-500"
-                                            >
-                                                {{
-                                                    formatNotificationDate(
-                                                        notification.created_at,
-                                                    )
-                                                }}
-                                            </p>
-                                        </Link>
-
-                                        <div
-                                            v-else
-                                            :class="
-                                                notificationCardStyles(
-                                                    notification,
-                                                )
-                                            "
-                                        >
-                                            <div
-                                                class="mb-1 flex items-start justify-between gap-3"
-                                            >
-                                                <p
-                                                    class="text-sm font-medium text-foreground"
-                                                >
-                                                    {{ notification.title }}
-                                                </p>
-                                                <span
-                                                    v-if="!notification.read_at"
-                                                    class="mt-1 inline-flex h-2 w-2 shrink-0 rounded-full bg-cyan-500"
-                                                />
-                                            </div>
-                                            <p
-                                                v-if="notification.body"
-                                                class="text-sm leading-6 text-muted-foreground"
-                                            >
-                                                {{ notification.body }}
-                                            </p>
-                                            <p
-                                                v-if="
-                                                    formatNotificationDate(
-                                                        notification.created_at,
-                                                    )
-                                                "
-                                                class="mt-2 text-xs text-slate-500"
-                                            >
-                                                {{
-                                                    formatNotificationDate(
-                                                        notification.created_at,
-                                                    )
-                                                }}
-                                            </p>
-                                        </div>
-                                    </template>
-                                </div>
-                            </DropdownMenuContent>
-                        </DropdownMenu>
+                        <NotificationBell />
 
                         <div class="hidden space-x-1 lg:flex">
                             <template

@@ -1,6 +1,7 @@
 import SitemapController from './SitemapController'
 import DashboardController from './DashboardController'
 import Dashboard from './Dashboard'
+import Notifications from './Notifications'
 import Telegram from './Telegram'
 import Bluesky from './Bluesky'
 import Mastodon from './Mastodon'
@@ -14,6 +15,7 @@ const Controllers = {
     SitemapController: Object.assign(SitemapController, SitemapController),
 DashboardController: Object.assign(DashboardController, DashboardController),
 Dashboard: Object.assign(Dashboard, Dashboard),
+Notifications: Object.assign(Notifications, Notifications),
 Telegram: Object.assign(Telegram, Telegram),
 Bluesky: Object.assign(Bluesky, Bluesky),
 Mastodon: Object.assign(Mastodon, Mastodon),
