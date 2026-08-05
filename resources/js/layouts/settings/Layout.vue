@@ -2,9 +2,9 @@
 import { Link } from '@inertiajs/vue3';
 import { computed } from 'vue';
 import Heading from '@/components/Heading.vue';
-import WorkspaceToolbarControls from '@/components/WorkspaceToolbarControls.vue';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
+import WorkspaceToolbarControls from '@/components/WorkspaceToolbarControls.vue';
 import { useCurrentUrl } from '@/composables/useCurrentUrl';
 import { useI18n } from '@/composables/useI18n';
 import { toUrl } from '@/lib/utils';

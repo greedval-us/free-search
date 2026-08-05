@@ -1,5 +1,5 @@
-import { ref } from 'vue';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { ref } from 'vue';
 import { useNotifications } from '@/composables/useNotifications';
 import type { AppNotification, AuthNotifications } from '@/types';
 

@@ -9,15 +9,15 @@ import {
     DropdownMenuContent,
     DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { useNotifications } from '@/composables/useNotifications';
 import { useI18n } from '@/composables/useI18n';
+import { useNotifications } from '@/composables/useNotifications';
 
 type Props = {
     buttonClass?: string;
     menuClass?: string;
 };
 
-const props = withDefaults(defineProps<Props>(), {
+withDefaults(defineProps<Props>(), {
     buttonClass: 'group relative h-9 w-9 cursor-pointer',
     menuClass: 'w-[22rem] rounded-3xl p-2',
 });

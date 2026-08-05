@@ -1,4 +1,5 @@
-import { computed, ref, toValue, type MaybeRefOrGetter } from 'vue';
+import { computed, ref, toValue } from 'vue';
+import type { MaybeRefOrGetter } from 'vue';
 import {
     submitMarkAllNotificationsRead,
     submitMarkNotificationRead,
