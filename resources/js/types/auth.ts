@@ -31,6 +31,10 @@ export type AppNotification = {
     id: string;
     title: string;
     body: string;
+    titleKey?: string | null;
+    bodyKey?: string | null;
+    titleParams?: Record<string, string | number | null> | null;
+    bodyParams?: Record<string, string | number | null> | null;
     url: string | null;
     kind: string;
     read_at: string | null;

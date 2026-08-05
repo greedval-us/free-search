@@ -1,10 +1,12 @@
 <script setup lang="ts">
-import { Head, Link } from '@inertiajs/vue3';
-import { Bell, BellOff, Clock3 } from 'lucide-vue-next';
+import { Head } from '@inertiajs/vue3';
+import { BellOff } from 'lucide-vue-next';
 import { computed } from 'vue';
 import Heading from '@/components/Heading.vue';
+import NotificationListItem from '@/components/NotificationListItem.vue';
 import { Button } from '@/components/ui/button';
 import { useI18n } from '@/composables/useI18n';
+import { useNotifications } from '@/composables/useNotifications';
 import type { AppNotification } from '@/types';
 
 const props = defineProps<{
@@ -25,6 +27,10 @@ defineOptions({
 });
 
 const { t, locale } = useI18n();
+const { items: notifications, markRead: markNotificationRead } =
+    useNotifications({
+        notifications: () => props.notifications,
+    });
 
 const formattedPeriodStart = computed(() =>
     new Intl.DateTimeFormat(locale.value, {
@@ -33,17 +39,6 @@ const formattedPeriodStart = computed(() =>
         year: 'numeric',
     }).format(new Date(props.periodStart))
 );
-
-const formatNotificationDate = (value: string | null) => {
-    if (!value) {
-        return '';
-    }
-
-    return new Intl.DateTimeFormat(locale.value, {
-        dateStyle: 'medium',
-        timeStyle: 'short',
-    }).format(new Date(value));
-};
 </script>
 
 <template>
@@ -109,6 +104,7 @@ const formatNotificationDate = (value: string | null) => {
                 >
                     <BellOff class="h-6 w-6 text-muted-foreground" />
                 </div>
+
                 <div class="space-y-2">
                     <h3 class="text-lg font-semibold">
                         {{ t('settings.notificationsPage.emptyTitle') }}
@@ -124,54 +120,23 @@ const formatNotificationDate = (value: string | null) => {
             <article
                 v-for="notification in notifications"
                 :key="notification.id"
-                class="rounded-2xl border border-sidebar-border/70 bg-background/45 p-5 shadow-lg transition"
-                :class="
-                    notification.read_at
-                        ? ''
-                        : 'border-cyan-400/30 bg-cyan-500/6'
-                "
+                class="space-y-4"
             >
-                <div class="flex flex-wrap items-start justify-between gap-3">
-                    <div class="min-w-0 flex-1 space-y-2">
-                        <div class="flex items-center gap-2">
-                            <div
-                                class="rounded-full border border-sidebar-border/70 bg-background/70 p-2"
-                            >
-                                <Bell class="h-4 w-4 text-cyan-300" />
-                            </div>
-
-                            <div class="flex min-w-0 items-center gap-2">
-                                <h3 class="truncate text-base font-semibold">
-                                    {{ notification.title }}
-                                </h3>
-                                <span
-                                    v-if="!notification.read_at"
-                                    class="inline-flex h-2.5 w-2.5 rounded-full bg-cyan-400"
-                                />
-                            </div>
-                        </div>
-
-                        <p
-                            v-if="notification.body"
-                            class="text-sm leading-6 text-muted-foreground"
-                        >
-                            {{ notification.body }}
-                        </p>
-                    </div>
-
-                    <div
-                        class="flex items-center gap-2 text-xs text-muted-foreground"
-                    >
-                        <Clock3 class="h-4 w-4" />
-                        {{ formatNotificationDate(notification.created_at) }}
-                    </div>
-                </div>
+                <NotificationListItem :notification="notification" />
 
                 <div v-if="notification.url" class="mt-4 flex justify-end">
                     <Button as-child variant="outline" class="rounded-xl">
-                        <Link :href="notification.url">
+                        <button
+                            type="button"
+                            @click.stop="
+                                markNotificationRead(
+                                    notification,
+                                    notification.url
+                                )
+                            "
+                        >
                             {{ t('settings.notificationsPage.openLink') }}
-                        </Link>
+                        </button>
                     </Button>
                 </div>
             </article>

@@ -6,11 +6,16 @@ use App\Exceptions\SubscriptionActivationException;
 use App\Models\SubscriptionActivationToken;
 use App\Models\User;
 use App\Models\UserSubscription;
+use App\Support\Notifications\UserNotificationService;
 use Carbon\CarbonImmutable;
 use Illuminate\Support\Facades\DB;
 
 final class SubscriptionActivationService
 {
+    public function __construct(
+        private readonly UserNotificationService $userNotificationService,
+    ) {}
+
     public function activate(User $user, string $rawToken): UserSubscription
     {
         $normalizedToken = SubscriptionActivationToken::normalizeToken($rawToken);
@@ -35,6 +40,11 @@ final class SubscriptionActivationService
             }
 
             $now = CarbonImmutable::now(config('app.timezone'));
+            $hadActiveSubscription = UserSubscription::query()
+                ->where('user_id', $user->id)
+                ->where('status', UserSubscription::STATUS_ACTIVE)
+                ->where('ends_at', '>', $now)
+                ->exists();
 
             UserSubscription::query()
                 ->where('user_id', $user->id)
@@ -63,6 +73,12 @@ final class SubscriptionActivationService
                 'used_by_user_id' => $user->id,
                 'used_subscription_id' => $subscription->id,
             ])->save();
+
+            $this->userNotificationService->sendSubscriptionActivated(
+                user: $user,
+                subscription: $subscription,
+                renewed: $hadActiveSubscription,
+            );
 
             return $subscription;
         });

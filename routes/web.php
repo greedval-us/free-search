@@ -18,6 +18,8 @@ Route::middleware(['auth', 'verified'])->group(function (): void {
         ->name('dashboard.module-pins.toggle');
     Route::post('notifications/read-all', [UserNotificationController::class, 'markAllRead'])
         ->name('notifications.read-all');
+    Route::post('notifications/{notification}/read', [UserNotificationController::class, 'markRead'])
+        ->name('notifications.read');
 
     require __DIR__.'/web/telegram.php';
     require __DIR__.'/web/bluesky.php';

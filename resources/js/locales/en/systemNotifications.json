@@ -1,0 +1,34 @@
+{
+    "welcome": {
+        "title": "Welcome",
+        "body": "Your account was created successfully. Welcome to the Uraboros workspace."
+    },
+    "loginGreeting": {
+        "title": "Account sign-in",
+        "body": "You signed in to your account on {date} from IP {ip}."
+    },
+    "newIpLogin": {
+        "title": "New IP sign-in detected",
+        "body": "We detected a sign-in from a new IP address {ip} on {date}. If this was not you, change your password."
+    },
+    "subscriptionActivated": {
+        "title": "Subscription activated",
+        "body": "Your {plan} subscription is active until {date}."
+    },
+    "subscriptionRenewed": {
+        "title": "Subscription renewed",
+        "body": "Your {plan} subscription was renewed and is active until {date}."
+    },
+    "subscriptionExpiringTomorrow": {
+        "title": "Subscription expires tomorrow",
+        "body": "Your {plan} subscription expires on {date}. Renew it in advance to keep access."
+    },
+    "passwordChanged": {
+        "title": "Password changed",
+        "body": "Your account password was changed{ipSuffix}."
+    },
+    "passwordReset": {
+        "title": "Password reset",
+        "body": "Your account password was reset through account recovery."
+    }
+}

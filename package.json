@@ -10,6 +10,7 @@
         "format:check": "prettier --check resources/",
         "lint": "eslint . --fix",
         "lint:check": "eslint .",
+        "test:unit": "vitest run --config vitest.config.ts",
         "types:check": "vue-tsc --noEmit",
         "i18n:check": "node scripts/i18n/pipeline.mjs",
         "i18n:check:strict": "node scripts/i18n/pipeline.mjs --strict",
@@ -34,6 +35,7 @@
         "typescript": "^5.2.2",
         "typescript-eslint": "^8.23.0",
         "vite": "^8.0.0",
+        "vitest": "^4.1.10",
         "vue-tsc": "^2.2.4"
     },
     "dependencies": {
