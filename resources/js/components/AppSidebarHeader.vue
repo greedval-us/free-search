@@ -1,10 +1,7 @@
 <script setup lang="ts">
 import Breadcrumbs from '@/components/Breadcrumbs.vue';
-import { Button } from '@/components/ui/button';
-import { useI18n } from '@/composables/useI18n';
+import WorkspaceToolbarControls from '@/components/WorkspaceToolbarControls.vue';
 import type { BreadcrumbItem } from '@/types';
-
-const { locale, setLocale, t } = useI18n();
 
 withDefaults(
     defineProps<{
@@ -14,10 +11,6 @@ withDefaults(
         breadcrumbs: () => [],
     }
 );
-
-const toggleLocale = () => {
-    setLocale(locale.value === 'ru' ? 'en' : 'ru');
-};
 </script>
 
 <template>
@@ -30,14 +23,6 @@ const toggleLocale = () => {
             </template>
         </div>
 
-        <Button
-            type="button"
-            variant="outline"
-            size="sm"
-            class="h-8 px-2.5 text-xs"
-            @click="toggleLocale"
-        >
-            {{ t('common.language') }}: {{ locale.toUpperCase() }}
-        </Button>
+        <WorkspaceToolbarControls />
     </header>
 </template>

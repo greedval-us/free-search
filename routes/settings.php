@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Settings\BillingController;
+use App\Http\Controllers\Settings\NotificationsController;
 use App\Http\Controllers\Settings\PlaceholderController;
 use App\Http\Controllers\Settings\ProfileController;
 use App\Http\Controllers\Settings\SecurityController;
@@ -17,6 +18,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::delete('settings/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
     Route::get('settings/security', [SecurityController::class, 'edit'])->name('security.edit');
+    Route::get('settings/notifications', [NotificationsController::class, 'index'])->name('settings.notifications');
     Route::get('settings/billing', [BillingController::class, 'edit'])->name('billing.edit');
     Route::post('settings/billing/activate-token', [BillingController::class, 'activateToken'])->name('billing.activate-token');
     Route::get('settings/placeholder', [PlaceholderController::class, 'show'])->name('settings.placeholder');

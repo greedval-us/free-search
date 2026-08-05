@@ -3,12 +3,16 @@
 namespace App\Http\Middleware;
 
 use App\Services\Access\AccountAccessSummaryService;
+use App\Support\Notifications\UserNotificationPresenter;
 use Illuminate\Http\Request;
 use Inertia\Middleware;
 
 class HandleInertiaRequests extends Middleware
 {
-    public function __construct(private readonly AccountAccessSummaryService $accessSummaryService) {}
+    public function __construct(
+        private readonly AccountAccessSummaryService $accessSummaryService,
+        private readonly UserNotificationPresenter $userNotificationPresenter,
+    ) {}
 
     /**
      * The root template that's loaded on the first page visit.
@@ -38,6 +42,8 @@ class HandleInertiaRequests extends Middleware
      */
     public function share(Request $request): array
     {
+        $user = $request->user();
+
         return [
             ...parent::share($request),
             'name' => config('app.name'),
@@ -46,7 +52,7 @@ class HandleInertiaRequests extends Middleware
                 'pages' => config('seo.pages', []),
             ],
             'auth' => [
-                'user' => $request->user()?->only([
+                'user' => $user?->only([
                     'id',
                     'name',
                     'email',
@@ -54,7 +60,15 @@ class HandleInertiaRequests extends Middleware
                     'account_type',
                     'created_at',
                 ]),
-                'access' => $this->accessSummaryService->forUser($request->user()),
+                'access' => $this->accessSummaryService->forUser($user),
+                'notifications' => [
+                    'unreadCount' => $user?->unreadNotifications()->count() ?? 0,
+                    'items' => $user
+                        ? $this->userNotificationPresenter->presentCollection(
+                            $user->notifications()->latest()->limit(8)->get()
+                        )
+                        : [],
+                ],
             ],
             'sidebarOpen' => ! $request->hasCookie('sidebar_state') || $request->cookie('sidebar_state') === 'true',
         ];

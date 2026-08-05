@@ -3,6 +3,7 @@
     "description": "Manage your profile and account settings",
     "profile": "Profile",
     "security": "Security",
+    "notifications": "Notifications",
     "appearance": "Appearance",
     "billing": "Plan & billing",
     "profilePage": {
@@ -65,6 +66,19 @@
         "title": "Appearance settings",
         "heading": "Appearance settings",
         "headingDescription": "Update your account's appearance settings"
+    },
+    "notificationsPage": {
+        "title": "Notifications",
+        "heading": "Notifications",
+        "description": "Messages, updates, and system alerts for the last 30 days.",
+        "badge": "INBOX",
+        "heroTitle": "Your notification history for the last month",
+        "heroText": "This section keeps recent service messages, release notes, and personal alerts so you can quickly review what happened recently.",
+        "period": "Messages",
+        "since": "Since",
+        "emptyTitle": "No notifications for the last 30 days",
+        "emptyDescription": "When the service sends you updates or personal alerts, they will appear here.",
+        "openLink": "Open"
     },
     "billingPage": {
         "title": "Plan & billing",

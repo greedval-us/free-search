@@ -5,6 +5,7 @@ namespace App\Actions\Fortify;
 use App\Concerns\PasswordValidationRules;
 use App\Concerns\ProfileValidationRules;
 use App\Models\User;
+use App\Support\Notifications\UserNotificationService;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rules\Password;
 use Laravel\Fortify\Contracts\CreatesNewUsers;
@@ -41,10 +42,14 @@ class CreateNewUser implements CreatesNewUsers
             ],
         ])->validate();
 
-        return User::create([
+        $user = User::create([
             'name' => $input['name'],
             'email' => $input['email'],
             'password' => $input['password'],
         ]);
+
+        app(UserNotificationService::class)->sendWelcome($user);
+
+        return $user;
     }
 }

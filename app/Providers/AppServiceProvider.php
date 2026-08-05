@@ -2,6 +2,8 @@
 
 namespace App\Providers;
 
+use App\Models\User;
+use App\Support\Notifications\UserNotificationService;
 use App\Support\Observability\MoonShineLoginAlertService;
 use App\Support\Observability\MoonShineLoginContext;
 use Carbon\CarbonImmutable;
@@ -34,6 +36,7 @@ class AppServiceProvider extends ServiceProvider
         $this->configureDefaults();
         $this->configureAuthMail();
         $this->configureMoonShineLoginAlerts();
+        $this->configureUserLoginNotifications();
     }
 
     /**
@@ -142,6 +145,36 @@ class AppServiceProvider extends ServiceProvider
             );
 
             app(MoonShineLoginAlertService::class)->handle($context);
+        });
+    }
+
+    protected function configureUserLoginNotifications(): void
+    {
+        Event::listen(Login::class, function (Login $event): void {
+            if ($event->guard !== 'web') {
+                return;
+            }
+
+            if (! $event->user instanceof User) {
+                return;
+            }
+
+            /** @var Request|null $request */
+            $request = app('request');
+
+            app(UserNotificationService::class)->sendLoginGreeting(
+                user: $event->user,
+                ip: (string) ($request?->ip() ?? 'unknown'),
+                userAgent: Str::limit((string) ($request?->userAgent() ?? 'unknown'), 255),
+                occurredAt: now(),
+            );
+
+            app(UserNotificationService::class)->sendNewIpLoginAlert(
+                user: $event->user,
+                ip: (string) ($request?->ip() ?? 'unknown'),
+                userAgent: Str::limit((string) ($request?->userAgent() ?? 'unknown'), 255),
+                occurredAt: now(),
+            );
         });
     }
 }
