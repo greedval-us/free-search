@@ -41,6 +41,10 @@ const unreadNotificationsLabel = computed(() =>
         String(unreadNotificationsCount.value)
     )
 );
+
+const unreadNotificationItems = computed(() =>
+    notificationItems.value.filter((notification) => notification.read_at === null)
+);
 </script>
 
 <template>
@@ -109,14 +113,14 @@ const unreadNotificationsLabel = computed(() =>
 
             <div class="max-h-[26rem] space-y-2 overflow-y-auto p-2">
                 <div
-                    v-if="notificationItems.length === 0"
+                    v-if="unreadNotificationItems.length === 0"
                     class="rounded-2xl border border-dashed border-slate-300/70 bg-slate-50/80 p-4 text-sm text-muted-foreground dark:border-slate-800 dark:bg-slate-950/40"
                 >
                     {{ t('navigation.notificationsPlaceholder') }}
                 </div>
 
                 <template
-                    v-for="notification in notificationItems"
+                    v-for="notification in unreadNotificationItems"
                     :key="notification.id"
                 >
                     <NotificationListItem
