@@ -1,5 +1,4 @@
 import { router } from '@inertiajs/vue3';
-import { markAllRead as markAllReadAction } from '@/actions/App/Http/Controllers/Notifications/UserNotificationController';
 import type { AppNotification } from '@/types';
 
 const notificationVisitOptions = {
@@ -11,7 +10,7 @@ const markReadUrl = (notificationId: string): string =>
     `/notifications/${encodeURIComponent(notificationId)}/read`;
 
 export const submitMarkAllNotificationsRead = (): void => {
-    router.post(markAllReadAction().url, {}, notificationVisitOptions);
+    router.post('/notifications/read-all', {}, notificationVisitOptions);
 };
 
 export const submitMarkNotificationRead = (
