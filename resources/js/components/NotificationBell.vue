@@ -43,7 +43,9 @@ const unreadNotificationsLabel = computed(() =>
 );
 
 const unreadNotificationItems = computed(() =>
-    notificationItems.value.filter((notification) => notification.read_at === null)
+    notificationItems.value.filter(
+        (notification) => notification.read_at === null
+    )
 );
 </script>
 
