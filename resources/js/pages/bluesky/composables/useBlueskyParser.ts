@@ -1,39 +1,19 @@
 import { computed, onBeforeUnmount, onMounted, reactive, ref } from 'vue';
 import { apiRequest, resolveClientErrorMessage } from '@/lib/api';
+import { withDownloadLocale } from '@/lib/downloadLocale';
+import type {
+    BlueskyParserHistoryItem as ParserHistoryItem,
+    BlueskyParserHistoryResponse as ParserHistoryResponse,
+    BlueskyParserStage as ParserStage,
+    BlueskyParserStatus as ParserStatus,
+    BlueskyParserStatusResponse as ParserStatusResponse,
+} from '../types';
 
-type ParserStage =
-    | 'idle'
-    | 'profile'
-    | 'feed'
-    | 'followers'
-    | 'follows'
-    | 'interactions'
-    | 'finishing'
-    | 'completed'
-    | 'failed'
-    | 'stopped';
-type ParserStatus = 'running' | 'completed' | 'failed' | 'stopped';
 type TranslateFn = (key: string) => string;
-
-type ParserStatusResponse = {
-    ok: boolean;
-    runId: string;
-    status: ParserStatus;
-    stage: ParserStage;
-    progress: number;
-    processedPosts: number;
-    processedAuthoredReplies: number;
-    processedReceivedReplies: number;
-    processedFollowers: number;
-    processedFollows: number;
-    processedReactions: number;
-    error: string | null;
-    downloadUrl: string | null;
-    downloadJsonUrl: string | null;
-};
 
 const POLL_INTERVAL_MS = 3000;
 const TERMINAL_STATUSES: ParserStatus[] = ['completed', 'failed', 'stopped'];
+const parserEndpoint = (suffix: string) => `/bluesky/parser/${suffix}`;
 
 export const useBlueskyParser = (t: TranslateFn) => {
     const form = reactive({
@@ -54,6 +34,9 @@ export const useBlueskyParser = (t: TranslateFn) => {
     const processedReactions = ref(0);
     const downloadUrl = ref<string | null>(null);
     const downloadJsonUrl = ref<string | null>(null);
+    const historyItems = ref<ParserHistoryItem[]>([]);
+    const historyLoading = ref(false);
+    const historyRetentionDays = ref(7);
     const pollTimer = ref<number | null>(null);
     const pollRequestInFlight = ref(false);
 
@@ -107,9 +90,33 @@ export const useBlueskyParser = (t: TranslateFn) => {
         downloadJsonUrl.value = payload.downloadJsonUrl;
     };
 
+    const refreshHistory = async () => {
+        historyLoading.value = true;
+
+        try {
+            const response = await apiRequest<ParserHistoryResponse>(
+                parserEndpoint('history'),
+                { method: 'GET' }
+            );
+
+            if (!response.ok) {
+                throw new Error(
+                    response.message ?? t('bluesky.parser.history.errors.load')
+                );
+            }
+
+            historyItems.value = response.data.items;
+            historyRetentionDays.value = response.data.retentionDays;
+        } catch {
+            historyItems.value = [];
+        } finally {
+            historyLoading.value = false;
+        }
+    };
+
     const stopRunRequest = (activeRunId: string) =>
         apiRequest<ParserStatusResponse>(
-            `/bluesky/parser/stop/${activeRunId}`,
+            parserEndpoint(`stop/${activeRunId}`),
             {
                 method: 'POST',
                 headers: requestHeaders(),
@@ -146,6 +153,7 @@ export const useBlueskyParser = (t: TranslateFn) => {
                 }
 
                 applyPayload(response.data);
+                void refreshHistory();
             })
             .catch(() => undefined);
     };
@@ -166,7 +174,7 @@ export const useBlueskyParser = (t: TranslateFn) => {
 
         try {
             const response = await apiRequest<ParserStatusResponse>(
-                '/bluesky/parser/start',
+                parserEndpoint('start'),
                 {
                     method: 'POST',
                     headers: requestHeaders('application/json'),
@@ -184,6 +192,7 @@ export const useBlueskyParser = (t: TranslateFn) => {
 
             runId.value = response.data.runId;
             applyPayload(response.data);
+            void refreshHistory();
 
             const pollStatus = async () => {
                 if (!runId.value || pollRequestInFlight.value) {
@@ -195,7 +204,7 @@ export const useBlueskyParser = (t: TranslateFn) => {
                 try {
                     const statusResponse =
                         await apiRequest<ParserStatusResponse>(
-                            `/bluesky/parser/status/${runId.value}`,
+                            parserEndpoint(`status/${runId.value}`),
                             {
                                 method: 'GET',
                             }
@@ -214,6 +223,7 @@ export const useBlueskyParser = (t: TranslateFn) => {
                     if (TERMINAL_STATUSES.includes(statusPayload.status)) {
                         loading.value = false;
                         clearPolling();
+                        await refreshHistory();
 
                         return;
                     }
@@ -256,7 +266,7 @@ export const useBlueskyParser = (t: TranslateFn) => {
             return;
         }
 
-        window.location.href = downloadUrl.value;
+        window.location.href = withDownloadLocale(downloadUrl.value);
     };
 
     const downloadJson = () => {
@@ -264,7 +274,23 @@ export const useBlueskyParser = (t: TranslateFn) => {
             return;
         }
 
-        window.location.href = downloadJsonUrl.value;
+        window.location.href = withDownloadLocale(downloadJsonUrl.value);
+    };
+
+    const downloadHistoryRun = (item: ParserHistoryItem) => {
+        if (!item.downloadUrl) {
+            return;
+        }
+
+        window.location.href = withDownloadLocale(item.downloadUrl);
+    };
+
+    const downloadHistoryRunJson = (item: ParserHistoryItem) => {
+        if (!item.downloadJsonUrl) {
+            return;
+        }
+
+        window.location.href = withDownloadLocale(item.downloadJsonUrl);
     };
 
     const handleBeforeUnload = () => {
@@ -274,7 +300,7 @@ export const useBlueskyParser = (t: TranslateFn) => {
             return;
         }
 
-        fetch(`/bluesky/parser/stop/${activeRunId}`, {
+        fetch(parserEndpoint(`stop/${activeRunId}`), {
             method: 'POST',
             keepalive: true,
             headers: {
@@ -286,6 +312,7 @@ export const useBlueskyParser = (t: TranslateFn) => {
 
     onMounted(() => {
         window.addEventListener('beforeunload', handleBeforeUnload);
+        void refreshHistory();
     });
 
     onBeforeUnmount(() => {
@@ -308,10 +335,16 @@ export const useBlueskyParser = (t: TranslateFn) => {
         processedReactions,
         downloadUrl,
         downloadJsonUrl,
+        historyItems,
+        historyLoading,
+        historyRetentionDays,
         canStart,
         start,
         stop,
         download,
         downloadJson,
+        refreshHistory,
+        downloadHistoryRun,
+        downloadHistoryRunJson,
     };
 };

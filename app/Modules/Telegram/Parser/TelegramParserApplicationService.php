@@ -2,6 +2,8 @@
 
 namespace App\Modules\Telegram\Parser;
 
+use App\Models\ParserRun;
+use App\Modules\ParserSupport\ParserRunHistoryRepository;
 use App\Modules\ParserSupport\ParserRunStateMachine;
 use App\Modules\ParserSupport\ParserRunStatusPayloadBuilder;
 use App\Modules\Telegram\DTO\Request\TelegramParserStartDTO;
@@ -10,12 +12,20 @@ use App\Modules\Telegram\Parser\Contracts\TelegramParserApplicationServiceInterf
 
 class TelegramParserApplicationService implements TelegramParserApplicationServiceInterface
 {
+    public const MODULE_KEY = 'telegram';
+
+    public const DOWNLOAD_EXCEL_ROUTE = 'telegram.parser.download-excel';
+
+    public const DOWNLOAD_JSON_ROUTE = 'telegram.parser.download-json';
+
     public function __construct(
         private readonly TelegramParserRunStore $runStore,
         private readonly TelegramParserCollector $collector,
         private readonly TelegramParserRunGuard $runGuard,
         private readonly ParserRunStateMachine $stateMachine,
         private readonly ParserRunStatusPayloadBuilder $statusPayloadBuilder,
+        private readonly ParserRunHistoryRepository $historyRepository,
+        private readonly TelegramParserHistoryPresenter $historyPresenter,
     ) {
     }
 
@@ -57,6 +67,22 @@ class TelegramParserApplicationService implements TelegramParserApplicationServi
     }
 
     /**
+     * @return array<int, array<string, mixed>>
+     */
+    public function history(int $userId): array
+    {
+        return $this->historyRepository
+            ->forUser($userId, self::MODULE_KEY)
+            ->map(function (ParserRun $metadata) use ($userId): array {
+                $run = $this->runStore->get($userId, $metadata->run_id);
+
+                return $this->historyPresenter->present($metadata, $run);
+            })
+            ->values()
+            ->all();
+    }
+
+    /**
      * @return array<string, mixed>
      */
     public function getDownloadPayload(int $userId, string $runId): array
@@ -78,8 +104,8 @@ class TelegramParserApplicationService implements TelegramParserApplicationServi
                     'processedMessages' => 'processedMessages',
                     'processedComments' => 'processedComments',
                 ],
-                excelRoute: 'telegram.parser.download-excel',
-                jsonRoute: 'telegram.parser.download-json',
+                excelRoute: self::DOWNLOAD_EXCEL_ROUTE,
+                jsonRoute: self::DOWNLOAD_JSON_ROUTE,
             )
         );
     }

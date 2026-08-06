@@ -8,6 +8,11 @@ use App\Modules\YouTube\Enums\YouTubeParserStage;
 
 class YouTubeParserRunStore extends JsonRunStore
 {
+    protected function moduleKey(): string
+    {
+        return 'youtube';
+    }
+
     /**
      * @param array<string, mixed> $context
      * @return array<string, mixed>

@@ -6,11 +6,14 @@ use App\Exceptions\PublicException;
 use App\Models\User;
 use App\Modules\Mastodon\Analytics\Contracts\MastodonAnalyticsApplicationServiceInterface;
 use App\Modules\Mastodon\DTO\Request\MastodonAnalyticsQueryDTO;
+use App\Modules\Mastodon\DTO\Request\MastodonParserStartDTO;
 use App\Modules\Mastodon\DTO\Request\MastodonSearchQueryDTO;
 use App\Modules\Mastodon\DTO\Result\MastodonAnalyticsResultDTO;
+use App\Modules\Mastodon\DTO\Result\MastodonParserRunStatusDTO;
 use App\Modules\Mastodon\DTO\Result\MastodonSearchResultDTO;
 use App\Modules\Mastodon\DTO\Result\MastodonStatusContextResultDTO;
 use App\Modules\Mastodon\DTO\Result\MastodonTagTimelineResultDTO;
+use App\Modules\Mastodon\Parser\Contracts\MastodonParserApplicationServiceInterface;
 use App\Modules\Mastodon\Search\Contracts\MastodonSearchApplicationServiceInterface;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Mockery;
@@ -398,5 +401,53 @@ class MastodonControllerIsolationTest extends TestCase
             ]))
             ->assertOk()
             ->assertSee('Mastodon Analytics Report');
+    }
+
+    public function test_mastodon_parser_start_controller_passes_authenticated_user_to_service(): void
+    {
+        $user = $this->paidUser();
+
+        $this->mock(MastodonParserApplicationServiceInterface::class, function ($mock) use ($user): void {
+            $mock->shouldReceive('start')
+                ->once()
+                ->with(Mockery::on(
+                    fn (MastodonParserStartDTO $input): bool => $input->userId === $user->id
+                        && $input->account === 'analyst@mastodon.social'
+                ))
+                ->andReturn(new MastodonParserRunStatusDTO([
+                    'ok' => true,
+                    'runId' => 'mastodon-run-1',
+                    'status' => 'queued',
+                ]));
+        });
+
+        $this
+            ->actingAs($user)
+            ->postJson(route('mastodon.parser.start'), ['account' => '@analyst@mastodon.social'])
+            ->assertOk()
+            ->assertJsonPath('runId', 'mastodon-run-1');
+    }
+
+    public function test_mastodon_parser_history_controller_returns_service_payload(): void
+    {
+        $user = $this->paidUser();
+
+        $this->mock(MastodonParserApplicationServiceInterface::class, function ($mock) use ($user): void {
+            $mock->shouldReceive('history')
+                ->once()
+                ->with($user->id)
+                ->andReturn([[
+                    'runId' => 'mastodon-run-1',
+                    'account' => '@analyst@mastodon.social',
+                ]]);
+        });
+
+        $this
+            ->actingAs($user)
+            ->getJson(route('mastodon.parser.history'))
+            ->assertOk()
+            ->assertJsonPath('ok', true)
+            ->assertJsonPath('items.0.runId', 'mastodon-run-1')
+            ->assertJsonPath('items.0.account', '@analyst@mastodon.social');
     }
 }

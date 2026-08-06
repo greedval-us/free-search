@@ -226,4 +226,27 @@ class YouTubeControllerIsolationTest extends TestCase
             ->assertJsonPath('runId', 'yt-run-1')
             ->assertJsonPath('status', 'done');
     }
+
+    public function test_youtube_parser_history_controller_returns_service_payload(): void
+    {
+        $user = $this->paidUser();
+
+        $this->mock(YouTubeParserApplicationServiceInterface::class, function ($mock) use ($user): void {
+            $mock->shouldReceive('history')
+                ->once()
+                ->with($user->id)
+                ->andReturn([[
+                    'runId' => 'yt-run-1',
+                    'videoId' => 'video-123',
+                ]]);
+        });
+
+        $this
+            ->actingAs($user)
+            ->getJson(route('youtube.parser.history'))
+            ->assertOk()
+            ->assertJsonPath('ok', true)
+            ->assertJsonPath('items.0.runId', 'yt-run-1')
+            ->assertJsonPath('items.0.videoId', 'video-123');
+    }
 }

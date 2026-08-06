@@ -2,6 +2,7 @@
 
 return [
     'frontend_api_retry' => require __DIR__ . '/osint/frontend_api_retry.php',
+    'parser_runs' => require __DIR__ . '/osint/parser_runs.php',
     'reports' => require __DIR__ . '/osint/reports.php',
     'bluesky' => require __DIR__ . '/osint/bluesky.php',
     'site_intel' => require __DIR__ . '/osint/site_intel.php',

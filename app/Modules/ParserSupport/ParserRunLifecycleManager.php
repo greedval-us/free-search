@@ -2,6 +2,8 @@
 
 namespace App\Modules\ParserSupport;
 
+use App\Modules\ParserSupport\Enums\ParserRunStatus;
+
 final class ParserRunLifecycleManager
 {
     /**
@@ -9,7 +11,7 @@ final class ParserRunLifecycleManager
      */
     public function isRunning(array $run): bool
     {
-        return ($run['status'] ?? null) === 'running';
+        return ($run['status'] ?? null) === ParserRunStatus::Running->value;
     }
 
     /**
@@ -18,7 +20,7 @@ final class ParserRunLifecycleManager
      */
     public function markFailed(array $run, string $message, string $stage = 'failed'): array
     {
-        $run['status'] = 'failed';
+        $run['status'] = ParserRunStatus::Failed->value;
         $run['stage'] = $stage;
         $run['progress'] = 100;
         $run['error'] = $message;
@@ -34,7 +36,7 @@ final class ParserRunLifecycleManager
     public function markCompleted(array $run, array $result, string $stage = 'completed'): array
     {
         $run['result'] = $result;
-        $run['status'] = 'completed';
+        $run['status'] = ParserRunStatus::Completed->value;
         $run['stage'] = $stage;
         $run['progress'] = 100;
         $run['error'] = null;

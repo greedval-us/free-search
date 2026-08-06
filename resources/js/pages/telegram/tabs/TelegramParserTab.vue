@@ -4,6 +4,7 @@ import ParserTabLayout from '@/components/ui/parser/ParserTabLayout.vue';
 import { useI18n } from '@/composables/useI18n';
 import { useStageLabel } from '@/composables/useStageLabel';
 import { useTelegramParser } from '../composables/useTelegramParser';
+import TelegramParserHistoryPanel from './components/TelegramParserHistoryPanel.vue';
 
 const { t } = useI18n();
 
@@ -18,6 +19,9 @@ const {
     processedComments,
     downloadUrl,
     downloadJsonUrl,
+    historyItems,
+    historyLoading,
+    historyRetentionDays,
     keywordActive,
     customPeriod,
     canStart,
@@ -25,6 +29,8 @@ const {
     stop,
     download,
     downloadJson,
+    downloadHistoryRun,
+    downloadHistoryRunJson,
 } = useTelegramParser(t);
 
 const stageLabel = useStageLabel(stage, (value) =>
@@ -152,4 +158,12 @@ const progressStats = computed(() => [
             <p v-if="error" class="text-sm text-destructive">{{ error }}</p>
         </template>
     </ParserTabLayout>
+
+    <TelegramParserHistoryPanel
+        :items="historyItems"
+        :loading="historyLoading"
+        :retention-days="historyRetentionDays"
+        @download="downloadHistoryRun"
+        @download-json="downloadHistoryRunJson"
+    />
 </template>

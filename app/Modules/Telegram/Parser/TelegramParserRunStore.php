@@ -6,6 +6,11 @@ use App\Modules\ParserSupport\JsonRunStore;
 
 class TelegramParserRunStore extends JsonRunStore
 {
+    protected function moduleKey(): string
+    {
+        return 'telegram';
+    }
+
     /**
      * @param array<string, mixed> $context
      * @return array<string, mixed>

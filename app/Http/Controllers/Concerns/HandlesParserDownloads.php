@@ -5,10 +5,16 @@ namespace App\Http\Controllers\Concerns;
 use App\Support\Reports\Contracts\ReportFilenamePolicyInterface;
 use App\Support\Reports\ReportFilenamePolicy;
 use App\Support\Reports\ReportsConfig;
+use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
 trait HandlesParserDownloads
 {
+    /**
+     * @var array<int, string>
+     */
+    private const SUPPORTED_DOWNLOAD_LOCALES = ['ru', 'en'];
+
     /**
      * @param array<string, mixed> $payload
      */
@@ -35,6 +41,15 @@ trait HandlesParserDownloads
             prefix: $prefix,
             target: $target,
             extension: $extension,
+        );
+    }
+
+    protected function applyDownloadLocale(Request $request): void
+    {
+        $locale = strtolower(trim((string) $request->query('locale', app()->getLocale())));
+
+        app()->setLocale(
+            in_array($locale, self::SUPPORTED_DOWNLOAD_LOCALES, true) ? $locale : 'en',
         );
     }
 

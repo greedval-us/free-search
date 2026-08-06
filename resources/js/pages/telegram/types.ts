@@ -1,5 +1,61 @@
 export type TelegramTabValue = 'search' | 'analytics' | 'parser';
 
+export type TelegramParserPeriod = 'day' | 'week' | 'month' | 'custom';
+
+export type TelegramParserStage =
+    | 'idle'
+    | 'messages'
+    | 'comments'
+    | 'finishing'
+    | 'completed'
+    | 'failed'
+    | 'stopped';
+
+export type TelegramParserStatus =
+    | 'running'
+    | 'completed'
+    | 'failed'
+    | 'stopped';
+
+export type TelegramParserStatusResponse = {
+    ok: boolean;
+    runId: string;
+    status: TelegramParserStatus;
+    stage: TelegramParserStage;
+    progress: number;
+    processedMessages: number;
+    processedComments: number;
+    error: string | null;
+    downloadUrl: string | null;
+    downloadJsonUrl: string | null;
+};
+
+export type TelegramParserHistoryItem = {
+    runId: string;
+    status: TelegramParserStatus | 'unknown';
+    stage: TelegramParserStage | 'unknown' | string | null;
+    progress: number;
+    error: string | null;
+    createdAt: string | null;
+    updatedAt: string | null;
+    finishedAt: string | null;
+    expiresAt: string | null;
+    downloadable: boolean;
+    downloadUrl: string | null;
+    downloadJsonUrl: string | null;
+    chatUsername: string | null;
+    keyword: string | null;
+    period: TelegramParserPeriod | null;
+    processedMessages: number;
+    processedComments: number;
+};
+
+export type TelegramParserHistoryResponse = {
+    ok: boolean;
+    items: TelegramParserHistoryItem[];
+    retentionDays: number;
+};
+
 export type SearchItem = {
     id: number;
     date: number;

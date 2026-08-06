@@ -2,6 +2,8 @@
 
 namespace App\Modules\ParserSupport;
 
+use App\Modules\ParserSupport\Enums\ParserRunStatus;
+
 class ParserRunStateMachine
 {
     /**
@@ -11,7 +13,7 @@ class ParserRunStateMachine
      */
     public function advance(array $state, callable $advance, int $nowTimestamp): array
     {
-        if (($state['status'] ?? null) !== 'running') {
+        if (($state['status'] ?? null) !== ParserRunStatus::Running->value) {
             return $state;
         }
 
@@ -25,7 +27,7 @@ class ParserRunStateMachine
         try {
             $state = $advance($state);
         } catch (\Throwable $exception) {
-            $state['status'] = 'failed';
+            $state['status'] = ParserRunStatus::Failed->value;
             $state['stage'] = 'failed';
             $state['progress'] = 100;
             $state['error'] = $exception->getMessage();
@@ -33,7 +35,7 @@ class ParserRunStateMachine
             return $state;
         }
 
-        if (($state['status'] ?? null) === 'running') {
+        if (($state['status'] ?? null) === ParserRunStatus::Running->value) {
             $cursor = is_array($state['cursor'] ?? null) ? $state['cursor'] : [];
             $cursor['nextAdvanceAt'] = $nowTimestamp + 2;
             $state['cursor'] = $cursor;
@@ -49,7 +51,7 @@ class ParserRunStateMachine
      */
     public function stop(array $state, callable $snapshotBuilder): array
     {
-        if (($state['status'] ?? null) !== 'running') {
+        if (($state['status'] ?? null) !== ParserRunStatus::Running->value) {
             return $state;
         }
 
@@ -57,7 +59,7 @@ class ParserRunStateMachine
             $state['result'] = $snapshotBuilder($state);
         }
 
-        $state['status'] = 'stopped';
+        $state['status'] = ParserRunStatus::Stopped->value;
         $state['stage'] = 'stopped';
         $state['error'] = null;
 

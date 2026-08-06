@@ -9,6 +9,11 @@ use App\Modules\ParserSupport\JsonRunStore;
 
 final class BlueskyParserRunStore extends JsonRunStore
 {
+    protected function moduleKey(): string
+    {
+        return 'bluesky';
+    }
+
     /**
      * @param array<string, mixed> $context
      * @return array<string, mixed>

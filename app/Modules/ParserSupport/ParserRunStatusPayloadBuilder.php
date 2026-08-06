@@ -2,6 +2,8 @@
 
 namespace App\Modules\ParserSupport;
 
+use App\Models\ParserRun;
+
 class ParserRunStatusPayloadBuilder
 {
     /**
@@ -12,21 +14,22 @@ class ParserRunStatusPayloadBuilder
     public function build(array $run, array $statsMap, string $excelRoute, string $jsonRoute): array
     {
         $stats = is_array($run['stats'] ?? null) ? $run['stats'] : [];
-        $status = (string) ($run['status'] ?? 'running');
+        $status = ParserRun::normalizeStatus($run['status'] ?? null);
         $runId = (string) ($run['runId'] ?? '');
         $hasResult = is_array($run['result'] ?? null);
+        $isDownloadable = ParserRun::isDownloadableStatus($status) && $hasResult && $runId !== '';
 
         $payload = [
             'ok' => true,
             'runId' => $runId,
             'status' => $status,
             'stage' => (string) ($run['stage'] ?? 'idle'),
-            'progress' => (int) ($run['progress'] ?? 0),
+            'progress' => ParserRun::normalizeProgress($run['progress'] ?? null),
             'error' => $run['error'] ?? null,
-            'downloadUrl' => in_array($status, ['completed', 'stopped'], true) && $hasResult && $runId !== ''
+            'downloadUrl' => $isDownloadable
                 ? route($excelRoute, ['runId' => $runId])
                 : null,
-            'downloadJsonUrl' => in_array($status, ['completed', 'stopped'], true) && $hasResult && $runId !== ''
+            'downloadJsonUrl' => $isDownloadable
                 ? route($jsonRoute, ['runId' => $runId])
                 : null,
         ];
@@ -38,4 +41,3 @@ class ParserRunStatusPayloadBuilder
         return $payload;
     }
 }
-

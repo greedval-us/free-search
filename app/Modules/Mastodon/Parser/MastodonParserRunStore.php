@@ -8,6 +8,11 @@ use App\Modules\ParserSupport\Enums\ParserRunStatus;
 
 final class MastodonParserRunStore extends JsonRunStore
 {
+    protected function moduleKey(): string
+    {
+        return 'mastodon';
+    }
+
     /**
      * @param array<string, mixed> $context
      * @return array<string, mixed>

@@ -45,8 +45,19 @@ final class BlueskyParserController extends Controller
         );
     }
 
+    public function history(Request $request): JsonResponse
+    {
+        return response()->json([
+            'ok' => true,
+            'items' => $this->parserApplicationService->history($this->userId($request)),
+            'retentionDays' => (int) config('osint.parser_runs.retention_days', 7),
+        ]);
+    }
+
     public function downloadExcel(Request $request, string $runId): BinaryFileResponse
     {
+        $this->applyDownloadLocale($request);
+
         $payload = $this->parserApplicationService->getDownloadPayload($this->userId($request), $runId);
         $filename = $this->buildExportFilename(
             'bluesky-parser',
@@ -59,6 +70,8 @@ final class BlueskyParserController extends Controller
 
     public function downloadJson(Request $request, string $runId): StreamedResponse
     {
+        $this->applyDownloadLocale($request);
+
         $payload = $this->parserApplicationService->getDownloadPayload($this->userId($request), $runId);
         $filename = $this->buildExportFilename(
             'bluesky-parser',

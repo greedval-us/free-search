@@ -9,6 +9,10 @@ abstract class JsonRunStore
 {
     protected const DISK = 'private';
 
+    public function __construct(
+        private readonly ParserRunMetadataSynchronizer $metadataSynchronizer,
+    ) {}
+
     /**
      * @param array<string, mixed> $context
      * @return array<string, mixed>
@@ -30,11 +34,11 @@ abstract class JsonRunStore
     public function get(int $userId, string $runId): ?array
     {
         $path = $this->runPath($userId, $runId);
-        if (!Storage::disk(static::DISK)->exists($path)) {
+        if (! $this->disk()->exists($path)) {
             return null;
         }
 
-        $raw = Storage::disk(static::DISK)->get($path);
+        $raw = $this->disk()->get($path);
         $decoded = json_decode($raw, true);
 
         return is_array($decoded) ? $decoded : null;
@@ -46,8 +50,9 @@ abstract class JsonRunStore
      */
     public function mutate(int $userId, string $runId, callable $callback): ?array
     {
-        $path = Storage::disk(static::DISK)->path($this->runPath($userId, $runId));
-        if (!is_file($path)) {
+        $relativePath = $this->runPath($userId, $runId);
+        $path = $this->disk()->path($relativePath);
+        if (! is_file($path)) {
             return null;
         }
 
@@ -57,13 +62,13 @@ abstract class JsonRunStore
         }
 
         try {
-            if (!flock($handle, LOCK_EX)) {
+            if (! flock($handle, LOCK_EX)) {
                 return null;
             }
 
             $contents = stream_get_contents($handle);
             $run = json_decode($contents !== false ? $contents : '', true);
-            if (!is_array($run)) {
+            if (! is_array($run)) {
                 $run = [];
             }
 
@@ -72,9 +77,10 @@ abstract class JsonRunStore
 
             ftruncate($handle, 0);
             rewind($handle);
-            fwrite($handle, json_encode($run, JSON_UNESCAPED_UNICODE));
+            fwrite($handle, $this->encodeRun($run));
             fflush($handle);
             flock($handle, LOCK_UN);
+            $this->syncMetadata($userId, $runId, $run, $relativePath);
 
             return $run;
         } finally {
@@ -87,10 +93,11 @@ abstract class JsonRunStore
      */
     public function write(int $userId, string $runId, array $run): void
     {
-        Storage::disk(static::DISK)->put(
-            $this->runPath($userId, $runId),
-            json_encode($run, JSON_UNESCAPED_UNICODE)
-        );
+        $path = $this->runPath($userId, $runId);
+
+        $this->disk()->put($path, $this->encodeRun($run));
+
+        $this->syncMetadata($userId, $runId, $run, $path);
     }
 
     /**
@@ -99,6 +106,37 @@ abstract class JsonRunStore
      */
     abstract protected function initialState(int $userId, string $runId, array $context, string $now): array;
 
-    abstract protected function runPath(int $userId, string $runId): string;
-}
+    abstract protected function moduleKey(): string;
 
+    abstract protected function runPath(int $userId, string $runId): string;
+
+    /**
+     * @param array<string, mixed> $run
+     */
+    private function syncMetadata(int $userId, string $runId, array $run, ?string $path = null): void
+    {
+        $normalizedRun = $run;
+        $normalizedRun['runId'] ??= $runId;
+
+        $this->metadataSynchronizer->sync(
+            $this->moduleKey(),
+            $userId,
+            static::DISK,
+            $path ?? $this->runPath($userId, $runId),
+            $normalizedRun
+        );
+    }
+
+    private function disk()
+    {
+        return Storage::disk(static::DISK);
+    }
+
+    /**
+     * @param array<string, mixed> $run
+     */
+    private function encodeRun(array $run): string
+    {
+        return json_encode($run, JSON_UNESCAPED_UNICODE);
+    }
+}

@@ -138,6 +138,23 @@
         "help": {
             "overview": "Controlled online collection for Telegram messages and comments with ready-to-export results and minimal storage footprint."
         },
+        "history": {
+            "title": "Recent exports",
+            "description": "Completed and recent Telegram parser runs remain available here for repeated downloads during the retention window.",
+            "retention": "Files are stored for {days} days.",
+            "loading": "Loading export history...",
+            "empty": "No Telegram parser exports yet.",
+            "unknown": "Unknown source",
+            "created": "Created",
+            "expires": "Available until",
+            "period": "Period",
+            "keyword": "Keyword",
+            "messages": "Messages: {count}",
+            "comments": "Comments: {count}",
+            "errors": {
+                "load": "Failed to load export history."
+            }
+        },
         "errors": {
             "customBothDates": "Please specify both custom period dates.",
             "customInvalid": "Custom period is invalid.",
