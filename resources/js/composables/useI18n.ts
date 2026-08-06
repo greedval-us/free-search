@@ -4,6 +4,7 @@ import ru from '@/locales/ru';
 
 type Locale = 'en' | 'ru';
 type Messages = Record<string, unknown>;
+type TranslationReplacements = Record<string, string | number>;
 
 const dictionaries: Record<Locale, Messages> = { en, ru };
 const LOCALE_STORAGE_KEY = 'locale';
@@ -53,14 +54,30 @@ const getNestedValue = (dictionary: Messages, key: string): string | null => {
     return typeof value === 'string' ? value : null;
 };
 
+const interpolate = (
+    message: string,
+    replacements?: TranslationReplacements
+): string => {
+    if (!replacements) {
+        return message;
+    }
+
+    return Object.entries(replacements).reduce(
+        (result, [token, value]) =>
+            result.replaceAll(`{${token}}`, String(value)),
+        message
+    );
+};
+
 export const useI18n = () => {
     const locale = computed(() => activeLocale.value);
 
-    const t = (key: string): string => {
-        return (
+    const t = (key: string, replacements?: TranslationReplacements): string => {
+        return interpolate(
             getNestedValue(dictionaries[activeLocale.value], key) ??
-            getNestedValue(dictionaries.en, key) ??
-            key
+                getNestedValue(dictionaries.en, key) ??
+                key,
+            replacements
         );
     };
 

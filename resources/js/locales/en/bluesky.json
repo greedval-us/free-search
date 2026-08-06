@@ -149,6 +149,25 @@
         "errors": {
             "actorRequired": "Actor is required.",
             "failed": "Parser request failed."
+        },
+        "history": {
+            "title": "Recent exports",
+            "description": "Saved Bluesky parser exports for the last {days} days.",
+            "retention": "Files are stored for {days} days.",
+            "loading": "Loading export history...",
+            "empty": "No exports yet.",
+            "unknown": "Unknown",
+            "created": "Created",
+            "expires": "Expires",
+            "posts": "Posts: {count}",
+            "authoredReplies": "Authored replies: {count}",
+            "receivedReplies": "Received replies: {count}",
+            "followers": "Followers: {count}",
+            "follows": "Following: {count}",
+            "reactions": "Reactions: {count}",
+            "errors": {
+                "load": "Failed to load parser history."
+            }
         }
     },
     "sections": {

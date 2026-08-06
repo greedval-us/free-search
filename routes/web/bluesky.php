@@ -36,6 +36,9 @@ Route::prefix('bluesky')->name('bluesky.')->group(function (): void {
         Route::post('stop/{runId}', [BlueskyParserController::class, 'stop'])
             ->middleware(['feature.access', 'throttle:20,1'])
             ->name('stop');
+        Route::get('history', [BlueskyParserController::class, 'history'])
+            ->middleware(['feature.access', 'throttle:20,1'])
+            ->name('history');
         Route::get('download-excel/{runId}', [BlueskyParserController::class, 'downloadExcel'])
             ->middleware(['feature.access', 'throttle:10,1'])
             ->name('download-excel');

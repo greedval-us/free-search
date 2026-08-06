@@ -2,6 +2,7 @@
 
 namespace App\Modules\YouTube\Parser;
 
+use App\Models\ParserRun;
 use App\Modules\ParserSupport\ParserRunStateMachine;
 use App\Modules\ParserSupport\ParserRunStatusPayloadBuilder;
 use App\Modules\YouTube\Actions\Request\VideoCommentsAction;
@@ -13,6 +14,12 @@ use App\Modules\YouTube\Parser\Contracts\YouTubeParserApplicationServiceInterfac
 
 class YouTubeParserApplicationService implements YouTubeParserApplicationServiceInterface
 {
+    public const MODULE_KEY = 'youtube';
+
+    public const DOWNLOAD_EXCEL_ROUTE = 'youtube.parser.download-excel';
+
+    public const DOWNLOAD_JSON_ROUTE = 'youtube.parser.download-json';
+
     public function __construct(
         private readonly VideoCommentsAction $videoCommentsAction,
         private readonly YouTubeParserRunStore $runStore,
@@ -20,6 +27,8 @@ class YouTubeParserApplicationService implements YouTubeParserApplicationService
         private readonly YouTubeParserRunGuard $runGuard,
         private readonly ParserRunStateMachine $stateMachine,
         private readonly ParserRunStatusPayloadBuilder $statusPayloadBuilder,
+        private readonly YouTubeParserHistoryRepository $historyRepository,
+        private readonly YouTubeParserHistoryPresenter $historyPresenter,
     ) {
     }
 
@@ -66,6 +75,22 @@ class YouTubeParserApplicationService implements YouTubeParserApplicationService
     }
 
     /**
+     * @return array<int, array<string, mixed>>
+     */
+    public function history(int $userId): array
+    {
+        return $this->historyRepository
+            ->forUser($userId)
+            ->map(function (ParserRun $metadata) use ($userId): array {
+                $run = $this->runStore->get($userId, $metadata->run_id);
+
+                return $this->historyPresenter->present($metadata, $run);
+            })
+            ->values()
+            ->all();
+    }
+
+    /**
      * @return array<string, mixed>
      */
     public function getDownloadPayload(int $userId, string $runId): array
@@ -87,8 +112,8 @@ class YouTubeParserApplicationService implements YouTubeParserApplicationService
                     'processedComments' => 'processedComments',
                     'processedReplies' => 'processedReplies',
                 ],
-                excelRoute: 'youtube.parser.download-excel',
-                jsonRoute: 'youtube.parser.download-json',
+                excelRoute: self::DOWNLOAD_EXCEL_ROUTE,
+                jsonRoute: self::DOWNLOAD_JSON_ROUTE,
             )
         );
     }

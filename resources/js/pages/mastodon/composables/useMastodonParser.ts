@@ -1,32 +1,19 @@
 import { computed, onBeforeUnmount, onMounted, reactive, ref } from 'vue';
 import { apiRequest, resolveClientErrorMessage } from '@/lib/api';
 import { withDownloadLocale } from '@/lib/downloadLocale';
+import type {
+    MastodonParserHistoryItem as ParserHistoryItem,
+    MastodonParserHistoryResponse as ParserHistoryResponse,
+    MastodonParserStatus as ParserStatus,
+    MastodonParserStatusResponse as ParserStatusResponse,
+    MastodonParserStage as ParserStage,
+} from '../types';
 
-type ParserStage =
-    | 'idle'
-    | 'statuses'
-    | 'comments'
-    | 'finishing'
-    | 'completed'
-    | 'failed'
-    | 'stopped';
-type ParserStatus = 'running' | 'completed' | 'failed' | 'stopped';
 type TranslateFn = (key: string) => string;
-type ParserStatusResponse = {
-    ok: boolean;
-    runId: string;
-    status: ParserStatus;
-    stage: ParserStage;
-    progress: number;
-    processedStatuses: number;
-    processedComments: number;
-    error: string | null;
-    downloadUrl: string | null;
-    downloadJsonUrl: string | null;
-};
 
 const POLL_INTERVAL_MS = 3000;
 const TERMINAL_STATUSES: ParserStatus[] = ['completed', 'failed', 'stopped'];
+const parserEndpoint = (suffix: string) => `/mastodon/parser/${suffix}`;
 
 export const useMastodonParser = (t: TranslateFn) => {
     const form = reactive({
@@ -43,6 +30,9 @@ export const useMastodonParser = (t: TranslateFn) => {
     const processedComments = ref(0);
     const downloadUrl = ref<string | null>(null);
     const downloadJsonUrl = ref<string | null>(null);
+    const historyItems = ref<ParserHistoryItem[]>([]);
+    const historyLoading = ref(false);
+    const historyRetentionDays = ref(7);
     const pollTimer = ref<number | null>(null);
     const pollRequestInFlight = ref(false);
 
@@ -88,9 +78,33 @@ export const useMastodonParser = (t: TranslateFn) => {
         downloadJsonUrl.value = payload.downloadJsonUrl;
     };
 
+    const refreshHistory = async () => {
+        historyLoading.value = true;
+
+        try {
+            const response = await apiRequest<ParserHistoryResponse>(
+                parserEndpoint('history'),
+                { method: 'GET' }
+            );
+
+            if (!response.ok) {
+                throw new Error(
+                    response.message ?? t('mastodon.parser.history.errors.load')
+                );
+            }
+
+            historyItems.value = response.data.items;
+            historyRetentionDays.value = response.data.retentionDays;
+        } catch {
+            historyItems.value = [];
+        } finally {
+            historyLoading.value = false;
+        }
+    };
+
     const stopRunRequest = (activeRunId: string) =>
         apiRequest<ParserStatusResponse>(
-            `/mastodon/parser/stop/${activeRunId}`,
+            parserEndpoint(`stop/${activeRunId}`),
             {
                 method: 'POST',
                 headers: requestHeaders(),
@@ -127,6 +141,7 @@ export const useMastodonParser = (t: TranslateFn) => {
                 }
 
                 applyPayload(response.data);
+                void refreshHistory();
             })
             .catch(() => undefined);
     };
@@ -147,7 +162,7 @@ export const useMastodonParser = (t: TranslateFn) => {
 
         try {
             const response = await apiRequest<ParserStatusResponse>(
-                '/mastodon/parser/start',
+                parserEndpoint('start'),
                 {
                     method: 'POST',
                     headers: requestHeaders('application/json'),
@@ -165,6 +180,7 @@ export const useMastodonParser = (t: TranslateFn) => {
 
             runId.value = response.data.runId;
             applyPayload(response.data);
+            void refreshHistory();
 
             const pollStatus = async () => {
                 if (!runId.value || pollRequestInFlight.value) {
@@ -176,7 +192,7 @@ export const useMastodonParser = (t: TranslateFn) => {
                 try {
                     const statusResponse =
                         await apiRequest<ParserStatusResponse>(
-                            `/mastodon/parser/status/${runId.value}`,
+                            parserEndpoint(`status/${runId.value}`),
                             {
                                 method: 'GET',
                             }
@@ -195,6 +211,7 @@ export const useMastodonParser = (t: TranslateFn) => {
                     if (TERMINAL_STATUSES.includes(statusPayload.status)) {
                         loading.value = false;
                         clearPolling();
+                        await refreshHistory();
 
                         return;
                     }
@@ -248,6 +265,22 @@ export const useMastodonParser = (t: TranslateFn) => {
         window.location.href = withDownloadLocale(downloadJsonUrl.value);
     };
 
+    const downloadHistoryRun = (item: ParserHistoryItem) => {
+        if (!item.downloadUrl) {
+            return;
+        }
+
+        window.location.href = withDownloadLocale(item.downloadUrl);
+    };
+
+    const downloadHistoryRunJson = (item: ParserHistoryItem) => {
+        if (!item.downloadJsonUrl) {
+            return;
+        }
+
+        window.location.href = withDownloadLocale(item.downloadJsonUrl);
+    };
+
     const handleBeforeUnload = () => {
         const activeRunId = runId.value;
 
@@ -255,7 +288,7 @@ export const useMastodonParser = (t: TranslateFn) => {
             return;
         }
 
-        fetch(`/mastodon/parser/stop/${activeRunId}`, {
+        fetch(parserEndpoint(`stop/${activeRunId}`), {
             method: 'POST',
             keepalive: true,
             headers: {
@@ -267,6 +300,7 @@ export const useMastodonParser = (t: TranslateFn) => {
 
     onMounted(() => {
         window.addEventListener('beforeunload', handleBeforeUnload);
+        void refreshHistory();
     });
 
     onBeforeUnmount(() => {
@@ -285,10 +319,16 @@ export const useMastodonParser = (t: TranslateFn) => {
         processedComments,
         downloadUrl,
         downloadJsonUrl,
+        historyItems,
+        historyLoading,
+        historyRetentionDays,
         canStart,
         start,
         stop,
         download,
         downloadJson,
+        refreshHistory,
+        downloadHistoryRun,
+        downloadHistoryRunJson,
     };
 };

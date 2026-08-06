@@ -16,8 +16,6 @@ class TelegramParserController extends BaseTelegramController
 {
     use HandlesParserDownloads;
 
-    private const SUPPORTED_LOCALES = ['ru', 'en'];
-
     public function __construct(
         private readonly TelegramParserApplicationServiceInterface $parserApplicationService,
         private readonly TelegramParserExportBuilderInterface $exportBuilder,
@@ -44,9 +42,18 @@ class TelegramParserController extends BaseTelegramController
         );
     }
 
+    public function history(Request $request): JsonResponse
+    {
+        return response()->json([
+            'ok' => true,
+            'items' => $this->parserApplicationService->history($this->userId($request)),
+            'retentionDays' => (int) config('osint.parser_runs.retention_days', 7),
+        ]);
+    }
+
     public function downloadExcel(Request $request, string $runId): BinaryFileResponse
     {
-        $this->applyRequestLocale($this->resolveRequestLocale($request));
+        $this->applyDownloadLocale($request);
 
         $payload = $this->parserApplicationService->getDownloadPayload($this->userId($request), $runId);
         $filename = $this->buildExportFilename(
@@ -60,7 +67,7 @@ class TelegramParserController extends BaseTelegramController
 
     public function downloadJson(Request $request, string $runId): StreamedResponse
     {
-        $this->applyRequestLocale($this->resolveRequestLocale($request));
+        $this->applyDownloadLocale($request);
 
         $payload = $this->parserApplicationService->getDownloadPayload($this->userId($request), $runId);
         $filename = $this->buildExportFilename(
@@ -70,12 +77,5 @@ class TelegramParserController extends BaseTelegramController
         );
 
         return $this->streamJsonDownload($payload, $filename);
-    }
-
-    private function resolveRequestLocale(Request $request): string
-    {
-        $locale = strtolower(trim((string) $request->query('locale', app()->getLocale())));
-
-        return in_array($locale, self::SUPPORTED_LOCALES, true) ? $locale : 'en';
     }
 }

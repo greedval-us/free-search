@@ -246,4 +246,29 @@ class TelegramControllerIsolationTest extends TestCase
             ->getJson(route('telegram.parser.status', ['runId' => 'missing-run']))
             ->assertNotFound();
     }
+
+    public function test_telegram_parser_history_controller_returns_service_payload(): void
+    {
+        $user = $this->paidUser();
+
+        $this->mock(TelegramParserApplicationServiceInterface::class, function ($mock) use ($user): void {
+            $mock->shouldReceive('history')
+                ->once()
+                ->with($user->id)
+                ->andReturn([[
+                    'runId' => 'tg-run-1',
+                    'status' => 'completed',
+                    'chatUsername' => 'durov',
+                    'downloadable' => true,
+                ]]);
+        });
+
+        $this
+            ->actingAs($user)
+            ->getJson(route('telegram.parser.history'))
+            ->assertOk()
+            ->assertJsonPath('ok', true)
+            ->assertJsonPath('items.0.runId', 'tg-run-1')
+            ->assertJsonPath('items.0.chatUsername', 'durov');
+    }
 }

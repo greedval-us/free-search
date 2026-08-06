@@ -61,6 +61,15 @@ class YouTubeParserController extends Controller
         );
     }
 
+    public function history(Request $request): JsonResponse
+    {
+        return response()->json([
+            'ok' => true,
+            'items' => $this->parserApplicationService->history($this->userId($request)),
+            'retentionDays' => (int) config('osint.parser_runs.retention_days', 7),
+        ]);
+    }
+
     public function downloadExcel(Request $request, string $runId): BinaryFileResponse
     {
         $this->applyDownloadLocale($request);

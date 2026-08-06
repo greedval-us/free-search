@@ -6,32 +6,20 @@ import {
 } from '@/composables/useRepeatQuery';
 import { apiRequest, resolveClientErrorMessage } from '@/lib/api';
 import { withDownloadLocale } from '@/lib/downloadLocale';
+import type {
+    YouTubeParserHistoryItem as ParserHistoryItem,
+    YouTubeParserHistoryResponse as ParserHistoryResponse,
+    YouTubeParserStage as ParserStage,
+    YouTubeParserStatusResponse as ParserStatusResponse,
+} from '../types';
 
-type ParserStage =
-    | 'idle'
-    | 'comments'
-    | 'replies'
-    | 'finishing'
-    | 'completed'
-    | 'failed'
-    | 'stopped';
-type ParserStatus = 'running' | 'completed' | 'failed' | 'stopped';
 type TranslateFn = (key: string) => string;
 
-type ParserStatusResponse = {
-    ok: boolean;
-    runId: string;
-    status: ParserStatus;
-    stage: ParserStage;
-    progress: number;
-    processedComments: number;
-    processedReplies: number;
-    error: string | null;
-    downloadUrl: string | null;
-    downloadJsonUrl: string | null;
-};
-
 const POLL_INTERVAL_MS = 3000;
+const parserEndpoint = (suffix: string) => `/youtube/parser/${suffix}`;
+const csrfToken = () =>
+    document.querySelector<HTMLMetaElement>('meta[name="csrf-token"]')
+        ?.content ?? '';
 
 export const useYouTubeParser = (t: TranslateFn) => {
     const form = reactive({
@@ -48,6 +36,9 @@ export const useYouTubeParser = (t: TranslateFn) => {
     const processedReplies = ref(0);
     const downloadUrl = ref<string | null>(null);
     const downloadJsonUrl = ref<string | null>(null);
+    const historyItems = ref<ParserHistoryItem[]>([]);
+    const historyLoading = ref(false);
+    const historyRetentionDays = ref(7);
     const pollTimer = ref<number | null>(null);
     const pollRequestInFlight = ref(false);
 
@@ -74,23 +65,77 @@ export const useYouTubeParser = (t: TranslateFn) => {
         pollRequestInFlight.value = false;
     };
 
+    const applyStatusPayload = (payload: ParserStatusResponse) => {
+        stage.value = payload.stage;
+        progress.value = payload.progress;
+        processedComments.value = payload.processedComments;
+        processedReplies.value = payload.processedReplies;
+        error.value = payload.error;
+        downloadUrl.value = payload.downloadUrl;
+        downloadJsonUrl.value = payload.downloadJsonUrl;
+    };
+
+    const refreshHistory = async () => {
+        historyLoading.value = true;
+
+        try {
+            const response = await apiRequest<ParserHistoryResponse>(
+                parserEndpoint('history'),
+                { method: 'GET' }
+            );
+
+            if (!response.ok) {
+                throw new Error(
+                    response.message ?? t('youtube.parser.history.errors.load')
+                );
+            }
+
+            historyItems.value = response.data.items;
+            historyRetentionDays.value = response.data.retentionDays;
+        } catch {
+            historyItems.value = [];
+        } finally {
+            historyLoading.value = false;
+        }
+    };
+
+    const requestStop = async (
+        activeRunId: string
+    ): Promise<ParserStatusResponse | null> => {
+        const response = await apiRequest<ParserStatusResponse>(
+            parserEndpoint(`stop/${activeRunId}`),
+            {
+                method: 'POST',
+                headers: {
+                    'X-CSRF-TOKEN': csrfToken(),
+                },
+            }
+        );
+
+        return response.ok ? response.data : null;
+    };
+
+    const downloadByUrl = (url: string | null) => {
+        if (!url) {
+            return;
+        }
+
+        window.location.href = withDownloadLocale(url);
+    };
+
+    const finalizeRun = async (payload: ParserStatusResponse) => {
+        applyStatusPayload(payload);
+        loading.value = false;
+        clearPolling();
+        await refreshHistory();
+    };
+
     const stopSilently = () => {
         clearPolling();
         const activeRunId = runId.value;
 
         if (activeRunId) {
-            apiRequest<ParserStatusResponse>(
-                `/youtube/parser/stop/${activeRunId}`,
-                {
-                    method: 'POST',
-                    headers: {
-                        'X-CSRF-TOKEN':
-                            document.querySelector<HTMLMetaElement>(
-                                'meta[name="csrf-token"]'
-                            )?.content ?? '',
-                    },
-                }
-            ).catch(() => undefined);
+            requestStop(activeRunId).catch(() => undefined);
         }
     };
 
@@ -108,31 +153,14 @@ export const useYouTubeParser = (t: TranslateFn) => {
             return;
         }
 
-        apiRequest<ParserStatusResponse>(
-            `/youtube/parser/stop/${activeRunId}`,
-            {
-                method: 'POST',
-                headers: {
-                    'X-CSRF-TOKEN':
-                        document.querySelector<HTMLMetaElement>(
-                            'meta[name="csrf-token"]'
-                        )?.content ?? '',
-                },
-            }
-        )
-            .then((response) => {
-                if (!response.ok || response.data.runId !== runId.value) {
+        requestStop(activeRunId)
+            .then((payload) => {
+                if (!payload || payload.runId !== runId.value) {
                     return;
                 }
 
-                const payload = response.data;
-                stage.value = payload.stage;
-                progress.value = payload.progress;
-                processedComments.value = payload.processedComments;
-                processedReplies.value = payload.processedReplies;
-                error.value = payload.error;
-                downloadUrl.value = payload.downloadUrl;
-                downloadJsonUrl.value = payload.downloadJsonUrl;
+                applyStatusPayload(payload);
+                void refreshHistory();
             })
             .catch(() => undefined);
     };
@@ -153,15 +181,12 @@ export const useYouTubeParser = (t: TranslateFn) => {
 
         try {
             const response = await apiRequest<ParserStatusResponse>(
-                '/youtube/parser/start',
+                parserEndpoint('start'),
                 {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
-                        'X-CSRF-TOKEN':
-                            document.querySelector<HTMLMetaElement>(
-                                'meta[name="csrf-token"]'
-                            )?.content ?? '',
+                        'X-CSRF-TOKEN': csrfToken(),
                     },
                     body: {
                         videoId: form.videoId.trim(),
@@ -177,12 +202,8 @@ export const useYouTubeParser = (t: TranslateFn) => {
 
             const payload = response.data;
             runId.value = payload.runId;
-            stage.value = payload.stage;
-            progress.value = payload.progress;
-            processedComments.value = payload.processedComments;
-            processedReplies.value = payload.processedReplies;
-            downloadUrl.value = payload.downloadUrl;
-            downloadJsonUrl.value = payload.downloadJsonUrl;
+            applyStatusPayload(payload);
+            void refreshHistory();
 
             const pollStatus = async () => {
                 if (!runId.value || pollRequestInFlight.value) {
@@ -194,7 +215,7 @@ export const useYouTubeParser = (t: TranslateFn) => {
                 try {
                     const statusResponse =
                         await apiRequest<ParserStatusResponse>(
-                            `/youtube/parser/status/${runId.value}`,
+                            parserEndpoint(`status/${runId.value}`),
                             {
                                 method: 'GET',
                             }
@@ -208,21 +229,14 @@ export const useYouTubeParser = (t: TranslateFn) => {
                     }
 
                     const statusPayload = statusResponse.data;
-                    stage.value = statusPayload.stage;
-                    progress.value = statusPayload.progress;
-                    processedComments.value = statusPayload.processedComments;
-                    processedReplies.value = statusPayload.processedReplies;
-                    error.value = statusPayload.error;
+                    applyStatusPayload(statusPayload);
 
                     if (
                         statusPayload.status === 'completed' ||
                         statusPayload.status === 'failed' ||
                         statusPayload.status === 'stopped'
                     ) {
-                        downloadUrl.value = statusPayload.downloadUrl;
-                        downloadJsonUrl.value = statusPayload.downloadJsonUrl;
-                        loading.value = false;
-                        clearPolling();
+                        await finalizeRun(statusPayload);
 
                         return;
                     }
@@ -261,19 +275,19 @@ export const useYouTubeParser = (t: TranslateFn) => {
     };
 
     const download = () => {
-        if (!downloadUrl.value) {
-            return;
-        }
-
-        window.location.href = withDownloadLocale(downloadUrl.value);
+        downloadByUrl(downloadUrl.value);
     };
 
     const downloadJson = () => {
-        if (!downloadJsonUrl.value) {
-            return;
-        }
+        downloadByUrl(downloadJsonUrl.value);
+    };
 
-        window.location.href = withDownloadLocale(downloadJsonUrl.value);
+    const downloadHistoryRun = (item: ParserHistoryItem) => {
+        downloadByUrl(item.downloadUrl);
+    };
+
+    const downloadHistoryRunJson = (item: ParserHistoryItem) => {
+        downloadByUrl(item.downloadJsonUrl);
     };
 
     const handleBeforeUnload = () => {
@@ -283,15 +297,12 @@ export const useYouTubeParser = (t: TranslateFn) => {
             return;
         }
 
-        fetch(`/youtube/parser/stop/${activeRunId}`, {
+        fetch(parserEndpoint(`stop/${activeRunId}`), {
             method: 'POST',
             keepalive: true,
             headers: {
                 Accept: 'application/json',
-                'X-CSRF-TOKEN':
-                    document.querySelector<HTMLMetaElement>(
-                        'meta[name="csrf-token"]'
-                    )?.content ?? '',
+                'X-CSRF-TOKEN': csrfToken(),
             },
         }).catch(() => undefined);
     };
@@ -319,6 +330,7 @@ export const useYouTubeParser = (t: TranslateFn) => {
         }
 
         window.addEventListener('beforeunload', handleBeforeUnload);
+        void refreshHistory();
     });
 
     onBeforeUnmount(() => {
@@ -337,10 +349,16 @@ export const useYouTubeParser = (t: TranslateFn) => {
         processedReplies,
         downloadUrl,
         downloadJsonUrl,
+        historyItems,
+        historyLoading,
+        historyRetentionDays,
         canStart,
         start,
         stop,
         download,
         downloadJson,
+        refreshHistory,
+        downloadHistoryRun,
+        downloadHistoryRunJson,
     };
 };

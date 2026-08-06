@@ -36,6 +36,9 @@ Route::prefix('mastodon')->name('mastodon.')->group(function (): void {
         Route::post('stop/{runId}', [MastodonParserController::class, 'stop'])
             ->middleware(['feature.access', 'throttle:20,1'])
             ->name('stop');
+        Route::get('history', [MastodonParserController::class, 'history'])
+            ->middleware(['feature.access', 'throttle:20,1'])
+            ->name('history');
         Route::get('download-excel/{runId}', [MastodonParserController::class, 'downloadExcel'])
             ->middleware(['feature.access', 'throttle:10,1'])
             ->name('download-excel');

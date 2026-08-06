@@ -349,6 +349,29 @@ class BlueskyControllerIsolationTest extends TestCase
             ->assertNotFound();
     }
 
+    public function test_bluesky_parser_history_controller_returns_service_payload(): void
+    {
+        $user = $this->createSubscribedUser();
+
+        $this->mock(BlueskyParserApplicationServiceInterface::class, function ($mock) use ($user): void {
+            $mock->shouldReceive('history')
+                ->once()
+                ->with($user->id)
+                ->andReturn([[
+                    'runId' => 'bsky-run-1',
+                    'actor' => 'analyst.bsky.social',
+                ]]);
+        });
+
+        $this
+            ->actingAs($user)
+            ->getJson(route('bluesky.parser.history'))
+            ->assertOk()
+            ->assertJsonPath('ok', true)
+            ->assertJsonPath('items.0.runId', 'bsky-run-1')
+            ->assertJsonPath('items.0.actor', 'analyst.bsky.social');
+    }
+
     public function test_bluesky_analytics_report_renders_html_response(): void
     {
         $user = $this->createSubscribedUser();

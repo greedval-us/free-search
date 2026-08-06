@@ -41,6 +41,9 @@ Route::prefix('youtube')->name('youtube.')->group(function (): void {
         Route::post('stop/{runId}', [YouTubeParserController::class, 'stop'])
             ->middleware(['feature.access', 'throttle:20,1'])
             ->name('stop');
+        Route::get('history', [YouTubeParserController::class, 'history'])
+            ->middleware(['feature.access', 'throttle:20,1'])
+            ->name('history');
         Route::get('download-excel/{runId}', [YouTubeParserController::class, 'downloadExcel'])
             ->middleware(['feature.access', 'throttle:10,1'])
             ->name('download-excel');

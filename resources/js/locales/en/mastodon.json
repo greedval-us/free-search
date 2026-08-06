@@ -40,6 +40,21 @@
         "errors": {
             "accountRequired": "Account is required.",
             "failed": "Failed to run parser."
+        },
+        "history": {
+            "title": "Recent exports",
+            "description": "Saved Mastodon parser exports for the last {days} days.",
+            "retention": "Files are stored for {days} days.",
+            "loading": "Loading export history...",
+            "empty": "No exports yet.",
+            "unknown": "Unknown",
+            "created": "Created",
+            "expires": "Expires",
+            "statuses": "Statuses: {count}",
+            "comments": "Comments: {count}",
+            "errors": {
+                "load": "Failed to load parser history."
+            }
         }
     },
     "analytics": {

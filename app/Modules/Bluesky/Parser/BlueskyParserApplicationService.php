@@ -2,6 +2,7 @@
 
 namespace App\Modules\Bluesky\Parser;
 
+use App\Models\ParserRun;
 use App\Modules\Bluesky\DTO\Request\BlueskyParserStartDTO;
 use App\Modules\Bluesky\DTO\Result\BlueskyParserRunStatusDTO;
 use App\Modules\Bluesky\Parser\Contracts\BlueskyParserApplicationServiceInterface;
@@ -10,12 +11,20 @@ use App\Modules\ParserSupport\ParserRunStatusPayloadBuilder;
 
 final class BlueskyParserApplicationService implements BlueskyParserApplicationServiceInterface
 {
+    public const MODULE_KEY = 'bluesky';
+
+    public const DOWNLOAD_EXCEL_ROUTE = 'bluesky.parser.download-excel';
+
+    public const DOWNLOAD_JSON_ROUTE = 'bluesky.parser.download-json';
+
     public function __construct(
         private readonly BlueskyParserRunStore $runStore,
         private readonly BlueskyParserCollector $collector,
         private readonly BlueskyParserRunGuard $runGuard,
         private readonly ParserRunStateMachine $stateMachine,
         private readonly ParserRunStatusPayloadBuilder $statusPayloadBuilder,
+        private readonly BlueskyParserHistoryRepository $historyRepository,
+        private readonly BlueskyParserHistoryPresenter $historyPresenter,
     ) {
     }
 
@@ -57,6 +66,22 @@ final class BlueskyParserApplicationService implements BlueskyParserApplicationS
     }
 
     /**
+     * @return array<int, array<string, mixed>>
+     */
+    public function history(int $userId): array
+    {
+        return $this->historyRepository
+            ->forUser($userId)
+            ->map(function (ParserRun $metadata) use ($userId): array {
+                $run = $this->runStore->get($userId, $metadata->run_id);
+
+                return $this->historyPresenter->present($metadata, $run);
+            })
+            ->values()
+            ->all();
+    }
+
+    /**
      * @return array<string, mixed>
      */
     public function getDownloadPayload(int $userId, string $runId): array
@@ -82,8 +107,8 @@ final class BlueskyParserApplicationService implements BlueskyParserApplicationS
                     'processedFollows' => 'processedFollows',
                     'processedReactions' => 'processedReactions',
                 ],
-                excelRoute: 'bluesky.parser.download-excel',
-                jsonRoute: 'bluesky.parser.download-json',
+                excelRoute: self::DOWNLOAD_EXCEL_ROUTE,
+                jsonRoute: self::DOWNLOAD_JSON_ROUTE,
             )
         );
     }

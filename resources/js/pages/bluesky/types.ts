@@ -1,5 +1,68 @@
 export type BlueskyTabValue = 'search' | 'analytics';
 
+export type BlueskyParserStage =
+    | 'idle'
+    | 'profile'
+    | 'feed'
+    | 'followers'
+    | 'follows'
+    | 'interactions'
+    | 'finishing'
+    | 'completed'
+    | 'failed'
+    | 'stopped';
+
+export type BlueskyParserStatus =
+    | 'running'
+    | 'completed'
+    | 'failed'
+    | 'stopped';
+
+export type BlueskyParserStatusResponse = {
+    ok: boolean;
+    runId: string;
+    status: BlueskyParserStatus;
+    stage: BlueskyParserStage;
+    progress: number;
+    processedPosts: number;
+    processedAuthoredReplies: number;
+    processedReceivedReplies: number;
+    processedFollowers: number;
+    processedFollows: number;
+    processedReactions: number;
+    error: string | null;
+    downloadUrl: string | null;
+    downloadJsonUrl: string | null;
+};
+
+export type BlueskyParserHistoryItem = {
+    runId: string;
+    status: BlueskyParserStatus | 'unknown';
+    stage: BlueskyParserStage | 'unknown' | string | null;
+    progress: number;
+    error: string | null;
+    createdAt: string | null;
+    updatedAt: string | null;
+    finishedAt: string | null;
+    expiresAt: string | null;
+    downloadable: boolean;
+    downloadUrl: string | null;
+    downloadJsonUrl: string | null;
+    actor: string | null;
+    processedPosts: number;
+    processedAuthoredReplies: number;
+    processedReceivedReplies: number;
+    processedFollowers: number;
+    processedFollows: number;
+    processedReactions: number;
+};
+
+export type BlueskyParserHistoryResponse = {
+    ok: boolean;
+    items: BlueskyParserHistoryItem[];
+    retentionDays: number;
+};
+
 export enum BlueskySearchType {
     All = 'all',
     Posts = 'posts',

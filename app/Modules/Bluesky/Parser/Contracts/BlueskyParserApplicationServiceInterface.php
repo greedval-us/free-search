@@ -14,6 +14,11 @@ interface BlueskyParserApplicationServiceInterface
     public function stop(int $userId, string $runId): ?BlueskyParserRunStatusDTO;
 
     /**
+     * @return array<int, array<string, mixed>>
+     */
+    public function history(int $userId): array;
+
+    /**
      * @return array<string, mixed>
      */
     public function getDownloadPayload(int $userId, string $runId): array;

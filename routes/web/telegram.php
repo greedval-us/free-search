@@ -39,6 +39,9 @@ Route::prefix('telegram')->name('telegram.')->group(function (): void {
         Route::get('status/{runId}', [TelegramParserController::class, 'status'])
             ->middleware(['feature.access', 'throttle:40,1'])
             ->name('status');
+        Route::get('history', [TelegramParserController::class, 'history'])
+            ->middleware(['feature.access', 'throttle:20,1'])
+            ->name('history');
         Route::post('stop/{runId}', [TelegramParserController::class, 'stop'])
             ->middleware(['feature.access', 'throttle:20,1'])
             ->name('stop');

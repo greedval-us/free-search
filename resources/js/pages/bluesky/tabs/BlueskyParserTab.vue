@@ -4,6 +4,7 @@ import ParserTabLayout from '@/components/ui/parser/ParserTabLayout.vue';
 import { useI18n } from '@/composables/useI18n';
 import { useStageLabel } from '@/composables/useStageLabel';
 import { useBlueskyParser } from '../composables/useBlueskyParser';
+import BlueskyParserHistoryPanel from './components/BlueskyParserHistoryPanel.vue';
 
 const { t } = useI18n();
 
@@ -22,11 +23,16 @@ const {
     processedReactions,
     downloadUrl,
     downloadJsonUrl,
+    historyItems,
+    historyLoading,
+    historyRetentionDays,
     canStart,
     start,
     stop,
     download,
     downloadJson,
+    downloadHistoryRun,
+    downloadHistoryRunJson,
 } = useBlueskyParser(t);
 
 const stageLabel = useStageLabel(stage, (value) =>
@@ -112,4 +118,12 @@ const progressStats = computed(() => [
             <p v-if="error" class="text-sm text-destructive">{{ error }}</p>
         </template>
     </ParserTabLayout>
+
+    <BlueskyParserHistoryPanel
+        :items="historyItems"
+        :loading="historyLoading"
+        :retention-days="historyRetentionDays"
+        @download="downloadHistoryRun"
+        @download-json="downloadHistoryRunJson"
+    />
 </template>
