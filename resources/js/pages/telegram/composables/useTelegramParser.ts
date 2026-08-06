@@ -27,6 +27,32 @@ type ParserStatusResponse = {
 
 const DAY_IN_MS = 24 * 60 * 60 * 1000;
 const POLL_INTERVAL_MS = 3000;
+const LOCALE_STORAGE_KEY = 'locale';
+
+const resolveLocale = (): 'en' | 'ru' => {
+    if (typeof window !== 'undefined') {
+        const storedLocale = window.localStorage.getItem(LOCALE_STORAGE_KEY);
+
+        if (storedLocale === 'ru' || storedLocale === 'en') {
+            return storedLocale;
+        }
+    }
+
+    if (typeof document !== 'undefined') {
+        return document.documentElement.lang.toLowerCase().startsWith('ru')
+            ? 'ru'
+            : 'en';
+    }
+
+    return 'en';
+};
+
+const withLocale = (url: string): string => {
+    const nextUrl = new URL(url, window.location.origin);
+    nextUrl.searchParams.set('locale', resolveLocale());
+
+    return nextUrl.toString();
+};
 
 const parseDate = (value: string): Date | null => {
     const match = /^(\d{4})-(\d{2})-(\d{2})$/.exec(value);
@@ -324,7 +350,7 @@ export const useTelegramParser = (t: TranslateFn) => {
             return;
         }
 
-        window.location.href = downloadUrl.value;
+        window.location.href = withLocale(downloadUrl.value);
     };
 
     const downloadJson = () => {
@@ -332,7 +358,7 @@ export const useTelegramParser = (t: TranslateFn) => {
             return;
         }
 
-        window.location.href = downloadJsonUrl.value;
+        window.location.href = withLocale(downloadJsonUrl.value);
     };
 
     const handleBeforeUnload = () => {

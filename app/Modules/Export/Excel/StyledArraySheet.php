@@ -2,6 +2,7 @@
 
 namespace App\Modules\Export\Excel;
 
+use PhpOffice\PhpSpreadsheet\Cell\Coordinate;
 use Maatwebsite\Excel\Concerns\FromArray;
 use Maatwebsite\Excel\Concerns\ShouldAutoSize;
 use Maatwebsite\Excel\Concerns\WithColumnFormatting;
@@ -12,6 +13,7 @@ use Maatwebsite\Excel\Concerns\WithTitle;
 use Maatwebsite\Excel\Events\AfterSheet;
 use PhpOffice\PhpSpreadsheet\Style\Alignment;
 use PhpOffice\PhpSpreadsheet\Style\Border;
+use PhpOffice\PhpSpreadsheet\Style\Color;
 use PhpOffice\PhpSpreadsheet\Style\Fill;
 use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 
@@ -64,6 +66,12 @@ class StyledArraySheet implements FromArray, ShouldAutoSize, WithColumnFormattin
                 $sheet->freezePane('A2');
                 $sheet->setAutoFilter("A1:{$highestColumn}1");
                 $sheet->getRowDimension(1)->setRowHeight(24);
+                $sheet->getDefaultRowDimension()->setRowHeight(-1);
+
+                foreach ($this->definition->columnWidths as $column => $width) {
+                    $sheet->getColumnDimension($column)->setAutoSize(false);
+                    $sheet->getColumnDimension($column)->setWidth((float) $width);
+                }
 
                 $sheet->getStyle("A1:{$highestColumn}1")->applyFromArray([
                     'fill' => [
@@ -105,8 +113,34 @@ class StyledArraySheet implements FromArray, ShouldAutoSize, WithColumnFormattin
                         ],
                     ],
                 ]);
+
+                foreach ($this->definition->centeredColumns as $column) {
+                    $sheet->getStyle("{$column}2:{$column}{$highestRow}")
+                        ->getAlignment()
+                        ->setHorizontal(Alignment::HORIZONTAL_CENTER);
+                }
+
+                foreach ($this->definition->hyperlinkColumns as $column) {
+                    $columnIndex = Coordinate::columnIndexFromString($column);
+
+                    for ($row = 2; $row <= $highestRow; $row++) {
+                        $cell = $sheet->getCell([$columnIndex, $row]);
+                        $value = trim((string) $cell->getValue());
+
+                        if ($value === '' || ! filter_var($value, FILTER_VALIDATE_URL)) {
+                            continue;
+                        }
+
+                        $cell->getHyperlink()->setUrl($value);
+                        $sheet->getStyle("{$column}{$row}")->applyFromArray([
+                            'font' => [
+                                'color' => ['rgb' => Color::COLOR_BLUE],
+                                'underline' => true,
+                            ],
+                        ]);
+                    }
+                }
             },
         ];
     }
 }
-

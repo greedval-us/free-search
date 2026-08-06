@@ -35,22 +35,35 @@ class TelegramParserExportBuilder implements TelegramParserExportBuilderInterfac
     private function buildSummarySheet(array $payload): SheetDefinition
     {
         $range = is_array($payload['range'] ?? null) ? $payload['range'] : [];
+        $messages = is_array($payload['messages'] ?? null) ? $payload['messages'] : [];
+        $comments = is_array($payload['commentsIndex'] ?? null) ? $payload['commentsIndex'] : [];
+        $chatUsername = trim((string) ($payload['chatUsername'] ?? ''));
 
         return new SheetDefinition(
-            title: 'Summary',
-            headings: ['Field', 'Value'],
+            title: (string) __('exports.telegram.sheets.summary'),
+            headings: $this->translations('exports.telegram.summary.headings'),
             rows: [
-                ['Source', 'Telegram'],
-                ['Channel', (string) ($payload['chatUsername'] ?? '')],
-                ['Period', (string) ($payload['period'] ?? '')],
-                ['Keyword', (string) ($payload['keyword'] ?? '')],
-                ['Date from', (string) ($range['dateFrom'] ?? '')],
-                ['Date to', (string) ($range['dateTo'] ?? '')],
-                ['Is channel', (bool) ($payload['isChannel'] ?? false) ? 'yes' : 'no'],
-                ['Messages', (int) ($payload['messagesCount'] ?? 0)],
-                ['Comments', (int) ($payload['commentsCount'] ?? 0)],
-                ['Generated at', Carbon::now($this->config->timezone())->toDateTimeString()],
+                [(string) __('exports.telegram.summary.source'), 'Telegram'],
+                [(string) __('exports.telegram.summary.channel'), $chatUsername],
+                [(string) __('exports.telegram.summary.channel_url'), $this->buildChatUrl($chatUsername)],
+                [(string) __('exports.telegram.summary.period'), (string) ($payload['period'] ?? '')],
+                [(string) __('exports.telegram.summary.keyword'), (string) ($payload['keyword'] ?? '')],
+                [(string) __('exports.telegram.summary.date_from'), (string) ($range['dateFrom'] ?? '')],
+                [(string) __('exports.telegram.summary.date_to'), (string) ($range['dateTo'] ?? '')],
+                [(string) __('exports.telegram.summary.is_channel'), (bool) ($payload['isChannel'] ?? false) ? __('exports.common.yes') : __('exports.common.no')],
+                [(string) __('exports.telegram.summary.messages'), (int) ($payload['messagesCount'] ?? 0)],
+                [(string) __('exports.telegram.summary.comments'), (int) ($payload['commentsCount'] ?? 0)],
+                [(string) __('exports.telegram.summary.messages_with_media'), $this->countMessagesWithMedia($messages)],
+                [(string) __('exports.telegram.summary.messages_with_gifts'), $this->countMessagesWithGifts($messages)],
+                [(string) __('exports.telegram.summary.total_message_reactions'), $this->countTotalReactions($messages)],
+                [(string) __('exports.telegram.summary.total_comment_reactions'), $this->countTotalReactions($comments)],
+                [(string) __('exports.telegram.summary.generated_at'), Carbon::now($this->config->timezone())->toDateTimeString()],
             ],
+            columnWidths: [
+                'A' => 24,
+                'B' => 42,
+            ],
+            hyperlinkColumns: ['B'],
         );
     }
 
@@ -71,36 +84,45 @@ class TelegramParserExportBuilder implements TelegramParserExportBuilderInterfac
                 (int) ($message['id'] ?? 0),
                 $this->excelDate($message['date'] ?? null),
                 (int) ($message['authorId'] ?? 0),
-                (string) ($message['message'] ?? ''),
                 (int) ($message['views'] ?? 0),
                 (int) ($message['forwards'] ?? 0),
                 (int) ($message['repliesCount'] ?? 0),
-                (string) (($message['media']['type'] ?? '') ?: ''),
+                $this->sumReactionCounts($message['reactions'] ?? []),
+                $this->summarizeReactions($message['reactions'] ?? []),
+                count($this->normalizeIntArray($message['reactionSenderIds'] ?? [])),
+                !empty($message['gifts']['hasGift']) ? 'yes' : 'no',
+                $this->summarizeGiftTypes($message['gifts'] ?? []),
+                (string) (($message['media']['label'] ?? $message['media']['type'] ?? '') ?: ''),
+                (string) ($message['message'] ?? ''),
                 (string) ($message['telegramUrl'] ?? ''),
-                $this->stringify($message['reactions'] ?? []),
-                $this->stringify($message['gifts'] ?? []),
             ];
         }
 
         return new SheetDefinition(
-            title: 'Messages',
-            headings: [
-                'Message ID',
-                'Date',
-                'Author ID',
-                'Text',
-                'Views',
-                'Forwards',
-                'Replies',
-                'Media type',
-                'Telegram URL',
-                'Reactions',
-                'Gifts',
-            ],
+            title: (string) __('exports.telegram.sheets.messages'),
+            headings: $this->translations('exports.telegram.messages.headings'),
             rows: $rows,
             columnFormats: [
                 'B' => NumberFormat::FORMAT_DATE_DATETIME,
             ],
+            columnWidths: [
+                'A' => 12,
+                'B' => 20,
+                'C' => 14,
+                'D' => 10,
+                'E' => 10,
+                'F' => 10,
+                'G' => 12,
+                'H' => 28,
+                'I' => 14,
+                'J' => 10,
+                'K' => 18,
+                'L' => 16,
+                'M' => 64,
+                'N' => 34,
+            ],
+            hyperlinkColumns: ['N'],
+            centeredColumns: ['A', 'C', 'D', 'E', 'F', 'G', 'I', 'J'],
         );
     }
 
@@ -122,25 +144,29 @@ class TelegramParserExportBuilder implements TelegramParserExportBuilderInterfac
                 (int) ($comment['id'] ?? 0),
                 $this->excelDate($comment['date'] ?? null),
                 (int) ($comment['authorId'] ?? 0),
+                $this->sumReactionCounts($comment['reactions'] ?? []),
+                $this->summarizeReactions($comment['reactions'] ?? []),
                 (string) ($comment['message'] ?? ''),
-                $this->stringify($comment['reactions'] ?? []),
             ];
         }
 
         return new SheetDefinition(
-            title: 'Comments',
-            headings: [
-                'Post ID',
-                'Comment ID',
-                'Date',
-                'Author ID',
-                'Text',
-                'Reactions',
-            ],
+            title: (string) __('exports.telegram.sheets.comments'),
+            headings: $this->translations('exports.telegram.comments.headings'),
             rows: $rows,
             columnFormats: [
                 'C' => NumberFormat::FORMAT_DATE_DATETIME,
             ],
+            columnWidths: [
+                'A' => 12,
+                'B' => 12,
+                'C' => 20,
+                'D' => 14,
+                'E' => 12,
+                'F' => 28,
+                'G' => 64,
+            ],
+            centeredColumns: ['A', 'B', 'D', 'E'],
         );
     }
 
@@ -164,23 +190,92 @@ class TelegramParserExportBuilder implements TelegramParserExportBuilderInterfac
                 (string) ($reaction['reactionKey'] ?? ''),
                 (string) ($reaction['reaction'] ?? ''),
                 (int) ($reaction['count'] ?? 0),
-                implode(',', array_map('intval', is_array($reaction['senderIds'] ?? null) ? $reaction['senderIds'] : [])),
+                count($this->normalizeIntArray($reaction['senderIds'] ?? [])),
+                implode(', ', $this->normalizeIntArray($reaction['senderIds'] ?? [])),
             ];
         }
 
         return new SheetDefinition(
-            title: 'Reactions',
-            headings: [
-                'Entity type',
-                'Message ID',
-                'Comment ID',
-                'Reaction key',
-                'Reaction',
-                'Count',
-                'Sender IDs',
-            ],
+            title: (string) __('exports.telegram.sheets.reactions'),
+            headings: $this->translations('exports.telegram.reactions.headings'),
             rows: $rows,
+            columnWidths: [
+                'A' => 14,
+                'B' => 12,
+                'C' => 12,
+                'D' => 24,
+                'E' => 18,
+                'F' => 10,
+                'G' => 14,
+                'H' => 34,
+            ],
+            centeredColumns: ['B', 'C', 'F', 'G'],
         );
+    }
+
+    /**
+     * @param array<int, mixed> $messages
+     */
+    private function countMessagesWithMedia(array $messages): int
+    {
+        $count = 0;
+
+        foreach ($messages as $message) {
+            if (!is_array($message)) {
+                continue;
+            }
+
+            if (!empty($message['media']['hasMedia'])) {
+                $count++;
+            }
+        }
+
+        return $count;
+    }
+
+    /**
+     * @param array<int, mixed> $messages
+     */
+    private function countMessagesWithGifts(array $messages): int
+    {
+        $count = 0;
+
+        foreach ($messages as $message) {
+            if (!is_array($message)) {
+                continue;
+            }
+
+            if (!empty($message['gifts']['hasGift'])) {
+                $count++;
+            }
+        }
+
+        return $count;
+    }
+
+    /**
+     * @param array<int, mixed> $items
+     */
+    private function countTotalReactions(array $items): int
+    {
+        $total = 0;
+
+        foreach ($items as $item) {
+            if (!is_array($item)) {
+                continue;
+            }
+
+            $total += $this->sumReactionCounts($item['reactions'] ?? []);
+        }
+
+        return $total;
+    }
+
+    private function buildChatUrl(string $chatUsername): string
+    {
+        $chatUsername = ltrim(trim($chatUsername), '@');
+
+        return $chatUsername !== '' ? sprintf('https://t.me/%s', $chatUsername) : '';
     }
 
     private function excelDate(mixed $value): mixed
@@ -194,16 +289,98 @@ class TelegramParserExportBuilder implements TelegramParserExportBuilderInterfac
         );
     }
 
-    private function stringify(mixed $value): string
+    private function sumReactionCounts(mixed $value): int
     {
-        if (is_string($value)) {
-            return $value;
+        if (!is_array($value)) {
+            return 0;
         }
 
+        $total = 0;
+
+        foreach ($value as $reaction) {
+            if (!is_array($reaction)) {
+                continue;
+            }
+
+            $total += (int) ($reaction['count'] ?? 0);
+        }
+
+        return $total;
+    }
+
+    private function summarizeReactions(mixed $value): string
+    {
         if (!is_array($value)) {
             return '';
         }
 
-        return json_encode($value, JSON_UNESCAPED_UNICODE) ?: '';
+        $parts = [];
+
+        foreach ($value as $reaction) {
+            if (!is_array($reaction)) {
+                continue;
+            }
+
+            $label = trim((string) ($reaction['emoji'] ?? $reaction['reaction'] ?? ''));
+            $count = (int) ($reaction['count'] ?? 0);
+
+            if ($label === '' && $count <= 0) {
+                continue;
+            }
+
+            $parts[] = sprintf(
+                '%s x%d',
+                $label !== '' ? $label : (string) __('exports.common.reaction'),
+                $count,
+            );
+        }
+
+        return implode('; ', $parts);
+    }
+
+    private function summarizeGiftTypes(mixed $value): string
+    {
+        if (!is_array($value)) {
+            return '';
+        }
+
+        $types = is_array($value['types'] ?? null) ? $value['types'] : [];
+
+        return implode('; ', array_filter(array_map(
+            static fn (mixed $type): string => trim((string) $type),
+            $types,
+        )));
+    }
+
+    /**
+     * @return array<int, int>
+     */
+    private function normalizeIntArray(mixed $value): array
+    {
+        if (!is_array($value)) {
+            return [];
+        }
+
+        $items = [];
+
+        foreach ($value as $item) {
+            $intValue = (int) $item;
+
+            if ($intValue > 0) {
+                $items[] = $intValue;
+            }
+        }
+
+        return array_values(array_unique($items));
+    }
+
+    /**
+     * @return array<int, string>
+     */
+    private function translations(string $key): array
+    {
+        $value = __($key);
+
+        return is_array($value) ? array_values($value) : [];
     }
 }

@@ -1,0 +1,76 @@
+<?php
+
+return [
+    'common' => [
+        'yes' => 'yes',
+        'no' => 'no',
+        'reaction' => 'Reaction',
+    ],
+    'telegram' => [
+        'sheets' => [
+            'summary' => 'Summary',
+            'messages' => 'Messages',
+            'comments' => 'Comments',
+            'reactions' => 'Reactions',
+        ],
+        'summary' => [
+            'headings' => ['Field', 'Value'],
+            'source' => 'Source',
+            'channel' => 'Channel',
+            'channel_url' => 'Channel URL',
+            'period' => 'Period',
+            'keyword' => 'Keyword',
+            'date_from' => 'Date from',
+            'date_to' => 'Date to',
+            'is_channel' => 'Is channel',
+            'messages' => 'Messages',
+            'comments' => 'Comments',
+            'messages_with_media' => 'Messages with media',
+            'messages_with_gifts' => 'Messages with gifts',
+            'total_message_reactions' => 'Total message reactions',
+            'total_comment_reactions' => 'Total comment reactions',
+            'generated_at' => 'Generated at',
+        ],
+        'messages' => [
+            'headings' => [
+                'Message ID',
+                'Published At',
+                'Author ID',
+                'Views',
+                'Forwards',
+                'Replies',
+                'Reaction Total',
+                'Reaction Summary',
+                'Unique Reactors',
+                'Has Gift',
+                'Gift Types',
+                'Media Type',
+                'Text',
+                'Telegram URL',
+            ],
+        ],
+        'comments' => [
+            'headings' => [
+                'Post ID',
+                'Comment ID',
+                'Published At',
+                'Author ID',
+                'Reaction Total',
+                'Reaction Summary',
+                'Text',
+            ],
+        ],
+        'reactions' => [
+            'headings' => [
+                'Entity Type',
+                'Message ID',
+                'Comment ID',
+                'Reaction Key',
+                'Reaction Label',
+                'Count',
+                'Sender IDs Count',
+                'Sender IDs',
+            ],
+        ],
+    ],
+];
