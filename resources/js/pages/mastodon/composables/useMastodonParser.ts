@@ -1,5 +1,6 @@
 import { computed, onBeforeUnmount, onMounted, reactive, ref } from 'vue';
 import { apiRequest, resolveClientErrorMessage } from '@/lib/api';
+import { withDownloadLocale } from '@/lib/downloadLocale';
 
 type ParserStage =
     | 'idle'
@@ -236,7 +237,7 @@ export const useMastodonParser = (t: TranslateFn) => {
             return;
         }
 
-        window.location.href = downloadUrl.value;
+        window.location.href = withDownloadLocale(downloadUrl.value);
     };
 
     const downloadJson = () => {
@@ -244,7 +245,7 @@ export const useMastodonParser = (t: TranslateFn) => {
             return;
         }
 
-        window.location.href = downloadJsonUrl.value;
+        window.location.href = withDownloadLocale(downloadJsonUrl.value);
     };
 
     const handleBeforeUnload = () => {

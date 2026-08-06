@@ -63,6 +63,8 @@ class YouTubeParserController extends Controller
 
     public function downloadExcel(Request $request, string $runId): BinaryFileResponse
     {
+        $this->applyDownloadLocale($request);
+
         $payload = $this->parserApplicationService->getDownloadPayload($this->userId($request), $runId);
         $filename = $this->buildExportFilename(
             'youtube-parser',
@@ -75,6 +77,8 @@ class YouTubeParserController extends Controller
 
     public function downloadJson(Request $request, string $runId): StreamedResponse
     {
+        $this->applyDownloadLocale($request);
+
         $payload = $this->parserApplicationService->getDownloadPayload($this->userId($request), $runId);
         $filename = $this->buildExportFilename(
             'youtube-parser',

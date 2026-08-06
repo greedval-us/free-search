@@ -31,16 +31,16 @@ final class MastodonParserExportBuilder implements MastodonParserExportBuilderIn
         $resolvedAccount = is_array($payload['resolvedAccount'] ?? null) ? $payload['resolvedAccount'] : [];
 
         return new SheetDefinition(
-            title: 'Summary',
-            headings: ['Field', 'Value'],
+            title: (string) __('exports.mastodon.sheets.summary'),
+            headings: $this->translations('exports.mastodon.summary.headings'),
             rows: [
-                ['Source', 'Mastodon'],
-                ['Account query', (string) ($payload['account'] ?? '')],
-                ['Resolved account', (string) ($resolvedAccount['acct'] ?? '')],
-                ['Display name', (string) ($resolvedAccount['displayName'] ?? '')],
-                ['Statuses', (int) ($payload['statusesCount'] ?? 0)],
-                ['Comments', (int) ($payload['commentsCount'] ?? 0)],
-                ['Generated at', Carbon::now((string) config('app.timezone', 'UTC'))->toDateTimeString()],
+                [(string) __('exports.mastodon.summary.source'), 'Mastodon'],
+                [(string) __('exports.mastodon.summary.account_query'), (string) ($payload['account'] ?? '')],
+                [(string) __('exports.mastodon.summary.resolved_account'), (string) ($resolvedAccount['acct'] ?? '')],
+                [(string) __('exports.mastodon.summary.display_name'), (string) ($resolvedAccount['displayName'] ?? '')],
+                [(string) __('exports.mastodon.summary.statuses'), (int) ($payload['statusesCount'] ?? 0)],
+                [(string) __('exports.mastodon.summary.comments'), (int) ($payload['commentsCount'] ?? 0)],
+                [(string) __('exports.mastodon.summary.generated_at'), Carbon::now((string) config('app.timezone', 'UTC'))->toDateTimeString()],
             ],
         );
     }
@@ -76,21 +76,8 @@ final class MastodonParserExportBuilder implements MastodonParserExportBuilderIn
         }
 
         return new SheetDefinition(
-            title: 'Statuses',
-            headings: [
-                'Status ID',
-                'Created at',
-                'Post type',
-                'Account',
-                'Display name',
-                'Language',
-                'Visibility',
-                'Replies',
-                'Boosts',
-                'Favorites',
-                'URL',
-                'Content',
-            ],
+            title: (string) __('exports.mastodon.sheets.statuses'),
+            headings: $this->translations('exports.mastodon.statuses.headings'),
             rows: $rows,
             columnFormats: [
                 'B' => NumberFormat::FORMAT_DATE_DATETIME,
@@ -130,22 +117,8 @@ final class MastodonParserExportBuilder implements MastodonParserExportBuilderIn
         }
 
         return new SheetDefinition(
-            title: 'Comments',
-            headings: [
-                'Root status ID',
-                'Comment ID',
-                'Parent status ID',
-                'Created at',
-                'Post type',
-                'Account',
-                'Display name',
-                'Language',
-                'Replies',
-                'Boosts',
-                'Favorites',
-                'URL',
-                'Content',
-            ],
+            title: (string) __('exports.mastodon.sheets.comments'),
+            headings: $this->translations('exports.mastodon.comments.headings'),
             rows: $rows,
             columnFormats: [
                 'D' => NumberFormat::FORMAT_DATE_DATETIME,
@@ -166,5 +139,15 @@ final class MastodonParserExportBuilder implements MastodonParserExportBuilderIn
         } catch (\Throwable) {
             return null;
         }
+    }
+
+    /**
+     * @return array<int, string>
+     */
+    private function translations(string $key): array
+    {
+        $value = __($key);
+
+        return is_array($value) ? array_values($value) : [];
     }
 }

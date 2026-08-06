@@ -34,14 +34,14 @@ class YouTubeParserExportBuilder implements YouTubeParserExportBuilderInterface
     private function buildSummarySheet(array $payload): SheetDefinition
     {
         return new SheetDefinition(
-            title: 'Summary',
-            headings: ['Field', 'Value'],
+            title: (string) __('exports.youtube.sheets.summary'),
+            headings: $this->translations('exports.youtube.summary.headings'),
             rows: [
-                ['Source', 'YouTube'],
-                ['Video ID', (string) ($payload['videoId'] ?? '')],
-                ['Comments', (int) ($payload['commentsCount'] ?? 0)],
-                ['Replies', (int) ($payload['repliesCount'] ?? 0)],
-                ['Generated at', Carbon::now($this->config->timezone())->toDateTimeString()],
+                [(string) __('exports.youtube.summary.source'), 'YouTube'],
+                [(string) __('exports.youtube.summary.video_id'), (string) ($payload['videoId'] ?? '')],
+                [(string) __('exports.youtube.summary.comments'), (int) ($payload['commentsCount'] ?? 0)],
+                [(string) __('exports.youtube.summary.replies'), (int) ($payload['repliesCount'] ?? 0)],
+                [(string) __('exports.youtube.summary.generated_at'), Carbon::now($this->config->timezone())->toDateTimeString()],
             ],
         );
     }
@@ -73,18 +73,8 @@ class YouTubeParserExportBuilder implements YouTubeParserExportBuilderInterface
         }
 
         return new SheetDefinition(
-            title: 'Comments',
-            headings: [
-                'Comment ID',
-                'Thread ID',
-                'Video ID',
-                'Published at',
-                'Author',
-                'Author channel URL',
-                'Text',
-                'Likes',
-                'Reply count',
-            ],
+            title: (string) __('exports.youtube.sheets.comments'),
+            headings: $this->translations('exports.youtube.comments.headings'),
             rows: $rows,
             columnFormats: [
                 'D' => NumberFormat::FORMAT_DATE_DATETIME,
@@ -118,17 +108,8 @@ class YouTubeParserExportBuilder implements YouTubeParserExportBuilderInterface
         }
 
         return new SheetDefinition(
-            title: 'Replies',
-            headings: [
-                'Reply ID',
-                'Parent comment ID',
-                'Thread ID',
-                'Published at',
-                'Author',
-                'Author channel URL',
-                'Text',
-                'Likes',
-            ],
+            title: (string) __('exports.youtube.sheets.replies'),
+            headings: $this->translations('exports.youtube.replies.headings'),
             rows: $rows,
             columnFormats: [
                 'D' => NumberFormat::FORMAT_DATE_DATETIME,
@@ -149,5 +130,15 @@ class YouTubeParserExportBuilder implements YouTubeParserExportBuilderInterface
         } catch (\Throwable) {
             return null;
         }
+    }
+
+    /**
+     * @return array<int, string>
+     */
+    private function translations(string $key): array
+    {
+        $value = __($key);
+
+        return is_array($value) ? array_values($value) : [];
     }
 }

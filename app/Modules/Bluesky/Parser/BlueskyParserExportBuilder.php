@@ -21,8 +21,8 @@ final class BlueskyParserExportBuilder implements BlueskyParserExportBuilderInte
             $this->buildPostsSheet($payload),
             $this->buildAuthoredRepliesSheet($payload),
             $this->buildReceivedRepliesSheet($payload),
-            $this->buildActorsSheet($payload, 'followersIndex', 'Followers'),
-            $this->buildActorsSheet($payload, 'followsIndex', 'Follows'),
+            $this->buildActorsSheet($payload, 'followersIndex', (string) __('exports.bluesky.sheets.followers')),
+            $this->buildActorsSheet($payload, 'followsIndex', (string) __('exports.bluesky.sheets.follows')),
             $this->buildReactionsSheet($payload),
         ];
     }
@@ -35,21 +35,21 @@ final class BlueskyParserExportBuilder implements BlueskyParserExportBuilderInte
         $resolvedActor = is_array($payload['resolvedActor'] ?? null) ? $payload['resolvedActor'] : [];
 
         return new SheetDefinition(
-            title: 'Summary',
-            headings: ['Field', 'Value'],
+            title: (string) __('exports.bluesky.sheets.summary'),
+            headings: $this->translations('exports.bluesky.summary.headings'),
             rows: [
-                ['Source', 'Bluesky'],
-                ['Actor query', (string) ($payload['actor'] ?? '')],
-                ['Resolved handle', (string) ($resolvedActor['handle'] ?? '')],
-                ['Resolved DID', (string) ($resolvedActor['did'] ?? '')],
-                ['Display name', (string) ($resolvedActor['displayName'] ?? '')],
-                ['Posts', (int) ($payload['postsCount'] ?? 0)],
-                ['Authored replies', (int) ($payload['authoredRepliesCount'] ?? 0)],
-                ['Received replies', (int) ($payload['receivedRepliesCount'] ?? 0)],
-                ['Followers', (int) ($payload['followersCount'] ?? 0)],
-                ['Follows', (int) ($payload['followsCount'] ?? 0)],
-                ['Reactions', (int) ($payload['reactionsCount'] ?? 0)],
-                ['Generated at', Carbon::now((string) config('app.timezone', 'UTC'))->toDateTimeString()],
+                [(string) __('exports.bluesky.summary.source'), 'Bluesky'],
+                [(string) __('exports.bluesky.summary.actor_query'), (string) ($payload['actor'] ?? '')],
+                [(string) __('exports.bluesky.summary.resolved_handle'), (string) ($resolvedActor['handle'] ?? '')],
+                [(string) __('exports.bluesky.summary.resolved_did'), (string) ($resolvedActor['did'] ?? '')],
+                [(string) __('exports.bluesky.summary.display_name'), (string) ($resolvedActor['displayName'] ?? '')],
+                [(string) __('exports.bluesky.summary.posts'), (int) ($payload['postsCount'] ?? 0)],
+                [(string) __('exports.bluesky.summary.authored_replies'), (int) ($payload['authoredRepliesCount'] ?? 0)],
+                [(string) __('exports.bluesky.summary.received_replies'), (int) ($payload['receivedRepliesCount'] ?? 0)],
+                [(string) __('exports.bluesky.summary.followers'), (int) ($payload['followersCount'] ?? 0)],
+                [(string) __('exports.bluesky.summary.follows'), (int) ($payload['followsCount'] ?? 0)],
+                [(string) __('exports.bluesky.summary.reactions'), (int) ($payload['reactionsCount'] ?? 0)],
+                [(string) __('exports.bluesky.summary.generated_at'), Carbon::now((string) config('app.timezone', 'UTC'))->toDateTimeString()],
             ],
         );
     }
@@ -60,7 +60,7 @@ final class BlueskyParserExportBuilder implements BlueskyParserExportBuilderInte
     private function buildPostsSheet(array $payload): SheetDefinition
     {
         return $this->buildPostSheet(
-            title: 'Posts',
+            title: (string) __('exports.bluesky.sheets.posts'),
             items: is_array($payload['postsIndex'] ?? null) ? $payload['postsIndex'] : [],
         );
     }
@@ -71,7 +71,7 @@ final class BlueskyParserExportBuilder implements BlueskyParserExportBuilderInte
     private function buildAuthoredRepliesSheet(array $payload): SheetDefinition
     {
         return $this->buildPostSheet(
-            title: 'Authored Replies',
+            title: (string) __('exports.bluesky.sheets.authored_replies'),
             items: is_array($payload['authoredRepliesIndex'] ?? null) ? $payload['authoredRepliesIndex'] : [],
         );
     }
@@ -107,20 +107,7 @@ final class BlueskyParserExportBuilder implements BlueskyParserExportBuilderInte
 
         return new SheetDefinition(
             title: $title,
-            headings: [
-                'URI',
-                'CID',
-                'Created at',
-                'Post type',
-                'Author handle',
-                'Author name',
-                'Replies',
-                'Reposts',
-                'Likes',
-                'Quotes',
-                'URL',
-                'Text',
-            ],
+            headings: $this->translations('exports.bluesky.posts.headings'),
             rows: $rows,
             columnFormats: [
                 'C' => NumberFormat::FORMAT_DATE_DATETIME,
@@ -159,21 +146,8 @@ final class BlueskyParserExportBuilder implements BlueskyParserExportBuilderInte
         }
 
         return new SheetDefinition(
-            title: 'Received Replies',
-            headings: [
-                'Root post URI',
-                'Reply URI',
-                'Parent URI',
-                'Created at',
-                'Author handle',
-                'Author name',
-                'Replies',
-                'Reposts',
-                'Likes',
-                'Quotes',
-                'URL',
-                'Text',
-            ],
+            title: (string) __('exports.bluesky.sheets.received_replies'),
+            headings: $this->translations('exports.bluesky.received_replies.headings'),
             rows: $rows,
             columnFormats: [
                 'D' => NumberFormat::FORMAT_DATE_DATETIME,
@@ -208,16 +182,7 @@ final class BlueskyParserExportBuilder implements BlueskyParserExportBuilderInte
 
         return new SheetDefinition(
             title: $title,
-            headings: [
-                'DID',
-                'Handle',
-                'Display name',
-                'URL',
-                'Followers',
-                'Follows',
-                'Posts',
-                'Description',
-            ],
+            headings: $this->translations('exports.bluesky.actors.headings'),
             rows: $rows,
         );
     }
@@ -249,17 +214,8 @@ final class BlueskyParserExportBuilder implements BlueskyParserExportBuilderInte
         }
 
         return new SheetDefinition(
-            title: 'Reactions',
-            headings: [
-                'Post URI',
-                'Post CID',
-                'Kind',
-                'Actor DID',
-                'Actor handle',
-                'Actor name',
-                'Created at',
-                'Indexed at',
-            ],
+            title: (string) __('exports.bluesky.sheets.reactions'),
+            headings: $this->translations('exports.bluesky.reactions.headings'),
             rows: $rows,
             columnFormats: [
                 'G' => NumberFormat::FORMAT_DATE_DATETIME,
@@ -281,5 +237,15 @@ final class BlueskyParserExportBuilder implements BlueskyParserExportBuilderInte
         } catch (\Throwable) {
             return null;
         }
+    }
+
+    /**
+     * @return array<int, string>
+     */
+    private function translations(string $key): array
+    {
+        $value = __($key);
+
+        return is_array($value) ? array_values($value) : [];
     }
 }
