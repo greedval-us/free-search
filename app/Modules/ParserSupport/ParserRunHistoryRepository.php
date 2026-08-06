@@ -1,20 +1,20 @@
 <?php
 
-namespace App\Modules\Telegram\Parser;
+namespace App\Modules\ParserSupport;
 
 use App\Models\ParserRun;
 use Illuminate\Support\Collection;
 
-final class TelegramParserHistoryRepository
+final class ParserRunHistoryRepository
 {
     /**
      * @return Collection<int, ParserRun>
      */
-    public function forUser(int $userId): Collection
+    public function forUser(int $userId, string $moduleKey): Collection
     {
         return ParserRun::query()
             ->where('user_id', $userId)
-            ->where('module', TelegramParserApplicationService::MODULE_KEY)
+            ->where('module', $moduleKey)
             ->where(function ($query): void {
                 $query
                     ->whereNull('expires_at')

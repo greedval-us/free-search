@@ -3,6 +3,7 @@
 namespace App\Modules\YouTube\Parser;
 
 use App\Models\ParserRun;
+use App\Modules\ParserSupport\ParserRunHistoryRepository;
 use App\Modules\ParserSupport\ParserRunStateMachine;
 use App\Modules\ParserSupport\ParserRunStatusPayloadBuilder;
 use App\Modules\YouTube\Actions\Request\VideoCommentsAction;
@@ -27,7 +28,7 @@ class YouTubeParserApplicationService implements YouTubeParserApplicationService
         private readonly YouTubeParserRunGuard $runGuard,
         private readonly ParserRunStateMachine $stateMachine,
         private readonly ParserRunStatusPayloadBuilder $statusPayloadBuilder,
-        private readonly YouTubeParserHistoryRepository $historyRepository,
+        private readonly ParserRunHistoryRepository $historyRepository,
         private readonly YouTubeParserHistoryPresenter $historyPresenter,
     ) {
     }
@@ -80,7 +81,7 @@ class YouTubeParserApplicationService implements YouTubeParserApplicationService
     public function history(int $userId): array
     {
         return $this->historyRepository
-            ->forUser($userId)
+            ->forUser($userId, self::MODULE_KEY)
             ->map(function (ParserRun $metadata) use ($userId): array {
                 $run = $this->runStore->get($userId, $metadata->run_id);
 

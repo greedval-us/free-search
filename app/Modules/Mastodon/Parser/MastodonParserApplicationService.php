@@ -6,6 +6,7 @@ use App\Models\ParserRun;
 use App\Modules\Mastodon\DTO\Request\MastodonParserStartDTO;
 use App\Modules\Mastodon\DTO\Result\MastodonParserRunStatusDTO;
 use App\Modules\Mastodon\Parser\Contracts\MastodonParserApplicationServiceInterface;
+use App\Modules\ParserSupport\ParserRunHistoryRepository;
 use App\Modules\ParserSupport\ParserRunStateMachine;
 use App\Modules\ParserSupport\ParserRunStatusPayloadBuilder;
 
@@ -23,7 +24,7 @@ final class MastodonParserApplicationService implements MastodonParserApplicatio
         private readonly MastodonParserRunGuard $runGuard,
         private readonly ParserRunStateMachine $stateMachine,
         private readonly ParserRunStatusPayloadBuilder $statusPayloadBuilder,
-        private readonly MastodonParserHistoryRepository $historyRepository,
+        private readonly ParserRunHistoryRepository $historyRepository,
         private readonly MastodonParserHistoryPresenter $historyPresenter,
     ) {
     }
@@ -71,7 +72,7 @@ final class MastodonParserApplicationService implements MastodonParserApplicatio
     public function history(int $userId): array
     {
         return $this->historyRepository
-            ->forUser($userId)
+            ->forUser($userId, self::MODULE_KEY)
             ->map(function (ParserRun $metadata) use ($userId): array {
                 $run = $this->runStore->get($userId, $metadata->run_id);
 

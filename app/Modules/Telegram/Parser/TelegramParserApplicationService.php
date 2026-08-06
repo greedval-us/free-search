@@ -3,6 +3,7 @@
 namespace App\Modules\Telegram\Parser;
 
 use App\Models\ParserRun;
+use App\Modules\ParserSupport\ParserRunHistoryRepository;
 use App\Modules\ParserSupport\ParserRunStateMachine;
 use App\Modules\ParserSupport\ParserRunStatusPayloadBuilder;
 use App\Modules\Telegram\DTO\Request\TelegramParserStartDTO;
@@ -23,7 +24,7 @@ class TelegramParserApplicationService implements TelegramParserApplicationServi
         private readonly TelegramParserRunGuard $runGuard,
         private readonly ParserRunStateMachine $stateMachine,
         private readonly ParserRunStatusPayloadBuilder $statusPayloadBuilder,
-        private readonly TelegramParserHistoryRepository $historyRepository,
+        private readonly ParserRunHistoryRepository $historyRepository,
         private readonly TelegramParserHistoryPresenter $historyPresenter,
     ) {
     }
@@ -71,7 +72,7 @@ class TelegramParserApplicationService implements TelegramParserApplicationServi
     public function history(int $userId): array
     {
         return $this->historyRepository
-            ->forUser($userId)
+            ->forUser($userId, self::MODULE_KEY)
             ->map(function (ParserRun $metadata) use ($userId): array {
                 $run = $this->runStore->get($userId, $metadata->run_id);
 

@@ -6,6 +6,7 @@ use App\Models\ParserRun;
 use App\Modules\Bluesky\DTO\Request\BlueskyParserStartDTO;
 use App\Modules\Bluesky\DTO\Result\BlueskyParserRunStatusDTO;
 use App\Modules\Bluesky\Parser\Contracts\BlueskyParserApplicationServiceInterface;
+use App\Modules\ParserSupport\ParserRunHistoryRepository;
 use App\Modules\ParserSupport\ParserRunStateMachine;
 use App\Modules\ParserSupport\ParserRunStatusPayloadBuilder;
 
@@ -23,7 +24,7 @@ final class BlueskyParserApplicationService implements BlueskyParserApplicationS
         private readonly BlueskyParserRunGuard $runGuard,
         private readonly ParserRunStateMachine $stateMachine,
         private readonly ParserRunStatusPayloadBuilder $statusPayloadBuilder,
-        private readonly BlueskyParserHistoryRepository $historyRepository,
+        private readonly ParserRunHistoryRepository $historyRepository,
         private readonly BlueskyParserHistoryPresenter $historyPresenter,
     ) {
     }
@@ -71,7 +72,7 @@ final class BlueskyParserApplicationService implements BlueskyParserApplicationS
     public function history(int $userId): array
     {
         return $this->historyRepository
-            ->forUser($userId)
+            ->forUser($userId, self::MODULE_KEY)
             ->map(function (ParserRun $metadata) use ($userId): array {
                 $run = $this->runStore->get($userId, $metadata->run_id);
 

@@ -3,10 +3,13 @@
 namespace App\Modules\YouTube\Parser;
 
 use App\Models\ParserRun;
+use App\Modules\ParserSupport\Concerns\InteractsWithParserHistoryPayload;
 use App\Modules\ParserSupport\ParserRunHistoryItemBuilder;
 
 final class YouTubeParserHistoryPresenter
 {
+    use InteractsWithParserHistoryPayload;
+
     public function __construct(
         private readonly ParserRunHistoryItemBuilder $historyItemBuilder,
     ) {
@@ -24,9 +27,9 @@ final class YouTubeParserHistoryPresenter
             excelRoute: YouTubeParserApplicationService::DOWNLOAD_EXCEL_ROUTE,
             jsonRoute: YouTubeParserApplicationService::DOWNLOAD_JSON_ROUTE,
             extra: function (?array $payload): array {
-                $context = is_array($payload['context'] ?? null) ? $payload['context'] : [];
-                $stats = is_array($payload['stats'] ?? null) ? $payload['stats'] : [];
-                $result = is_array($payload['result'] ?? null) ? $payload['result'] : [];
+                $context = $this->context($payload);
+                $stats = $this->stats($payload);
+                $result = $this->result($payload);
 
                 return [
                     'videoId' => $this->stringValue(
@@ -37,10 +40,5 @@ final class YouTubeParserHistoryPresenter
                 ];
             }
         );
-    }
-
-    private function stringValue(mixed $value): ?string
-    {
-        return is_string($value) && $value !== '' ? $value : null;
     }
 }
