@@ -2,6 +2,8 @@
 
 namespace App\Modules\ParserSupport;
 
+use App\Models\ParserRun;
+
 class ParserRunGuard
 {
     /**
@@ -21,7 +23,7 @@ class ParserRunGuard
      */
     public function requireDownloadablePayload(array $run): array
     {
-        abort_unless(in_array(($run['status'] ?? null), ['completed', 'stopped'], true), 409);
+        abort_unless(ParserRun::isDownloadableStatus($run['status'] ?? null), 409);
 
         $payload = is_array($run['result'] ?? null) ? $run['result'] : null;
         abort_unless($payload !== null, 404);
@@ -29,4 +31,3 @@ class ParserRunGuard
         return $payload;
     }
 }
-
