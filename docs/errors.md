@@ -1,75 +1,99 @@
 # Error Handling Guide
 
-Этот документ фиксирует, как использовать ошибки и переводы в проекте, чтобы:
+Этот документ описывает, как в проекте оформлять ошибки, пользовательские сообщения и переводы так, чтобы:
 
-- не показывать пользователю технические детали;
-- не хардкодить публичные сообщения в PHP и сервисах;
-- держать единый стандарт для API, валидации, доступа и доменной логики.
+- не утекали технические детали наружу;
+- backend и frontend пользовались предсказуемыми ключами и соглашениями;
+- новые модули не приносили хаотичный набор текстов и exception-практик.
 
 ## Базовое правило
 
-- `lang/*` — все сообщения, которые формируются на сервере:
-  API-ошибки, validation, access, domain messages, exception messages.
-- `resources/js/locales/*` — все сообщения, которые живут только во Vue:
-  кнопки, подписи, пустые состояния, клиентские fallback-тексты.
-- В PHP нельзя писать `__('Some English text...')` для новых пользовательских сообщений.
-  Нужно использовать ключи вида `errors.api.*`, `errors.validation.*`, `errors.access.*`, `errors.domain.*`.
+Пользовательские сообщения не хардкодятся в service/action/controller-коде.
 
-## Структура ключей
+Используем:
 
-Файл: `lang/en/errors.php`, `lang/ru/errors.php`
+- `lang/*` для серверных сообщений;
+- `resources/js/locales/*` для frontend-only текста;
+- именованные исключения и translation keys вместо случайных строк.
 
-Используем 4 основных секции:
+Нежелательно писать что-то вроде:
 
-- `errors.api.*`
-  Публичные сообщения для JSON/API и контролируемых серверных ошибок.
-- `errors.validation.*`
-  Сообщения для `FormRequest`, `ValidationException` и полевой HTTP-валидации.
-- `errors.access.*`
-  Сообщения для ограничений доступа, тарифов и квот.
-- `errors.domain.*`
-  Сообщения для доменных инвариантов, DTO и внутренних бизнес-проверок, если их текст может дойти до пользователя или тестов.
+```php
+__('Some English sentence...')
+```
 
-## Когда использовать `errors.api.*`
+Для новых сообщений используем ключи.
 
-Использовать, если сообщение:
+## Где хранить тексты
 
-- возвращается в JSON-ответе;
-- пробрасывается через `PublicException`;
-- используется в контроллере, middleware или responder'е как публичная ошибка;
-- описывает недоступность интеграции, внешнего API, not found, invalid target и т.д.
+### Backend
+
+Файлы:
+
+- `lang/en/errors.php`
+- `lang/ru/errors.php`
+
+Здесь лежат:
+
+- API errors;
+- validation messages, если они серверные;
+- access/quota messages;
+- domain-level user-facing errors.
+
+### Frontend
+
+Файлы:
+
+- `resources/js/locales/en/*.json`
+- `resources/js/locales/ru/*.json`
+
+Здесь лежат:
+
+- кнопки, подписи, пустые состояния;
+- клиентские fallback-тексты;
+- UI-описания, не приходящие с сервера.
+
+## Основные namespace-группы ключей
+
+### `errors.api.*`
+
+Используем, если сообщение:
+
+- возвращается в JSON/API;
+- описывает проблему внешней интеграции;
+- используется публичным exception/responder-механизмом;
+- относится к not found, invalid target, unavailable service и similar transport-level errors.
 
 Примеры:
 
 - `errors.api.telegram.load_messages_failed`
+- `errors.api.telegram.not_configured`
 - `errors.api.site_intel.invalid_target`
 - `errors.api.youtube.request_failed`
-- `errors.api.shifr.unsupported_cipher_configuration`
 
-## Когда использовать `errors.validation.*`
+### `errors.validation.*`
 
-Использовать, если сообщение:
+Используем, если сообщение:
 
-- добавляется через `$validator->errors()->add(...)`;
 - относится к `FormRequest`;
-- привязано к конкретному полю формы;
-- используется в `ValidationException::withMessages(...)`.
+- добавляется в validator errors;
+- связано с конкретным полем ввода;
+- рождается через `ValidationException`.
 
 Примеры:
 
 - `errors.validation.date_from_before_or_equal_date_to`
 - `errors.validation.custom_period_requires_both_dates`
-- `errors.validation.custom_analytics_range_max_days`
 - `errors.validation.shifr_transform_only_for_rot`
 
-## Когда использовать `errors.access.*`
+### `errors.access.*`
 
-Использовать для:
+Используем для:
 
 - отказа в доступе;
-- тарифных ограничений;
-- исчерпанной квоты;
-- редиректов и JSON-ответов слоя feature access.
+- ограничений по тарифу;
+- исчерпания квоты;
+- сообщений из feature access слоя.
 
 Примеры:
 
@@ -77,14 +101,14 @@
 - `errors.access.feature_paid_only`
 - `errors.access.feature_daily_limit_reached`
 
-## Когда использовать `errors.domain.*`
+### `errors.domain.*`
 
-Использовать, если:
+Используем, если сообщение:
 
-- сообщение относится к инварианту DTO или value-like объекта;
-- ошибка рождается в доменном слое;
-- это не transport-level validation, а бизнес- или domain-level проверка;
-- текст должен быть предсказуемым и единым в тестах и обработке.
+- относится к domain invariant;
+- связано с DTO/value object/business rule;
+- важно для единообразия UX и тестов;
+- не является transport-level validation.
 
 Примеры:
 
@@ -94,74 +118,89 @@
 
 ## Исключения
 
-### `app/Exceptions/Public/*`
+### Public exceptions
 
-Используются для безопасных публичных ошибок API.
+Папка:
 
-Примеры:
+- `app/Exceptions/Public/*`
 
-- `IntegrationMisconfiguredException`
-- `ExternalServiceUnavailableException`
-- `ExternalServiceRequestException`
-- `PublicResourceNotFoundException`
-- `PublicValidationException`
+Назначение:
 
-Такие исключения должны ссылаться на ключ перевода, а не держать текст в коде.
+- безопасные публичные ошибки, пригодные для API и контролируемого вывода;
+- связь между exception-типом и translation key.
 
-### `app/Exceptions/Domain/*`
+Типичные сценарии:
 
-Используются для доменных ошибок и инвариантов.
+- integration misconfigured;
+- external service unavailable;
+- external request failed;
+- public resource not found;
+- public validation error.
 
-Сейчас основной тип:
+Правило:
 
-- `DomainValidationException`
+- exception должен ссылаться на translation key;
+- нельзя пробрасывать наружу случайный `$exception->getMessage()` из внешней библиотеки.
 
-Если текст доменной ошибки важен для UX, тестов или единообразия, он тоже должен приходить из `errors.domain.*`.
+### Domain exceptions
 
-### Named domain exceptions
+Папка:
 
-Если у сценария устойчивый набор причин, лучше отдельный тип исключения.
+- `app/Exceptions/Domain/*`
 
-Пример:
+Назначение:
 
-- `SubscriptionActivationException`
+- инварианты домена;
+- внутренние прикладные запреты;
+- предсказуемое поведение при invalid domain state.
 
-С подходом:
-
-- `invalid()`
-- `used()`
-- `expired()`
+Если текст ошибки важен для UX, тестов или API consistency, он тоже должен идти через `errors.domain.*`.
 
 ## Как выбирать тип ошибки
 
-1. Ошибка уходит пользователю через JSON/API?
-Используй `errors.api.*` и при необходимости `PublicException`.
+1. Сообщение уйдет пользователю через JSON/API?
+   Используй `errors.api.*` и при необходимости public exception.
 
-2. Ошибка относится к полю формы?
-Используй `errors.validation.*` через `FormRequest` или `ValidationException`.
+2. Сообщение относится к полю формы?
+   Используй `errors.validation.*`.
 
-3. Ошибка относится к тарифам, квотам, разрешениям?
-Используй `errors.access.*`.
+3. Ошибка про тариф, квоту или разрешение?
+   Используй `errors.access.*`.
 
-4. Ошибка относится к DTO, domain invariant или внутренней бизнес-логике?
-Используй `errors.domain.*` и `DomainValidationException` либо отдельное доменное исключение.
+4. Ошибка про DTO, invariant или business rule?
+   Используй `errors.domain.*`.
 
-## Анти-паттерны
+## Что считается хорошей практикой
 
-Нежелательно:
+- Один source of truth для текста ошибки.
+- Translation key стабилен и пригоден для тестов.
+- Внешняя библиотека логируется детально, а пользователю показывается безопасный текст.
+- Domain/service слой не смешивает технический лог и пользовательский message.
+- Frontend не дублирует backend-тексты, если сообщение уже приходит с сервера.
 
-- `__('Some English sentence...')` вместо ключа перевода;
-- хардкодить пользовательский текст прямо в service/action/controller;
-- отдавать `$exception->getMessage()` пользователю напрямую;
-- использовать `RuntimeException` или `InvalidArgumentException` как универсальный способ для новых пользовательских ошибок;
-- смешивать frontend-переводы и backend-переводы в одном месте.
+## Что считается плохой практикой
 
-## Практический стандарт
+- хардкод пользовательской строки внутри action/service/controller;
+- возврат raw exception message из внешнего API;
+- смесь frontend и backend переводов в одном месте;
+- повторение одной и той же ошибки разными фразами в разных модулях;
+- generic `RuntimeException` для пользовательского сценария, где нужен именованный тип или хотя бы translation key.
 
-Для новых изменений проверяй:
+## Рекомендации для новых модулей
 
-1. Это backend message или frontend-only message?
-2. Если backend — есть ли правильный ключ в `lang/en/errors.php` и `lang/ru/errors.php`?
-3. Если frontend-only — лежит ли текст в `resources/js/locales/*`?
-4. Не утечёт ли техническая строка пользователю?
-5. Есть ли тест на ошибочный сценарий, если поведение критично?
+При добавлении нового модуля:
+
+1. Сразу договорись о namespace ошибок:
+   например, `errors.api.my_module.*`, `errors.domain.my_module.*`.
+2. Определи, какие ошибки transport-level, а какие domain-level.
+3. Добавь ключи как минимум в `en` и `ru`.
+4. Покрой критичные ошибочные ветки тестами.
+
+## Чек-лист перед merge
+
+1. Текст ошибки хранится в правильном месте?
+2. Есть translation key, а не случайная строка?
+3. Пользователю не показывается техническая внутрянка?
+4. Ошибка имеет нужный уровень: `api`, `validation`, `access` или `domain`?
+5. Ключ добавлен в обе локали?
+6. Критичный error path покрыт тестом?
