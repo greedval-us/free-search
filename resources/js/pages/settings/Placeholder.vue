@@ -11,6 +11,7 @@ const props = defineProps<{
         plan: '' | 'free' | 'plus' | 'pro';
         back: string;
     };
+    checkoutEnabled?: boolean;
 }>();
 
 defineOptions({

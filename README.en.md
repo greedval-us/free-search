@@ -47,7 +47,7 @@ The current platform includes:
 
 ## Architecture Principles
 
-- The HTTP layer stays thin: request → validation/normalization → application service → response.
+- The HTTP layer stays thin: request -> validation/normalization -> application service -> response.
 - Business rules live outside controllers in modular services and narrow collaborators.
 - External integrations are hidden behind contracts.
 - Runtime code does not call `env()` directly; configuration comes from `config/*`.
@@ -216,6 +216,15 @@ composer run setup
 - `OSINT_NEWSAPI_KEY`
 - `RESEND_API_KEY`
 
+### Billing and checkout
+
+- `BILLING_CHECKOUT_ENABLED`
+
+Current behavior:
+
+- when `BILLING_CHECKOUT_ENABLED=false`, direct checkout UI is hidden and subscription access can only be activated with a one-time token;
+- when `BILLING_CHECKOUT_ENABLED=true`, checkout and upgrade UI becomes available again without code changes.
+
 ### OSINT and Site Intel
 
 Configuration is split across `config/osint/*.php` and related config files:
@@ -236,6 +245,7 @@ Useful `.env.example` groups include:
 - `OSINT_SITE_INTEL_*`
 - `OSINT_NEWSAPI_*`
 - `PARSER_RUN_*`
+- `BILLING_CHECKOUT_ENABLED`
 
 ### MadelineProto
 
@@ -254,6 +264,12 @@ Details: [docs/telegram-sessions.md](docs/telegram-sessions.md)
 - registration, password reset, email verification
 - 2FA
 - profile, security, notifications, and billing settings
+
+Billing notes:
+
+- subscription activation by token remains available on the billing page;
+- direct purchase and upgrade UI is feature-flagged by `BILLING_CHECKOUT_ENABLED`;
+- the default value in `.env.example` is `false`.
 
 ### Feature access
 
@@ -331,6 +347,7 @@ php artisan test
 
 1. Prepare production `.env`.
 2. Make sure `APP_URL`, `SESSION_SECURE_COOKIE`, `MAIL_*`, `QUEUE_CONNECTION`, external API keys, and `MOONSHINE_*` are configured.
+   Also verify the intended billing mode through `BILLING_CHECKOUT_ENABLED`.
 3. Run migrations:
 
 ```bash
@@ -363,7 +380,8 @@ php artisan schedule:run
 - 2FA flow;
 - `MoonShine` access;
 - parser/export flows;
-- queue workers and cleanup jobs.
+- queue workers and cleanup jobs;
+- the intended billing mode: token-only or checkout-enabled.
 
 ## Further Reading
 

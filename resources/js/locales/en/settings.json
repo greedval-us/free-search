@@ -1,219 +1,221 @@
-{
-    "title": "Settings",
-    "description": "Manage your profile and account settings",
-    "profile": "Profile",
-    "security": "Security",
-    "notifications": "Notifications",
-    "appearance": "Appearance",
-    "billing": "Plan & billing",
-    "profilePage": {
-        "title": "Profile settings",
-        "heading": "Profile information",
-        "headingDescription": "Update your name",
-        "name": "Name",
-        "email": "Email address",
-        "namePlaceholder": "Full name",
-        "emailPlaceholder": "Email address",
-        "emailUnverified": "Your email address is unverified.",
-        "resendVerification": "Click here to resend the verification email.",
-        "verificationSent": "A new verification link has been sent to your email address.",
-        "save": "Save"
-    },
-    "securityPage": {
-        "title": "Security settings",
-        "updatePassword": "Update password",
-        "updatePasswordDescription": "Ensure your account is using a long, random password to stay secure",
-        "currentPassword": "Current password",
-        "newPassword": "New password",
-        "confirmPassword": "Confirm password",
-        "savePassword": "Save password",
-        "twoFactorTitle": "Two-factor authentication",
-        "twoFactorDescription": "Manage your two-factor authentication settings",
-        "twoFactorEnableHint": "When you enable two-factor authentication, you will be prompted for a secure pin during login. This pin can be retrieved from a TOTP-supported application on your phone.",
-        "twoFactorContinueSetup": "Continue setup",
-        "twoFactorEnable": "Enable 2FA",
-        "twoFactorEnabledHint": "You will be prompted for a secure, random pin during login, which you can retrieve from the TOTP-supported application on your phone.",
-        "twoFactorDisable": "Disable 2FA",
-        "twoFactorSetup": {
-            "enabledTitle": "Two-factor authentication enabled",
-            "enabledDescription": "Your account is protected with two-factor authentication.",
-            "verifyTitle": "Verify authentication code",
-            "verifyDescription": "Enter the 6-digit code from your authenticator app to finish setup.",
-            "enableTitle": "Enable two-factor authentication",
-            "enableDescription": "Scan the QR code with your authenticator app, then continue.",
-            "close": "Close",
-            "continue": "Continue",
-            "orManual": "or, enter the code manually",
-            "back": "Back",
-            "confirm": "Confirm"
-        },
-        "twoFactorRecovery": {
-            "title": "2FA recovery codes",
-            "description": "Recovery codes let you regain access if you lose your 2FA device. Store them in a secure password manager.",
-            "hide": "Hide recovery codes",
-            "view": "View recovery codes",
-            "regenerate": "Regenerate codes",
-            "footerPrefix": "Each recovery code can be used once to access your account and will be removed after use. If you need more, click ",
-            "footerSuffix": " above."
-        },
-        "twoFactorErrors": {
-            "fetchQrCode": "Failed to fetch QR code.",
-            "fetchSetupKey": "Failed to fetch a setup key.",
-            "fetchRecoveryCodes": "Failed to fetch recovery codes."
-        }
-    },
-    "appearancePage": {
-        "title": "Appearance settings",
-        "heading": "Appearance settings",
-        "headingDescription": "Update your account's appearance settings"
-    },
-    "notificationsPage": {
-        "title": "Notifications",
-        "heading": "Notifications",
-        "description": "Messages, updates, and system alerts for the last 30 days.",
-        "badge": "INBOX",
-        "heroTitle": "Your notification history for the last month",
-        "heroText": "This section keeps recent service messages, release notes, and personal alerts so you can quickly review what happened recently.",
-        "period": "Messages",
-        "since": "Since",
-        "emptyTitle": "No notifications for the last 30 days",
-        "emptyDescription": "When the service sends you updates or personal alerts, they will appear here.",
-        "openLink": "Open"
-    },
-    "billingPage": {
-        "title": "Plan & billing",
-        "heading": "Plan & billing",
-        "description": "Compare plans, review quotas, and pick the option that matches your workload.",
-        "currentPlan": "Current plan",
-        "validUntil": "Valid until",
-        "noExpiry": "No active paid subscription",
-        "active": "Active",
-        "analytics": "Analytics requests per day",
-        "parser": "Parser requests per day",
-        "backDashboard": "Back to dashboard",
-        "hero": {
-            "badge": "PLANS",
-            "title": "Ready-made plans for different levels of usage",
-            "text": "The page already shows the current plan, main quotas, and upgrade paths. Payment is not connected yet, so pay buttons lead to a reusable placeholder screen."
-        },
-        "summary": {
-            "currentPlan": "Account plan",
-            "renewal": "Period end",
-            "analytics": "Remaining shared analytics quota"
-        },
-        "popular": "Popular choice",
-        "includes": "What is included",
-        "currentButton": "Current plan",
-        "freeButton": "Base access",
-        "payButton": "Pay now",
-        "compareTitle": "Quota comparison",
-        "compareDescription": "Compare the key daily limits side by side without reading long conditions.",
-        "moduleLimitsTitle": "Module limits",
-        "moduleLimitsDescription": "Values come from the current plan configuration and can change together with product settings.",
-        "dailyLimit": "per day",
-        "compare": {
-            "metric": "Metric",
-            "analytics": "Shared analytics limit per day",
-            "parser": "Shared parser limit per day",
-            "seoAudit": "SEO audit / Site Intel per day"
-        },
-        "supportTitle": "Need broader access than your current plan?",
-        "supportText": "Choose the plan that fits you best and continue. Payment is temporarily unavailable, but it will be available soon.",
-        "footer": {
-            "upgradePlus": "Upgrade to Plus",
-            "upgradePro": "Upgrade to Pro",
-            "customAccess": "Custom terms"
-        },
-        "token": {
-            "title": "Have an activation token?",
-            "description": "Enter a one-time token to activate a subscription on your account right away.",
-            "label": "Activation token",
-            "placeholder": "For example: ABCD-EFGH-JKLM-NPQR",
-            "button": "Activate",
-            "success": "Subscription activated successfully."
-        },
-        "reason": {
-            "planTitle": "This feature is locked by plan",
-            "planText": "Your current plan does not include this capability. Choose Plus or Pro to unlock broader access.",
-            "planTextWithFeature": "Your current plan does not include this capability: :feature. Choose Plus or Pro to unlock broader access.",
-            "quotaTitle": "Quota limit reached",
-            "quotaText": "You have reached the limit of your current plan. A higher plan gives you more daily quota.",
-            "quotaTextWithFeature": "You have reached the quota for: :feature. A higher plan gives you more daily quota."
-        },
-        "plans": {
-            "free": {
-                "name": "Free",
-                "price": "$0",
-                "tagline": "Starter",
-                "description": "Best for exploring the interface and basic platform navigation.",
-                "highlights": {
-                    "first": "Suitable for demos and onboarding.",
-                    "second": "No practical quota for paid OSINT workflows.",
-                    "third": "A safe entry point for team familiarization."
-                }
-            },
-            "plus": {
-                "name": "Plus",
-                "price": "$12 / mo",
-                "tagline": "Working pace",
-                "description": "Designed for individual recurring work with moderate daily load.",
-                "highlights": {
-                    "first": "Daily quotas for analytics and parser actions.",
-                    "second": "A good fit for analysts running several cases in parallel.",
-                    "third": "Balanced plan for day-to-day OSINT work."
-                }
-            },
-            "pro": {
-                "name": "Pro",
-                "price": "$49 / mo",
-                "tagline": "Team capacity",
-                "description": "For intensive usage, higher request volume, and steady investigative workloads.",
-                "highlights": {
-                    "first": "Maximum daily quotas for deeper operational work.",
-                    "second": "A strong choice for teams that need quota headroom.",
-                    "third": "Best suited for continuous analytical usage."
-                }
-            }
-        }
-    },
-    "placeholderPage": {
-        "title": "Temporarily unavailable",
-        "heading": "Coming soon",
-        "description": "This section is temporarily unavailable. We are preparing it for launch.",
-        "back": "Go back",
-        "genericPlan": "selected plan",
-        "generic": {
-            "badge": "SOON",
-            "title": "This section will be available soon",
-            "description": "This feature is temporarily unavailable, but we are already working on it.",
-            "bullets": {
-                "first": "For now, you can go back and continue using the service.",
-                "second": "As soon as the section is ready, it will appear here automatically.",
-                "third": "Thank you for your patience."
-            },
-            "note": "This section will appear in one of the upcoming updates."
-        },
-        "checkout": {
-            "badge": "PAYMENT SOON",
-            "title": "Payment for the “:plan” plan is coming soon",
-            "description": "Online payment is temporarily unavailable, but we are already preparing it.",
-            "bullets": {
-                "first": "Your selected plan is saved, and you will be able to complete it a little later.",
-                "second": "For now, you can go back and compare the available plans.",
-                "third": "We will add payment in one of the next updates."
-            },
-            "note": "Thank you for your interest. Payment will be available very soon."
-        }
-    },
-    "deleteAccount": {
-        "title": "Delete account",
-        "description": "Delete your account and all of its resources",
-        "warning": "Warning",
-        "warningDescription": "Please proceed with caution, this cannot be undone.",
-        "button": "Delete account",
-        "confirmTitle": "Are you sure you want to delete your account?",
-        "confirmDescription": "Once your account is deleted, all of its resources and data will also be permanently deleted. Please enter your password to confirm you would like to permanently delete your account.",
-        "password": "Password",
-        "confirmButton": "Delete account"
-    }
+﻿{
+    "title":  "Settings",
+    "description":  "Manage your profile and account settings",
+    "profile":  "Profile",
+    "security":  "Security",
+    "notifications":  "Notifications",
+    "appearance":  "Appearance",
+    "billing":  "Plan \u0026 billing",
+    "profilePage":  {
+                        "title":  "Profile settings",
+                        "heading":  "Profile information",
+                        "headingDescription":  "Update your name",
+                        "name":  "Name",
+                        "email":  "Email address",
+                        "namePlaceholder":  "Full name",
+                        "emailPlaceholder":  "Email address",
+                        "emailUnverified":  "Your email address is unverified.",
+                        "resendVerification":  "Click here to resend the verification email.",
+                        "verificationSent":  "A new verification link has been sent to your email address.",
+                        "save":  "Save"
+                    },
+    "securityPage":  {
+                         "title":  "Security settings",
+                         "updatePassword":  "Update password",
+                         "updatePasswordDescription":  "Ensure your account is using a long, random password to stay secure",
+                         "currentPassword":  "Current password",
+                         "newPassword":  "New password",
+                         "confirmPassword":  "Confirm password",
+                         "savePassword":  "Save password",
+                         "twoFactorTitle":  "Two-factor authentication",
+                         "twoFactorDescription":  "Manage your two-factor authentication settings",
+                         "twoFactorEnableHint":  "When you enable two-factor authentication, you will be prompted for a secure pin during login. This pin can be retrieved from a TOTP-supported application on your phone.",
+                         "twoFactorContinueSetup":  "Continue setup",
+                         "twoFactorEnable":  "Enable 2FA",
+                         "twoFactorEnabledHint":  "You will be prompted for a secure, random pin during login, which you can retrieve from the TOTP-supported application on your phone.",
+                         "twoFactorDisable":  "Disable 2FA",
+                         "twoFactorSetup":  {
+                                                "enabledTitle":  "Two-factor authentication enabled",
+                                                "enabledDescription":  "Your account is protected with two-factor authentication.",
+                                                "verifyTitle":  "Verify authentication code",
+                                                "verifyDescription":  "Enter the 6-digit code from your authenticator app to finish setup.",
+                                                "enableTitle":  "Enable two-factor authentication",
+                                                "enableDescription":  "Scan the QR code with your authenticator app, then continue.",
+                                                "close":  "Close",
+                                                "continue":  "Continue",
+                                                "orManual":  "or, enter the code manually",
+                                                "back":  "Back",
+                                                "confirm":  "Confirm"
+                                            },
+                         "twoFactorRecovery":  {
+                                                   "title":  "2FA recovery codes",
+                                                   "description":  "Recovery codes let you regain access if you lose your 2FA device. Store them in a secure password manager.",
+                                                   "hide":  "Hide recovery codes",
+                                                   "view":  "View recovery codes",
+                                                   "regenerate":  "Regenerate codes",
+                                                   "footerPrefix":  "Each recovery code can be used once to access your account and will be removed after use. If you need more, click ",
+                                                   "footerSuffix":  " above."
+                                               },
+                         "twoFactorErrors":  {
+                                                 "fetchQrCode":  "Failed to fetch QR code.",
+                                                 "fetchSetupKey":  "Failed to fetch a setup key.",
+                                                 "fetchRecoveryCodes":  "Failed to fetch recovery codes."
+                                             }
+                     },
+    "appearancePage":  {
+                           "title":  "Appearance settings",
+                           "heading":  "Appearance settings",
+                           "headingDescription":  "Update your account\u0027s appearance settings"
+                       },
+    "notificationsPage":  {
+                              "title":  "Notifications",
+                              "heading":  "Notifications",
+                              "description":  "Messages, updates, and system alerts for the last 30 days.",
+                              "badge":  "INBOX",
+                              "heroTitle":  "Your notification history for the last month",
+                              "heroText":  "This section keeps recent service messages, release notes, and personal alerts so you can quickly review what happened recently.",
+                              "period":  "Messages",
+                              "since":  "Since",
+                              "emptyTitle":  "No notifications for the last 30 days",
+                              "emptyDescription":  "When the service sends you updates or personal alerts, they will appear here.",
+                              "openLink":  "Open"
+                          },
+    "billingPage":  {
+                        "title":  "Plan \u0026 billing",
+                        "heading":  "Plan \u0026 billing",
+                        "description":  "Compare plans, review quotas, and pick the option that matches your workload.",
+                        "currentPlan":  "Current plan",
+                        "validUntil":  "Valid until",
+                        "noExpiry":  "No active paid subscription",
+                        "active":  "Active",
+                        "analytics":  "Analytics requests per day",
+                        "parser":  "Parser requests per day",
+                        "backDashboard":  "Back to dashboard",
+                        "hero":  {
+                                     "badge":  "PLANS",
+                                     "title":  "Ready-made plans for different levels of usage",
+                                     "text":  "The page already shows the current plan, main quotas, and upgrade paths. Payment is not connected yet, so pay buttons lead to a reusable placeholder screen.",
+                                     "textDisabled":  "Plan comparison and direct checkout are temporarily disabled. Access can currently be activated only with a one-time token."
+                                 },
+                        "summary":  {
+                                        "currentPlan":  "Account plan",
+                                        "renewal":  "Period end",
+                                        "analytics":  "Remaining shared analytics quota"
+                                    },
+                        "popular":  "Popular choice",
+                        "includes":  "What is included",
+                        "currentButton":  "Current plan",
+                        "freeButton":  "Base access",
+                        "payButton":  "Pay now",
+                        "compareTitle":  "Quota comparison",
+                        "compareDescription":  "Compare the key daily limits side by side without reading long conditions.",
+                        "moduleLimitsTitle":  "Module limits",
+                        "moduleLimitsDescription":  "Values come from the current plan configuration and can change together with product settings.",
+                        "dailyLimit":  "per day",
+                        "compare":  {
+                                        "metric":  "Metric",
+                                        "analytics":  "Shared analytics limit per day",
+                                        "parser":  "Shared parser limit per day",
+                                        "seoAudit":  "SEO audit / Site Intel per day"
+                                    },
+                        "supportTitle":  "Need broader access than your current plan?",
+                        "supportText":  "Choose the plan that fits you best and continue. Payment is temporarily unavailable, but it will be available soon.",
+                        "footer":  {
+                                       "upgradePlus":  "Upgrade to Plus",
+                                       "upgradePro":  "Upgrade to Pro",
+                                       "customAccess":  "Custom terms"
+                                   },
+                        "token":  {
+                                      "title":  "Have an activation token?",
+                                      "description":  "Enter a one-time token to activate a subscription on your account right away.",
+                                      "label":  "Activation token",
+                                      "placeholder":  "For example: ABCD-EFGH-JKLM-NPQR",
+                                      "button":  "Activate",
+                                      "success":  "Subscription activated successfully."
+                                  },
+                        "reason":  {
+                                       "planTitle":  "This feature is locked by plan",
+                                       "planText":  "Your current plan does not include this capability. Choose Plus or Pro to unlock broader access.",
+                                       "planTextWithFeature":  "Your current plan does not include this capability: :feature. Choose Plus or Pro to unlock broader access.",
+                                       "quotaTitle":  "Quota limit reached",
+                                       "quotaText":  "You have reached the limit of your current plan. A higher plan gives you more daily quota.",
+                                       "quotaTextWithFeature":  "You have reached the quota for: :feature. A higher plan gives you more daily quota."
+                                   },
+                        "plans":  {
+                                      "free":  {
+                                                   "name":  "Free",
+                                                   "price":  "$0",
+                                                   "tagline":  "Starter",
+                                                   "description":  "Best for exploring the interface and basic platform navigation.",
+                                                   "highlights":  {
+                                                                      "first":  "Suitable for demos and onboarding.",
+                                                                      "second":  "No practical quota for paid OSINT workflows.",
+                                                                      "third":  "A safe entry point for team familiarization."
+                                                                  }
+                                               },
+                                      "plus":  {
+                                                   "name":  "Plus",
+                                                   "price":  "$12 / mo",
+                                                   "tagline":  "Working pace",
+                                                   "description":  "Designed for individual recurring work with moderate daily load.",
+                                                   "highlights":  {
+                                                                      "first":  "Daily quotas for analytics and parser actions.",
+                                                                      "second":  "A good fit for analysts running several cases in parallel.",
+                                                                      "third":  "Balanced plan for day-to-day OSINT work."
+                                                                  }
+                                               },
+                                      "pro":  {
+                                                  "name":  "Pro",
+                                                  "price":  "$49 / mo",
+                                                  "tagline":  "Team capacity",
+                                                  "description":  "For intensive usage, higher request volume, and steady investigative workloads.",
+                                                  "highlights":  {
+                                                                     "first":  "Maximum daily quotas for deeper operational work.",
+                                                                     "second":  "A strong choice for teams that need quota headroom.",
+                                                                     "third":  "Best suited for continuous analytical usage."
+                                                                 }
+                                              }
+                                  },
+                        "descriptionDisabled":  "Review your current plan, quotas, and activate access with a code. Direct purchase is temporarily disabled."
+                    },
+    "placeholderPage":  {
+                            "title":  "Temporarily unavailable",
+                            "heading":  "Coming soon",
+                            "description":  "This section is temporarily unavailable. We are preparing it for launch.",
+                            "back":  "Go back",
+                            "genericPlan":  "selected plan",
+                            "generic":  {
+                                            "badge":  "SOON",
+                                            "title":  "This section will be available soon",
+                                            "description":  "This feature is temporarily unavailable, but we are already working on it.",
+                                            "bullets":  {
+                                                            "first":  "For now, you can go back and continue using the service.",
+                                                            "second":  "As soon as the section is ready, it will appear here automatically.",
+                                                            "third":  "Thank you for your patience."
+                                                        },
+                                            "note":  "This section will appear in one of the upcoming updates."
+                                        },
+                            "checkout":  {
+                                             "badge":  "PAYMENT SOON",
+                                             "title":  "Payment for the вЂњ:planвЂќ plan is coming soon",
+                                             "description":  "Online payment is temporarily unavailable, but we are already preparing it.",
+                                             "bullets":  {
+                                                             "first":  "Your selected plan is saved, and you will be able to complete it a little later.",
+                                                             "second":  "For now, you can go back and compare the available plans.",
+                                                             "third":  "We will add payment in one of the next updates."
+                                                         },
+                                             "note":  "Thank you for your interest. Payment will be available very soon."
+                                         }
+                        },
+    "deleteAccount":  {
+                          "title":  "Delete account",
+                          "description":  "Delete your account and all of its resources",
+                          "warning":  "Warning",
+                          "warningDescription":  "Please proceed with caution, this cannot be undone.",
+                          "button":  "Delete account",
+                          "confirmTitle":  "Are you sure you want to delete your account?",
+                          "confirmDescription":  "Once your account is deleted, all of its resources and data will also be permanently deleted. Please enter your password to confirm you would like to permanently delete your account.",
+                          "password":  "Password",
+                          "confirmButton":  "Delete account"
+                      }
 }

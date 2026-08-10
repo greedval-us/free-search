@@ -47,7 +47,7 @@ English version: [README.en.md](README.en.md)
 
 ## Архитектурные принципы
 
-- HTTP-слой тонкий: request → validation/normalization → application service → response.
+- HTTP-слой тонкий: request -> validation/normalization -> application service -> response.
 - Бизнес-правила вынесены из контроллеров в модульные сервисы и узкие коллабораторы.
 - Внешние интеграции скрыты за контрактами.
 - Runtime-код не читает `env()` напрямую: конфигурация идет через `config/*`.
@@ -216,6 +216,15 @@ composer run setup
 - `OSINT_NEWSAPI_KEY`
 - `RESEND_API_KEY`
 
+### Биллинг и checkout
+
+- `BILLING_CHECKOUT_ENABLED`
+
+Текущее поведение:
+
+- при `BILLING_CHECKOUT_ENABLED=false` UI прямой покупки скрыт, а доступ к подписке можно активировать только одноразовым токеном;
+- при `BILLING_CHECKOUT_ENABLED=true` checkout и upgrade UI снова включаются без изменений в коде.
+
 ### OSINT и Site Intel
 
 Конфигурация секционирована в `config/osint/*.php` и связанных конфиг-файлах:
@@ -236,6 +245,7 @@ composer run setup
 - `OSINT_SITE_INTEL_*`
 - `OSINT_NEWSAPI_*`
 - `PARSER_RUN_*`
+- `BILLING_CHECKOUT_ENABLED`
 
 ### MadelineProto
 
@@ -254,6 +264,12 @@ composer run setup
 - регистрация, восстановление пароля, подтверждение email
 - 2FA
 - личные настройки профиля, безопасности, уведомлений и биллинга
+
+Заметки по биллингу:
+
+- активация подписки по токену остается доступной на странице биллинга;
+- UI прямой покупки и апгрейда управляется флагом `BILLING_CHECKOUT_ENABLED`;
+- значение по умолчанию в `.env.example` — `false`.
 
 ### Ограничение возможностей
 
@@ -331,6 +347,7 @@ php artisan test
 
 1. Подготовить production `.env`.
 2. Убедиться, что настроены `APP_URL`, `SESSION_SECURE_COOKIE`, `MAIL_*`, `QUEUE_CONNECTION`, внешние API-ключи и `MOONSHINE_*`.
+   Также проверить нужный режим биллинга через `BILLING_CHECKOUT_ENABLED`.
 3. Выполнить миграции:
 
 ```bash
@@ -363,7 +380,8 @@ php artisan schedule:run
 - работу 2FA;
 - доступ в `MoonShine`;
 - доступность parser/export флоу;
-- job queue и cleanup-задачи.
+- job queue и cleanup-задачи;
+- нужный режим биллинга: token-only или checkout-enabled.
 
 ## Что читать дальше
 

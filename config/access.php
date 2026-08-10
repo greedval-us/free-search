@@ -1,6 +1,8 @@
 <?php
 
 return [
+    'checkout_enabled' => (bool) env('BILLING_CHECKOUT_ENABLED', false),
+
     'plans' => [
         'free' => [
             'analytics' => 0,

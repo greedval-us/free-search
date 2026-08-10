@@ -14,9 +14,15 @@ final class PlaceholderController extends Controller
         $context = (string) $request->query('context', 'generic');
         $plan = (string) $request->query('plan', '');
         $back = (string) $request->query('back', '/settings/billing');
+        $checkoutEnabled = (bool) config('access.checkout_enabled', false);
 
         if (! in_array($context, ['generic', 'checkout'], true)) {
             $context = 'generic';
+        }
+
+        if ($context === 'checkout' && ! $checkoutEnabled) {
+            $context = 'generic';
+            $plan = '';
         }
 
         if (! in_array($plan, ['free', 'plus', 'pro', ''], true)) {
@@ -33,6 +39,7 @@ final class PlaceholderController extends Controller
                 'plan' => $plan,
                 'back' => $back,
             ],
+            'checkoutEnabled' => $checkoutEnabled,
         ]);
     }
 }

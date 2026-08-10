@@ -10,6 +10,7 @@ import type { AccountAccess } from '@/types';
 const props = defineProps<{
     access: AccountAccess;
     plans: Record<string, Record<string, number>>;
+    checkoutEnabled: boolean;
     reason?: string | null;
     feature?: string | null;
     tokenStatus?: string | null;
@@ -145,7 +146,11 @@ const submitActivationToken = (): void => {
         <Heading
             variant="small"
             :title="t('settings.billingPage.heading')"
-            :description="t('settings.billingPage.description')"
+            :description="
+                checkoutEnabled
+                    ? t('settings.billingPage.description')
+                    : t('settings.billingPage.descriptionDisabled')
+            "
         />
 
         <section
@@ -167,7 +172,11 @@ const submitActivationToken = (): void => {
                         <p
                             class="max-w-2xl text-sm leading-6 text-muted-foreground"
                         >
-                            {{ t('settings.billingPage.hero.text') }}
+                            {{
+                                checkoutEnabled
+                                    ? t('settings.billingPage.hero.text')
+                                    : t('settings.billingPage.hero.textDisabled')
+                            }}
                         </p>
                     </div>
 
@@ -276,7 +285,7 @@ const submitActivationToken = (): void => {
             </div>
         </section>
 
-        <section class="grid gap-4 xl:grid-cols-3">
+        <section v-if="checkoutEnabled" class="grid gap-4 xl:grid-cols-3">
             <article
                 v-for="plan in planCards"
                 :key="plan.key"
@@ -405,7 +414,11 @@ const submitActivationToken = (): void => {
                         </Link>
                     </Button>
 
-                    <Button as-child class="rounded-xl">
+                    <Button
+                        v-if="checkoutEnabled"
+                        as-child
+                        class="rounded-xl"
+                    >
                         <Link :href="footerAction.href">
                             {{ footerAction.label }}
                         </Link>
