@@ -175,7 +175,9 @@ const submitActivationToken = (): void => {
                             {{
                                 checkoutEnabled
                                     ? t('settings.billingPage.hero.text')
-                                    : t('settings.billingPage.hero.textDisabled')
+                                    : t(
+                                          'settings.billingPage.hero.textDisabled'
+                                      )
                             }}
                         </p>
                     </div>
@@ -414,11 +416,7 @@ const submitActivationToken = (): void => {
                         </Link>
                     </Button>
 
-                    <Button
-                        v-if="checkoutEnabled"
-                        as-child
-                        class="rounded-xl"
-                    >
+                    <Button v-if="checkoutEnabled" as-child class="rounded-xl">
                         <Link :href="footerAction.href">
                             {{ footerAction.label }}
                         </Link>
