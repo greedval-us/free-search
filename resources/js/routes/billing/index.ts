@@ -79,7 +79,7 @@ edit.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     edit.form = editForm
 /**
 * @see \App\Http\Controllers\Settings\BillingController::activateToken
- * @see app/Http/Controllers/Settings/BillingController.php:33
+ * @see app/Http/Controllers/Settings/BillingController.php:34
  * @route '/settings/billing/activate-token'
  */
 export const activateToken = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -94,7 +94,7 @@ activateToken.definition = {
 
 /**
 * @see \App\Http\Controllers\Settings\BillingController::activateToken
- * @see app/Http/Controllers/Settings/BillingController.php:33
+ * @see app/Http/Controllers/Settings/BillingController.php:34
  * @route '/settings/billing/activate-token'
  */
 activateToken.url = (options?: RouteQueryOptions) => {
@@ -103,7 +103,7 @@ activateToken.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\Settings\BillingController::activateToken
- * @see app/Http/Controllers/Settings/BillingController.php:33
+ * @see app/Http/Controllers/Settings/BillingController.php:34
  * @route '/settings/billing/activate-token'
  */
 activateToken.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -113,7 +113,7 @@ activateToken.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => (
 
     /**
 * @see \App\Http\Controllers\Settings\BillingController::activateToken
- * @see app/Http/Controllers/Settings/BillingController.php:33
+ * @see app/Http/Controllers/Settings/BillingController.php:34
  * @route '/settings/billing/activate-token'
  */
     const activateTokenForm = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -123,7 +123,7 @@ activateToken.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => (
 
             /**
 * @see \App\Http\Controllers\Settings\BillingController::activateToken
- * @see app/Http/Controllers/Settings/BillingController.php:33
+ * @see app/Http/Controllers/Settings/BillingController.php:34
  * @route '/settings/billing/activate-token'
  */
         activateTokenForm.post = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({

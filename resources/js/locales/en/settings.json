@@ -5,7 +5,7 @@
     "security": "Security",
     "notifications": "Notifications",
     "appearance": "Appearance",
-    "billing": "Plan & billing",
+    "billing": "Plan \u0026 billing",
     "profilePage": {
         "title": "Profile settings",
         "heading": "Profile information",
@@ -65,7 +65,7 @@
     "appearancePage": {
         "title": "Appearance settings",
         "heading": "Appearance settings",
-        "headingDescription": "Update your account's appearance settings"
+        "headingDescription": "Update your account\u0027s appearance settings"
     },
     "notificationsPage": {
         "title": "Notifications",
@@ -81,8 +81,8 @@
         "openLink": "Open"
     },
     "billingPage": {
-        "title": "Plan & billing",
-        "heading": "Plan & billing",
+        "title": "Plan \u0026 billing",
+        "heading": "Plan \u0026 billing",
         "description": "Compare plans, review quotas, and pick the option that matches your workload.",
         "currentPlan": "Current plan",
         "validUntil": "Valid until",
@@ -94,7 +94,8 @@
         "hero": {
             "badge": "PLANS",
             "title": "Ready-made plans for different levels of usage",
-            "text": "The page already shows the current plan, main quotas, and upgrade paths. Payment is not connected yet, so pay buttons lead to a reusable placeholder screen."
+            "text": "The page already shows the current plan, main quotas, and upgrade paths. Payment is not connected yet, so pay buttons lead to a reusable placeholder screen.",
+            "textDisabled": "Plan comparison and direct checkout are temporarily disabled. Access can currently be activated only with a one-time token."
         },
         "summary": {
             "currentPlan": "Account plan",
@@ -174,7 +175,8 @@
                     "third": "Best suited for continuous analytical usage."
                 }
             }
-        }
+        },
+        "descriptionDisabled": "Review your current plan, quotas, and activate access with a code. Direct purchase is temporarily disabled."
     },
     "placeholderPage": {
         "title": "Temporarily unavailable",
@@ -195,7 +197,7 @@
         },
         "checkout": {
             "badge": "PAYMENT SOON",
-            "title": "Payment for the “:plan” plan is coming soon",
+            "title": "Payment for the вЂњ:planвЂќ plan is coming soon",
             "description": "Online payment is temporarily unavailable, but we are already preparing it.",
             "bullets": {
                 "first": "Your selected plan is saved, and you will be able to complete it a little later.",
