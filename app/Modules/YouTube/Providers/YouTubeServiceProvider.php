@@ -2,6 +2,7 @@
 
 namespace App\Modules\YouTube\Providers;
 
+use App\Modules\ParserSupport\Contracts\ParserRunBackgroundProcessorInterface;
 use App\Modules\YouTube\Analytics\Contracts\YouTubeAnalyticsApplicationServiceInterface;
 use App\Modules\YouTube\Analytics\YouTubeAnalyticsApplicationService;
 use App\Modules\YouTube\Core\Contracts\YouTubeGatewayInterface;
@@ -34,6 +35,11 @@ final class YouTubeServiceProvider extends BindingsServiceProvider
                 (array) config('osint.youtube', []),
                 (string) config('app.timezone', 'UTC')
             )
+        );
+
+        $this->app->tag(
+            [YouTubeParserApplicationService::class],
+            ParserRunBackgroundProcessorInterface::CONTAINER_TAG,
         );
     }
 

@@ -3,8 +3,9 @@
 namespace App\Modules\YouTube\Parser;
 
 use App\Models\ParserRun;
+use App\Modules\ParserSupport\Contracts\ParserRunBackgroundProcessorInterface;
+use App\Modules\ParserSupport\ParserRunExecutionCoordinator;
 use App\Modules\ParserSupport\ParserRunHistoryRepository;
-use App\Modules\ParserSupport\ParserRunStateMachine;
 use App\Modules\ParserSupport\ParserRunStatusPayloadBuilder;
 use App\Modules\YouTube\Actions\Request\VideoCommentsAction;
 use App\Modules\YouTube\DTO\Request\YouTubeCommentsQueryDTO;
@@ -13,7 +14,7 @@ use App\Modules\YouTube\DTO\Result\YouTubeCommentsResultDTO;
 use App\Modules\YouTube\DTO\Result\YouTubeParserRunStatusDTO;
 use App\Modules\YouTube\Parser\Contracts\YouTubeParserApplicationServiceInterface;
 
-class YouTubeParserApplicationService implements YouTubeParserApplicationServiceInterface
+class YouTubeParserApplicationService implements ParserRunBackgroundProcessorInterface, YouTubeParserApplicationServiceInterface
 {
     public const MODULE_KEY = 'youtube';
 
@@ -26,12 +27,11 @@ class YouTubeParserApplicationService implements YouTubeParserApplicationService
         private readonly YouTubeParserRunStore $runStore,
         private readonly YouTubeParserCollector $collector,
         private readonly YouTubeParserRunGuard $runGuard,
-        private readonly ParserRunStateMachine $stateMachine,
+        private readonly ParserRunExecutionCoordinator $executionCoordinator,
         private readonly ParserRunStatusPayloadBuilder $statusPayloadBuilder,
         private readonly ParserRunHistoryRepository $historyRepository,
         private readonly YouTubeParserHistoryPresenter $historyPresenter,
-    ) {
-    }
+    ) {}
 
     public function comments(YouTubeCommentsQueryDTO $query): YouTubeCommentsResultDTO
     {
@@ -40,22 +40,23 @@ class YouTubeParserApplicationService implements YouTubeParserApplicationService
 
     public function start(YouTubeParserStartDTO $input): YouTubeParserRunStatusDTO
     {
-        $run = $this->runStore->create($input->userId, $input->toContext());
+        $run = $this->executionCoordinator->start(
+            $this->runStore,
+            self::MODULE_KEY,
+            $input->userId,
+            $input->toContext(),
+        );
 
         return $this->presentRun($run);
     }
 
     public function status(int $userId, string $runId): ?YouTubeParserRunStatusDTO
     {
-        $nowTs = now()->timestamp;
-        $run = $this->runStore->mutate(
+        $run = $this->executionCoordinator->status(
+            $this->runStore,
             $userId,
             $runId,
-            fn (array $state): array => $this->stateMachine->advance(
-                $state,
-                fn (array $current): array => $this->collector->advance($current),
-                $nowTs
-            )
+            fn (array $state): array => $this->collector->advance($state),
         );
 
         return is_array($run) ? $this->presentRun($run) : null;
@@ -63,16 +64,36 @@ class YouTubeParserApplicationService implements YouTubeParserApplicationService
 
     public function stop(int $userId, string $runId): ?YouTubeParserRunStatusDTO
     {
-        $run = $this->runStore->mutate(
+        $run = $this->executionCoordinator->stop(
+            $this->runStore,
             $userId,
             $runId,
-            fn (array $state): array => $this->stateMachine->stop(
-                $state,
-                fn (array $current): array => $this->collector->buildResultSnapshot($current)
-            )
+            fn (array $state): array => $this->collector->buildResultSnapshot($state),
         );
 
         return is_array($run) ? $this->presentRun($run) : null;
+    }
+
+    public function moduleKey(): string
+    {
+        return self::MODULE_KEY;
+    }
+
+    public function advanceRun(int $userId, string $runId): bool
+    {
+        $run = $this->executionCoordinator->advance(
+            $this->runStore,
+            $userId,
+            $runId,
+            fn (array $state): array => $this->collector->advance($state),
+        );
+
+        return $this->executionCoordinator->shouldContinue($run);
+    }
+
+    public function failRun(int $userId, string $runId, string $message): void
+    {
+        $this->executionCoordinator->fail($this->runStore, $userId, $runId, $message);
     }
 
     /**
@@ -102,7 +123,7 @@ class YouTubeParserApplicationService implements YouTubeParserApplicationService
     }
 
     /**
-     * @param array<string, mixed> $run
+     * @param  array<string, mixed>  $run
      */
     private function presentRun(array $run): YouTubeParserRunStatusDTO
     {

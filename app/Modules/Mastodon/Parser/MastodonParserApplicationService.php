@@ -6,11 +6,12 @@ use App\Models\ParserRun;
 use App\Modules\Mastodon\DTO\Request\MastodonParserStartDTO;
 use App\Modules\Mastodon\DTO\Result\MastodonParserRunStatusDTO;
 use App\Modules\Mastodon\Parser\Contracts\MastodonParserApplicationServiceInterface;
+use App\Modules\ParserSupport\Contracts\ParserRunBackgroundProcessorInterface;
+use App\Modules\ParserSupport\ParserRunExecutionCoordinator;
 use App\Modules\ParserSupport\ParserRunHistoryRepository;
-use App\Modules\ParserSupport\ParserRunStateMachine;
 use App\Modules\ParserSupport\ParserRunStatusPayloadBuilder;
 
-final class MastodonParserApplicationService implements MastodonParserApplicationServiceInterface
+final class MastodonParserApplicationService implements MastodonParserApplicationServiceInterface, ParserRunBackgroundProcessorInterface
 {
     public const MODULE_KEY = 'mastodon';
 
@@ -22,31 +23,31 @@ final class MastodonParserApplicationService implements MastodonParserApplicatio
         private readonly MastodonParserRunStore $runStore,
         private readonly MastodonParserCollector $collector,
         private readonly MastodonParserRunGuard $runGuard,
-        private readonly ParserRunStateMachine $stateMachine,
+        private readonly ParserRunExecutionCoordinator $executionCoordinator,
         private readonly ParserRunStatusPayloadBuilder $statusPayloadBuilder,
         private readonly ParserRunHistoryRepository $historyRepository,
         private readonly MastodonParserHistoryPresenter $historyPresenter,
-    ) {
-    }
+    ) {}
 
     public function start(MastodonParserStartDTO $input): MastodonParserRunStatusDTO
     {
-        $run = $this->runStore->create($input->userId, $input->toContext());
+        $run = $this->executionCoordinator->start(
+            $this->runStore,
+            self::MODULE_KEY,
+            $input->userId,
+            $input->toContext(),
+        );
 
         return $this->presentRun($run);
     }
 
     public function status(int $userId, string $runId): ?MastodonParserRunStatusDTO
     {
-        $nowTs = now()->timestamp;
-        $run = $this->runStore->mutate(
+        $run = $this->executionCoordinator->status(
+            $this->runStore,
             $userId,
             $runId,
-            fn (array $state): array => $this->stateMachine->advance(
-                $state,
-                fn (array $current): array => $this->collector->advance($current),
-                $nowTs
-            )
+            fn (array $state): array => $this->collector->advance($state),
         );
 
         return is_array($run) ? $this->presentRun($run) : null;
@@ -54,16 +55,36 @@ final class MastodonParserApplicationService implements MastodonParserApplicatio
 
     public function stop(int $userId, string $runId): ?MastodonParserRunStatusDTO
     {
-        $run = $this->runStore->mutate(
+        $run = $this->executionCoordinator->stop(
+            $this->runStore,
             $userId,
             $runId,
-            fn (array $state): array => $this->stateMachine->stop(
-                $state,
-                fn (array $current): array => $this->collector->buildResultSnapshot($current)
-            )
+            fn (array $state): array => $this->collector->buildResultSnapshot($state),
         );
 
         return is_array($run) ? $this->presentRun($run) : null;
+    }
+
+    public function moduleKey(): string
+    {
+        return self::MODULE_KEY;
+    }
+
+    public function advanceRun(int $userId, string $runId): bool
+    {
+        $run = $this->executionCoordinator->advance(
+            $this->runStore,
+            $userId,
+            $runId,
+            fn (array $state): array => $this->collector->advance($state),
+        );
+
+        return $this->executionCoordinator->shouldContinue($run);
+    }
+
+    public function failRun(int $userId, string $runId, string $message): void
+    {
+        $this->executionCoordinator->fail($this->runStore, $userId, $runId, $message);
     }
 
     /**
@@ -93,7 +114,7 @@ final class MastodonParserApplicationService implements MastodonParserApplicatio
     }
 
     /**
-     * @param array<string, mixed> $run
+     * @param  array<string, mixed>  $run
      */
     private function presentRun(array $run): MastodonParserRunStatusDTO
     {

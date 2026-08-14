@@ -14,6 +14,7 @@ use App\Modules\Mastodon\Search\Contracts\MastodonSearchApplicationServiceInterf
 use App\Modules\Mastodon\Search\MastodonSearchApplicationService;
 use App\Modules\Mastodon\Support\MastodonApiConfig;
 use App\Modules\Mastodon\Support\MastodonModuleConfig;
+use App\Modules\ParserSupport\Contracts\ParserRunBackgroundProcessorInterface;
 use App\Support\Providers\BindingsServiceProvider;
 
 final class MastodonServiceProvider extends BindingsServiceProvider
@@ -27,6 +28,11 @@ final class MastodonServiceProvider extends BindingsServiceProvider
             static fn (): MastodonApiConfig => MastodonApiConfig::fromArray(
                 (array) config('services.mastodon', [])
             )
+        );
+
+        $this->app->tag(
+            [MastodonParserApplicationService::class],
+            ParserRunBackgroundProcessorInterface::CONTAINER_TAG,
         );
 
         $this->app->singleton(
