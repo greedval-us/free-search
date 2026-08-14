@@ -14,6 +14,8 @@ final class SeoAuditHttpFetcher implements SeoAuditHttpFetcherInterface
     public function __construct(
         private readonly SiteIntelConfig $config,
         private readonly SiteIntelTargetGuard $targetGuard,
+        private readonly SiteIntelHttpRequestOptions $requestOptions,
+        private readonly SiteIntelRedirectUrlResolver $redirectUrlResolver,
         private readonly ExternalServiceLogger $externalServiceLogger,
     ) {}
 
@@ -26,7 +28,7 @@ final class SeoAuditHttpFetcher implements SeoAuditHttpFetcherInterface
         $responseTimeMs = 0;
 
         for ($step = 0; $step <= $this->config->httpMaxRedirects(); $step++) {
-            $this->targetGuard->assertSafeUrl($currentUrl);
+            $target = $this->targetGuard->resolveSafeTarget($currentUrl);
 
             $startedAt = microtime(true);
 
@@ -35,16 +37,14 @@ final class SeoAuditHttpFetcher implements SeoAuditHttpFetcherInterface
                     'User-Agent' => $this->config->seoAuditUserAgent(),
                     'Accept' => 'text/html,application/xhtml+xml,*/*;q=0.8',
                 ])
-                    ->withOptions([
-                        'allow_redirects' => false,
-                        'verify' => $this->config->httpVerifySsl(),
-                    ])
+                    ->withOptions($this->requestOptions->build($target, $this->config->httpVerifySsl()))
                     ->timeout($this->config->httpTimeoutSeconds())
-                    ->get($currentUrl);
+                    ->get($target->url);
             } catch (ConnectionException $exception) {
                 $this->externalServiceLogger->logConnectionFailure('site-intel', 'seo-audit-fetch', $exception, [
                     'url' => $currentUrl,
                 ]);
+
                 return [
                     'url' => $currentUrl,
                     'status' => 0,
@@ -59,7 +59,7 @@ final class SeoAuditHttpFetcher implements SeoAuditHttpFetcherInterface
             $status = $response->status();
             $location = $response->header('Location');
 
-            if (!in_array($status, [301, 302, 303, 307, 308], true) || !is_string($location) || $location === '') {
+            if (! in_array($status, [301, 302, 303, 307, 308], true) || ! is_string($location) || $location === '') {
                 return [
                     'url' => $currentUrl,
                     'status' => $status,
@@ -70,7 +70,7 @@ final class SeoAuditHttpFetcher implements SeoAuditHttpFetcherInterface
                 ];
             }
 
-            $resolved = $this->resolveRedirectUrl($currentUrl, $location);
+            $resolved = $this->redirectUrlResolver->resolve($currentUrl, $location);
             if ($resolved === null) {
                 $this->externalServiceLogger->logFallback('site-intel', 'seo-audit-fetch', 'redirect_resolution_failed', [
                     'url' => $currentUrl,
@@ -79,7 +79,6 @@ final class SeoAuditHttpFetcher implements SeoAuditHttpFetcherInterface
                 break;
             }
 
-            $this->targetGuard->assertSafeUrl($resolved);
             $currentUrl = $resolved;
         }
 
@@ -91,37 +90,5 @@ final class SeoAuditHttpFetcher implements SeoAuditHttpFetcherInterface
             'responseTimeMs' => $responseTimeMs,
             'error' => 'redirect_resolution_failed',
         ];
-    }
-
-    private function resolveRedirectUrl(string $currentUrl, string $location): ?string
-    {
-        if (str_starts_with($location, 'http://') || str_starts_with($location, 'https://')) {
-            return $location;
-        }
-
-        $parts = parse_url($currentUrl);
-        if (!is_array($parts) || !isset($parts['scheme'], $parts['host'])) {
-            return null;
-        }
-
-        $scheme = (string) $parts['scheme'];
-        $host = (string) $parts['host'];
-        $port = isset($parts['port']) ? ':' . (int) $parts['port'] : '';
-
-        if (str_starts_with($location, '//')) {
-            return $scheme . ':' . $location;
-        }
-
-        if (str_starts_with($location, '/')) {
-            return sprintf('%s://%s%s%s', $scheme, $host, $port, $location);
-        }
-
-        $path = (string) ($parts['path'] ?? '/');
-        $basePath = str_ends_with($path, '/') ? $path : dirname($path) . '/';
-        if ($basePath === './') {
-            $basePath = '/';
-        }
-
-        return sprintf('%s://%s%s%s%s', $scheme, $host, $port, $basePath, $location);
     }
 }

@@ -14,6 +14,8 @@ final class SiteHealthHttpInspector implements SiteHealthHttpInspectorInterface
     public function __construct(
         private readonly SiteIntelConfig $config,
         private readonly SiteIntelTargetGuard $targetGuard,
+        private readonly SiteIntelHttpRequestOptions $requestOptions,
+        private readonly SiteIntelRedirectUrlResolver $redirectUrlResolver,
         private readonly ExternalServiceLogger $externalServiceLogger,
     ) {}
 
@@ -28,7 +30,7 @@ final class SiteHealthHttpInspector implements SiteHealthHttpInspectorInterface
         $finalStatus = 0;
 
         for ($step = 0; $step <= $this->maxRedirects(); $step++) {
-            $this->targetGuard->assertSafeUrl($currentUrl);
+            $target = $this->targetGuard->resolveSafeTarget($currentUrl);
             $startedAt = microtime(true);
 
             try {
@@ -36,12 +38,9 @@ final class SiteHealthHttpInspector implements SiteHealthHttpInspectorInterface
                     'User-Agent' => $this->userAgent(),
                     'Accept' => $this->acceptHeader(),
                 ])
-                    ->withOptions([
-                        'allow_redirects' => false,
-                        'verify' => $this->verifySsl(),
-                    ])
+                    ->withOptions($this->requestOptions->build($target, $this->verifySsl()))
                     ->timeout($this->timeoutSeconds())
-                    ->get($currentUrl);
+                    ->get($target->url);
             } catch (ConnectionException $exception) {
                 $this->externalServiceLogger->logConnectionFailure('site-intel', 'site-health-http', $exception, [
                     'url' => $currentUrl,
@@ -79,11 +78,11 @@ final class SiteHealthHttpInspector implements SiteHealthHttpInspectorInterface
             $finalHeaders = is_array($headers) ? $headers : [];
             $finalStatus = $status;
 
-            if (!$this->isRedirectStatus($status) || !is_string($location) || $location === '') {
+            if (! $this->isRedirectStatus($status) || ! is_string($location) || $location === '') {
                 break;
             }
 
-            $resolved = $this->resolveRedirectUrl($currentUrl, $location);
+            $resolved = $this->redirectUrlResolver->resolve($currentUrl, $location);
             if ($resolved === null) {
                 $this->externalServiceLogger->logFallback('site-intel', 'site-health-http', 'redirect_resolution_failed', [
                     'url' => $currentUrl,
@@ -92,7 +91,6 @@ final class SiteHealthHttpInspector implements SiteHealthHttpInspectorInterface
                 break;
             }
 
-            $this->targetGuard->assertSafeUrl($resolved);
             $currentUrl = $resolved;
         }
 
@@ -108,38 +106,6 @@ final class SiteHealthHttpInspector implements SiteHealthHttpInspectorInterface
     private function isRedirectStatus(int $status): bool
     {
         return in_array($status, [301, 302, 303, 307, 308], true);
-    }
-
-    private function resolveRedirectUrl(string $currentUrl, string $location): ?string
-    {
-        if (str_starts_with($location, 'http://') || str_starts_with($location, 'https://')) {
-            return $location;
-        }
-
-        $parts = parse_url($currentUrl);
-        if (!is_array($parts) || !isset($parts['scheme'], $parts['host'])) {
-            return null;
-        }
-
-        $scheme = (string) $parts['scheme'];
-        $host = (string) $parts['host'];
-        $port = isset($parts['port']) ? ':' . (int) $parts['port'] : '';
-
-        if (str_starts_with($location, '//')) {
-            return $scheme . ':' . $location;
-        }
-
-        if (str_starts_with($location, '/')) {
-            return sprintf('%s://%s%s%s', $scheme, $host, $port, $location);
-        }
-
-        $path = (string) ($parts['path'] ?? '/');
-        $basePath = str_ends_with($path, '/') ? $path : dirname($path) . '/';
-        if ($basePath === './') {
-            $basePath = '/';
-        }
-
-        return sprintf('%s://%s%s%s%s', $scheme, $host, $port, $basePath, $location);
     }
 
     private function userAgent(): string
