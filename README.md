@@ -245,6 +245,11 @@ composer run setup
 - `OSINT_SITE_INTEL_*`
 - `OSINT_NEWSAPI_*`
 - `PARSER_RUN_*`
+
+Parser runs выполняются фоновыми queue jobs. По умолчанию они отправляются в
+очередь `default`, поэтому достаточно запущенного `php artisan queue:work`.
+Для отдельного worker задайте `PARSER_RUN_QUEUE_NAME=parser-runs` и запускайте
+его с `php artisan queue:work --queue=parser-runs`.
 - `BILLING_CHECKOUT_ENABLED`
 
 ### MadelineProto

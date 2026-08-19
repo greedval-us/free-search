@@ -7,12 +7,16 @@ use App\Modules\ParserSupport\Enums\ParserRunStatus;
 class ParserRunStateMachine
 {
     /**
-     * @param array<string, mixed> $state
-     * @param callable(array<string, mixed>): array<string, mixed> $advance
+     * @param  array<string, mixed>  $state
+     * @param  callable(array<string, mixed>): array<string, mixed>  $advance
      * @return array<string, mixed>
      */
-    public function advance(array $state, callable $advance, int $nowTimestamp): array
-    {
+    public function advance(
+        array $state,
+        callable $advance,
+        int $nowTimestamp,
+        int $advanceDelaySeconds = 2,
+    ): array {
         if (($state['status'] ?? null) !== ParserRunStatus::Running->value) {
             return $state;
         }
@@ -37,7 +41,7 @@ class ParserRunStateMachine
 
         if (($state['status'] ?? null) === ParserRunStatus::Running->value) {
             $cursor = is_array($state['cursor'] ?? null) ? $state['cursor'] : [];
-            $cursor['nextAdvanceAt'] = $nowTimestamp + 2;
+            $cursor['nextAdvanceAt'] = $nowTimestamp + max(0, $advanceDelaySeconds);
             $state['cursor'] = $cursor;
         }
 
@@ -45,8 +49,8 @@ class ParserRunStateMachine
     }
 
     /**
-     * @param array<string, mixed> $state
-     * @param callable(array<string, mixed>): array<string, mixed> $snapshotBuilder
+     * @param  array<string, mixed>  $state
+     * @param  callable(array<string, mixed>): array<string, mixed>  $snapshotBuilder
      * @return array<string, mixed>
      */
     public function stop(array $state, callable $snapshotBuilder): array
@@ -55,7 +59,7 @@ class ParserRunStateMachine
             return $state;
         }
 
-        if (!is_array($state['result'] ?? null)) {
+        if (! is_array($state['result'] ?? null)) {
             $state['result'] = $snapshotBuilder($state);
         }
 

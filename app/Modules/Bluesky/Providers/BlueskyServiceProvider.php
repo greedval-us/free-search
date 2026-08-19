@@ -12,9 +12,10 @@ use App\Modules\Bluesky\Parser\Contracts\BlueskyParserApplicationServiceInterfac
 use App\Modules\Bluesky\Parser\Contracts\BlueskyParserExportBuilderInterface;
 use App\Modules\Bluesky\Search\BlueskySearchApplicationService;
 use App\Modules\Bluesky\Search\Contracts\BlueskySearchApplicationServiceInterface;
-use App\Modules\Bluesky\Support\BlueskyApiConfig;
 use App\Modules\Bluesky\Support\BlueskyActorResolver;
+use App\Modules\Bluesky\Support\BlueskyApiConfig;
 use App\Modules\Bluesky\Support\BlueskyModuleConfig;
+use App\Modules\ParserSupport\Contracts\ParserRunBackgroundProcessorInterface;
 use App\Support\Providers\BindingsServiceProvider;
 
 final class BlueskyServiceProvider extends BindingsServiceProvider
@@ -38,6 +39,11 @@ final class BlueskyServiceProvider extends BindingsServiceProvider
         );
 
         $this->app->singleton(BlueskyActorResolver::class);
+
+        $this->app->tag(
+            [BlueskyParserApplicationService::class],
+            ParserRunBackgroundProcessorInterface::CONTAINER_TAG,
+        );
     }
 
     protected function bindings(): array

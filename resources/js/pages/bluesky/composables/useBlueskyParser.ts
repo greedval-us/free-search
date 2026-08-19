@@ -1,350 +1,96 @@
-import { computed, onBeforeUnmount, onMounted, reactive, ref } from 'vue';
-import { apiRequest, resolveClientErrorMessage } from '@/lib/api';
-import { withDownloadLocale } from '@/lib/downloadLocale';
+import { computed, reactive, ref } from 'vue';
+import { useParserRun } from '@/composables/useParserRun';
 import type {
     BlueskyParserHistoryItem as ParserHistoryItem,
-    BlueskyParserHistoryResponse as ParserHistoryResponse,
     BlueskyParserStage as ParserStage,
-    BlueskyParserStatus as ParserStatus,
     BlueskyParserStatusResponse as ParserStatusResponse,
 } from '../types';
 
 type TranslateFn = (key: string) => string;
 
-const POLL_INTERVAL_MS = 3000;
-const TERMINAL_STATUSES: ParserStatus[] = ['completed', 'failed', 'stopped'];
-const parserEndpoint = (suffix: string) => `/bluesky/parser/${suffix}`;
-
 export const useBlueskyParser = (t: TranslateFn) => {
     const form = reactive({
         actor: '',
     });
-
     const settingsCollapsed = ref(false);
-    const loading = ref(false);
-    const error = ref<string | null>(null);
-    const runId = ref<string | null>(null);
-    const progress = ref(0);
-    const stage = ref<ParserStage>('idle');
     const processedPosts = ref(0);
     const processedAuthoredReplies = ref(0);
     const processedReceivedReplies = ref(0);
     const processedFollowers = ref(0);
     const processedFollows = ref(0);
     const processedReactions = ref(0);
-    const downloadUrl = ref<string | null>(null);
-    const downloadJsonUrl = ref<string | null>(null);
-    const historyItems = ref<ParserHistoryItem[]>([]);
-    const historyLoading = ref(false);
-    const historyRetentionDays = ref(7);
-    const pollTimer = ref<number | null>(null);
-    const pollRequestInFlight = ref(false);
 
-    const canStart = computed(
-        () => form.actor.trim().length > 0 && !loading.value
-    );
-
-    const csrfToken = () =>
-        document.querySelector<HTMLMetaElement>('meta[name="csrf-token"]')
-            ?.content ?? '';
-
-    const requestHeaders = (contentType?: 'application/json') => ({
-        ...(contentType ? { 'Content-Type': contentType } : {}),
-        'X-CSRF-TOKEN': csrfToken(),
+    const parser = useParserRun<
+        ParserStage,
+        ParserStatusResponse,
+        ParserHistoryItem
+    >({
+        endpointBase: '/bluesky/parser',
+        idleStage: 'idle',
+        initialStage: 'profile',
+        stoppedStage: 'stopped',
+        failedStage: 'failed',
+        requestErrorMessage: () => t('bluesky.parser.errors.failed'),
+        historyErrorMessage: () => t('bluesky.parser.history.errors.load'),
+        applyModulePayload: (payload) => {
+            processedPosts.value = payload.processedPosts;
+            processedAuthoredReplies.value = payload.processedAuthoredReplies;
+            processedReceivedReplies.value = payload.processedReceivedReplies;
+            processedFollowers.value = payload.processedFollowers;
+            processedFollows.value = payload.processedFollows;
+            processedReactions.value = payload.processedReactions;
+        },
+        resetModuleState: () => {
+            processedPosts.value = 0;
+            processedAuthoredReplies.value = 0;
+            processedReceivedReplies.value = 0;
+            processedFollowers.value = 0;
+            processedFollows.value = 0;
+            processedReactions.value = 0;
+        },
     });
 
-    const resetState = () => {
-        runId.value = null;
-        progress.value = 0;
-        stage.value = 'idle';
-        processedPosts.value = 0;
-        processedAuthoredReplies.value = 0;
-        processedReceivedReplies.value = 0;
-        processedFollowers.value = 0;
-        processedFollows.value = 0;
-        processedReactions.value = 0;
-        downloadUrl.value = null;
-        downloadJsonUrl.value = null;
-    };
-
-    const clearPolling = () => {
-        if (pollTimer.value !== null) {
-            window.clearTimeout(pollTimer.value);
-            pollTimer.value = null;
-        }
-
-        pollRequestInFlight.value = false;
-    };
-
-    const applyPayload = (payload: ParserStatusResponse) => {
-        stage.value = payload.stage;
-        progress.value = payload.progress;
-        processedPosts.value = payload.processedPosts;
-        processedAuthoredReplies.value = payload.processedAuthoredReplies;
-        processedReceivedReplies.value = payload.processedReceivedReplies;
-        processedFollowers.value = payload.processedFollowers;
-        processedFollows.value = payload.processedFollows;
-        processedReactions.value = payload.processedReactions;
-        error.value = payload.error;
-        downloadUrl.value = payload.downloadUrl;
-        downloadJsonUrl.value = payload.downloadJsonUrl;
-    };
-
-    const refreshHistory = async () => {
-        historyLoading.value = true;
-
-        try {
-            const response = await apiRequest<ParserHistoryResponse>(
-                parserEndpoint('history'),
-                { method: 'GET' }
-            );
-
-            if (!response.ok) {
-                throw new Error(
-                    response.message ?? t('bluesky.parser.history.errors.load')
-                );
-            }
-
-            historyItems.value = response.data.items;
-            historyRetentionDays.value = response.data.retentionDays;
-        } catch {
-            historyItems.value = [];
-        } finally {
-            historyLoading.value = false;
-        }
-    };
-
-    const stopRunRequest = (activeRunId: string) =>
-        apiRequest<ParserStatusResponse>(
-            parserEndpoint(`stop/${activeRunId}`),
-            {
-                method: 'POST',
-                headers: requestHeaders(),
-            }
-        );
-
-    const stopSilently = () => {
-        clearPolling();
-        const activeRunId = runId.value;
-
-        if (activeRunId) {
-            stopRunRequest(activeRunId).catch(() => undefined);
-        }
-    };
-
-    const stop = () => {
-        clearPolling();
-        loading.value = false;
-
-        if (stage.value !== 'completed' && stage.value !== 'failed') {
-            stage.value = 'stopped';
-        }
-
-        const activeRunId = runId.value;
-
-        if (!activeRunId) {
-            return;
-        }
-
-        stopRunRequest(activeRunId)
-            .then((response) => {
-                if (!response.ok || response.data.runId !== runId.value) {
-                    return;
-                }
-
-                applyPayload(response.data);
-                void refreshHistory();
-            })
-            .catch(() => undefined);
-    };
+    const canStart = computed(
+        () => form.actor.trim().length > 0 && !parser.loading.value
+    );
 
     const start = async () => {
         if (!canStart.value) {
-            error.value = t('bluesky.parser.errors.actorRequired');
+            parser.error.value = t('bluesky.parser.errors.actorRequired');
 
             return;
         }
 
-        stopSilently();
-        resetState();
-        error.value = null;
-        loading.value = true;
-        stage.value = 'profile';
-        progress.value = 1;
-
-        try {
-            const response = await apiRequest<ParserStatusResponse>(
-                parserEndpoint('start'),
-                {
-                    method: 'POST',
-                    headers: requestHeaders('application/json'),
-                    body: {
-                        actor: form.actor.trim(),
-                    },
-                }
-            );
-
-            if (!response.ok || !response.data.runId) {
-                throw new Error(
-                    response.message ?? t('bluesky.parser.errors.failed')
-                );
-            }
-
-            runId.value = response.data.runId;
-            applyPayload(response.data);
-            void refreshHistory();
-
-            const pollStatus = async () => {
-                if (!runId.value || pollRequestInFlight.value) {
-                    return;
-                }
-
-                pollRequestInFlight.value = true;
-
-                try {
-                    const statusResponse =
-                        await apiRequest<ParserStatusResponse>(
-                            parserEndpoint(`status/${runId.value}`),
-                            {
-                                method: 'GET',
-                            }
-                        );
-
-                    if (!statusResponse.ok) {
-                        throw new Error(
-                            statusResponse.message ??
-                                t('bluesky.parser.errors.failed')
-                        );
-                    }
-
-                    const statusPayload = statusResponse.data;
-                    applyPayload(statusPayload);
-
-                    if (TERMINAL_STATUSES.includes(statusPayload.status)) {
-                        loading.value = false;
-                        clearPolling();
-                        await refreshHistory();
-
-                        return;
-                    }
-                } catch (pollError) {
-                    loading.value = false;
-                    error.value = resolveClientErrorMessage(
-                        pollError,
-                        t('bluesky.parser.errors.failed')
-                    );
-                    clearPolling();
-
-                    return;
-                } finally {
-                    pollRequestInFlight.value = false;
-                }
-
-                pollTimer.value = window.setTimeout(() => {
-                    void pollStatus();
-                }, POLL_INTERVAL_MS);
-            };
-
-            pollTimer.value = window.setTimeout(() => {
-                void pollStatus();
-            }, POLL_INTERVAL_MS);
-        } catch (exception) {
-            stage.value = 'failed';
-            error.value = resolveClientErrorMessage(
-                exception,
-                t('bluesky.parser.errors.failed')
-            );
-        } finally {
-            if (stage.value === 'failed') {
-                loading.value = false;
-            }
-        }
+        await parser.startRun({
+            actor: form.actor.trim(),
+        });
     };
-
-    const download = () => {
-        if (!downloadUrl.value) {
-            return;
-        }
-
-        window.location.href = withDownloadLocale(downloadUrl.value);
-    };
-
-    const downloadJson = () => {
-        if (!downloadJsonUrl.value) {
-            return;
-        }
-
-        window.location.href = withDownloadLocale(downloadJsonUrl.value);
-    };
-
-    const downloadHistoryRun = (item: ParserHistoryItem) => {
-        if (!item.downloadUrl) {
-            return;
-        }
-
-        window.location.href = withDownloadLocale(item.downloadUrl);
-    };
-
-    const downloadHistoryRunJson = (item: ParserHistoryItem) => {
-        if (!item.downloadJsonUrl) {
-            return;
-        }
-
-        window.location.href = withDownloadLocale(item.downloadJsonUrl);
-    };
-
-    const handleBeforeUnload = () => {
-        const activeRunId = runId.value;
-
-        if (!activeRunId) {
-            return;
-        }
-
-        fetch(parserEndpoint(`stop/${activeRunId}`), {
-            method: 'POST',
-            keepalive: true,
-            headers: {
-                Accept: 'application/json',
-                'X-CSRF-TOKEN': csrfToken(),
-            },
-        }).catch(() => undefined);
-    };
-
-    onMounted(() => {
-        window.addEventListener('beforeunload', handleBeforeUnload);
-        void refreshHistory();
-    });
-
-    onBeforeUnmount(() => {
-        window.removeEventListener('beforeunload', handleBeforeUnload);
-        stopSilently();
-    });
 
     return {
         form,
         settingsCollapsed,
-        loading,
-        error,
-        progress,
-        stage,
+        loading: parser.loading,
+        error: parser.error,
+        progress: parser.progress,
+        stage: parser.stage,
         processedPosts,
         processedAuthoredReplies,
         processedReceivedReplies,
         processedFollowers,
         processedFollows,
         processedReactions,
-        downloadUrl,
-        downloadJsonUrl,
-        historyItems,
-        historyLoading,
-        historyRetentionDays,
+        downloadUrl: parser.downloadUrl,
+        downloadJsonUrl: parser.downloadJsonUrl,
+        historyItems: parser.historyItems,
+        historyLoading: parser.historyLoading,
+        historyRetentionDays: parser.historyRetentionDays,
         canStart,
         start,
-        stop,
-        download,
-        downloadJson,
-        refreshHistory,
-        downloadHistoryRun,
-        downloadHistoryRunJson,
+        stop: parser.stop,
+        download: parser.download,
+        downloadJson: parser.downloadJson,
+        refreshHistory: parser.refreshHistory,
+        downloadHistoryRun: parser.downloadHistoryRun,
+        downloadHistoryRunJson: parser.downloadHistoryRunJson,
     };
 };

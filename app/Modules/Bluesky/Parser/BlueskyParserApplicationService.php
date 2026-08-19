@@ -6,11 +6,12 @@ use App\Models\ParserRun;
 use App\Modules\Bluesky\DTO\Request\BlueskyParserStartDTO;
 use App\Modules\Bluesky\DTO\Result\BlueskyParserRunStatusDTO;
 use App\Modules\Bluesky\Parser\Contracts\BlueskyParserApplicationServiceInterface;
+use App\Modules\ParserSupport\Contracts\ParserRunBackgroundProcessorInterface;
+use App\Modules\ParserSupport\ParserRunExecutionCoordinator;
 use App\Modules\ParserSupport\ParserRunHistoryRepository;
-use App\Modules\ParserSupport\ParserRunStateMachine;
 use App\Modules\ParserSupport\ParserRunStatusPayloadBuilder;
 
-final class BlueskyParserApplicationService implements BlueskyParserApplicationServiceInterface
+final class BlueskyParserApplicationService implements BlueskyParserApplicationServiceInterface, ParserRunBackgroundProcessorInterface
 {
     public const MODULE_KEY = 'bluesky';
 
@@ -22,31 +23,31 @@ final class BlueskyParserApplicationService implements BlueskyParserApplicationS
         private readonly BlueskyParserRunStore $runStore,
         private readonly BlueskyParserCollector $collector,
         private readonly BlueskyParserRunGuard $runGuard,
-        private readonly ParserRunStateMachine $stateMachine,
+        private readonly ParserRunExecutionCoordinator $executionCoordinator,
         private readonly ParserRunStatusPayloadBuilder $statusPayloadBuilder,
         private readonly ParserRunHistoryRepository $historyRepository,
         private readonly BlueskyParserHistoryPresenter $historyPresenter,
-    ) {
-    }
+    ) {}
 
     public function start(BlueskyParserStartDTO $input): BlueskyParserRunStatusDTO
     {
-        $run = $this->runStore->create($input->userId, $input->toContext());
+        $run = $this->executionCoordinator->start(
+            $this->runStore,
+            self::MODULE_KEY,
+            $input->userId,
+            $input->toContext(),
+        );
 
         return $this->presentRun($run);
     }
 
     public function status(int $userId, string $runId): ?BlueskyParserRunStatusDTO
     {
-        $nowTs = now()->timestamp;
-        $run = $this->runStore->mutate(
+        $run = $this->executionCoordinator->status(
+            $this->runStore,
             $userId,
             $runId,
-            fn (array $state): array => $this->stateMachine->advance(
-                $state,
-                fn (array $current): array => $this->collector->advance($current),
-                $nowTs
-            )
+            fn (array $state): array => $this->collector->advance($state),
         );
 
         return is_array($run) ? $this->presentRun($run) : null;
@@ -54,16 +55,36 @@ final class BlueskyParserApplicationService implements BlueskyParserApplicationS
 
     public function stop(int $userId, string $runId): ?BlueskyParserRunStatusDTO
     {
-        $run = $this->runStore->mutate(
+        $run = $this->executionCoordinator->stop(
+            $this->runStore,
             $userId,
             $runId,
-            fn (array $state): array => $this->stateMachine->stop(
-                $state,
-                fn (array $current): array => $this->collector->buildResultSnapshot($current)
-            )
+            fn (array $state): array => $this->collector->buildResultSnapshot($state),
         );
 
         return is_array($run) ? $this->presentRun($run) : null;
+    }
+
+    public function moduleKey(): string
+    {
+        return self::MODULE_KEY;
+    }
+
+    public function advanceRun(int $userId, string $runId): bool
+    {
+        $run = $this->executionCoordinator->advance(
+            $this->runStore,
+            $userId,
+            $runId,
+            fn (array $state): array => $this->collector->advance($state),
+        );
+
+        return $this->executionCoordinator->shouldContinue($run);
+    }
+
+    public function failRun(int $userId, string $runId, string $message): void
+    {
+        $this->executionCoordinator->fail($this->runStore, $userId, $runId, $message);
     }
 
     /**
@@ -93,7 +114,7 @@ final class BlueskyParserApplicationService implements BlueskyParserApplicationS
     }
 
     /**
-     * @param array<string, mixed> $run
+     * @param  array<string, mixed>  $run
      */
     private function presentRun(array $run): BlueskyParserRunStatusDTO
     {

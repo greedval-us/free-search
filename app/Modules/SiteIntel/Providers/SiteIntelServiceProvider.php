@@ -5,13 +5,14 @@ namespace App\Modules\SiteIntel\Providers;
 use App\Modules\SiteIntel\Application\Contracts\DomainLiteDnsResolverInterface;
 use App\Modules\SiteIntel\Application\Contracts\DomainLiteServiceInterface;
 use App\Modules\SiteIntel\Application\Contracts\DomainLiteWhoisClientInterface;
-use App\Modules\SiteIntel\Application\Contracts\SeoAuditServiceInterface;
 use App\Modules\SiteIntel\Application\Contracts\SeoAuditHttpFetcherInterface;
-use App\Modules\SiteIntel\Application\Contracts\SiteHealthServiceInterface;
+use App\Modules\SiteIntel\Application\Contracts\SeoAuditServiceInterface;
 use App\Modules\SiteIntel\Application\Contracts\SiteHealthDnsResolverInterface;
 use App\Modules\SiteIntel\Application\Contracts\SiteHealthHttpInspectorInterface;
+use App\Modules\SiteIntel\Application\Contracts\SiteHealthServiceInterface;
 use App\Modules\SiteIntel\Application\Contracts\SiteHealthSslInspectorInterface;
 use App\Modules\SiteIntel\Application\Contracts\SiteIntelAnalyticsServiceInterface;
+use App\Modules\SiteIntel\Application\Contracts\SiteIntelHostResolverInterface;
 use App\Modules\SiteIntel\Application\Services\DomainLiteService;
 use App\Modules\SiteIntel\Application\Services\SeoAuditService;
 use App\Modules\SiteIntel\Application\Services\SiteHealthService;
@@ -23,6 +24,7 @@ use App\Modules\SiteIntel\Infrastructure\Clients\SeoAuditHttpFetcher;
 use App\Modules\SiteIntel\Infrastructure\Clients\SiteHealthDnsResolver;
 use App\Modules\SiteIntel\Infrastructure\Clients\SiteHealthHttpInspector;
 use App\Modules\SiteIntel\Infrastructure\Clients\SiteHealthSslInspector;
+use App\Modules\SiteIntel\Infrastructure\Clients\SystemSiteIntelHostResolver;
 use App\Support\Providers\BindingsServiceProvider;
 
 final class SiteIntelServiceProvider extends BindingsServiceProvider
@@ -50,6 +52,7 @@ final class SiteIntelServiceProvider extends BindingsServiceProvider
             SeoAuditHttpFetcherInterface::class => SeoAuditHttpFetcher::class,
             DomainLiteDnsResolverInterface::class => DomainLiteDnsResolver::class,
             DomainLiteWhoisClientInterface::class => DomainLiteWhoisClient::class,
+            SiteIntelHostResolverInterface::class => SystemSiteIntelHostResolver::class,
         ];
     }
 }

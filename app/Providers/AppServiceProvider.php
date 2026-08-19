@@ -7,9 +7,9 @@ use App\Support\Notifications\UserNotificationService;
 use App\Support\Observability\MoonShineLoginAlertService;
 use App\Support\Observability\MoonShineLoginContext;
 use Carbon\CarbonImmutable;
+use Illuminate\Auth\Events\Login;
 use Illuminate\Auth\Notifications\ResetPassword;
 use Illuminate\Auth\Notifications\VerifyEmail;
-use Illuminate\Auth\Events\Login;
 use Illuminate\Http\Request;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Support\Facades\Date;
@@ -24,9 +24,7 @@ class AppServiceProvider extends ServiceProvider
     /**
      * Register any application services.
      */
-    public function register(): void
-    {
-    }
+    public function register(): void {}
 
     /**
      * Bootstrap any application services.
@@ -122,7 +120,7 @@ class AppServiceProvider extends ServiceProvider
                 return;
             }
 
-            if (!is_object($event->user)) {
+            if (! is_object($event->user)) {
                 return;
             }
 
@@ -162,14 +160,7 @@ class AppServiceProvider extends ServiceProvider
             /** @var Request|null $request */
             $request = app('request');
 
-            app(UserNotificationService::class)->sendLoginGreeting(
-                user: $event->user,
-                ip: (string) ($request?->ip() ?? 'unknown'),
-                userAgent: Str::limit((string) ($request?->userAgent() ?? 'unknown'), 255),
-                occurredAt: now(),
-            );
-
-            app(UserNotificationService::class)->sendNewIpLoginAlert(
+            app(UserNotificationService::class)->sendLoginNotifications(
                 user: $event->user,
                 ip: (string) ($request?->ip() ?? 'unknown'),
                 userAgent: Str::limit((string) ($request?->userAgent() ?? 'unknown'), 255),

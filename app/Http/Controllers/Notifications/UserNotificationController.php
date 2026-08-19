@@ -3,9 +3,9 @@
 namespace App\Http\Controllers\Notifications;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Response;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 
 class UserNotificationController extends Controller
 {
@@ -30,10 +30,20 @@ class UserNotificationController extends Controller
 
         $redirectTo = (string) $request->input('redirect_to', '');
 
-        if ($redirectTo !== '' && str_starts_with($redirectTo, '/')) {
+        if ($this->isSafeLocalRedirect($redirectTo)) {
             return redirect()->to($redirectTo, 303);
         }
 
         return back(303);
+    }
+
+    private function isSafeLocalRedirect(string $url): bool
+    {
+        if (! str_starts_with($url, '/') || str_starts_with($url, '//') || str_starts_with($url, '/\\')) {
+            return false;
+        }
+
+        return parse_url($url, PHP_URL_SCHEME) === null
+            && parse_url($url, PHP_URL_HOST) === null;
     }
 }

@@ -2,9 +2,10 @@
 
 declare(strict_types=1);
 
-use App\MoonShine\Layouts\MoonShineLayout;
 use App\Http\Middleware\RestrictMoonShineAccess;
 use App\Http\Middleware\ThrottleMoonShineLoginAttempts;
+use App\MoonShine\Layouts\MoonShineLayout;
+use App\MoonShine\Pages\Dashboard;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
 use Illuminate\Cookie\Middleware\EncryptCookies;
 use Illuminate\Foundation\Http\Middleware\ConvertEmptyStringsToNull;
@@ -56,6 +57,17 @@ return [
             ->filter(static fn (string $ip): bool => $ip !== '')
             ->values()
             ->all(),
+    ],
+    'security' => [
+        'login_throttle' => [
+            'max_attempts' => max(1, (int) env('MOONSHINE_LOGIN_MAX_ATTEMPTS', 3)),
+            'decay_seconds' => max(15, (int) env('MOONSHINE_LOGIN_DECAY_SECONDS', 60)),
+        ],
+        'login_alert' => [
+            'channel' => env('MOONSHINE_LOGIN_ALERT_CHANNEL', 'stack'),
+            'email_enabled' => (bool) env('MOONSHINE_LOGIN_ALERT_EMAIL_ENABLED', false),
+            'email' => env('MOONSHINE_LOGIN_ALERT_EMAIL', ''),
+        ],
     ],
 
     // Error handling
@@ -110,7 +122,7 @@ return [
     ],
 
     'pages' => [
-        'dashboard' => App\MoonShine\Pages\Dashboard::class,
+        'dashboard' => Dashboard::class,
         'profile' => ProfilePage::class,
         'login' => LoginPage::class,
         'error' => ErrorPage::class,

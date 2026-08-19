@@ -2,6 +2,7 @@
 
 namespace App\Http\Middleware;
 
+use App\Support\Observability\MoonShineSecurityConfig;
 use Closure;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\RateLimiter;
@@ -11,6 +12,10 @@ use Symfony\Component\HttpFoundation\Response;
 
 class ThrottleMoonShineLoginAttempts
 {
+    public function __construct(
+        private readonly MoonShineSecurityConfig $securityConfig,
+    ) {}
+
     /**
      * Handle an incoming request.
      *
@@ -18,12 +23,12 @@ class ThrottleMoonShineLoginAttempts
      */
     public function handle(Request $request, Closure $next): Response
     {
-        if (!$this->isMoonShineLoginRequest($request)) {
+        if (! $this->isMoonShineLoginRequest($request)) {
             return $next($request);
         }
 
-        $maxAttempts = max(1, (int) env('MOONSHINE_LOGIN_MAX_ATTEMPTS', 3));
-        $decaySeconds = max(15, (int) env('MOONSHINE_LOGIN_DECAY_SECONDS', 60));
+        $maxAttempts = $this->securityConfig->loginMaxAttempts();
+        $decaySeconds = $this->securityConfig->loginDecaySeconds();
         $key = $this->throttleKey($request);
 
         if (RateLimiter::tooManyAttempts($key, $maxAttempts)) {
@@ -42,7 +47,7 @@ class ThrottleMoonShineLoginAttempts
     private function isMoonShineLoginRequest(Request $request): bool
     {
         $prefix = trim((string) config('moonshine.prefix', 'admin'), '/');
-        $loginPath = $prefix !== '' ? $prefix . '/login' : 'login';
+        $loginPath = $prefix !== '' ? $prefix.'/login' : 'login';
 
         return $request->isMethod('post') && $request->is($loginPath);
     }
@@ -52,6 +57,6 @@ class ThrottleMoonShineLoginAttempts
         $usernameField = (string) config('moonshine.user_fields.username', 'email');
         $username = Str::transliterate(Str::lower((string) $request->input($usernameField, '')));
 
-        return 'moonshine-login:' . $username . '|' . $request->ip();
+        return 'moonshine-login:'.$username.'|'.$request->ip();
     }
 }

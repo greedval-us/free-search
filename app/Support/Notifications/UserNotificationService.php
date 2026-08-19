@@ -26,7 +26,22 @@ final class UserNotificationService
         );
     }
 
-    public function sendLoginGreeting(
+    public function sendLoginNotifications(
+        User $user,
+        string $ip,
+        string $userAgent,
+        CarbonInterface $occurredAt,
+    ): void {
+        $isNewIp = $this->isNewLoginIp($user, $ip);
+
+        $this->sendLoginGreeting($user, $ip, $userAgent, $occurredAt);
+
+        if ($isNewIp) {
+            $this->sendNewIpLoginAlert($user, $ip, $userAgent, $occurredAt);
+        }
+    }
+
+    private function sendLoginGreeting(
         User $user,
         string $ip,
         string $userAgent,
@@ -45,6 +60,7 @@ final class UserNotificationService
                 'url' => '/dashboard',
                 'kind' => 'security',
                 'meta' => [
+                    'event' => 'login',
                     'ip' => $ip,
                     'user_agent' => $userAgent,
                     'occurred_at' => $occurredAt->toIso8601String(),
@@ -54,16 +70,12 @@ final class UserNotificationService
         );
     }
 
-    public function sendNewIpLoginAlert(
+    private function sendNewIpLoginAlert(
         User $user,
         string $ip,
         string $userAgent,
         CarbonInterface $occurredAt,
     ): void {
-        if (! $this->isNewLoginIp($user, $ip)) {
-            return;
-        }
-
         $this->sendUniqueWithinWindow(
             user: $user,
             fingerprint: 'login-new-ip:'.$ip,
@@ -77,6 +89,7 @@ final class UserNotificationService
                 'url' => '/settings/security',
                 'kind' => 'security',
                 'meta' => [
+                    'event' => 'login',
                     'ip' => $ip,
                     'user_agent' => $userAgent,
                     'occurred_at' => $occurredAt->toIso8601String(),
@@ -234,7 +247,19 @@ final class UserNotificationService
 
                 $meta = $data['meta'] ?? null;
 
-                return is_array($meta) && ($meta['ip'] ?? null) === $ip;
+                if (! is_array($meta) || ($meta['ip'] ?? null) !== $ip) {
+                    return false;
+                }
+
+                if (($meta['event'] ?? null) === 'login') {
+                    return true;
+                }
+
+                $fingerprint = $this->notificationFingerprint($notification);
+
+                return is_string($fingerprint)
+                    && (str_starts_with($fingerprint, 'login:')
+                        || str_starts_with($fingerprint, 'login-new-ip:'));
             });
     }
 

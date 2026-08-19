@@ -3,61 +3,54 @@
 namespace App\Modules\SiteIntel\Support;
 
 use App\Exceptions\Public\PublicValidationException;
+use App\Modules\SiteIntel\Application\Contracts\SiteIntelHostResolverInterface;
 
 final class SiteIntelTargetGuard
 {
+    public function __construct(
+        private readonly SiteIntelHostResolverInterface $hostResolver,
+    ) {}
+
     public function assertSafeUrl(string $url): void
     {
-        $host = $this->extractHost($url);
-        if ($host === null) {
+        $this->resolveSafeTarget($url);
+    }
+
+    public function resolveSafeTarget(string $url): ResolvedSiteIntelTarget
+    {
+        $parts = parse_url($url);
+        if (! is_array($parts)) {
             throw $this->invalidTarget();
         }
 
-        foreach ($this->resolveHostAddresses($host) as $ip) {
+        $scheme = strtolower((string) ($parts['scheme'] ?? ''));
+        $rawHost = (string) ($parts['host'] ?? '');
+        $host = strtolower($rawHost);
+
+        if (! in_array($scheme, ['http', 'https'], true)
+            || $host === ''
+            || str_ends_with($rawHost, '.')
+        ) {
+            throw $this->invalidTarget();
+        }
+
+        $addresses = $this->hostResolver->resolve($host);
+        if ($addresses === []) {
+            throw $this->invalidTarget();
+        }
+
+        foreach ($addresses as $ip) {
             if ($this->isUnsafeIp($ip)) {
                 throw $this->invalidTarget();
             }
         }
-    }
 
-    private function extractHost(string $url): ?string
-    {
-        $host = parse_url($url, PHP_URL_HOST);
-
-        return is_string($host) && $host !== '' ? $host : null;
-    }
-
-    /**
-     * @return list<string>
-     */
-    private function resolveHostAddresses(string $host): array
-    {
-        if (filter_var($host, FILTER_VALIDATE_IP) !== false) {
-            return [$host];
-        }
-
-        $addresses = [];
-        $ipv4 = gethostbynamel($host) ?: [];
-        foreach ($ipv4 as $ip) {
-            if (is_string($ip) && $ip !== '') {
-                $addresses[] = $ip;
-            }
-        }
-
-        if (defined('DNS_AAAA')) {
-            $ipv6Records = @dns_get_record($host, DNS_AAAA);
-
-            if (is_array($ipv6Records)) {
-                foreach ($ipv6Records as $record) {
-                    $ip = $record['ipv6'] ?? null;
-                    if (is_string($ip) && $ip !== '') {
-                        $addresses[] = $ip;
-                    }
-                }
-            }
-        }
-
-        return array_values(array_unique($addresses));
+        return new ResolvedSiteIntelTarget(
+            url: $url,
+            host: $host,
+            port: isset($parts['port']) ? (int) $parts['port'] : ($scheme === 'https' ? 443 : 80),
+            ip: $addresses[0],
+        );
     }
 
     private function isUnsafeIp(string $ip): bool

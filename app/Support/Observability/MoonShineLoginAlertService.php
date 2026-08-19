@@ -10,6 +10,10 @@ use Throwable;
 
 final class MoonShineLoginAlertService
 {
+    public function __construct(
+        private readonly MoonShineSecurityConfig $securityConfig,
+    ) {}
+
     public function handle(MoonShineLoginContext $context): void
     {
         $this->writeAuditLog($context);
@@ -18,7 +22,7 @@ final class MoonShineLoginAlertService
 
     private function writeAuditLog(MoonShineLoginContext $context): void
     {
-        Log::channel((string) env('MOONSHINE_LOGIN_ALERT_CHANNEL', 'stack'))->warning('MoonShine admin login', [
+        Log::channel($this->securityConfig->alertChannel())->warning('MoonShine admin login', [
             'admin_id' => $context->adminId,
             'admin_email' => $context->adminEmail !== '' ? $context->adminEmail : null,
             'ip' => $context->ip,
@@ -30,11 +34,11 @@ final class MoonShineLoginAlertService
 
     private function sendEmailIfEnabled(MoonShineLoginContext $context): void
     {
-        $notify = (bool) env('MOONSHINE_LOGIN_ALERT_EMAIL_ENABLED', false);
-        $target = trim((string) env('MOONSHINE_LOGIN_ALERT_EMAIL', ''));
-        if (!$notify || $target === '') {
+        if (! $this->securityConfig->shouldSendAlertEmail()) {
             return;
         }
+
+        $target = $this->securityConfig->alertEmail();
 
         try {
             Mail::raw(
