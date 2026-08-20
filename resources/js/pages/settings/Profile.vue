@@ -54,9 +54,12 @@ const { t } = useI18n();
                     name="name"
                     :default-value="user.name"
                     required
-                    autocomplete="name"
+                    autocomplete="username"
                     :placeholder="t('settings.profilePage.namePlaceholder')"
                 />
+                <p class="text-xs leading-5 text-muted-foreground">
+                    {{ t('settings.profilePage.nameHint') }}
+                </p>
                 <InputError class="mt-2" :message="errors.name" />
             </div>
 

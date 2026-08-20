@@ -10,7 +10,7 @@ import {
     readRepeatQueryInt,
     readRepeatQueryParam,
 } from '@/composables/useRepeatQuery';
-import { apiRequest } from '@/lib/api';
+import { apiRequest, resolveApiErrorMessage } from '@/lib/api';
 import type {
     YouTubeCommentItem,
     YouTubeCommentsPayload,
@@ -18,7 +18,7 @@ import type {
     YouTubeVideo,
 } from '../types';
 
-const { t } = useI18n();
+const { t, locale } = useI18n();
 const form = ref({
     q: '',
     type: 'video' as 'video' | 'channel' | 'playlist',
@@ -59,10 +59,10 @@ const commentsByVideoId = ref<
 const canSearch = computed(() => form.value.q.trim().length > 0);
 const canUseVideoActions = (item: YouTubeVideo) => item.type === 'video';
 
-const numberFormat = new Intl.NumberFormat();
-const fmt = (value: number) => numberFormat.format(value ?? 0);
+const fmt = (value: number) =>
+    new Intl.NumberFormat(locale.value).format(value ?? 0);
 const formatDate = (value: string) =>
-    value ? new Date(value).toLocaleString() : '-';
+    value ? new Date(value).toLocaleString(locale.value) : '-';
 
 const ensureCommentState = (videoId: string) => {
     if (!commentsByVideoId.value[videoId]) {
@@ -123,7 +123,10 @@ const runSearch = async (append = false) => {
     loadingMore.value = false;
 
     if (!response.ok) {
-        error.value = response.message ?? t('youtube.common.requestFailed');
+        error.value = resolveApiErrorMessage(
+            response.message,
+            t('youtube.common.requestFailed')
+        );
 
         return;
     }
@@ -182,7 +185,10 @@ const loadComments = async (video: YouTubeVideo, append = false) => {
     }
 
     if (!response.ok) {
-        state.error = response.message ?? t('youtube.common.requestFailed');
+        state.error = resolveApiErrorMessage(
+            response.message,
+            t('youtube.common.requestFailed')
+        );
 
         return;
     }

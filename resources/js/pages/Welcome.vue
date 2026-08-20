@@ -53,56 +53,56 @@ const copy = computed(() => {
             localeToggleLabel: 'Переключить язык интерфейса',
             modulesTitle: 'Что уже доступно',
             modulesText:
-                'Каждый модуль решает понятный рабочий сценарий: поиск, аналитика, парсинг или техническая проверка.',
+                'Каждый модуль решает понятный рабочий сценарий: поиск, аналитика, сбор данных или техническая проверка.',
             modules: [
                 {
                     title: 'Telegram',
                     href: '/telegram',
                     summary:
-                        'Поиск по каналам, аналитика активности и парсинг сообщений с отчетами.',
-                    badges: ['Search', 'Analytics', 'Parser'],
+                        'Поиск по каналам, аналитика активности и сбор сообщений с отчётами.',
+                    badges: ['Поиск', 'Аналитика', 'Сбор данных'],
                 },
                 {
                     title: 'YouTube',
                     href: '/youtube',
                     summary:
                         'Поиск видео и каналов, аналитика по контенту и сбор комментариев.',
-                    badges: ['Search', 'Analytics', 'Comments'],
+                    badges: ['Поиск', 'Аналитика', 'Комментарии'],
                 },
                 {
                     title: 'Bluesky',
                     href: '/bluesky',
                     summary:
                         'Поиск постов и профилей, раскрытие связей и аналитика по темам.',
-                    badges: ['Posts', 'Profiles', 'Analytics'],
+                    badges: ['Публикации', 'Профили', 'Аналитика'],
                 },
                 {
                     title: 'Mastodon',
                     href: '/mastodon',
                     summary:
                         'Поиск по аккаунтам, постам и хэштегам с разбором контекста обсуждений.',
-                    badges: ['Accounts', 'Hashtags', 'Context'],
+                    badges: ['Аккаунты', 'Хэштеги', 'Контекст'],
                 },
                 {
                     title: 'Site Intel',
                     href: '/site-intel',
                     summary:
                         'Проверка сайта, домена и технических рисков: DNS, SSL, SEO и базовая аналитика.',
-                    badges: ['Domain', 'Security', 'SEO'],
+                    badges: ['Домен', 'Безопасность', 'SEO'],
                 },
                 {
                     title: 'News & Media Intel',
                     href: '/news-media-intel',
                     summary:
                         'Мониторинг новостей и медиа по теме, бренду, персоне или событию.',
-                    badges: ['Mentions', 'Timeline', 'Topics'],
+                    badges: ['Упоминания', 'Динамика', 'Темы'],
                 },
                 {
                     title: 'Shifr',
                     href: '/shifr',
                     summary:
                         'Утилиты для хеширования, преобразований, IOC и проверки JWT.',
-                    badges: ['Hash', 'Transform', 'IOC'],
+                    badges: ['Хеширование', 'Преобразования', 'IOC'],
                 },
             ] satisfies LandingModule[],
             workflowTitle: 'Как это используется в работе',
@@ -170,14 +170,14 @@ const copy = computed(() => {
         localeToggleLabel: 'Switch interface language',
         modulesTitle: 'What is already available',
         modulesText:
-            'Each module supports a clear workflow such as search, analytics, parsing, or technical validation.',
+            'Each module supports a clear workflow such as search, analytics, data collection, or technical validation.',
         modules: [
             {
                 title: 'Telegram',
                 href: '/telegram',
                 summary:
-                    'Channel search, activity analytics, and message parsing with reports.',
-                badges: ['Search', 'Analytics', 'Parser'],
+                    'Channel search, activity analytics, and message collection with reports.',
+                badges: ['Search', 'Analytics', 'Data collection'],
             },
             {
                 title: 'YouTube',

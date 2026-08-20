@@ -89,19 +89,19 @@
         "channelRequired": "Please enter the channel username first.",
         "searchFailed": "Unable to complete the search. Please retry in a moment.",
         "unknownSearchError": "Unexpected response received. Please retry the search.",
-        "commentsFailed": "Failed to load comments."
+        "commentsFailed": "Could not load comments. Please try again."
     },
     "tabs": {
         "search": "Search",
         "analytics": "Analytics",
-        "parser": "Parser"
+        "parser": "Data collection"
     },
     "parser": {
-        "title": "Telegram Parser",
-        "description": "This section is prepared for parser workflows. We will add sources, rules, and scheduled collection here.",
-        "status": "Stub: in development",
+        "title": "Telegram data collection",
+        "description": "Collect channel messages and comments, then download the results as Excel or JSON.",
+        "status": "Ready",
         "subtitle": "Online Telegram data collection and export",
-        "collapsed": "Settings panel is collapsed",
+        "collapsed": "Data collection panel is collapsed",
         "start": "Start collection",
         "stop": "Stop",
         "collecting": "Collecting...",
@@ -131,7 +131,7 @@
                 "comments": "Collecting comments",
                 "finishing": "Preparing export",
                 "completed": "Completed",
-                "failed": "Failed",
+                "failed": "Could not complete",
                 "stopped": "Stopped"
             }
         },
@@ -140,10 +140,10 @@
         },
         "history": {
             "title": "Recent exports",
-            "description": "Completed and recent Telegram parser runs remain available here for repeated downloads during the retention window.",
+            "description": "Download recent Telegram collection results again before their retention period ends.",
             "retention": "Files are stored for {days} days.",
             "loading": "Loading export history...",
-            "empty": "No Telegram parser exports yet.",
+            "empty": "No exports yet. Start data collection and completed files will appear here.",
             "unknown": "Unknown source",
             "created": "Created",
             "expires": "Available until",
@@ -152,14 +152,14 @@
             "messages": "Messages: {count}",
             "comments": "Comments: {count}",
             "errors": {
-                "load": "Failed to load export history."
+                "load": "Could not load export history. Refresh the page and try again."
             }
         },
         "errors": {
             "customBothDates": "Please specify both custom period dates.",
             "customInvalid": "Custom period is invalid.",
             "customTooLong": "Custom period cannot exceed one month.",
-            "failed": "Parser failed."
+            "failed": "Could not complete data collection. Check the settings and try again."
         }
     },
     "analytics": {
@@ -258,7 +258,7 @@
         },
         "errors": {
             "channelRequired": "Please enter a channel username.",
-            "loadFailed": "Could not load analytics.",
+            "loadFailed": "Could not load Telegram analytics. Please try again in a moment.",
             "rangeTooLong": "The custom date range cannot exceed 7 days."
         },
         "stats": {

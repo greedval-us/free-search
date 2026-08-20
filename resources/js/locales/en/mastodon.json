@@ -6,13 +6,13 @@
     "tabs": {
         "search": "Search",
         "analytics": "Analytics",
-        "parser": "Parser"
+        "parser": "Data collection"
     },
     "parser": {
-        "title": "Mastodon Parser",
-        "collapsed": "Parser panel is collapsed",
+        "title": "Mastodon data collection",
+        "collapsed": "Data collection panel is collapsed",
         "subtitle": "Collect all available posts from a Mastodon account and replies to each original post.",
-        "hint": "Use an account handle like @analyst@mastodon.social. The parser walks through the account timeline, then loads reply threads under each original post.",
+        "hint": "Enter an account such as @analyst@mastodon.social. The service will load its timeline and reply threads under each original post.",
         "account": "Account",
         "accountPlaceholder": "for example: @analyst@mastodon.social",
         "start": "Start collection",
@@ -24,8 +24,8 @@
             "overview": "Build an export with the account timeline and reply threads for each original post."
         },
         "progress": {
-            "title": "Parser progress",
-            "statuses": "Statuses",
+            "title": "Collection progress",
+            "statuses": "Posts",
             "comments": "Comments",
             "stage": {
                 "idle": "Idle",
@@ -33,27 +33,27 @@
                 "comments": "Loading comments",
                 "finishing": "Building export",
                 "completed": "Completed",
-                "failed": "Failed",
+                "failed": "Could not complete",
                 "stopped": "Stopped"
             }
         },
         "errors": {
             "accountRequired": "Account is required.",
-            "failed": "Failed to run parser."
+            "failed": "Could not start data collection. Check the account and try again."
         },
         "history": {
             "title": "Recent exports",
-            "description": "Saved Mastodon parser exports for the last {days} days.",
+            "description": "Completed Mastodon exports from the last {days} days.",
             "retention": "Files are stored for {days} days.",
             "loading": "Loading export history...",
-            "empty": "No exports yet.",
+            "empty": "No exports yet. Start data collection and completed files will appear here.",
             "unknown": "Unknown",
             "created": "Created",
             "expires": "Expires",
             "statuses": "Statuses: {count}",
             "comments": "Comments: {count}",
             "errors": {
-                "load": "Failed to load parser history."
+                "load": "Could not load export history. Refresh the page and try again."
             }
         }
     },
@@ -122,7 +122,7 @@
             "favouritesTotal": "Favorites total"
         },
         "errors": {
-            "requestFailed": "Request failed."
+            "requestFailed": "Could not load Mastodon analytics. Please try again in a moment."
         }
     },
     "search": {
@@ -148,8 +148,11 @@
         "loadMore": "Load more",
         "loadingMore": "Loading...",
         "noText": "[No text]",
-        "noBio": "No profile bio available.",
+        "noBio": "No profile description available.",
+        "author": "Author",
         "language": "Language",
+        "dateFrom": "Date from",
+        "dateTo": "Date to",
         "languagePlaceholder": "for example: en",
         "instanceDomain": "Instance domain",
         "instancePlaceholder": "for example: mastodon.social",
@@ -171,6 +174,19 @@
         "followersSection": "Followers",
         "emptyPosts": "No posts found.",
         "emptyFollowers": "No followers found."
+    },
+    "hashtags": {
+        "showPosts": "Hashtag posts",
+        "hidePosts": "Hide posts",
+        "uniqueAccounts": "Unique accounts in the loaded sample",
+        "uniqueInstances": "Unique instances in the loaded sample",
+        "postsWithMedia": "Posts with media in the loaded sample",
+        "postsWithLinks": "Posts with links in the loaded sample",
+        "sampleNote": "This summary covers only the posts loaded below, not the hashtag's complete history.",
+        "accountsSection": "Accounts using this hashtag",
+        "instancesSection": "Instances",
+        "postsSection": "Hashtag posts",
+        "emptyPosts": "No posts found."
     },
     "metrics": {
         "replies": "Replies",
@@ -207,8 +223,8 @@
         "openTag": "Open hashtag"
     },
     "errors": {
-        "requestFailed": "Request failed.",
-        "contextFailed": "Failed to load replies."
+        "requestFailed": "Could not load Mastodon results. Check the filters and try again.",
+        "contextFailed": "Could not load replies. Please try again."
     },
     "postTypes": {
         "original": "Original",

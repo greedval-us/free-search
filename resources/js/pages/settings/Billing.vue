@@ -31,6 +31,18 @@ defineOptions({
 const { t, locale } = useI18n();
 
 const planKeys = ['free', 'plus', 'pro'] as const;
+const featureLabelKeys: Record<string, string> = {
+    'bluesky.analytics': 'blueskyAnalytics',
+    'bluesky.parser': 'blueskyCollection',
+    'mastodon.analytics': 'mastodonAnalytics',
+    'mastodon.parser': 'mastodonCollection',
+    'site-intel.analytics': 'siteIntelAnalytics',
+    'site-intel.seo-audit': 'siteIntelSeoAudit',
+    'telegram.analytics': 'telegramAnalytics',
+    'telegram.parser': 'telegramCollection',
+    'youtube.analytics': 'youtubeAnalytics',
+    'youtube.parser': 'youtubeCollection',
+};
 const currentPlan = computed(() => props.access.plan);
 
 const replaceToken = (template: string, token: string, value: string): string =>
@@ -41,7 +53,9 @@ const featureLabel = computed(() => {
         return '';
     }
 
-    return props.feature.replaceAll('.', ' / ').replaceAll('-', ' ');
+    const labelKey = featureLabelKeys[props.feature] ?? 'unknown';
+
+    return t(`settings.billingPage.reason.features.${labelKey}`);
 });
 
 const formatDate = (value: string | null | undefined): string => {

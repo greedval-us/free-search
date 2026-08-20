@@ -19,7 +19,7 @@ import {
     readRepeatQueryInt,
     readRepeatQueryParam,
 } from '@/composables/useRepeatQuery';
-import { apiRequest } from '@/lib/api';
+import { apiRequest, resolveApiErrorMessage } from '@/lib/api';
 import MastodonAccountCard from '../components/MastodonAccountCard.vue';
 import MastodonStatusCard from '../components/MastodonStatusCard.vue';
 import type {
@@ -63,9 +63,10 @@ const hashtagProfile = computed(() =>
         : null
 );
 
-const fmt = (value: number) => new Intl.NumberFormat().format(value ?? 0);
+const fmt = (value: number) =>
+    new Intl.NumberFormat(locale.value).format(value ?? 0);
 const formatDate = (value: string) =>
-    value ? new Date(value).toLocaleString() : '-';
+    value ? new Date(value).toLocaleString(locale.value) : '-';
 
 const clampNumber = (
     value: number,
@@ -119,8 +120,10 @@ const runAnalytics = async () => {
     loading.value = false;
 
     if (!response.ok) {
-        error.value =
-            response.message ?? t('mastodon.analytics.errors.requestFailed');
+        error.value = resolveApiErrorMessage(
+            response.message,
+            t('mastodon.analytics.errors.requestFailed')
+        );
 
         return;
     }

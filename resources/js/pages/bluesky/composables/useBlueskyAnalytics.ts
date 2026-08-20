@@ -5,7 +5,7 @@ import {
     readRepeatQueryInt,
     readRepeatQueryParam,
 } from '@/composables/useRepeatQuery';
-import { apiRequest } from '@/lib/api';
+import { apiRequest, resolveApiErrorMessage } from '@/lib/api';
 import type {
     BlueskyActor,
     BlueskyAnalyticsPayload,
@@ -128,8 +128,10 @@ export const useBlueskyAnalytics = (
         loading.value = false;
 
         if (!response.ok) {
-            error.value =
-                response.message ?? t('bluesky.analytics.errors.requestFailed');
+            error.value = resolveApiErrorMessage(
+                response.message,
+                t('bluesky.analytics.errors.requestFailed')
+            );
 
             return;
         }

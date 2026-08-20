@@ -12,7 +12,7 @@ import {
 import MastodonSearchResults from '../components/MastodonSearchResults.vue';
 import { useMastodonSearch } from '../composables/useMastodonSearch';
 
-const { t } = useI18n();
+const { t, locale } = useI18n();
 
 const {
     limitMax,
@@ -39,7 +39,7 @@ const {
     loadMoreAccountFollowers,
     toggleHashtagStatuses,
     loadMoreHashtagStatuses,
-} = useMastodonSearch(t);
+} = useMastodonSearch(t, locale);
 
 const readRepeatBoolean = (value: string): boolean | null => {
     if (value === '1' || value === 'true') {

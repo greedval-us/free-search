@@ -87,10 +87,10 @@ const ruModules: ModuleDoc[] = [
                 ],
             },
             {
-                name: 'Парсер',
+                name: 'Сбор данных',
                 items: [
                     'Статусы запуска и выполнения',
-                    'Прогресс и счетчики обработки',
+                    'Прогресс и счётчики обработки',
                     'Сбор по периодам и по ключевой теме',
                     'Выгрузки в Excel и JSON',
                 ],
@@ -163,7 +163,7 @@ const ruModules: ModuleDoc[] = [
                 ],
             },
             {
-                name: 'Парсер',
+                name: 'Сбор данных',
                 items: [
                     'Получение комментариев и ответов по выбранному видео',
                     'Сортировка по релевантности или дате и поиск внутри комментариев',
@@ -446,7 +446,7 @@ const enModules: ModuleDoc[] = [
                 ],
             },
             {
-                name: 'Parser',
+                name: 'Data collection',
                 items: [
                     'Run and status states',
                     'Progress and processing counters',
@@ -522,7 +522,7 @@ const enModules: ModuleDoc[] = [
                 ],
             },
             {
-                name: 'Parser',
+                name: 'Data collection',
                 items: [
                     'Comments and replies for the selected video',
                     'Sorting by relevance or date and comment search',

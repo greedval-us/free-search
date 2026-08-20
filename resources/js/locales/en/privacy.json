@@ -4,8 +4,8 @@
     "title": "Personal Data Processing Policy",
     "subtitle": "This document explains what data the site processes, why it is used, and how users can manage their data.",
     "lastUpdated": "Last updated: June 11, 2026",
-    "noticeTitle": "Fill in the operator details before publication",
-    "noticeText": "Before publishing this page in production, replace the placeholders with the actual operator details, contact email, and mailing address for requests.",
+    "noticeTitle": "Operator details are required",
+    "noticeText": "Add the personal data operator's full legal name and mailing address before the public launch.",
     "backHome": "Back to home",
     "sectionLabels": {
         "general": "1. General Provisions",
@@ -28,7 +28,7 @@
     "operator": [
         "Personal data operator: [INSERT FULL LEGAL ENTITY NAME OR INDIVIDUAL ENTREPRENEUR NAME].",
         "Operator address: [INSERT LEGAL OR MAILING ADDRESS].",
-        "Email for personal data requests: [INSERT EMAIL ADDRESS]."
+        "Email for personal data requests: osint@uraboros.online."
     ],
     "data": [
         "Account data: login, email, password hash, registration date, and email verification status.",
@@ -73,7 +73,7 @@
         "Technical logs, cookies, and related support data are retained for the period necessary for service operation, security, and internal retention procedures."
     ],
     "contacts": [
-        "Requests regarding personal data processing should be sent to: [INSERT EMAIL ADDRESS].",
+        "Requests regarding personal data processing should be sent to: osint@uraboros.online.",
         "The request should preferably include information sufficient to identify the user, a description of the request, and a reply contact."
     ],
     "changes": [

@@ -6,7 +6,7 @@
     "tabs": {
         "search": "Search",
         "analytics": "Analytics",
-        "parser": "Parser"
+        "parser": "Data collection"
     },
     "search": {
         "title": "YouTube Search",
@@ -139,14 +139,14 @@
     "comments": {
         "toggleShow": "Comments",
         "toggleHide": "Hide comments",
-        "empty": "No comments found",
+        "empty": "No comments found for this video.",
         "toggleShowReplies": "Show replies",
         "toggleHideReplies": "Hide replies",
         "repliesPartialHint": "Only a subset of replies available via the public YouTube API is shown."
     },
     "parser": {
-        "title": "YouTube Parser",
-        "collapsed": "Settings panel is collapsed",
+        "title": "YouTube data collection",
+        "collapsed": "Data collection panel is collapsed",
         "subtitle": "Online YouTube comments collection and export",
         "hint": "Collect comments from the selected video and load all available replies.",
         "videoId": "Video ID",
@@ -169,30 +169,30 @@
                 "replies": "Collecting replies",
                 "finishing": "Preparing export",
                 "completed": "Completed",
-                "failed": "Failed",
+                "failed": "Could not complete",
                 "stopped": "Stopped"
             }
         },
         "errors": {
             "videoRequired": "Please enter a video ID or video URL.",
-            "failed": "Parser failed."
+            "failed": "Could not start comment collection. Please try again in a moment."
         },
         "help": {
-            "overview": "YouTube parser collects comments and all available replies under the selected video, then prepares Excel and JSON exports."
+            "overview": "Data collection loads comments and all available replies under the selected video, then prepares Excel and JSON exports."
         },
         "history": {
             "title": "Recent exports",
-            "description": "Saved YouTube parser exports for the last {days} days.",
+            "description": "Completed YouTube exports from the last {days} days.",
             "retention": "Files are stored for {days} days.",
             "loading": "Loading export history...",
-            "empty": "No exports yet.",
+            "empty": "No exports yet. Start comment collection and completed files will appear here.",
             "unknown": "Unknown",
             "created": "Created",
             "expires": "Expires",
             "comments": "Comments: {count}",
             "replies": "Replies: {count}",
             "errors": {
-                "load": "Failed to load parser history."
+                "load": "Could not load export history. Refresh the page and try again."
             }
         }
     },
@@ -241,10 +241,10 @@
     },
     "common": {
         "loading": "Loading...",
-        "empty": "No data yet",
+        "empty": "No data yet. Run a search or analysis to see results here.",
         "published": "Published",
         "open": "Open",
         "loadMore": "Load more",
-        "requestFailed": "Request failed"
+        "requestFailed": "Could not load YouTube data. Check the request and try again."
     }
 }

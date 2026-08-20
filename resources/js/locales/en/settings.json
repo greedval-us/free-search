@@ -9,30 +9,31 @@
     "profilePage": {
         "title": "Profile settings",
         "heading": "Profile information",
-        "headingDescription": "Update your name",
-        "name": "Name",
+        "headingDescription": "Update the username displayed throughout the service.",
+        "name": "Username",
         "email": "Email address",
-        "namePlaceholder": "Full name",
+        "namePlaceholder": "Username",
+        "nameHint": "Use Latin letters, numbers, spaces, and the characters . ' -",
         "emailPlaceholder": "Email address",
         "emailUnverified": "Your email address is unverified.",
-        "resendVerification": "Click here to resend the verification email.",
+        "resendVerification": "Resend verification email",
         "verificationSent": "A new verification link has been sent to your email address.",
         "save": "Save"
     },
     "securityPage": {
         "title": "Security settings",
         "updatePassword": "Update password",
-        "updatePasswordDescription": "Ensure your account is using a long, random password to stay secure",
+        "updatePasswordDescription": "Use a unique password with at least 12 characters.",
         "currentPassword": "Current password",
         "newPassword": "New password",
         "confirmPassword": "Confirm password",
         "savePassword": "Save password",
         "twoFactorTitle": "Two-factor authentication",
         "twoFactorDescription": "Manage your two-factor authentication settings",
-        "twoFactorEnableHint": "When you enable two-factor authentication, you will be prompted for a secure pin during login. This pin can be retrieved from a TOTP-supported application on your phone.",
+        "twoFactorEnableHint": "After you enable 2FA, sign-in will require a one-time code from your authenticator app.",
         "twoFactorContinueSetup": "Continue setup",
         "twoFactorEnable": "Enable 2FA",
-        "twoFactorEnabledHint": "You will be prompted for a secure, random pin during login, which you can retrieve from the TOTP-supported application on your phone.",
+        "twoFactorEnabledHint": "Sign-in now requires a one-time code from your authenticator app.",
         "twoFactorDisable": "Disable 2FA",
         "twoFactorSetup": {
             "enabledTitle": "Two-factor authentication enabled",
@@ -57,9 +58,9 @@
             "footerSuffix": " above."
         },
         "twoFactorErrors": {
-            "fetchQrCode": "Failed to fetch QR code.",
-            "fetchSetupKey": "Failed to fetch a setup key.",
-            "fetchRecoveryCodes": "Failed to fetch recovery codes."
+            "fetchQrCode": "Could not load the QR code. Close this window and try again.",
+            "fetchSetupKey": "Could not load the setup key. Please try again.",
+            "fetchRecoveryCodes": "Could not load recovery codes. Refresh the page and try again."
         }
     },
     "appearancePage": {
@@ -92,13 +93,13 @@
         "noExpiry": "No active paid subscription",
         "active": "Active",
         "analytics": "Analytics requests per day",
-        "parser": "Parser requests per day",
+        "parser": "Data collection runs per day",
         "backDashboard": "Back to dashboard",
         "hero": {
             "badge": "PLANS",
-            "title": "Ready-made plans for different levels of usage",
-            "text": "The page already shows the current plan, main quotas, and upgrade paths. Payment is not connected yet, so pay buttons lead to a reusable placeholder screen.",
-            "textDisabled": "Plan comparison and direct checkout are temporarily disabled. Access can currently be activated only with a one-time token."
+            "title": "Plans for different workloads",
+            "text": "Compare available features and daily limits. While online payment is unavailable, you can activate a subscription with a code.",
+            "textDisabled": "Plan comparison and online payment are temporarily unavailable. You can still activate a subscription with a code."
         },
         "summary": {
             "currentPlan": "Account plan",
@@ -113,36 +114,49 @@
         "compareTitle": "Quota comparison",
         "compareDescription": "Compare the key daily limits side by side without reading long conditions.",
         "moduleLimitsTitle": "Module limits",
-        "moduleLimitsDescription": "Values come from the current plan configuration and can change together with product settings.",
+        "moduleLimitsDescription": "See how many operations are available in each module per day.",
         "dailyLimit": "per day",
         "compare": {
             "metric": "Metric",
             "analytics": "Shared analytics limit per day",
-            "parser": "Shared parser limit per day",
+            "parser": "Shared data collection limit per day",
             "seoAudit": "SEO audit / Site Intel per day"
         },
         "supportTitle": "Need broader access than your current plan?",
-        "supportText": "Choose the plan that fits you best and continue. Payment is temporarily unavailable, but it will be available soon.",
+        "supportText": "Compare the available plans. Online payment is temporarily unavailable, but you can activate a subscription with a code.",
         "footer": {
             "upgradePlus": "Upgrade to Plus",
             "upgradePro": "Upgrade to Pro",
             "customAccess": "Custom terms"
         },
         "token": {
-            "title": "Have an activation token?",
-            "description": "Enter a one-time token to activate a subscription on your account right away.",
-            "label": "Activation token",
+            "title": "Have an activation code?",
+            "description": "Enter a one-time code to activate a subscription for this account.",
+            "label": "Activation code",
             "placeholder": "For example: ABCD-EFGH-JKLM-NPQR",
-            "button": "Activate",
+            "button": "Activate subscription",
             "success": "Subscription activated successfully."
         },
         "reason": {
             "planTitle": "This feature is locked by plan",
             "planText": "Your current plan does not include this capability. Choose Plus or Pro to unlock broader access.",
-            "planTextWithFeature": "Your current plan does not include this capability: :feature. Choose Plus or Pro to unlock broader access.",
+            "planTextWithFeature": "The “:feature” feature is not available on your current plan. Choose Plus or Pro to unlock it.",
             "quotaTitle": "Quota limit reached",
             "quotaText": "You have reached the limit of your current plan. A higher plan gives you more daily quota.",
-            "quotaTextWithFeature": "You have reached the quota for: :feature. A higher plan gives you more daily quota."
+            "quotaTextWithFeature": "The daily limit for “:feature” has been reached. A higher plan increases the available quota.",
+            "features": {
+                "blueskyAnalytics": "Bluesky analytics",
+                "blueskyCollection": "Bluesky data collection",
+                "mastodonAnalytics": "Mastodon analytics",
+                "mastodonCollection": "Mastodon data collection",
+                "siteIntelAnalytics": "site analytics",
+                "siteIntelSeoAudit": "site SEO audit",
+                "telegramAnalytics": "Telegram analytics",
+                "telegramCollection": "Telegram data collection",
+                "youtubeAnalytics": "YouTube analytics",
+                "youtubeCollection": "YouTube data collection",
+                "unknown": "selected feature"
+            }
         },
         "plans": {
             "free": {
@@ -162,7 +176,7 @@
                 "tagline": "Working pace",
                 "description": "Designed for individual recurring work with moderate daily load.",
                 "highlights": {
-                    "first": "Daily quotas for analytics and parser actions.",
+                    "first": "Daily quotas for analytics and data collection.",
                     "second": "A good fit for analysts running several cases in parallel.",
                     "third": "Balanced plan for day-to-day OSINT work."
                 }
@@ -200,10 +214,10 @@
         },
         "checkout": {
             "badge": "PAYMENT SOON",
-            "title": "Payment for the вЂњ:planвЂќ plan is coming soon",
-            "description": "Online payment is temporarily unavailable, but we are already preparing it.",
+            "title": "Payment for the “:plan” plan is temporarily unavailable",
+            "description": "We are preparing online payment. For now, keep using your current plan or activate a subscription with a code.",
             "bullets": {
-                "first": "Your selected plan is saved, and you will be able to complete it a little later.",
+                "first": "You will be able to purchase the selected plan when online payment becomes available.",
                 "second": "For now, you can go back and compare the available plans.",
                 "third": "We will add payment in one of the next updates."
             },
@@ -212,12 +226,12 @@
     },
     "deleteAccount": {
         "title": "Delete account",
-        "description": "Delete your account and all of its resources",
+        "description": "Permanently delete your account and its associated data.",
         "warning": "Warning",
-        "warningDescription": "Please proceed with caution, this cannot be undone.",
+        "warningDescription": "After confirmation, your account and its data cannot be restored.",
         "button": "Delete account",
-        "confirmTitle": "Are you sure you want to delete your account?",
-        "confirmDescription": "Once your account is deleted, all of its resources and data will also be permanently deleted. Please enter your password to confirm you would like to permanently delete your account.",
+        "confirmTitle": "Delete account?",
+        "confirmDescription": "Your account and associated data will be permanently deleted. Enter your password to confirm.",
         "password": "Password",
         "confirmButton": "Delete account"
     }

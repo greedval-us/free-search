@@ -18,7 +18,7 @@ import { useSiteIntelAnalytics } from '../composables/useSiteIntelAnalytics';
 import { useSiteIntelAnalyticsViewModel } from '../composables/useSiteIntelAnalyticsViewModel';
 import SiteIntelMetricBars from './components/SiteIntelMetricBars.vue';
 
-const { t } = useI18n();
+const { t, locale } = useI18n();
 const {
     form,
     loading,
@@ -42,7 +42,7 @@ const {
     emailSecurityScore,
     domainAgeDays,
     totalResponseTimeMs,
-} = useSiteIntelAnalyticsViewModel(result, t);
+} = useSiteIntelAnalyticsViewModel(result, t, locale);
 
 onMounted(() => {
     const params = getRepeatQueryParams();

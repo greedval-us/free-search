@@ -1,6 +1,6 @@
 import type { Ref } from 'vue';
 import { computed, ref } from 'vue';
-import { apiRequest } from '@/lib/api';
+import { apiRequest, resolveApiErrorMessage } from '@/lib/api';
 import type {
     BlueskyActor,
     BlueskyActorDetailsState,
@@ -110,7 +110,7 @@ const ensureStateInMap = <TState>(
     return store.value[key];
 };
 
-export const useBlueskySearch = (t: TranslateFn) => {
+export const useBlueskySearch = (t: TranslateFn, locale: { value: string }) => {
     const form = ref<BlueskySearchForm>(createSearchForm());
     const loading = ref(false);
     const loadingMore = ref(false);
@@ -209,7 +209,10 @@ export const useBlueskySearch = (t: TranslateFn) => {
         loadingMore.value = false;
 
         if (!response.ok) {
-            error.value = response.message ?? t('bluesky.errors.requestFailed');
+            error.value = resolveApiErrorMessage(
+                response.message,
+                t('bluesky.errors.requestFailed')
+            );
 
             return;
         }
@@ -228,7 +231,7 @@ export const useBlueskySearch = (t: TranslateFn) => {
     };
 
     const formatDate = (value: string) =>
-        value ? new Date(value).toLocaleString() : '-';
+        value ? new Date(value).toLocaleString(locale.value) : '-';
 
     const ensureInteractionState = (kind: PostEngagementKind, postId: string) =>
         ensureStateInMap(
@@ -294,7 +297,10 @@ export const useBlueskySearch = (t: TranslateFn) => {
         state.loadingMore = false;
 
         if (!response.ok) {
-            state.error = response.message ?? t('bluesky.errors.requestFailed');
+            state.error = resolveApiErrorMessage(
+                response.message,
+                t('bluesky.errors.requestFailed')
+            );
 
             return;
         }
@@ -336,7 +342,10 @@ export const useBlueskySearch = (t: TranslateFn) => {
         state.loading = false;
 
         if (!response.ok) {
-            state.error = response.message ?? t('bluesky.errors.requestFailed');
+            state.error = resolveApiErrorMessage(
+                response.message,
+                t('bluesky.errors.requestFailed')
+            );
 
             return;
         }
@@ -440,7 +449,10 @@ export const useBlueskySearch = (t: TranslateFn) => {
             if (!response.ok) {
                 options.setError(
                     state,
-                    response.message ?? t('bluesky.errors.requestFailed')
+                    resolveApiErrorMessage(
+                        response.message,
+                        t('bluesky.errors.requestFailed')
+                    )
                 );
 
                 return;

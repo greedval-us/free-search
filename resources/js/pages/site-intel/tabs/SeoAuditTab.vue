@@ -8,7 +8,7 @@ import { useI18n } from '@/composables/useI18n';
 import { useSeoAudit } from '../composables/useSeoAudit';
 import SeoAuditLinkGraph from './components/SeoAuditLinkGraph.vue';
 
-const { t } = useI18n();
+const { t, locale } = useI18n();
 const {
     form,
     loading,
@@ -274,7 +274,7 @@ const linkGraphFilters = reactive({
                         {{ t('siteIntel.common.checkedAt') }}
                     </p>
                     <p class="mt-1 text-sm font-semibold">
-                        {{ new Date(result.checkedAt).toLocaleString() }}
+                        {{ new Date(result.checkedAt).toLocaleString(locale) }}
                     </p>
                 </div>
             </div>

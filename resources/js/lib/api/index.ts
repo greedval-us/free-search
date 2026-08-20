@@ -1,7 +1,10 @@
 export { ApiError } from './errors';
 export { apiRequest, apiRequestOrThrow } from './client';
 export { buildQueryString } from './query';
-export { resolveClientErrorMessage } from './resolve-error-message';
+export {
+    resolveApiErrorMessage,
+    resolveClientErrorMessage,
+} from './resolve-error-message';
 export type {
     ApiEnvelope,
     ApiFailure,

@@ -2,7 +2,7 @@
     "headTitle": "News & Media Intel",
     "title": "News & Media Intel",
     "description": "Monitor public mentions, topics, sentiment, and timeline shifts in one place.",
-    "empty": "Enter a query to start monitoring mentions.",
+    "empty": "No mentions yet. Enter a person, company, or topic to start monitoring.",
     "form": {
         "query": "Query",
         "placeholder": "person, company, or topic",
@@ -20,11 +20,11 @@
     },
     "timeline": {
         "title": "Timeline",
-        "none": "No timeline points yet."
+        "none": "No publication activity found for this query."
     },
     "mentions": {
         "title": "Mentions",
-        "none": "No mentions found."
+        "none": "No public mentions found. Try a broader query or another spelling."
     },
     "sources": {
         "googlenews": "Google News",
@@ -32,8 +32,8 @@
         "newsapi": "NewsAPI"
     },
     "errors": {
-        "queryRequired": "Enter query (minimum 2 characters).",
-        "lookupFailed": "Unable to complete the news and media lookup."
+        "queryRequired": "Enter at least 2 characters to search for mentions.",
+        "lookupFailed": "Could not load news and media mentions. Check the query and try again."
     },
     "help": {
         "label": "About block",

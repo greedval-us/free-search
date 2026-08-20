@@ -1,5 +1,5 @@
 import { computed, ref } from 'vue';
-import { apiRequest } from '@/lib/api';
+import { apiRequest, resolveApiErrorMessage } from '@/lib/api';
 import type {
     MastodonAccount,
     MastodonAccountDetailsState,
@@ -101,7 +101,10 @@ const mergeUniqueById = <T extends { id: string }>(
     });
 };
 
-export const useMastodonSearch = (t: TranslateFn) => {
+export const useMastodonSearch = (
+    t: TranslateFn,
+    locale: { value: string }
+) => {
     const form = ref<MastodonSearchForm>(createSearchForm());
     const loading = ref(false);
     const loadingMore = ref(false);
@@ -137,7 +140,7 @@ export const useMastodonSearch = (t: TranslateFn) => {
     };
 
     const formatDate = (value: string) =>
-        value ? new Date(value).toLocaleString() : '-';
+        value ? new Date(value).toLocaleString(locale.value) : '-';
 
     const ensureContextState = (statusId: string) => {
         if (!contextByStatusId.value[statusId]) {
@@ -205,8 +208,10 @@ export const useMastodonSearch = (t: TranslateFn) => {
         loadingMore.value = false;
 
         if (!response.ok) {
-            error.value =
-                response.message ?? t('mastodon.errors.requestFailed');
+            error.value = resolveApiErrorMessage(
+                response.message,
+                t('mastodon.errors.requestFailed')
+            );
 
             return;
         }
@@ -242,8 +247,10 @@ export const useMastodonSearch = (t: TranslateFn) => {
         state.loading = false;
 
         if (!response.ok) {
-            state.error =
-                response.message ?? t('mastodon.errors.contextFailed');
+            state.error = resolveApiErrorMessage(
+                response.message,
+                t('mastodon.errors.contextFailed')
+            );
 
             return;
         }
@@ -302,8 +309,10 @@ export const useMastodonSearch = (t: TranslateFn) => {
         state.statusesLoadingMore = false;
 
         if (!response.ok) {
-            state.statusesError =
-                response.message ?? t('mastodon.errors.requestFailed');
+            state.statusesError = resolveApiErrorMessage(
+                response.message,
+                t('mastodon.errors.requestFailed')
+            );
 
             return;
         }
@@ -348,8 +357,10 @@ export const useMastodonSearch = (t: TranslateFn) => {
         state.followersLoadingMore = false;
 
         if (!response.ok) {
-            state.followersError =
-                response.message ?? t('mastodon.errors.requestFailed');
+            state.followersError = resolveApiErrorMessage(
+                response.message,
+                t('mastodon.errors.requestFailed')
+            );
 
             return;
         }
@@ -427,8 +438,10 @@ export const useMastodonSearch = (t: TranslateFn) => {
         state.loadingMore = false;
 
         if (!response.ok) {
-            state.error =
-                response.message ?? t('mastodon.errors.requestFailed');
+            state.error = resolveApiErrorMessage(
+                response.message,
+                t('mastodon.errors.requestFailed')
+            );
 
             return;
         }

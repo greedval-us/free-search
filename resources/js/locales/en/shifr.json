@@ -86,12 +86,12 @@
         }
     },
     "help": {
-        "label": "What is this help?",
+        "label": "More information",
         "input": "Paste any artifact for quick transformations, decoding, hashing, or IOC extraction.",
         "result": "Results are returned in structured JSON so they are easy to review, copy into reports, or reuse in pivots."
     },
     "errors": {
-        "requestFailed": "Request failed."
+        "requestFailed": "Could not process the input. Check its format and try again."
     },
     "classic": {
         "cipher": "Cipher",

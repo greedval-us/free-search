@@ -43,9 +43,10 @@ onMounted(() => {
     initializeFromRepeatQuery();
 });
 
-const fmt = (value: number) => new Intl.NumberFormat().format(value ?? 0);
+const fmt = (value: number) =>
+    new Intl.NumberFormat(locale.value).format(value ?? 0);
 const formatDate = (value: string) =>
-    value ? new Date(value).toLocaleString() : '-';
+    value ? new Date(value).toLocaleString(locale.value) : '-';
 
 const primaryMetrics = computed(() =>
     result.value

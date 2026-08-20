@@ -1,6 +1,10 @@
 import { onBeforeUnmount, onMounted, ref } from 'vue';
 import type { Ref } from 'vue';
-import { apiRequest, resolveClientErrorMessage } from '@/lib/api';
+import {
+    apiRequest,
+    resolveApiErrorMessage,
+    resolveClientErrorMessage,
+} from '@/lib/api';
 import { withDownloadLocale } from '@/lib/downloadLocale';
 
 export type ParserRunStatus = 'running' | 'completed' | 'failed' | 'stopped';
@@ -109,7 +113,10 @@ export const useParserRun = <
 
             if (!response.ok) {
                 throw new Error(
-                    response.message ?? options.historyErrorMessage()
+                    resolveApiErrorMessage(
+                        response.message,
+                        options.historyErrorMessage()
+                    )
                 );
             }
 
@@ -169,7 +176,10 @@ export const useParserRun = <
 
             if (!response.ok) {
                 throw new Error(
-                    response.message ?? options.requestErrorMessage()
+                    resolveApiErrorMessage(
+                        response.message,
+                        options.requestErrorMessage()
+                    )
                 );
             }
 
@@ -221,7 +231,10 @@ export const useParserRun = <
 
             if (!response.ok || !response.data.runId) {
                 throw new Error(
-                    response.message ?? options.requestErrorMessage()
+                    resolveApiErrorMessage(
+                        response.message,
+                        options.requestErrorMessage()
+                    )
                 );
             }
 

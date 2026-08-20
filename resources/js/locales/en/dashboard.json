@@ -3,8 +3,8 @@
         "title": "Dashboard"
     },
     "header": {
-        "kicker": "User dashboard",
-        "title": "Your activity hub",
+        "kicker": "Workspace",
+        "title": "Your activity",
         "subtitle": "Track real search queries, recent actions, and quickly return to your modules.",
         "badge": "Search history is saved automatically"
     },
@@ -21,7 +21,7 @@
         "capabilities": {
             "analytics": "Analytics",
             "seo-audit": "SEO audit",
-            "parser": "Parser"
+            "parser": "Data collection"
         },
         "unavailable": "Unavailable"
     },
@@ -41,8 +41,8 @@
         "savedQueries": "Saved queries"
     },
     "favorite": {
-        "usedPrefix": "Used",
-        "usedSuffix": "times",
+        "usedPrefix": "Queries:",
+        "usedSuffix": "",
         "empty": "No query history yet. Run your first search."
     },
     "modules": {
@@ -58,13 +58,13 @@
         "open": "Open module",
         "pinAria": "Pin module",
         "unpinAria": "Unpin module",
-        "empty": "No module activity yet."
+        "empty": "No module activity yet. Open a module to run your first query."
     },
     "weekly": {
-        "empty": "No weekly data yet."
+        "empty": "No activity this week yet. New queries will appear here."
     },
     "recent": {
-        "empty": "No queries yet.",
+        "empty": "No queries yet. Start with any module and your history will appear here.",
         "runAgain": "Run again",
         "save": "Save query"
     },
@@ -74,7 +74,7 @@
         "favorite": "Favorite module"
     },
     "saved": {
-        "empty": "No saved queries yet.",
+        "empty": "No saved queries yet. Save a useful query from recent activity to access it here.",
         "run": "Run query",
         "delete": "Delete"
     },

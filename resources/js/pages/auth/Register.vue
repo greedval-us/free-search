@@ -48,6 +48,9 @@ defineOptions({
                     :placeholder="t('auth.register.loginPlaceholder')"
                     class="auth-input-skin"
                 />
+                <p class="text-xs leading-5 text-muted-foreground">
+                    {{ t('auth.register.loginRule') }}
+                </p>
                 <InputError :message="errors.name" />
             </div>
 

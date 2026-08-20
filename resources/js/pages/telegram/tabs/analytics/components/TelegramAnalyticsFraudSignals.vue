@@ -10,12 +10,12 @@ const props = defineProps<{
     signals: FraudSignals;
 }>();
 
-const { t } = useI18n();
+const { t, locale } = useI18n();
 
 const formatNumber = (value: number | null | undefined) => {
     const numeric = Number(value);
 
-    return new Intl.NumberFormat().format(
+    return new Intl.NumberFormat(locale.value).format(
         Number.isFinite(numeric) ? numeric : 0
     );
 };
@@ -25,7 +25,7 @@ const formatDate = (unix: number) => {
         return '-';
     }
 
-    return new Date(unix * 1000).toLocaleString();
+    return new Date(unix * 1000).toLocaleString(locale.value);
 };
 
 const riskLevelLabel = computed(() =>
