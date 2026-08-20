@@ -1,234 +1,31 @@
-# Module Architecture Standard
+# Module boundaries
 
-Этот документ фиксирует текущий архитектурный стандарт для модулей Free Search. Его задача — удерживать кодовую базу расширяемой, читаемой и пригодной к безопасному рефакторингу по мере роста числа модулей, отчетов и интеграций.
+## Фактические стили
 
-## Цели
+| Modules | Фактическая организация |
+| --- | --- |
+| Telegram | Search/Analytics/Parser application services, Actions, DTO, Presenters, Gateway, MadelineProto support |
+| YouTube | Search/Analytics/Parser services, Actions, DTO, Data API Gateway/client |
+| Bluesky, Mastodon | Search/Analytics/Parser, Actions, DTO, Presenters, Gateway/API client, typed config |
+| Site Intel | Application contracts/services, Domain DTO, Infrastructure clients, Support guard/config |
+| News / Media Intel | Application service/contracts, Domain DTO, Infrastructure feed providers |
+| Shifr | Application services, Actions, DTO, cipher/toolkit Support; no external infrastructure |
+| ParserSupport, Export | Shared technical modules used by social parsers |
 
-- уменьшать связанность между слоями и модулями;
-- упрощать добавление новых OSINT-направлений;
-- удерживать контроллеры и UI-слой тонкими;
-- не допускать разрастания серых зон вроде “еще один service/helper” без явной роли;
-- делать инфраструктурные зависимости заменяемыми и тестируемыми.
+Следовательно, проект module-oriented, но не имеет одного обязательного шаблона директорий.
 
-## Базовая идея
+## Правила границ
 
-Новая прикладная функциональность по возможности должна попадать в `app/Modules/<ModuleName>`, а не расползаться по глобальным папкам. Модуль — это не просто каталог, а граница ответственности.
+- Controller зависит от Application Service interface или узкого service, не от raw external client.
+- Form Request валидирует/нормализует и при наличии собирает DTO.
+- External implementation регистрируется module Service Provider.
+- DTO/Result/Presenter отделяет raw source payload от transport/export.
+- Module-specific limits находятся в `config/osint/*` или `config/services.php` и часто оборачиваются typed config.
+- Shared Parser/Excel infrastructure не должна знать source-specific fields; module export builder формирует sheets.
+- Dashboard/Access/Subscriptions остаются в app-level Services, поскольку пересекают несколько modules.
 
-Внутри модуля допускаются разные стили детализации, но структура должна оставаться узнаваемой и предсказуемой.
+## Добавление модуля
 
-## Рекомендуемая структура модуля
+Минимум: named UI/operation routes, Controller + Request, application entry point, source boundary, config/Provider, frontend page/composable, localized errors и tests. Parser нужен только для длительного пошагового сбора; не копируйте Parser lifecycle для синхронного lookup. Paid capability требует resource/route/page mapping в `config/access.php`.
 
-Для `app/Modules/<ModuleName>` ориентир такой:
-
-### `Application/`
-
-- orchestration/use cases;
-- application services;
-- прикладные контракты;
-- coordination между domain и infrastructure.
-
-### `Domain/`
-
-- чистые бизнес-правила;
-- value objects, enums, domain DTO;
-- инварианты и вычисления;
-- без прямой зависимости от Laravel facades, HTTP и storage.
-
-### `Infrastructure/`
-
-- HTTP/API clients;
-- парсеры ответов внешних сервисов;
-- storage-specific реализации;
-- реализации контрактов из `Application` или `Domain`.
-
-### `DTO/`
-
-- явные входные и выходные контракты между слоями;
-- request/result DTO;
-- parser snapshot/state DTO, если сценарий потоковый или фоновой.
-
-### `Providers/`
-
-- module-level bindings;
-- регистрация typed config factories и module services.
-
-### Вспомогательные папки по необходимости
-
-- `Actions/` — если модуль сознательно использует action-style orchestration;
-- `Presenters/` — если нужно стабильно преобразовывать сырой payload в UI/API-friendly вид;
-- `Support/` — только для модульных внутренних утилит, не для глобального “склада всего”.
-
-## Разрешенные направления зависимостей
-
-Допустимое направление:
-
-- `Http -> Application -> Domain`
-- `Infrastructure -> Application contracts`
-- `Infrastructure -> Domain contracts`
-- `Presenter -> DTO/Domain/Application result`
-
-Недопустимо:
-
-- `Domain -> Http`
-- `Domain -> Laravel facades`
-- `Controller -> raw external client`
-- `FormRequest -> бизнес-логика и инфраструктурные вызовы`
-- `Infrastructure -> Controller`
-
-## Правила для HTTP-слоя
-
-### `FormRequest`
-
-Должен заниматься только:
-
-- валидацией;
-- нормализацией входа;
-- сборкой DTO для следующего слоя.
-
-Не должен:
-
-- ходить во внешние API;
-- хранить прикладные ветвления;
-- повторять сложные domain checks без причины.
-
-### `Controller`
-
-Контроллер должен:
-
-- принять request;
-- вызвать один прикладной сценарий;
-- вернуть `Inertia`, `JSON`, файл или redirect.
-
-Контроллер не должен:
-
-- склеивать большие массивы доменной логики;
-- считать метрики;
-- напрямую работать с низкоуровневыми API-клиентами;
-- сам определять access policy, если это уже решается middleware/service-слоем.
-
-## Что куда класть вне модулей
-
-В проекте уже есть важные глобальные директории: `app/Services`, `app/Support`, `app/Http`, `app/MoonShine`. Чтобы они не размывали модульную структуру, придерживаемся таких правил:
-
-### `app/Services`
-
-Подходит для:
-
-- сценариев уровня приложения, которые агрегируют несколько модулей;
-- dashboard/billing/access/use-case логики верхнего уровня;
-- функциональности, у которой нет одного “домашнего” модуля.
-
-Не подходит для:
-
-- новой логики конкретного модуля, если у нее есть четкая доменная принадлежность.
-
-### `app/Support`
-
-Подходит для:
-
-- cross-cutting infrastructure;
-- observability/logging helpers;
-- shared utility-классов, реально используемых из нескольких областей.
-
-Не подходит для:
-
-- размещения доменной логики “потому что некуда положить”.
-
-### `app/MoonShine`
-
-Подходит для:
-
-- ресурсов, страниц, форматтеров и UX-представления админки.
-
-Не подходит для:
-
-- дублирования доменной логики, уже существующей в модуле или сервисе.
-
-## Конфигурация
-
-- `env()` используется только в `config/*.php`.
-- Для нетривиальных конфигов применяются typed config objects и/или factory-классы.
-- Потребители должны зависеть от `*Config`, а не от raw `config()`-массивов.
-
-Рекомендуемый паттерн:
-
-1. `config/*.php` собирает и именует значения.
-2. `*Config::fromArray()` нормализует структуру.
-3. Сервисы получают уже typed config object.
-
-## Паттерны, которые в проекте считаются нормальными
-
-### Thin controller + application service
-
-Основной путь для HTTP use cases.
-
-### Action classes
-
-Допустимы, если:
-
-- action имеет одну четкую обязанность;
-- имя отражает реальный сценарий;
-- action не превращается в “второй сервисный слой без границ”.
-
-### Presenters
-
-Хороший выбор, если:
-
-- есть повторяемое преобразование DTO/raw payload в API/UI-friendly структуру;
-- нужно централизовать формат данных для нескольких endpoints или отчетов.
-
-### Parser run lifecycle
-
-Для сценариев длительного сбора данных допустимы:
-
-- `*ParserApplicationService`
-- `*RunStore`
-- `*RunGuard`
-- `*HistoryPresenter`
-- export builders
-
-Важно, чтобы orchestration оставалась в сервисе, а детали хранения/экспорта были вынесены в отдельные коллабораторы.
-
-## Definition of Done для нового модуля
-
-1. Есть один явный прикладной entry point или набор entry points.
-2. HTTP-слой тонкий.
-3. Инфраструктура скрыта за контрактами или достаточно узкими адаптерами.
-4. Конфиг вынесен в `config/*` и, если нужно, typed config object.
-5. Критический happy path покрыт тестом.
-6. Ошибки и пользовательские сообщения интегрированы в общий стандарт переводов.
-7. Если есть parser/export/report сценарии, их lifecycle задокументирован и тестируем.
-
-## Признаки, что класс пора разрезать
-
-- класс одновременно грузит данные, парсит payload, считает score и форматирует response;
-- constructor стал длинным и отражает несколько подсистем;
-- один и тот же класс нужен и для доменной логики, и для UI formatting;
-- тесты на него требуют много unrelated моков;
-- его нельзя коротко описать одним предложением.
-
-При рефакторинге обычно помогает такой порядок:
-
-1. Выделить parsing/mapping.
-2. Выделить вычисления и score calculators.
-3. Оставить в исходном классе orchestration.
-4. Обновить unit/feature тесты.
-
-## Антипаттерны
-
-- god-class с загрузкой, парсингом, scoring и formatting в одном месте;
-- глобальные helper-цепочки вместо явных классов;
-- копирование normalization logic в нескольких request/service классах;
-- доменная логика в `Support` без четкой причины;
-- появление новых “общих” директорий без архитектурной необходимости;
-- слой абстракций, созданный только ради паттерна, а не ради реальной замены реализации.
-
-## Быстрый чек-лист при ревью
-
-1. У класса одна роль?
-2. Зависимости направлены вниз по слоям?
-3. Новая логика лежит в правильном модуле, а не в серой зоне?
-4. Интеграции изолированы за контрактом или узким адаптером?
-5. DTO и naming отражают сценарий, а не случайную техническую деталь?
-6. Сообщения об ошибках и переводы не захардкожены?
-7. Основной сценарий покрыт тестом?
+Проверяйте регистрацию Provider в `bootstrap/providers.php` и подключение nested config в `config/osint.php`: наличие файла само по себе не делает его доступным как `config('osint.<key>')`.

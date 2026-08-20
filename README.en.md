@@ -1,394 +1,86 @@
 # Free Search
 
-Free Search is a modular OSINT platform built with `Laravel 13` + `Inertia.js` + `Vue 3`, with a user-facing workspace, analytical modules, subscription-aware access control, and a dedicated `MoonShine` admin panel.
+Free Search is a modular OSINT platform built with Laravel, Inertia.js, and Vue for searching, collecting, normalizing, and analysing open-source data.
 
-Russian version: [README.md](README.md)
+> **Project Status: Beta.** The project is under active development. Internal APIs and interfaces may change, modules have different maturity levels, and integrations depend on third-party availability and policies. Production deployment requires an independent configuration, security, and source-limit review.
 
-## Overview
+[Русская версия](README.md) · [Documentation index (Russian)](docs/README.md) · [Quick start (Russian)](docs/getting-started.md)
 
-The platform collects, normalizes, and presents signals from open sources. Its main goals are:
+## Current capabilities
 
-- fast access to practical OSINT workflows;
-- a unified UX across different source types;
-- an extensible modular architecture;
-- predictable operations and maintenance.
+- Telegram, YouTube, Bluesky, and Mastodon: Search, Analytics, background Parser Runs, history, stop, JSON and Excel exports.
+- Site Intel: HTTP/DNS/SSL checks, WHOIS-based Domain Lite, analytics, SEO Audit, and HTML reports.
+- News / Media Intel: NewsAPI, Google News RSS, and Bing RSS aggregation with deduplication and lightweight heuristic analysis.
+- Shifr: hashing, text transforms, IOC extraction, JWT inspection, and classic ciphers.
+- Dashboard with activity history, summaries, pinned modules, and saved queries.
+- Fortify authentication, email verification, 2FA, subscriptions, daily Feature Access quotas, and a separate MoonShine admin panel.
 
-The current platform includes:
+All areas are Beta. Telegram requires a MadelineProto session; YouTube depends on Data API quotas; Bluesky requires credentials; Site Intel performs active network requests; News analysis is heuristic. See [project status](docs/project/status.md).
 
-- `Telegram` search, parser, and analytics;
-- `YouTube` search, parser, and analytics;
-- `Bluesky` search, parser, and analytics;
-- `Mastodon` search, parser, and analytics;
-- `Site Intel`: `site-health`, `domain-lite`, `analytics`, `seo-audit`;
-- `News / Media Intel`;
-- `Shifr Toolkit` for applied crypto and IOC workflows;
-- a user `Dashboard` with history, pinned modules, and saved queries;
-- web auth, 2FA, notifications, and subscription activation/billing flows;
-- a `MoonShine` admin panel.
+## Stack
 
-## Tech Stack
+- PHP `^8.3`, Laravel `^13.0`, Fortify, MoonShine 4
+- Vue 3, TypeScript, Inertia.js 3, Vite 8, Tailwind CSS 4
+- MadelineProto, YouTube Data API v3, Bluesky AT Protocol, Mastodon API, RSS/NewsAPI
+- PHPUnit 12, Vitest 4, Pint, ESLint, Prettier, vue-tsc
 
-- Backend: `PHP 8.3`, `Laravel 13`
-- Frontend: `Vue 3`, `TypeScript`, `Inertia.js`, `Vite`
-- UI: `Tailwind CSS 4`, `Reka UI`, `Lucide`
-- Auth/Security: `Laravel Fortify`, email verification, 2FA
-- Admin: `MoonShine`
-- Files/Exports: `maatwebsite/excel`
-- Telegram integration: `danog/madelineproto`
-- Testing: `PHPUnit`, `Vitest`
+## Architecture
 
-## Main User Flows
+The codebase uses a pragmatic modular Laravel architecture rather than one uniform Clean Architecture or DDD template. Controllers and Form Requests lead into module Application Services; Actions, DTOs, gateway/provider contracts, collectors, presenters, and infrastructure adapters are used according to each module's needs. Shared Parser Run and Excel export infrastructure lives under `app/Modules`.
 
-- Run open-source lookups from a single workspace.
-- Save repeated queries and re-run them from the dashboard.
-- Start parser runs, track status, stop them, and download `JSON` or `Excel`.
-- Generate analytical reports for Telegram, YouTube, Bluesky, Mastodon, or Site Intel.
-- Manage profile, security, notifications, and subscription settings from the app.
+```mermaid
+flowchart LR
+    Vue[Vue / Inertia] --> Http[Route + Controller]
+    Http --> Request[Form Request]
+    Request --> Service[Application Service]
+    Service --> Logic[Action / collector / analysis]
+    Logic --> Port[Gateway / Provider]
+    Port --> Source[External source / storage]
+    Service --> Response[DTO to JSON / Inertia / file]
+```
 
-## Architecture Principles
+See the [architecture overview](docs/architecture/overview.md) and [Parser Run lifecycle](docs/architecture/parser-runs.md).
 
-- The HTTP layer stays thin: request -> validation/normalization -> application service -> response.
-- Business rules live outside controllers in modular services and narrow collaborators.
-- External integrations are hidden behind contracts.
-- Runtime code does not call `env()` directly; configuration comes from `config/*`.
-- Architecture agreements are documented and kept close to the codebase.
+## Requirements and quick start
 
-Related docs:
-
-- [docs/architecture/modules.md](docs/architecture/modules.md)
-- [docs/errors.md](docs/errors.md)
-- [docs/telegram-sessions.md](docs/telegram-sessions.md)
-
-## Repository Structure
-
-- `app/Modules` - modular domains and use cases
-- `app/Http` - controllers, requests, middleware
-- `app/Services` - top-level application services outside module folders
-- `app/Support` - shared infrastructure and cross-cutting support classes
-- `app/MoonShine` - admin panel resources and UI integration
-- `config` - application configuration
-- `config/osint` - OSINT and parser-run configuration
-- `resources/js` - frontend application
-- `routes` - public, protected, and settings routes
-- `database` - migrations, factories, seeders
-- `tests` - unit and feature tests
-- `docs` - architecture and operations guides
-
-## Module Map
-
-### Telegram
-
-- `search/messages`
-- `search/comments`
-- message media streaming
-- parser-run lifecycle: `start`, `status`, `history`, `stop`, `download-json`, `download-excel`
-- analytics: `summary`, `report`
-
-### YouTube
-
-- video search
-- comments preview
-- parser-run lifecycle
-- analytics: `summary`, `report`
-
-### Bluesky
-
-- content search
-- actor feed / followers / follows
-- likes / reposts / thread
-- parser-run lifecycle
-- analytics: `summary`, `report`
-
-### Mastodon
-
-- resource search
-- account statuses / followers
-- tag timeline
-- status context
-- parser-run lifecycle
-- analytics: `summary`, `report`
-
-### Site Intel
-
-- `site-health`
-- `domain-lite`
-- `analytics`
-- `seo-audit`
-- HTML and analytics reports
-
-### News / Media Intel
-
-- aggregated lookup across configured news/media providers
-
-### Shifr
-
-- hash lookup
-- text transform
-- IOC extraction
-- JWT inspection
-- classic ciphers
-
-## Quick Start
-
-### 1. Install dependencies
+CI uses PHP 8.3, Composer 2, and Node.js 22.
 
 ```bash
 composer install
 npm install
-```
-
-### 2. Prepare the environment
-
-```bash
 cp .env.example .env
 php artisan key:generate
-```
-
-### 3. Configure the database
-
-The default setup uses `sqlite`, but any Laravel-supported driver can be configured through `DB_*`.
-
-```bash
 php artisan migrate
-```
-
-### 4. Start the local environment
-
-```bash
 composer run dev
 ```
 
-This script starts:
-
-- `php artisan serve`
-- `php artisan queue:listen --tries=1`
-- `vite`
-
-### One-command alternative
-
-```bash
-composer run setup
-```
-
-## Development Commands
-
-### Composer
-
-- `composer run dev` - local development environment
-- `composer run setup` - initial project bootstrap
-- `composer run lint` - `pint --parallel`
-- `composer run lint:check` - PHP style check
-- `composer run test` - clear config cache, run PHP style check, then `php artisan test`
-- `composer run ci:check` - local CI-style pass: frontend checks + PHP tests
-
-### NPM
-
-- `npm run dev` - Vite dev server
-- `npm run build` - production build
-- `npm run build:ssr` - build + SSR bundle
-- `npm run lint` - ESLint autofix
-- `npm run lint:check` - ESLint check
-- `npm run format` - Prettier write
-- `npm run format:check` - Prettier check
-- `npm run types:check` - `vue-tsc --noEmit`
-- `npm run test:unit` - `vitest`
-- `npm run i18n:check` - frontend translation sync check
-- `npm run i18n:check:strict` - strict translation check
-- `npm run quality:check` - bundled frontend quality pass
+For SQLite, ensure `database/database.sqlite` exists before migration. `composer run dev` starts the Laravel server, `queue:listen --tries=1`, and Vite.
 
 ## Configuration
 
-### Base variables
+- Telegram: `TELEGRAM_API_ID`, `TELEGRAM_API_HASH`, and a local MadelineProto session.
+- YouTube: `YOUTUBE_DATA_API_KEY`.
+- Bluesky: `BLUESKY_IDENTIFIER`, `BLUESKY_APP_PASSWORD`, `BLUESKY_PDS_URL`.
+- Mastodon: `MASTODON_API_BASE_URL`, optionally `MASTODON_API_TOKEN`.
+- NewsAPI: `OSINT_NEWSAPI_KEY`; RSS providers can operate without it.
+- Parser Runs: `PARSER_RUN_*`; a worker is required when queue execution is enabled.
+- MoonShine: production domain/prefix, allowlist, and throttling use `MOONSHINE_*`.
 
-- `APP_*`
-- `DB_*`
-- `CACHE_*`
-- `QUEUE_*`
-- `SESSION_*`
-- `LOG_*`
-- `MAIL_*`
+The complete reference is maintained in Russian: [Configuration](docs/configuration.md).
 
-### Integrations
-
-- `TELEGRAM_API_ID`
-- `TELEGRAM_API_HASH`
-- `YOUTUBE_DATA_API_KEY`
-- `OSINT_NEWSAPI_KEY`
-- `RESEND_API_KEY`
-
-### Billing and checkout
-
-- `BILLING_CHECKOUT_ENABLED`
-
-Current behavior:
-
-- when `BILLING_CHECKOUT_ENABLED=false`, direct checkout UI is hidden and subscription access can only be activated with a one-time token;
-- when `BILLING_CHECKOUT_ENABLED=true`, checkout and upgrade UI becomes available again without code changes.
-
-### OSINT and Site Intel
-
-Configuration is split across `config/osint/*.php` and related config files:
-
-- `config/osint/telegram.php`
-- `config/osint/youtube.php`
-- `config/osint/bluesky.php`
-- `config/osint/mastodon.php`
-- `config/osint/site_intel.php`
-- `config/osint/news_media_intel.php`
-- `config/osint/parser_runs.php`
-- `config/access.php`
-
-Useful `.env.example` groups include:
-
-- `OSINT_TELEGRAM_*`
-- `OSINT_SITE_HEALTH_*`
-- `OSINT_SITE_INTEL_*`
-- `OSINT_NEWSAPI_*`
-- `PARSER_RUN_*`
-- `BILLING_CHECKOUT_ENABLED`
-
-### MadelineProto
-
-- `TELEGRAM_API_ID`
-- `TELEGRAM_API_HASH`
-- `MADELINEPROTO_SESSION_PATH`
-- `MADELINEPROTO_LOG_PATH`
-
-Details: [docs/telegram-sessions.md](docs/telegram-sessions.md)
-
-## Authentication, Access, and Plans
-
-### User-facing app
-
-- `Fortify` on the `web` guard
-- registration, password reset, email verification
-- 2FA
-- profile, security, notifications, and billing settings
-
-Billing notes:
-
-- subscription activation by token remains available on the billing page;
-- direct purchase and upgrade UI is feature-flagged by `BILLING_CHECKOUT_ENABLED`;
-- the default value in `.env.example` is `false`.
-
-### Feature access
-
-Plans and quotas are configured in `config/access.php`.
-
-Current plans:
-
-- `free`
-- `plus`
-- `pro`
-
-Quota-controlled resources currently include:
-
-- `telegram.analytics`
-- `telegram.parser`
-- `youtube.analytics`
-- `youtube.parser`
-- `bluesky.analytics`
-- `bluesky.parser`
-- `mastodon.analytics`
-- `mastodon.parser`
-- `site-intel.analytics`
-- `site-intel.seo-audit`
-
-### Admin panel
-
-- separate `moonshine` guard/model
-- production domain and route prefix configured through `MOONSHINE_*`
-- IP allowlist support:
-  - `MOONSHINE_ENFORCE_IP_ALLOWLIST=true`
-  - `MOONSHINE_ALLOWED_IPS=...`
-- login throttling and login alert settings
-
-## Background Jobs and Maintenance
-
-`routes/console.php` schedules:
-
-- `app:notify-subscription-expiry` - daily at `09:00`
-- `app:cleanup-parser-runs` - daily at `PARSER_RUN_CLEANUP_SCHEDULE` or `03:30`
-
-Operational notes:
-
-- parser runs are stored in the `parser_runs` table and private storage
-- retention and cleanup batching are configured in `config/osint/parser_runs.php`
-
-Useful commands:
+## Development and operations
 
 ```bash
-php artisan app:create-telegram-session default
-php artisan app:cleanup-parser-runs --dry-run
-php artisan app:notify-subscription-expiry
-```
-
-## Testing
-
-### Backend
-
-- `Feature` tests for auth/security, dashboard, controller isolation, parser history, subscriptions, and billing
-- `Unit` tests for DTO validation, parser state machines, access logic, payload sanitizing, and search actions
-
-Run:
-
-```bash
-php artisan test
-```
-
-### Frontend
-
-- `Vitest` for composables and utility code
-- `vue-tsc` for type safety
-- `ESLint` and `Prettier`
-- an `i18n` pipeline for translation consistency
-
-## Deployment Checklist
-
-1. Prepare production `.env`.
-2. Make sure `APP_URL`, `SESSION_SECURE_COOKIE`, `MAIL_*`, `QUEUE_CONNECTION`, external API keys, and `MOONSHINE_*` are configured.
-   Also verify the intended billing mode through `BILLING_CHECKOUT_ENABLED`.
-3. Run migrations:
-
-```bash
-php artisan migrate --force
-```
-
-4. Build the frontend:
-
-```bash
+composer run test
+npm run test:unit
+npm run quality:check
 npm run build
-```
-
-5. Warm Laravel caches:
-
-```bash
-php artisan config:cache
-php artisan route:cache
-php artisan view:cache
-```
-
-6. Configure cron/scheduler:
-
-```bash
+php artisan queue:work
 php artisan schedule:run
 ```
 
-7. Verify:
-
-- user login;
-- 2FA flow;
-- `MoonShine` access;
-- parser/export flows;
-- queue workers and cleanup jobs;
-- the intended billing mode: token-only or checkout-enabled.
-
-## Further Reading
-
-- [docs/architecture/modules.md](docs/architecture/modules.md)
-- [docs/errors.md](docs/errors.md)
-- [docs/telegram-sessions.md](docs/telegram-sessions.md)
+Read [Development](docs/development.md), [Testing](docs/testing.md), [Deployment](docs/deployment.md), and [Security](docs/security.md). Do not commit `.env`, API credentials, MadelineProto sessions, or Parser Run data.
 
 ## License
 
-`MIT` as inherited from the starter kit base. Before public distribution, verify your internal licensing policy, content rules, integrations, and data usage constraints.
+`composer.json` declares MIT. Confirm project licensing, asset rights, and external-data policies before a public release.

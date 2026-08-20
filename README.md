@@ -1,399 +1,148 @@
 # Free Search
 
-Free Search — модульная OSINT-платформа на `Laravel 13` + `Inertia.js` + `Vue 3` с пользовательским интерфейсом, аналитическими модулями, системой тарифов и отдельной админ-панелью на `MoonShine`.
+Free Search — модульная OSINT-платформа на Laravel, Inertia.js и Vue для поиска, сбора, нормализации и анализа данных из открытых источников.
 
-English version: [README.en.md](README.en.md)
+> **Project Status: Beta.** Проект активно развивается. Внутренние API и интерфейсы могут меняться, зрелость модулей различается, а внешние интеграции зависят от доступности и правил сторонних сервисов. Production-развёртывание требует отдельной проверки конфигурации, безопасности и лимитов источников.
 
-## Что это за проект
+[English version](README.en.md) · [Документация](docs/README.md) · [Быстрый старт](docs/getting-started.md)
 
-Проект собирает, нормализует и показывает сигналы из открытых источников. Основной фокус:
+## Возможности
 
-- быстрый доступ к прикладовой OSINT-аналитике;
-- единый UX для разных источников данных;
-- расширяемая модульная архитектура;
-- предсказуемая эксплуатация и поддержка.
+- Telegram, YouTube, Bluesky и Mastodon: Search, Analytics и фоновые Parser Runs с историей, остановкой и экспортом JSON/Excel.
+- Site Intel: HTTP/DNS/SSL-проверки, WHOIS-based Domain Lite, агрегированная аналитика и SEO Audit с HTML-отчётами.
+- News / Media Intel: агрегирование NewsAPI, Google News RSS и Bing RSS, дедупликация, timeline, темы и словарная sentiment-оценка.
+- Shifr: хеширование, преобразования текста, извлечение IOC, просмотр JWT и классические шифры.
+- Dashboard: журнал действий, сводки, закреплённые модули и сохранённые запросы.
+- Fortify authentication, email verification, 2FA, подписки и дневные Feature Access quotas.
+- Отдельная MoonShine admin panel для пользователей, подписок, токенов активации, очередей и журналов.
 
-Сейчас платформа включает:
+## Модули и зрелость
 
-- поиск, парсинг и аналитику по `Telegram`;
-- поиск, парсинг и аналитику по `YouTube`;
-- поиск, парсинг и аналитику по `Bluesky`;
-- поиск, парсинг и аналитику по `Mastodon`;
-- `Site Intel`: `site-health`, `domain-lite`, `analytics`, `seo-audit`;
-- `News / Media Intel`;
-- `Shifr Toolkit` для прикладовых крипто- и IOC-сценариев;
-- пользовательский `Dashboard` с историей, закрепленными модулями и сохраненными запросами;
-- web-auth, 2FA, уведомления и биллинг/активацию подписки;
-- административную панель на `MoonShine`.
+| Область | Реализовано | Текущий статус |
+| --- | --- | --- |
+| Telegram | Search, media, Analytics, Parser, JSON/Excel | Beta; требует MadelineProto-сессию |
+| YouTube | Video Search, comments, Analytics, Parser, JSON/Excel | Beta; зависит от YouTube Data API quota |
+| Bluesky | Search, actor/post relations, Analytics, Parser, JSON/Excel | Beta; требует Bluesky credentials |
+| Mastodon | Search, account/status/tag data, Analytics, Parser, JSON/Excel | Beta; конфигурация требует проверки, см. [ограничения](docs/project/status.md) |
+| Site Intel | Site Health, Domain Lite, Analytics, SEO Audit, HTML reports | Beta; активные сетевые проверки требуют production hardening |
+| News / Media Intel | RSS/NewsAPI aggregation and lightweight analysis | Beta; эвристический анализ, без Parser/Export lifecycle |
+| Shifr | Local toolkit and classic ciphers | Beta; не предназначен для хранения секретов |
+
+Dashboard, Wiki, Export и Access/Subscriptions являются общими подсистемами, а не независимыми внешними источниками.
 
 ## Технологический стек
 
-- Backend: `PHP 8.3`, `Laravel 13`
-- Frontend: `Vue 3`, `TypeScript`, `Inertia.js`, `Vite`
-- UI: `Tailwind CSS 4`, `Reka UI`, `Lucide`
-- Auth/Security: `Laravel Fortify`, email verification, 2FA
-- Admin: `MoonShine`
-- Files/Exports: `maatwebsite/excel`
-- Telegram integration: `danog/madelineproto`
-- Testing: `PHPUnit`, `Vitest`
+- PHP `^8.3`, Laravel `^13.0`, Fortify, MoonShine 4
+- Vue 3, TypeScript, Inertia.js 3, Vite 8, Tailwind CSS 4
+- database-backed cache/session/queue по умолчанию; SQLite в `.env.example`
+- MadelineProto, YouTube Data API v3, Bluesky AT Protocol, Mastodon API, RSS/NewsAPI
+- PHPUnit 12, Vitest 4, Pint, ESLint, Prettier, vue-tsc
 
-## Основные пользовательские сценарии
+## Архитектура
 
-- Запустить поиск по публичным источникам без ручного переключения между инструментами.
-- Сохранить повторяющийся запрос и быстро запустить его снова из dashboard.
-- Запустить parser-run, отследить статус, остановить задачу и скачать `JSON` или `Excel`.
-- Построить аналитический отчет по Telegram, YouTube, Bluesky, Mastodon или Site Intel.
-- Управлять профилем, безопасностью, уведомлениями и подпиской из пользовательских настроек.
+Проект использует прагматичную модульную архитектуру. HTTP-слой принимает и нормализует вход, Application Service координирует сценарий, а Actions, DTO, Gateway/Provider interfaces и infrastructure adapters используются там, где это подтверждено конкретным модулем. Структура модулей неодинакова: Site Intel и News / Media Intel явно разделяют `Application`, `Domain`, `Infrastructure`; social-модули используют `Search`, `Analytics`, `Parser`, `Actions`, `DTO` и `Support`.
 
-## Архитектурные принципы
+```mermaid
+flowchart LR
+    Browser[Vue / Inertia] --> Http[Route + Controller]
+    Http --> Request[Form Request / normalization]
+    Request --> App[Application Service]
+    App --> Logic[Action / collector / analysis]
+    Logic --> Port[Gateway / Provider contract]
+    Port --> Source[External API / DNS / HTTP / storage]
+    App --> Result[DTO / result]
+    Result --> Response[JSON / Inertia / HTML / file]
+```
 
-- HTTP-слой тонкий: request -> validation/normalization -> application service -> response.
-- Бизнес-правила вынесены из контроллеров в модульные сервисы и узкие коллабораторы.
-- Внешние интеграции скрыты за контрактами.
-- Runtime-код не читает `env()` напрямую: конфигурация идет через `config/*`.
-- Общие архитектурные договоренности документируются и поддерживаются в репозитории.
-
-Связанные документы:
-
-- [docs/architecture/modules.md](docs/architecture/modules.md)
-- [docs/errors.md](docs/errors.md)
-- [docs/telegram-sessions.md](docs/telegram-sessions.md)
+Подробнее: [Architecture overview](docs/architecture/overview.md) и [Parser Runs](docs/architecture/parser-runs.md).
 
 ## Структура репозитория
 
-- `app/Modules` — модульные домены и прикладные сценарии
-- `app/Http` — controllers, requests, middleware
-- `app/Services` — прикладные сервисы верхнего уровня вне модулей
-- `app/Support` — общая инфраструктура и cross-cutting support-классы
-- `app/MoonShine` — ресурсы и UI админ-панели
-- `config` — конфигурация приложения
-- `config/osint` — конфиги OSINT-модулей и parser-runs
-- `resources/js` — клиентское приложение
-- `routes` — публичные, защищенные и settings-маршруты
-- `database` — миграции, фабрики, сидеры
-- `tests` — unit/feature тесты
-- `docs` — архитектурные и эксплуатационные гайды
+```text
+app/Modules/          OSINT-модули и shared Parser/Export infrastructure
+app/Http/             Controllers, Form Requests, middleware
+app/Services/         Dashboard, Access, Subscriptions и другие app-wide сценарии
+app/Support/          Cross-cutting infrastructure
+app/MoonShine/        Admin resources, pages и presentation helpers
+config/osint/         Конфигурация модулей и Parser Runs
+resources/js/         Vue/Inertia frontend, composables и Vitest tests
+routes/               Public, authenticated, settings и scheduled routes
+database/migrations/  Схема приложения
+tests/                PHPUnit Feature и Unit tests
+docs/                 Техническая документация
+```
 
-## Модульная карта
+## Требования и быстрый старт
 
-### Telegram
-
-- `search/messages`
-- `search/comments`
-- media streaming по сообщению
-- parser-run lifecycle: `start`, `status`, `history`, `stop`, `download-json`, `download-excel`
-- analytics: `summary`, `report`
-
-### YouTube
-
-- поиск видео
-- preview комментариев
-- parser-run lifecycle
-- analytics: `summary`, `report`
-
-### Bluesky
-
-- content search
-- actor feed / followers / follows
-- likes / reposts / thread
-- parser-run lifecycle
-- analytics: `summary`, `report`
-
-### Mastodon
-
-- resource search
-- account statuses / followers
-- tag timeline
-- status context
-- parser-run lifecycle
-- analytics: `summary`, `report`
-
-### Site Intel
-
-- `site-health`
-- `domain-lite`
-- `analytics`
-- `seo-audit`
-- HTML/analytics reports
-
-### News / Media Intel
-
-- агрегированный lookup по news/media источникам
-
-### Shifr
-
-- hash lookup
-- text transform
-- IOC extraction
-- JWT inspection
-- classic ciphers
-
-## Быстрый старт
-
-### 1. Установить зависимости
+Точные CI-версии: PHP 8.3 и Node.js 22. Нужны Composer 2, npm и расширения PHP, требуемые зависимостями Composer.
 
 ```bash
 composer install
 npm install
-```
-
-### 2. Подготовить окружение
-
-```bash
 cp .env.example .env
 php artisan key:generate
-```
-
-### 3. Настроить базу
-
-По умолчанию проект использует `sqlite`, но можно переключить драйвер через `DB_*`.
-
-```bash
 php artisan migrate
-```
-
-### 4. Запустить dev-окружение
-
-```bash
 composer run dev
 ```
 
-Скрипт поднимает:
+`composer run dev` запускает Laravel server, `queue:listen --tries=1` и Vite. До миграции при SQLite убедитесь, что существует `database/database.sqlite`; скрипт `composer run setup` создаёт окружение и запускает миграции, но не создаёт SQLite-файл явно.
 
-- `php artisan serve`
-- `php artisan queue:listen --tries=1`
-- `vite`
+Полная инструкция: [Getting started](docs/getting-started.md).
 
-### Альтернатива одним скриптом
+## Основная конфигурация
+
+Интеграции требуют только тех ключей, чьи модули используются:
+
+- Telegram: `TELEGRAM_API_ID`, `TELEGRAM_API_HASH`, локальная MadelineProto session.
+- YouTube: `YOUTUBE_DATA_API_KEY`.
+- Bluesky: `BLUESKY_IDENTIFIER`, `BLUESKY_APP_PASSWORD`, `BLUESKY_PDS_URL`.
+- Mastodon: `MASTODON_API_BASE_URL`, при необходимости `MASTODON_API_TOKEN`.
+- NewsAPI: `OSINT_NEWSAPI_KEY`; RSS providers работают независимо от него.
+- Parser Runs: `PARSER_RUN_*`; queue worker обязателен при `PARSER_RUN_QUEUE_ENABLED=true`.
+- MoonShine: production route/domain, IP allowlist и login throttling задаются `MOONSHINE_*`.
+
+Полная таблица: [Configuration](docs/configuration.md).
+
+## Разработка и проверка
 
 ```bash
-composer run setup
+composer run test          # Pint check + PHPUnit
+npm run test:unit          # Vitest
+npm run quality:check      # Prettier, ESLint, vue-tsc, i18n
+npm run build              # production frontend build
 ```
 
-## Команды разработки
+CI отдельно выполняет frontend quality, PHPUnit и production build. См. [Development](docs/development.md) и [Testing](docs/testing.md).
 
-### Composer
-
-- `composer run dev` — локальное окружение
-- `composer run setup` — первичная подготовка
-- `composer run lint` — `pint --parallel`
-- `composer run lint:check` — проверка PHP-стиля
-- `composer run test` — очистка config cache, PHP style check, затем `php artisan test`
-- `composer run ci:check` — локальный CI-проход: frontend checks + PHP tests
-
-### NPM
-
-- `npm run dev` — Vite dev server
-- `npm run build` — production build
-- `npm run build:ssr` — build + SSR bundle
-- `npm run lint` — ESLint autofix
-- `npm run lint:check` — ESLint check
-- `npm run format` — Prettier write
-- `npm run format:check` — Prettier check
-- `npm run types:check` — `vue-tsc --noEmit`
-- `npm run test:unit` — `vitest`
-- `npm run i18n:check` — сверка фронтовых переводов
-- `npm run i18n:check:strict` — строгая проверка переводов
-- `npm run quality:check` — frontend quality bundle
-
-## Конфигурация
-
-### Базовые переменные
-
-- `APP_*`
-- `DB_*`
-- `CACHE_*`
-- `QUEUE_*`
-- `SESSION_*`
-- `LOG_*`
-- `MAIL_*`
-
-### Интеграции
-
-- `TELEGRAM_API_ID`
-- `TELEGRAM_API_HASH`
-- `YOUTUBE_DATA_API_KEY`
-- `OSINT_NEWSAPI_KEY`
-- `RESEND_API_KEY`
-
-### Биллинг и checkout
-
-- `BILLING_CHECKOUT_ENABLED`
-
-Текущее поведение:
-
-- при `BILLING_CHECKOUT_ENABLED=false` UI прямой покупки скрыт, а доступ к подписке можно активировать только одноразовым токеном;
-- при `BILLING_CHECKOUT_ENABLED=true` checkout и upgrade UI снова включаются без изменений в коде.
-
-### OSINT и Site Intel
-
-Конфигурация секционирована в `config/osint/*.php` и связанных конфиг-файлах:
-
-- `config/osint/telegram.php`
-- `config/osint/youtube.php`
-- `config/osint/bluesky.php`
-- `config/osint/mastodon.php`
-- `config/osint/site_intel.php`
-- `config/osint/news_media_intel.php`
-- `config/osint/parser_runs.php`
-- `config/access.php`
-
-Часть полезных переменных из `.env.example`:
-
-- `OSINT_TELEGRAM_*`
-- `OSINT_SITE_HEALTH_*`
-- `OSINT_SITE_INTEL_*`
-- `OSINT_NEWSAPI_*`
-- `PARSER_RUN_*`
-
-Parser runs выполняются фоновыми queue jobs. По умолчанию они отправляются в
-очередь `default`, поэтому достаточно запущенного `php artisan queue:work`.
-Для отдельного worker задайте `PARSER_RUN_QUEUE_NAME=parser-runs` и запускайте
-его с `php artisan queue:work --queue=parser-runs`.
-- `BILLING_CHECKOUT_ENABLED`
-
-### MadelineProto
-
-- `TELEGRAM_API_ID`
-- `TELEGRAM_API_HASH`
-- `MADELINEPROTO_SESSION_PATH`
-- `MADELINEPROTO_LOG_PATH`
-
-Подробности: [docs/telegram-sessions.md](docs/telegram-sessions.md)
-
-## Аутентификация, доступ и тарифы
-
-### Пользовательская часть
-
-- `Fortify` на `web` guard
-- регистрация, восстановление пароля, подтверждение email
-- 2FA
-- личные настройки профиля, безопасности, уведомлений и биллинга
-
-Заметки по биллингу:
-
-- активация подписки по токену остается доступной на странице биллинга;
-- UI прямой покупки и апгрейда управляется флагом `BILLING_CHECKOUT_ENABLED`;
-- значение по умолчанию в `.env.example` — `false`.
-
-### Ограничение возможностей
-
-Тарифы и квоты описаны в `config/access.php`.
-
-Сейчас в проекте есть планы:
-
-- `free`
-- `plus`
-- `pro`
-
-Квоты применяются к ресурсам вроде:
-
-- `telegram.analytics`
-- `telegram.parser`
-- `youtube.analytics`
-- `youtube.parser`
-- `bluesky.analytics`
-- `bluesky.parser`
-- `mastodon.analytics`
-- `mastodon.parser`
-- `site-intel.analytics`
-- `site-intel.seo-audit`
-
-### Админ-панель
-
-- отдельный guard/model `moonshine`
-- production-домен и route-prefix настраиваются через `MOONSHINE_*`
-- поддерживается IP allowlist:
-  - `MOONSHINE_ENFORCE_IP_ALLOWLIST=true`
-  - `MOONSHINE_ALLOWED_IPS=...`
-- есть throttling логина и алерты по входу
-
-## Фоновые задачи и обслуживание
-
-В `routes/console.php` настроены scheduled jobs:
-
-- `app:notify-subscription-expiry` — ежедневно в `09:00`
-- `app:cleanup-parser-runs` — ежедневно по `PARSER_RUN_CLEANUP_SCHEDULE` или `03:30`
-
-Дополнительно:
-
-- parser-runs хранятся в таблице `parser_runs` и приватном storage
-- retention и batch cleanup настраиваются через `config/osint/parser_runs.php`
-
-Полезные команды:
+## Queue, Scheduler и эксплуатация
 
 ```bash
-php artisan app:create-telegram-session default
-php artisan app:cleanup-parser-runs --dry-run
-php artisan app:notify-subscription-expiry
-```
-
-## Тестирование
-
-### Backend
-
-- `Feature` — auth/security, dashboard, controller isolation, parser history, subscriptions, billing
-- `Unit` — DTO validation, parser state machine, access logic, request payload sanitizing, search actions
-
-Запуск:
-
-```bash
-php artisan test
-```
-
-### Frontend
-
-- `Vitest` для composables и utility-кода
-- `vue-tsc` для проверки типов
-- `ESLint` и `Prettier`
-- `i18n` pipeline для синхронизации переводов
-
-## Деплой-чеклист
-
-1. Подготовить production `.env`.
-2. Убедиться, что настроены `APP_URL`, `SESSION_SECURE_COOKIE`, `MAIL_*`, `QUEUE_CONNECTION`, внешние API-ключи и `MOONSHINE_*`.
-   Также проверить нужный режим биллинга через `BILLING_CHECKOUT_ENABLED`.
-3. Выполнить миграции:
-
-```bash
-php artisan migrate --force
-```
-
-4. Собрать frontend:
-
-```bash
-npm run build
-```
-
-5. Прогреть кэши:
-
-```bash
-php artisan config:cache
-php artisan route:cache
-php artisan view:cache
-```
-
-6. Настроить cron/scheduler:
-
-```bash
+php artisan queue:work
 php artisan schedule:run
+php artisan app:cleanup-parser-runs --dry-run
+php artisan app:create-telegram-session default
 ```
 
-7. Проверить:
+Scheduler ежедневно отправляет уведомления об окончании подписки (`09:00`) и очищает истёкшие Parser Runs (по умолчанию `03:30`). В production `schedule:run` должен вызываться инфраструктурным scheduler каждую минуту, а queue worker — работать постоянно.
 
-- вход пользователя;
-- работу 2FA;
-- доступ в `MoonShine`;
-- доступность parser/export флоу;
-- job queue и cleanup-задачи;
-- нужный режим биллинга: token-only или checkout-enabled.
+См. [Queues and scheduler](docs/operations/queues-and-scheduler.md), [Deployment](docs/deployment.md) и [Telegram sessions](docs/operations/telegram-session.md).
 
-## Что читать дальше
+## Security
 
-- [docs/architecture/modules.md](docs/architecture/modules.md)
-- [docs/errors.md](docs/errors.md)
-- [docs/telegram-sessions.md](docs/telegram-sessions.md)
+Реализованы CSRF/session protection Laravel, validation через Form Requests, password hashing, email verification, 2FA, login throttling, блокировка пользователей, Feature Access middleware и отдельный MoonShine guard с production IP allowlist. Реализованные меры и production-рекомендации разделены в [Security](docs/security.md).
 
-## Лицензия
+Не коммитьте `.env`, API credentials, MadelineProto sessions и Parser Run data. Использование источников должно соответствовать их API policies и применимому законодательству.
 
-`MIT` как база starter-kit. Перед публичной публикацией проверь внутреннюю лицензионную политику проекта, контент, интеграции и права на данные.
+## Документация
+
+- [Индекс документации](docs/README.md)
+- [Архитектура](docs/architecture/overview.md)
+- [Модули](docs/architecture/modules.md)
+- [Parser Runs](docs/architecture/parser-runs.md)
+- [Ошибки](docs/errors.md)
+- [Статус и известные ограничения](docs/project/status.md)
+- [Contributing](docs/project/contributing.md)
+
+## License
+
+`composer.json` указывает MIT. Перед публичным релизом необходимо подтвердить лицензионную политику проекта, права на assets и допустимость использования данных внешних источников.
