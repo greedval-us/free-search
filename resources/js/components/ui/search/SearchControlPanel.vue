@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { Search, Settings } from 'lucide-vue-next';
+import { Button } from '@/components/ui/button';
 import ControlPanelShell from '@/components/ui/control-panel/ControlPanelShell.vue';
 
 defineProps<{
@@ -39,31 +40,36 @@ const emit = defineEmits<{
     >
             <slot name="fields" />
 
-            <div class="flex flex-wrap items-end gap-2 xl:justify-end">
+            <div
+                class="grid grid-cols-[auto_minmax(0,1fr)] items-end gap-2 sm:flex sm:flex-wrap xl:justify-end"
+            >
                 <slot name="toolbarLeading" />
 
-                <button
+                <Button
                     type="button"
+                    variant="outline"
+                    size="icon"
                     :aria-label="
                         showAdvanced ? advancedHideAria : advancedShowAria
                     "
-                    class="inline-flex h-10 w-10 cursor-pointer items-center justify-center rounded-md border border-slate-700 bg-slate-900/80 text-slate-200 transition hover:border-cyan-300/40 hover:text-cyan-100"
+                    :title="showAdvanced ? advancedHideAria : advancedShowAria"
                     :class="{
-                        'border-cyan-400/50 bg-cyan-400/20 text-cyan-300':
+                        'border-primary/50 bg-primary/10 text-primary':
                             showAdvanced,
                     }"
                     @click="emit('update:showAdvanced', !showAdvanced)"
                 >
                     <Settings class="h-4 w-4" />
-                </button>
+                </Button>
 
-                <button
+                <Button
+                    type="button"
                     :disabled="loading || !canSearch"
-                    class="h-10 cursor-pointer rounded-md bg-primary px-5 text-sm font-semibold text-primary-foreground disabled:cursor-not-allowed disabled:opacity-60"
+                    class="min-w-0 px-5 sm:min-w-32"
                     @click="emit('submit')"
                 >
                     {{ loading ? searchingLabel : submitLabel }}
-                </button>
+                </Button>
             </div>
         <slot name="advanced" />
         <slot name="afterActions" />

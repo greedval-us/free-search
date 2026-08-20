@@ -14,8 +14,8 @@ type Props = {
 withDefaults(defineProps<Props>(), {
     containerClass: 'flex items-center gap-2',
     buttonClass:
-        'group relative h-8 w-8 rounded-md border border-input bg-background text-foreground transition hover:bg-accent hover:text-accent-foreground',
-    localeButtonClass: 'h-8 px-2.5 text-xs',
+        'group relative h-10 w-10 rounded-md border border-input bg-background text-foreground transition hover:bg-accent hover:text-accent-foreground',
+    localeButtonClass: 'h-10 px-2.5 text-xs',
     localeButtonSize: 'sm',
     showNotifications: true,
 });

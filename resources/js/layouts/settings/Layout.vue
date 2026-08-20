@@ -43,15 +43,17 @@ const { isCurrentOrParentUrl } = useCurrentUrl();
 
 <template>
     <div
-        class="mx-4 mt-4 mb-4 flex min-h-0 flex-1 flex-col overflow-hidden rounded-2xl border border-sidebar-border/80 bg-card/70 px-4 py-6 shadow-xl backdrop-blur sm:mx-6 sm:mt-6"
+        class="m-2 flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden rounded-2xl border border-sidebar-border/80 bg-card/70 px-3 py-4 shadow-xl backdrop-blur sm:m-4 sm:px-4 sm:py-6 lg:m-6"
     >
         <Heading
             :title="t('settings.title')"
             :description="t('settings.description')"
         />
 
-        <div class="flex min-h-0 flex-1 flex-col lg:flex-row lg:space-x-12">
-            <aside class="w-full max-w-xl lg:w-56">
+        <div
+            class="flex min-h-0 min-w-0 flex-1 flex-col lg:flex-row lg:gap-8 xl:gap-12"
+        >
+            <aside class="w-full shrink-0 lg:w-56">
                 <nav
                     class="flex flex-col space-y-1 space-x-0"
                     :aria-label="t('settings.title')"
@@ -89,7 +91,7 @@ const { isCurrentOrParentUrl } = useCurrentUrl();
 
             <div class="min-h-0 min-w-0 flex-1">
                 <section
-                    class="intel-scroll max-h-[72vh] w-full max-w-6xl space-y-12 overflow-y-auto pr-1 [scrollbar-gutter:stable]"
+                    class="intel-scroll h-full min-h-0 w-full max-w-6xl space-y-8 overflow-y-auto pr-1 [scrollbar-gutter:stable] sm:space-y-12"
                 >
                     <slot />
                 </section>

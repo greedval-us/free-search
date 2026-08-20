@@ -41,7 +41,9 @@ const selectTab = (tab: string): void => {
 
 <template>
     <IntelModuleLayout>
-        <div class="intel-tabbar flex flex-wrap items-center justify-center gap-1.5">
+        <div
+            class="intel-tabbar intel-scroll flex items-center justify-start gap-1.5 overflow-x-auto overscroll-x-contain sm:flex-wrap sm:justify-center"
+        >
             <button
                 v-for="tab in tabs"
                 :key="tab.key"

@@ -12,18 +12,27 @@ defineProps<{
 </script>
 
 <template>
-    <div class="space-y-1">
-        <div class="flex items-center gap-2 text-sm font-semibold">
-            <component :is="icon" v-if="icon" class="h-4 w-4 text-primary" />
-            <span>{{ title }}</span>
+    <header class="min-w-0 space-y-1.5">
+        <div class="flex min-w-0 items-center gap-2">
+            <component
+                :is="icon"
+                v-if="icon"
+                class="h-5 w-5 shrink-0 text-primary"
+            />
+            <h2 class="min-w-0 text-base font-semibold tracking-tight sm:text-lg">
+                {{ title }}
+            </h2>
             <HelpTooltip
                 v-if="helpLabel && helpText"
                 :label="helpLabel"
                 :text="helpText"
             />
         </div>
-        <p v-if="description" class="text-xs leading-relaxed text-muted-foreground">
+        <p
+            v-if="description"
+            class="max-w-3xl text-sm leading-relaxed text-muted-foreground"
+        >
             {{ description }}
         </p>
-    </div>
+    </header>
 </template>

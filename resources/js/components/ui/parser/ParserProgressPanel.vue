@@ -15,16 +15,20 @@ withDefaults(
 
 <template>
     <section class="intel-panel-strong">
-        <div class="flex items-center justify-between gap-3">
-            <h3 class="text-sm font-semibold">{{ title }}</h3>
-            <span class="rounded-full border border-border px-2 py-1 text-xs text-muted-foreground">
+        <div class="flex min-w-0 flex-wrap items-center justify-between gap-2">
+            <h3 class="min-w-0 break-words text-base font-semibold">
+                {{ title }}
+            </h3>
+            <span
+                class="max-w-full break-words rounded-full border border-border px-2.5 py-1 text-xs text-muted-foreground"
+            >
                 {{ stageLabel }}
             </span>
         </div>
 
         <div class="mt-3 h-3 overflow-hidden rounded-full bg-muted">
             <div
-                class="h-full bg-cyan-400 transition-all"
+                class="h-full bg-primary transition-[width]"
                 :style="{ width: `${Math.max(0, Math.min(100, progress))}%` }"
             />
         </div>
