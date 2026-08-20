@@ -157,12 +157,12 @@ const submitActivationToken = (): void => {
             class="overflow-hidden rounded-2xl border border-sidebar-border/70 bg-background/40 shadow-xl"
         >
             <div
-                class="border-b border-sidebar-border/70 bg-[radial-gradient(circle_at_top_right,rgba(56,189,248,0.16),transparent_36%),radial-gradient(circle_at_bottom_left,rgba(16,185,129,0.14),transparent_32%)] p-5"
+                class="border-b border-sidebar-border/70 bg-[radial-gradient(circle_at_top_right,rgba(56,189,248,0.16),transparent_36%),radial-gradient(circle_at_bottom_left,rgba(16,185,129,0.14),transparent_32%)] p-4 sm:p-5"
             >
                 <div class="flex flex-wrap items-start justify-between gap-4">
-                    <div class="space-y-2">
+                    <div class="min-w-0 flex-1 space-y-2">
                         <p
-                            class="text-xs tracking-[0.2em] text-cyan-200 uppercase"
+                            class="text-xs tracking-[0.2em] text-primary uppercase"
                         >
                             {{ t('settings.billingPage.hero.badge') }}
                         </p>
@@ -183,7 +183,7 @@ const submitActivationToken = (): void => {
                     </div>
 
                     <div
-                        class="rounded-2xl border border-cyan-400/20 bg-slate-950/35 p-4 text-right"
+                        class="w-full rounded-2xl border border-primary/20 bg-background/70 p-4 text-left sm:w-auto sm:text-right"
                     >
                         <p
                             class="text-xs tracking-wide text-muted-foreground uppercase"
@@ -211,12 +211,16 @@ const submitActivationToken = (): void => {
             class="rounded-2xl border border-amber-400/25 bg-amber-400/10 p-4"
         >
             <div class="flex items-start gap-3">
-                <Sparkles class="mt-0.5 h-5 w-5 text-amber-300" />
-                <div>
-                    <h3 class="font-semibold text-amber-50">
+                <Sparkles
+                    class="mt-0.5 h-5 w-5 shrink-0 text-amber-600 dark:text-amber-300"
+                />
+                <div class="min-w-0">
+                    <h3 class="font-semibold text-amber-900 dark:text-amber-50">
                         {{ reasonCard.title }}
                     </h3>
-                    <p class="mt-1 text-sm leading-6 text-amber-100/90">
+                    <p
+                        class="mt-1 text-sm leading-6 text-amber-800 dark:text-amber-100/90"
+                    >
                         {{ reasonCard.text }}
                     </p>
                 </div>
@@ -279,7 +283,7 @@ const submitActivationToken = (): void => {
 
                     <p
                         v-else-if="tokenStatus === 'success'"
-                        class="text-sm text-emerald-300"
+                        class="text-sm text-emerald-700 dark:text-emerald-300"
                     >
                         {{ t('settings.billingPage.token.success') }}
                     </p>
@@ -291,7 +295,7 @@ const submitActivationToken = (): void => {
             <article
                 v-for="plan in planCards"
                 :key="plan.key"
-                class="relative flex h-full flex-col overflow-hidden rounded-2xl border border-sidebar-border/70 bg-background/40 p-5 shadow-lg"
+                class="relative flex h-full min-w-0 flex-col overflow-hidden rounded-2xl border border-sidebar-border/70 bg-background/40 p-4 shadow-lg sm:p-5"
                 :class="[
                     plan.isCurrent
                         ? 'border-primary/60 ring-1 ring-primary/30'
@@ -301,7 +305,7 @@ const submitActivationToken = (): void => {
             >
                 <div
                     v-if="plan.isPopular"
-                    class="absolute top-4 right-4 rounded-full bg-cyan-400/15 px-2.5 py-1 text-xs font-semibold text-cyan-200"
+                    class="self-start rounded-full bg-primary/15 px-2.5 py-1 text-xs font-semibold text-primary sm:absolute sm:top-4 sm:right-4"
                 >
                     {{ t('settings.billingPage.popular') }}
                 </div>
@@ -326,21 +330,27 @@ const submitActivationToken = (): void => {
 
                     <ul class="space-y-2 text-sm">
                         <li class="flex items-start gap-2">
-                            <Check class="mt-0.5 h-4 w-4 text-emerald-300" />
+                            <Check
+                                class="mt-0.5 h-4 w-4 shrink-0 text-emerald-600 dark:text-emerald-300"
+                            />
                             <span>
                                 {{ t('settings.billingPage.analytics') }}:
                                 {{ plan.analytics }}
                             </span>
                         </li>
                         <li class="flex items-start gap-2">
-                            <Check class="mt-0.5 h-4 w-4 text-emerald-300" />
+                            <Check
+                                class="mt-0.5 h-4 w-4 shrink-0 text-emerald-600 dark:text-emerald-300"
+                            />
                             <span>
                                 {{ t('settings.billingPage.parser') }}:
                                 {{ plan.parser }}
                             </span>
                         </li>
                         <li class="flex items-start gap-2">
-                            <Check class="mt-0.5 h-4 w-4 text-emerald-300" />
+                            <Check
+                                class="mt-0.5 h-4 w-4 shrink-0 text-emerald-600 dark:text-emerald-300"
+                            />
                             <span>
                                 {{
                                     t('settings.billingPage.compare.seoAudit')
@@ -409,7 +419,7 @@ const submitActivationToken = (): void => {
                     </p>
                 </div>
 
-                <div class="flex flex-wrap gap-3">
+                <div class="grid gap-3 sm:flex sm:flex-wrap">
                     <Button variant="outline" as-child class="rounded-xl">
                         <Link href="/dashboard">
                             {{ t('settings.billingPage.backDashboard') }}

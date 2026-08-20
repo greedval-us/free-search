@@ -1,4 +1,4 @@
-﻿<script setup lang="ts">
+<script setup lang="ts">
 import { LoaderCircle, SearchCheck } from 'lucide-vue-next';
 import { computed, reactive } from 'vue';
 import IntelResultPanel from '@/components/ui/IntelResultPanel.vue';
@@ -25,14 +25,14 @@ const scoreClass = computed(() => {
     const level = result.value?.score.level;
 
     if (level === 'high') {
-        return 'text-emerald-300';
+        return 'text-emerald-700 dark:text-emerald-300';
     }
 
     if (level === 'medium') {
-        return 'text-amber-300';
+        return 'text-amber-700 dark:text-amber-300';
     }
 
-    return 'text-rose-300';
+    return 'text-rose-700 dark:text-rose-300';
 });
 
 const signalLabel = (signal: string) => {
@@ -105,13 +105,15 @@ const linkGraphFilters = reactive({
                 <span>{{ t('siteIntel.seoAudit.title') }}</span>
                 <span class="group relative inline-flex">
                     <span
-                        class="inline-flex h-5 w-5 cursor-help items-center justify-center rounded-full border border-border text-[11px] font-semibold text-muted-foreground"
+                        class="inline-flex h-5 w-5 cursor-help items-center justify-center rounded-full border border-border text-[11px] font-semibold text-muted-foreground outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
                         :aria-label="t('siteIntel.help.label')"
+                        role="button"
+                        tabindex="0"
                     >
                         ?
                     </span>
                     <span
-                        class="pointer-events-none absolute top-6 left-0 z-20 hidden w-80 rounded-md border border-border/70 bg-popover p-2 text-[11px] leading-relaxed text-popover-foreground shadow-xl group-hover:block"
+                        class="pointer-events-none absolute top-6 left-0 z-20 hidden w-[min(20rem,calc(100vw-2rem))] rounded-md border border-border/70 bg-popover p-2 text-[11px] leading-relaxed text-popover-foreground shadow-xl group-focus-within:block group-hover:block"
                     >
                         {{ t('siteIntel.seoAudit.help.overview') }}
                     </span>
@@ -136,7 +138,7 @@ const linkGraphFilters = reactive({
                     @keydown.enter.prevent="analyze"
                 />
             </label>
-            <label class="block w-44">
+            <label class="block w-full sm:w-44">
                 <span
                     class="mb-1 block truncate text-xs font-medium text-muted-foreground"
                     >{{ t('siteIntel.seoAudit.crawlLimit') }}</span
@@ -151,19 +153,21 @@ const linkGraphFilters = reactive({
                     <option :value="20">20</option>
                 </select>
             </label>
-            <label class="block w-52">
+            <label class="block w-full sm:w-52">
                 <span
                     class="mb-1 flex items-center gap-1 truncate text-xs font-medium text-muted-foreground"
                 >
                     <span>{{ t('siteIntel.seoAudit.platformType') }}</span>
                     <span class="group relative inline-flex">
                         <span
-                            class="inline-flex h-4 w-4 cursor-help items-center justify-center rounded-full border border-border text-[10px] font-semibold text-muted-foreground"
+                            class="inline-flex h-4 w-4 cursor-help items-center justify-center rounded-full border border-border text-[10px] font-semibold text-muted-foreground outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
                             :aria-label="t('siteIntel.help.label')"
+                            role="button"
+                            tabindex="0"
                             >?</span
                         >
                         <span
-                            class="pointer-events-none absolute top-5 left-0 z-20 hidden w-80 rounded-md border border-border/70 bg-popover p-2 text-[11px] leading-relaxed text-popover-foreground shadow-xl group-hover:block"
+                            class="pointer-events-none absolute top-5 left-0 z-20 hidden w-[min(20rem,calc(100vw-2rem))] rounded-md border border-border/70 bg-popover p-2 text-[11px] leading-relaxed text-popover-foreground shadow-xl group-focus-within:block group-hover:block"
                             >{{
                                 t('siteIntel.seoAudit.help.platformType')
                             }}</span
@@ -283,12 +287,14 @@ const linkGraphFilters = reactive({
                     </p>
                     <span class="group relative inline-flex">
                         <span
-                            class="inline-flex h-4 w-4 cursor-help items-center justify-center rounded-full border border-border text-[10px] font-semibold text-muted-foreground"
+                            class="inline-flex h-4 w-4 cursor-help items-center justify-center rounded-full border border-border text-[10px] font-semibold text-muted-foreground outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
                             :aria-label="t('siteIntel.help.label')"
+                            role="button"
+                            tabindex="0"
                             >?</span
                         >
                         <span
-                            class="pointer-events-none absolute top-5 left-0 z-20 hidden w-80 rounded-md border border-border/70 bg-popover p-2 text-[11px] leading-relaxed text-popover-foreground shadow-xl group-hover:block"
+                            class="pointer-events-none absolute top-5 left-0 z-20 hidden w-[min(20rem,calc(100vw-2rem))] rounded-md border border-border/70 bg-popover p-2 text-[11px] leading-relaxed text-popover-foreground shadow-xl group-focus-within:block group-hover:block"
                             >{{
                                 t('siteIntel.seoAudit.help.scoreProfile')
                             }}</span
@@ -332,12 +338,14 @@ const linkGraphFilters = reactive({
                         </p>
                         <span class="group relative inline-flex">
                             <span
-                                class="inline-flex h-5 w-5 cursor-help items-center justify-center rounded-full border border-border text-[11px] font-semibold text-muted-foreground"
+                                class="inline-flex h-5 w-5 cursor-help items-center justify-center rounded-full border border-border text-[11px] font-semibold text-muted-foreground outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
                                 :aria-label="t('siteIntel.help.label')"
+                                role="button"
+                                tabindex="0"
                                 >?</span
                             >
                             <span
-                                class="pointer-events-none absolute top-6 left-0 z-20 hidden w-80 rounded-md border border-border/70 bg-popover p-2 text-[11px] leading-relaxed text-popover-foreground shadow-xl group-hover:block"
+                                class="pointer-events-none absolute top-6 left-0 z-20 hidden w-[min(20rem,calc(100vw-2rem))] rounded-md border border-border/70 bg-popover p-2 text-[11px] leading-relaxed text-popover-foreground shadow-xl group-focus-within:block group-hover:block"
                                 >{{ t('siteIntel.seoAudit.help.meta') }}</span
                             >
                         </span>
@@ -376,12 +384,14 @@ const linkGraphFilters = reactive({
                         </p>
                         <span class="group relative inline-flex">
                             <span
-                                class="inline-flex h-5 w-5 cursor-help items-center justify-center rounded-full border border-border text-[11px] font-semibold text-muted-foreground"
+                                class="inline-flex h-5 w-5 cursor-help items-center justify-center rounded-full border border-border text-[11px] font-semibold text-muted-foreground outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
                                 :aria-label="t('siteIntel.help.label')"
+                                role="button"
+                                tabindex="0"
                                 >?</span
                             >
                             <span
-                                class="pointer-events-none absolute top-6 left-0 z-20 hidden w-80 rounded-md border border-border/70 bg-popover p-2 text-[11px] leading-relaxed text-popover-foreground shadow-xl group-hover:block"
+                                class="pointer-events-none absolute top-6 left-0 z-20 hidden w-[min(20rem,calc(100vw-2rem))] rounded-md border border-border/70 bg-popover p-2 text-[11px] leading-relaxed text-popover-foreground shadow-xl group-focus-within:block group-hover:block"
                                 >{{
                                     t('siteIntel.seoAudit.help.indexability')
                                 }}</span
@@ -471,12 +481,14 @@ const linkGraphFilters = reactive({
                         </p>
                         <span class="group relative inline-flex">
                             <span
-                                class="inline-flex h-5 w-5 cursor-help items-center justify-center rounded-full border border-border text-[11px] font-semibold text-muted-foreground"
+                                class="inline-flex h-5 w-5 cursor-help items-center justify-center rounded-full border border-border text-[11px] font-semibold text-muted-foreground outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
                                 :aria-label="t('siteIntel.help.label')"
+                                role="button"
+                                tabindex="0"
                                 >?</span
                             >
                             <span
-                                class="pointer-events-none absolute top-6 left-0 z-20 hidden w-80 rounded-md border border-border/70 bg-popover p-2 text-[11px] leading-relaxed text-popover-foreground shadow-xl group-hover:block"
+                                class="pointer-events-none absolute top-6 left-0 z-20 hidden w-[min(20rem,calc(100vw-2rem))] rounded-md border border-border/70 bg-popover p-2 text-[11px] leading-relaxed text-popover-foreground shadow-xl group-focus-within:block group-hover:block"
                                 >{{
                                     t('siteIntel.seoAudit.help.performance')
                                 }}</span
@@ -567,12 +579,14 @@ const linkGraphFilters = reactive({
                         </p>
                         <span class="group relative inline-flex">
                             <span
-                                class="inline-flex h-5 w-5 cursor-help items-center justify-center rounded-full border border-border text-[11px] font-semibold text-muted-foreground"
+                                class="inline-flex h-5 w-5 cursor-help items-center justify-center rounded-full border border-border text-[11px] font-semibold text-muted-foreground outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
                                 :aria-label="t('siteIntel.help.label')"
+                                role="button"
+                                tabindex="0"
                                 >?</span
                             >
                             <span
-                                class="pointer-events-none absolute top-6 left-0 z-20 hidden w-80 rounded-md border border-border/70 bg-popover p-2 text-[11px] leading-relaxed text-popover-foreground shadow-xl group-hover:block"
+                                class="pointer-events-none absolute top-6 left-0 z-20 hidden w-[min(20rem,calc(100vw-2rem))] rounded-md border border-border/70 bg-popover p-2 text-[11px] leading-relaxed text-popover-foreground shadow-xl group-focus-within:block group-hover:block"
                                 >{{
                                     t('siteIntel.seoAudit.help.crawlFiles')
                                 }}</span
@@ -672,12 +686,14 @@ const linkGraphFilters = reactive({
                         </p>
                         <span class="group relative inline-flex">
                             <span
-                                class="inline-flex h-5 w-5 cursor-help items-center justify-center rounded-full border border-border text-[11px] font-semibold text-muted-foreground"
+                                class="inline-flex h-5 w-5 cursor-help items-center justify-center rounded-full border border-border text-[11px] font-semibold text-muted-foreground outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
                                 :aria-label="t('siteIntel.help.label')"
+                                role="button"
+                                tabindex="0"
                                 >?</span
                             >
                             <span
-                                class="pointer-events-none absolute top-6 left-0 z-20 hidden w-80 rounded-md border border-border/70 bg-popover p-2 text-[11px] leading-relaxed text-popover-foreground shadow-xl group-hover:block"
+                                class="pointer-events-none absolute top-6 left-0 z-20 hidden w-[min(20rem,calc(100vw-2rem))] rounded-md border border-border/70 bg-popover p-2 text-[11px] leading-relaxed text-popover-foreground shadow-xl group-focus-within:block group-hover:block"
                                 >{{
                                     t('siteIntel.seoAudit.help.technicalFlags')
                                 }}</span
@@ -720,12 +736,14 @@ const linkGraphFilters = reactive({
                     </p>
                     <span class="group relative inline-flex">
                         <span
-                            class="inline-flex h-5 w-5 cursor-help items-center justify-center rounded-full border border-border text-[11px] font-semibold text-muted-foreground"
+                            class="inline-flex h-5 w-5 cursor-help items-center justify-center rounded-full border border-border text-[11px] font-semibold text-muted-foreground outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
                             :aria-label="t('siteIntel.help.label')"
+                            role="button"
+                            tabindex="0"
                             >?</span
                         >
                         <span
-                            class="pointer-events-none absolute top-6 left-0 z-20 hidden w-80 rounded-md border border-border/70 bg-popover p-2 text-[11px] leading-relaxed text-popover-foreground shadow-xl group-hover:block"
+                            class="pointer-events-none absolute top-6 left-0 z-20 hidden w-[min(20rem,calc(100vw-2rem))] rounded-md border border-border/70 bg-popover p-2 text-[11px] leading-relaxed text-popover-foreground shadow-xl group-focus-within:block group-hover:block"
                             >{{
                                 t('siteIntel.seoAudit.help.recommendations')
                             }}</span
@@ -835,12 +853,14 @@ const linkGraphFilters = reactive({
                         </p>
                         <span class="group relative inline-flex">
                             <span
-                                class="inline-flex h-5 w-5 cursor-help items-center justify-center rounded-full border border-border text-[11px] font-semibold text-muted-foreground"
+                                class="inline-flex h-5 w-5 cursor-help items-center justify-center rounded-full border border-border text-[11px] font-semibold text-muted-foreground outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
                                 :aria-label="t('siteIntel.help.label')"
+                                role="button"
+                                tabindex="0"
                                 >?</span
                             >
                             <span
-                                class="pointer-events-none absolute top-6 left-0 z-20 hidden w-80 rounded-md border border-border/70 bg-popover p-2 text-[11px] leading-relaxed text-popover-foreground shadow-xl group-hover:block"
+                                class="pointer-events-none absolute top-6 left-0 z-20 hidden w-[min(20rem,calc(100vw-2rem))] rounded-md border border-border/70 bg-popover p-2 text-[11px] leading-relaxed text-popover-foreground shadow-xl group-focus-within:block group-hover:block"
                                 >{{
                                     t('siteIntel.seoAudit.help.contentQuality')
                                 }}</span
@@ -877,12 +897,14 @@ const linkGraphFilters = reactive({
                         </p>
                         <span class="group relative inline-flex">
                             <span
-                                class="inline-flex h-5 w-5 cursor-help items-center justify-center rounded-full border border-border text-[11px] font-semibold text-muted-foreground"
+                                class="inline-flex h-5 w-5 cursor-help items-center justify-center rounded-full border border-border text-[11px] font-semibold text-muted-foreground outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
                                 :aria-label="t('siteIntel.help.label')"
+                                role="button"
+                                tabindex="0"
                                 >?</span
                             >
                             <span
-                                class="pointer-events-none absolute top-6 left-0 z-20 hidden w-80 rounded-md border border-border/70 bg-popover p-2 text-[11px] leading-relaxed text-popover-foreground shadow-xl group-hover:block"
+                                class="pointer-events-none absolute top-6 left-0 z-20 hidden w-[min(20rem,calc(100vw-2rem))] rounded-md border border-border/70 bg-popover p-2 text-[11px] leading-relaxed text-popover-foreground shadow-xl group-focus-within:block group-hover:block"
                                 >{{
                                     t('siteIntel.seoAudit.help.accessibility')
                                 }}</span
@@ -923,12 +945,14 @@ const linkGraphFilters = reactive({
                         </p>
                         <span class="group relative inline-flex">
                             <span
-                                class="inline-flex h-5 w-5 cursor-help items-center justify-center rounded-full border border-border text-[11px] font-semibold text-muted-foreground"
+                                class="inline-flex h-5 w-5 cursor-help items-center justify-center rounded-full border border-border text-[11px] font-semibold text-muted-foreground outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
                                 :aria-label="t('siteIntel.help.label')"
+                                role="button"
+                                tabindex="0"
                                 >?</span
                             >
                             <span
-                                class="pointer-events-none absolute top-6 left-0 z-20 hidden w-80 rounded-md border border-border/70 bg-popover p-2 text-[11px] leading-relaxed text-popover-foreground shadow-xl group-hover:block"
+                                class="pointer-events-none absolute top-6 left-0 z-20 hidden w-[min(20rem,calc(100vw-2rem))] rounded-md border border-border/70 bg-popover p-2 text-[11px] leading-relaxed text-popover-foreground shadow-xl group-focus-within:block group-hover:block"
                                 >{{
                                     t('siteIntel.seoAudit.help.linkGraph')
                                 }}</span
@@ -968,12 +992,14 @@ const linkGraphFilters = reactive({
                         </p>
                         <span class="group relative inline-flex">
                             <span
-                                class="inline-flex h-5 w-5 cursor-help items-center justify-center rounded-full border border-border text-[11px] font-semibold text-muted-foreground"
+                                class="inline-flex h-5 w-5 cursor-help items-center justify-center rounded-full border border-border text-[11px] font-semibold text-muted-foreground outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
                                 :aria-label="t('siteIntel.help.label')"
+                                role="button"
+                                tabindex="0"
                                 >?</span
                             >
                             <span
-                                class="pointer-events-none absolute top-6 left-0 z-20 hidden w-80 rounded-md border border-border/70 bg-popover p-2 text-[11px] leading-relaxed text-popover-foreground shadow-xl group-hover:block"
+                                class="pointer-events-none absolute top-6 left-0 z-20 hidden w-[min(20rem,calc(100vw-2rem))] rounded-md border border-border/70 bg-popover p-2 text-[11px] leading-relaxed text-popover-foreground shadow-xl group-focus-within:block group-hover:block"
                                 >{{
                                     t('siteIntel.seoAudit.help.international')
                                 }}</span
@@ -1014,12 +1040,14 @@ const linkGraphFilters = reactive({
                         </p>
                         <span class="group relative inline-flex">
                             <span
-                                class="inline-flex h-5 w-5 cursor-help items-center justify-center rounded-full border border-border text-[11px] font-semibold text-muted-foreground"
+                                class="inline-flex h-5 w-5 cursor-help items-center justify-center rounded-full border border-border text-[11px] font-semibold text-muted-foreground outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
                                 :aria-label="t('siteIntel.help.label')"
+                                role="button"
+                                tabindex="0"
                                 >?</span
                             >
                             <span
-                                class="pointer-events-none absolute top-6 left-0 z-20 hidden w-80 rounded-md border border-border/70 bg-popover p-2 text-[11px] leading-relaxed text-popover-foreground shadow-xl group-hover:block"
+                                class="pointer-events-none absolute top-6 left-0 z-20 hidden w-[min(20rem,calc(100vw-2rem))] rounded-md border border-border/70 bg-popover p-2 text-[11px] leading-relaxed text-popover-foreground shadow-xl group-focus-within:block group-hover:block"
                                 >{{
                                     t('siteIntel.seoAudit.help.crawlBudget')
                                 }}</span

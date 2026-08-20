@@ -55,12 +55,12 @@ const formattedPeriodStart = computed(() =>
             class="overflow-hidden rounded-2xl border border-sidebar-border/70 bg-background/40 shadow-xl"
         >
             <div
-                class="border-b border-sidebar-border/70 bg-[radial-gradient(circle_at_top_right,rgba(56,189,248,0.16),transparent_36%),radial-gradient(circle_at_bottom_left,rgba(16,185,129,0.14),transparent_32%)] p-5"
+                class="border-b border-sidebar-border/70 bg-[radial-gradient(circle_at_top_right,rgba(56,189,248,0.16),transparent_36%),radial-gradient(circle_at_bottom_left,rgba(16,185,129,0.14),transparent_32%)] p-4 sm:p-5"
             >
                 <div class="flex flex-wrap items-start justify-between gap-4">
-                    <div class="space-y-2">
+                    <div class="min-w-0 flex-1 space-y-2">
                         <p
-                            class="text-xs tracking-[0.2em] text-cyan-200 uppercase"
+                            class="text-xs tracking-[0.2em] text-primary uppercase"
                         >
                             {{ t('settings.notificationsPage.badge') }}
                         </p>
@@ -75,7 +75,7 @@ const formattedPeriodStart = computed(() =>
                     </div>
 
                     <div
-                        class="rounded-2xl border border-cyan-400/20 bg-slate-950/35 p-4 text-right"
+                        class="w-full rounded-2xl border border-primary/20 bg-background/70 p-4 text-left sm:w-auto sm:text-right"
                     >
                         <p
                             class="text-xs tracking-wide text-muted-foreground uppercase"
@@ -96,7 +96,7 @@ const formattedPeriodStart = computed(() =>
 
         <section
             v-if="notifications.length === 0"
-            class="rounded-2xl border border-dashed border-sidebar-border/70 bg-background/30 p-8 text-center"
+            class="rounded-2xl border border-dashed border-sidebar-border/70 bg-background/30 p-5 text-center sm:p-8"
         >
             <div class="mx-auto flex max-w-xl flex-col items-center gap-4">
                 <div
@@ -124,7 +124,10 @@ const formattedPeriodStart = computed(() =>
             >
                 <NotificationListItem :notification="notification" />
 
-                <div v-if="notification.url" class="mt-4 flex justify-end">
+                <div
+                    v-if="notification.url"
+                    class="mt-4 grid sm:flex sm:justify-end"
+                >
                     <Button as-child variant="outline" class="rounded-xl">
                         <button
                             type="button"

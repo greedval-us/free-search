@@ -6,6 +6,7 @@ import {
     SidebarMenu,
     SidebarMenuButton,
     SidebarMenuItem,
+    useSidebar,
 } from '@/components/ui/sidebar';
 import { useCurrentUrl } from '@/composables/useCurrentUrl';
 import { useI18n } from '@/composables/useI18n';
@@ -17,6 +18,7 @@ defineProps<{
 
 const { isCurrentUrl } = useCurrentUrl();
 const { t } = useI18n();
+const { setOpenMobile } = useSidebar();
 </script>
 
 <template>
@@ -29,7 +31,7 @@ const { t } = useI18n();
                     :is-active="isCurrentUrl(item.href)"
                     :tooltip="item.title"
                 >
-                    <Link :href="item.href">
+                    <Link :href="item.href" @click="setOpenMobile(false)">
                         <component :is="item.icon" />
                         <span class="block truncate">{{ item.title }}</span>
                     </Link>

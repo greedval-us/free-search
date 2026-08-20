@@ -281,14 +281,14 @@ onMounted(() => {
                             class="intel-surface"
                         >
                             <div
-                                class="mb-1 flex min-w-0 items-center justify-between gap-2"
+                                class="mb-1 flex min-w-0 flex-col items-start gap-1 sm:flex-row sm:items-center sm:justify-between sm:gap-2"
                             >
                                 <p
                                     class="min-w-0 text-sm font-medium break-words"
                                 >
                                     {{ item.title }}
                                 </p>
-                                <span class="shrink-0 text-xs text-cyan-300">{{
+                                <span class="shrink-0 text-xs text-primary">{{
                                     sourceLabel(item.source)
                                 }}</span>
                             </div>
@@ -301,7 +301,7 @@ onMounted(() => {
                                 :href="item.link"
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                class="block text-xs break-all text-cyan-300 hover:underline"
+                                class="block text-xs break-all text-primary hover:underline"
                             >
                                 {{ item.link }}
                             </a>

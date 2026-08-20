@@ -425,7 +425,7 @@ onBeforeUnmount(() => {
                 <div
                     class="relative flex flex-wrap items-center justify-between gap-4"
                 >
-                    <div class="space-y-1">
+                    <div class="min-w-0 flex-1 space-y-1">
                         <p class="intel-kicker">
                             {{ t('dashboard.header.kicker') }}
                         </p>
@@ -437,7 +437,7 @@ onBeforeUnmount(() => {
                         </p>
                     </div>
                     <div
-                        class="w-full rounded-full border border-emerald-500/40 bg-emerald-500/10 px-3 py-1.5 text-xs font-medium text-emerald-300 sm:w-auto"
+                        class="w-full rounded-full border border-emerald-500/40 bg-emerald-500/10 px-3 py-1.5 text-xs font-medium text-emerald-700 sm:w-auto dark:text-emerald-300"
                     >
                         <span class="inline-flex items-center gap-1.5">
                             <Sparkles class="h-3.5 w-3.5" />
@@ -483,7 +483,7 @@ onBeforeUnmount(() => {
                                 <dt class="truncate text-muted-foreground">
                                     {{ quotaCapabilityLabel(item.capability) }}
                                 </dt>
-                                <dd class="font-semibold">
+                                <dd class="shrink-0 font-semibold">
                                     {{ quotaLabel(item) }}
                                 </dd>
                             </div>
@@ -615,7 +615,7 @@ onBeforeUnmount(() => {
                                             class="h-3.5 w-3.5"
                                             :class="
                                                 module.is_pinned
-                                                    ? 'text-cyan-300'
+                                                    ? 'text-primary'
                                                     : ''
                                             "
                                         />
@@ -631,7 +631,7 @@ onBeforeUnmount(() => {
                             </p>
                             <Link
                                 :href="module.url"
-                                class="mt-2 inline-block text-xs text-cyan-300 hover:underline"
+                                class="mt-2 inline-block text-xs text-primary hover:underline"
                             >
                                 {{ t('dashboard.modules.open') }}
                             </Link>
@@ -714,13 +714,13 @@ onBeforeUnmount(() => {
                                 <Link
                                     v-if="saved.run_url"
                                     :href="saved.run_url"
-                                    class="text-xs text-cyan-300 hover:underline"
+                                    class="text-xs text-primary hover:underline"
                                 >
                                     {{ t('dashboard.saved.run') }}
                                 </Link>
                                 <button
                                     type="button"
-                                    class="inline-flex items-center gap-1 text-xs text-rose-300 hover:text-rose-200"
+                                    class="inline-flex items-center gap-1 text-xs text-destructive hover:opacity-80"
                                     @click="deleteSavedQuery(saved.id)"
                                 >
                                     <Trash2 class="h-3.5 w-3.5" />
@@ -837,7 +837,7 @@ onBeforeUnmount(() => {
                             <Link
                                 v-if="row.run_url"
                                 :href="row.run_url"
-                                class="text-xs text-cyan-300 hover:underline"
+                                class="text-xs text-primary hover:underline"
                             >
                                 {{ t('dashboard.recent.runAgain') }}
                             </Link>

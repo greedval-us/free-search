@@ -65,7 +65,10 @@
     "appearancePage": {
         "title": "Настройки оформления",
         "heading": "Настройки оформления",
-        "headingDescription": "Обновите настройки внешнего вида аккаунта"
+        "headingDescription": "Обновите настройки внешнего вида аккаунта",
+        "light": "Светлая",
+        "dark": "Тёмная",
+        "system": "Системная"
     },
     "notificationsPage": {
         "title": "Оповещения",

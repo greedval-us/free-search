@@ -38,10 +38,10 @@ const riskBadgeClass = computed(() => {
     }
 
     if (props.signals.riskLevel === 'medium') {
-        return 'border-amber-500/40 bg-amber-500/10 text-amber-300';
+        return 'border-amber-500/40 bg-amber-500/10 text-amber-700 dark:text-amber-300';
     }
 
-    return 'border-emerald-500/40 bg-emerald-500/10 text-emerald-300';
+    return 'border-emerald-500/40 bg-emerald-500/10 text-emerald-700 dark:text-emerald-300';
 });
 
 const triggerLabel = (key: string): string =>

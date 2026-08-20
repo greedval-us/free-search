@@ -60,7 +60,7 @@ const cardClass = computed(() =>
                         v-if="!compact"
                         class="rounded-full border border-sidebar-border/70 bg-background/70 p-2"
                     >
-                        <Bell class="h-4 w-4 text-cyan-300" />
+                        <Bell class="h-4 w-4 text-primary" />
                     </div>
 
                     <div class="flex min-w-0 items-center gap-2">

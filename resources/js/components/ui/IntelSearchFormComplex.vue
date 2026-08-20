@@ -5,7 +5,9 @@ defineProps<{
 </script>
 
 <template>
-    <div class="mt-3 flex flex-wrap items-end gap-3">
+    <div
+        class="mt-3 grid min-w-0 grid-cols-1 items-end gap-3 sm:flex sm:flex-wrap"
+    >
         <slot />
     </div>
 

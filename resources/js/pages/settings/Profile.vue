@@ -60,7 +60,7 @@ const { t } = useI18n();
                 <InputError class="mt-2" :message="errors.name" />
             </div>
 
-            <div class="flex items-center gap-4">
+            <div class="grid items-center gap-3 sm:flex sm:gap-4">
                 <Button
                     :disabled="processing"
                     data-test="update-profile-button"
@@ -77,7 +77,7 @@ const { t } = useI18n();
                 >
                     <p
                         v-show="recentlySuccessful"
-                        class="text-sm text-neutral-600"
+                        class="text-sm text-muted-foreground"
                     >
                         {{ t('common.saved') }}
                     </p>

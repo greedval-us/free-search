@@ -150,7 +150,7 @@ const progressStats = computed(() => [
         <template #afterActions>
             <div
                 v-if="keywordActive"
-                class="rounded-md border border-amber-500/40 bg-amber-500/10 p-3 text-xs text-amber-300"
+                class="rounded-md border border-amber-500/40 bg-amber-500/10 p-3 text-xs text-amber-700 dark:text-amber-300"
             >
                 {{ t('telegram.parser.keywordHint') }}
             </div>

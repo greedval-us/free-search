@@ -22,9 +22,12 @@ withDefaults(
             <SidebarTrigger
                 class="shrink-0 rounded-full border border-sidebar-border bg-background shadow-sm"
             />
-            <template v-if="breadcrumbs && breadcrumbs.length > 0">
+            <div
+                v-if="breadcrumbs && breadcrumbs.length > 0"
+                class="hidden min-w-0 sm:block"
+            >
                 <Breadcrumbs :breadcrumbs="breadcrumbs" />
-            </template>
+            </div>
         </div>
 
         <WorkspaceToolbarControls />

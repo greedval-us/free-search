@@ -6,6 +6,7 @@ import {
     SidebarMenu,
     SidebarMenuButton,
     SidebarMenuItem,
+    useSidebar,
 } from '@/components/ui/sidebar';
 import { toUrl } from '@/lib/utils';
 import type { NavItem } from '@/types';
@@ -16,6 +17,7 @@ type Props = {
 };
 
 defineProps<Props>();
+const { setOpenMobile } = useSidebar();
 
 const isExternalHref = (href: NavItem['href']): boolean => {
     return typeof href === 'string' && /^https?:\/\//i.test(href);
@@ -48,7 +50,7 @@ const isExternalHref = (href: NavItem['href']): boolean => {
                         class="text-neutral-600 hover:text-neutral-800 dark:text-neutral-300 dark:hover:text-neutral-100"
                         as-child
                     >
-                        <Link :href="item.href">
+                        <Link :href="item.href" @click="setOpenMobile(false)">
                             <component :is="item.icon" />
                             <span>{{ item.title }}</span>
                         </Link>

@@ -40,7 +40,8 @@ const toggleLocale = () => {
             :class="localeButtonClass"
             @click="toggleLocale"
         >
-            {{ t('common.language') }}: {{ locale.toUpperCase() }}
+            <span class="hidden sm:inline">{{ t('common.language') }}:</span>
+            {{ locale.toUpperCase() }}
         </Button>
     </div>
 </template>

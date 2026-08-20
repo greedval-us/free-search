@@ -576,12 +576,12 @@ onMounted(() => {
                         :key="video.id"
                         class="intel-result-card relative"
                     >
-                        <div class="flex gap-3">
+                        <div class="flex min-w-0 flex-col gap-3 sm:flex-row">
                             <img
                                 v-if="video.thumbnail"
                                 :src="video.thumbnail"
                                 :alt="video.title"
-                                class="h-24 w-40 rounded-md object-cover"
+                                class="aspect-video h-auto w-full rounded-md object-cover sm:h-24 sm:w-40 sm:shrink-0"
                                 loading="lazy"
                             />
                             <div class="min-w-0 flex-1">

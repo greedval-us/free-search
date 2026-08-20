@@ -355,13 +355,16 @@ onMounted(() => {
                             class="mb-1 flex items-center justify-between gap-2"
                         >
                             <span class="text-[11px]">{{ item.label }}</span>
-                            <span class="text-[11px] text-emerald-300">{{
-                                item.impact > 0
-                                    ? `~ +${item.impact} ${t('siteIntel.analytics.scoreUnit')}`
-                                    : t(
-                                          'siteIntel.analytics.recommendationMaintain'
-                                      )
-                            }}</span>
+                            <span
+                                class="text-[11px] text-emerald-700 dark:text-emerald-300"
+                                >{{
+                                    item.impact > 0
+                                        ? `~ +${item.impact} ${t('siteIntel.analytics.scoreUnit')}`
+                                        : t(
+                                              'siteIntel.analytics.recommendationMaintain'
+                                          )
+                                }}</span
+                            >
                         </div>
                         <div
                             v-if="item.impact > 0"

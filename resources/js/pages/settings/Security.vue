@@ -115,7 +115,7 @@ onUnmounted(() => clearTwoFactorAuthData());
                 <InputError :message="errors.password_confirmation" />
             </div>
 
-            <div class="flex items-center gap-4">
+            <div class="grid items-center gap-3 sm:flex sm:gap-4">
                 <Button
                     :disabled="processing"
                     data-test="update-password-button"
@@ -132,7 +132,7 @@ onUnmounted(() => clearTwoFactorAuthData());
                 >
                     <p
                         v-show="recentlySuccessful"
-                        class="text-sm text-neutral-600"
+                        class="text-sm text-muted-foreground"
                     >
                         {{ t('common.saved') }}
                     </p>

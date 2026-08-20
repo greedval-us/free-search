@@ -178,7 +178,7 @@ onMounted(() => {
                         </button>
                         <div
                             v-if="algorithmMenuOpen"
-                            class="shifr-hash-algorithm-select absolute z-[120] mt-1 max-h-52 w-full overflow-y-auto rounded-md border border-input bg-background p-1 shadow-2xl"
+                            class="shifr-hash-algorithm-select absolute z-50 mt-1 max-h-52 w-full overflow-y-auto rounded-md border border-input bg-background p-1 shadow-2xl"
                         >
                             <button
                                 v-for="item in algorithmOptions"

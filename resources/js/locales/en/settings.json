@@ -65,7 +65,10 @@
     "appearancePage": {
         "title": "Appearance settings",
         "heading": "Appearance settings",
-        "headingDescription": "Update your account\u0027s appearance settings"
+        "headingDescription": "Update your account\u0027s appearance settings",
+        "light": "Light",
+        "dark": "Dark",
+        "system": "System"
     },
     "notificationsPage": {
         "title": "Notifications",
