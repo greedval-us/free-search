@@ -10,7 +10,7 @@ import {
     readRepeatQueryInt,
     readRepeatQueryParam,
 } from '@/composables/useRepeatQuery';
-import { apiRequest } from '@/lib/api';
+import { apiRequest, resolveApiErrorMessage } from '@/lib/api';
 import type {
     YouTubeCommentItem,
     YouTubeCommentsPayload,
@@ -18,7 +18,7 @@ import type {
     YouTubeVideo,
 } from '../types';
 
-const { t } = useI18n();
+const { t, locale } = useI18n();
 const form = ref({
     q: '',
     type: 'video' as 'video' | 'channel' | 'playlist',
@@ -59,10 +59,10 @@ const commentsByVideoId = ref<
 const canSearch = computed(() => form.value.q.trim().length > 0);
 const canUseVideoActions = (item: YouTubeVideo) => item.type === 'video';
 
-const numberFormat = new Intl.NumberFormat();
-const fmt = (value: number) => numberFormat.format(value ?? 0);
+const fmt = (value: number) =>
+    new Intl.NumberFormat(locale.value).format(value ?? 0);
 const formatDate = (value: string) =>
-    value ? new Date(value).toLocaleString() : '-';
+    value ? new Date(value).toLocaleString(locale.value) : '-';
 
 const ensureCommentState = (videoId: string) => {
     if (!commentsByVideoId.value[videoId]) {
@@ -123,7 +123,10 @@ const runSearch = async (append = false) => {
     loadingMore.value = false;
 
     if (!response.ok) {
-        error.value = response.message ?? t('youtube.common.requestFailed');
+        error.value = resolveApiErrorMessage(
+            response.message,
+            t('youtube.common.requestFailed')
+        );
 
         return;
     }
@@ -182,7 +185,10 @@ const loadComments = async (video: YouTubeVideo, append = false) => {
     }
 
     if (!response.ok) {
-        state.error = response.message ?? t('youtube.common.requestFailed');
+        state.error = resolveApiErrorMessage(
+            response.message,
+            t('youtube.common.requestFailed')
+        );
 
         return;
     }
@@ -576,19 +582,21 @@ onMounted(() => {
                         :key="video.id"
                         class="intel-result-card relative"
                     >
-                        <div class="flex gap-3">
+                        <div class="flex min-w-0 flex-col gap-3 sm:flex-row">
                             <img
                                 v-if="video.thumbnail"
                                 :src="video.thumbnail"
                                 :alt="video.title"
-                                class="h-24 w-40 rounded-md object-cover"
+                                class="aspect-video h-auto w-full rounded-md object-cover sm:h-24 sm:w-40 sm:shrink-0"
                                 loading="lazy"
                             />
                             <div class="min-w-0 flex-1">
                                 <h2 class="line-clamp-2 text-sm font-semibold">
                                     {{ video.title }}
                                 </h2>
-                                <p class="mt-1 text-xs text-muted-foreground">
+                                <p
+                                    class="mt-1 text-xs break-words text-muted-foreground"
+                                >
                                     {{
                                         t(
                                             `youtube.options.searchType.${video.type}`
@@ -676,7 +684,7 @@ onMounted(() => {
                                         v-else-if="
                                             ensureCommentState(video.id).error
                                         "
-                                        class="text-xs text-destructive"
+                                        class="text-xs break-words text-destructive"
                                     >
                                         {{ ensureCommentState(video.id).error }}
                                     </p>
@@ -709,7 +717,7 @@ onMounted(() => {
                                                     "
                                                     target="_blank"
                                                     rel="noopener noreferrer"
-                                                    class="text-primary hover:underline"
+                                                    class="break-words text-primary hover:underline"
                                                 >
                                                     {{ comment.author }}
                                                 </a>

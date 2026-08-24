@@ -180,7 +180,7 @@ onMounted(() => {
                         : t('shifr.actions.run')
                 }}
             </button>
-            <p v-if="error" class="mt-2 text-sm text-destructive">
+            <p v-if="error" class="mt-2 text-sm break-words text-destructive">
                 {{ error }}
             </p>
         </ShifrFormCard>

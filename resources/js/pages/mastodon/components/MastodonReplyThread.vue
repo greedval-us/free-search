@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { useI18n } from '@/composables/useI18n';
 import type { MastodonStatusThreadNode } from '../types';
 
 defineOptions({
@@ -10,8 +11,10 @@ const props = defineProps<{
     noTextLabel: string;
 }>();
 
+const { locale } = useI18n();
+
 const formatDate = (value: string) =>
-    value ? new Date(value).toLocaleString() : '-';
+    value ? new Date(value).toLocaleString(locale.value) : '-';
 </script>
 
 <template>

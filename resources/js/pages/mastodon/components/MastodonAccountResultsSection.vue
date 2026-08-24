@@ -76,7 +76,7 @@ const { t } = useI18n();
                         v-else-if="
                             ensureAccountDetailsState(account.id).statusesError
                         "
-                        class="text-xs text-destructive"
+                        class="text-xs break-words text-destructive"
                     >
                         {{
                             ensureAccountDetailsState(account.id).statusesError
@@ -152,7 +152,7 @@ const { t } = useI18n();
                         v-else-if="
                             ensureAccountDetailsState(account.id).followersError
                         "
-                        class="text-xs text-destructive"
+                        class="text-xs break-words text-destructive"
                     >
                         {{
                             ensureAccountDetailsState(account.id).followersError

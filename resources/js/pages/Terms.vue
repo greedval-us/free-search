@@ -41,9 +41,6 @@ const sections = computed(() => Object.values(content.value.sections));
     <SeoHead :title="seoTitle" :description="seoDescription" :path="seoPath" />
 
     <div class="terms-root">
-        <div class="terms-ambient terms-ambient-a" />
-        <div class="terms-ambient terms-ambient-b" />
-
         <div class="terms-shell">
             <header class="terms-topbar">
                 <Link :href="home()" class="terms-home-link">
@@ -91,40 +88,9 @@ const sections = computed(() => Object.values(content.value.sections));
 .terms-root {
     position: relative;
     min-height: 100vh;
-    overflow: hidden;
-    background:
-        radial-gradient(
-            120% 140% at 10% 0%,
-            #143252 0%,
-            #0a1325 52%,
-            #04070f 100%
-        ),
-        linear-gradient(180deg, #07101d 0%, #04070f 100%);
+    background: #07101f;
     color: #e7edf8;
-}
-
-.terms-ambient {
-    position: absolute;
-    border-radius: 9999px;
-    filter: blur(100px);
-    opacity: 0.3;
-    pointer-events: none;
-}
-
-.terms-ambient-a {
-    top: -8rem;
-    left: -6rem;
-    width: 24rem;
-    height: 24rem;
-    background: #22c55e;
-}
-
-.terms-ambient-b {
-    right: -6rem;
-    bottom: 12rem;
-    width: 22rem;
-    height: 22rem;
-    background: #38bdf8;
+    overflow-wrap: anywhere;
 }
 
 .terms-shell {
@@ -143,8 +109,7 @@ const sections = computed(() => Object.values(content.value.sections));
     padding: 0.85rem 1rem;
     border: 1px solid rgba(148, 163, 184, 0.18);
     border-radius: 1rem;
-    background: rgba(8, 15, 28, 0.72);
-    backdrop-filter: blur(14px);
+    background: #0b1628;
 }
 
 .terms-home-link,
@@ -171,11 +136,9 @@ const sections = computed(() => Object.values(content.value.sections));
 .terms-hero,
 .terms-section {
     border: 1px solid rgba(148, 163, 184, 0.18);
-    border-radius: 1.25rem;
-    background: rgba(9, 15, 29, 0.78);
+    border-radius: 1rem;
+    background: #0d192b;
     padding: 1.25rem;
-    backdrop-filter: blur(14px);
-    box-shadow: 0 26px 80px -48px rgba(2, 6, 23, 0.75);
 }
 
 .terms-eyebrow {

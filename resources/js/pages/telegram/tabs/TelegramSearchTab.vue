@@ -12,7 +12,7 @@ import {
 } from '@/composables/useRepeatQuery';
 import { useTelegramSearch } from '../composables/useTelegramSearch';
 
-const { t } = useI18n();
+const { t, locale } = useI18n();
 
 const {
     LIMIT_MAX,
@@ -47,7 +47,7 @@ const formatDate = (unix: number) => {
         return '-';
     }
 
-    return new Date(unix * 1000).toLocaleString();
+    return new Date(unix * 1000).toLocaleString(locale.value);
 };
 
 const mediaLabel = (type: string) => {
@@ -556,7 +556,7 @@ onMounted(() => {
                                     getCommentState(item.id).error &&
                                     getCommentState(item.id).items.length === 0
                                 "
-                                class="text-xs text-destructive"
+                                class="text-xs break-words text-destructive"
                             >
                                 {{ getCommentState(item.id).error }}
                             </p>
@@ -634,7 +634,7 @@ onMounted(() => {
                                     getCommentState(item.id).error &&
                                     getCommentState(item.id).items.length > 0
                                 "
-                                class="mt-2 text-xs text-destructive"
+                                class="mt-2 text-xs break-words text-destructive"
                             >
                                 {{ getCommentState(item.id).error }}
                             </p>

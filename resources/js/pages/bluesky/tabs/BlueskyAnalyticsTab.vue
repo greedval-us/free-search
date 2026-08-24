@@ -43,9 +43,10 @@ onMounted(() => {
     initializeFromRepeatQuery();
 });
 
-const fmt = (value: number) => new Intl.NumberFormat().format(value ?? 0);
+const fmt = (value: number) =>
+    new Intl.NumberFormat(locale.value).format(value ?? 0);
 const formatDate = (value: string) =>
-    value ? new Date(value).toLocaleString() : '-';
+    value ? new Date(value).toLocaleString(locale.value) : '-';
 
 const primaryMetrics = computed(() =>
     result.value
@@ -352,7 +353,9 @@ const hashtagProfileStats = computed(() =>
             </p>
         </template>
         <template #afterActions>
-            <p v-if="error" class="text-sm text-destructive">{{ error }}</p>
+            <p v-if="error" class="text-sm break-words text-destructive">
+                {{ error }}
+            </p>
         </template>
     </AnalyticsControlPanel>
 

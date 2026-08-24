@@ -211,7 +211,7 @@ onMounted(() => {
             </span>
         </div>
 
-        <p v-if="error" class="mt-3 text-sm text-destructive">
+        <p v-if="error" class="mt-3 text-sm break-words text-destructive">
             {{ error }}
         </p>
     </section>
@@ -221,7 +221,8 @@ onMounted(() => {
     >
         <div
             v-if="loading && !payload"
-            class="rounded-xl border border-sidebar-border/80 bg-card/70 p-6 text-center text-sm text-muted-foreground shadow-xl backdrop-blur"
+            class="rounded-xl border border-sidebar-border/80 bg-card/80 p-5 text-center text-sm text-muted-foreground"
+            role="status"
         >
             {{ t('telegram.analytics.loading') }}
         </div>

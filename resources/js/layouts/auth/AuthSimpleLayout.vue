@@ -14,31 +14,16 @@ defineProps<{
 
 <template>
     <div class="auth-stage">
-        <div class="pointer-events-none absolute inset-0">
-            <div
-                class="absolute -top-32 left-1/2 h-80 w-80 -translate-x-1/2 rounded-full bg-cyan-500/35 blur-3xl"
-            />
-            <div
-                class="absolute bottom-0 left-0 h-72 w-72 rounded-full bg-emerald-500/24 blur-3xl"
-            />
-            <div
-                class="absolute top-1/3 right-0 h-72 w-72 rounded-full bg-sky-500/18 blur-3xl"
-            />
-            <div class="grid-pattern absolute inset-0 opacity-30" />
-        </div>
-
         <div class="auth-stage-grid">
             <div class="auth-stage-layout">
                 <section class="auth-story-panel">
                     <p class="auth-chip">Uraboros</p>
                     <h2
-                        class="mt-5 text-3xl leading-tight font-semibold text-slate-100 xl:text-4xl"
+                        class="mt-4 text-2xl leading-tight font-semibold text-slate-100"
                     >
                         {{ t('auth.layout.platformTitle') }}
                     </h2>
-                    <p
-                        class="mt-4 text-sm leading-relaxed text-slate-300 xl:text-base"
-                    >
+                    <p class="mt-3 text-sm leading-relaxed text-slate-300">
                         {{ t('auth.layout.platformText') }}
                     </p>
                 </section>
@@ -52,9 +37,9 @@ defineProps<{
                         {{ locale.toUpperCase() }}
                     </button>
 
-                    <div class="flex flex-col gap-7">
+                    <div class="flex flex-col gap-5">
                         <div
-                            class="flex flex-col items-center gap-4 text-center"
+                            class="flex flex-col items-center gap-3 text-center"
                         >
                             <Link
                                 :href="home()"
@@ -92,20 +77,3 @@ defineProps<{
         </div>
     </div>
 </template>
-
-<style scoped>
-.grid-pattern {
-    background-image:
-        linear-gradient(
-            to right,
-            rgba(148, 163, 184, 0.12) 1px,
-            transparent 1px
-        ),
-        linear-gradient(
-            to bottom,
-            rgba(148, 163, 184, 0.12) 1px,
-            transparent 1px
-        );
-    background-size: 40px 40px;
-}
-</style>

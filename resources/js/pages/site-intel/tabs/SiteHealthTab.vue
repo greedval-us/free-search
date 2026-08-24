@@ -17,7 +17,7 @@ import {
 } from '@/composables/useRepeatQuery';
 import { useSiteHealth } from '../composables/useSiteHealth';
 
-const { t } = useI18n();
+const { t, locale } = useI18n();
 const { form, loading, error, result, canCheck, check } = useSiteHealth(t);
 
 const formatDateTime = (value: string | null) => {
@@ -25,7 +25,7 @@ const formatDateTime = (value: string | null) => {
         return '-';
     }
 
-    return new Date(value).toLocaleString();
+    return new Date(value).toLocaleString(locale.value);
 };
 
 const headerLabel = (headerName: string) => {

@@ -27,11 +27,19 @@ const breadcrumbLabel = (item: BreadcrumbItemType) =>
     <Breadcrumb>
         <BreadcrumbList>
             <template v-for="(item, index) in breadcrumbs" :key="index">
-                <BreadcrumbItem>
+                <BreadcrumbItem
+                    :class="[
+                        index < breadcrumbs.length - 1
+                            ? 'hidden sm:inline-flex'
+                            : 'min-w-0',
+                    ]"
+                >
                     <template v-if="index === breadcrumbs.length - 1">
-                        <BreadcrumbPage>{{
-                            breadcrumbLabel(item)
-                        }}</BreadcrumbPage>
+                        <BreadcrumbPage
+                            class="block max-w-32 truncate sm:max-w-64"
+                        >
+                            {{ breadcrumbLabel(item) }}
+                        </BreadcrumbPage>
                     </template>
                     <template v-else>
                         <BreadcrumbLink as-child>
@@ -41,7 +49,10 @@ const breadcrumbLabel = (item: BreadcrumbItemType) =>
                         </BreadcrumbLink>
                     </template>
                 </BreadcrumbItem>
-                <BreadcrumbSeparator v-if="index !== breadcrumbs.length - 1" />
+                <BreadcrumbSeparator
+                    v-if="index !== breadcrumbs.length - 1"
+                    class="hidden sm:list-item"
+                />
             </template>
         </BreadcrumbList>
     </Breadcrumb>

@@ -53,56 +53,56 @@ const copy = computed(() => {
             localeToggleLabel: 'Переключить язык интерфейса',
             modulesTitle: 'Что уже доступно',
             modulesText:
-                'Каждый модуль решает понятный рабочий сценарий: поиск, аналитика, парсинг или техническая проверка.',
+                'Каждый модуль решает понятный рабочий сценарий: поиск, аналитика, сбор данных или техническая проверка.',
             modules: [
                 {
                     title: 'Telegram',
                     href: '/telegram',
                     summary:
-                        'Поиск по каналам, аналитика активности и парсинг сообщений с отчетами.',
-                    badges: ['Search', 'Analytics', 'Parser'],
+                        'Поиск по каналам, аналитика активности и сбор сообщений с отчётами.',
+                    badges: ['Поиск', 'Аналитика', 'Сбор данных'],
                 },
                 {
                     title: 'YouTube',
                     href: '/youtube',
                     summary:
                         'Поиск видео и каналов, аналитика по контенту и сбор комментариев.',
-                    badges: ['Search', 'Analytics', 'Comments'],
+                    badges: ['Поиск', 'Аналитика', 'Комментарии'],
                 },
                 {
                     title: 'Bluesky',
                     href: '/bluesky',
                     summary:
                         'Поиск постов и профилей, раскрытие связей и аналитика по темам.',
-                    badges: ['Posts', 'Profiles', 'Analytics'],
+                    badges: ['Публикации', 'Профили', 'Аналитика'],
                 },
                 {
                     title: 'Mastodon',
                     href: '/mastodon',
                     summary:
                         'Поиск по аккаунтам, постам и хэштегам с разбором контекста обсуждений.',
-                    badges: ['Accounts', 'Hashtags', 'Context'],
+                    badges: ['Аккаунты', 'Хэштеги', 'Контекст'],
                 },
                 {
                     title: 'Site Intel',
                     href: '/site-intel',
                     summary:
                         'Проверка сайта, домена и технических рисков: DNS, SSL, SEO и базовая аналитика.',
-                    badges: ['Domain', 'Security', 'SEO'],
+                    badges: ['Домен', 'Безопасность', 'SEO'],
                 },
                 {
                     title: 'News & Media Intel',
                     href: '/news-media-intel',
                     summary:
                         'Мониторинг новостей и медиа по теме, бренду, персоне или событию.',
-                    badges: ['Mentions', 'Timeline', 'Topics'],
+                    badges: ['Упоминания', 'Динамика', 'Темы'],
                 },
                 {
                     title: 'Shifr',
                     href: '/shifr',
                     summary:
                         'Утилиты для хеширования, преобразований, IOC и проверки JWT.',
-                    badges: ['Hash', 'Transform', 'IOC'],
+                    badges: ['Хеширование', 'Преобразования', 'IOC'],
                 },
             ] satisfies LandingModule[],
             workflowTitle: 'Как это используется в работе',
@@ -170,14 +170,14 @@ const copy = computed(() => {
         localeToggleLabel: 'Switch interface language',
         modulesTitle: 'What is already available',
         modulesText:
-            'Each module supports a clear workflow such as search, analytics, parsing, or technical validation.',
+            'Each module supports a clear workflow such as search, analytics, data collection, or technical validation.',
         modules: [
             {
                 title: 'Telegram',
                 href: '/telegram',
                 summary:
-                    'Channel search, activity analytics, and message parsing with reports.',
-                badges: ['Search', 'Analytics', 'Parser'],
+                    'Channel search, activity analytics, and message collection with reports.',
+                badges: ['Search', 'Analytics', 'Data collection'],
             },
             {
                 title: 'YouTube',
@@ -275,10 +275,6 @@ const toggleLocale = () => setLocale(locale.value === 'ru' ? 'en' : 'ru');
     <SeoHead :title="seoTitle" :description="seoDescription" :path="seoPath" />
 
     <div class="page-root">
-        <div class="bg-layer bg-layer-a" />
-        <div class="bg-layer bg-layer-b" />
-        <div class="mesh-overlay" />
-
         <div class="content-wrap">
             <header class="topbar">
                 <div>
@@ -324,7 +320,7 @@ const toggleLocale = () => setLocale(locale.value === 'ru' ? 'en' : 'ru');
             </header>
 
             <main class="layout">
-                <section class="hero panel rise">
+                <section class="hero panel">
                     <div class="hero-copy">
                         <p class="badge">{{ copy.badge }}</p>
                         <h2 class="hero-title">{{ copy.heroTitle }}</h2>
@@ -363,7 +359,7 @@ const toggleLocale = () => setLocale(locale.value === 'ru' ? 'en' : 'ru');
                     </div>
                 </section>
 
-                <section class="panel fade-in">
+                <section class="panel">
                     <div class="section-head">
                         <h3 class="section-title">{{ copy.modulesTitle }}</h3>
                         <p class="section-text">{{ copy.modulesText }}</p>
@@ -400,7 +396,7 @@ const toggleLocale = () => setLocale(locale.value === 'ru' ? 'en' : 'ru');
                     </div>
                 </section>
 
-                <section class="panel fade-in">
+                <section class="panel">
                     <h3 class="section-title">{{ copy.workflowTitle }}</h3>
                     <div class="workflow-grid">
                         <article
@@ -416,7 +412,7 @@ const toggleLocale = () => setLocale(locale.value === 'ru' ? 'en' : 'ru');
                 </section>
 
                 <section class="split">
-                    <article class="panel fade-in">
+                    <article class="panel">
                         <h3 class="section-title">{{ copy.workspaceTitle }}</h3>
                         <ul class="list">
                             <li v-for="item in copy.workspaceItems" :key="item">
@@ -425,7 +421,7 @@ const toggleLocale = () => setLocale(locale.value === 'ru' ? 'en' : 'ru');
                         </ul>
                     </article>
 
-                    <article class="panel fade-in">
+                    <article class="panel">
                         <h3 class="section-title">{{ copy.supportTitle }}</h3>
                         <div class="support-grid">
                             <div
@@ -440,7 +436,7 @@ const toggleLocale = () => setLocale(locale.value === 'ru' ? 'en' : 'ru');
                     </article>
                 </section>
 
-                <section class="panel cta-panel rise">
+                <section class="panel cta-panel">
                     <h3>{{ copy.finalTitle }}</h3>
                     <p>{{ copy.finalText }}</p>
                     <div class="hero-actions">
@@ -472,56 +468,10 @@ const toggleLocale = () => setLocale(locale.value === 'ru' ? 'en' : 'ru');
 .page-root {
     position: relative;
     min-height: 100vh;
-    overflow: hidden;
-    background:
-        radial-gradient(
-            120% 140% at 20% 0%,
-            #153053 0%,
-            #091121 53%,
-            #04070f 100%
-        ),
-        linear-gradient(180deg, #08101d 0%, #04070f 100%);
+    background: #07101f;
     color: #e6ecff;
     font-family: 'Space Grotesk', 'Manrope', 'Segoe UI', sans-serif;
-    perspective: 1200px;
-}
-
-.bg-layer {
-    position: absolute;
-    border-radius: 9999px;
-    filter: blur(96px);
-    opacity: 0.42;
-    pointer-events: none;
-    animation: ambient-float 14s ease-in-out infinite alternate;
-}
-
-.bg-layer-a {
-    width: 34rem;
-    height: 34rem;
-    top: -8rem;
-    left: -6rem;
-    background: #14b8a6;
-}
-
-.bg-layer-b {
-    width: 28rem;
-    height: 28rem;
-    right: -8rem;
-    bottom: -6rem;
-    background: #f59e0b;
-    animation-delay: -4s;
-}
-
-.mesh-overlay {
-    position: absolute;
-    inset: 0;
-    background-image:
-        linear-gradient(rgba(255, 255, 255, 0.06) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(255, 255, 255, 0.05) 1px, transparent 1px);
-    background-size: 44px 44px;
-    mask-image: radial-gradient(circle at center, black 45%, transparent 100%);
-    pointer-events: none;
-    opacity: 0.7;
+    overflow-wrap: anywhere;
 }
 
 .content-wrap {
@@ -539,30 +489,12 @@ const toggleLocale = () => setLocale(locale.value === 'ru' ? 'en' : 'ru');
     margin-bottom: 1.3rem;
     padding: 0.9rem 1rem;
     border: 1px solid rgba(148, 163, 184, 0.16);
-    border-radius: 1.25rem;
-    background: linear-gradient(
-        180deg,
-        rgba(9, 15, 29, 0.82),
-        rgba(9, 15, 29, 0.56)
-    );
-    box-shadow: 0 30px 80px -48px rgba(0, 0, 0, 0.65);
-    backdrop-filter: blur(16px);
+    border-radius: 1rem;
+    background: #0b1628;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.18);
     position: sticky;
     top: 1rem;
     z-index: 10;
-}
-
-.topbar::after {
-    content: '';
-    position: absolute;
-    inset: auto 1.25rem 0;
-    height: 1px;
-    background: linear-gradient(
-        90deg,
-        transparent,
-        rgba(125, 211, 252, 0.52),
-        transparent
-    );
 }
 
 .brand-mark {
@@ -593,7 +525,6 @@ const toggleLocale = () => setLocale(locale.value === 'ru' ? 'en' : 'ru');
     font-weight: 560;
     text-decoration: none;
     transition:
-        transform 0.2s ease,
         border-color 0.2s ease,
         background-color 0.2s ease;
 }
@@ -618,18 +549,14 @@ const toggleLocale = () => setLocale(locale.value === 'ru' ? 'en' : 'ru');
 }
 
 .btn-solid {
-    background: linear-gradient(135deg, #14b8a6, #2dd4bf);
+    background: #2dd4bf;
     color: #041018;
     border-color: transparent;
-    box-shadow:
-        0 18px 34px rgba(45, 212, 191, 0.24),
-        inset 0 1px 0 rgba(255, 255, 255, 0.24);
 }
 
 .btn:hover,
 .locale-btn:hover,
 .module-card:hover {
-    transform: translateY(-2px) scale(1.01);
     border-color: rgba(125, 211, 252, 0.62);
 }
 
@@ -640,46 +567,10 @@ const toggleLocale = () => setLocale(locale.value === 'ru' ? 'en' : 'ru');
 
 .panel {
     border: 1px solid rgba(148, 163, 184, 0.2);
-    background: linear-gradient(
-        155deg,
-        rgba(18, 28, 49, 0.94),
-        rgba(9, 14, 27, 0.78)
-    );
-    border-radius: 1.35rem;
+    background: #0d192b;
+    border-radius: 1rem;
     padding: 1.2rem;
-    backdrop-filter: blur(14px);
-    box-shadow:
-        0 30px 85px -48px rgba(3, 7, 18, 0.8),
-        inset 0 1px 0 rgba(255, 255, 255, 0.05);
     position: relative;
-    overflow: hidden;
-}
-
-.panel::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(
-        130deg,
-        rgba(255, 255, 255, 0.08),
-        transparent 28%,
-        transparent 62%,
-        rgba(56, 189, 248, 0.08)
-    );
-    pointer-events: none;
-}
-
-.panel::after {
-    content: '';
-    position: absolute;
-    inset: auto 0 0;
-    height: 0.9rem;
-    background: radial-gradient(
-        60% 120% at 50% 0%,
-        rgba(34, 211, 238, 0.12),
-        transparent 72%
-    );
-    pointer-events: none;
 }
 
 .hero {
@@ -737,14 +628,8 @@ const toggleLocale = () => setLocale(locale.value === 'ru' ? 'en' : 'ru');
 .metric {
     border: 1px solid rgba(148, 163, 184, 0.2);
     border-radius: 1rem;
-    background: linear-gradient(
-        180deg,
-        rgba(11, 18, 34, 0.72),
-        rgba(7, 13, 25, 0.5)
-    );
+    background: #091426;
     padding: 0.9rem;
-    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04);
-    transform: translateZ(0);
 }
 
 .metric-value {
@@ -789,33 +674,16 @@ const toggleLocale = () => setLocale(locale.value === 'ru' ? 'en' : 'ru');
     gap: 0.8rem;
     border: 1px solid rgba(148, 163, 184, 0.18);
     border-radius: 1rem;
-    background: linear-gradient(
-        180deg,
-        rgba(8, 13, 25, 0.68),
-        rgba(6, 11, 22, 0.5)
-    );
+    background: #091426;
     padding: 1rem;
     text-decoration: none;
     color: inherit;
     transition:
-        transform 0.2s ease,
         border-color 0.2s ease,
-        background-color 0.2s ease,
-        box-shadow 0.2s ease;
-    box-shadow: 0 16px 34px -28px rgba(0, 0, 0, 0.55);
-}
-
-.module-card:hover,
-.workflow-card:hover,
-.support-card:hover,
-.metric:hover {
-    box-shadow:
-        0 22px 44px -30px rgba(4, 10, 24, 0.7),
-        0 8px 20px -16px rgba(34, 211, 238, 0.28);
+        background-color 0.2s ease;
 }
 
 .module-card:hover {
-    transform: translateY(-4px);
     border-color: rgba(125, 211, 252, 0.34);
 }
 
@@ -827,11 +695,13 @@ const toggleLocale = () => setLocale(locale.value === 'ru' ? 'en' : 'ru');
 }
 
 .module-head h4 {
+    min-width: 0;
     margin: 0;
     font-size: 1rem;
 }
 
 .module-link {
+    flex-shrink: 0;
     color: #8be7da;
     font-size: 0.74rem;
     white-space: nowrap;
@@ -870,20 +740,12 @@ const toggleLocale = () => setLocale(locale.value === 'ru' ? 'en' : 'ru');
 .workflow-card {
     border: 1px solid rgba(148, 163, 184, 0.18);
     border-radius: 1rem;
-    background: linear-gradient(
-        180deg,
-        rgba(10, 16, 30, 0.72),
-        rgba(6, 11, 22, 0.48)
-    );
+    background: #091426;
     padding: 1rem;
-    transition:
-        transform 0.24s ease,
-        box-shadow 0.24s ease,
-        border-color 0.24s ease;
+    transition: border-color 0.2s ease;
 }
 
 .workflow-card:hover {
-    transform: translateY(-4px);
     border-color: rgba(125, 211, 252, 0.42);
 }
 
@@ -949,20 +811,12 @@ const toggleLocale = () => setLocale(locale.value === 'ru' ? 'en' : 'ru');
 .support-card {
     border: 1px solid rgba(148, 163, 184, 0.18);
     border-radius: 1rem;
-    background: linear-gradient(
-        180deg,
-        rgba(10, 16, 30, 0.72),
-        rgba(6, 11, 22, 0.48)
-    );
+    background: #091426;
     padding: 1rem;
-    transition:
-        transform 0.24s ease,
-        border-color 0.24s ease,
-        box-shadow 0.24s ease;
+    transition: border-color 0.2s ease;
 }
 
 .support-card:hover {
-    transform: translateY(-4px);
     border-color: rgba(125, 211, 252, 0.4);
 }
 
@@ -989,43 +843,6 @@ const toggleLocale = () => setLocale(locale.value === 'ru' ? 'en' : 'ru');
     line-height: 1.58;
     font-size: 0.93rem;
     max-width: 760px;
-}
-
-.rise {
-    animation: rise-in 0.58s ease both;
-}
-
-.fade-in {
-    animation: fade-in 0.66s ease both;
-}
-
-@keyframes rise-in {
-    from {
-        opacity: 0;
-        transform: translateY(16px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-@keyframes fade-in {
-    from {
-        opacity: 0;
-    }
-    to {
-        opacity: 1;
-    }
-}
-
-@keyframes ambient-float {
-    from {
-        transform: translate3d(0, 0, 0) scale(1);
-    }
-    to {
-        transform: translate3d(1rem, -1rem, 0) scale(1.06);
-    }
 }
 
 @media (min-width: 900px) {

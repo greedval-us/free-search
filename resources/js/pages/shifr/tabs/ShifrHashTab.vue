@@ -178,7 +178,7 @@ onMounted(() => {
                         </button>
                         <div
                             v-if="algorithmMenuOpen"
-                            class="shifr-hash-algorithm-select absolute z-[120] mt-1 max-h-52 w-full overflow-y-auto rounded-md border border-input bg-background p-1 shadow-2xl"
+                            class="shifr-hash-algorithm-select absolute z-50 mt-1 max-h-52 w-full overflow-y-auto rounded-md border border-input bg-background p-1 shadow-md"
                         >
                             <button
                                 v-for="item in algorithmOptions"
@@ -226,7 +226,7 @@ onMounted(() => {
                     }}
                 </button>
             </div>
-            <p v-if="error" class="mt-2 text-sm text-destructive">
+            <p v-if="error" class="mt-2 text-sm break-words text-destructive">
                 {{ error }}
             </p>
         </ShifrFormCard>

@@ -50,11 +50,11 @@ const mediaPreviewUrl = (post: BlueskyPost): string => {
                         :href="post.author.url"
                         target="_blank"
                         rel="noopener noreferrer"
-                        class="text-sm font-semibold text-primary hover:underline"
+                        class="text-sm font-semibold break-words text-primary hover:underline"
                     >
                         {{ post.author.displayName || post.author.handle }}
                     </a>
-                    <span class="text-xs text-muted-foreground">
+                    <span class="text-xs break-words text-muted-foreground">
                         @{{ post.author.handle }}
                     </span>
                 </div>
@@ -74,7 +74,7 @@ const mediaPreviewUrl = (post: BlueskyPost): string => {
             </a>
         </div>
 
-        <p class="mt-3 text-sm leading-relaxed text-foreground">
+        <p class="mt-3 text-sm leading-relaxed break-words text-foreground">
             {{ post.text || t('bluesky.search.noText') }}
         </p>
 
@@ -134,13 +134,13 @@ const mediaPreviewUrl = (post: BlueskyPost): string => {
                         :href="post.media.external.uri"
                         target="_blank"
                         rel="noopener noreferrer"
-                        class="text-sm font-medium text-primary hover:underline"
+                        class="text-sm font-medium break-words text-primary hover:underline"
                     >
                         {{
                             post.media.external.title || post.media.external.uri
                         }}
                     </a>
-                    <p class="mt-1 text-xs text-muted-foreground">
+                    <p class="mt-1 text-xs break-words text-muted-foreground">
                         {{ post.media.external.description }}
                     </p>
                 </div>
@@ -159,19 +159,19 @@ const mediaPreviewUrl = (post: BlueskyPost): string => {
                 <p class="mb-1 font-medium text-muted-foreground">
                     {{ t('bluesky.metrics.languages') }}
                 </p>
-                <p>{{ post.languages.join(', ') }}</p>
+                <p class="break-words">{{ post.languages.join(', ') }}</p>
             </div>
             <div v-if="post.hashtags.length > 0">
                 <p class="mb-1 font-medium text-muted-foreground">
                     {{ t('bluesky.metrics.hashtags') }}
                 </p>
-                <p>{{ post.hashtags.join(', ') }}</p>
+                <p class="break-words">{{ post.hashtags.join(', ') }}</p>
             </div>
             <div v-if="post.domains.length > 0">
                 <p class="mb-1 font-medium text-muted-foreground">
                     {{ t('bluesky.metrics.domains') }}
                 </p>
-                <p>{{ post.domains.join(', ') }}</p>
+                <p class="break-words">{{ post.domains.join(', ') }}</p>
             </div>
         </div>
 
@@ -180,37 +180,37 @@ const mediaPreviewUrl = (post: BlueskyPost): string => {
                 {{ t('bluesky.osint.title') }}
             </p>
             <div class="grid gap-2 md:grid-cols-2">
-                <p>
+                <p class="break-words">
                     <span class="text-muted-foreground"
                         >{{ t('bluesky.osint.did') }}:</span
                     >
                     {{ post.author.did || '-' }}
                 </p>
-                <p>
+                <p class="break-words">
                     <span class="text-muted-foreground"
                         >{{ t('bluesky.osint.cid') }}:</span
                     >
                     {{ post.cid || '-' }}
                 </p>
-                <p>
+                <p class="break-words">
                     <span class="text-muted-foreground"
                         >{{ t('bluesky.osint.atUri') }}:</span
                     >
                     {{ post.uri || '-' }}
                 </p>
-                <p>
+                <p class="break-words">
                     <span class="text-muted-foreground"
                         >{{ t('bluesky.osint.indexedAt') }}:</span
                     >
                     {{ formatDate(post.indexedAt) }}
                 </p>
-                <p>
+                <p class="break-words">
                     <span class="text-muted-foreground"
                         >{{ t('bluesky.osint.replyRoot') }}:</span
                     >
                     {{ post.replyRootUri || '-' }}
                 </p>
-                <p>
+                <p class="break-words">
                     <span class="text-muted-foreground"
                         >{{ t('bluesky.osint.replyParent') }}:</span
                     >
@@ -327,7 +327,10 @@ const mediaPreviewUrl = (post: BlueskyPost): string => {
             <p v-if="threadState.loading" class="text-xs text-muted-foreground">
                 {{ t('bluesky.engagement.loading') }}
             </p>
-            <p v-else-if="threadState.error" class="text-xs text-destructive">
+            <p
+                v-else-if="threadState.error"
+                class="text-xs break-words text-destructive"
+            >
                 {{ threadState.error }}
             </p>
             <div v-else class="space-y-3 text-xs">

@@ -56,7 +56,7 @@ const { t } = useI18n();
 
                     <p
                         v-else-if="ensureContextState(status.id).error"
-                        class="text-xs text-destructive"
+                        class="text-xs break-words text-destructive"
                     >
                         {{ ensureContextState(status.id).error }}
                     </p>

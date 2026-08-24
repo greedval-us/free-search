@@ -15,7 +15,8 @@ export type ChartBar = {
 
 export const useSiteIntelAnalyticsViewModel = (
     result: Ref<SiteIntelAnalyticsResult | null>,
-    t: TranslateFn
+    t: TranslateFn,
+    locale: { value: string }
 ) => {
     const scoreBadgeClass = computed(() => {
         const level = result.value?.overview.score.level;
@@ -36,7 +37,7 @@ export const useSiteIntelAnalyticsViewModel = (
             return '-';
         }
 
-        return new Date(value).toLocaleString();
+        return new Date(value).toLocaleString(locale.value);
     };
 
     const recommendationLabel = (key: string) => {
@@ -88,7 +89,7 @@ export const useSiteIntelAnalyticsViewModel = (
                 tone: 'emerald',
             },
             {
-                label: 'Domain safety (100 - risk)',
+                label: t('siteIntel.analytics.domainSafetyScore'),
                 value: domainSafety,
                 percent: clampPercent(domainSafety),
                 tone: 'amber',

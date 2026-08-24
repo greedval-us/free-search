@@ -24,7 +24,7 @@ const { t } = useI18n();
 </script>
 
 <template>
-    <div class="space-y-6">
+    <section class="space-y-5 border-t pt-6">
         <Heading
             variant="small"
             :title="t('settings.deleteAccount.title')"
@@ -117,5 +117,5 @@ const { t } = useI18n();
                 </DialogContent>
             </Dialog>
         </div>
-    </div>
+    </section>
 </template>

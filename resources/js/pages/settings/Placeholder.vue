@@ -75,9 +75,10 @@ const panelContent = computed(() => {
 <template>
     <Head :title="t('settings.placeholderPage.title')" />
 
-    <div class="space-y-6">
+    <div class="max-w-4xl space-y-5">
         <Heading
             variant="small"
+            as="h1"
             :title="t('settings.placeholderPage.heading')"
             :description="t('settings.placeholderPage.description')"
         />

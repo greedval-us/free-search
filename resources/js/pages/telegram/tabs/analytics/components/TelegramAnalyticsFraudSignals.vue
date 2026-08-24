@@ -10,12 +10,12 @@ const props = defineProps<{
     signals: FraudSignals;
 }>();
 
-const { t } = useI18n();
+const { t, locale } = useI18n();
 
 const formatNumber = (value: number | null | undefined) => {
     const numeric = Number(value);
 
-    return new Intl.NumberFormat().format(
+    return new Intl.NumberFormat(locale.value).format(
         Number.isFinite(numeric) ? numeric : 0
     );
 };
@@ -25,7 +25,7 @@ const formatDate = (unix: number) => {
         return '-';
     }
 
-    return new Date(unix * 1000).toLocaleString();
+    return new Date(unix * 1000).toLocaleString(locale.value);
 };
 
 const riskLevelLabel = computed(() =>
@@ -38,10 +38,10 @@ const riskBadgeClass = computed(() => {
     }
 
     if (props.signals.riskLevel === 'medium') {
-        return 'border-amber-500/40 bg-amber-500/10 text-amber-300';
+        return 'border-amber-500/40 bg-amber-500/10 text-amber-700 dark:text-amber-300';
     }
 
-    return 'border-emerald-500/40 bg-emerald-500/10 text-emerald-300';
+    return 'border-emerald-500/40 bg-emerald-500/10 text-emerald-700 dark:text-emerald-300';
 });
 
 const triggerLabel = (key: string): string =>

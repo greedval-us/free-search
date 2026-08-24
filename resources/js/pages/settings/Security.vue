@@ -50,157 +50,167 @@ onUnmounted(() => clearTwoFactorAuthData());
 <template>
     <Head :title="t('settings.securityPage.title')" />
 
-    <h1 class="sr-only">{{ t('settings.securityPage.title') }}</h1>
+    <div class="max-w-2xl space-y-8">
+        <section class="space-y-5">
+            <Heading
+                variant="small"
+                as="h1"
+                :title="t('settings.securityPage.updatePassword')"
+                :description="
+                    t('settings.securityPage.updatePasswordDescription')
+                "
+            />
 
-    <div class="space-y-6">
-        <Heading
-            variant="small"
-            :title="t('settings.securityPage.updatePassword')"
-            :description="t('settings.securityPage.updatePasswordDescription')"
-        />
+            <Form
+                v-bind="SecurityController.update.form()"
+                :options="{
+                    preserveScroll: true,
+                }"
+                reset-on-success
+                :reset-on-error="[
+                    'password',
+                    'password_confirmation',
+                    'current_password',
+                ]"
+                class="space-y-5"
+                v-slot="{ errors, processing, recentlySuccessful }"
+            >
+                <div class="grid gap-2">
+                    <Label for="current_password">{{
+                        t('settings.securityPage.currentPassword')
+                    }}</Label>
+                    <PasswordInput
+                        id="current_password"
+                        name="current_password"
+                        class="mt-1 block w-full"
+                        autocomplete="current-password"
+                        :placeholder="
+                            t('settings.securityPage.currentPassword')
+                        "
+                    />
+                    <InputError :message="errors.current_password" />
+                </div>
 
-        <Form
-            v-bind="SecurityController.update.form()"
-            :options="{
-                preserveScroll: true,
-            }"
-            reset-on-success
-            :reset-on-error="[
-                'password',
-                'password_confirmation',
-                'current_password',
-            ]"
-            class="space-y-6"
-            v-slot="{ errors, processing, recentlySuccessful }"
-        >
-            <div class="grid gap-2">
-                <Label for="current_password">{{
-                    t('settings.securityPage.currentPassword')
-                }}</Label>
-                <PasswordInput
-                    id="current_password"
-                    name="current_password"
-                    class="mt-1 block w-full"
-                    autocomplete="current-password"
-                    :placeholder="t('settings.securityPage.currentPassword')"
-                />
-                <InputError :message="errors.current_password" />
-            </div>
+                <div class="grid gap-2">
+                    <Label for="password">{{
+                        t('settings.securityPage.newPassword')
+                    }}</Label>
+                    <PasswordInput
+                        id="password"
+                        name="password"
+                        class="mt-1 block w-full"
+                        autocomplete="new-password"
+                        :placeholder="t('settings.securityPage.newPassword')"
+                    />
+                    <InputError :message="errors.password" />
+                </div>
 
-            <div class="grid gap-2">
-                <Label for="password">{{
-                    t('settings.securityPage.newPassword')
-                }}</Label>
-                <PasswordInput
-                    id="password"
-                    name="password"
-                    class="mt-1 block w-full"
-                    autocomplete="new-password"
-                    :placeholder="t('settings.securityPage.newPassword')"
-                />
-                <InputError :message="errors.password" />
-            </div>
+                <div class="grid gap-2">
+                    <Label for="password_confirmation">{{
+                        t('settings.securityPage.confirmPassword')
+                    }}</Label>
+                    <PasswordInput
+                        id="password_confirmation"
+                        name="password_confirmation"
+                        class="mt-1 block w-full"
+                        autocomplete="new-password"
+                        :placeholder="
+                            t('settings.securityPage.confirmPassword')
+                        "
+                    />
+                    <InputError :message="errors.password_confirmation" />
+                </div>
 
-            <div class="grid gap-2">
-                <Label for="password_confirmation">{{
-                    t('settings.securityPage.confirmPassword')
-                }}</Label>
-                <PasswordInput
-                    id="password_confirmation"
-                    name="password_confirmation"
-                    class="mt-1 block w-full"
-                    autocomplete="new-password"
-                    :placeholder="t('settings.securityPage.confirmPassword')"
-                />
-                <InputError :message="errors.password_confirmation" />
-            </div>
-
-            <div class="flex items-center gap-4">
-                <Button
-                    :disabled="processing"
-                    data-test="update-password-button"
-                >
-                    <Spinner v-if="processing" class="mr-2" />
-                    {{ t('settings.securityPage.savePassword') }}
-                </Button>
-
-                <Transition
-                    enter-active-class="transition ease-in-out"
-                    enter-from-class="opacity-0"
-                    leave-active-class="transition ease-in-out"
-                    leave-to-class="opacity-0"
-                >
-                    <p
-                        v-show="recentlySuccessful"
-                        class="text-sm text-neutral-600"
-                    >
-                        {{ t('common.saved') }}
-                    </p>
-                </Transition>
-            </div>
-        </Form>
-    </div>
-
-    <div v-if="canManageTwoFactor" class="space-y-6">
-        <Heading
-            variant="small"
-            :title="t('settings.securityPage.twoFactorTitle')"
-            :description="t('settings.securityPage.twoFactorDescription')"
-        />
-
-        <div
-            v-if="!twoFactorEnabled"
-            class="flex flex-col items-start justify-start space-y-4"
-        >
-            <p class="text-sm text-muted-foreground">
-                {{ t('settings.securityPage.twoFactorEnableHint') }}
-            </p>
-
-            <div>
-                <Button v-if="hasSetupData" @click="showSetupModal = true">
-                    <ShieldCheck />{{
-                        t('settings.securityPage.twoFactorContinueSetup')
-                    }}
-                </Button>
-                <Form
-                    v-else
-                    v-bind="enable.form()"
-                    @success="showSetupModal = true"
-                    #default="{ processing }"
-                >
-                    <Button type="submit" :disabled="processing">
-                        <Spinner v-if="processing" class="mr-2" />
-                        {{ t('settings.securityPage.twoFactorEnable') }}
-                    </Button>
-                </Form>
-            </div>
-        </div>
-
-        <div v-else class="flex flex-col items-start justify-start space-y-4">
-            <p class="text-sm text-muted-foreground">
-                {{ t('settings.securityPage.twoFactorEnabledHint') }}
-            </p>
-
-            <div class="relative inline">
-                <Form v-bind="disable.form()" #default="{ processing }">
+                <div class="grid items-center gap-3 sm:flex sm:gap-4">
                     <Button
-                        variant="destructive"
-                        type="submit"
                         :disabled="processing"
+                        data-test="update-password-button"
                     >
                         <Spinner v-if="processing" class="mr-2" />
-                        {{ t('settings.securityPage.twoFactorDisable') }}
+                        {{ t('settings.securityPage.savePassword') }}
                     </Button>
-                </Form>
+
+                    <Transition
+                        enter-active-class="transition ease-in-out"
+                        enter-from-class="opacity-0"
+                        leave-active-class="transition ease-in-out"
+                        leave-to-class="opacity-0"
+                    >
+                        <p
+                            v-show="recentlySuccessful"
+                            class="text-sm text-muted-foreground"
+                        >
+                            {{ t('common.saved') }}
+                        </p>
+                    </Transition>
+                </div>
+            </Form>
+        </section>
+
+        <section v-if="canManageTwoFactor" class="space-y-5 border-t pt-6">
+            <Heading
+                variant="small"
+                :title="t('settings.securityPage.twoFactorTitle')"
+                :description="t('settings.securityPage.twoFactorDescription')"
+            />
+
+            <div
+                v-if="!twoFactorEnabled"
+                class="flex flex-col items-start justify-start space-y-4"
+            >
+                <p class="text-sm text-muted-foreground">
+                    {{ t('settings.securityPage.twoFactorEnableHint') }}
+                </p>
+
+                <div>
+                    <Button v-if="hasSetupData" @click="showSetupModal = true">
+                        <ShieldCheck />{{
+                            t('settings.securityPage.twoFactorContinueSetup')
+                        }}
+                    </Button>
+                    <Form
+                        v-else
+                        v-bind="enable.form()"
+                        @success="showSetupModal = true"
+                        #default="{ processing }"
+                    >
+                        <Button type="submit" :disabled="processing">
+                            <Spinner v-if="processing" class="mr-2" />
+                            {{ t('settings.securityPage.twoFactorEnable') }}
+                        </Button>
+                    </Form>
+                </div>
             </div>
 
-            <TwoFactorRecoveryCodes />
-        </div>
+            <div
+                v-else
+                class="flex flex-col items-start justify-start space-y-4"
+            >
+                <p class="text-sm text-muted-foreground">
+                    {{ t('settings.securityPage.twoFactorEnabledHint') }}
+                </p>
 
-        <TwoFactorSetupModal
-            v-model:isOpen="showSetupModal"
-            :requiresConfirmation="requiresConfirmation"
-            :twoFactorEnabled="twoFactorEnabled"
-        />
+                <div class="relative inline">
+                    <Form v-bind="disable.form()" #default="{ processing }">
+                        <Button
+                            variant="destructive"
+                            type="submit"
+                            :disabled="processing"
+                        >
+                            <Spinner v-if="processing" class="mr-2" />
+                            {{ t('settings.securityPage.twoFactorDisable') }}
+                        </Button>
+                    </Form>
+                </div>
+
+                <TwoFactorRecoveryCodes />
+            </div>
+
+            <TwoFactorSetupModal
+                v-model:isOpen="showSetupModal"
+                :requiresConfirmation="requiresConfirmation"
+                :twoFactorEnabled="twoFactorEnabled"
+            />
+        </section>
     </div>
 </template>

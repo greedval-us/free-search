@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import HelpTooltip from '@/components/ui/HelpTooltip.vue';
 import { useI18n } from '@/composables/useI18n';
 
 type TopPost = {
@@ -18,12 +19,12 @@ defineProps<{
     posts: TopPost[];
 }>();
 
-const { t } = useI18n();
+const { t, locale } = useI18n();
 
 const formatNumber = (value: number | null | undefined) => {
     const numeric = Number(value);
 
-    return new Intl.NumberFormat().format(
+    return new Intl.NumberFormat(locale.value).format(
         Number.isFinite(numeric) ? numeric : 0
     );
 };
@@ -33,7 +34,7 @@ const formatDate = (unix: number) => {
         return '-';
     }
 
-    return new Date(unix * 1000).toLocaleString();
+    return new Date(unix * 1000).toLocaleString(locale.value);
 };
 </script>
 
@@ -49,19 +50,10 @@ const formatDate = (unix: number) => {
                 </p>
             </div>
             <div class="flex items-center gap-2">
-                <div class="group relative">
-                    <span
-                        class="inline-flex h-5 w-5 cursor-help items-center justify-center rounded-full border border-border text-[11px] font-semibold text-muted-foreground"
-                        :aria-label="t('telegram.analytics.help.label')"
-                    >
-                        ?
-                    </span>
-                    <div
-                        class="pointer-events-none absolute top-6 right-0 z-20 hidden w-64 rounded-md border border-border/70 bg-popover p-2 text-[11px] leading-relaxed text-popover-foreground shadow-xl group-hover:block"
-                    >
-                        {{ t('telegram.analytics.help.topPosts') }}
-                    </div>
-                </div>
+                <HelpTooltip
+                    :label="t('telegram.analytics.help.label')"
+                    :text="t('telegram.analytics.help.topPosts')"
+                />
                 <span
                     class="rounded-full border border-border px-2 py-1 text-xs text-muted-foreground"
                 >
@@ -117,7 +109,7 @@ const formatDate = (unix: number) => {
                             {{ formatNumber(post.reactions) }}</span
                         >
                         <span
-                            class="rounded-full border border-cyan-400/40 bg-cyan-400/10 px-2 py-1 text-cyan-200"
+                            class="rounded-full border border-primary/40 bg-primary/10 px-2 py-1 text-primary"
                         >
                             {{ t('telegram.analytics.score') }}:
                             {{ formatNumber(post.score) }}

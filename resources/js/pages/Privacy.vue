@@ -63,9 +63,6 @@ const sections = computed(() => [
     <SeoHead :title="seoTitle" :description="seoDescription" :path="seoPath" />
 
     <div class="privacy-root">
-        <div class="privacy-ambient privacy-ambient-a" />
-        <div class="privacy-ambient privacy-ambient-b" />
-
         <div class="privacy-shell">
             <header class="privacy-topbar">
                 <Link :href="home()" class="privacy-home-link">
@@ -113,40 +110,9 @@ const sections = computed(() => [
 .privacy-root {
     position: relative;
     min-height: 100vh;
-    overflow: hidden;
-    background:
-        radial-gradient(
-            120% 140% at 10% 0%,
-            #143252 0%,
-            #0a1325 52%,
-            #04070f 100%
-        ),
-        linear-gradient(180deg, #07101d 0%, #04070f 100%);
+    background: #07101f;
     color: #e7edf8;
-}
-
-.privacy-ambient {
-    position: absolute;
-    border-radius: 9999px;
-    filter: blur(100px);
-    opacity: 0.3;
-    pointer-events: none;
-}
-
-.privacy-ambient-a {
-    top: -8rem;
-    left: -6rem;
-    width: 24rem;
-    height: 24rem;
-    background: #14b8a6;
-}
-
-.privacy-ambient-b {
-    right: -6rem;
-    bottom: 12rem;
-    width: 22rem;
-    height: 22rem;
-    background: #f59e0b;
+    overflow-wrap: anywhere;
 }
 
 .privacy-shell {
@@ -165,8 +131,7 @@ const sections = computed(() => [
     padding: 0.85rem 1rem;
     border: 1px solid rgba(148, 163, 184, 0.18);
     border-radius: 1rem;
-    background: rgba(8, 15, 28, 0.72);
-    backdrop-filter: blur(14px);
+    background: #0b1628;
 }
 
 .privacy-home-link,
@@ -191,14 +156,11 @@ const sections = computed(() => [
 }
 
 .privacy-hero,
-.privacy-note,
 .privacy-section {
     border: 1px solid rgba(148, 163, 184, 0.18);
-    border-radius: 1.25rem;
-    background: rgba(9, 15, 29, 0.78);
+    border-radius: 1rem;
+    background: #0d192b;
     padding: 1.25rem;
-    backdrop-filter: blur(14px);
-    box-shadow: 0 26px 80px -48px rgba(2, 6, 23, 0.75);
 }
 
 .privacy-eyebrow {
@@ -228,21 +190,9 @@ const sections = computed(() => [
     font-size: 0.92rem;
 }
 
-.privacy-note {
-    border-color: rgba(45, 212, 191, 0.24);
-    background: rgba(7, 22, 26, 0.82);
-}
-
-.privacy-note h2,
 .privacy-section h2 {
     margin: 0;
     font-size: 1.04rem;
-}
-
-.privacy-note p {
-    margin: 0.7rem 0 0;
-    color: #cfe4de;
-    line-height: 1.6;
 }
 
 .privacy-list {
@@ -282,7 +232,6 @@ const sections = computed(() => [
     }
 
     .privacy-hero,
-    .privacy-note,
     .privacy-section {
         padding: 1rem;
     }

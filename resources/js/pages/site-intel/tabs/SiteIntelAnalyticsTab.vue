@@ -18,7 +18,7 @@ import { useSiteIntelAnalytics } from '../composables/useSiteIntelAnalytics';
 import { useSiteIntelAnalyticsViewModel } from '../composables/useSiteIntelAnalyticsViewModel';
 import SiteIntelMetricBars from './components/SiteIntelMetricBars.vue';
 
-const { t } = useI18n();
+const { t, locale } = useI18n();
 const {
     form,
     loading,
@@ -42,7 +42,7 @@ const {
     emailSecurityScore,
     domainAgeDays,
     totalResponseTimeMs,
-} = useSiteIntelAnalyticsViewModel(result, t);
+} = useSiteIntelAnalyticsViewModel(result, t, locale);
 
 onMounted(() => {
     const params = getRepeatQueryParams();
@@ -159,7 +159,7 @@ onMounted(() => {
                 </p>
                 <p class="mt-1">
                     {{ t('siteIntel.analytics.domain') }}:
-                    <span class="text-muted-foreground">{{
+                    <span class="break-words text-muted-foreground">{{
                         result.target.domain
                     }}</span>
                 </p>
@@ -355,13 +355,16 @@ onMounted(() => {
                             class="mb-1 flex items-center justify-between gap-2"
                         >
                             <span class="text-[11px]">{{ item.label }}</span>
-                            <span class="text-[11px] text-emerald-300">{{
-                                item.impact > 0
-                                    ? `~ +${item.impact} ${t('siteIntel.analytics.scoreUnit')}`
-                                    : t(
-                                          'siteIntel.analytics.recommendationMaintain'
-                                      )
-                            }}</span>
+                            <span
+                                class="text-[11px] text-emerald-700 dark:text-emerald-300"
+                                >{{
+                                    item.impact > 0
+                                        ? `~ +${item.impact} ${t('siteIntel.analytics.scoreUnit')}`
+                                        : t(
+                                              'siteIntel.analytics.recommendationMaintain'
+                                          )
+                                }}</span
+                            >
                         </div>
                         <div
                             v-if="item.impact > 0"

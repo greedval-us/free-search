@@ -54,12 +54,12 @@ const historyStageLabel = (value: string | null) => {
 
 <template>
     <section
-        class="flex max-h-[72vh] min-h-0 flex-col rounded-xl border border-border/70 bg-background/70 p-4"
+        class="flex min-h-0 min-w-0 flex-col rounded-xl border border-border/70 bg-card/70 p-3 sm:max-h-[72vh] sm:p-4"
     >
         <div
             class="flex flex-col gap-3 border-b border-border/70 pb-4 md:flex-row md:items-start md:justify-between"
         >
-            <div class="space-y-1">
+            <div class="min-w-0 space-y-1">
                 <h3 class="text-base font-semibold">
                     {{ t(historyKey('title')) }}
                 </h3>
@@ -73,7 +73,7 @@ const historyStageLabel = (value: string | null) => {
             </div>
 
             <div
-                class="rounded-lg border border-border/70 bg-background/80 px-3 py-2 text-xs text-muted-foreground"
+                class="self-start rounded-md bg-muted/45 px-2.5 py-1.5 text-xs text-muted-foreground md:text-right"
             >
                 {{
                     t(historyKey('retention'), {
@@ -96,23 +96,23 @@ const historyStageLabel = (value: string | null) => {
 
         <div
             v-else
-            class="intel-scroll mt-4 min-h-0 flex-1 space-y-3 overflow-y-auto overscroll-contain pr-1 [scrollbar-gutter:stable]"
+            class="intel-scroll mt-4 min-h-0 min-w-0 flex-1 space-y-3 overflow-y-visible overscroll-contain sm:overflow-y-auto sm:pr-1 sm:[scrollbar-gutter:stable]"
         >
             <article
                 v-for="item in items"
                 :key="item.runId"
-                class="rounded-xl border border-border/70 bg-background/80 p-4"
+                class="min-w-0 rounded-lg border border-border/60 bg-background/65 p-3"
             >
                 <div
                     class="flex flex-col gap-3 lg:flex-row lg:items-start lg:justify-between"
                 >
-                    <div class="space-y-3">
+                    <div class="min-w-0 flex-1 space-y-3">
                         <div class="flex flex-wrap items-center gap-2">
-                            <span class="text-sm font-semibold">
+                            <span class="min-w-0 break-words text-sm font-semibold">
                                 {{ title(item) || t(historyKey('unknown')) }}
                             </span>
                             <span
-                                class="rounded-full border border-border/70 bg-background px-2 py-0.5 text-[11px] text-muted-foreground uppercase"
+                                class="max-w-full break-words rounded-full border border-border/70 bg-background px-2 py-0.5 text-[11px] text-muted-foreground uppercase"
                             >
                                 {{ historyStageLabel(item.stage) }}
                             </span>
@@ -125,7 +125,7 @@ const historyStageLabel = (value: string | null) => {
                                 <span class="block">
                                     {{ t(historyKey('created')) }}
                                 </span>
-                                <span class="text-foreground">
+                                <span class="break-words text-foreground">
                                     {{ formatDateTime(item.createdAt) }}
                                 </span>
                             </div>
@@ -133,7 +133,7 @@ const historyStageLabel = (value: string | null) => {
                                 <span class="block">
                                     {{ t(historyKey('expires')) }}
                                 </span>
-                                <span class="text-foreground">
+                                <span class="break-words text-foreground">
                                     {{ formatDateTime(item.expiresAt) }}
                                 </span>
                             </div>
@@ -142,7 +142,7 @@ const historyStageLabel = (value: string | null) => {
                                 :key="field.label"
                             >
                                 <span class="block">{{ field.label }}</span>
-                                <span class="text-foreground">
+                                <span class="break-words text-foreground">
                                     {{ field.value(item) || '-' }}
                                 </span>
                             </div>
@@ -154,7 +154,7 @@ const historyStageLabel = (value: string | null) => {
                             <span
                                 v-for="stat in statFields"
                                 :key="stat.label"
-                                class="rounded-md border border-border/70 bg-background px-2 py-1"
+                                class="max-w-full break-words rounded-md bg-muted/50 px-2 py-1"
                             >
                                 {{
                                     t(stat.label, {
@@ -164,12 +164,15 @@ const historyStageLabel = (value: string | null) => {
                             </span>
                         </div>
 
-                        <p v-if="item.error" class="text-xs text-destructive">
+                        <p
+                            v-if="item.error"
+                            class="break-words text-xs text-destructive"
+                        >
                             {{ item.error }}
                         </p>
                     </div>
 
-                    <div class="flex flex-wrap gap-2">
+                    <div class="grid shrink-0 gap-2 sm:flex sm:flex-wrap">
                         <Button
                             type="button"
                             variant="outline"

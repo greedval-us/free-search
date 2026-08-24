@@ -127,7 +127,7 @@ onMounted(() => {
                                 form.periodDays === period &&
                                 !form.dateFrom &&
                                 !form.dateTo
-                                    ? 'bg-cyan-400/15 text-cyan-200'
+                                    ? 'bg-primary/15 text-primary'
                                     : 'text-foreground hover:bg-accent'
                             "
                             @click="applyPreset(period)"
@@ -180,8 +180,13 @@ onMounted(() => {
             </p>
         </template>
         <template #afterActions>
-            <p v-if="error" class="text-sm text-destructive">{{ error }}</p>
-            <p v-else-if="customPeriodTooLong" class="text-sm text-destructive">
+            <p v-if="error" class="text-sm break-words text-destructive">
+                {{ error }}
+            </p>
+            <p
+                v-else-if="customPeriodTooLong"
+                class="text-sm break-words text-destructive"
+            >
                 {{ t('youtube.analytics.customPeriodTooLong') }}
             </p>
         </template>
@@ -224,7 +229,9 @@ onMounted(() => {
                                     {{ t('youtube.common.open') }}
                                 </a>
                             </div>
-                            <p class="mt-1 text-xs text-muted-foreground">
+                            <p
+                                class="mt-1 text-xs break-words text-muted-foreground"
+                            >
                                 ID: {{ result.channel.id }} ·
                                 {{ t('youtube.analytics.createdAt') }}:
                                 {{ formatDate(result.channel.publishedAt) }} ·
@@ -262,7 +269,9 @@ onMounted(() => {
                             <h2 class="text-base font-semibold">
                                 {{ result.video.title }}
                             </h2>
-                            <p class="mt-1 text-xs text-muted-foreground">
+                            <p
+                                class="mt-1 text-xs break-words text-muted-foreground"
+                            >
                                 {{ result.video.channelTitle }} ·
                                 {{ formatDate(result.video.publishedAt) }} ·
                                 {{

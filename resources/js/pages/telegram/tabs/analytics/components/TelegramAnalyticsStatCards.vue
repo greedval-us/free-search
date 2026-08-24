@@ -10,12 +10,12 @@ type StatCard = {
 defineProps<{
     cards: StatCard[];
 }>();
-const { t } = useI18n();
+const { t, locale } = useI18n();
 
 const formatNumber = (value: number | null | undefined) => {
     const numeric = Number(value);
 
-    return new Intl.NumberFormat().format(
+    return new Intl.NumberFormat(locale.value).format(
         Number.isFinite(numeric) ? numeric : 0
     );
 };

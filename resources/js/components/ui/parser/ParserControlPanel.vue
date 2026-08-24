@@ -6,6 +6,7 @@ import {
     Square,
     Wrench,
 } from 'lucide-vue-next';
+import { Button } from '@/components/ui/button';
 import ControlPanelShell from '@/components/ui/control-panel/ControlPanelShell.vue';
 
 defineProps<{
@@ -49,47 +50,47 @@ const emit = defineEmits<{
     >
             <slot name="fields" />
 
-            <div class="flex flex-wrap items-center gap-2">
-                <button
+            <div class="grid gap-2 sm:flex sm:flex-wrap sm:items-center">
+                <Button
                     type="button"
-                    class="inline-flex h-10 cursor-pointer items-center gap-2 rounded-md bg-primary px-4 text-sm font-semibold text-primary-foreground disabled:cursor-not-allowed disabled:opacity-60"
                     :disabled="!canStart"
                     @click="emit('start')"
                 >
                     <LoaderCircle v-if="loading" class="h-4 w-4 animate-spin" />
                     <Database v-else class="h-4 w-4" />
                     {{ loading ? collectingLabel : startLabel }}
-                </button>
+                </Button>
 
-                <button
+                <Button
                     type="button"
-                    class="inline-flex h-10 cursor-pointer items-center gap-2 rounded-md border border-input px-4 text-sm font-semibold text-foreground disabled:cursor-not-allowed disabled:opacity-60"
+                    variant="outline"
+                    class="border-destructive/35 text-destructive hover:bg-destructive/10 hover:text-destructive"
                     :disabled="!loading"
                     @click="emit('stop')"
                 >
                     <Square class="h-4 w-4" />
                     {{ stopLabel }}
-                </button>
+                </Button>
 
-                <button
+                <Button
                     type="button"
-                    class="inline-flex h-10 cursor-pointer items-center gap-2 rounded-md border border-cyan-400/50 bg-cyan-400/10 px-4 text-sm font-semibold text-cyan-200 hover:bg-cyan-400/15 disabled:cursor-not-allowed disabled:opacity-60"
+                    variant="outline"
                     :disabled="!downloadUrl || loading"
                     @click="emit('download')"
                 >
                     <Download class="h-4 w-4" />
                     {{ downloadLabel }}
-                </button>
+                </Button>
 
-                <button
+                <Button
                     type="button"
-                    class="inline-flex h-10 cursor-pointer items-center gap-2 rounded-md border border-emerald-400/50 bg-emerald-400/10 px-4 text-sm font-semibold text-emerald-200 hover:bg-emerald-400/15 disabled:cursor-not-allowed disabled:opacity-60"
+                    variant="outline"
                     :disabled="!downloadJsonUrl || loading"
                     @click="emit('downloadJson')"
                 >
                     <Download class="h-4 w-4" />
                     {{ downloadJsonLabel }}
-                </button>
+                </Button>
             </div>
 
             <slot name="afterActions" />

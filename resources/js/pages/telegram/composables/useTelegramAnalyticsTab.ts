@@ -5,7 +5,7 @@ import { useTelegramAnalytics } from './useTelegramAnalytics';
 type TrendSeriesKey = 'messages' | 'views' | 'interactions';
 
 export const useTelegramAnalyticsTab = () => {
-    const { t } = useI18n();
+    const { t, locale } = useI18n();
 
     const {
         PERIODS,
@@ -70,7 +70,7 @@ export const useTelegramAnalyticsTab = () => {
     const formatNumber = (value: number | null | undefined) => {
         const numeric = Number(value);
 
-        return new Intl.NumberFormat().format(
+        return new Intl.NumberFormat(locale.value).format(
             Number.isFinite(numeric) ? numeric : 0
         );
     };
@@ -102,7 +102,7 @@ export const useTelegramAnalyticsTab = () => {
             return '-';
         }
 
-        return new Date(unix * 1000).toLocaleString();
+        return new Date(unix * 1000).toLocaleString(locale.value);
     };
 
     const timeline = computed(() => payload.value?.summary.timeline ?? []);

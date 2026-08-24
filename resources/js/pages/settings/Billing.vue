@@ -2,7 +2,7 @@
 import { Head, Link, useForm } from '@inertiajs/vue3';
 import { Check, CreditCard, Sparkles } from 'lucide-vue-next';
 import { computed } from 'vue';
-import Heading from '@/components/Heading.vue';
+import SettingsHero from '@/components/settings/SettingsHero.vue';
 import { Button } from '@/components/ui/button';
 import { useI18n } from '@/composables/useI18n';
 import type { AccountAccess } from '@/types';
@@ -31,6 +31,18 @@ defineOptions({
 const { t, locale } = useI18n();
 
 const planKeys = ['free', 'plus', 'pro'] as const;
+const featureLabelKeys: Record<string, string> = {
+    'bluesky.analytics': 'blueskyAnalytics',
+    'bluesky.parser': 'blueskyCollection',
+    'mastodon.analytics': 'mastodonAnalytics',
+    'mastodon.parser': 'mastodonCollection',
+    'site-intel.analytics': 'siteIntelAnalytics',
+    'site-intel.seo-audit': 'siteIntelSeoAudit',
+    'telegram.analytics': 'telegramAnalytics',
+    'telegram.parser': 'telegramCollection',
+    'youtube.analytics': 'youtubeAnalytics',
+    'youtube.parser': 'youtubeCollection',
+};
 const currentPlan = computed(() => props.access.plan);
 
 const replaceToken = (template: string, token: string, value: string): string =>
@@ -41,7 +53,9 @@ const featureLabel = computed(() => {
         return '';
     }
 
-    return props.feature.replaceAll('.', ' / ').replaceAll('-', ' ');
+    const labelKey = featureLabelKeys[props.feature] ?? 'unknown';
+
+    return t(`settings.billingPage.reason.features.${labelKey}`);
 });
 
 const formatDate = (value: string | null | undefined): string => {
@@ -142,81 +156,47 @@ const submitActivationToken = (): void => {
 <template>
     <Head :title="t('settings.billingPage.title')" />
 
-    <div class="space-y-6">
-        <Heading
-            variant="small"
-            :title="t('settings.billingPage.heading')"
+    <div class="max-w-5xl space-y-5">
+        <SettingsHero
+            :badge="t('settings.billingPage.hero.badge')"
+            :title="t('settings.billingPage.hero.title')"
             :description="
                 checkoutEnabled
-                    ? t('settings.billingPage.description')
-                    : t('settings.billingPage.descriptionDisabled')
+                    ? t('settings.billingPage.hero.text')
+                    : t('settings.billingPage.hero.textDisabled')
             "
-        />
-
-        <section
-            class="overflow-hidden rounded-2xl border border-sidebar-border/70 bg-background/40 shadow-xl"
         >
-            <div
-                class="border-b border-sidebar-border/70 bg-[radial-gradient(circle_at_top_right,rgba(56,189,248,0.16),transparent_36%),radial-gradient(circle_at_bottom_left,rgba(16,185,129,0.14),transparent_32%)] p-5"
-            >
-                <div class="flex flex-wrap items-start justify-between gap-4">
-                    <div class="space-y-2">
-                        <p
-                            class="text-xs tracking-[0.2em] text-cyan-200 uppercase"
-                        >
-                            {{ t('settings.billingPage.hero.badge') }}
-                        </p>
-                        <h2 class="text-2xl font-semibold sm:text-3xl">
-                            {{ t('settings.billingPage.hero.title') }}
-                        </h2>
-                        <p
-                            class="max-w-2xl text-sm leading-6 text-muted-foreground"
-                        >
-                            {{
-                                checkoutEnabled
-                                    ? t('settings.billingPage.hero.text')
-                                    : t(
-                                          'settings.billingPage.hero.textDisabled'
-                                      )
-                            }}
-                        </p>
-                    </div>
-
-                    <div
-                        class="rounded-2xl border border-cyan-400/20 bg-slate-950/35 p-4 text-right"
-                    >
-                        <p
-                            class="text-xs tracking-wide text-muted-foreground uppercase"
-                        >
-                            {{ t('settings.billingPage.currentPlan') }}
-                        </p>
-                        <p class="mt-2 text-2xl font-semibold uppercase">
-                            {{
-                                t(
-                                    `settings.billingPage.plans.${currentPlan}.name`
-                                )
-                            }}
-                        </p>
-                        <p class="mt-1 text-sm text-muted-foreground">
-                            {{ t('settings.billingPage.validUntil') }}:
-                            {{ formatDate(access.subscription?.ends_at) }}
-                        </p>
-                    </div>
-                </div>
-            </div>
-        </section>
+            <template #summary>
+                <p
+                    class="text-xs tracking-wide text-muted-foreground uppercase"
+                >
+                    {{ t('settings.billingPage.currentPlan') }}
+                </p>
+                <p class="mt-2 text-2xl font-semibold uppercase">
+                    {{ t(`settings.billingPage.plans.${currentPlan}.name`) }}
+                </p>
+                <p class="mt-1 text-sm text-muted-foreground">
+                    {{ t('settings.billingPage.validUntil') }}:
+                    {{ formatDate(access.subscription?.ends_at) }}
+                </p>
+            </template>
+        </SettingsHero>
 
         <section
             v-if="reasonCard"
             class="rounded-2xl border border-amber-400/25 bg-amber-400/10 p-4"
         >
             <div class="flex items-start gap-3">
-                <Sparkles class="mt-0.5 h-5 w-5 text-amber-300" />
-                <div>
-                    <h3 class="font-semibold text-amber-50">
+                <Sparkles
+                    class="mt-0.5 h-5 w-5 shrink-0 text-amber-600 dark:text-amber-300"
+                />
+                <div class="min-w-0">
+                    <h3 class="font-semibold text-amber-900 dark:text-amber-50">
                         {{ reasonCard.title }}
                     </h3>
-                    <p class="mt-1 text-sm leading-6 text-amber-100/90">
+                    <p
+                        class="mt-1 text-sm leading-6 text-amber-800 dark:text-amber-100/90"
+                    >
                         {{ reasonCard.text }}
                     </p>
                 </div>
@@ -272,14 +252,14 @@ const submitActivationToken = (): void => {
 
                     <p
                         v-if="activationForm.errors.activation_token"
-                        class="text-sm text-destructive"
+                        class="text-sm break-words text-destructive"
                     >
                         {{ activationForm.errors.activation_token }}
                     </p>
 
                     <p
                         v-else-if="tokenStatus === 'success'"
-                        class="text-sm text-emerald-300"
+                        class="text-sm text-emerald-700 dark:text-emerald-300"
                     >
                         {{ t('settings.billingPage.token.success') }}
                     </p>
@@ -291,17 +271,16 @@ const submitActivationToken = (): void => {
             <article
                 v-for="plan in planCards"
                 :key="plan.key"
-                class="relative flex h-full flex-col overflow-hidden rounded-2xl border border-sidebar-border/70 bg-background/40 p-5 shadow-lg"
+                class="relative flex h-full min-w-0 flex-col rounded-xl border border-sidebar-border/70 bg-background/60 p-4 shadow-sm"
                 :class="[
                     plan.isCurrent
                         ? 'border-primary/60 ring-1 ring-primary/30'
                         : '',
-                    plan.isPopular ? 'xl:-translate-y-2' : '',
                 ]"
             >
                 <div
                     v-if="plan.isPopular"
-                    class="absolute top-4 right-4 rounded-full bg-cyan-400/15 px-2.5 py-1 text-xs font-semibold text-cyan-200"
+                    class="self-start rounded-md bg-primary/15 px-2.5 py-1 text-xs font-semibold text-primary sm:absolute sm:top-4 sm:right-4"
                 >
                     {{ t('settings.billingPage.popular') }}
                 </div>
@@ -313,10 +292,10 @@ const submitActivationToken = (): void => {
                         >
                             {{ plan.tagline }}
                         </p>
-                        <h3 class="mt-2 text-2xl font-semibold">
+                        <h3 class="mt-2 text-xl font-semibold">
                             {{ plan.name }}
                         </h3>
-                        <p class="mt-1 text-3xl font-semibold">
+                        <p class="mt-1 text-2xl font-semibold">
                             {{ plan.price }}
                         </p>
                         <p class="mt-2 text-sm leading-6 text-muted-foreground">
@@ -326,21 +305,27 @@ const submitActivationToken = (): void => {
 
                     <ul class="space-y-2 text-sm">
                         <li class="flex items-start gap-2">
-                            <Check class="mt-0.5 h-4 w-4 text-emerald-300" />
+                            <Check
+                                class="mt-0.5 h-4 w-4 shrink-0 text-emerald-600 dark:text-emerald-300"
+                            />
                             <span>
                                 {{ t('settings.billingPage.analytics') }}:
                                 {{ plan.analytics }}
                             </span>
                         </li>
                         <li class="flex items-start gap-2">
-                            <Check class="mt-0.5 h-4 w-4 text-emerald-300" />
+                            <Check
+                                class="mt-0.5 h-4 w-4 shrink-0 text-emerald-600 dark:text-emerald-300"
+                            />
                             <span>
                                 {{ t('settings.billingPage.parser') }}:
                                 {{ plan.parser }}
                             </span>
                         </li>
                         <li class="flex items-start gap-2">
-                            <Check class="mt-0.5 h-4 w-4 text-emerald-300" />
+                            <Check
+                                class="mt-0.5 h-4 w-4 shrink-0 text-emerald-600 dark:text-emerald-300"
+                            />
                             <span>
                                 {{
                                     t('settings.billingPage.compare.seoAudit')
@@ -350,9 +335,7 @@ const submitActivationToken = (): void => {
                         </li>
                     </ul>
 
-                    <div
-                        class="rounded-xl border border-sidebar-border/70 bg-background/50 p-4"
-                    >
+                    <div class="rounded-lg bg-muted/35 p-3">
                         <p
                             class="text-xs tracking-wide text-muted-foreground uppercase"
                         >
@@ -409,7 +392,7 @@ const submitActivationToken = (): void => {
                     </p>
                 </div>
 
-                <div class="flex flex-wrap gap-3">
+                <div class="grid gap-3 sm:flex sm:flex-wrap">
                     <Button variant="outline" as-child class="rounded-xl">
                         <Link href="/dashboard">
                             {{ t('settings.billingPage.backDashboard') }}

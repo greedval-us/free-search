@@ -23,11 +23,10 @@ defineOptions({
 <template>
     <Head :title="t('settings.appearancePage.title')" />
 
-    <h1 class="sr-only">{{ t('settings.appearancePage.title') }}</h1>
-
-    <div class="space-y-6">
+    <div class="max-w-2xl space-y-5">
         <Heading
             variant="small"
+            as="h1"
             :title="t('settings.appearancePage.heading')"
             :description="t('settings.appearancePage.headingDescription')"
         />

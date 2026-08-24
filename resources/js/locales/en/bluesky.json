@@ -6,7 +6,7 @@
     "tabs": {
         "search": "Search",
         "analytics": "Analytics",
-        "parser": "Parser"
+        "parser": "Data collection"
     },
     "search": {
         "title": "Bluesky Search",
@@ -107,16 +107,16 @@
             "description": "Choose an account or hashtag and run analytics to build a Bluesky activity snapshot."
         },
         "errors": {
-            "requestFailed": "Analytics request failed."
+            "requestFailed": "Could not load Bluesky analytics. Please try again in a moment."
         }
     },
     "parser": {
-        "title": "Bluesky Parser",
+        "title": "Bluesky data collection",
         "subtitle": "Collect a full account snapshot: profile, authored posts, replies, followers, follows, and reactions.",
-        "collapsed": "Parser panel is collapsed",
+        "collapsed": "Data collection panel is collapsed",
         "actor": "Actor",
         "actorPlaceholder": "for example: analyst.bsky.social",
-        "hint": "Use the parser when you need a downloadable account snapshot for deeper OSINT work. It will walk the account feed, social graph, reply activity, and visible reactions.",
+        "hint": "Enter an account to build a downloadable snapshot for deeper OSINT analysis, including its feed, social graph, replies, and visible reactions.",
         "collecting": "Collecting...",
         "start": "Start collection",
         "stop": "Stop",
@@ -142,20 +142,20 @@
                 "interactions": "Collecting interactions",
                 "finishing": "Finalizing export",
                 "completed": "Completed",
-                "failed": "Failed",
+                "failed": "Could not complete",
                 "stopped": "Stopped"
             }
         },
         "errors": {
             "actorRequired": "Actor is required.",
-            "failed": "Parser request failed."
+            "failed": "Could not start data collection. Check the account and try again."
         },
         "history": {
             "title": "Recent exports",
-            "description": "Saved Bluesky parser exports for the last {days} days.",
+            "description": "Completed Bluesky exports from the last {days} days.",
             "retention": "Files are stored for {days} days.",
             "loading": "Loading export history...",
-            "empty": "No exports yet.",
+            "empty": "No exports yet. Start data collection and completed files will appear here.",
             "unknown": "Unknown",
             "created": "Created",
             "expires": "Expires",
@@ -166,7 +166,7 @@
             "follows": "Following: {count}",
             "reactions": "Reactions: {count}",
             "errors": {
-                "load": "Failed to load parser history."
+                "load": "Could not load export history. Refresh the page and try again."
             }
         }
     },
@@ -251,6 +251,6 @@
         "emptyFollows": "No follows found."
     },
     "errors": {
-        "requestFailed": "Request failed."
+        "requestFailed": "Could not load Bluesky results. Check the filters and try again."
     }
 }

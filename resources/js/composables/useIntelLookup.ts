@@ -1,6 +1,6 @@
 import { computed, ref } from 'vue';
 import type { Ref } from 'vue';
-import { apiRequest } from '@/lib/api';
+import { apiRequest, resolveApiErrorMessage } from '@/lib/api';
 
 type UseIntelLookupOptions = {
     endpoint: string;
@@ -43,7 +43,10 @@ export function useIntelLookup<T>(
         });
 
         if (!res.ok) {
-            error.value = res.message ?? options.fallbackError;
+            error.value = resolveApiErrorMessage(
+                res.message,
+                options.fallbackError
+            );
             loading.value = false;
 
             return;

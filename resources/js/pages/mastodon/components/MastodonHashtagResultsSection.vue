@@ -97,7 +97,7 @@ const { t } = useI18n();
 
                 <p
                     v-else-if="ensureHashtagDetailsState(hashtag.name).error"
-                    class="text-xs text-destructive"
+                    class="text-xs break-words text-destructive"
                 >
                     {{ ensureHashtagDetailsState(hashtag.name).error }}
                 </p>

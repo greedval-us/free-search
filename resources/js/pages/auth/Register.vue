@@ -28,9 +28,9 @@ defineOptions({
         v-bind="store.form()"
         :reset-on-success="['password', 'password_confirmation']"
         v-slot="{ errors, processing }"
-        class="flex flex-col gap-6"
+        class="flex flex-col gap-5"
     >
-        <div class="grid gap-6">
+        <div class="grid gap-5">
             <div class="grid gap-2">
                 <Label for="name" class="auth-field-label">{{
                     t('auth.register.login')
@@ -48,6 +48,9 @@ defineOptions({
                     :placeholder="t('auth.register.loginPlaceholder')"
                     class="auth-input-skin"
                 />
+                <p class="text-xs leading-5 text-muted-foreground">
+                    {{ t('auth.register.loginRule') }}
+                </p>
                 <InputError :message="errors.name" />
             </div>
 
@@ -102,7 +105,7 @@ defineOptions({
 
             <div class="grid gap-2">
                 <div
-                    class="flex items-start gap-3 rounded-xl border border-slate-700/70 bg-slate-900/30 p-3"
+                    class="flex items-start gap-3 rounded-lg border border-slate-700/70 bg-slate-950/35 p-3"
                 >
                     <input
                         id="accept_service_rules"

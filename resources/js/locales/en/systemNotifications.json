@@ -5,11 +5,11 @@
     },
     "loginGreeting": {
         "title": "Account sign-in",
-        "body": "You signed in to your account on {date} from IP {ip}."
+        "body": "You signed in to your account from IP {ip}."
     },
     "newIpLogin": {
         "title": "New IP sign-in detected",
-        "body": "We detected a sign-in from a new IP address {ip} on {date}. If this was not you, change your password."
+        "body": "We detected a sign-in from a new IP address {ip}. If this was not you, change your password."
     },
     "subscriptionActivated": {
         "title": "Subscription activated",

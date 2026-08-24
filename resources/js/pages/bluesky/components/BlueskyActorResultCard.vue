@@ -76,7 +76,7 @@ const { t } = useI18n();
                 </p>
                 <p
                     v-else-if="state.postsError"
-                    class="text-xs text-destructive"
+                    class="text-xs break-words text-destructive"
                 >
                     {{ state.postsError }}
                 </p>
@@ -122,7 +122,7 @@ const { t } = useI18n();
                 </p>
                 <p
                     v-else-if="state.followersError"
-                    class="text-xs text-destructive"
+                    class="text-xs break-words text-destructive"
                 >
                     {{ state.followersError }}
                 </p>
@@ -167,7 +167,7 @@ const { t } = useI18n();
                 </p>
                 <p
                     v-else-if="state.followsError"
-                    class="text-xs text-destructive"
+                    class="text-xs break-words text-destructive"
                 >
                     {{ state.followsError }}
                 </p>

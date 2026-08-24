@@ -1,10 +1,8 @@
 <script setup lang="ts">
 import { Link } from '@inertiajs/vue3';
 import { computed } from 'vue';
-import Heading from '@/components/Heading.vue';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
-import WorkspaceToolbarControls from '@/components/WorkspaceToolbarControls.vue';
 import { useCurrentUrl } from '@/composables/useCurrentUrl';
 import { useI18n } from '@/composables/useI18n';
 import { toUrl } from '@/lib/utils';
@@ -43,17 +41,14 @@ const { isCurrentOrParentUrl } = useCurrentUrl();
 
 <template>
     <div
-        class="mx-4 mt-4 mb-4 flex min-h-0 flex-1 flex-col overflow-hidden rounded-2xl border border-sidebar-border/80 bg-card/70 px-4 py-6 shadow-xl backdrop-blur sm:mx-6 sm:mt-6"
+        class="m-2 flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden rounded-xl border border-sidebar-border/80 bg-card/95 px-3 py-4 shadow-sm sm:m-3 sm:px-4 lg:m-4"
     >
-        <Heading
-            :title="t('settings.title')"
-            :description="t('settings.description')"
-        />
-
-        <div class="flex min-h-0 flex-1 flex-col lg:flex-row lg:space-x-12">
-            <aside class="w-full max-w-xl lg:w-56">
+        <div
+            class="flex min-h-0 min-w-0 flex-1 flex-col lg:flex-row lg:gap-6 xl:gap-8"
+        >
+            <aside class="min-w-0 shrink-0 lg:w-52">
                 <nav
-                    class="flex flex-col space-y-1 space-x-0"
+                    class="intel-scroll -mx-1 flex min-w-0 gap-1 overflow-x-auto px-1 pb-2 lg:mx-0 lg:flex-col lg:overflow-visible lg:px-0 lg:pb-0"
                     :aria-label="t('settings.title')"
                 >
                     <Button
@@ -61,7 +56,7 @@ const { isCurrentOrParentUrl } = useCurrentUrl();
                         :key="toUrl(item.href)"
                         variant="ghost"
                         :class="[
-                            'w-full justify-start text-muted-foreground hover:text-foreground',
+                            'shrink-0 justify-start text-muted-foreground hover:text-foreground lg:w-full',
                             {
                                 'bg-primary/15 text-primary':
                                     isCurrentOrParentUrl(item.href),
@@ -69,27 +64,26 @@ const { isCurrentOrParentUrl } = useCurrentUrl();
                         ]"
                         as-child
                     >
-                        <Link :href="item.href">
+                        <Link
+                            :href="item.href"
+                            :aria-current="
+                                isCurrentOrParentUrl(item.href)
+                                    ? 'page'
+                                    : undefined
+                            "
+                        >
                             <component :is="item.icon" class="h-4 w-4" />
                             {{ item.title }}
                         </Link>
                     </Button>
-
-                    <WorkspaceToolbarControls
-                        container-class="mt-2 flex items-center gap-2"
-                        button-class="group relative h-10 w-10 rounded-md border border-input bg-background text-foreground transition hover:bg-accent hover:text-accent-foreground"
-                        locale-button-size="default"
-                        locale-button-class="w-full justify-start"
-                        :show-notifications="false"
-                    />
                 </nav>
             </aside>
 
-            <Separator class="my-6 lg:hidden" />
+            <Separator class="my-4 lg:hidden" />
 
             <div class="min-h-0 min-w-0 flex-1">
                 <section
-                    class="intel-scroll max-h-[72vh] w-full max-w-6xl space-y-12 overflow-y-auto pr-1 [scrollbar-gutter:stable]"
+                    class="intel-scroll h-full min-h-0 w-full max-w-6xl space-y-6 overflow-y-auto pr-1 [scrollbar-gutter:stable]"
                 >
                     <slot />
                 </section>

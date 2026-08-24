@@ -36,7 +36,7 @@ const inputEmail = ref(props.email);
         :reset-on-success="['password', 'password_confirmation']"
         v-slot="{ errors, processing }"
     >
-        <div class="grid gap-6">
+        <div class="grid gap-5">
             <div class="grid gap-2">
                 <Label for="email" class="auth-field-label">{{
                     t('auth.resetPassword.email')
@@ -86,7 +86,7 @@ const inputEmail = ref(props.email);
 
             <Button
                 type="submit"
-                class="auth-button-primary mt-4"
+                class="auth-button-primary mt-1"
                 :disabled="processing"
                 data-test="reset-password-button"
             >

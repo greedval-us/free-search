@@ -12,7 +12,7 @@ const props = defineProps<{
     topReactions: TopReactions;
 }>();
 
-const { t } = useI18n();
+const { t, locale } = useI18n();
 
 const maxDistribution = computed(() => {
     const mediaMax = Math.max(...props.topMedia.map((item) => item.count), 1);
@@ -27,7 +27,7 @@ const maxDistribution = computed(() => {
 const formatNumber = (value: number | null | undefined) => {
     const numeric = Number(value);
 
-    return new Intl.NumberFormat().format(
+    return new Intl.NumberFormat(locale.value).format(
         Number.isFinite(numeric) ? numeric : 0
     );
 };

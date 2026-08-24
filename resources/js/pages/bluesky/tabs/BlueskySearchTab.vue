@@ -13,7 +13,7 @@ import BlueskySearchResults from '../components/BlueskySearchResults.vue';
 import { useBlueskySearch } from '../composables/useBlueskySearch';
 import { BlueskySearchSort, BlueskySearchType } from '../types';
 
-const { t } = useI18n();
+const { t, locale } = useI18n();
 
 const searchTypes = BlueskySearchType;
 const searchSorts = BlueskySearchSort;
@@ -48,7 +48,7 @@ const {
     loadActorPosts,
     loadActorFollowers,
     loadActorFollows,
-} = useBlueskySearch(t);
+} = useBlueskySearch(t, locale);
 
 onMounted(() => {
     const params = getRepeatQueryParams();

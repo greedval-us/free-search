@@ -20,7 +20,9 @@ const { t } = useI18n()
     data-slot="sidebar-trigger"
     variant="ghost"
     size="icon"
-    :class="cn('h-7 w-7', props.class)"
+    :class="cn('h-10 w-10', props.class)"
+    :aria-label="t('common.toggleSidebar')"
+    :title="t('common.toggleSidebar')"
     @click="toggleSidebar"
   >
     <PanelLeftOpen v-if="isMobile || state === 'collapsed'" />

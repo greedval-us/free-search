@@ -4,7 +4,7 @@
     "dashboard": "Dashboard",
     "signIn": "Sign in",
     "register": "Register",
-    "pill": "OSINT ? Analytics ? Investigations",
+    "pill": "OSINT / Analytics / Investigations",
     "heroTitle": "Commercial-grade OSINT workspace for analysts and investigation teams",
     "heroDescription": "Run search, verification, and analysis in one platform: move from first signal to report-ready findings without fragmented tooling.",
     "openDashboard": "Open Workspace",
@@ -12,9 +12,9 @@
     "createAccount": "Create Workspace Account",
     "features": {
         "monitoringTitle": "Unified operational workflow",
-        "monitoringText": "Reduce analyst overhead with one interface for collection, validation, and intelligence pivots.",
-        "osintTitle": "Cross-source OSINT pivots",
-        "osintText": "Link entities, infrastructure, and public traces across threat, archive, and reputation sources.",
+        "monitoringText": "Reduce analyst overhead with one interface for collection, verification, and analysis.",
+        "osintTitle": "Connections across sources",
+        "osintText": "Connect entities, infrastructure, and public traces across threat, archive, and reputation sources.",
         "dashboardsTitle": "Executive-ready output",
         "dashboardsText": "Deliver structured insights with clear risk narratives and audit-friendly context."
     }

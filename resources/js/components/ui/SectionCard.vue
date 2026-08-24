@@ -7,9 +7,11 @@ defineProps<{
 </script>
 
 <template>
-    <div class="intel-section" :class="bodyClass">
-        <p class="mb-2 font-semibold">{{ title }}</p>
-        <p v-if="description" class="mb-2 intel-caption">{{ description }}</p>
+    <section class="intel-section min-w-0" :class="bodyClass">
+        <h3 class="mb-2 break-words font-semibold">{{ title }}</h3>
+        <p v-if="description" class="intel-caption mb-2 break-words">
+            {{ description }}
+        </p>
         <slot />
-    </div>
+    </section>
 </template>

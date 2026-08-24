@@ -9,7 +9,7 @@ defineProps<{
     chatUsername: string;
 }>();
 
-const { t } = useI18n();
+const { t, locale } = useI18n();
 
 const groupTypeLabel = (type: GroupInfo['type']): string => {
     const map: Record<GroupInfo['type'], string> = {
@@ -26,7 +26,7 @@ const groupTypeLabel = (type: GroupInfo['type']): string => {
 const formatNumber = (value: number | null | undefined) => {
     const numeric = Number(value);
 
-    return new Intl.NumberFormat().format(
+    return new Intl.NumberFormat(locale.value).format(
         Number.isFinite(numeric) ? numeric : 0
     );
 };
@@ -36,7 +36,7 @@ const formatDate = (unix: number) => {
         return '-';
     }
 
-    return new Date(unix * 1000).toLocaleString();
+    return new Date(unix * 1000).toLocaleString(locale.value);
 };
 </script>
 
@@ -76,7 +76,7 @@ const formatDate = (unix: number) => {
                 </span>
                 <span
                     v-if="group.verified"
-                    class="rounded-full border border-emerald-500/40 bg-emerald-500/10 px-2 py-1 text-emerald-300"
+                    class="rounded-full border border-emerald-500/40 bg-emerald-500/10 px-2 py-1 text-emerald-700 dark:text-emerald-300"
                 >
                     {{ t('telegram.analytics.group.verified') }}
                 </span>
@@ -113,7 +113,7 @@ const formatDate = (unix: number) => {
             </span>
             <span
                 v-if="group.restricted"
-                class="rounded-full border border-amber-500/40 bg-amber-500/10 px-2 py-1 text-amber-300"
+                class="rounded-full border border-amber-500/40 bg-amber-500/10 px-2 py-1 text-amber-700 dark:text-amber-300"
             >
                 {{ t('telegram.analytics.group.restricted') }}
             </span>

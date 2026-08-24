@@ -5,7 +5,7 @@ import {
     readRepeatQueryInt,
     readRepeatQueryParam,
 } from '@/composables/useRepeatQuery';
-import { apiRequest } from '@/lib/api';
+import { apiRequest, resolveApiErrorMessage } from '@/lib/api';
 import type { YouTubeAnalyticsPayload, YouTubeVideo } from '../types';
 
 type TranslateFn = (key: string) => string;
@@ -166,7 +166,10 @@ export const useYouTubeAnalytics = (
         loading.value = false;
 
         if (!response.ok) {
-            error.value = response.message ?? t('youtube.common.requestFailed');
+            error.value = resolveApiErrorMessage(
+                response.message,
+                t('youtube.common.requestFailed')
+            );
 
             return;
         }
@@ -207,11 +210,11 @@ export const useYouTubeAnalytics = (
         );
     };
 
-    const numberFormat = new Intl.NumberFormat();
-    const fmt = (value: number) => numberFormat.format(value ?? 0);
+    const fmt = (value: number) =>
+        new Intl.NumberFormat(locale.value).format(value ?? 0);
     const pct = (value: number) => `${Number(value ?? 0).toFixed(2)}%`;
     const formatDate = (value: string) =>
-        value ? new Date(value).toLocaleString() : '-';
+        value ? new Date(value).toLocaleString(locale.value) : '-';
     const compactText = (value: string, max = 220) =>
         value.length > max ? `${value.slice(0, max).trim()}...` : value;
 

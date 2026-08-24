@@ -40,9 +40,9 @@ defineProps<{
         v-bind="store.form()"
         :reset-on-success="['password']"
         v-slot="{ errors, processing }"
-        class="flex flex-col gap-6"
+        class="flex flex-col gap-5"
     >
-        <div class="grid gap-6">
+        <div class="grid gap-5">
             <div class="grid gap-2">
                 <Label for="email" class="auth-field-label">{{
                     t('auth.login.email')
@@ -99,7 +99,7 @@ defineProps<{
 
             <Button
                 type="submit"
-                class="auth-button-primary mt-4"
+                class="auth-button-primary mt-1"
                 :tabindex="4"
                 :disabled="processing"
                 data-test="login-button"

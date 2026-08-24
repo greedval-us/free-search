@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import HelpTooltip from '@/components/ui/HelpTooltip.vue';
+
 import type {
     ChartBar,
     Tone,
@@ -46,19 +48,11 @@ const barToneClass = (tone: Tone) => {
     >
         <div class="mb-2 flex items-center gap-2">
             <p class="font-semibold">{{ props.title }}</p>
-            <span v-if="props.hint" class="group relative inline-flex">
-                <span
-                    class="inline-flex h-5 w-5 cursor-help items-center justify-center rounded-full border border-border text-[11px] font-semibold text-muted-foreground"
-                    :aria-label="props.helpLabel"
-                >
-                    ?
-                </span>
-                <span
-                    class="pointer-events-none absolute top-6 left-0 z-20 hidden w-80 rounded-md border border-border/70 bg-popover p-2 text-[11px] leading-relaxed text-popover-foreground shadow-xl group-hover:block"
-                >
-                    {{ props.hint }}
-                </span>
-            </span>
+            <HelpTooltip
+                v-if="props.hint"
+                :label="props.helpLabel"
+                :text="props.hint"
+            />
         </div>
         <ul class="space-y-2">
             <li v-for="item in props.items" :key="item.label">

@@ -41,13 +41,20 @@ const selectTab = (tab: string): void => {
 
 <template>
     <IntelModuleLayout>
-        <div class="intel-tabbar flex flex-wrap items-center justify-center gap-1.5">
+        <div
+            class="intel-tabbar intel-scroll flex shrink-0 items-center justify-start gap-1.5 overflow-x-auto overscroll-x-contain sm:flex-wrap sm:justify-center"
+            role="tablist"
+        >
             <button
                 v-for="tab in tabs"
                 :key="tab.key"
                 type="button"
                 @click="selectTab(tab.key)"
-                :aria-pressed="activeTab === tab.key"
+                :id="`module-tab-${tab.key}`"
+                role="tab"
+                :aria-selected="activeTab === tab.key"
+                :aria-controls="`module-panel-${tab.key}`"
+                :tabindex="activeTab === tab.key ? 0 : -1"
                 :class="[
                     'intel-tab',
                     activeTab === tab.key
@@ -60,6 +67,13 @@ const selectTab = (tab: string): void => {
             </button>
         </div>
 
-        <slot />
+        <div
+            :id="`module-panel-${activeTab}`"
+            class="flex min-h-0 min-w-0 flex-1 flex-col"
+            role="tabpanel"
+            :aria-labelledby="`module-tab-${activeTab}`"
+        >
+            <slot />
+        </div>
     </IntelModuleLayout>
 </template>

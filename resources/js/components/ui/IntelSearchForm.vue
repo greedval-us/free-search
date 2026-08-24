@@ -35,8 +35,8 @@ const onSubmit = () => {
 </script>
 
 <template>
-    <div class="mt-3 flex flex-wrap items-end gap-3">
-        <label class="block min-w-0 flex-1">
+    <div class="mt-3 grid min-w-0 gap-3 sm:flex sm:flex-wrap sm:items-end">
+        <label class="block min-w-0 sm:flex-1">
             <span class="intel-label">{{ label }}</span>
             <input
                 :value="modelValue"
@@ -49,8 +49,9 @@ const onSubmit = () => {
         </label>
 
         <button
+            type="button"
             :disabled="loading || disabled"
-            class="intel-button-primary px-5"
+            class="intel-button-primary w-full justify-center px-5 sm:w-auto"
             @click="onSubmit"
         >
             <LoaderCircle v-if="loading" class="h-4 w-4 animate-spin" />
@@ -60,5 +61,7 @@ const onSubmit = () => {
         <slot name="actions" />
     </div>
 
-    <p v-if="error" class="mt-3 text-sm text-destructive">{{ error }}</p>
+    <p v-if="error" class="mt-3 break-words text-sm text-destructive">
+        {{ error }}
+    </p>
 </template>

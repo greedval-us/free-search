@@ -226,7 +226,7 @@ watch(
                                         type="text"
                                         readonly
                                         :value="manualSetupKey"
-                                        class="h-full w-full bg-background p-3 text-foreground"
+                                        class="h-full w-full min-w-0 bg-background p-3 text-foreground"
                                     />
                                     <button
                                         @click="copy(manualSetupKey || '')"
@@ -278,11 +278,11 @@ watch(
                                 <InputError :message="errors?.code" />
                             </div>
 
-                            <div class="flex w-full items-center space-x-5">
+                            <div class="grid w-full gap-2 sm:grid-cols-2">
                                 <Button
                                     type="button"
                                     variant="outline"
-                                    class="w-auto flex-1"
+                                    class="w-full"
                                     @click="showVerificationStep = false"
                                     :disabled="processing"
                                 >
@@ -294,7 +294,7 @@ watch(
                                 </Button>
                                 <Button
                                     type="submit"
-                                    class="w-auto flex-1"
+                                    class="w-full"
                                     :disabled="processing || code.length < 6"
                                 >
                                     {{

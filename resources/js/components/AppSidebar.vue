@@ -13,6 +13,7 @@ import {
     SidebarMenu,
     SidebarMenuButton,
     SidebarMenuItem,
+    useSidebar,
 } from '@/components/ui/sidebar';
 import { useI18n } from '@/composables/useI18n';
 import {
@@ -23,6 +24,7 @@ import { dashboard } from '@/routes';
 import type { NavItem } from '@/types';
 
 const { t } = useI18n();
+const { setOpenMobile } = useSidebar();
 
 const mainNavItems = computed<NavItem[]>(() => buildMainNavItems(t));
 const footerNavItems = computed<NavItem[]>(() => buildFooterNavItems(t));
@@ -34,7 +36,7 @@ const footerNavItems = computed<NavItem[]>(() => buildFooterNavItems(t));
             <SidebarMenu>
                 <SidebarMenuItem>
                     <SidebarMenuButton size="lg" as-child>
-                        <Link :href="dashboard()">
+                        <Link :href="dashboard()" @click="setOpenMobile(false)">
                             <AppLogo />
                         </Link>
                     </SidebarMenuButton>

@@ -32,59 +32,64 @@ const { t } = useI18n();
 <template>
     <Head :title="t('settings.profilePage.title')" />
 
-    <h1 class="sr-only">{{ t('settings.profilePage.title') }}</h1>
+    <div class="max-w-2xl space-y-8">
+        <section class="space-y-5">
+            <Heading
+                variant="small"
+                as="h1"
+                :title="t('settings.profilePage.heading')"
+                :description="t('settings.profilePage.headingDescription')"
+            />
 
-    <div class="flex flex-col space-y-6">
-        <Heading
-            variant="small"
-            :title="t('settings.profilePage.heading')"
-            :description="t('settings.profilePage.headingDescription')"
-        />
-
-        <Form
-            v-bind="ProfileController.update.form()"
-            class="space-y-6"
-            v-slot="{ errors, processing, recentlySuccessful }"
-        >
-            <div class="grid gap-2">
-                <Label for="name">{{ t('settings.profilePage.name') }}</Label>
-                <Input
-                    id="name"
-                    class="mt-1 block w-full"
-                    name="name"
-                    :default-value="user.name"
-                    required
-                    autocomplete="name"
-                    :placeholder="t('settings.profilePage.namePlaceholder')"
-                />
-                <InputError class="mt-2" :message="errors.name" />
-            </div>
-
-            <div class="flex items-center gap-4">
-                <Button
-                    :disabled="processing"
-                    data-test="update-profile-button"
-                >
-                    <Spinner v-if="processing" class="mr-2" />
-                    {{ t('settings.profilePage.save') }}
-                </Button>
-
-                <Transition
-                    enter-active-class="transition ease-in-out"
-                    enter-from-class="opacity-0"
-                    leave-active-class="transition ease-in-out"
-                    leave-to-class="opacity-0"
-                >
-                    <p
-                        v-show="recentlySuccessful"
-                        class="text-sm text-neutral-600"
-                    >
-                        {{ t('common.saved') }}
+            <Form
+                v-bind="ProfileController.update.form()"
+                class="space-y-5"
+                v-slot="{ errors, processing, recentlySuccessful }"
+            >
+                <div class="grid gap-2">
+                    <Label for="name">{{
+                        t('settings.profilePage.name')
+                    }}</Label>
+                    <Input
+                        id="name"
+                        name="name"
+                        :default-value="user.name"
+                        required
+                        autocomplete="username"
+                        :placeholder="t('settings.profilePage.namePlaceholder')"
+                    />
+                    <p class="text-xs leading-5 text-muted-foreground">
+                        {{ t('settings.profilePage.nameHint') }}
                     </p>
-                </Transition>
-            </div>
-        </Form>
-    </div>
+                    <InputError :message="errors.name" />
+                </div>
 
-    <DeleteUser />
+                <div class="grid items-center gap-3 sm:flex sm:gap-4">
+                    <Button
+                        :disabled="processing"
+                        data-test="update-profile-button"
+                    >
+                        <Spinner v-if="processing" class="mr-2" />
+                        {{ t('settings.profilePage.save') }}
+                    </Button>
+
+                    <Transition
+                        enter-active-class="transition ease-in-out"
+                        enter-from-class="opacity-0"
+                        leave-active-class="transition ease-in-out"
+                        leave-to-class="opacity-0"
+                    >
+                        <p
+                            v-show="recentlySuccessful"
+                            class="text-sm text-muted-foreground"
+                        >
+                            {{ t('common.saved') }}
+                        </p>
+                    </Transition>
+                </div>
+            </Form>
+        </section>
+
+        <DeleteUser />
+    </div>
 </template>
