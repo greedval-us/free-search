@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { Link, usePage } from '@inertiajs/vue3';
 import { BookOpen, Folder, Menu, Search } from 'lucide-vue-next';
-import { computed } from 'vue';
+import { computed, ref } from 'vue';
 import AppLogo from '@/components/AppLogo.vue';
 import AppLogoIcon from '@/components/AppLogoIcon.vue';
 import Breadcrumbs from '@/components/Breadcrumbs.vue';
@@ -53,9 +53,9 @@ const page = usePage();
 const auth = computed(() => page.props.auth);
 const { isCurrentUrl, whenCurrentUrl } = useCurrentUrl();
 const { t } = useI18n();
+const mobileMenuOpen = ref(false);
 
-const activeItemStyles =
-    'bg-cyan-500/15 text-cyan-700 shadow-[0_10px_30px_-20px_rgba(8,145,178,0.95)] dark:text-cyan-100';
+const activeItemStyles = 'bg-cyan-500/15 text-cyan-700 dark:text-cyan-100';
 
 const mainNavItems = computed<NavItem[]>(() => buildHeaderNavItems(t));
 
@@ -79,7 +79,7 @@ const rightNavItems = computed<NavItem[]>(() => [
             <div class="app-header-panel">
                 <!-- Mobile Menu -->
                 <div class="lg:hidden">
-                    <Sheet>
+                    <Sheet v-model:open="mobileMenuOpen">
                         <SheetTrigger :as-child="true">
                             <Button
                                 variant="ghost"
@@ -93,7 +93,7 @@ const rightNavItems = computed<NavItem[]>(() => [
                         </SheetTrigger>
                         <SheetContent
                             side="left"
-                            class="w-[300px] rounded-r-3xl border-sidebar-border bg-card/95 p-6 text-foreground shadow-2xl"
+                            class="w-[min(19rem,calc(100vw-1rem))] rounded-r-xl border-sidebar-border bg-card p-4 text-foreground shadow-lg"
                         >
                             <SheetTitle class="sr-only">{{
                                 t('navigation.menu')
@@ -104,9 +104,11 @@ const rightNavItems = computed<NavItem[]>(() => [
                                 />
                             </SheetHeader>
                             <div
-                                class="flex h-full flex-1 flex-col justify-between space-y-4 py-6"
+                                class="flex min-h-0 flex-1 flex-col justify-between gap-4 py-4"
                             >
-                                <nav class="-mx-3 space-y-1">
+                                <nav
+                                    class="-mx-3 min-h-0 flex-1 space-y-1 overflow-y-auto"
+                                >
                                     <Link
                                         v-for="item in mainNavItems"
                                         :key="item.title"
@@ -118,6 +120,12 @@ const rightNavItems = computed<NavItem[]>(() => [
                                                 activeItemStyles
                                             )
                                         "
+                                        :aria-current="
+                                            isCurrentUrl(item.href)
+                                                ? 'page'
+                                                : undefined
+                                        "
+                                        @click="mobileMenuOpen = false"
                                     >
                                         <component
                                             v-if="item.icon"
@@ -135,6 +143,7 @@ const rightNavItems = computed<NavItem[]>(() => [
                                         target="_blank"
                                         rel="noopener noreferrer"
                                         class="flex items-center space-x-2 text-sm font-medium text-muted-foreground hover:text-foreground"
+                                        @click="mobileMenuOpen = false"
                                     >
                                         <component
                                             v-if="item.icon"
@@ -179,6 +188,11 @@ const rightNavItems = computed<NavItem[]>(() => [
                                         'h-9 cursor-pointer rounded-full px-3.5',
                                     ]"
                                     :href="item.href"
+                                    :aria-current="
+                                        isCurrentUrl(item.href)
+                                            ? 'page'
+                                            : undefined
+                                    "
                                 >
                                     <component
                                         v-if="item.icon"

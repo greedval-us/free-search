@@ -2,7 +2,7 @@
 </script>
 
 <template>
-    <section class="sticky top-0 z-10 shrink-0 intel-panel-strong">
+    <section class="intel-panel-strong sticky top-0 z-10 shrink-0">
         <slot />
     </section>
 </template>

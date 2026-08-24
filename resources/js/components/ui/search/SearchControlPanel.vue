@@ -41,7 +41,7 @@ const emit = defineEmits<{
             <slot name="fields" />
 
             <div
-                class="grid grid-cols-[auto_minmax(0,1fr)] items-end gap-2 sm:flex sm:flex-wrap xl:justify-end"
+                class="grid min-w-0 grid-cols-[minmax(0,1fr)_auto] items-end gap-2 sm:flex sm:flex-wrap xl:justify-end"
             >
                 <slot name="toolbarLeading" />
 
@@ -65,7 +65,7 @@ const emit = defineEmits<{
                 <Button
                     type="button"
                     :disabled="loading || !canSearch"
-                    class="min-w-0 px-5 sm:min-w-32"
+                    class="col-span-full w-full min-w-0 px-5 sm:w-auto sm:min-w-32"
                     @click="emit('submit')"
                 >
                     {{ loading ? searchingLabel : submitLabel }}

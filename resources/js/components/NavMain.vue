@@ -31,7 +31,13 @@ const { setOpenMobile } = useSidebar();
                     :is-active="isCurrentUrl(item.href)"
                     :tooltip="item.title"
                 >
-                    <Link :href="item.href" @click="setOpenMobile(false)">
+                    <Link
+                        :href="item.href"
+                        :aria-current="
+                            isCurrentUrl(item.href) ? 'page' : undefined
+                        "
+                        @click="setOpenMobile(false)"
+                    >
                         <component :is="item.icon" />
                         <span class="block truncate">{{ item.title }}</span>
                     </Link>

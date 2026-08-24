@@ -15,9 +15,9 @@ defineProps<{
 </script>
 
 <template>
-    <div class="mb-3 flex items-center justify-between gap-3">
-        <h2 class="text-sm font-semibold">{{ title }}</h2>
-        <p class="text-xs text-muted-foreground">
+    <div class="mb-3 flex flex-wrap items-center justify-between gap-2">
+        <h2 class="min-w-0 break-words text-sm font-semibold">{{ title }}</h2>
+        <p class="shrink-0 text-xs text-muted-foreground">
             {{ shownLabel }}: {{ totalShown }}
         </p>
     </div>

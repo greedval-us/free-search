@@ -11,5 +11,7 @@ defineProps<{
         <slot />
     </div>
 
-    <p v-if="error" class="mt-3 text-sm text-destructive">{{ error }}</p>
+    <p v-if="error" class="mt-3 break-words text-sm text-destructive">
+        {{ error }}
+    </p>
 </template>

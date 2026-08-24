@@ -25,27 +25,27 @@ defineProps<{
 <template>
     <Head :title="t('auth.verifyEmail.title')" />
 
-    <div class="space-y-6">
+    <div class="space-y-5">
         <div
-            class="rounded-3xl border border-cyan-400/20 bg-linear-to-br from-cyan-500/14 via-slate-900/70 to-emerald-500/10 p-6 shadow-[0_24px_80px_-40px_rgba(34,211,238,0.55)]"
+            class="rounded-xl border border-cyan-400/20 bg-cyan-400/[0.06] p-4"
         >
             <div class="flex items-start gap-4">
                 <div
-                    class="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl border border-cyan-300/30 bg-cyan-300/12 text-cyan-100"
+                    class="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg border border-cyan-300/30 bg-cyan-300/10 text-cyan-100"
                 >
                     <ShieldCheck class="size-6" />
                 </div>
 
-                <div class="space-y-3">
+                <div class="space-y-2">
                     <p
                         class="text-xs font-semibold tracking-[0.24em] text-cyan-200 uppercase"
                     >
                         {{ t('auth.verifyEmail.badge') }}
                     </p>
-                    <p class="text-sm leading-7 text-slate-200">
+                    <p class="text-sm leading-6 text-slate-200">
                         {{ t('auth.verifyEmail.intro') }}
                     </p>
-                    <p class="text-sm leading-7 text-slate-400">
+                    <p class="text-sm leading-6 text-slate-400">
                         {{ t('auth.verifyEmail.hint') }}
                     </p>
                 </div>
@@ -59,12 +59,12 @@ defineProps<{
             {{ t('auth.verifyEmail.statusMessage') }}
         </div>
 
-        <div class="grid gap-3 sm:grid-cols-3">
-            <div
-                class="rounded-2xl border border-slate-700/70 bg-slate-950/45 p-4"
-            >
+        <div
+            class="grid divide-y divide-slate-800 rounded-xl border border-slate-800 bg-slate-950/30 sm:grid-cols-3 sm:divide-x sm:divide-y-0"
+        >
+            <div class="p-3">
                 <div
-                    class="mb-3 flex h-10 w-10 items-center justify-center rounded-xl border border-slate-700 bg-slate-900/80 text-cyan-100"
+                    class="mb-3 flex h-9 w-9 items-center justify-center rounded-lg bg-slate-900 text-cyan-100"
                 >
                     <Inbox class="size-5" />
                 </div>
@@ -76,11 +76,9 @@ defineProps<{
                 </p>
             </div>
 
-            <div
-                class="rounded-2xl border border-slate-700/70 bg-slate-950/45 p-4"
-            >
+            <div class="p-3">
                 <div
-                    class="mb-3 flex h-10 w-10 items-center justify-center rounded-xl border border-slate-700 bg-slate-900/80 text-emerald-100"
+                    class="mb-3 flex h-9 w-9 items-center justify-center rounded-lg bg-slate-900 text-emerald-100"
                 >
                     <CheckCheck class="size-5" />
                 </div>
@@ -92,11 +90,9 @@ defineProps<{
                 </p>
             </div>
 
-            <div
-                class="rounded-2xl border border-slate-700/70 bg-slate-950/45 p-4"
-            >
+            <div class="p-3">
                 <div
-                    class="mb-3 flex h-10 w-10 items-center justify-center rounded-xl border border-slate-700 bg-slate-900/80 text-sky-100"
+                    class="mb-3 flex h-9 w-9 items-center justify-center rounded-lg bg-slate-900 text-sky-100"
                 >
                     <RefreshCw class="size-5" />
                 </div>
@@ -109,7 +105,7 @@ defineProps<{
             </div>
         </div>
 
-        <div class="rounded-2xl border border-slate-700/70 bg-slate-900/40 p-5">
+        <div class="rounded-xl border border-slate-800 bg-slate-900/50 p-4">
             <p class="text-sm font-medium text-slate-100">
                 {{ t('auth.verifyEmail.actionTitle') }}
             </p>

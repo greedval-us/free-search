@@ -535,7 +535,9 @@ const hashtagProfileStats = computed(() =>
             </p>
         </template>
         <template #afterActions>
-            <p v-if="error" class="text-sm text-destructive">{{ error }}</p>
+            <p v-if="error" class="text-sm break-words text-destructive">
+                {{ error }}
+            </p>
         </template>
     </AnalyticsControlPanel>
 

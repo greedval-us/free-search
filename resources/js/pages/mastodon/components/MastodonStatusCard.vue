@@ -35,18 +35,18 @@ const metaClass = computed(() =>
 );
 const contentClass = computed(() =>
     props.compact
-        ? 'text-xs leading-relaxed text-foreground'
-        : 'text-sm leading-relaxed text-foreground'
+        ? 'break-words text-xs leading-relaxed text-foreground'
+        : 'break-words text-sm leading-relaxed text-foreground'
 );
 const badgeClass = computed(() =>
     props.compact
-        ? 'rounded-full border border-input px-2 py-1 text-[11px] text-muted-foreground'
-        : 'rounded-full border border-input px-2 py-1 text-xs text-muted-foreground'
+        ? 'max-w-full break-all rounded-full border border-input px-2 py-1 text-[11px] text-muted-foreground'
+        : 'max-w-full break-all rounded-full border border-input px-2 py-1 text-xs text-muted-foreground'
 );
 const domainBadgeClass = computed(() =>
     props.compact
-        ? 'rounded-full border border-cyan-500/30 bg-cyan-500/10 px-2 py-1 text-[11px] text-cyan-700'
-        : 'rounded-full border border-cyan-500/30 bg-cyan-500/10 px-2 py-1 text-xs text-cyan-700'
+        ? 'max-w-full break-all rounded-full border border-cyan-500/30 bg-cyan-500/10 px-2 py-1 text-[11px] text-cyan-700 dark:text-cyan-300'
+        : 'max-w-full break-all rounded-full border border-cyan-500/30 bg-cyan-500/10 px-2 py-1 text-xs text-cyan-700 dark:text-cyan-300'
 );
 const linkButtonClass = computed(() =>
     props.compact
@@ -173,7 +173,7 @@ const hasDetails = computed(() => Boolean(slots.details));
                     :href="mention.url"
                     target="_blank"
                     rel="noopener noreferrer"
-                    class="rounded-full border border-input px-2 py-1 text-primary hover:bg-accent"
+                    class="max-w-full rounded-full border border-input px-2 py-1 break-all text-primary hover:bg-accent"
                 >
                     @{{ mention.acct }}
                 </a>

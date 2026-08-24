@@ -159,7 +159,7 @@ onMounted(() => {
                 </p>
                 <p class="mt-1">
                     {{ t('siteIntel.analytics.domain') }}:
-                    <span class="text-muted-foreground">{{
+                    <span class="break-words text-muted-foreground">{{
                         result.target.domain
                     }}</span>
                 </p>

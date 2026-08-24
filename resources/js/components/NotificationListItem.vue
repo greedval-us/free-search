@@ -36,8 +36,8 @@ const formattedDate = computed(() =>
 
 const cardClass = computed(() =>
     cn(
-        'rounded-2xl border text-left transition-all duration-500 ease-out',
-        props.compact ? 'block p-3' : 'bg-background/45 p-5 shadow-lg',
+        'rounded-xl border text-left transition-colors duration-200',
+        props.compact ? 'block p-3' : 'bg-background/60 p-4',
         props.notification.read_at
             ? 'border-slate-200/70 bg-white/70 hover:border-cyan-200 hover:bg-cyan-50/60 dark:border-slate-800 dark:bg-slate-900/65 dark:hover:border-cyan-800 dark:hover:bg-slate-900'
             : 'border-cyan-200/80 bg-cyan-50/80 shadow-[0_12px_30px_-24px_rgba(8,145,178,0.8)] hover:border-cyan-300 dark:border-cyan-900/60 dark:bg-cyan-950/20'
@@ -54,7 +54,9 @@ const cardClass = computed(() =>
                     : 'flex flex-wrap items-start justify-between gap-3'
             "
         >
-            <div :class="compact ? '' : 'min-w-0 flex-1 space-y-2'">
+            <div
+                :class="compact ? 'min-w-0 flex-1' : 'min-w-0 flex-1 space-y-2'"
+            >
                 <div class="flex items-center gap-2">
                     <div
                         v-if="!compact"
@@ -67,7 +69,7 @@ const cardClass = computed(() =>
                         <p
                             :class="
                                 compact
-                                    ? 'text-sm font-medium text-foreground'
+                                    ? 'truncate text-sm font-medium text-foreground'
                                     : 'truncate text-base font-semibold'
                             "
                         >
@@ -83,7 +85,10 @@ const cardClass = computed(() =>
                     </div>
                 </div>
 
-                <p v-if="body" class="text-sm leading-6 text-muted-foreground">
+                <p
+                    v-if="body"
+                    class="text-sm leading-6 break-words text-muted-foreground"
+                >
                     {{ body }}
                 </p>
             </div>
@@ -92,8 +97,8 @@ const cardClass = computed(() =>
                 v-if="formattedDate"
                 :class="
                     compact
-                        ? 'mt-2 text-xs text-slate-500'
-                        : 'flex items-center gap-2 text-xs text-muted-foreground'
+                        ? 'mt-2 shrink-0 text-xs whitespace-nowrap text-slate-500'
+                        : 'flex shrink-0 items-center gap-2 text-xs whitespace-nowrap text-muted-foreground'
                 "
             >
                 <Clock3 v-if="!compact" class="h-3.5 w-3.5" />

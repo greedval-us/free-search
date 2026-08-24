@@ -51,7 +51,7 @@ const toggleRecoveryMode = (clearErrors: () => void): void => {
 <template>
     <Head :title="t('auth.twoFactor.title')" />
 
-    <div class="space-y-6">
+    <div class="space-y-5">
         <template v-if="!showRecoveryInput">
             <Form
                 v-bind="store.form()"
@@ -62,7 +62,7 @@ const toggleRecoveryMode = (clearErrors: () => void): void => {
             >
                 <input type="hidden" name="code" :value="code" />
                 <div
-                    class="rounded-2xl border border-slate-800/80 bg-slate-950/30 p-4"
+                    class="rounded-xl border border-slate-800/80 bg-slate-950/35 p-4"
                 >
                     <div
                         class="flex flex-col items-center justify-center space-y-3 text-center"

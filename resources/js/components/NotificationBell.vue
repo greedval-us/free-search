@@ -19,7 +19,7 @@ type Props = {
 
 withDefaults(defineProps<Props>(), {
     buttonClass: 'group relative h-9 w-9 cursor-pointer',
-    menuClass: 'w-[22rem] rounded-3xl p-2',
+    menuClass: 'w-[min(22rem,calc(100vw-1rem))] rounded-xl p-2',
 });
 
 const page = usePage();
@@ -71,8 +71,10 @@ const unreadNotificationItems = computed(() =>
             </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end" :class="menuClass">
-            <div class="flex items-center justify-between gap-4 px-3 py-2">
-                <div>
+            <div
+                class="flex flex-col items-start gap-2 px-3 py-2 sm:flex-row sm:items-center sm:justify-between sm:gap-4"
+            >
+                <div class="min-w-0">
                     <p class="text-sm font-semibold text-foreground">
                         {{ t('navigation.notifications') }}
                     </p>
@@ -106,7 +108,7 @@ const unreadNotificationItems = computed(() =>
                     v-if="hasUnreadNotifications"
                     variant="ghost"
                     size="sm"
-                    class="h-8 rounded-full px-3 text-xs"
+                    class="h-8 shrink-0 rounded-full px-3 text-xs"
                     @click="markAllNotificationsRead"
                 >
                     {{ t('navigation.markAllNotificationsRead') }}
@@ -116,7 +118,7 @@ const unreadNotificationItems = computed(() =>
             <div class="max-h-[26rem] space-y-2 overflow-y-auto p-2">
                 <div
                     v-if="unreadNotificationItems.length === 0"
-                    class="rounded-2xl border border-dashed border-slate-300/70 bg-slate-50/80 p-4 text-sm text-muted-foreground dark:border-slate-800 dark:bg-slate-950/40"
+                    class="rounded-xl border border-dashed border-slate-300/70 bg-slate-50/80 p-4 text-sm text-muted-foreground dark:border-slate-800 dark:bg-slate-950/40"
                 >
                     {{ t('navigation.notificationsPlaceholder') }}
                 </div>

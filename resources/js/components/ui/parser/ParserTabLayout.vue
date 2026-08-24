@@ -71,10 +71,12 @@ const emit = defineEmits<{
     </ParserControlPanel>
 
     <ParserProgressPanel
+        :class="loading ? 'order-first' : ''"
         :title="progressTitle"
         :stage-label="stageLabel"
         :progress="progress"
         :stats="stats"
         :stats-grid-class="statsGridClass"
+        :active="loading"
     />
 </template>

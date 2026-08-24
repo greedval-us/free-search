@@ -64,6 +64,7 @@ const emit = defineEmits<{
                 <Button
                     type="button"
                     variant="outline"
+                    class="border-destructive/35 text-destructive hover:bg-destructive/10 hover:text-destructive"
                     :disabled="!loading"
                     @click="emit('stop')"
                 >
@@ -74,7 +75,6 @@ const emit = defineEmits<{
                 <Button
                     type="button"
                     variant="outline"
-                    class="border-cyan-500/40 bg-cyan-500/10 text-cyan-700 hover:bg-cyan-500/15 hover:text-cyan-800 dark:text-cyan-200 dark:hover:text-cyan-100"
                     :disabled="!downloadUrl || loading"
                     @click="emit('download')"
                 >
@@ -85,7 +85,6 @@ const emit = defineEmits<{
                 <Button
                     type="button"
                     variant="outline"
-                    class="border-emerald-500/40 bg-emerald-500/10 text-emerald-700 hover:bg-emerald-500/15 hover:text-emerald-800 dark:text-emerald-200 dark:hover:text-emerald-100"
                     :disabled="!downloadJsonUrl || loading"
                     @click="emit('downloadJson')"
                 >

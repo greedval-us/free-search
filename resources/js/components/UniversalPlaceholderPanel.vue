@@ -18,32 +18,34 @@ defineProps<{
 
 <template>
     <section
-        class="overflow-hidden rounded-2xl border border-sidebar-border/70 bg-background/50 shadow-xl"
+        class="overflow-hidden rounded-xl border border-sidebar-border/70 bg-background/60 shadow-sm"
     >
         <div
-            class="border-b border-sidebar-border/70 bg-[radial-gradient(circle_at_top_right,rgba(56,189,248,0.16),transparent_36%),radial-gradient(circle_at_bottom_left,rgba(16,185,129,0.14),transparent_32%)] p-4 sm:p-6"
+            class="border-b border-sidebar-border/70 bg-primary/[0.04] p-4 sm:p-5"
         >
             <div
-                class="inline-flex max-w-full items-center gap-2 rounded-full border border-primary/25 bg-primary/10 px-3 py-1 text-xs font-semibold tracking-[0.18em] text-primary uppercase"
+                class="inline-flex max-w-full items-center gap-2 rounded-full border border-primary/25 bg-primary/10 px-3 py-1 text-xs font-semibold tracking-[0.18em] break-words text-primary uppercase"
             >
                 <Sparkles class="h-3.5 w-3.5" />
                 {{ badge }}
             </div>
 
-            <h1 class="mt-4 text-2xl font-semibold sm:text-3xl">
+            <h2 class="mt-4 text-2xl font-semibold break-words sm:text-3xl">
                 {{ title }}
-            </h1>
-            <p class="mt-3 max-w-2xl text-sm leading-6 text-muted-foreground">
+            </h2>
+            <p
+                class="mt-3 max-w-2xl text-sm leading-6 break-words text-muted-foreground"
+            >
                 {{ description }}
             </p>
         </div>
 
-        <div class="space-y-5 p-4 sm:space-y-6 sm:p-6">
+        <div class="space-y-4 p-4 sm:p-5">
             <div class="grid gap-3">
                 <article
                     v-for="bullet in bullets"
                     :key="bullet"
-                    class="rounded-xl border border-sidebar-border/70 bg-background/60 p-4 text-sm leading-6 text-foreground/90"
+                    class="rounded-lg bg-muted/35 p-3 text-sm leading-6 break-words text-foreground/90"
                 >
                     {{ bullet }}
                 </article>
@@ -51,7 +53,7 @@ defineProps<{
 
             <p
                 v-if="note"
-                class="rounded-xl border border-amber-500/30 bg-amber-500/10 px-4 py-3 text-sm leading-6 text-amber-800 dark:text-amber-100"
+                class="rounded-xl border border-amber-500/30 bg-amber-500/10 px-4 py-3 text-sm leading-6 break-words text-amber-800 dark:text-amber-100"
             >
                 {{ note }}
             </p>

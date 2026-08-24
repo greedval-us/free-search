@@ -594,7 +594,9 @@ onMounted(() => {
                                 <h2 class="line-clamp-2 text-sm font-semibold">
                                     {{ video.title }}
                                 </h2>
-                                <p class="mt-1 text-xs text-muted-foreground">
+                                <p
+                                    class="mt-1 text-xs break-words text-muted-foreground"
+                                >
                                     {{
                                         t(
                                             `youtube.options.searchType.${video.type}`
@@ -682,7 +684,7 @@ onMounted(() => {
                                         v-else-if="
                                             ensureCommentState(video.id).error
                                         "
-                                        class="text-xs text-destructive"
+                                        class="text-xs break-words text-destructive"
                                     >
                                         {{ ensureCommentState(video.id).error }}
                                     </p>
@@ -715,7 +717,7 @@ onMounted(() => {
                                                     "
                                                     target="_blank"
                                                     rel="noopener noreferrer"
-                                                    class="text-primary hover:underline"
+                                                    class="break-words text-primary hover:underline"
                                                 >
                                                     {{ comment.author }}
                                                 </a>

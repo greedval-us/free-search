@@ -17,16 +17,17 @@ defineEmits<{
 
 <template>
     <div
-        class="flex min-h-[50vh] flex-col items-center justify-center rounded-2xl border border-dashed border-sidebar-border/80 bg-card/75 p-8 text-center shadow-[0_24px_80px_-42px_rgba(15,23,42,0.5)] backdrop-blur"
+        class="flex min-h-72 flex-col items-center justify-center rounded-xl border border-dashed border-sidebar-border/80 bg-card/80 p-5 text-center sm:p-6"
+        role="status"
     >
-        <BarChart3 class="mb-4 h-14 w-14 text-muted-foreground" />
-        <h3 class="text-lg font-semibold">{{ title }}</h3>
-        <p class="mt-2 max-w-2xl text-sm text-muted-foreground">
+        <BarChart3 class="mb-3 h-10 w-10 text-muted-foreground" />
+        <h3 class="break-words text-lg font-semibold">{{ title }}</h3>
+        <p class="mt-2 max-w-2xl break-words text-sm text-muted-foreground">
             {{ description }}
         </p>
         <button
             type="button"
-            class="intel-button-primary mt-5"
+            class="intel-button-primary mt-4"
             :disabled="loading || disabled"
             @click="$emit('action')"
         >

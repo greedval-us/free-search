@@ -180,8 +180,13 @@ onMounted(() => {
             </p>
         </template>
         <template #afterActions>
-            <p v-if="error" class="text-sm text-destructive">{{ error }}</p>
-            <p v-else-if="customPeriodTooLong" class="text-sm text-destructive">
+            <p v-if="error" class="text-sm break-words text-destructive">
+                {{ error }}
+            </p>
+            <p
+                v-else-if="customPeriodTooLong"
+                class="text-sm break-words text-destructive"
+            >
                 {{ t('youtube.analytics.customPeriodTooLong') }}
             </p>
         </template>

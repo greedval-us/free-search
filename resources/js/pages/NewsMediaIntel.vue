@@ -145,6 +145,7 @@ onMounted(() => {
 
 <template>
     <Head :title="pageTitle" />
+    <h1 class="sr-only">{{ pageTitle }}</h1>
 
     <IntelModuleLayout>
         <IntelSearchPanel>

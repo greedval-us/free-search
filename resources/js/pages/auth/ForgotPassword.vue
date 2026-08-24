@@ -31,7 +31,7 @@ defineProps<{
         {{ status }}
     </div>
 
-    <div class="space-y-6">
+    <div class="space-y-5">
         <Form v-bind="email.form()" v-slot="{ errors, processing }">
             <div class="grid gap-2">
                 <Label for="email" class="auth-field-label">{{
@@ -49,7 +49,7 @@ defineProps<{
                 <InputError :message="errors.email" />
             </div>
 
-            <div class="my-6 flex items-center justify-start">
+            <div class="mt-5 flex items-center justify-start">
                 <Button
                     class="auth-button-primary"
                     :disabled="processing"

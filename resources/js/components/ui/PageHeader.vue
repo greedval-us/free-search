@@ -19,7 +19,9 @@ defineProps<{
                 v-if="icon"
                 class="h-5 w-5 shrink-0 text-primary"
             />
-            <h2 class="min-w-0 text-base font-semibold tracking-tight sm:text-lg">
+            <h2
+                class="min-w-0 break-words text-base font-semibold tracking-tight sm:text-lg"
+            >
                 {{ title }}
             </h2>
             <HelpTooltip
@@ -30,7 +32,7 @@ defineProps<{
         </div>
         <p
             v-if="description"
-            class="max-w-3xl text-sm leading-relaxed text-muted-foreground"
+            class="max-w-3xl break-words text-sm leading-relaxed text-muted-foreground"
         >
             {{ description }}
         </p>

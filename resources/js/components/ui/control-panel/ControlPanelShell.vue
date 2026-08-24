@@ -26,13 +26,15 @@ const emit = defineEmits<{
                 <div class="flex min-w-0 items-center gap-2 text-base font-semibold">
                     <component
                         :is="icon"
-                        class="h-4 w-4"
+                        class="h-4 w-4 shrink-0"
                         :class="iconClass ?? 'text-cyan-400'"
                     />
                     <h2 class="min-w-0 break-words">{{ title }}</h2>
                     <HelpTooltip :label="helpLabel" :text="helpText" />
                 </div>
-                <p class="text-sm leading-relaxed text-muted-foreground">
+                <p
+                    class="break-words text-sm leading-relaxed text-muted-foreground"
+                >
                     {{ collapsed ? collapsedText : subtitle }}
                 </p>
             </div>

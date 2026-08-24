@@ -22,7 +22,11 @@ const resolvedTitle = computed(() => props.title ?? t('common.fail'));
         <AlertTitle>{{ resolvedTitle }}</AlertTitle>
         <AlertDescription>
             <ul class="list-inside list-disc text-sm">
-                <li v-for="(error, index) in uniqueErrors" :key="index">
+                <li
+                    v-for="(error, index) in uniqueErrors"
+                    :key="index"
+                    class="break-words"
+                >
                     {{ error }}
                 </li>
             </ul>

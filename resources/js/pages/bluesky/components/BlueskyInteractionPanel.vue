@@ -24,7 +24,7 @@ const { t } = useI18n();
             {{ t('bluesky.engagement.loading') }}
         </p>
 
-        <p v-else-if="state.error" class="text-xs text-destructive">
+        <p v-else-if="state.error" class="text-xs break-words text-destructive">
             {{ state.error }}
         </p>
 
@@ -45,11 +45,11 @@ const { t } = useI18n();
                     :href="item.actor.url"
                     target="_blank"
                     rel="noopener noreferrer"
-                    class="text-xs font-medium text-primary hover:underline"
+                    class="text-xs font-medium break-words text-primary hover:underline"
                 >
                     {{ item.actor.displayName || item.actor.handle }}
                 </a>
-                <p class="text-xs text-muted-foreground">
+                <p class="text-xs break-words text-muted-foreground">
                     @{{ item.actor.handle }}
                 </p>
                 <p

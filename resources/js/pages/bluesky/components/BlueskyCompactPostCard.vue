@@ -19,11 +19,11 @@ const { t } = useI18n();
                         :href="post.author.url"
                         target="_blank"
                         rel="noopener noreferrer"
-                        class="text-sm font-semibold text-primary hover:underline"
+                        class="text-sm font-semibold break-words text-primary hover:underline"
                     >
                         {{ post.author.displayName || post.author.handle }}
                     </a>
-                    <span class="text-xs text-muted-foreground">
+                    <span class="text-xs break-words text-muted-foreground">
                         @{{ post.author.handle }}
                     </span>
                 </div>
@@ -43,7 +43,7 @@ const { t } = useI18n();
             </a>
         </div>
 
-        <p class="mt-3 text-sm leading-relaxed text-foreground">
+        <p class="mt-3 text-sm leading-relaxed break-words text-foreground">
             {{ post.text || t('bluesky.search.noText') }}
         </p>
 

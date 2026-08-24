@@ -11,17 +11,19 @@ const { t } = useI18n();
 
 <template>
     <article class="rounded-lg border border-border/80 bg-background/70 p-4">
-        <div class="flex items-start justify-between gap-3">
+        <div class="flex min-w-0 items-start justify-between gap-3">
             <div class="min-w-0">
                 <a
                     :href="actor.url"
                     target="_blank"
                     rel="noopener noreferrer"
-                    class="text-sm font-semibold text-primary hover:underline"
+                    class="text-sm font-semibold break-words text-primary hover:underline"
                 >
                     {{ actor.displayName || actor.handle }}
                 </a>
-                <p class="text-xs text-muted-foreground">@{{ actor.handle }}</p>
+                <p class="text-xs break-words text-muted-foreground">
+                    @{{ actor.handle }}
+                </p>
             </div>
 
             <a
@@ -34,7 +36,7 @@ const { t } = useI18n();
             </a>
         </div>
 
-        <p class="mt-3 text-sm leading-relaxed text-foreground">
+        <p class="mt-3 text-sm leading-relaxed break-words text-foreground">
             {{ actor.description || t('bluesky.search.noBio') }}
         </p>
 

@@ -2,8 +2,8 @@
 import { Head } from '@inertiajs/vue3';
 import { BellOff } from 'lucide-vue-next';
 import { computed } from 'vue';
-import Heading from '@/components/Heading.vue';
 import NotificationListItem from '@/components/NotificationListItem.vue';
+import SettingsHero from '@/components/settings/SettingsHero.vue';
 import { Button } from '@/components/ui/button';
 import { useI18n } from '@/composables/useI18n';
 import { useNotifications } from '@/composables/useNotifications';
@@ -44,59 +44,31 @@ const formattedPeriodStart = computed(() =>
 <template>
     <Head :title="t('settings.notificationsPage.title')" />
 
-    <div class="space-y-6">
-        <Heading
-            variant="small"
-            :title="t('settings.notificationsPage.heading')"
-            :description="t('settings.notificationsPage.description')"
-        />
-
-        <section
-            class="overflow-hidden rounded-2xl border border-sidebar-border/70 bg-background/40 shadow-xl"
+    <div class="max-w-5xl space-y-5">
+        <SettingsHero
+            :badge="t('settings.notificationsPage.badge')"
+            :title="t('settings.notificationsPage.heroTitle')"
+            :description="t('settings.notificationsPage.heroText')"
         >
-            <div
-                class="border-b border-sidebar-border/70 bg-[radial-gradient(circle_at_top_right,rgba(56,189,248,0.16),transparent_36%),radial-gradient(circle_at_bottom_left,rgba(16,185,129,0.14),transparent_32%)] p-4 sm:p-5"
-            >
-                <div class="flex flex-wrap items-start justify-between gap-4">
-                    <div class="min-w-0 flex-1 space-y-2">
-                        <p
-                            class="text-xs tracking-[0.2em] text-primary uppercase"
-                        >
-                            {{ t('settings.notificationsPage.badge') }}
-                        </p>
-                        <h2 class="text-2xl font-semibold sm:text-3xl">
-                            {{ t('settings.notificationsPage.heroTitle') }}
-                        </h2>
-                        <p
-                            class="max-w-2xl text-sm leading-6 text-muted-foreground"
-                        >
-                            {{ t('settings.notificationsPage.heroText') }}
-                        </p>
-                    </div>
-
-                    <div
-                        class="w-full rounded-2xl border border-primary/20 bg-background/70 p-4 text-left sm:w-auto sm:text-right"
-                    >
-                        <p
-                            class="text-xs tracking-wide text-muted-foreground uppercase"
-                        >
-                            {{ t('settings.notificationsPage.period') }}
-                        </p>
-                        <p class="mt-2 text-2xl font-semibold">
-                            {{ notifications.length }}
-                        </p>
-                        <p class="mt-1 text-sm text-muted-foreground">
-                            {{ t('settings.notificationsPage.since') }}:
-                            {{ formattedPeriodStart }}
-                        </p>
-                    </div>
-                </div>
-            </div>
-        </section>
+            <template #summary>
+                <p
+                    class="text-xs tracking-wide text-muted-foreground uppercase"
+                >
+                    {{ t('settings.notificationsPage.period') }}
+                </p>
+                <p class="mt-2 text-2xl font-semibold">
+                    {{ notifications.length }}
+                </p>
+                <p class="mt-1 text-sm text-muted-foreground">
+                    {{ t('settings.notificationsPage.since') }}:
+                    {{ formattedPeriodStart }}
+                </p>
+            </template>
+        </SettingsHero>
 
         <section
             v-if="notifications.length === 0"
-            class="rounded-2xl border border-dashed border-sidebar-border/70 bg-background/30 p-5 text-center sm:p-8"
+            class="rounded-xl border border-dashed border-sidebar-border/70 bg-background/30 p-5 text-center sm:p-6"
         >
             <div class="mx-auto flex max-w-xl flex-col items-center gap-4">
                 <div

@@ -556,7 +556,7 @@ onMounted(() => {
                                     getCommentState(item.id).error &&
                                     getCommentState(item.id).items.length === 0
                                 "
-                                class="text-xs text-destructive"
+                                class="text-xs break-words text-destructive"
                             >
                                 {{ getCommentState(item.id).error }}
                             </p>
@@ -634,7 +634,7 @@ onMounted(() => {
                                     getCommentState(item.id).error &&
                                     getCommentState(item.id).items.length > 0
                                 "
-                                class="mt-2 text-xs text-destructive"
+                                class="mt-2 text-xs break-words text-destructive"
                             >
                                 {{ getCommentState(item.id).error }}
                             </p>

@@ -5,7 +5,7 @@ defineProps<{
 </script>
 
 <template>
-    <div class="intel-empty">
+    <div class="intel-empty break-words" role="status">
         {{ text }}
     </div>
 </template>

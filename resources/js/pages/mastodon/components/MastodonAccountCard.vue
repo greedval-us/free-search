@@ -35,8 +35,8 @@ const metaClass = computed(() =>
 );
 const noteClass = computed(() =>
     props.compact
-        ? 'mt-2 text-xs leading-relaxed text-foreground'
-        : 'mt-2 text-sm leading-relaxed text-foreground'
+        ? 'mt-2 break-words text-xs leading-relaxed text-foreground'
+        : 'mt-2 break-words text-sm leading-relaxed text-foreground'
 );
 const statsClass = computed(() =>
     props.compact

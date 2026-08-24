@@ -26,7 +26,7 @@ defineOptions({
         reset-on-success
         v-slot="{ errors, processing }"
     >
-        <div class="space-y-6">
+        <div class="space-y-5">
             <div class="grid gap-2">
                 <Label htmlFor="password" class="auth-field-label">{{
                     t('auth.confirmPassword.password')

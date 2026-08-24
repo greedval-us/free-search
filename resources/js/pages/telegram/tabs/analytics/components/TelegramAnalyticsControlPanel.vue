@@ -91,7 +91,7 @@ const inputValue = (event: Event) => (event.target as HTMLInputElement).value;
         <div class="grid gap-3 md:grid-cols-2 xl:grid-cols-12">
             <label class="block min-w-0 xl:col-span-3">
                 <span
-                    class="mb-1 block truncate text-xs font-medium text-muted-foreground"
+                    class="mb-1 block text-xs font-medium break-words text-muted-foreground"
                     >{{ t('telegram.analytics.filters.channel') }}</span
                 >
                 <input
@@ -105,7 +105,7 @@ const inputValue = (event: Event) => (event.target as HTMLInputElement).value;
 
             <label class="block min-w-0 xl:col-span-3">
                 <span
-                    class="mb-1 block truncate text-xs font-medium text-muted-foreground"
+                    class="mb-1 block text-xs font-medium break-words text-muted-foreground"
                     >{{ t('telegram.search.keyword') }}</span
                 >
                 <input
@@ -119,7 +119,7 @@ const inputValue = (event: Event) => (event.target as HTMLInputElement).value;
 
             <div class="min-w-0 xl:col-span-2">
                 <span
-                    class="mb-1 block truncate text-xs font-medium text-muted-foreground"
+                    class="mb-1 block text-xs font-medium break-words text-muted-foreground"
                     >{{ t('telegram.analytics.filters.period') }}</span
                 >
                 <div
@@ -144,7 +144,7 @@ const inputValue = (event: Event) => (event.target as HTMLInputElement).value;
 
             <label class="block min-w-0 xl:col-span-2">
                 <span
-                    class="mb-1 block truncate text-xs font-medium text-muted-foreground"
+                    class="mb-1 block text-xs font-medium break-words text-muted-foreground"
                     >{{ t('telegram.analytics.filters.from') }}</span
                 >
                 <input
@@ -159,7 +159,7 @@ const inputValue = (event: Event) => (event.target as HTMLInputElement).value;
 
             <label class="block min-w-0 xl:col-span-2">
                 <span
-                    class="mb-1 block truncate text-xs font-medium text-muted-foreground"
+                    class="mb-1 block text-xs font-medium break-words text-muted-foreground"
                     >{{ t('telegram.analytics.filters.to') }}</span
                 >
                 <input

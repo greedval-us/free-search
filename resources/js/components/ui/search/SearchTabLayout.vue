@@ -55,7 +55,7 @@ const emit = defineEmits<{
             <slot name="advanced" />
         </template>
         <template #afterActions>
-            <p v-if="error" class="mt-3 text-sm text-destructive">
+            <p v-if="error" class="mt-3 break-words text-sm text-destructive">
                 {{ error }}
             </p>
             <slot name="afterActions" />

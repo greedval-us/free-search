@@ -127,7 +127,7 @@ const linkGraphFilters = reactive({
         <IntelSearchFormComplex :error="error">
             <label class="block min-w-0 flex-1">
                 <span
-                    class="mb-1 block truncate text-xs font-medium text-muted-foreground"
+                    class="mb-1 block text-xs font-medium break-words text-muted-foreground"
                     >{{ t('siteIntel.seoAudit.target') }}</span
                 >
                 <input
@@ -140,7 +140,7 @@ const linkGraphFilters = reactive({
             </label>
             <label class="block w-full sm:w-44">
                 <span
-                    class="mb-1 block truncate text-xs font-medium text-muted-foreground"
+                    class="mb-1 block text-xs font-medium break-words text-muted-foreground"
                     >{{ t('siteIntel.seoAudit.crawlLimit') }}</span
                 >
                 <select
@@ -155,7 +155,7 @@ const linkGraphFilters = reactive({
             </label>
             <label class="block w-full sm:w-52">
                 <span
-                    class="mb-1 flex items-center gap-1 truncate text-xs font-medium text-muted-foreground"
+                    class="mb-1 flex min-w-0 items-center gap-1 text-xs font-medium text-muted-foreground"
                 >
                     <span>{{ t('siteIntel.seoAudit.platformType') }}</span>
                     <span class="group relative inline-flex">
@@ -167,7 +167,7 @@ const linkGraphFilters = reactive({
                             >?</span
                         >
                         <span
-                            class="pointer-events-none absolute top-5 left-0 z-20 hidden w-[min(20rem,calc(100vw-2rem))] rounded-md border border-border/70 bg-popover p-2 text-[11px] leading-relaxed text-popover-foreground shadow-xl group-focus-within:block group-hover:block"
+                            class="pointer-events-none absolute top-5 right-0 z-20 hidden w-[min(20rem,calc(100vw-2rem))] rounded-md border border-border/70 bg-popover p-2 text-[11px] leading-relaxed break-words text-popover-foreground shadow-xl group-focus-within:block group-hover:block"
                             >{{
                                 t('siteIntel.seoAudit.help.platformType')
                             }}</span

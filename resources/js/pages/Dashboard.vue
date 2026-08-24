@@ -413,18 +413,13 @@ onBeforeUnmount(() => {
     <Head :title="t('dashboard.meta.title')" />
 
     <div
-        class="mx-auto flex h-full min-h-0 w-full max-w-[1500px] flex-1 flex-col overflow-hidden rounded-xl p-3 sm:p-4"
+        class="mx-auto flex h-full min-h-0 w-full max-w-[1500px] flex-1 flex-col overflow-hidden p-2 sm:p-3"
     >
         <div
             class="intel-scroll min-h-0 flex-1 space-y-4 overflow-x-hidden overflow-y-auto pr-1 [scrollbar-gutter:stable_both-edges]"
         >
-            <section class="intel-hero-panel sm:p-5">
-                <div
-                    class="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(56,189,248,0.14),transparent_45%),radial-gradient(circle_at_bottom_left,rgba(16,185,129,0.1),transparent_42%)]"
-                />
-                <div
-                    class="relative flex flex-wrap items-center justify-between gap-4"
-                >
+            <section class="intel-hero-panel">
+                <div class="flex flex-wrap items-center justify-between gap-3">
                     <div class="min-w-0 flex-1 space-y-1">
                         <p class="intel-kicker">
                             {{ t('dashboard.header.kicker') }}
@@ -437,7 +432,7 @@ onBeforeUnmount(() => {
                         </p>
                     </div>
                     <div
-                        class="w-full rounded-full border border-emerald-500/40 bg-emerald-500/10 px-3 py-1.5 text-xs font-medium text-emerald-700 sm:w-auto dark:text-emerald-300"
+                        class="inline-flex max-w-full rounded-md border border-emerald-500/30 bg-emerald-500/10 px-2.5 py-1.5 text-xs font-medium text-emerald-700 dark:text-emerald-300"
                     >
                         <span class="inline-flex items-center gap-1.5">
                             <Sparkles class="h-3.5 w-3.5" />
@@ -447,7 +442,7 @@ onBeforeUnmount(() => {
                 </div>
             </section>
 
-            <section class="intel-panel">
+            <section class="intel-panel bg-card/80">
                 <div class="flex flex-wrap items-center justify-between gap-3">
                     <div>
                         <p class="intel-kicker">
@@ -493,12 +488,12 @@ onBeforeUnmount(() => {
             </section>
 
             <section
-                class="grid grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-4 xl:grid-cols-4"
+                class="grid grid-cols-1 gap-2 sm:grid-cols-2 xl:grid-cols-4"
             >
                 <article
                     v-for="card in summaryCards"
                     :key="card.key"
-                    class="intel-panel transition hover:-translate-y-0.5 hover:border-primary/40"
+                    class="intel-panel"
                 >
                     <div class="flex items-center gap-2 text-muted-foreground">
                         <component :is="card.icon" class="h-4 w-4" />
@@ -506,13 +501,13 @@ onBeforeUnmount(() => {
                             card.title
                         }}</span>
                     </div>
-                    <p class="mt-3 text-2xl font-semibold sm:text-3xl">
+                    <p class="mt-2 text-2xl font-semibold tracking-tight">
                         {{ card.value }}
                     </p>
                 </article>
             </section>
 
-            <section class="grid gap-4 xl:grid-cols-2">
+            <section class="grid gap-3 xl:grid-cols-2">
                 <article class="intel-panel">
                     <h2 class="intel-section-heading">
                         {{ t('dashboard.sections.quickActions') }}
@@ -522,7 +517,7 @@ onBeforeUnmount(() => {
                             v-for="action in quickActions"
                             :key="`quick-${action.key}`"
                             :href="action.url"
-                            class="group flex items-center justify-between gap-3 rounded-xl border border-sidebar-border/70 bg-background/40 px-3 py-2.5 text-sm font-medium transition hover:border-primary/40 hover:bg-background/65"
+                            class="group flex min-w-0 items-center justify-between gap-3 rounded-lg bg-muted/35 px-3 py-2.5 text-sm font-medium transition-colors hover:bg-accent/70"
                         >
                             <span class="truncate">{{
                                 moduleLabel(action.key)
@@ -557,7 +552,7 @@ onBeforeUnmount(() => {
                 </article>
             </section>
 
-            <section class="grid min-h-0 gap-4 lg:grid-cols-2 2xl:grid-cols-3">
+            <section class="grid min-h-0 gap-3 lg:grid-cols-2 2xl:grid-cols-3">
                 <article class="intel-panel min-h-0">
                     <div class="flex items-center justify-between">
                         <h2 class="intel-section-heading">
@@ -710,7 +705,7 @@ onBeforeUnmount(() => {
                                     )
                                 }}
                             </p>
-                            <div class="mt-2 flex items-center gap-2">
+                            <div class="mt-2 flex flex-wrap items-center gap-2">
                                 <Link
                                     v-if="saved.run_url"
                                     :href="saved.run_url"
@@ -767,7 +762,7 @@ onBeforeUnmount(() => {
                     <input
                         v-model="filterForm.query"
                         type="text"
-                        class="intel-filter-control"
+                        class="intel-filter-control sm:col-span-2 lg:col-span-2 xl:col-span-1"
                         :aria-label="t('dashboard.filters.queryLabel')"
                         :placeholder="t('dashboard.filters.queryPlaceholder')"
                     />
