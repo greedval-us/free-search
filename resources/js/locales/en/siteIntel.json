@@ -317,7 +317,8 @@
         },
         "errors": {
             "targetRequired": "Enter URL or domain.",
-            "analyzeFailed": "Could not complete SEO audit."
+            "analyzeFailed": "Could not complete SEO audit.",
+            "graphLoadFailed": "Could not load the link graph. Reload the page and try again."
         },
         "signal": {
             "title_length_out_of_range": "Title length is outside recommended range",

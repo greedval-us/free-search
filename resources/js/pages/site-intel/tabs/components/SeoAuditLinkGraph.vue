@@ -1,6 +1,10 @@
 <script setup lang="ts">
-import cytoscape from 'cytoscape';
+import type cytoscape from 'cytoscape';
 import { onBeforeUnmount, onMounted, ref, watch } from 'vue';
+import Spinner from '@/components/ui/spinner/Spinner.vue';
+import { useI18n } from '@/composables/useI18n';
+import { loadCytoscape } from '../../lib/loadCytoscape';
+import type { CytoscapeFactory } from '../../lib/loadCytoscape';
 
 type Node = {
     id: string;
@@ -33,11 +37,15 @@ const props = defineProps<{
     };
 }>();
 
+const { t } = useI18n();
 const root = ref<HTMLDivElement | null>(null);
+const loading = ref(true);
+const loadFailed = ref(false);
+let createCytoscape: CytoscapeFactory | null = null;
 let cy: cytoscape.Core | null = null;
 
 const render = () => {
-    if (!root.value) {
+    if (!root.value || !createCytoscape) {
         return;
     }
 
@@ -89,7 +97,7 @@ const render = () => {
             visibleNodeMap.has(edge.source) && visibleNodeMap.has(edge.target)
     );
 
-    cy = cytoscape({
+    cy = createCytoscape({
         container: root.value,
         elements: [
             ...Array.from(visibleNodeMap.values()).map((node) => ({
@@ -212,8 +220,15 @@ const render = () => {
     });
 };
 
-onMounted(() => {
-    render();
+onMounted(async () => {
+    try {
+        createCytoscape = await loadCytoscape();
+        render();
+    } catch {
+        loadFailed.value = true;
+    } finally {
+        loading.value = false;
+    }
 });
 
 watch(
@@ -235,8 +250,24 @@ onBeforeUnmount(() => {
 <template>
     <div class="rounded-lg border border-border/70 bg-background/60 p-3">
         <div
-            ref="root"
-            class="h-[26rem] w-full rounded-md border border-border/70 bg-slate-950/80"
-        />
+            class="relative h-[26rem] w-full overflow-hidden rounded-md border border-border/70 bg-slate-950/80"
+        >
+            <div ref="root" class="h-full w-full" />
+
+            <div
+                v-if="loading"
+                class="absolute inset-0 flex items-center justify-center bg-slate-950/80"
+            >
+                <Spinner class="size-5 text-cyan-300" />
+            </div>
+
+            <div
+                v-else-if="loadFailed"
+                class="absolute inset-0 flex items-center justify-center bg-slate-950/80 p-6 text-center text-sm text-slate-300"
+                role="alert"
+            >
+                {{ t('siteIntel.seoAudit.errors.graphLoadFailed') }}
+            </div>
+        </div>
     </div>
 </template>
