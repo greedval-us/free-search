@@ -25,11 +25,15 @@ class FeatureAccessServiceTest extends TestCase
         parent::tearDown();
     }
 
-    public function test_free_account_can_use_each_resource_once_per_day(): void
+    public function test_free_account_can_use_every_resource_once_per_day(): void
     {
         $user = User::factory()->create();
 
         $routes = [
+            'bluesky.analytics.summary',
+            'bluesky.parser.start',
+            'mastodon.analytics.summary',
+            'mastodon.parser.start',
             'site-intel.analytics',
             'site-intel.seo-audit',
             'telegram.analytics.summary',
@@ -47,12 +51,14 @@ class FeatureAccessServiceTest extends TestCase
             $this->assertSame(1, $decision->used);
         }
 
-        $decision = $this->service()->consume($user, 'telegram.parser.start');
+        foreach ($routes as $route) {
+            $decision = $this->service()->consume($user, $route);
 
-        $this->assertFalse($decision->allowed);
-        $this->assertSame('free', $decision->plan);
-        $this->assertSame(1, $decision->limit);
-        $this->assertSame(1, $decision->used);
+            $this->assertFalse($decision->allowed, $route);
+            $this->assertSame('free', $decision->plan);
+            $this->assertSame(1, $decision->limit);
+            $this->assertSame(1, $decision->used);
+        }
     }
 
     public function test_feature_can_be_disabled_for_free_accounts_from_config(): void
