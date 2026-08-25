@@ -2,10 +2,10 @@
 import { Link } from '@inertiajs/vue3';
 import { computed } from 'vue';
 import SeoHead from '@/components/SeoHead.vue';
-import { useI18n } from '@/composables/useI18n';
+import { useLocale } from '@/composables/useLocale';
 import { useSeoPage } from '@/composables/useSeoPage';
-import en from '@/locales/en';
-import ru from '@/locales/ru';
+import en from '@/locales/en/terms.json';
+import ru from '@/locales/ru/terms.json';
 import { home } from '@/routes';
 
 type TermsSection = {
@@ -23,7 +23,7 @@ type TermsContent = {
     sections: Record<string, TermsSection>;
 };
 
-const { locale, setLocale } = useI18n();
+const { locale, setLocale } = useLocale();
 const {
     path: seoPath,
     title: seoTitle,
@@ -31,7 +31,7 @@ const {
 } = useSeoPage('terms', locale);
 
 const content = computed<TermsContent>(
-    () => (locale.value === 'ru' ? ru.terms : en.terms) as TermsContent
+    () => (locale.value === 'ru' ? ru : en) as TermsContent
 );
 
 const sections = computed(() => Object.values(content.value.sections));

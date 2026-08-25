@@ -3,8 +3,10 @@ import { Link } from '@inertiajs/vue3';
 import { computed } from 'vue';
 import CookieNotice from '@/components/CookieNotice.vue';
 import SeoHead from '@/components/SeoHead.vue';
-import { useI18n } from '@/composables/useI18n';
+import { useLocale } from '@/composables/useLocale';
 import { useSeoPage } from '@/composables/useSeoPage';
+import enCommon from '@/locales/en/common.json';
+import ruCommon from '@/locales/ru/common.json';
 import { dashboard, login, register } from '@/routes';
 
 type LandingModule = {
@@ -28,7 +30,7 @@ withDefaults(
     }
 );
 
-const { locale, setLocale, t } = useI18n();
+const { locale, setLocale } = useLocale();
 const {
     path: seoPath,
     title: seoTitle,
@@ -269,6 +271,9 @@ const copy = computed(() => {
 });
 
 const toggleLocale = () => setLocale(locale.value === 'ru' ? 'en' : 'ru');
+const privacyPolicyLabel = computed(() =>
+    locale.value === 'ru' ? ruCommon.privacyPolicy : enCommon.privacyPolicy
+);
 </script>
 
 <template>
@@ -293,7 +298,7 @@ const toggleLocale = () => setLocale(locale.value === 'ru' ? 'en' : 'ru');
                     </button>
 
                     <Link href="/privacy" class="btn btn-ghost">
-                        {{ t('common.privacyPolicy') }}
+                        {{ privacyPolicyLabel }}
                     </Link>
 
                     <Link

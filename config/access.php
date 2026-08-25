@@ -1,51 +1,59 @@
 <?php
 
+$baseLimit = static fn (string $plan, string $capability, int $default): int => max(
+    0,
+    (int) env(sprintf('ACCESS_%s_%s_DAILY_LIMIT', strtoupper($plan), strtoupper(str_replace('-', '_', $capability))), $default)
+);
+
+$resourceLimit = static fn (string $plan, string $resource, int $default): int => max(
+    0,
+    (int) env(sprintf('ACCESS_%s_%s_DAILY_LIMIT', strtoupper($plan), strtoupper(str_replace(['-', '.'], '_', $resource))), $default)
+);
+
+$planLimits = [
+    'free' => [
+        'analytics' => $baseLimit('free', 'analytics', 1),
+        'parser' => $baseLimit('free', 'parser', 1),
+        'seo-audit' => $baseLimit('free', 'seo-audit', 1),
+    ],
+    'plus' => [
+        'analytics' => $baseLimit('plus', 'analytics', 10),
+        'parser' => $baseLimit('plus', 'parser', 5),
+        'seo-audit' => $baseLimit('plus', 'seo-audit', 10),
+    ],
+    'pro' => [
+        'analytics' => $baseLimit('pro', 'analytics', 100),
+        'parser' => $baseLimit('pro', 'parser', 50),
+        'seo-audit' => $baseLimit('pro', 'seo-audit', 100),
+    ],
+];
+
+$resourceQuotas = static function (string $plan) use ($planLimits, $resourceLimit): array {
+    $limits = $planLimits[$plan];
+
+    return [
+        'analytics' => $limits['analytics'],
+        'parser' => $limits['parser'],
+        'bluesky.analytics' => $resourceLimit($plan, 'bluesky.analytics', $limits['analytics']),
+        'bluesky.parser' => $resourceLimit($plan, 'bluesky.parser', $limits['parser']),
+        'mastodon.analytics' => $resourceLimit($plan, 'mastodon.analytics', $limits['analytics']),
+        'mastodon.parser' => $resourceLimit($plan, 'mastodon.parser', $limits['parser']),
+        'site-intel.analytics' => $resourceLimit($plan, 'site-intel.analytics', $limits['analytics']),
+        'site-intel.seo-audit' => $resourceLimit($plan, 'site-intel.seo-audit', $limits['seo-audit']),
+        'telegram.analytics' => $resourceLimit($plan, 'telegram.analytics', $limits['analytics']),
+        'telegram.parser' => $resourceLimit($plan, 'telegram.parser', $limits['parser']),
+        'youtube.analytics' => $resourceLimit($plan, 'youtube.analytics', $limits['analytics']),
+        'youtube.parser' => $resourceLimit($plan, 'youtube.parser', $limits['parser']),
+    ];
+};
+
 return [
     'checkout_enabled' => (bool) env('BILLING_CHECKOUT_ENABLED', false),
 
     'plans' => [
-        'free' => [
-            'analytics' => 0,
-            'parser' => 0,
-            'bluesky.analytics' => 0,
-            'bluesky.parser' => 0,
-            'mastodon.analytics' => 0,
-            'mastodon.parser' => 0,
-            'site-intel.analytics' => 0,
-            'site-intel.seo-audit' => 0,
-            'telegram.analytics' => 0,
-            'telegram.parser' => 0,
-            'youtube.analytics' => 0,
-            'youtube.parser' => 0,
-        ],
-        'plus' => [
-            'analytics' => 10,
-            'parser' => 5,
-            'bluesky.analytics' => 10,
-            'bluesky.parser' => 5,
-            'mastodon.analytics' => 10,
-            'mastodon.parser' => 5,
-            'site-intel.analytics' => 10,
-            'site-intel.seo-audit' => 10,
-            'telegram.analytics' => 10,
-            'telegram.parser' => 5,
-            'youtube.analytics' => 10,
-            'youtube.parser' => 5,
-        ],
-        'pro' => [
-            'analytics' => 100,
-            'parser' => 50,
-            'bluesky.analytics' => 100,
-            'bluesky.parser' => 50,
-            'mastodon.analytics' => 100,
-            'mastodon.parser' => 50,
-            'site-intel.analytics' => 100,
-            'site-intel.seo-audit' => 100,
-            'telegram.analytics' => 100,
-            'telegram.parser' => 50,
-            'youtube.analytics' => 100,
-            'youtube.parser' => 50,
-        ],
+        'free' => $resourceQuotas('free'),
+        'plus' => $resourceQuotas('plus'),
+        'pro' => $resourceQuotas('pro'),
     ],
 
     'resources' => [

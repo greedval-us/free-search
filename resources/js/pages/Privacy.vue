@@ -2,10 +2,10 @@
 import { Link } from '@inertiajs/vue3';
 import { computed } from 'vue';
 import SeoHead from '@/components/SeoHead.vue';
-import { useI18n } from '@/composables/useI18n';
+import { useLocale } from '@/composables/useLocale';
 import { useSeoPage } from '@/composables/useSeoPage';
-import en from '@/locales/en';
-import ru from '@/locales/ru';
+import en from '@/locales/en/privacy.json';
+import ru from '@/locales/ru/privacy.json';
 import { home } from '@/routes';
 
 type PrivacyContent = {
@@ -32,7 +32,7 @@ type PrivacyContent = {
     changes: string[];
 };
 
-const { locale, setLocale } = useI18n();
+const { locale, setLocale } = useLocale();
 const {
     path: seoPath,
     title: seoTitle,
@@ -40,7 +40,7 @@ const {
 } = useSeoPage('privacy', locale);
 
 const content = computed<PrivacyContent>(
-    () => (locale.value === 'ru' ? ru.privacy : en.privacy) as PrivacyContent
+    () => (locale.value === 'ru' ? ru : en) as PrivacyContent
 );
 
 const sections = computed(() => [

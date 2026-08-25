@@ -25,14 +25,47 @@ class FeatureAccessServiceTest extends TestCase
         parent::tearDown();
     }
 
-    public function test_free_account_cannot_use_analytics(): void
+    public function test_free_account_can_use_each_resource_once_per_day(): void
     {
         $user = User::factory()->create();
 
-        $decision = $this->service()->consume($user, 'site-intel.analytics');
+        $routes = [
+            'site-intel.analytics',
+            'site-intel.seo-audit',
+            'telegram.analytics.summary',
+            'telegram.parser.start',
+            'youtube.analytics.summary',
+            'youtube.parser.start',
+        ];
+
+        foreach ($routes as $route) {
+            $decision = $this->service()->consume($user, $route);
+
+            $this->assertTrue($decision->allowed, $route);
+            $this->assertSame('free', $decision->plan);
+            $this->assertSame(1, $decision->limit);
+            $this->assertSame(1, $decision->used);
+        }
+
+        $decision = $this->service()->consume($user, 'telegram.parser.start');
 
         $this->assertFalse($decision->allowed);
         $this->assertSame('free', $decision->plan);
+        $this->assertSame(1, $decision->limit);
+        $this->assertSame(1, $decision->used);
+    }
+
+    public function test_feature_can_be_disabled_for_free_accounts_from_config(): void
+    {
+        Config::set('access.plans.free', [
+            ...config('access.plans.free'),
+            'telegram.analytics' => 0,
+        ]);
+        $user = User::factory()->create();
+
+        $decision = $this->service()->consume($user, 'telegram.analytics.summary');
+
+        $this->assertFalse($decision->allowed);
         $this->assertSame(0, $decision->limit);
     }
 
@@ -163,8 +196,9 @@ class FeatureAccessServiceTest extends TestCase
 
         $decision = $this->service()->consume($user, 'youtube.analytics.summary');
 
-        $this->assertFalse($decision->allowed);
+        $this->assertTrue($decision->allowed);
         $this->assertSame('free', $decision->plan);
+        $this->assertSame(1, $decision->limit);
     }
 
     private function service(): FeatureAccessServiceInterface

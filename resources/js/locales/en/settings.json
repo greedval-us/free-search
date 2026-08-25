@@ -118,8 +118,8 @@
         "dailyLimit": "per day",
         "compare": {
             "metric": "Metric",
-            "analytics": "Shared analytics limit per day",
-            "parser": "Shared data collection limit per day",
+            "analytics": "Analytics runs per module per day",
+            "parser": "Data collection runs per module per day",
             "seoAudit": "SEO audit / Site Intel per day"
         },
         "supportTitle": "Need broader access than your current plan?",
@@ -163,11 +163,11 @@
                 "name": "Free",
                 "price": "$0",
                 "tagline": "Starter",
-                "description": "Best for exploring the interface and basic platform navigation.",
+                "description": "Best for exploring real platform workflows at a light daily pace.",
                 "highlights": {
-                    "first": "Suitable for demos and onboarding.",
-                    "second": "No practical quota for paid OSINT workflows.",
-                    "third": "A safe entry point for team familiarization."
+                    "first": "One analytics run per module each day.",
+                    "second": "One data collection run per module each day.",
+                    "third": "Includes one daily Site Intel SEO audit."
                 }
             },
             "plus": {

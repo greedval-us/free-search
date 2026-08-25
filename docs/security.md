@@ -18,6 +18,8 @@ Free Search обрабатывает credentials внешних API, польз�
 - MadelineProto sessions и Parser Run JSON хранятся на private disk.
 - MoonShine использует отдельный `moonshine` guard/model, login throttle, production-only IP allowlist и security alerts configuration.
 - Admin actions над app users пишут audit records; request/activity logging sanitizes payloads через dedicated support class.
+- Production web responses используют HSTS, CSP с nonce, Referrer Policy, Permissions Policy и anti-sniffing headers; MoonShine path можно исключить из CSP через конфигурацию.
+- Request/activity logs автоматически удаляются после настраиваемого retention period.
 
 ## Recommended for production
 

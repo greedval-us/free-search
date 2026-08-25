@@ -1,15 +1,20 @@
 <script setup lang="ts">
 import { Link } from '@inertiajs/vue3';
-import { onMounted, ref } from 'vue';
+import { computed, onMounted, ref } from 'vue';
 import { Button } from '@/components/ui/button';
-import { useI18n } from '@/composables/useI18n';
+import { useLocale } from '@/composables/useLocale';
+import enCommon from '@/locales/en/common.json';
+import ruCommon from '@/locales/ru/common.json';
 
 const COOKIE_NAME = 'cookie_notice_accepted';
 const COOKIE_MAX_AGE = 60 * 60 * 24 * 180;
 
 const visible = ref(false);
 const theme = ref<'light' | 'dark'>('light');
-const { t } = useI18n();
+const { locale } = useLocale();
+const copy = computed(() =>
+    locale.value === 'ru' ? ruCommon.cookies : enCommon.cookies
+);
 
 const hasConsent = (): boolean => {
     if (typeof document === 'undefined') {
@@ -54,13 +59,13 @@ onMounted(() => {
                 <div class="cookie-notice" :data-theme="theme">
                     <div class="cookie-copy">
                         <p class="cookie-title">
-                            {{ t('common.cookies.title') }}
+                            {{ copy.title }}
                         </p>
                         <p class="cookie-text">
-                            {{ t('common.cookies.text') }}
+                            {{ copy.text }}
                         </p>
                         <Link href="/privacy" class="cookie-link">
-                            {{ t('common.cookies.details') }}
+                            {{ copy.details }}
                         </Link>
                     </div>
 
@@ -69,7 +74,7 @@ onMounted(() => {
                         class="cookie-button"
                         @click="acceptCookies"
                     >
-                        {{ t('common.cookies.accept') }}
+                        {{ copy.accept }}
                     </Button>
                 </div>
             </div>
