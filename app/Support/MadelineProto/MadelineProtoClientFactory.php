@@ -10,7 +10,10 @@ use danog\MadelineProto\Settings\Logger as LoggerSettings;
 
 final class MadelineProtoClientFactory
 {
-    public function __construct(private readonly MadelineProtoConfig $config) {}
+    public function __construct(
+        private readonly MadelineProtoConfig $config,
+        private readonly MadelineProtoRuntime $runtime,
+    ) {}
 
     public function make(string $sessionName = 'default'): API
     {
@@ -33,7 +36,10 @@ final class MadelineProtoClientFactory
                     ->setExtra($logPath)
             );
 
-        return new API($sessionPath, $settings);
+        return $this->runtime->executeFrom(
+            dirname($logPath),
+            static fn (): API => new API($sessionPath, $settings),
+        );
     }
 
     private function ensureDirectory(string $directory): void
