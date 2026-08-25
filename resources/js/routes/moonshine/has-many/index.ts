@@ -104,7 +104,7 @@ form.head = (args: { pageUri: string | number, resourceUri?: string | number, re
     form.form = formForm
 /**
 * @see \MoonShine\Laravel\Http\Controllers\HasManyController::list
- * @see vendor/moonshine/moonshine/src/Laravel/src/Http/Controllers/HasManyController.php:149
+ * @see vendor/moonshine/moonshine/src/Laravel/src/Http/Controllers/HasManyController.php:160
  * @route '/admin/has-many/list/{pageUri}/{resourceUri?}/{resourceItem?}'
  */
 export const list = (args: { pageUri: string | number, resourceUri?: string | number, resourceItem?: string | number } | [pageUri: string | number, resourceUri: string | number, resourceItem: string | number ], options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -119,7 +119,7 @@ list.definition = {
 
 /**
 * @see \MoonShine\Laravel\Http\Controllers\HasManyController::list
- * @see vendor/moonshine/moonshine/src/Laravel/src/Http/Controllers/HasManyController.php:149
+ * @see vendor/moonshine/moonshine/src/Laravel/src/Http/Controllers/HasManyController.php:160
  * @route '/admin/has-many/list/{pageUri}/{resourceUri?}/{resourceItem?}'
  */
 list.url = (args: { pageUri: string | number, resourceUri?: string | number, resourceItem?: string | number } | [pageUri: string | number, resourceUri: string | number, resourceItem: string | number ], options?: RouteQueryOptions) => {
@@ -153,7 +153,7 @@ list.url = (args: { pageUri: string | number, resourceUri?: string | number, res
 
 /**
 * @see \MoonShine\Laravel\Http\Controllers\HasManyController::list
- * @see vendor/moonshine/moonshine/src/Laravel/src/Http/Controllers/HasManyController.php:149
+ * @see vendor/moonshine/moonshine/src/Laravel/src/Http/Controllers/HasManyController.php:160
  * @route '/admin/has-many/list/{pageUri}/{resourceUri?}/{resourceItem?}'
  */
 list.get = (args: { pageUri: string | number, resourceUri?: string | number, resourceItem?: string | number } | [pageUri: string | number, resourceUri: string | number, resourceItem: string | number ], options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -162,7 +162,7 @@ list.get = (args: { pageUri: string | number, resourceUri?: string | number, res
 })
 /**
 * @see \MoonShine\Laravel\Http\Controllers\HasManyController::list
- * @see vendor/moonshine/moonshine/src/Laravel/src/Http/Controllers/HasManyController.php:149
+ * @see vendor/moonshine/moonshine/src/Laravel/src/Http/Controllers/HasManyController.php:160
  * @route '/admin/has-many/list/{pageUri}/{resourceUri?}/{resourceItem?}'
  */
 list.head = (args: { pageUri: string | number, resourceUri?: string | number, resourceItem?: string | number } | [pageUri: string | number, resourceUri: string | number, resourceItem: string | number ], options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -172,7 +172,7 @@ list.head = (args: { pageUri: string | number, resourceUri?: string | number, re
 
     /**
 * @see \MoonShine\Laravel\Http\Controllers\HasManyController::list
- * @see vendor/moonshine/moonshine/src/Laravel/src/Http/Controllers/HasManyController.php:149
+ * @see vendor/moonshine/moonshine/src/Laravel/src/Http/Controllers/HasManyController.php:160
  * @route '/admin/has-many/list/{pageUri}/{resourceUri?}/{resourceItem?}'
  */
     const listForm = (args: { pageUri: string | number, resourceUri?: string | number, resourceItem?: string | number } | [pageUri: string | number, resourceUri: string | number, resourceItem: string | number ], options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -182,7 +182,7 @@ list.head = (args: { pageUri: string | number, resourceUri?: string | number, re
 
             /**
 * @see \MoonShine\Laravel\Http\Controllers\HasManyController::list
- * @see vendor/moonshine/moonshine/src/Laravel/src/Http/Controllers/HasManyController.php:149
+ * @see vendor/moonshine/moonshine/src/Laravel/src/Http/Controllers/HasManyController.php:160
  * @route '/admin/has-many/list/{pageUri}/{resourceUri?}/{resourceItem?}'
  */
         listForm.get = (args: { pageUri: string | number, resourceUri?: string | number, resourceItem?: string | number } | [pageUri: string | number, resourceUri: string | number, resourceItem: string | number ], options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -191,7 +191,7 @@ list.head = (args: { pageUri: string | number, resourceUri?: string | number, re
         })
             /**
 * @see \MoonShine\Laravel\Http\Controllers\HasManyController::list
- * @see vendor/moonshine/moonshine/src/Laravel/src/Http/Controllers/HasManyController.php:149
+ * @see vendor/moonshine/moonshine/src/Laravel/src/Http/Controllers/HasManyController.php:160
  * @route '/admin/has-many/list/{pageUri}/{resourceUri?}/{resourceItem?}'
  */
         listForm.head = (args: { pageUri: string | number, resourceUri?: string | number, resourceItem?: string | number } | [pageUri: string | number, resourceUri: string | number, resourceItem: string | number ], options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({

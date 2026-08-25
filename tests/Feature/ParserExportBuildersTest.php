@@ -6,10 +6,12 @@ use App\Modules\Bluesky\Parser\BlueskyParserExportBuilder;
 use App\Modules\Export\Excel\SheetDefinition;
 use App\Modules\Export\Excel\WorkbookExport;
 use App\Modules\Mastodon\Parser\MastodonParserExportBuilder;
+use App\Modules\Telegram\Parser\TelegramParserExportBuilder;
 use App\Modules\YouTube\Parser\YouTubeParserExportBuilder;
 use App\Modules\YouTube\Support\YouTubeModuleConfig;
 use Maatwebsite\Excel\Excel as ExcelWriter;
 use Maatwebsite\Excel\Facades\Excel;
+use PhpOffice\PhpSpreadsheet\Cell\DataType;
 use PhpOffice\PhpSpreadsheet\IOFactory;
 use Tests\TestCase;
 
@@ -19,8 +21,12 @@ class ParserExportBuildersTest extends TestCase
     {
         $definition = new SheetDefinition(
             title: 'Results',
-            headings: ['Name', 'URL'],
-            rows: [['Uraboros', 'https://uraboros.online']],
+            headings: ['Name', 'URL', 'External content'],
+            rows: [[
+                'Uraboros',
+                'https://uraboros.online',
+                '=HYPERLINK("https://example.com", "Open")',
+            ]],
             hyperlinkColumns: ['B'],
         );
 
@@ -36,8 +42,13 @@ class ParserExportBuildersTest extends TestCase
             $this->assertSame('Name', $sheet->getCell('A1')->getValue());
             $this->assertSame('Uraboros', $sheet->getCell('A2')->getValue());
             $this->assertSame('https://uraboros.online', $sheet->getCell('B2')->getHyperlink()->getUrl());
+            $this->assertSame(DataType::TYPE_STRING, $sheet->getCell('C2')->getDataType());
+            $this->assertSame(
+                '=HYPERLINK("https://example.com", "Open")',
+                $sheet->getCell('C2')->getValue(),
+            );
             $this->assertSame('A2', $sheet->getFreezePane());
-            $this->assertSame('A1:B1', $sheet->getAutoFilter()->getRange());
+            $this->assertSame('A1:C1', $sheet->getAutoFilter()->getRange());
         } finally {
             if (is_file($path)) {
                 unlink($path);
@@ -123,6 +134,46 @@ class ParserExportBuildersTest extends TestCase
         $this->assertSame(['F'], $commentsSheet->hyperlinkColumns);
         $this->assertSame(['A', 'B', 'C', 'D', 'H', 'I'], $commentsSheet->centeredColumns);
         $this->assertSame(72, $commentsSheet->columnWidths['G']);
+    }
+
+    public function test_telegram_export_builder_includes_messages_comments_and_reactions(): void
+    {
+        app()->setLocale('en');
+
+        $builder = app(TelegramParserExportBuilder::class);
+        $sheets = $builder->buildSheets([
+            'chatUsername' => 'uraboros_online',
+            'messagesCount' => 1,
+            'commentsCount' => 1,
+            'messages' => [[
+                'id' => 10,
+                'date' => 1788256800,
+                'authorId' => 20,
+                'message' => '=HYPERLINK("https://example.com", "Open")',
+                'telegramUrl' => 'https://t.me/uraboros_online/10',
+                'reactions' => [['emoji' => 'like', 'count' => 2]],
+            ]],
+            'commentsIndex' => [[
+                'postId' => 10,
+                'id' => 11,
+                'date' => 1788256800,
+                'authorId' => 21,
+                'message' => 'Comment',
+            ]],
+            'reactionsIndex' => [[
+                'entityType' => 'message',
+                'messageId' => 10,
+                'reactionKey' => 'like',
+                'reaction' => 'like',
+                'count' => 2,
+            ]],
+        ]);
+
+        $this->assertCount(4, $sheets);
+        $this->assertSame('uraboros_online', $this->rowsByField($sheets[0])['Channel']);
+        $this->assertSame('=HYPERLINK("https://example.com", "Open")', $sheets[1]->rows[0][12]);
+        $this->assertSame('Comment', $sheets[2]->rows[0][6]);
+        $this->assertSame(2, $sheets[3]->rows[0][5]);
     }
 
     public function test_mastodon_export_builder_includes_profile_and_engagement_summary_metrics(): void

@@ -3,6 +3,7 @@ import { Head, usePage } from '@inertiajs/vue3';
 import { computed } from 'vue';
 
 type SharedSeoProps = {
+    defaultImage?: string;
     siteUrl?: string;
 };
 
@@ -42,12 +43,22 @@ const canonicalUrl = computed(() => {
 });
 
 const imageUrl = computed(() => {
-    if (!props.image || normalizedSiteUrl.value === '') {
+    const image = props.image ?? sharedSeo.value.defaultImage;
+
+    if (!image || normalizedSiteUrl.value === '') {
         return undefined;
     }
 
-    return new URL(props.image, `${normalizedSiteUrl.value}/`).toString();
+    return new URL(image, `${normalizedSiteUrl.value}/`).toString();
 });
+
+const locale = computed(() => String(page.props.locale ?? 'en'));
+const openGraphLocale = computed(() =>
+    locale.value === 'ru' ? 'ru_RU' : 'en_US'
+);
+const alternateOpenGraphLocale = computed(() =>
+    locale.value === 'ru' ? 'en_US' : 'ru_RU'
+);
 </script>
 
 <template>
@@ -68,6 +79,16 @@ const imageUrl = computed(() => {
         />
 
         <meta head-key="og:type" property="og:type" :content="type" />
+        <meta
+            head-key="og:locale"
+            property="og:locale"
+            :content="openGraphLocale"
+        />
+        <meta
+            head-key="og:locale:alternate"
+            property="og:locale:alternate"
+            :content="alternateOpenGraphLocale"
+        />
         <meta head-key="og:title" property="og:title" :content="title" />
         <meta
             head-key="og:description"

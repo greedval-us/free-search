@@ -1,6 +1,7 @@
 <?php
 
 return [
+    'default_image' => env('SEO_DEFAULT_IMAGE', '/social-preview.png'),
     'sitemap' => [
         'pages' => [
             [

@@ -82,4 +82,21 @@ class RegistrationTest extends TestCase
         $response->assertRedirect(route('register'));
         $response->assertSessionHasErrors(['password']);
     }
+
+    public function test_registration_is_rate_limited_by_ip(): void
+    {
+        config()->set('security.rate_limits.registration.per_minute', 2);
+        config()->set('security.rate_limits.registration.per_hour', 20);
+
+        $payload = [
+            'name' => '',
+            'email' => 'invalid-email',
+            'password' => 'password',
+            'password_confirmation' => 'password',
+        ];
+
+        $this->post(route('register.store'), $payload)->assertSessionHasErrors();
+        $this->post(route('register.store'), $payload)->assertSessionHasErrors();
+        $this->post(route('register.store'), $payload)->assertTooManyRequests();
+    }
 }

@@ -7,6 +7,7 @@ use App\Modules\ParserSupport\Contracts\ParserRunJobDispatcherInterface;
 use App\Modules\ParserSupport\ParserRunBackgroundProcessorRegistry;
 use App\Modules\ParserSupport\ParserRunExecutionConfig;
 use App\Modules\ParserSupport\ParserRunJobDispatcher;
+use App\Modules\ParserSupport\ParserRunQueueConfigurationGuard;
 use Illuminate\Support\ServiceProvider;
 
 final class ParserSupportServiceProvider extends ServiceProvider
@@ -31,5 +32,10 @@ final class ParserSupportServiceProvider extends ServiceProvider
                 $this->app->tagged(ParserRunBackgroundProcessorInterface::CONTAINER_TAG),
             ),
         );
+    }
+
+    public function boot(ParserRunQueueConfigurationGuard $configurationGuard): void
+    {
+        $configurationGuard->ensureSafe();
     }
 }

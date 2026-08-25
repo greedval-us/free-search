@@ -14,10 +14,12 @@ use App\Providers\DashboardServiceProvider;
 use App\Providers\FortifyServiceProvider;
 use App\Providers\MadelineProtoServiceProvider;
 use App\Providers\MoonShineServiceProvider;
+use App\Providers\SecurityServiceProvider;
 use App\Providers\SupportServiceProvider;
 
 return [
     AppServiceProvider::class,
+    SecurityServiceProvider::class,
     SupportServiceProvider::class,
     DashboardServiceProvider::class,
     ParserSupportServiceProvider::class,

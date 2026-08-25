@@ -1,50 +1,59 @@
+import { usePage } from '@inertiajs/vue3';
 import { computed, ref } from 'vue';
+import type { ComputedRef } from 'vue';
 
 export type Locale = 'en' | 'ru';
 
+type LocaleState = {
+    locale: ComputedRef<Locale>;
+    setLocale: (next: Locale) => void;
+};
+
 const LOCALE_STORAGE_KEY = 'locale';
+const LOCALE_COOKIE_MAX_AGE_SECONDS = 60 * 60 * 24 * 365;
 
 const isLocale = (value: unknown): value is Locale =>
     value === 'en' || value === 'ru';
 
-const detectLocale = (): Locale => {
-    if (typeof window !== 'undefined') {
-        const storedLocale = window.localStorage.getItem(LOCALE_STORAGE_KEY);
+const browserLocale = ref<Locale | null>(null);
 
-        if (isLocale(storedLocale)) {
-            return storedLocale;
-        }
+const normalizeLocale = (value: unknown): Locale =>
+    isLocale(value) ? value : 'en';
+
+const persistBrowserLocale = (locale: Locale): void => {
+    document.documentElement.lang = locale;
+
+    try {
+        window.localStorage.setItem(LOCALE_STORAGE_KEY, locale);
+    } catch {
+        // Locale still persists in the cookie when storage is unavailable.
     }
 
-    if (
-        typeof document !== 'undefined' &&
-        document.documentElement.lang.toLowerCase().startsWith('ru')
-    ) {
-        return 'ru';
-    }
-
-    return 'en';
+    const secure = window.location.protocol === 'https:' ? '; Secure' : '';
+    document.cookie = `locale=${locale}; Path=/; Max-Age=${LOCALE_COOKIE_MAX_AGE_SECONDS}; SameSite=Lax${secure}`;
 };
 
-const activeLocale = ref<Locale>(detectLocale());
+export const useLocale = (): LocaleState => {
+    const page = usePage();
+    const serverLocale = computed(() => normalizeLocale(page.props.locale));
 
-if (typeof document !== 'undefined') {
-    document.documentElement.lang = activeLocale.value;
-}
+    if (typeof window === 'undefined') {
+        return {
+            locale: serverLocale,
+            setLocale: (): void => undefined,
+        };
+    }
 
-export const useLocale = () => {
-    const locale = computed(() => activeLocale.value);
+    if (browserLocale.value === null) {
+        browserLocale.value = serverLocale.value;
+        persistBrowserLocale(browserLocale.value);
+    }
+
+    const locale = computed(() => browserLocale.value ?? serverLocale.value);
 
     const setLocale = (next: Locale): void => {
-        activeLocale.value = next;
-
-        if (typeof document !== 'undefined') {
-            document.documentElement.lang = next;
-        }
-
-        if (typeof window !== 'undefined') {
-            window.localStorage.setItem(LOCALE_STORAGE_KEY, next);
-        }
+        browserLocale.value = next;
+        persistBrowserLocale(next);
     };
 
     return {

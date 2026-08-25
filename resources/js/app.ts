@@ -1,6 +1,7 @@
 import { createInertiaApp } from '@inertiajs/vue3';
 import { defineAsyncComponent } from 'vue';
 import { initializeTheme } from '@/composables/useAppearance';
+import { formatPageTitle } from '@/lib/pageTitle';
 
 const AppLayout = defineAsyncComponent(() => import('@/layouts/AppLayout.vue'));
 const AuthLayout = defineAsyncComponent(
@@ -13,7 +14,7 @@ const SettingsLayout = defineAsyncComponent(
 const appName = import.meta.env.VITE_APP_NAME || 'Uraboros';
 
 createInertiaApp({
-    title: (title) => (title ? `${title} - ${appName}` : appName),
+    title: (title) => formatPageTitle(title, appName),
     layout: (name) => {
         switch (true) {
             case name === 'Welcome':

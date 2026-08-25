@@ -13,13 +13,15 @@ use Throwable;
 
 final class ProcessParserRun implements ShouldBeUniqueUntilProcessing, ShouldQueue
 {
+    public const TIMEOUT_SECONDS = 120;
+
     private const SERIALIZED_MODULES = ['telegram'];
 
     use Queueable;
 
     public int $tries = 3;
 
-    public int $timeout = 120;
+    public int $timeout = self::TIMEOUT_SECONDS;
 
     public bool $failOnTimeout = true;
 

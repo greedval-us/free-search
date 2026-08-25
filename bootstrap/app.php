@@ -3,10 +3,13 @@
 use App\Exceptions\PublicException;
 use App\Http\Middleware\AddSecurityHeaders;
 use App\Http\Middleware\EnsureFeatureAccess;
+use App\Http\Middleware\EnsureResendWebhookConfigured;
 use App\Http\Middleware\EnsureUserIsNotBlocked;
 use App\Http\Middleware\HandleAppearance;
 use App\Http\Middleware\HandleInertiaRequests;
 use App\Http\Middleware\LogUserActivity;
+use App\Http\Middleware\ResolveRequestLocale;
+use App\Http\Middleware\ThrottleSensitivePublicEndpoints;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Auth\AuthenticationException;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
@@ -28,14 +31,18 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
-        $middleware->encryptCookies(except: ['appearance', 'sidebar_state']);
+        $middleware->encryptCookies(except: ['appearance', 'locale', 'sidebar_state']);
 
         $middleware->alias([
             'feature.access' => EnsureFeatureAccess::class,
         ]);
 
+        $middleware->append(EnsureResendWebhookConfigured::class);
+
         $middleware->web(append: [
             AddSecurityHeaders::class,
+            ResolveRequestLocale::class,
+            ThrottleSensitivePublicEndpoints::class,
             HandleAppearance::class,
             HandleInertiaRequests::class,
             AddLinkHeadersForPreloadedAssets::using(6),

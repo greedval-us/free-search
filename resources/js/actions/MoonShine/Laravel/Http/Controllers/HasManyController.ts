@@ -104,7 +104,7 @@ formComponent.head = (args: { pageUri: string | number, resourceUri?: string | n
     formComponent.form = formComponentForm
 /**
 * @see \MoonShine\Laravel\Http\Controllers\HasManyController::listComponent
- * @see vendor/moonshine/moonshine/src/Laravel/src/Http/Controllers/HasManyController.php:149
+ * @see vendor/moonshine/moonshine/src/Laravel/src/Http/Controllers/HasManyController.php:160
  * @route '/admin/has-many/list/{pageUri}/{resourceUri?}/{resourceItem?}'
  */
 export const listComponent = (args: { pageUri: string | number, resourceUri?: string | number, resourceItem?: string | number } | [pageUri: string | number, resourceUri: string | number, resourceItem: string | number ], options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -119,7 +119,7 @@ listComponent.definition = {
 
 /**
 * @see \MoonShine\Laravel\Http\Controllers\HasManyController::listComponent
- * @see vendor/moonshine/moonshine/src/Laravel/src/Http/Controllers/HasManyController.php:149
+ * @see vendor/moonshine/moonshine/src/Laravel/src/Http/Controllers/HasManyController.php:160
  * @route '/admin/has-many/list/{pageUri}/{resourceUri?}/{resourceItem?}'
  */
 listComponent.url = (args: { pageUri: string | number, resourceUri?: string | number, resourceItem?: string | number } | [pageUri: string | number, resourceUri: string | number, resourceItem: string | number ], options?: RouteQueryOptions) => {
@@ -153,7 +153,7 @@ listComponent.url = (args: { pageUri: string | number, resourceUri?: string | nu
 
 /**
 * @see \MoonShine\Laravel\Http\Controllers\HasManyController::listComponent
- * @see vendor/moonshine/moonshine/src/Laravel/src/Http/Controllers/HasManyController.php:149
+ * @see vendor/moonshine/moonshine/src/Laravel/src/Http/Controllers/HasManyController.php:160
  * @route '/admin/has-many/list/{pageUri}/{resourceUri?}/{resourceItem?}'
  */
 listComponent.get = (args: { pageUri: string | number, resourceUri?: string | number, resourceItem?: string | number } | [pageUri: string | number, resourceUri: string | number, resourceItem: string | number ], options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -162,7 +162,7 @@ listComponent.get = (args: { pageUri: string | number, resourceUri?: string | nu
 })
 /**
 * @see \MoonShine\Laravel\Http\Controllers\HasManyController::listComponent
- * @see vendor/moonshine/moonshine/src/Laravel/src/Http/Controllers/HasManyController.php:149
+ * @see vendor/moonshine/moonshine/src/Laravel/src/Http/Controllers/HasManyController.php:160
  * @route '/admin/has-many/list/{pageUri}/{resourceUri?}/{resourceItem?}'
  */
 listComponent.head = (args: { pageUri: string | number, resourceUri?: string | number, resourceItem?: string | number } | [pageUri: string | number, resourceUri: string | number, resourceItem: string | number ], options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -172,7 +172,7 @@ listComponent.head = (args: { pageUri: string | number, resourceUri?: string | n
 
     /**
 * @see \MoonShine\Laravel\Http\Controllers\HasManyController::listComponent
- * @see vendor/moonshine/moonshine/src/Laravel/src/Http/Controllers/HasManyController.php:149
+ * @see vendor/moonshine/moonshine/src/Laravel/src/Http/Controllers/HasManyController.php:160
  * @route '/admin/has-many/list/{pageUri}/{resourceUri?}/{resourceItem?}'
  */
     const listComponentForm = (args: { pageUri: string | number, resourceUri?: string | number, resourceItem?: string | number } | [pageUri: string | number, resourceUri: string | number, resourceItem: string | number ], options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -182,7 +182,7 @@ listComponent.head = (args: { pageUri: string | number, resourceUri?: string | n
 
             /**
 * @see \MoonShine\Laravel\Http\Controllers\HasManyController::listComponent
- * @see vendor/moonshine/moonshine/src/Laravel/src/Http/Controllers/HasManyController.php:149
+ * @see vendor/moonshine/moonshine/src/Laravel/src/Http/Controllers/HasManyController.php:160
  * @route '/admin/has-many/list/{pageUri}/{resourceUri?}/{resourceItem?}'
  */
         listComponentForm.get = (args: { pageUri: string | number, resourceUri?: string | number, resourceItem?: string | number } | [pageUri: string | number, resourceUri: string | number, resourceItem: string | number ], options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -191,7 +191,7 @@ listComponent.head = (args: { pageUri: string | number, resourceUri?: string | n
         })
             /**
 * @see \MoonShine\Laravel\Http\Controllers\HasManyController::listComponent
- * @see vendor/moonshine/moonshine/src/Laravel/src/Http/Controllers/HasManyController.php:149
+ * @see vendor/moonshine/moonshine/src/Laravel/src/Http/Controllers/HasManyController.php:160
  * @route '/admin/has-many/list/{pageUri}/{resourceUri?}/{resourceItem?}'
  */
         listComponentForm.head = (args: { pageUri: string | number, resourceUri?: string | number, resourceItem?: string | number } | [pageUri: string | number, resourceUri: string | number, resourceItem: string | number ], options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({

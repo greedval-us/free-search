@@ -92,4 +92,18 @@ class PasswordResetTest extends TestCase
 
         $response->assertSessionHasErrors('email');
     }
+
+    public function test_reset_password_link_requests_are_rate_limited(): void
+    {
+        Notification::fake();
+        config()->set('security.rate_limits.password_reset.per_minute', 2);
+        config()->set('security.rate_limits.password_reset.per_hour', 20);
+        config()->set('security.rate_limits.password_reset.per_email_per_minute', 20);
+
+        $payload = ['email' => 'unknown@example.com'];
+
+        $this->post(route('password.email'), $payload)->assertRedirect();
+        $this->post(route('password.email'), $payload)->assertRedirect();
+        $this->post(route('password.email'), $payload)->assertTooManyRequests();
+    }
 }
