@@ -17,5 +17,6 @@ class SitemapControllerTest extends TestCase
         $response->assertSee(route('home', absolute: true), false);
         $response->assertSee(route('privacy', absolute: true), false);
         $response->assertSee(route('terms', absolute: true), false);
+        $response->assertDontSee('<lastmod>', false);
     }
 }

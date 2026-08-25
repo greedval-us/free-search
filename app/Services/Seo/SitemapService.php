@@ -24,10 +24,8 @@ final class SitemapService
 
     public function toXml(): string
     {
-        $lastmod = now()->toDateString();
-
         $items = collect($this->pages())
-            ->map(function (array $page) use ($lastmod): string {
+            ->map(function (array $page): string {
                 $loc = htmlspecialchars($page['loc'], ENT_XML1);
                 $priority = htmlspecialchars($page['priority'], ENT_XML1);
                 $changefreq = htmlspecialchars($page['changefreq'], ENT_XML1);
@@ -35,7 +33,6 @@ final class SitemapService
                 return <<<XML
     <url>
         <loc>{$loc}</loc>
-        <lastmod>{$lastmod}</lastmod>
         <changefreq>{$changefreq}</changefreq>
         <priority>{$priority}</priority>
     </url>

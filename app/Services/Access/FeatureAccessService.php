@@ -31,6 +31,18 @@ final class FeatureAccessService implements FeatureAccessServiceInterface
         return $this->decide($user, $this->policyResolver->resourcePolicy($resource, $counts), false);
     }
 
+    public function refund(User $user, string $routeName): void
+    {
+        $policy = $this->policyResolver->routePolicy($routeName)
+            ?? $this->policyResolver->resourcePolicy('analytics');
+
+        if (! $policy->counts || $this->policyResolver->canBypass($user)) {
+            return;
+        }
+
+        $this->usageCounter->release($user, $policy->quotaKey);
+    }
+
     private function decide(User $user, AccessResourcePolicy $policy, bool $consume): FeatureAccessDecision
     {
         if ($this->policyResolver->canBypass($user)) {

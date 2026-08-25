@@ -1,6 +1,9 @@
 <?php
 
 return [
+    'retention_days' => max(1, (int) env('ACTIVITY_LOG_RETENTION_DAYS', 90)),
+    'cleanup_schedule' => env('ACTIVITY_LOG_CLEANUP_SCHEDULE', '04:00'),
+
     /**
      * Declarative mapping for rebuilding module run URLs from request logs.
      *

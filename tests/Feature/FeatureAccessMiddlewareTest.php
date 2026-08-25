@@ -11,6 +11,7 @@ use App\Modules\YouTube\Parser\Contracts\YouTubeParserApplicationServiceInterfac
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Validation\ValidationException;
 use Mockery;
 use Tests\Feature\Concerns\CreatesSubscribedUser;
 use Tests\TestCase;
@@ -19,6 +20,16 @@ class FeatureAccessMiddlewareTest extends TestCase
 {
     use CreatesSubscribedUser;
     use RefreshDatabase;
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        Config::set('access.plans.free', array_map(
+            static fn (): int => 0,
+            config('access.plans.free')
+        ));
+    }
 
     public function test_denied_feature_request_is_not_written_to_dashboard_activity(): void
     {
@@ -151,6 +162,98 @@ class FeatureAccessMiddlewareTest extends TestCase
         $this
             ->actingAs($user)
             ->getJson('/_feature-access-summary-test?snapshotRole=previous')
+            ->assertOk();
+
+        $this->assertDatabaseHas('feature_usage_daily', [
+            'user_id' => $user->id,
+            'feature' => 'telegram.analytics',
+            'used' => 1,
+        ]);
+    }
+
+    public function test_unsuccessful_response_refunds_consumed_quota(): void
+    {
+        Route::get('/_feature-access-failed-response', static fn () => response()->json([
+            'ok' => false,
+        ], 422))
+            ->middleware('feature.access')
+            ->name('feature-access.failed-response');
+
+        Config::set('access.protected_routes', [
+            ...config('access.protected_routes'),
+            'feature-access.failed-response' => [
+                'resource' => 'telegram.analytics',
+                'counts' => true,
+            ],
+        ]);
+
+        $user = $this->createSubscribedUser();
+
+        $this
+            ->actingAs($user)
+            ->getJson('/_feature-access-failed-response')
+            ->assertUnprocessable();
+
+        $this->assertDatabaseHas('feature_usage_daily', [
+            'user_id' => $user->id,
+            'feature' => 'telegram.analytics',
+            'used' => 0,
+        ]);
+    }
+
+    public function test_validation_exception_refunds_consumed_quota(): void
+    {
+        Route::get('/_feature-access-validation-error', static function (): never {
+            throw ValidationException::withMessages([
+                'target' => ['The target field is required.'],
+            ]);
+        })
+            ->middleware('feature.access')
+            ->name('feature-access.validation-error');
+
+        Config::set('access.protected_routes', [
+            ...config('access.protected_routes'),
+            'feature-access.validation-error' => [
+                'resource' => 'telegram.analytics',
+                'counts' => true,
+            ],
+        ]);
+
+        $user = $this->createSubscribedUser();
+
+        $this
+            ->actingAs($user)
+            ->getJson('/_feature-access-validation-error')
+            ->assertUnprocessable();
+
+        $this->assertDatabaseHas('feature_usage_daily', [
+            'user_id' => $user->id,
+            'feature' => 'telegram.analytics',
+            'used' => 0,
+        ]);
+    }
+
+    public function test_successful_response_keeps_consumed_quota(): void
+    {
+        Route::get('/_feature-access-successful-response', static fn () => response()->json([
+            'ok' => true,
+        ]))
+            ->middleware('feature.access')
+            ->name('feature-access.successful-response');
+
+        Config::set('access.protected_routes', [
+            ...config('access.protected_routes'),
+            'feature-access.successful-response' => [
+                'resource' => 'telegram.analytics',
+                'counts' => true,
+            ],
+        ]);
+
+        $user = $this->createSubscribedUser();
+
+        $this
+            ->actingAs($user)
+            ->getJson('/_feature-access-successful-response')
             ->assertOk();
 
         $this->assertDatabaseHas('feature_usage_daily', [
@@ -315,5 +418,4 @@ class FeatureAccessMiddlewareTest extends TestCase
             'used' => 5,
         ]);
     }
-
 }

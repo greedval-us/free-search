@@ -2,11 +2,15 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\MassPrunable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class RequestLog extends Model
 {
+    use MassPrunable;
+
     public $timestamps = false;
 
     /**
@@ -60,5 +64,15 @@ class RequestLog extends Model
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
+    }
+
+    /**
+     * @return Builder<RequestLog>
+     */
+    public function prunable(): Builder
+    {
+        $retentionDays = max(1, (int) config('activity.retention_days', 90));
+
+        return static::query()->where('created_at', '<', now()->subDays($retentionDays));
     }
 }

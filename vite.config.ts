@@ -4,6 +4,7 @@ import tailwindcss from '@tailwindcss/vite';
 import vue from '@vitejs/plugin-vue';
 import laravel from 'laravel-vite-plugin';
 import { existsSync } from 'node:fs';
+import { resolve } from 'node:path';
 import { defineConfig } from 'vite';
 
 const resolveWayfinderCommand = () => {
@@ -15,7 +16,10 @@ const resolveWayfinderCommand = () => {
         return `"${process.env.WAYFINDER_PHP}" artisan wayfinder:generate`;
     }
 
-    const osPanelPhp83 = 'D:/Program/OSPanel/modules/PHP-8.3/php.exe';
+    const osPanelPhp83 = resolve(
+        process.cwd(),
+        '../../modules/PHP-8.3/php.exe'
+    );
 
     if (existsSync(osPanelPhp83)) {
         return `"${osPanelPhp83}" artisan wayfinder:generate`;
@@ -30,7 +34,12 @@ export default defineConfig({
             input: ['resources/css/app.css', 'resources/js/app.ts'],
             refresh: true,
         }),
-        inertia(),
+        inertia({
+            ssr: {
+                port: 13714,
+                cluster: false,
+            },
+        }),
         tailwindcss(),
         vue({
             template: {

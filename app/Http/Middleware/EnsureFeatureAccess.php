@@ -4,10 +4,12 @@ namespace App\Http\Middleware;
 
 use App\Services\Access\Contracts\FeatureAccessRequestResolverInterface;
 use App\Services\Access\Contracts\FeatureAccessServiceInterface;
+use App\Services\Access\DTO\FeatureAccessDecision;
 use Closure;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Throwable;
 
 final class EnsureFeatureAccess
 {
@@ -37,10 +39,31 @@ final class EnsureFeatureAccess
             ? $this->featureAccessService->consume($user, $routeName)
             : $this->featureAccessService->inspect($user, $accessRequest->resource, $accessRequest->counts);
 
-        if ($decision->allowed) {
+        if (! $decision->allowed) {
+            return $this->deniedResponse($request, $decision);
+        }
+
+        if (! $accessRequest->consume || ! $decision->counts) {
             return $next($request);
         }
 
+        try {
+            $response = $next($request);
+        } catch (Throwable $exception) {
+            $this->featureAccessService->refund($user, $routeName);
+
+            throw $exception;
+        }
+
+        if (! $response->isSuccessful()) {
+            $this->featureAccessService->refund($user, $routeName);
+        }
+
+        return $response;
+    }
+
+    private function deniedResponse(Request $request, FeatureAccessDecision $decision): Response
+    {
         $status = $decision->limit <= 0 ? Response::HTTP_FORBIDDEN : Response::HTTP_TOO_MANY_REQUESTS;
         $message = $decision->message ?? __('errors.access.feature_denied');
         $request->attributes->set('feature_access_denied', true);
