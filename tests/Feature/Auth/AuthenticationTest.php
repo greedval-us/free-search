@@ -17,6 +17,9 @@ class AuthenticationTest extends TestCase
         $response = $this->get(route('login'));
 
         $response->assertOk();
+
+        $linkHeader = (string) $response->headers->get('Link');
+        $this->assertLessThanOrEqual(6, substr_count($linkHeader, '<'));
     }
 
     public function test_users_can_authenticate_using_the_login_screen()

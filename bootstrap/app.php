@@ -38,7 +38,7 @@ return Application::configure(basePath: dirname(__DIR__))
             AddSecurityHeaders::class,
             HandleAppearance::class,
             HandleInertiaRequests::class,
-            AddLinkHeadersForPreloadedAssets::class,
+            AddLinkHeadersForPreloadedAssets::using(6),
             EnsureUserIsNotBlocked::class,
             LogUserActivity::class,
         ]);

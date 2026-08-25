@@ -44,14 +44,25 @@ class RequestPayloadSanitizer
     ];
 
     /**
-     * @param array<string, mixed> $payload
+     * @param  array<int, string>  $additionalMaskedKeys
+     */
+    public function __construct(array $additionalMaskedKeys = [])
+    {
+        $this->maskedKeys = array_values(array_unique([
+            ...$this->maskedKeys,
+            ...array_map('strtolower', $additionalMaskedKeys),
+        ]));
+    }
+
+    /**
+     * @param  array<string, mixed>  $payload
      * @return array<string, mixed>
      */
     public function sanitize(array $payload): array
     {
         $result = [];
         foreach ($payload as $key => $value) {
-            if (!is_string($key)) {
+            if (! is_string($key)) {
                 continue;
             }
 
