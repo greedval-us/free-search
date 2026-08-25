@@ -66,6 +66,21 @@ location ^~ /build/assets/ {
 
 Перед reload всегда выполняйте `sudo nginx -t`.
 
+## Host hardening
+
+- Use key-only SSH authentication, disable password authentication, limit login attempts and do not expose privileged credentials in deployment scripts.
+- Allow inbound traffic only to SSH, HTTP and HTTPS. Rate-limit SSH and keep the SSR endpoint on `127.0.0.1:13714`; port `13714` must not be reachable from the Internet.
+- Enable Fail2ban for SSH and automatic security updates. Validate firewall state after every network change.
+- Use daily Laravel logs with bounded retention (`LOG_STACK=daily`, `LOG_DAILY_DAYS=14`) and rotate standalone process logs such as `ssr.log`.
+- Back up the database, `.env` and `storage/app/private` with root-only permissions. Verify checksums and restore regularly; keep an encrypted off-site copy in addition to local retention.
+- For large Inertia responses, configure bounded FastCGI buffers instead of disabling response headers globally:
+
+```nginx
+fastcgi_buffer_size 16k;
+fastcgi_buffers 8 16k;
+fastcgi_busy_buffers_size 32k;
+```
+
 ## Security baseline
 
 - `APP_ENV=production`, `APP_DEBUG=false`, HTTPS и `SESSION_SECURE_COOKIE=true`;

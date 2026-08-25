@@ -4,13 +4,47 @@ namespace Tests\Feature;
 
 use App\Modules\Bluesky\Parser\BlueskyParserExportBuilder;
 use App\Modules\Export\Excel\SheetDefinition;
+use App\Modules\Export\Excel\WorkbookExport;
 use App\Modules\Mastodon\Parser\MastodonParserExportBuilder;
 use App\Modules\YouTube\Parser\YouTubeParserExportBuilder;
 use App\Modules\YouTube\Support\YouTubeModuleConfig;
+use Maatwebsite\Excel\Excel as ExcelWriter;
+use Maatwebsite\Excel\Facades\Excel;
+use PhpOffice\PhpSpreadsheet\IOFactory;
 use Tests\TestCase;
 
 class ParserExportBuildersTest extends TestCase
 {
+    public function test_workbook_export_creates_a_readable_styled_xlsx_file(): void
+    {
+        $definition = new SheetDefinition(
+            title: 'Results',
+            headings: ['Name', 'URL'],
+            rows: [['Uraboros', 'https://uraboros.online']],
+            hyperlinkColumns: ['B'],
+        );
+
+        $path = tempnam(storage_path('framework/cache'), 'uraboros-xlsx-');
+        $this->assertNotFalse($path);
+
+        try {
+            file_put_contents($path, Excel::raw(new WorkbookExport([$definition]), ExcelWriter::XLSX));
+            $spreadsheet = IOFactory::load($path);
+            $sheet = $spreadsheet->getSheetByName('Results');
+
+            $this->assertNotNull($sheet);
+            $this->assertSame('Name', $sheet->getCell('A1')->getValue());
+            $this->assertSame('Uraboros', $sheet->getCell('A2')->getValue());
+            $this->assertSame('https://uraboros.online', $sheet->getCell('B2')->getHyperlink()->getUrl());
+            $this->assertSame('A2', $sheet->getFreezePane());
+            $this->assertSame('A1:B1', $sheet->getAutoFilter()->getRange());
+        } finally {
+            if (is_file($path)) {
+                unlink($path);
+            }
+        }
+    }
+
     public function test_youtube_export_builder_produces_analytics_summary_and_sheet_formatting(): void
     {
         app()->setLocale('en');
@@ -95,7 +129,7 @@ class ParserExportBuildersTest extends TestCase
     {
         app()->setLocale('en');
 
-        $builder = new MastodonParserExportBuilder();
+        $builder = new MastodonParserExportBuilder;
 
         $sheets = $builder->buildSheets([
             'account' => '@alice@example.social',
@@ -201,7 +235,7 @@ class ParserExportBuildersTest extends TestCase
     {
         app()->setLocale('en');
 
-        $builder = new BlueskyParserExportBuilder();
+        $builder = new BlueskyParserExportBuilder;
 
         $sheets = $builder->buildSheets([
             'actor' => '@alice.bsky.social',
