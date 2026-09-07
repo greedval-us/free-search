@@ -12,6 +12,7 @@ use App\Modules\YouTube\Providers\YouTubeServiceProvider;
 use App\Providers\AppServiceProvider;
 use App\Providers\DashboardServiceProvider;
 use App\Providers\FortifyServiceProvider;
+use App\Providers\HttpServiceProvider;
 use App\Providers\MadelineProtoServiceProvider;
 use App\Providers\MoonShineServiceProvider;
 use App\Providers\SecurityServiceProvider;
@@ -19,6 +20,7 @@ use App\Providers\SupportServiceProvider;
 
 return [
     AppServiceProvider::class,
+    HttpServiceProvider::class,
     SecurityServiceProvider::class,
     SupportServiceProvider::class,
     DashboardServiceProvider::class,

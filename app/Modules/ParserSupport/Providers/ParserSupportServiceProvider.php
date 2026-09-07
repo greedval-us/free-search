@@ -5,7 +5,7 @@ namespace App\Modules\ParserSupport\Providers;
 use App\Modules\ParserSupport\Contracts\ParserRunBackgroundProcessorInterface;
 use App\Modules\ParserSupport\Contracts\ParserRunJobDispatcherInterface;
 use App\Modules\ParserSupport\ParserRunBackgroundProcessorRegistry;
-use App\Modules\ParserSupport\ParserRunExecutionConfig;
+use App\Modules\ParserSupport\ParserRunConfig;
 use App\Modules\ParserSupport\ParserRunJobDispatcher;
 use App\Modules\ParserSupport\ParserRunQueueConfigurationGuard;
 use Illuminate\Support\ServiceProvider;
@@ -15,8 +15,8 @@ final class ParserSupportServiceProvider extends ServiceProvider
     public function register(): void
     {
         $this->app->singleton(
-            ParserRunExecutionConfig::class,
-            static fn (): ParserRunExecutionConfig => ParserRunExecutionConfig::fromArray(
+            ParserRunConfig::class,
+            static fn (): ParserRunConfig => ParserRunConfig::fromArray(
                 (array) config('osint.parser_runs', []),
             ),
         );

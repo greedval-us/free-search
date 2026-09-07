@@ -19,6 +19,12 @@ use Illuminate\Support\Facades\Log;
 
 class TelegramService implements TelegramGatewayInterface
 {
+    private const MIN_COMMENTS_LIMIT = 1;
+
+    private const COMMENTS_REQUEST_DELAY_MS = 650;
+
+    private const COMMENTS_MAX_PAGES = 1;
+
     public function __construct(
         private readonly InfoAction $infoAction,
         private readonly MessagesAction $messagesAction,
@@ -84,17 +90,21 @@ class TelegramService implements TelegramGatewayInterface
         }
     }
 
-    public function getComments(string $channel, int $postId, int $limit = 20, int $offsetId = 0): array
-    {
+    public function getComments(
+        string $channel,
+        int $postId,
+        int $limit = self::DEFAULT_COMMENTS_LIMIT,
+        int $offsetId = self::INITIAL_COMMENTS_OFFSET_ID,
+    ): array {
         try {
-            $safeLimit = max(1, min($limit, 20));
+            $safeLimit = max(self::MIN_COMMENTS_LIMIT, min($limit, self::DEFAULT_COMMENTS_LIMIT));
             $result = $this->commentsAction->execute(
                 channelId: $channel,
                 postIds: [$postId],
-                delayMs: 650,
+                delayMs: self::COMMENTS_REQUEST_DELAY_MS,
                 commentsPerRequest: $safeLimit,
-                maxPages: 1,
-                offsetId: max(0, $offsetId),
+                maxPages: self::COMMENTS_MAX_PAGES,
+                offsetId: max(self::INITIAL_COMMENTS_OFFSET_ID, $offsetId),
             );
 
             if (!is_array($result) || !isset($result[0]) || !is_array($result[0])) {

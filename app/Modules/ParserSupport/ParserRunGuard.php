@@ -2,6 +2,8 @@
 
 namespace App\Modules\ParserSupport;
 
+use App\Exceptions\Public\PublicResourceNotFoundException;
+use App\Exceptions\Public\PublicValidationException;
 use App\Models\ParserRun;
 
 class ParserRunGuard
@@ -12,7 +14,12 @@ class ParserRunGuard
      */
     public function requireExistingRun(?array $run): array
     {
-        abort_unless($run !== null, 404);
+        if ($run === null) {
+            throw new PublicResourceNotFoundException(
+                'errors.api.parser_run.not_found',
+                'parser_run_not_found',
+            );
+        }
 
         return $run;
     }
@@ -23,10 +30,21 @@ class ParserRunGuard
      */
     public function requireDownloadablePayload(array $run): array
     {
-        abort_unless(ParserRun::isDownloadableStatus($run['status'] ?? null), 409);
+        if (! ParserRun::isDownloadableStatus($run['status'] ?? null)) {
+            throw new PublicValidationException(
+                'errors.api.parser_run.not_downloadable',
+                'parser_run_not_downloadable',
+                409,
+            );
+        }
 
         $payload = is_array($run['result'] ?? null) ? $run['result'] : null;
-        abort_unless($payload !== null, 404);
+        if ($payload === null) {
+            throw new PublicResourceNotFoundException(
+                'errors.api.parser_run.result_not_found',
+                'parser_run_result_not_found',
+            );
+        }
 
         return $payload;
     }

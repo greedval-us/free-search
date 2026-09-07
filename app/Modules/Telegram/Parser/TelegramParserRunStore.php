@@ -3,6 +3,7 @@
 namespace App\Modules\Telegram\Parser;
 
 use App\Modules\ParserSupport\JsonRunStore;
+use App\Modules\Telegram\Enums\TelegramParserStage;
 
 class TelegramParserRunStore extends JsonRunStore
 {
@@ -17,17 +18,13 @@ class TelegramParserRunStore extends JsonRunStore
      */
     protected function initialState(int $userId, string $runId, array $context, string $now): array
     {
-        return [
-            'runId' => $runId,
-            'userId' => $userId,
-            'status' => 'running',
-            'stage' => 'messages',
-            'progress' => 1,
-            'error' => null,
-            'createdAt' => $now,
-            'updatedAt' => $now,
-            'context' => $context,
-            'cursor' => [
+        return $this->buildInitialState(
+            userId: $userId,
+            runId: $runId,
+            now: $now,
+            stage: TelegramParserStage::Messages->value,
+            context: $context,
+            cursor: [
                 'messagesOffsetId' => 0,
                 'messagesHasMore' => true,
                 'messagesPage' => 0,
@@ -35,13 +32,12 @@ class TelegramParserRunStore extends JsonRunStore
                 'commentPostIds' => [],
                 'commentPostIndex' => 0,
                 'commentOffsetId' => 0,
-                'nextAdvanceAt' => 0,
             ],
-            'stats' => [
+            stats: [
                 'processedMessages' => 0,
                 'processedComments' => 0,
             ],
-            'data' => [
+            data: [
                 'messages' => [],
                 'messageIds' => [],
                 'commentIds' => [],
@@ -49,12 +45,6 @@ class TelegramParserRunStore extends JsonRunStore
                 'reactionsIndex' => [],
                 'isChannel' => false,
             ],
-            'result' => null,
-        ];
-    }
-
-    protected function runPath(int $userId, string $runId): string
-    {
-        return sprintf('telegram-parser-runs/%d/%s.json', $userId, $runId);
+        );
     }
 }

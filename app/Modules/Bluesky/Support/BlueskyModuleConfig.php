@@ -4,12 +4,15 @@ namespace App\Modules\Bluesky\Support;
 
 final class BlueskyModuleConfig
 {
+    private const DEFAULT_TIMEZONE = 'UTC';
+
     /**
      * @param array<string, mixed> $config
      */
-    public static function fromArray(array $config): self
+    public static function fromArray(array $config, string $timezone = self::DEFAULT_TIMEZONE): self
     {
         return new self(
+            timezone: trim($timezone) !== '' ? $timezone : self::DEFAULT_TIMEZONE,
             searchLimitDefault: max(1, self::intValue($config, 'search_limit_default', 10)),
             searchLimitMax: max(1, self::intValue($config, 'search_limit_max', 25)),
             defaultType: self::stringValue($config, 'default_type', 'posts'),
@@ -18,11 +21,17 @@ final class BlueskyModuleConfig
     }
 
     public function __construct(
+        private readonly string $timezone,
         private readonly int $searchLimitDefault,
         private readonly int $searchLimitMax,
         private readonly string $defaultType,
         private readonly string $defaultSort,
     ) {
+    }
+
+    public function timezone(): string
+    {
+        return $this->timezone;
     }
 
     public function searchLimitDefault(): int

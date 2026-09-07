@@ -3,6 +3,7 @@
 namespace App\Modules\Bluesky\Parser;
 
 use App\Modules\Bluesky\Parser\Contracts\BlueskyParserExportBuilderInterface;
+use App\Modules\Bluesky\Support\BlueskyModuleConfig;
 use App\Modules\Export\Excel\SheetDefinition;
 use Carbon\Carbon;
 use PhpOffice\PhpSpreadsheet\Shared\Date as ExcelDate;
@@ -10,7 +11,9 @@ use PhpOffice\PhpSpreadsheet\Style\NumberFormat;
 
 final class BlueskyParserExportBuilder implements BlueskyParserExportBuilderInterface
 {
-    private const TIMEZONE = 'UTC';
+    public function __construct(private readonly BlueskyModuleConfig $config)
+    {
+    }
 
     /**
      * @param array<string, mixed> $payload
@@ -322,9 +325,7 @@ final class BlueskyParserExportBuilder implements BlueskyParserExportBuilderInte
 
     private function timezone(): string
     {
-        $timezone = (string) config('app.timezone', self::TIMEZONE);
-
-        return trim($timezone) !== '' ? $timezone : self::TIMEZONE;
+        return $this->config->timezone();
     }
 
     /**

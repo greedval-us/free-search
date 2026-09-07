@@ -6,7 +6,7 @@ use App\Jobs\ProcessParserRun;
 use App\Modules\ParserSupport\Contracts\ParserRunBackgroundProcessorInterface;
 use App\Modules\ParserSupport\Contracts\ParserRunJobDispatcherInterface;
 use App\Modules\ParserSupport\ParserRunBackgroundProcessorRegistry;
-use App\Modules\ParserSupport\ParserRunExecutionConfig;
+use App\Modules\ParserSupport\ParserRunConfig;
 use Illuminate\Queue\Middleware\WithoutOverlapping;
 use PHPUnit\Framework\TestCase;
 
@@ -30,7 +30,7 @@ class ProcessParserRunTest extends TestCase
         $job->handle(
             new ParserRunBackgroundProcessorRegistry([$processor]),
             $dispatcher,
-            new ParserRunExecutionConfig(true, 'parser-runs', 2),
+            new ParserRunConfig(true, 'parser-runs', 2),
         );
     }
 
@@ -50,7 +50,7 @@ class ProcessParserRunTest extends TestCase
         $job->handle(
             new ParserRunBackgroundProcessorRegistry([$processor]),
             $dispatcher,
-            new ParserRunExecutionConfig(true, 'parser-runs', 2),
+            new ParserRunConfig(true, 'parser-runs', 2),
         );
     }
 

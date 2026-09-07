@@ -2,9 +2,6 @@
 
 namespace App\Http\Controllers\Concerns;
 
-use App\Support\Reports\Contracts\ReportFilenamePolicyInterface;
-use App\Support\Reports\ReportFilenamePolicy;
-use App\Support\Reports\ReportsConfig;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
@@ -32,18 +29,6 @@ trait HandlesParserDownloads
         );
     }
 
-    protected function buildExportFilename(
-        string $prefix,
-        string $target,
-        string $extension
-    ): string {
-        return $this->parserFilenamePolicy()->buildWithExtension(
-            prefix: $prefix,
-            target: $target,
-            extension: $extension,
-        );
-    }
-
     protected function applyDownloadLocale(Request $request): void
     {
         $locale = strtolower(trim((string) $request->query('locale', app()->getLocale())));
@@ -53,16 +38,4 @@ trait HandlesParserDownloads
         );
     }
 
-    private function parserFilenamePolicy(): ReportFilenamePolicyInterface
-    {
-        return new ReportFilenamePolicy($this->parserReportsConfig());
-    }
-
-    private function parserReportsConfig(): ReportsConfig
-    {
-        return ReportsConfig::fromArray(
-            (array) config('osint.reports', []),
-            (string) config('app.timezone', 'UTC')
-        );
-    }
 }

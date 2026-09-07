@@ -11,6 +11,7 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
+use JsonException;
 use Tests\TestCase;
 
 class ParserRunStorageTest extends TestCase
@@ -112,5 +113,31 @@ class ParserRunStorageTest extends TestCase
         ]);
         Storage::disk('private')->assertExists($metadata->file_path);
         Log::shouldHaveReceived('info')->once();
+    }
+
+    public function test_corrupted_run_file_is_not_overwritten_during_read_or_mutation(): void
+    {
+        Storage::fake('private');
+
+        $user = User::factory()->create();
+        $store = app(TelegramParserRunStore::class);
+        $run = $store->create($user->id, ['query' => 'corruption-check']);
+        $metadata = ParserRun::query()->where('run_id', $run['runId'])->firstOrFail();
+        $corruptedJson = '{invalid-json';
+
+        Storage::disk('private')->put($metadata->file_path, $corruptedJson);
+        Log::spy();
+
+        $this->assertNull($store->get($user->id, $run['runId']));
+        Log::shouldHaveReceived('warning')->once();
+
+        try {
+            $store->mutate($user->id, $run['runId'], static fn (array $state): array => $state);
+            $this->fail('Mutating corrupted parser state must fail.');
+        } catch (JsonException) {
+            $this->addToAssertionCount(1);
+        }
+
+        $this->assertSame($corruptedJson, Storage::disk('private')->get($metadata->file_path));
     }
 }

@@ -5,8 +5,8 @@ namespace App\Http\Controllers\Telegram;
 use App\Http\Requests\Telegram\SearchCommentsRequest;
 use App\Http\Requests\Telegram\SearchMessagesRequest;
 use App\Http\Requests\Telegram\StreamTelegramMediaRequest;
+use App\Http\Responses\Contracts\TelegramMediaResponderInterface;
 use App\Modules\Telegram\Search\Contracts\TelegramSearchApplicationServiceInterface;
-use App\Modules\Telegram\Support\Contracts\TelegramMediaResponderInterface;
 use Illuminate\Http\JsonResponse;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 

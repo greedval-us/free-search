@@ -8,6 +8,10 @@ use Illuminate\Support\Facades\Storage;
 
 final class ParserRunMetadataSynchronizer
 {
+    public function __construct(
+        private readonly ParserRunConfig $config,
+    ) {}
+
     /**
      * @param array<string, mixed> $run
      */
@@ -32,14 +36,9 @@ final class ParserRunMetadataSynchronizer
                 'started_at' => $startedAt,
                 'last_activity_at' => $lastActivityAt,
                 'finished_at' => $this->finishedAt($status, $lastActivityAt),
-                'expires_at' => $lastActivityAt->copy()->addDays($this->retentionDays()),
+                'expires_at' => $lastActivityAt->copy()->addDays($this->config->retentionDays()),
             ]
         );
-    }
-
-    private function retentionDays(): int
-    {
-        return max(1, (int) config('osint.parser_runs.retention_days', 30));
     }
 
     private function finishedAt(string $status, CarbonImmutable $fallback): ?CarbonImmutable

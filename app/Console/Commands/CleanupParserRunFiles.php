@@ -3,6 +3,7 @@
 namespace App\Console\Commands;
 
 use App\Models\ParserRun;
+use App\Modules\ParserSupport\ParserRunConfig;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
@@ -13,17 +14,17 @@ class CleanupParserRunFiles extends Command
 
     protected $description = 'Delete expired parser run JSON files from private storage and remove their metadata.';
 
-    public function handle(): int
+    public function handle(ParserRunConfig $config): int
     {
         $isDryRun = (bool) $this->option('dry-run');
-        $batchSize = $this->batchSize();
+        $batchSize = $config->cleanupBatchSize();
         $matchedRuns = 0;
         $deletedFiles = 0;
         $deletedRows = 0;
 
         if (! ParserRun::query()->expired()->exists()) {
             $this->info('No expired parser runs found.');
-            $this->logSummary($isDryRun, 0, 0, 0);
+            $this->logSummary($config, $isDryRun, 0, 0, 0);
 
             return self::SUCCESS;
         }
@@ -55,7 +56,7 @@ class CleanupParserRunFiles extends Command
 
         if ($isDryRun) {
             $this->info(sprintf('Dry run complete. %d expired parser runs matched.', $matchedRuns));
-            $this->logSummary(true, $matchedRuns, 0, 0);
+            $this->logSummary($config, true, $matchedRuns, 0, 0);
 
             return self::SUCCESS;
         }
@@ -65,14 +66,9 @@ class CleanupParserRunFiles extends Command
             $deletedRows,
             $deletedFiles
         ));
-        $this->logSummary(false, $matchedRuns, $deletedRows, $deletedFiles);
+        $this->logSummary($config, false, $matchedRuns, $deletedRows, $deletedFiles);
 
         return self::SUCCESS;
-    }
-
-    private function batchSize(): int
-    {
-        return max(1, (int) config('osint.parser_runs.cleanup_batch_size', 500));
     }
 
     private function deleteStoredFile(ParserRun $run): bool
@@ -91,15 +87,21 @@ class CleanupParserRunFiles extends Command
         return sprintf('[dry-run] %s %s %s', $run->run_id, $run->file_disk, $run->file_path);
     }
 
-    private function logSummary(bool $isDryRun, int $matchedRuns, int $deletedRows, int $deletedFiles): void
+    private function logSummary(
+        ParserRunConfig $config,
+        bool $isDryRun,
+        int $matchedRuns,
+        int $deletedRows,
+        int $deletedFiles,
+    ): void
     {
         Log::info('Parser run cleanup completed.', [
             'dry_run' => $isDryRun,
             'matched_runs' => $matchedRuns,
             'deleted_rows' => $deletedRows,
             'deleted_files' => $deletedFiles,
-            'batch_size' => $this->batchSize(),
-            'retention_days' => (int) config('osint.parser_runs.retention_days', 30),
+            'batch_size' => $config->cleanupBatchSize(),
+            'retention_days' => $config->retentionDays(),
         ]);
     }
 }

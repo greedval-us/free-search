@@ -8,8 +8,12 @@ use Illuminate\Support\Facades\Cache;
 
 final readonly class ParserRunExecutionCoordinator
 {
+    private const START_LOCK_SECONDS = 10;
+
+    private const START_LOCK_WAIT_SECONDS = 5;
+
     public function __construct(
-        private ParserRunExecutionConfig $config,
+        private ParserRunConfig $config,
         private ParserRunJobDispatcherInterface $jobDispatcher,
         private ParserRunStateMachine $stateMachine,
         private ParserRunLifecycleManager $lifecycleManager,
@@ -22,8 +26,8 @@ final readonly class ParserRunExecutionCoordinator
      */
     public function start(JsonRunStore $runStore, string $module, int $userId, array $context): array
     {
-        return Cache::lock($this->startLockKey($module, $userId), 10)->block(
-            5,
+        return Cache::lock($this->startLockKey($module, $userId), self::START_LOCK_SECONDS)->block(
+            self::START_LOCK_WAIT_SECONDS,
             function () use ($runStore, $module, $userId, $context): array {
                 $activeRun = $this->historyRepository->activeForUser($userId, $module);
                 if ($activeRun !== null) {

@@ -7,9 +7,13 @@ use LogicException;
 
 final class ParserRunQueueConfigurationGuard
 {
+    public function __construct(
+        private readonly ParserRunConfig $config,
+    ) {}
+
     public function ensureSafe(): void
     {
-        if (! config('osint.parser_runs.queue.enabled', true)) {
+        if (! $this->config->queueEnabled()) {
             return;
         }
 

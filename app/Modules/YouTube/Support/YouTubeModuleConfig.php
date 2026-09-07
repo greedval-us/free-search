@@ -4,32 +4,63 @@ namespace App\Modules\YouTube\Support;
 
 final class YouTubeModuleConfig
 {
+    private const DEFAULT_ANALYTICS_PERIOD_DAYS = [1, 3, 7];
+
+    private const DEFAULT_ANALYTICS_RANGE_DAYS = 7;
+
+    private const DEFAULT_PARSER_COMMENTS_LIMIT = 20;
+
+    private const MAX_PARSER_COMMENTS_LIMIT = 100;
+
+    private const DEFAULT_SEARCH_LIMIT = 10;
+
     /**
      * @param array<string, mixed> $config
      */
     public static function fromArray(array $config, string $timezone): self
     {
-        $periodDays = self::intList($config['analytics_period_days'] ?? [1, 3, 7], [1, 3, 7]);
+        $periodDays = self::intList(
+            $config['analytics_period_days'] ?? self::DEFAULT_ANALYTICS_PERIOD_DAYS,
+            self::DEFAULT_ANALYTICS_PERIOD_DAYS,
+        );
         $periodDays = array_values(array_unique(array_filter($periodDays, static fn (int $value): bool => $value > 0)));
         if ($periodDays === []) {
-            $periodDays = [1, 3, 7];
+            $periodDays = self::DEFAULT_ANALYTICS_PERIOD_DAYS;
         }
 
-        $defaultPeriodDays = self::intValue($config['analytics_default_period_days'] ?? null, 7);
+        $defaultPeriodDays = self::intValue(
+            $config['analytics_default_period_days'] ?? null,
+            self::DEFAULT_ANALYTICS_RANGE_DAYS,
+        );
         if (!in_array($defaultPeriodDays, $periodDays, true)) {
             $defaultPeriodDays = max($periodDays);
         }
 
-        $parserDefaultLimit = max(1, self::intValue($config['parser_comments_limit_default'] ?? null, 20));
-        $parserMaxLimit = max($parserDefaultLimit, self::intValue($config['parser_comments_limit_max'] ?? null, 100));
-        $searchDefaultLimit = max(1, self::intValue($config['search_limit_default'] ?? null, 10));
-        $searchMaxLimit = max($searchDefaultLimit, self::intValue($config['search_limit_max'] ?? null, 10));
+        $parserDefaultLimit = max(1, self::intValue(
+            $config['parser_comments_limit_default'] ?? null,
+            self::DEFAULT_PARSER_COMMENTS_LIMIT,
+        ));
+        $parserMaxLimit = max($parserDefaultLimit, self::intValue(
+            $config['parser_comments_limit_max'] ?? null,
+            self::MAX_PARSER_COMMENTS_LIMIT,
+        ));
+        $searchDefaultLimit = max(1, self::intValue(
+            $config['search_limit_default'] ?? null,
+            self::DEFAULT_SEARCH_LIMIT,
+        ));
+        $searchMaxLimit = max($searchDefaultLimit, self::intValue(
+            $config['search_limit_max'] ?? null,
+            self::DEFAULT_SEARCH_LIMIT,
+        ));
 
         return new self(
             timezone: trim($timezone) !== '' ? $timezone : 'UTC',
             analyticsPeriodDays: $periodDays,
             analyticsDefaultPeriodDays: $defaultPeriodDays,
-            analyticsCustomRangeMaxDays: max(1, self::intValue($config['analytics_custom_range_max_days'] ?? null, 7)),
+            analyticsCustomRangeMaxDays: max(1, self::intValue(
+                $config['analytics_custom_range_max_days'] ?? null,
+                self::DEFAULT_ANALYTICS_RANGE_DAYS,
+            )),
             parserCommentsLimitDefault: $parserDefaultLimit,
             parserCommentsLimitMax: $parserMaxLimit,
             searchLimitDefault: $searchDefaultLimit,

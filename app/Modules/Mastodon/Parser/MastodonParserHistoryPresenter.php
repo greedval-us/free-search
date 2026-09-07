@@ -4,9 +4,10 @@ namespace App\Modules\Mastodon\Parser;
 
 use App\Models\ParserRun;
 use App\Modules\ParserSupport\Concerns\InteractsWithParserHistoryPayload;
+use App\Modules\ParserSupport\Contracts\ParserRunHistoryPresenterInterface;
 use App\Modules\ParserSupport\ParserRunHistoryItemBuilder;
 
-final class MastodonParserHistoryPresenter
+final class MastodonParserHistoryPresenter implements ParserRunHistoryPresenterInterface
 {
     use InteractsWithParserHistoryPayload;
 

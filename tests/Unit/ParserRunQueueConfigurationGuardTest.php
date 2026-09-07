@@ -3,6 +3,7 @@
 namespace Tests\Unit;
 
 use App\Jobs\ProcessParserRun;
+use App\Modules\ParserSupport\ParserRunConfig;
 use App\Modules\ParserSupport\ParserRunQueueConfigurationGuard;
 use LogicException;
 use Tests\TestCase;
@@ -18,7 +19,7 @@ class ParserRunQueueConfigurationGuardTest extends TestCase
 
         $this->expectException(LogicException::class);
 
-        (new ParserRunQueueConfigurationGuard)->ensureSafe();
+        (new ParserRunQueueConfigurationGuard($this->parserRunConfig()))->ensureSafe();
     }
 
     public function test_safe_redis_retry_window_is_accepted(): void
@@ -28,8 +29,13 @@ class ParserRunQueueConfigurationGuardTest extends TestCase
         config()->set('queue.connections.redis.driver', 'redis');
         config()->set('queue.connections.redis.retry_after', ProcessParserRun::TIMEOUT_SECONDS + 30);
 
-        (new ParserRunQueueConfigurationGuard)->ensureSafe();
+        (new ParserRunQueueConfigurationGuard($this->parserRunConfig()))->ensureSafe();
 
         $this->addToAssertionCount(1);
+    }
+
+    private function parserRunConfig(): ParserRunConfig
+    {
+        return ParserRunConfig::fromArray((array) config('osint.parser_runs', []));
     }
 }

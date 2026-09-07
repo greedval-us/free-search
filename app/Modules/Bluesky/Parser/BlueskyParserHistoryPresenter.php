@@ -4,9 +4,10 @@ namespace App\Modules\Bluesky\Parser;
 
 use App\Models\ParserRun;
 use App\Modules\ParserSupport\Concerns\InteractsWithParserHistoryPayload;
+use App\Modules\ParserSupport\Contracts\ParserRunHistoryPresenterInterface;
 use App\Modules\ParserSupport\ParserRunHistoryItemBuilder;
 
-final class BlueskyParserHistoryPresenter
+final class BlueskyParserHistoryPresenter implements ParserRunHistoryPresenterInterface
 {
     use InteractsWithParserHistoryPayload;
 

@@ -6,6 +6,10 @@ use App\Modules\SiteIntel\Enums\SiteIntelScoreLevel;
 
 final class SiteIntelAnalyticsOverviewBuilder
 {
+    private const SCORE_HIGH_THRESHOLD = 75;
+
+    private const SCORE_MEDIUM_THRESHOLD = 45;
+
     /**
      * @param array<string, mixed> $siteHealth
      * @param array<string, mixed> $domainLite
@@ -47,7 +51,11 @@ final class SiteIntelAnalyticsOverviewBuilder
 
     private function scoreLevel(int $score): string
     {
-        return SiteIntelScoreLevel::fromThresholds($score, 75, 45)->value;
+        return SiteIntelScoreLevel::fromThresholds(
+            $score,
+            self::SCORE_HIGH_THRESHOLD,
+            self::SCORE_MEDIUM_THRESHOLD,
+        )->value;
     }
 
     /**

@@ -2,14 +2,8 @@
 
 namespace App\Modules\YouTube\Parser\Contracts;
 
-use App\Modules\Export\Excel\SheetDefinition;
+use App\Modules\Export\Excel\Contracts\ParserExportBuilderInterface;
 
-interface YouTubeParserExportBuilderInterface
+interface YouTubeParserExportBuilderInterface extends ParserExportBuilderInterface
 {
-    /**
-     * @param array<string, mixed> $payload
-     * @return array<int, SheetDefinition>
-     */
-    public function buildSheets(array $payload): array;
 }
-

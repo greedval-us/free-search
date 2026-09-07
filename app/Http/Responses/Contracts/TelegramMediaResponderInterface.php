@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Modules\Telegram\Support\Contracts;
+namespace App\Http\Responses\Contracts;
 
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 
@@ -11,4 +11,3 @@ interface TelegramMediaResponderInterface
      */
     public function respond(array $mediaPayload): BinaryFileResponse;
 }
-

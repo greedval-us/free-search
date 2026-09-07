@@ -14,10 +14,8 @@ use App\Modules\Telegram\Parser\TelegramParserApplicationService;
 use App\Modules\Telegram\Parser\TelegramParserExportBuilder;
 use App\Modules\Telegram\Search\Contracts\TelegramSearchApplicationServiceInterface;
 use App\Modules\Telegram\Search\TelegramSearchApplicationService;
-use App\Modules\Telegram\Support\Contracts\TelegramMediaResponderInterface;
 use App\Modules\Telegram\Support\TelegramConfig;
 use App\Modules\Telegram\Support\TelegramConfigFactory;
-use App\Modules\Telegram\Support\TelegramMediaResponder;
 use App\Modules\Telegram\TelegramService;
 use App\Support\Providers\BindingsServiceProvider;
 
@@ -50,7 +48,6 @@ final class TelegramServiceProvider extends BindingsServiceProvider
             TelegramParserExportBuilderInterface::class => TelegramParserExportBuilder::class,
             TelegramAnalyticsApplicationServiceInterface::class => TelegramAnalyticsApplicationService::class,
             TelegramAnalyticsRangeResolverInterface::class => TelegramAnalyticsRangeResolver::class,
-            TelegramMediaResponderInterface::class => TelegramMediaResponder::class,
         ];
     }
 }

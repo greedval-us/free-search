@@ -2,8 +2,8 @@
 
 namespace App\Modules\Telegram\Analytics;
 
-use App\Http\Requests\Telegram\TelegramAnalyticsRequest;
 use App\Modules\Telegram\Analytics\Contracts\TelegramAnalyticsRangeResolverInterface;
+use App\Modules\Telegram\DTO\Request\TelegramAnalyticsRangeDTO;
 use App\Modules\Telegram\Support\TelegramConfig;
 use Carbon\Carbon;
 
@@ -16,17 +16,19 @@ class TelegramAnalyticsRangeResolver implements TelegramAnalyticsRangeResolverIn
     /**
      * @return array{from: Carbon, to: Carbon}
      */
-    public function resolveRange(TelegramAnalyticsRequest $request): array
+    public function resolveRange(TelegramAnalyticsRangeDTO $range): array
     {
-        if ($request->customRange()) {
+        if ($range->hasCustomRange()) {
+            $timezone = $this->config->timezone();
+
             return [
-                'from' => $request->dateFrom()->copy(),
-                'to' => $request->dateTo()->copy(),
+                'from' => Carbon::createFromFormat('Y-m-d', $range->dateFrom, $timezone)->startOfDay(),
+                'to' => Carbon::createFromFormat('Y-m-d', $range->dateTo, $timezone)->endOfDay(),
             ];
         }
 
         $to = Carbon::now($this->config->timezone())->endOfDay();
-        $from = $to->copy()->subDays($request->periodDays() - 1)->startOfDay();
+        $from = $to->copy()->subDays($range->periodDays - 1)->startOfDay();
 
         return [
             'from' => $from,

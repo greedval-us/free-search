@@ -8,6 +8,10 @@ use App\Modules\Telegram\DTO\Response\Participants\ChannelParticipantsDTO;
 
 interface TelegramGatewayInterface
 {
+    public const DEFAULT_COMMENTS_LIMIT = 20;
+
+    public const INITIAL_COMMENTS_OFFSET_ID = 0;
+
     public function getInfo(string $id): ?ChannelInfoDTO;
 
     /**
@@ -23,7 +27,12 @@ interface TelegramGatewayInterface
     /**
      * @return array<string, mixed>
      */
-    public function getComments(string $channel, int $postId, int $limit = 20, int $offsetId = 0): array;
+    public function getComments(
+        string $channel,
+        int $postId,
+        int $limit = self::DEFAULT_COMMENTS_LIMIT,
+        int $offsetId = self::INITIAL_COMMENTS_OFFSET_ID,
+    ): array;
 
     /**
      * @return array<string, mixed>|null

@@ -13,8 +13,9 @@ use App\Modules\Bluesky\DTO\Parser\BlueskyParserStateDTO;
 use App\Modules\Bluesky\Enums\BlueskyParserInteractionKind;
 use App\Modules\Bluesky\Enums\BlueskyParserStage;
 use App\Modules\Bluesky\Support\BlueskyActorResolver;
+use App\Modules\ParserSupport\Contracts\ParserRunCollectorInterface;
 
-final class BlueskyParserCollector
+final class BlueskyParserCollector implements ParserRunCollectorInterface
 {
     private const FEED_LIMIT = 50;
     private const GRAPH_LIMIT = 100;

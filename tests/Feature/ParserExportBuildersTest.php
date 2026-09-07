@@ -3,9 +3,11 @@
 namespace Tests\Feature;
 
 use App\Modules\Bluesky\Parser\BlueskyParserExportBuilder;
+use App\Modules\Bluesky\Support\BlueskyModuleConfig;
 use App\Modules\Export\Excel\SheetDefinition;
 use App\Modules\Export\Excel\WorkbookExport;
 use App\Modules\Mastodon\Parser\MastodonParserExportBuilder;
+use App\Modules\Mastodon\Support\MastodonModuleConfig;
 use App\Modules\Telegram\Parser\TelegramParserExportBuilder;
 use App\Modules\YouTube\Parser\YouTubeParserExportBuilder;
 use App\Modules\YouTube\Support\YouTubeModuleConfig;
@@ -180,7 +182,9 @@ class ParserExportBuildersTest extends TestCase
     {
         app()->setLocale('en');
 
-        $builder = new MastodonParserExportBuilder;
+        $builder = new MastodonParserExportBuilder(
+            MastodonModuleConfig::fromArray([], 'UTC')
+        );
 
         $sheets = $builder->buildSheets([
             'account' => '@alice@example.social',
@@ -286,7 +290,9 @@ class ParserExportBuildersTest extends TestCase
     {
         app()->setLocale('en');
 
-        $builder = new BlueskyParserExportBuilder;
+        $builder = new BlueskyParserExportBuilder(
+            BlueskyModuleConfig::fromArray([], 'UTC')
+        );
 
         $sheets = $builder->buildSheets([
             'actor' => '@alice.bsky.social',

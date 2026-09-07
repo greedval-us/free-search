@@ -11,6 +11,7 @@ use App\Modules\YouTube\Presenters\YouTubeVideoPresenter;
 use App\Modules\YouTube\Support\YouTubeChannelInputNormalizer;
 use App\Modules\YouTube\Support\YouTubeChannelResolver;
 use App\Modules\YouTube\Support\YouTubeDurationFormatter;
+use App\Modules\YouTube\Support\YouTubeModuleConfig;
 use App\Modules\YouTube\Support\YouTubeUrlBuilder;
 use Tests\TestCase;
 
@@ -25,6 +26,7 @@ class YouTubeAnalyticsSummaryActionTest extends TestCase
             new YouTubeVideoPresenter(new YouTubeDurationFormatter(), new YouTubeUrlBuilder()),
             new YouTubeChannelPresenter(new YouTubeUrlBuilder()),
             new YouTubeChannelResolver($gateway, new YouTubeChannelInputNormalizer()),
+            YouTubeModuleConfig::fromArray([], 'UTC'),
         );
 
         $summary = $action->handle(new YouTubeAnalyticsLookupDTO(

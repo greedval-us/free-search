@@ -20,7 +20,7 @@ class TelegramAnalyticsController extends BaseTelegramController
     public function summary(TelegramAnalyticsRequest $request): JsonResponse
     {
         $params = $request->toParamsDTO();
-        $range = $this->rangeResolver->resolveRange($request);
+        $range = $this->rangeResolver->resolveRange($request->toRangeDTO());
         $data = $this->analyticsApplicationService->buildSummary(
             $params,
             $range['from'],
@@ -34,7 +34,7 @@ class TelegramAnalyticsController extends BaseTelegramController
     public function report(TelegramAnalyticsRequest $request): View|Response
     {
         $params = $request->toParamsDTO();
-        $range = $this->rangeResolver->resolveRange($request);
+        $range = $this->rangeResolver->resolveRange($request->toRangeDTO());
         $reportData = $this->analyticsApplicationService->buildReport($params, $range['from'], $range['to']);
         $data = $reportData->report;
         $previousData = $reportData->previousReport;

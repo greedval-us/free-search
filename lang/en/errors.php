@@ -44,6 +44,11 @@ return [
             'parser_messages_failed' => 'Failed to load messages for parser.',
             'media_temp_file_failed' => 'Failed to prepare a temporary media file.',
         ],
+        'parser_run' => [
+            'not_found' => 'The parser run was not found or has expired.',
+            'not_downloadable' => 'The parser result is not ready for download yet.',
+            'result_not_found' => 'The parser result file was not found or has expired.',
+        ],
         'site_intel' => [
             'invalid_target' => 'Invalid target URL or domain.',
             'invalid_domain' => 'Invalid domain.',

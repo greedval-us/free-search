@@ -2,7 +2,7 @@
 
 namespace App\Modules\Telegram\Analytics\Contracts;
 
-use App\Http\Requests\Telegram\TelegramAnalyticsRequest;
+use App\Modules\Telegram\DTO\Request\TelegramAnalyticsRangeDTO;
 use Carbon\Carbon;
 
 interface TelegramAnalyticsRangeResolverInterface
@@ -10,7 +10,7 @@ interface TelegramAnalyticsRangeResolverInterface
     /**
      * @return array{from: Carbon, to: Carbon}
      */
-    public function resolveRange(TelegramAnalyticsRequest $request): array;
+    public function resolveRange(TelegramAnalyticsRangeDTO $range): array;
 
     /**
      * @return array{from: Carbon, to: Carbon}
@@ -23,4 +23,3 @@ interface TelegramAnalyticsRangeResolverInterface
      */
     public function resolvePreviousRangeForReport(array $report, Carbon $fallbackFrom, Carbon $fallbackTo): array;
 }
-

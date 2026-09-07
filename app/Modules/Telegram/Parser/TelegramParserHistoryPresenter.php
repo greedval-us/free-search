@@ -4,9 +4,10 @@ namespace App\Modules\Telegram\Parser;
 
 use App\Models\ParserRun;
 use App\Modules\ParserSupport\Concerns\InteractsWithParserHistoryPayload;
+use App\Modules\ParserSupport\Contracts\ParserRunHistoryPresenterInterface;
 use App\Modules\ParserSupport\ParserRunHistoryItemBuilder;
 
-final class TelegramParserHistoryPresenter
+final class TelegramParserHistoryPresenter implements ParserRunHistoryPresenterInterface
 {
     use InteractsWithParserHistoryPayload;
 
