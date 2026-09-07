@@ -4,13 +4,17 @@ declare(strict_types=1);
 
 namespace App\MoonShine\Layouts;
 
+use App\MoonShine\Pages\Dashboard;
+use App\MoonShine\Support\AdminAccess;
 use App\MoonShine\Support\AdminNavigationCatalog;
+use MoonShine\AssetManager\Css;
 use MoonShine\ColorManager\ColorManager;
-use MoonShine\ColorManager\Palettes\PurplePalette;
+use MoonShine\ColorManager\Palettes\CyanPalette;
 use MoonShine\Contracts\ColorManager\ColorManagerContract;
 use MoonShine\Contracts\ColorManager\PaletteContract;
 use MoonShine\Contracts\MenuManager\MenuElementContract;
 use MoonShine\Laravel\Layouts\AppLayout;
+use MoonShine\Laravel\Models\MoonshineUser;
 use MoonShine\MenuManager\MenuGroup;
 use MoonShine\MenuManager\MenuItem;
 
@@ -19,23 +23,40 @@ final class MoonShineLayout extends AppLayout
     /**
      * @var null|class-string<PaletteContract>
      */
-    protected ?string $palette = PurplePalette::class;
+    protected ?string $palette = CyanPalette::class;
 
     protected function assets(): array
     {
         return [
             ...parent::assets(),
+            Css::make('/admin/moonshine.css?v=1'),
         ];
     }
 
     protected function menu(): array
     {
-        $groups = [];
+        $access = app(AdminAccess::class);
+        $user = auth('moonshine')->user();
+        $moonShineUser = $user instanceof MoonshineUser ? $user : null;
+
+        $groups = [
+            MenuItem::make(
+                Dashboard::class,
+                static fn (): string => __('admin_panel.navigation.overview'),
+                'home',
+            )->canSee(static fn (): bool => $access->role($moonShineUser) !== null),
+        ];
 
         foreach (AdminNavigationCatalog::menuGroups() as $group) {
+            $items = $this->menuItems($group['resources'], $access, $moonShineUser);
+            if ($items === []) {
+                continue;
+            }
+
             $groups[] = MenuGroup::make(
                 $group['title'],
-                $this->menuItems($group['resources'])
+                $items,
+                $group['icon'],
             );
         }
 
@@ -43,15 +64,25 @@ final class MoonShineLayout extends AppLayout
     }
 
     /**
-     * @param array<int, class-string> $resources
+     * @param  array<int, class-string>  $resources
      * @return list<MenuElementContract>
      */
-    private function menuItems(array $resources): array
-    {
-        return array_map(
-            static fn (string $resourceClass): MenuElementContract => MenuItem::make($resourceClass),
-            $resources,
-        );
+    private function menuItems(
+        array $resources,
+        AdminAccess $access,
+        ?MoonshineUser $user,
+    ): array {
+        $items = [];
+
+        foreach ($resources as $resourceClass) {
+            if (! $access->canViewResource($user, $resourceClass)) {
+                continue;
+            }
+
+            $items[] = MenuItem::make($resourceClass);
+        }
+
+        return $items;
     }
 
     /**
@@ -61,6 +92,8 @@ final class MoonShineLayout extends AppLayout
     {
         parent::colors($colorManager);
 
-        // $colorManager->primary('#00000');
+        $colorManager
+            ->primary('#0891b2')
+            ->primary('#22d3ee', dark: true);
     }
 }

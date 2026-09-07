@@ -5,16 +5,22 @@ declare(strict_types=1);
 namespace App\MoonShine\Support;
 
 use App\Models\FailedJob;
+use App\Models\ParserRun;
 use App\Models\QueueJob;
 use App\Models\RequestLog;
 use App\Models\User;
 use App\Models\UserSubscription;
+use App\Modules\ParserSupport\Enums\ParserRunStatus;
 use Carbon\CarbonImmutable;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 
 final class AdminControlAnalyticsService
 {
+    public function __construct(
+        private readonly AdminDashboardConfig $config,
+    ) {}
+
     /**
      * @return array<string, int|float>
      */
@@ -105,6 +111,17 @@ final class AdminControlAnalyticsService
             'failed_jobs_24h' => FailedJob::query()
                 ->where('failed_at', '>=', $dayAgo)
                 ->count(),
+            'parser_runs_active' => ParserRun::query()
+                ->where('status', ParserRunStatus::Running->value)
+                ->count(),
+            'parser_runs_completed_24h' => ParserRun::query()
+                ->where('status', ParserRunStatus::Completed->value)
+                ->where('finished_at', '>=', $dayAgo)
+                ->count(),
+            'parser_runs_failed_24h' => ParserRun::query()
+                ->where('status', ParserRunStatus::Failed->value)
+                ->where('finished_at', '>=', $dayAgo)
+                ->count(),
             'modules_used_30d' => RequestLog::query()
                 ->where('created_at', '>=', $monthAgo)
                 ->whereNotNull('module_key')
@@ -159,6 +176,34 @@ final class AdminControlAnalyticsService
                 'errors_5xx' => (int) $row->errors_5xx,
             ])
             ->toArray();
+    }
+
+    /**
+     * @param  array<string, int|float>  $snapshot
+     */
+    public function healthStatus(array $snapshot): string
+    {
+        if (
+            (int) ($snapshot['errors_5xx_24h'] ?? 0) > 0
+            || (int) ($snapshot['failed_jobs_24h'] ?? 0) > 0
+            || (int) ($snapshot['parser_runs_failed_24h'] ?? 0) > 0
+        ) {
+            return 'attention';
+        }
+
+        $requests = (int) ($snapshot['requests_24h'] ?? 0);
+        $errors = (int) ($snapshot['errors_4xx_24h'] ?? 0);
+        $errorRate = $requests > 0 ? ($errors / $requests) * 100 : 0.0;
+
+        if (
+            (int) ($snapshot['queue_jobs_ready'] ?? 0) >= $this->config->queueBacklogWarning
+            || (float) ($snapshot['avg_response_ms_24h'] ?? 0) >= $this->config->slowResponseMilliseconds
+            || $errorRate >= $this->config->errorRateWarningPercent
+        ) {
+            return 'warning';
+        }
+
+        return 'healthy';
     }
 
     /**

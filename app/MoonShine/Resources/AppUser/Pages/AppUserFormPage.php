@@ -34,7 +34,7 @@ final class AppUserFormPage extends FormPage
     protected function fields(): iterable
     {
         return [
-            Box::make([
+            Box::make(__('admin_panel.sections.user_identity'), [
                 ID::make(),
 
                 Flex::make([
@@ -56,7 +56,9 @@ final class AppUserFormPage extends FormPage
                     ]),
 
                 Text::make(__('admin_panel.fields.telegram_id'), 'telegram_id')->nullable(),
+            ])->icon('identification'),
 
+            Box::make(__('admin_panel.sections.access_management'), [
                 Select::make(__('admin_panel.fields.plan'), 'subscription_plan', static fn (mixed $original): string => $original instanceof User
                     ? $original->currentPlan()->value
                     : User::SUBSCRIPTION_PLAN_FREE)
@@ -74,7 +76,7 @@ final class AppUserFormPage extends FormPage
                     ->onApply(static fn (mixed $data, mixed $value, mixed $field): mixed => $data),
 
                 Switcher::make(__('admin_panel.fields.blocked'), 'is_blocked'),
-            ]),
+            ])->icon('key'),
         ];
     }
 

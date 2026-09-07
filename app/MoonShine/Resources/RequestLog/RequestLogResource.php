@@ -58,7 +58,7 @@ class RequestLogResource extends ReadOnlyModelResource
 
     protected function modifyQueryBuilder(Builder $builder): Builder
     {
-        if (!$this->hasQueryParam('sort')) {
+        if (! $this->hasQueryParam('sort')) {
             $builder->orderByDesc('created_at');
         }
 

@@ -8,13 +8,14 @@ use App\Models\User;
 use App\MoonShine\Resources\AppUser\AppUserResource;
 use App\MoonShine\Resources\RequestLog\RequestLogResource;
 use App\MoonShine\Resources\Shared\Pages\AdminIndexPage;
+use App\MoonShine\Support\AdminDashboardConfig;
 use App\MoonShine\Support\Formatting\AdminPanelDateFormatter;
 use App\MoonShine\Support\Formatting\RequestLogBadgeResolver;
 use Illuminate\Database\Eloquent\Builder;
 use MoonShine\Contracts\UI\FieldContract;
 use MoonShine\Laravel\Fields\Relationships\BelongsTo;
-use MoonShine\UI\Fields\Field;
 use MoonShine\UI\Fields\Date;
+use MoonShine\UI\Fields\Field;
 use MoonShine\UI\Fields\ID;
 use MoonShine\UI\Fields\Number;
 use MoonShine\UI\Fields\Select;
@@ -30,7 +31,7 @@ final class RequestLogIndexPage extends AdminIndexPage
      */
     protected function fields(): iterable
     {
-        $badgeResolver = new RequestLogBadgeResolver();
+        $badgeResolver = new RequestLogBadgeResolver;
 
         return [
             ID::make()->sortable(),
@@ -53,8 +54,6 @@ final class RequestLogIndexPage extends AdminIndexPage
             Text::make(__('admin_panel.fields.module'), 'module_key')->sortable(),
             Text::make(__('admin_panel.fields.action'), 'action_key')->sortable(),
             Text::make(__('admin_panel.fields.query'), 'query_preview'),
-            Text::make(__('admin_panel.fields.path'), 'path'),
-            Text::make(__('admin_panel.fields.route'), 'route_name'),
         ];
     }
 
@@ -82,6 +81,8 @@ final class RequestLogIndexPage extends AdminIndexPage
 
     protected function queryTags(): array
     {
+        $slowResponseMilliseconds = app(AdminDashboardConfig::class)->slowResponseMilliseconds;
+
         return [
             $this->allTag(static fn (Builder $query): Builder => $query),
             $this->customTag(
@@ -95,8 +96,8 @@ final class RequestLogIndexPage extends AdminIndexPage
                 'x-circle',
             ),
             $this->customTag(
-                __('admin_panel.tags.slow_1500'),
-                static fn (Builder $query): Builder => $query->where('response_time', '>', 1500),
+                __('admin_panel.tags.slow_requests', ['milliseconds' => $slowResponseMilliseconds]),
+                static fn (Builder $query): Builder => $query->where('response_time', '>', $slowResponseMilliseconds),
                 'clock',
             ),
             $this->todayTag('created_at'),

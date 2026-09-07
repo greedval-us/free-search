@@ -33,7 +33,6 @@ final class AppUserIndexPage extends AdminIndexPage
             ID::make()->sortable(),
             Text::make(__('admin_panel.fields.name'), 'name')->sortable(),
             Email::make(__('admin_panel.fields.email'), 'email')->sortable(),
-            Text::make(__('admin_panel.fields.account_type'), 'account_type')->sortable(),
             Text::make(__('admin_panel.fields.plan'), 'id', static fn (mixed $original): string => self::resolvePlan($original))
                 ->badge(static fn (mixed $value, Field $field): string => self::planBadge($value)),
             Date::make(__('admin_panel.fields.subscription_ends_at'), 'activeSubscription.ends_at')
@@ -41,7 +40,6 @@ final class AppUserIndexPage extends AdminIndexPage
             Preview::make(__('admin_panel.fields.quota_remaining'), 'id', static fn (mixed $original): mixed => self::quotaSummary($original)),
             Text::make(__('admin_panel.fields.blocked'), 'is_blocked', static fn (mixed $original): string => self::resolveFlag($original, 'is_blocked') ? __('admin_panel.values.blocked') : __('admin_panel.values.active'))
                 ->badge(static fn (mixed $value, Field $field): string => self::resolveFlag($value, 'is_blocked') ? 'error' : 'success'),
-            Text::make(__('admin_panel.fields.telegram_id'), 'telegram_id'),
             Number::make(__('admin_panel.fields.requests'), 'request_logs_count')->sortable(),
             Date::make(__('admin_panel.fields.created_at'), 'created_at')
                 ->format('d.m.Y H:i')

@@ -11,7 +11,7 @@ use MoonShine\Laravel\QueryTags\QueryTag;
 final class AdminPanelQueryTagFactory
 {
     /**
-     * @param Closure(Builder): Builder $scope
+     * @param  Closure(Builder): Builder  $scope
      */
     public function all(Closure $scope): QueryTag
     {
@@ -19,7 +19,7 @@ final class AdminPanelQueryTagFactory
     }
 
     /**
-     * @param Closure(Builder): Builder $scope
+     * @param  Closure(Builder): Builder  $scope
      */
     public function make(string $label, Closure $scope, ?string $icon = null, bool $default = false): QueryTag
     {

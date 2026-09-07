@@ -3,6 +3,36 @@
 return [
     'title' => 'Control Dashboard',
 
+    'hero' => [
+        'workspace' => 'Uraboros workspace',
+        'title' => 'Operations without noise',
+        'subtitle' => 'Product signals, parser activity and system health in one focused workspace.',
+        'updated_at' => 'Updated :date',
+        'period' => 'Analytics period',
+        'quick_actions' => 'Quick actions',
+    ],
+
+    'health' => [
+        'healthy' => 'Systems normal',
+        'warning' => 'Check performance',
+        'attention' => 'Attention required',
+    ],
+
+    'quick_links' => [
+        'users' => 'Accounts, plans and limits',
+        'subscriptions' => 'Active and expired plans',
+        'activation_tokens' => 'Issue access codes',
+        'feature_usage' => 'Daily usage by feature',
+        'parser_runs' => 'Progress and parser errors',
+        'request_logs' => 'HTTP performance and errors',
+        'queue' => 'Background jobs waiting',
+        'failed_jobs' => 'Jobs requiring investigation',
+        'staff' => 'Panel users and roles',
+        'audit' => 'Administrative changes',
+        'roles' => 'Staff access levels',
+        'unknown' => 'Open section',
+    ],
+
     'sections' => [
         'overview' => 'Overview',
         'visual_analytics' => 'Visual analytics',
@@ -25,6 +55,8 @@ return [
         'avg_response_24h_ms' => 'Avg response 24h (ms)',
         'queue_ready_now' => 'Queue ready now',
         'failed_jobs_24h' => 'Failed jobs in 24h',
+        'active_users_24h' => 'Active users in 24h',
+        'parser_runs_active' => 'Active parser runs',
     ],
 
     'table' => [
@@ -60,5 +92,9 @@ return [
         'by_total_requests' => 'By total requests',
         'max' => 'Max',
         'no_module_usage' => 'No module usage yet.',
+        'parser_status' => 'Parsers running now',
+        'completed_24h' => 'Completed in 24h',
+        'failed_24h' => 'Failed in 24h',
+        'users_count' => '{0} no users|{1} :count user|[2,*] :count users',
     ],
 ];

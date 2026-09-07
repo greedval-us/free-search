@@ -24,7 +24,9 @@ final class AccountAccessSummaryService
             ];
         }
 
-        $subscription = $user->activeSubscription()->first();
+        $subscription = $user->relationLoaded('activeSubscription')
+            ? $user->activeSubscription
+            : $user->activeSubscription()->first();
         $plan = AccountPlan::fromNullable($subscription?->plan);
         $usage = $this->usageForToday($user);
 
@@ -103,6 +105,13 @@ final class AccountAccessSummaryService
      */
     private function usageForToday(User $user): array
     {
+        if ($user->relationLoaded('featureUsageDaily')) {
+            return $user->featureUsageDaily
+                ->pluck('used', 'feature')
+                ->map(static fn (mixed $value): int => (int) $value)
+                ->toArray();
+        }
+
         return FeatureUsageDaily::query()
             ->where('user_id', $user->id)
             ->where('usage_date', CarbonImmutable::now(config('app.timezone'))->startOfDay())

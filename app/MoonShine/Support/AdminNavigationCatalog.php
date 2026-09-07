@@ -10,6 +10,7 @@ use App\MoonShine\Resources\FailedJob\FailedJobResource;
 use App\MoonShine\Resources\FeatureUsageDaily\FeatureUsageDailyResource;
 use App\MoonShine\Resources\MoonShineUser\MoonShineUserResource;
 use App\MoonShine\Resources\MoonShineUserRole\MoonShineUserRoleResource;
+use App\MoonShine\Resources\ParserRun\ParserRunResource;
 use App\MoonShine\Resources\QueueJob\QueueJobResource;
 use App\MoonShine\Resources\RequestLog\RequestLogResource;
 use App\MoonShine\Resources\SubscriptionActivationToken\SubscriptionActivationTokenResource;
@@ -18,33 +19,93 @@ use App\MoonShine\Resources\UserSubscription\UserSubscriptionResource;
 final class AdminNavigationCatalog
 {
     /**
-     * @return array<int, array{title: string|\Closure, resources: array<int, class-string>}>
+     * @return list<class-string>
+     */
+    public static function dashboardResources(AdminRole $role): array
+    {
+        return match ($role) {
+            AdminRole::Admin => [
+                AppUserResource::class,
+                UserSubscriptionResource::class,
+                ParserRunResource::class,
+                FailedJobResource::class,
+                MoonShineUserResource::class,
+                AdminAuditLogResource::class,
+            ],
+            AdminRole::Analyst => [
+                AppUserResource::class,
+                FeatureUsageDailyResource::class,
+                UserSubscriptionResource::class,
+                ParserRunResource::class,
+            ],
+            AdminRole::Developer => [
+                ParserRunResource::class,
+                RequestLogResource::class,
+                QueueJobResource::class,
+                FailedJobResource::class,
+                FeatureUsageDailyResource::class,
+            ],
+        };
+    }
+
+    /**
+     * @param  class-string  $resourceClass
+     */
+    public static function resourceKey(string $resourceClass): string
+    {
+        return match ($resourceClass) {
+            AppUserResource::class => 'users',
+            UserSubscriptionResource::class => 'subscriptions',
+            SubscriptionActivationTokenResource::class => 'activation_tokens',
+            FeatureUsageDailyResource::class => 'feature_usage',
+            ParserRunResource::class => 'parser_runs',
+            RequestLogResource::class => 'request_logs',
+            QueueJobResource::class => 'queue',
+            FailedJobResource::class => 'failed_jobs',
+            MoonShineUserResource::class => 'staff',
+            AdminAuditLogResource::class => 'audit',
+            MoonShineUserRoleResource::class => 'roles',
+            default => 'unknown',
+        };
+    }
+
+    /**
+     * @return array<int, array{title: string|\Closure, icon: string, resources: array<int, class-string>}>
      */
     public static function menuGroups(): array
     {
         return [
             [
-                'title' => static fn (): string => __('moonshine::ui.resource.system'),
+                'title' => static fn (): string => __('admin_panel.navigation.product'),
+                'icon' => 'chart-pie',
                 'resources' => [
-                    MoonShineUserResource::class,
-                    MoonShineUserRoleResource::class,
                     AppUserResource::class,
-                    RequestLogResource::class,
+                    FeatureUsageDailyResource::class,
+                ],
+            ],
+            [
+                'title' => static fn (): string => __('admin_panel.navigation.revenue'),
+                'icon' => 'credit-card',
+                'resources' => [
+                    UserSubscriptionResource::class,
+                    SubscriptionActivationTokenResource::class,
                 ],
             ],
             [
                 'title' => static fn (): string => __('admin_panel.navigation.operations'),
+                'icon' => 'server-stack',
                 'resources' => [
-                    UserSubscriptionResource::class,
-                    SubscriptionActivationTokenResource::class,
-                    FeatureUsageDailyResource::class,
+                    ParserRunResource::class,
+                    RequestLogResource::class,
                     QueueJobResource::class,
                     FailedJobResource::class,
                 ],
             ],
             [
-                'title' => static fn (): string => __('admin_panel.navigation.security'),
+                'title' => static fn (): string => __('admin_panel.navigation.access'),
+                'icon' => 'shield-check',
                 'resources' => [
+                    MoonShineUserResource::class,
                     AdminAuditLogResource::class,
                 ],
             ],
@@ -63,6 +124,8 @@ final class AdminNavigationCatalog
                 $all[$resourceClass] = $resourceClass;
             }
         }
+
+        $all[MoonShineUserRoleResource::class] = MoonShineUserRoleResource::class;
 
         return array_values($all);
     }

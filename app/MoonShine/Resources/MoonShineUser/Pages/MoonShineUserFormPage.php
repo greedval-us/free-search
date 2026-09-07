@@ -6,6 +6,7 @@ namespace App\MoonShine\Resources\MoonShineUser\Pages;
 
 use App\MoonShine\Resources\MoonShineUser\MoonShineUserResource;
 use App\MoonShine\Resources\MoonShineUserRole\MoonShineUserRoleResource;
+use App\MoonShine\Support\AdminRole;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\Rules\Password as PasswordRule;
@@ -48,11 +49,15 @@ final class MoonShineUserFormPage extends FormPage
                         BelongsTo::make(
                             __('moonshine::ui.resource.role'),
                             'moonshineUserRole',
-                            formatted: static fn (MoonshineUserRole $model) => $model->name,
+                            formatted: static fn (MoonshineUserRole $model): string => AdminRole::fromDatabaseName($model->name)?->label() ?? $model->name,
                             resource: MoonShineUserRoleResource::class,
                         )
-                            ->creatable()
-                            ->valuesQuery(static fn (Builder $q) => $q->select(['id', 'name'])),
+                            ->valuesQuery(static fn (Builder $q): Builder => $q
+                                ->whereIn('name', array_map(
+                                    static fn (AdminRole $role): string => $role->databaseName(),
+                                    AdminRole::cases(),
+                                ))
+                                ->select(['id', 'name'])),
 
                         Flex::make([
                             Text::make(__('moonshine::ui.resource.name'), 'name')

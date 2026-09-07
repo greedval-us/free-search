@@ -87,7 +87,13 @@ class AppUserResource extends ModelResource
 
     protected function modifyQueryBuilder(Builder $builder): Builder
     {
-        $builder->with(['activeSubscription'])->withCount('requestLogs');
+        $builder
+            ->with([
+                'activeSubscription',
+                'featureUsageDaily' => static fn (Builder $query): Builder => $query
+                    ->whereDate('usage_date', today()),
+            ])
+            ->withCount('requestLogs');
 
         if (! $this->hasQueryParam('sort')) {
             $builder->orderByDesc('created_at');
