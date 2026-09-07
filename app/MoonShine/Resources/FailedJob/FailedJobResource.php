@@ -37,6 +37,7 @@ class FailedJobResource extends ModelResource
             Action::CREATE,
             Action::VIEW,
             Action::UPDATE,
+            Action::MASS_DELETE,
         );
     }
 
@@ -59,7 +60,7 @@ class FailedJobResource extends ModelResource
 
     protected function modifyQueryBuilder(Builder $builder): Builder
     {
-        if (!$this->hasQueryParam('sort')) {
+        if (! $this->hasQueryParam('sort')) {
             $builder->orderByDesc('failed_at');
         }
 

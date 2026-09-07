@@ -5,6 +5,7 @@ namespace App\Http\Requests\Telegram;
 use App\Http\Requests\LocalizedFormRequest;
 use App\Http\Requests\Telegram\Concerns\ResolvesTelegramConfig;
 use App\Modules\Telegram\DTO\Request\TelegramAnalyticsParamsDTO;
+use App\Modules\Telegram\DTO\Request\TelegramAnalyticsRangeDTO;
 use Carbon\Carbon;
 use Illuminate\Validation\Validator;
 
@@ -135,6 +136,15 @@ class TelegramAnalyticsRequest extends LocalizedFormRequest
         );
     }
 
+    public function toRangeDTO(): TelegramAnalyticsRangeDTO
+    {
+        return new TelegramAnalyticsRangeDTO(
+            periodDays: $this->periodDays(),
+            dateFrom: $this->validatedDate('dateFrom'),
+            dateTo: $this->validatedDate('dateTo'),
+        );
+    }
+
     private function periodMinDays(): int
     {
         return $this->telegramConfig()->analyticsPeriodMinDays();
@@ -148,5 +158,12 @@ class TelegramAnalyticsRequest extends LocalizedFormRequest
     private function customRangeMaxDays(): int
     {
         return $this->telegramConfig()->analyticsCustomRangeMaxDays();
+    }
+
+    private function validatedDate(string $key): ?string
+    {
+        $value = $this->validated($key);
+
+        return is_string($value) && $value !== '' ? $value : null;
     }
 }

@@ -38,7 +38,8 @@ final class MastodonServiceProvider extends BindingsServiceProvider
         $this->app->singleton(
             MastodonModuleConfig::class,
             static fn (): MastodonModuleConfig => MastodonModuleConfig::fromArray(
-                (array) config('osint.mastodon', [])
+                (array) config('osint.mastodon', []),
+                (string) config('app.timezone', 'UTC'),
             )
         );
     }

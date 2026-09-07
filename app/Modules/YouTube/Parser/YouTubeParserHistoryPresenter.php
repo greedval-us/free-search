@@ -4,9 +4,10 @@ namespace App\Modules\YouTube\Parser;
 
 use App\Models\ParserRun;
 use App\Modules\ParserSupport\Concerns\InteractsWithParserHistoryPayload;
+use App\Modules\ParserSupport\Contracts\ParserRunHistoryPresenterInterface;
 use App\Modules\ParserSupport\ParserRunHistoryItemBuilder;
 
-final class YouTubeParserHistoryPresenter
+final class YouTubeParserHistoryPresenter implements ParserRunHistoryPresenterInterface
 {
     use InteractsWithParserHistoryPayload;
 

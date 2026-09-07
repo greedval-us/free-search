@@ -6,7 +6,6 @@ namespace App\MoonShine\Resources\SubscriptionActivationToken\Pages;
 
 use App\Models\SubscriptionActivationToken;
 use App\MoonShine\Resources\SubscriptionActivationToken\SubscriptionActivationTokenResource;
-use App\MoonShine\Resources\UserSubscription\Pages\UserSubscriptionIndexPage;
 use Illuminate\Validation\Rule;
 use MoonShine\Contracts\Core\TypeCasts\DataWrapperContract;
 use MoonShine\Contracts\UI\ComponentContract;

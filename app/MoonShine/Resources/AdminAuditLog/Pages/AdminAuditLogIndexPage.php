@@ -25,7 +25,7 @@ final class AdminAuditLogIndexPage extends AdminIndexPage
      */
     protected function fields(): iterable
     {
-        $formatter = new AdminAuditChangeFormatter();
+        $formatter = new AdminAuditChangeFormatter;
 
         return [
             ID::make()->sortable(),
@@ -36,18 +36,6 @@ final class AdminAuditLogIndexPage extends AdminIndexPage
             Text::make(__('admin_panel.fields.action'), 'action')->sortable(),
             Text::make(__('admin_panel.fields.target'), 'target_type')->sortable(),
             Number::make(__('admin_panel.fields.target_id'), 'target_id')->sortable(),
-            Number::make(
-                __('admin_panel.fields.changed_fields'),
-                'changes',
-                static fn (mixed $original): int => is_array($original->changes ?? null)
-                    ? count($original->changes)
-                    : 0
-            ),
-            Text::make(
-                __('admin_panel.fields.changed_keys'),
-                'changes',
-                static fn (mixed $original): string => $formatter->changedKeysSummary($original->changes ?? null),
-            ),
             Text::make(
                 __('admin_panel.fields.change_details'),
                 'changes',
@@ -74,5 +62,4 @@ final class AdminAuditLogIndexPage extends AdminIndexPage
             $this->last24HoursTag('created_at'),
         ];
     }
-
 }

@@ -7,12 +7,52 @@ use Carbon\Carbon;
 
 final class SeoAuditCrawlBudgetAnalyzer
 {
+    private const PERIOD_DAYS = 7;
+
+    private const TOP_BOT_AGENTS_LIMIT = 5;
+
+    private const ACCESS_LOG_USER_AGENT_INDEX = 5;
+
+    private const BOT_MARKERS = [
+        'googlebot',
+        'bingbot',
+        'yandexbot',
+        'baiduspider',
+        'duckduckbot',
+        'crawler',
+        'spider',
+        'bot',
+    ];
+
+    private const KNOWN_BOT_AGENTS = [
+        'googlebot',
+        'bingbot',
+        'yandexbot',
+        'baiduspider',
+        'duckduckbot',
+    ];
+
+    private const MONTH_NUMBERS = [
+        'Jan' => 1,
+        'Feb' => 2,
+        'Mar' => 3,
+        'Apr' => 4,
+        'May' => 5,
+        'Jun' => 6,
+        'Jul' => 7,
+        'Aug' => 8,
+        'Sep' => 9,
+        'Oct' => 10,
+        'Nov' => 11,
+        'Dec' => 12,
+    ];
+
     /**
      * @return array<string, mixed>
      */
     public function analyze(string $host): array
     {
-        $from = Carbon::now()->subDays(7);
+        $from = Carbon::now()->subDays(self::PERIOD_DAYS);
 
         $accessLogResult = $this->analyzeFromAccessLog($host, $from);
         if ($accessLogResult !== null) {
@@ -49,7 +89,7 @@ final class SeoAuditCrawlBudgetAnalyzer
                 continue;
             }
 
-            $ua = $this->extractQuotedPart($line, 5);
+            $ua = $this->extractQuotedPart($line, self::ACCESS_LOG_USER_AGENT_INDEX);
             if (!$this->isBotUserAgent($ua)) {
                 continue;
             }
@@ -65,11 +105,11 @@ final class SeoAuditCrawlBudgetAnalyzer
         }
 
         return [
-            'periodDays' => 7,
+            'periodDays' => self::PERIOD_DAYS,
             'host' => $host,
             'botHits' => $botHits,
             'statusBuckets' => $statusCounts,
-            'topBotAgents' => $this->topCounts($botAgents, 5),
+            'topBotAgents' => $this->topCounts($botAgents, self::TOP_BOT_AGENTS_LIMIT),
         ];
     }
 
@@ -108,18 +148,18 @@ final class SeoAuditCrawlBudgetAnalyzer
         }
 
         return [
-            'periodDays' => 7,
+            'periodDays' => self::PERIOD_DAYS,
             'host' => $host,
             'botHits' => $botHits,
             'statusBuckets' => $statusCounts,
-            'topBotAgents' => $this->topCounts($botAgents, 5),
+            'topBotAgents' => $this->topCounts($botAgents, self::TOP_BOT_AGENTS_LIMIT),
         ];
     }
 
     private function isBotUserAgent(string $ua): bool
     {
         $uaLower = mb_strtolower($ua);
-        foreach (['googlebot', 'bingbot', 'yandexbot', 'baiduspider', 'duckduckbot', 'crawler', 'spider', 'bot'] as $needle) {
+        foreach (self::BOT_MARKERS as $needle) {
             if (str_contains($uaLower, $needle)) {
                 return true;
             }
@@ -131,7 +171,7 @@ final class SeoAuditCrawlBudgetAnalyzer
     private function normalizeBotAgent(string $ua): string
     {
         $uaLower = mb_strtolower($ua);
-        foreach (['googlebot', 'bingbot', 'yandexbot', 'baiduspider', 'duckduckbot'] as $known) {
+        foreach (self::KNOWN_BOT_AGENTS as $known) {
             if (str_contains($uaLower, $known)) {
                 return $known;
             }
@@ -192,8 +232,7 @@ final class SeoAuditCrawlBudgetAnalyzer
         if (preg_match('/\\[(\\d{2})\\/([A-Za-z]{3})\\/(\\d{4}):(\\d{2}):(\\d{2}):(\\d{2})/', $line, $m) !== 1) {
             return true;
         }
-        $monthMap = ['Jan' => 1, 'Feb' => 2, 'Mar' => 3, 'Apr' => 4, 'May' => 5, 'Jun' => 6, 'Jul' => 7, 'Aug' => 8, 'Sep' => 9, 'Oct' => 10, 'Nov' => 11, 'Dec' => 12];
-        $month = $monthMap[$m[2]] ?? null;
+        $month = self::MONTH_NUMBERS[$m[2]] ?? null;
         if ($month === null) {
             return true;
         }
@@ -210,4 +249,3 @@ final class SeoAuditCrawlBudgetAnalyzer
         return isset($parts[$index]) ? (string) $parts[$index] : '';
     }
 }
-

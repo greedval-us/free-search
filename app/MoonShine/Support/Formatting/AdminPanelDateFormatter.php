@@ -17,4 +17,3 @@ final class AdminPanelDateFormatter
         return date(self::DATE_TIME_FORMAT, $timestamp);
     }
 }
-

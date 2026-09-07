@@ -4,8 +4,9 @@ namespace App\Modules\Bluesky\Parser\Contracts;
 
 use App\Modules\Bluesky\DTO\Request\BlueskyParserStartDTO;
 use App\Modules\Bluesky\DTO\Result\BlueskyParserRunStatusDTO;
+use App\Modules\ParserSupport\Contracts\ParserRunApplicationServiceInterface;
 
-interface BlueskyParserApplicationServiceInterface
+interface BlueskyParserApplicationServiceInterface extends ParserRunApplicationServiceInterface
 {
     public function start(BlueskyParserStartDTO $input): BlueskyParserRunStatusDTO;
 
@@ -13,13 +14,4 @@ interface BlueskyParserApplicationServiceInterface
 
     public function stop(int $userId, string $runId): ?BlueskyParserRunStatusDTO;
 
-    /**
-     * @return array<int, array<string, mixed>>
-     */
-    public function history(int $userId): array;
-
-    /**
-     * @return array<string, mixed>
-     */
-    public function getDownloadPayload(int $userId, string $runId): array;
 }

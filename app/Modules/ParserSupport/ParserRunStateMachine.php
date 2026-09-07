@@ -32,7 +32,7 @@ class ParserRunStateMachine
             $state = $advance($state);
         } catch (\Throwable $exception) {
             $state['status'] = ParserRunStatus::Failed->value;
-            $state['stage'] = 'failed';
+            $state['stage'] = ParserRunStatus::Failed->value;
             $state['progress'] = 100;
             $state['error'] = $exception->getMessage();
 
@@ -64,7 +64,7 @@ class ParserRunStateMachine
         }
 
         $state['status'] = ParserRunStatus::Stopped->value;
-        $state['stage'] = 'stopped';
+        $state['stage'] = ParserRunStatus::Stopped->value;
         $state['error'] = null;
 
         return $state;

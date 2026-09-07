@@ -7,6 +7,8 @@ use Carbon\Carbon;
 
 class TelegramAnalyticsOpinionLeadersBuilder
 {
+    private const LEADERS_LIMIT = 8;
+
     public function __construct(private readonly TelegramConfig $config)
     {
     }
@@ -121,7 +123,7 @@ class TelegramAnalyticsOpinionLeadersBuilder
 
         usort($leaders, static fn (array $left, array $right): int => ($right['score'] ?? 0) <=> ($left['score'] ?? 0));
 
-        return array_slice($leaders, 0, 8);
+        return array_slice($leaders, 0, self::LEADERS_LIMIT);
     }
 
     /**

@@ -2,8 +2,47 @@
 
 namespace App\Modules\SiteIntel\Application\Services\SeoAudit;
 
+use App\Modules\SiteIntel\Enums\SiteIntelScoreLevel;
+
 final class SeoAuditScoreCalculator
 {
+    private const DEFAULT_PROFILE = 'generic';
+
+    private const SCORE_MIN = 0;
+
+    private const SCORE_MAX = 100;
+
+    private const SIGNAL_PENALTIES = [
+        'title_length_out_of_range' => 10,
+        'description_length_out_of_range' => 8,
+        'invalid_h1_count' => 10,
+        'not_indexable' => 20,
+        'robots_missing' => 8,
+        'sitemap_missing' => 8,
+        'slow_response' => 8,
+        'heavy_page' => 6,
+        'https_missing' => 15,
+        'mixed_content' => 7,
+        'missing_mobile_viewport' => 8,
+        'soft_404_detected' => 15,
+        'render_blocking_resources' => 5,
+        'pagination_signals_incomplete' => 3,
+        'empty_anchor_links' => 4,
+        'images_missing_alt' => 5,
+        'thin_content_detected' => 5,
+        'low_text_to_html_ratio' => 4,
+        'low_internal_linking' => 4,
+        'html_structure_issues' => 3,
+        'hreflang_missing_reciprocal' => 4,
+        'hreflang_missing_x_default' => 2,
+        'crawl_budget_no_bot_hits' => 3,
+        'crawl_budget_bot_5xx' => 5,
+        'duplicate_titles' => 5,
+        'missing_canonical' => 5,
+        'hreflang_conflicts' => 4,
+        'sitemap_non_200_urls' => 6,
+    ];
+
     public function __construct(
         private readonly SeoAuditTechnicalThresholds $thresholds,
         private readonly SeoAuditScoringProfilePolicy $profilePolicy,
@@ -47,147 +86,125 @@ final class SeoAuditScoreCalculator
         array $crawl,
         array $sitemapAudit,
     ): array {
-        $score = 100;
+        $score = self::SCORE_MAX;
         $signals = [];
-        $profileKey = (string) ($profile['key'] ?? 'generic');
+        $profileKey = (string) ($profile['key'] ?? self::DEFAULT_PROFILE);
         $weights = $this->profilePolicy->weights($profileKey);
+        $applySignal = function (string $key, float $weight = 1.0) use (&$score, &$signals): void {
+            $score -= (int) round(self::SIGNAL_PENALTIES[$key] * $weight);
+            $signals[] = $key;
+        };
 
         if ($this->thresholds->isTitleOutOfRange((int) ($meta['titleLength'] ?? 0))) {
-            $score -= (int) round(10 * $weights['meta']);
-            $signals[] = 'title_length_out_of_range';
+            $applySignal('title_length_out_of_range', $weights['meta']);
         }
 
         if ($this->thresholds->isDescriptionOutOfRange((int) ($meta['descriptionLength'] ?? 0))) {
-            $score -= 8;
-            $signals[] = 'description_length_out_of_range';
+            $applySignal('description_length_out_of_range');
         }
 
         if (($headings['h1'] ?? 0) !== 1) {
-            $score -= 10;
-            $signals[] = 'invalid_h1_count';
+            $applySignal('invalid_h1_count');
         }
 
         if (($indexability['indexable'] ?? false) !== true) {
-            $score -= 20;
-            $signals[] = 'not_indexable';
+            $applySignal('not_indexable');
         }
 
         if (($robots['available'] ?? false) !== true) {
-            $score -= 8;
-            $signals[] = 'robots_missing';
+            $applySignal('robots_missing');
         }
 
         if (($sitemap['available'] ?? false) !== true) {
-            $score -= 8;
-            $signals[] = 'sitemap_missing';
+            $applySignal('sitemap_missing');
         }
 
         if ($this->thresholds->isSlowTtfb((int) ($performance['ttfbMsApprox'] ?? 0))) {
-            $score -= (int) round(8 * $weights['performance']);
-            $signals[] = 'slow_response';
+            $applySignal('slow_response', $weights['performance']);
         }
 
         if ($this->thresholds->isHeavyPage((int) ($performance['pageSizeKb'] ?? 0))) {
-            $score -= (int) round(6 * $weights['page_size']);
-            $signals[] = 'heavy_page';
+            $applySignal('heavy_page', $weights['page_size']);
         }
 
         if (($security['https'] ?? false) !== true) {
-            $score -= 15;
-            $signals[] = 'https_missing';
+            $applySignal('https_missing');
         }
 
         if (($security['mixedContent'] ?? false) === true) {
-            $score -= 7;
-            $signals[] = 'mixed_content';
+            $applySignal('mixed_content');
         }
         if (($mobileFriendly['isResponsive'] ?? false) !== true) {
-            $score -= 8;
-            $signals[] = 'missing_mobile_viewport';
+            $applySignal('missing_mobile_viewport');
         }
         if (($soft404['detected'] ?? false) === true) {
-            $score -= 15;
-            $signals[] = 'soft_404_detected';
+            $applySignal('soft_404_detected');
         }
         if ($this->thresholds->hasHighRenderBlocking((int) ($performance['renderBlocking']['total'] ?? 0))) {
-            $score -= (int) round(5 * $weights['render_blocking']);
-            $signals[] = 'render_blocking_resources';
+            $applySignal('render_blocking_resources', $weights['render_blocking']);
         }
         if (($pagination['isPaginated'] ?? false) === true && !(($pagination['hasRelPrev'] ?? false) && ($pagination['hasRelNext'] ?? false))) {
-            $score -= 3;
-            $signals[] = 'pagination_signals_incomplete';
+            $applySignal('pagination_signals_incomplete');
         }
         if ((int) ($quality['anchors']['empty'] ?? 0) > 0) {
-            $score -= 4;
-            $signals[] = 'empty_anchor_links';
+            $applySignal('empty_anchor_links');
         }
         if ((int) ($quality['accessibility']['imagesWithoutAlt'] ?? 0) > 0) {
-            $score -= 5;
-            $signals[] = 'images_missing_alt';
+            $applySignal('images_missing_alt');
         }
         if (($quality['content']['thinContent'] ?? false) === true) {
-            $score -= 5;
-            $signals[] = 'thin_content_detected';
+            $applySignal('thin_content_detected');
         }
         if (($quality['content']['lowTextRatio'] ?? false) === true) {
-            $score -= (int) round(4 * $weights['text_ratio']);
-            $signals[] = 'low_text_to_html_ratio';
+            $applySignal('low_text_to_html_ratio', $weights['text_ratio']);
         }
         if (($quality['linkGraph']['orphanRisk'] ?? false) === true) {
-            $score -= 4;
-            $signals[] = 'low_internal_linking';
+            $applySignal('low_internal_linking');
         }
         if ((int) ($quality['htmlValidation']['issueCount'] ?? 0) > 0) {
-            $score -= 3;
-            $signals[] = 'html_structure_issues';
+            $applySignal('html_structure_issues');
         }
         if ((int) count($international['missingReciprocal'] ?? []) > 0) {
-            $score -= 4;
-            $signals[] = 'hreflang_missing_reciprocal';
+            $applySignal('hreflang_missing_reciprocal');
         }
         if ((int) count($international['missingXDefault'] ?? []) > 0) {
-            $score -= 2;
-            $signals[] = 'hreflang_missing_x_default';
+            $applySignal('hreflang_missing_x_default');
         }
         if ((int) ($crawlBudget['botHits'] ?? 0) === 0) {
-            $score -= (int) round(3 * $weights['crawl_budget_hits']);
-            $signals[] = 'crawl_budget_no_bot_hits';
+            $applySignal('crawl_budget_no_bot_hits', $weights['crawl_budget_hits']);
         }
         if ((int) ($crawlBudget['statusBuckets']['5xx'] ?? 0) > 0) {
-            $score -= (int) round(5 * $weights['crawl_budget_5xx']);
-            $signals[] = 'crawl_budget_bot_5xx';
+            $applySignal('crawl_budget_bot_5xx', $weights['crawl_budget_5xx']);
         }
 
         $duplicateTitles = is_array($crawl['duplicates']['titles'] ?? null) ? $crawl['duplicates']['titles'] : [];
         if ($duplicateTitles !== []) {
-            $score -= 5;
-            $signals[] = 'duplicate_titles';
+            $applySignal('duplicate_titles');
         }
 
         $canonicalMissing = is_array($crawl['canonicalAudit']['missing'] ?? null) ? $crawl['canonicalAudit']['missing'] : [];
         if ($canonicalMissing !== []) {
-            $score -= 5;
-            $signals[] = 'missing_canonical';
+            $applySignal('missing_canonical');
         }
 
         $hreflangConflicts = is_array($crawl['hreflangAudit']['duplicateLangTags'] ?? null) ? $crawl['hreflangAudit']['duplicateLangTags'] : [];
         if ($hreflangConflicts !== []) {
-            $score -= 4;
-            $signals[] = 'hreflang_conflicts';
+            $applySignal('hreflang_conflicts');
         }
 
         $sitemapNon200 = is_array($sitemapAudit['non200'] ?? null) ? $sitemapAudit['non200'] : [];
         if ($sitemapNon200 !== []) {
-            $score -= 6;
-            $signals[] = 'sitemap_non_200_urls';
+            $applySignal('sitemap_non_200_urls');
         }
 
         $score += $this->profilePolicy->baseBonus($profileKey);
-        $score = max(0, min(100, $score));
+        $score = max(self::SCORE_MIN, min(self::SCORE_MAX, $score));
         $levelThresholds = $this->profilePolicy->levelThresholds($profileKey);
-        $level = $score >= $levelThresholds['high']
-            ? 'high'
-            : ($score >= $levelThresholds['medium'] ? 'medium' : 'low');
+        $level = SiteIntelScoreLevel::fromThresholds(
+            $score,
+            $levelThresholds['high'],
+            $levelThresholds['medium'],
+        )->value;
 
         return [
             'value' => $score,

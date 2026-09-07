@@ -2,83 +2,44 @@
 
 namespace App\Http\Controllers\Mastodon;
 
-use App\Http\Controllers\Concerns\HandlesParserDownloads;
-use App\Http\Controllers\Concerns\ResolvesAuthenticatedUserId;
-use App\Http\Controllers\Controller;
+use App\Http\Controllers\Parser\AbstractParserController;
 use App\Http\Requests\Mastodon\MastodonParserStartRequest;
 use App\Modules\Export\Excel\Contracts\ExcelWorkbookServiceInterface;
 use App\Modules\Mastodon\Parser\Contracts\MastodonParserApplicationServiceInterface;
 use App\Modules\Mastodon\Parser\Contracts\MastodonParserExportBuilderInterface;
+use App\Modules\ParserSupport\ParserRunConfig;
+use App\Support\Reports\Contracts\ReportFilenamePolicyInterface;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
-use Symfony\Component\HttpFoundation\BinaryFileResponse;
-use Symfony\Component\HttpFoundation\StreamedResponse;
 
-final class MastodonParserController extends Controller
+final class MastodonParserController extends AbstractParserController
 {
-    use HandlesParserDownloads;
-    use ResolvesAuthenticatedUserId;
+    private const EXPORT_PREFIX = 'mastodon-parser';
+
+    private const EXPORT_TARGET_KEY = 'account';
+
+    private const EXPORT_TARGET_FALLBACK = 'account';
 
     public function __construct(
         private readonly MastodonParserApplicationServiceInterface $parserApplicationService,
-        private readonly MastodonParserExportBuilderInterface $exportBuilder,
-        private readonly ExcelWorkbookServiceInterface $excelWorkbookService,
+        MastodonParserExportBuilderInterface $exportBuilder,
+        ExcelWorkbookServiceInterface $excelWorkbookService,
+        ParserRunConfig $parserRunConfig,
+        ReportFilenamePolicyInterface $filenamePolicy,
     ) {
+        parent::__construct(
+            $parserApplicationService,
+            $exportBuilder,
+            $excelWorkbookService,
+            $parserRunConfig,
+            $filenamePolicy,
+            self::EXPORT_PREFIX,
+            self::EXPORT_TARGET_KEY,
+            self::EXPORT_TARGET_FALLBACK,
+        );
     }
 
     public function start(MastodonParserStartRequest $request): JsonResponse
     {
         return $this->jsonPayloadFrom($this->parserApplicationService->start($request->toStartDTO()));
-    }
-
-    public function status(Request $request, string $runId): JsonResponse
-    {
-        return $this->jsonPayloadFromOrNotFound(
-            $this->parserApplicationService->status($this->userId($request), $runId)
-        );
-    }
-
-    public function stop(Request $request, string $runId): JsonResponse
-    {
-        return $this->jsonPayloadFromOrNotFound(
-            $this->parserApplicationService->stop($this->userId($request), $runId)
-        );
-    }
-
-    public function history(Request $request): JsonResponse
-    {
-        return response()->json([
-            'ok' => true,
-            'items' => $this->parserApplicationService->history($this->userId($request)),
-            'retentionDays' => (int) config('osint.parser_runs.retention_days', 7),
-        ]);
-    }
-
-    public function downloadExcel(Request $request, string $runId): BinaryFileResponse
-    {
-        $this->applyDownloadLocale($request);
-
-        $payload = $this->parserApplicationService->getDownloadPayload($this->userId($request), $runId);
-        $filename = $this->buildExportFilename(
-            'mastodon-parser',
-            (string) ($payload['account'] ?? 'account'),
-            'xlsx'
-        );
-
-        return $this->excelWorkbookService->download($filename, $this->exportBuilder->buildSheets($payload));
-    }
-
-    public function downloadJson(Request $request, string $runId): StreamedResponse
-    {
-        $this->applyDownloadLocale($request);
-
-        $payload = $this->parserApplicationService->getDownloadPayload($this->userId($request), $runId);
-        $filename = $this->buildExportFilename(
-            'mastodon-parser',
-            (string) ($payload['account'] ?? 'account'),
-            'json'
-        );
-
-        return $this->streamJsonDownload($payload, $filename);
     }
 }

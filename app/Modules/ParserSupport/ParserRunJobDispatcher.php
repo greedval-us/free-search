@@ -8,7 +8,7 @@ use App\Modules\ParserSupport\Contracts\ParserRunJobDispatcherInterface;
 final readonly class ParserRunJobDispatcher implements ParserRunJobDispatcherInterface
 {
     public function __construct(
-        private ParserRunExecutionConfig $config,
+        private ParserRunConfig $config,
     ) {}
 
     public function dispatch(string $module, int $userId, string $runId, int $delaySeconds = 0): void

@@ -37,6 +37,7 @@ class QueueJobResource extends ModelResource
             Action::CREATE,
             Action::VIEW,
             Action::UPDATE,
+            Action::MASS_DELETE,
         );
     }
 
@@ -58,7 +59,7 @@ class QueueJobResource extends ModelResource
 
     protected function modifyQueryBuilder(Builder $builder): Builder
     {
-        if (!$this->hasQueryParam('sort')) {
+        if (! $this->hasQueryParam('sort')) {
             $builder->orderByDesc('id');
         }
 

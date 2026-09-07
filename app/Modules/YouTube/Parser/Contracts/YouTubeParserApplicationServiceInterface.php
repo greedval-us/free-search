@@ -6,8 +6,9 @@ use App\Modules\YouTube\DTO\Request\YouTubeCommentsQueryDTO;
 use App\Modules\YouTube\DTO\Request\YouTubeParserStartDTO;
 use App\Modules\YouTube\DTO\Result\YouTubeCommentsResultDTO;
 use App\Modules\YouTube\DTO\Result\YouTubeParserRunStatusDTO;
+use App\Modules\ParserSupport\Contracts\ParserRunApplicationServiceInterface;
 
-interface YouTubeParserApplicationServiceInterface
+interface YouTubeParserApplicationServiceInterface extends ParserRunApplicationServiceInterface
 {
     public function comments(YouTubeCommentsQueryDTO $query): YouTubeCommentsResultDTO;
 
@@ -17,13 +18,4 @@ interface YouTubeParserApplicationServiceInterface
 
     public function stop(int $userId, string $runId): ?YouTubeParserRunStatusDTO;
 
-    /**
-     * @return array<int, array<string, mixed>>
-     */
-    public function history(int $userId): array;
-
-    /**
-     * @return array<string, mixed>
-     */
-    public function getDownloadPayload(int $userId, string $runId): array;
 }

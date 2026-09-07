@@ -4,17 +4,19 @@ declare(strict_types=1);
 
 namespace App\MoonShine\Pages;
 
+use App\MoonShine\Support\AdminAccess;
 use App\MoonShine\Support\AdminControlAnalyticsService;
+use App\MoonShine\Support\AdminDashboardConfig;
+use App\MoonShine\Support\AdminNavigationCatalog;
+use App\MoonShine\Support\AdminRole;
+use MoonShine\Contracts\Core\ResourceContract;
 use MoonShine\Contracts\UI\ComponentContract;
+use MoonShine\Laravel\Models\MoonshineUser;
 use MoonShine\Laravel\Pages\Page;
 use MoonShine\MenuManager\Attributes\SkipMenu;
 use MoonShine\Support\Enums\Color;
 use MoonShine\UI\Components\FlexibleRender;
-use MoonShine\UI\Components\Heading;
 use MoonShine\UI\Components\Metrics\Wrapped\ValueMetric;
-use MoonShine\UI\Components\Table\TableBuilder;
-use MoonShine\UI\Fields\Number;
-use MoonShine\UI\Fields\Text;
 
 #[SkipMenu]
 
@@ -40,14 +42,13 @@ class Dashboard extends Page
      */
     protected function components(): iterable
     {
-        $period = (int) request()->integer('period', 7);
-        $allowedPeriods = [7, 30, 90];
-
-        if (! \in_array($period, $allowedPeriods, true)) {
-            $period = 7;
-        }
-
-        $analytics = new AdminControlAnalyticsService;
+        $config = app(AdminDashboardConfig::class);
+        $period = $config->normalizePeriod((int) request()->integer('period', $config->defaultPeriod));
+        $analytics = app(AdminControlAnalyticsService::class);
+        $access = app(AdminAccess::class);
+        $user = auth('moonshine')->user();
+        $moonShineUser = $user instanceof MoonshineUser ? $user : null;
+        $role = $access->role($moonShineUser) ?? AdminRole::Analyst;
         $snapshot = $analytics->snapshot();
         $topModules = array_map(
             static function (array $row): array {
@@ -57,98 +58,24 @@ class Dashboard extends Page
 
                 return $row;
             },
-            $analytics->topModules($period),
+            $analytics->topModules($period, $config->topModulesLimit),
         );
         $dailyActivity = $analytics->dailyActivity($period);
 
         return [
-            Heading::make(__('admin_dashboard.sections.overview'), 3),
+            FlexibleRender::make(
+                view('moonshine.dashboard.hero'),
+                [
+                    'roleLabel' => $role->label(),
+                    'healthStatus' => $analytics->healthStatus($snapshot),
+                    'quickLinks' => $this->quickLinks($role, $access, $moonShineUser),
+                    'period' => $period,
+                    'allowedPeriods' => $config->periods,
+                    'generatedAt' => now()->format('d.m.Y H:i'),
+                ],
+            ),
 
-            ValueMetric::make(__('admin_dashboard.metrics.registered_users'))
-                ->icon('users')
-                ->value($snapshot['users_total'])
-                ->iconColor(Color::BLUE)
-                ->columnSpan(12, 12),
-
-            ValueMetric::make(__('admin_dashboard.metrics.new_users_24h'))
-                ->icon('user-plus')
-                ->value($snapshot['users_registered_24h'])
-                ->iconColor(Color::INFO)
-                ->columnSpan(12, 12),
-
-            ValueMetric::make(__('admin_dashboard.metrics.new_users_7d'))
-                ->icon('calendar-days')
-                ->value($snapshot['users_registered_7d'])
-                ->iconColor(Color::PRIMARY)
-                ->columnSpan(12, 12),
-
-            ValueMetric::make(__('admin_dashboard.metrics.paid_users_active'))
-                ->icon('star')
-                ->value($snapshot['users_paid_active'])
-                ->iconColor(Color::SUCCESS)
-                ->columnSpan(12, 12),
-
-            ValueMetric::make(__('admin_dashboard.metrics.plus_users_active'))
-                ->icon('sparkles')
-                ->value($snapshot['users_plus_active'])
-                ->iconColor(Color::WARNING)
-                ->columnSpan(12, 12),
-
-            ValueMetric::make(__('admin_dashboard.metrics.pro_users_active'))
-                ->icon('shield-check')
-                ->value($snapshot['users_pro_active'])
-                ->iconColor(Color::SUCCESS)
-                ->columnSpan(12, 12),
-
-            ValueMetric::make(__('admin_dashboard.metrics.blocked_users'))
-                ->icon('lock-closed')
-                ->value($snapshot['users_blocked'])
-                ->iconColor(Color::ERROR)
-                ->columnSpan(12, 12),
-
-            ValueMetric::make(__('admin_dashboard.metrics.requests_24h'))
-                ->icon('clock')
-                ->value($snapshot['requests_24h'])
-                ->iconColor(Color::GREEN)
-                ->columnSpan(12, 12),
-
-            ValueMetric::make(__('admin_dashboard.metrics.requests_7d'))
-                ->icon('chart-bar')
-                ->value($snapshot['requests_7d'])
-                ->iconColor(Color::SECONDARY)
-                ->columnSpan(12, 12),
-
-            ValueMetric::make(__('admin_dashboard.metrics.used_modules_30d'))
-                ->icon('squares-2x2')
-                ->value($snapshot['modules_used_30d'])
-                ->iconColor(Color::PURPLE)
-                ->columnSpan(12, 12),
-
-            ValueMetric::make(__('admin_dashboard.metrics.errors_5xx_24h'))
-                ->icon('x-circle')
-                ->value($snapshot['errors_5xx_24h'])
-                ->iconColor(Color::YELLOW)
-                ->columnSpan(12, 12),
-
-            ValueMetric::make(__('admin_dashboard.metrics.avg_response_24h_ms'))
-                ->icon('bolt')
-                ->value($snapshot['avg_response_ms_24h'])
-                ->iconColor(Color::GRAY)
-                ->columnSpan(12, 12),
-
-            ValueMetric::make(__('admin_dashboard.metrics.queue_ready_now'))
-                ->icon('queue-list')
-                ->value($snapshot['queue_jobs_ready'])
-                ->iconColor(Color::WARNING)
-                ->columnSpan(12, 12),
-
-            ValueMetric::make(__('admin_dashboard.metrics.failed_jobs_24h'))
-                ->icon('exclamation-triangle')
-                ->value($snapshot['failed_jobs_24h'])
-                ->iconColor(Color::ERROR)
-                ->columnSpan(12, 12),
-
-            Heading::make(__('admin_dashboard.sections.visual_analytics'), 3),
+            ...$this->metrics($role, $snapshot),
 
             FlexibleRender::make(
                 view('moonshine.dashboard.control-overview'),
@@ -157,34 +84,102 @@ class Dashboard extends Page
                     'topModules' => $topModules,
                     'dailyActivity' => $dailyActivity,
                     'period' => $period,
-                    'allowedPeriods' => $allowedPeriods,
+                    'healthStatus' => $analytics->healthStatus($snapshot),
                 ],
             ),
-
-            Heading::make(__('admin_dashboard.sections.most_used_modules', ['days' => $period]), 4),
-
-            TableBuilder::make(
-                [
-                    Text::make(__('admin_dashboard.table.module'), 'module_label'),
-                    Number::make(__('admin_dashboard.table.requests'), 'requests_count'),
-                    Number::make(__('admin_dashboard.table.unique_users'), 'users_count'),
-                    Number::make(__('admin_dashboard.table.errors_4xx'), 'errors_4xx'),
-                    Number::make(__('admin_dashboard.table.errors_5xx'), 'errors_5xx'),
-                ],
-                $topModules,
-            )->simple()->withNotFound(),
-
-            Heading::make(__('admin_dashboard.sections.daily_activity', ['days' => $period]), 4),
-
-            TableBuilder::make(
-                [
-                    Text::make(__('admin_dashboard.table.date'), 'date'),
-                    Number::make(__('admin_dashboard.table.registrations'), 'registrations_count'),
-                    Number::make(__('admin_dashboard.table.requests'), 'requests_count'),
-                    Number::make(__('admin_dashboard.table.active_users'), 'active_users_count'),
-                ],
-                $dailyActivity,
-            )->simple()->withNotFound(),
         ];
+    }
+
+    /**
+     * @param  array<string, int|float>  $snapshot
+     * @return list<ValueMetric>
+     */
+    private function metrics(AdminRole $role, array $snapshot): array
+    {
+        $catalog = [
+            'users_total' => ['registered_users', 'users', Color::BLUE],
+            'users_registered_7d' => ['new_users_7d', 'user-plus', Color::INFO],
+            'users_active_24h' => ['active_users_24h', 'cursor-arrow-rays', Color::PRIMARY],
+            'users_paid_active' => ['paid_users_active', 'star', Color::SUCCESS],
+            'requests_24h' => ['requests_24h', 'chart-bar', Color::GREEN],
+            'requests_7d' => ['requests_7d', 'chart-bar-square', Color::SECONDARY],
+            'modules_used_30d' => ['used_modules_30d', 'squares-2x2', Color::PURPLE],
+            'avg_response_ms_24h' => ['avg_response_24h_ms', 'bolt', Color::GRAY],
+            'errors_5xx_24h' => ['errors_5xx_24h', 'x-circle', Color::ERROR],
+            'queue_jobs_ready' => ['queue_ready_now', 'queue-list', Color::WARNING],
+            'parser_runs_active' => ['parser_runs_active', 'arrow-path', Color::INFO],
+            'failed_jobs_24h' => ['failed_jobs_24h', 'exclamation-triangle', Color::ERROR],
+        ];
+
+        $keys = match ($role) {
+            AdminRole::Admin => [
+                'users_total',
+                'users_active_24h',
+                'users_paid_active',
+                'requests_24h',
+                'parser_runs_active',
+                'failed_jobs_24h',
+            ],
+            AdminRole::Analyst => [
+                'users_total',
+                'users_registered_7d',
+                'users_active_24h',
+                'users_paid_active',
+                'requests_7d',
+                'modules_used_30d',
+            ],
+            AdminRole::Developer => [
+                'requests_24h',
+                'avg_response_ms_24h',
+                'errors_5xx_24h',
+                'queue_jobs_ready',
+                'parser_runs_active',
+                'failed_jobs_24h',
+            ],
+        };
+
+        return array_map(
+            static function (string $key) use ($catalog, $snapshot): ValueMetric {
+                [$label, $icon, $color] = $catalog[$key];
+
+                return ValueMetric::make(__("admin_dashboard.metrics.{$label}"))
+                    ->icon($icon)
+                    ->value($snapshot[$key] ?? 0)
+                    ->iconColor($color)
+                    ->columnSpan(4, 12);
+            },
+            $keys,
+        );
+    }
+
+    /**
+     * @return list<array{title: string, description: string, url: string}>
+     */
+    private function quickLinks(
+        AdminRole $role,
+        AdminAccess $access,
+        ?MoonshineUser $user,
+    ): array {
+        $links = [];
+
+        foreach (AdminNavigationCatalog::dashboardResources($role) as $resourceClass) {
+            if (! $access->canViewResource($user, $resourceClass)) {
+                continue;
+            }
+
+            $resource = $this->getCore()->getInstances($resourceClass);
+            if (! $resource instanceof ResourceContract) {
+                continue;
+            }
+
+            $key = AdminNavigationCatalog::resourceKey($resourceClass);
+            $links[] = [
+                'title' => $resource->getTitle(),
+                'description' => __("admin_dashboard.quick_links.{$key}"),
+                'url' => $resource->getUrl(),
+            ];
+        }
+
+        return $links;
     }
 }

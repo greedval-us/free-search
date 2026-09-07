@@ -2,13 +2,14 @@
 
 namespace App\Modules\YouTube\Parser;
 
+use App\Modules\ParserSupport\Contracts\ParserRunCollectorInterface;
 use App\Modules\YouTube\DTO\Parser\YouTubeParserStateDTO;
 use App\Modules\YouTube\Core\Contracts\YouTubeGatewayInterface;
 use App\Modules\YouTube\Enums\YouTubeParserStage;
 use App\Modules\YouTube\Presenters\YouTubeCommentThreadPresenter;
 use Illuminate\Support\Arr;
 
-class YouTubeParserCollector
+class YouTubeParserCollector implements ParserRunCollectorInterface
 {
     private const THREADS_LIMIT = 100;
     private const REPLIES_LIMIT = 100;

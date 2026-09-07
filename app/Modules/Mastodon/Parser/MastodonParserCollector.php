@@ -2,13 +2,14 @@
 
 namespace App\Modules\Mastodon\Parser;
 
+use App\Modules\ParserSupport\Contracts\ParserRunCollectorInterface;
 use App\Modules\Mastodon\DTO\Parser\MastodonParserStateDTO;
 use App\Modules\Mastodon\Core\Contracts\MastodonGatewayInterface;
 use App\Modules\Mastodon\Enums\MastodonParserStage;
 use App\Modules\Mastodon\Presenters\MastodonAccountPresenter;
 use App\Modules\Mastodon\Presenters\MastodonStatusPresenter;
 
-final class MastodonParserCollector
+final class MastodonParserCollector implements ParserRunCollectorInterface
 {
     private const STATUSES_LIMIT = 20;
 

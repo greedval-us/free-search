@@ -23,8 +23,7 @@ use Laravel\Fortify\TwoFactorAuthenticatable;
     'is_blocked',
 ])]
 #[Hidden(['password', 'two_factor_secret', 'two_factor_recovery_codes', 'remember_token'])]
-class User extends Authenticatable
-    implements MustVerifyEmail
+class User extends Authenticatable implements MustVerifyEmail
 {
     /** @use HasFactory<UserFactory> */
     use HasFactory, Notifiable, TwoFactorAuthenticatable;
@@ -110,6 +109,11 @@ class User extends Authenticatable
     public function subscriptions(): HasMany
     {
         return $this->hasMany(UserSubscription::class);
+    }
+
+    public function featureUsageDaily(): HasMany
+    {
+        return $this->hasMany(FeatureUsageDaily::class);
     }
 
     public function activeSubscription(): HasOne

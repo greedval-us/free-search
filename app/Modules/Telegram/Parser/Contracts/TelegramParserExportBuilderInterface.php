@@ -2,14 +2,8 @@
 
 namespace App\Modules\Telegram\Parser\Contracts;
 
-use App\Modules\Export\Excel\SheetDefinition;
+use App\Modules\Export\Excel\Contracts\ParserExportBuilderInterface;
 
-interface TelegramParserExportBuilderInterface
+interface TelegramParserExportBuilderInterface extends ParserExportBuilderInterface
 {
-    /**
-     * @param array<string, mixed> $payload
-     * @return array<int, SheetDefinition>
-     */
-    public function buildSheets(array $payload): array;
 }
-

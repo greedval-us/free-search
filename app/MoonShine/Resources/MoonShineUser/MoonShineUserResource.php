@@ -37,7 +37,10 @@ class MoonShineUserResource extends ModelResource
 
     protected function activeActions(): ListOf
     {
-        return parent::activeActions()->except(Action::VIEW);
+        return parent::activeActions()->except(
+            Action::VIEW,
+            Action::MASS_DELETE,
+        );
     }
 
     protected function pages(): array
@@ -53,6 +56,7 @@ class MoonShineUserResource extends ModelResource
         return [
             'id',
             'name',
+            'email',
         ];
     }
 }

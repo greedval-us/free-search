@@ -3,7 +3,6 @@
 namespace App\Http\Controllers\Concerns;
 
 use App\Support\Reports\Contracts\ReportFilenamePolicyInterface;
-use App\Support\Reports\ReportFilenamePolicy;
 use App\Support\Reports\ReportsConfig;
 use Carbon\Carbon;
 use Illuminate\Http\Response;
@@ -63,14 +62,11 @@ trait HandlesHtmlReports
 
     private function htmlReportFilenamePolicy(): ReportFilenamePolicyInterface
     {
-        return new ReportFilenamePolicy($this->htmlReportsConfig());
+        return app(ReportFilenamePolicyInterface::class);
     }
 
     private function htmlReportsConfig(): ReportsConfig
     {
-        return ReportsConfig::fromArray(
-            (array) config('osint.reports', []),
-            (string) config('app.timezone', 'UTC')
-        );
+        return app(ReportsConfig::class);
     }
 }

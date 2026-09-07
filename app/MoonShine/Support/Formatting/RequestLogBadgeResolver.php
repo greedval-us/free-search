@@ -40,4 +40,3 @@ final class RequestLogBadgeResolver
         return 'gray';
     }
 }
-

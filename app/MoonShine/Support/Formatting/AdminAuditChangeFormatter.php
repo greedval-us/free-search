@@ -8,7 +8,7 @@ final class AdminAuditChangeFormatter
 {
     public function changedKeysSummary(mixed $changes): string
     {
-        if (!is_array($changes) || $changes === []) {
+        if (! is_array($changes) || $changes === []) {
             return __('admin_panel.values.not_available');
         }
 
@@ -19,14 +19,14 @@ final class AdminAuditChangeFormatter
 
     public function changeDetailsSummary(mixed $changes): string
     {
-        if (!is_array($changes) || $changes === []) {
+        if (! is_array($changes) || $changes === []) {
             return __('admin_panel.values.not_available');
         }
 
         $parts = [];
 
         foreach ($changes as $field => $delta) {
-            if (!is_array($delta)) {
+            if (! is_array($delta)) {
                 continue;
             }
 
@@ -61,4 +61,3 @@ final class AdminAuditChangeFormatter
         return is_string($json) ? $json : __('admin_panel.values.complex');
     }
 }
-

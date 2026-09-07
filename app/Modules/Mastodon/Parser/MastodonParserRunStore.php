@@ -4,7 +4,6 @@ namespace App\Modules\Mastodon\Parser;
 
 use App\Modules\Mastodon\Enums\MastodonParserStage;
 use App\Modules\ParserSupport\JsonRunStore;
-use App\Modules\ParserSupport\Enums\ParserRunStatus;
 
 final class MastodonParserRunStore extends JsonRunStore
 {
@@ -19,41 +18,30 @@ final class MastodonParserRunStore extends JsonRunStore
      */
     protected function initialState(int $userId, string $runId, array $context, string $now): array
     {
-        return [
-            'runId' => $runId,
-            'userId' => $userId,
-            'status' => ParserRunStatus::Running->value,
-            'stage' => MastodonParserStage::Statuses->value,
-            'progress' => 1,
-            'error' => null,
-            'createdAt' => $now,
-            'updatedAt' => $now,
-            'context' => $context,
-            'cursor' => [
+        return $this->buildInitialState(
+            userId: $userId,
+            runId: $runId,
+            now: $now,
+            stage: MastodonParserStage::Statuses->value,
+            context: $context,
+            cursor: [
                 'statusesMaxId' => '',
                 'statusesPage' => 0,
                 'statusesTotalHint' => 0,
                 'commentStatusIds' => [],
                 'commentStatusIndex' => 0,
-                'nextAdvanceAt' => 0,
             ],
-            'stats' => [
+            stats: [
                 'processedStatuses' => 0,
                 'processedComments' => 0,
             ],
-            'data' => [
+            data: [
                 'account' => null,
                 'statusIds' => [],
                 'commentIds' => [],
                 'statusesIndex' => [],
                 'commentsIndex' => [],
             ],
-            'result' => null,
-        ];
-    }
-
-    protected function runPath(int $userId, string $runId): string
-    {
-        return sprintf('mastodon-parser-runs/%d/%s.json', $userId, $runId);
+        );
     }
 }

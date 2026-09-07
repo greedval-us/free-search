@@ -4,7 +4,7 @@ namespace App\Jobs;
 
 use App\Modules\ParserSupport\Contracts\ParserRunJobDispatcherInterface;
 use App\Modules\ParserSupport\ParserRunBackgroundProcessorRegistry;
-use App\Modules\ParserSupport\ParserRunExecutionConfig;
+use App\Modules\ParserSupport\ParserRunConfig;
 use Illuminate\Contracts\Queue\ShouldBeUniqueUntilProcessing;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Queue\Queueable;
@@ -15,17 +15,25 @@ final class ProcessParserRun implements ShouldBeUniqueUntilProcessing, ShouldQue
 {
     public const TIMEOUT_SECONDS = 120;
 
+    private const MAX_ATTEMPTS = 3;
+
+    private const UNIQUE_FOR_SECONDS = 3600;
+
+    private const OVERLAP_RELEASE_SECONDS = 3;
+
+    private const OVERLAP_EXPIRY_GRACE_SECONDS = 30;
+
     private const SERIALIZED_MODULES = ['telegram'];
 
     use Queueable;
 
-    public int $tries = 3;
+    public int $tries = self::MAX_ATTEMPTS;
 
     public int $timeout = self::TIMEOUT_SECONDS;
 
     public bool $failOnTimeout = true;
 
-    public int $uniqueFor = 3600;
+    public int $uniqueFor = self::UNIQUE_FOR_SECONDS;
 
     public function __construct(
         public readonly string $module,
@@ -36,7 +44,7 @@ final class ProcessParserRun implements ShouldBeUniqueUntilProcessing, ShouldQue
     public function handle(
         ParserRunBackgroundProcessorRegistry $registry,
         ParserRunJobDispatcherInterface $jobDispatcher,
-        ParserRunExecutionConfig $config,
+        ParserRunConfig $config,
     ): void {
         $shouldContinue = $registry
             ->forModule($this->module)
@@ -79,8 +87,8 @@ final class ProcessParserRun implements ShouldBeUniqueUntilProcessing, ShouldQue
 
         return [
             (new WithoutOverlapping("parser-run:module:{$this->module}"))
-                ->releaseAfter(3)
-                ->expireAfter($this->timeout + 30),
+                ->releaseAfter(self::OVERLAP_RELEASE_SECONDS)
+                ->expireAfter($this->timeout + self::OVERLAP_EXPIRY_GRACE_SECONDS),
         ];
     }
 }

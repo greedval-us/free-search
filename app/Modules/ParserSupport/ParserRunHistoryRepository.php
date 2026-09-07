@@ -8,6 +8,10 @@ use Illuminate\Support\Collection;
 
 final class ParserRunHistoryRepository
 {
+    public function __construct(
+        private readonly ParserRunConfig $config,
+    ) {}
+
     public function activeForUser(int $userId, string $moduleKey): ?ParserRun
     {
         return ParserRun::query()
@@ -34,7 +38,7 @@ final class ParserRunHistoryRepository
             })
             ->latest('started_at')
             ->latest('id')
-            ->limit((int) config('osint.parser_runs.history_limit', 20))
+            ->limit($this->config->historyLimit())
             ->get();
     }
 }

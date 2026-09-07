@@ -6,6 +6,10 @@ use App\Modules\YouTube\Enums\YouTubeDurationBucket;
 
 class YouTubeAnalyticsReportBuilder
 {
+    private const TOP_TAGS_LIMIT = 20;
+
+    private const DEFAULT_LEADERS_LIMIT = 5;
+
     /**
      * @param  array<int, array<string, mixed>>  $videos
      * @return array<string, mixed>
@@ -105,7 +109,7 @@ class YouTubeAnalyticsReportBuilder
         arsort($tags);
 
         return collect($tags)
-            ->take(20)
+            ->take(self::TOP_TAGS_LIMIT)
             ->map(fn (int $count, string $tag): array => ['tag' => $tag, 'count' => $count])
             ->values()
             ->all();
@@ -154,7 +158,7 @@ class YouTubeAnalyticsReportBuilder
      * @param  array<int, array<string, mixed>>  $videos
      * @return array<int, array<string, mixed>>
      */
-    public function topBy(array $videos, string $field, int $limit = 5): array
+    public function topBy(array $videos, string $field, int $limit = self::DEFAULT_LEADERS_LIMIT): array
     {
         usort($videos, fn (array $a, array $b): int => ($b[$field] ?? 0) <=> ($a[$field] ?? 0));
 

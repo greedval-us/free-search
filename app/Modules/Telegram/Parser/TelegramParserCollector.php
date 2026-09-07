@@ -2,11 +2,14 @@
 
 namespace App\Modules\Telegram\Parser;
 
+use App\Modules\ParserSupport\Contracts\ParserRunCollectorInterface;
+use App\Modules\ParserSupport\Enums\ParserRunStatus;
 use App\Modules\Telegram\Core\Contracts\TelegramGatewayInterface;
+use App\Modules\Telegram\Enums\TelegramParserStage;
 use App\Modules\Telegram\Presenters\TelegramCommentPresenter;
 use App\Modules\Telegram\Presenters\TelegramMessagePresenter;
 
-class TelegramParserCollector
+class TelegramParserCollector implements ParserRunCollectorInterface
 {
     private const MESSAGE_LIMIT = 50;
     private const COMMENT_LIMIT = 20;
@@ -24,16 +27,17 @@ class TelegramParserCollector
      */
     public function advance(array $run): array
     {
-        if (($run['status'] ?? null) !== 'running') {
+        if (($run['status'] ?? null) !== ParserRunStatus::Running->value) {
             return $run;
         }
 
-        $stage = (string) ($run['stage'] ?? 'messages');
+        $stage = TelegramParserStage::tryFrom((string) ($run['stage'] ?? ''))
+            ?? TelegramParserStage::Messages;
 
         return match ($stage) {
-            'messages' => $this->advanceMessages($run),
-            'comments' => $this->advanceComments($run),
-            'finishing' => $this->finish($run),
+            TelegramParserStage::Messages => $this->advanceMessages($run),
+            TelegramParserStage::Comments => $this->advanceComments($run),
+            TelegramParserStage::Finishing => $this->finish($run),
             default => $run,
         };
     }
@@ -154,7 +158,9 @@ class TelegramParserCollector
             $cursor['commentPostIds'] = array_values(array_filter($commentPostIds, static fn (int $id): bool => $id > 0));
             $cursor['commentPostIndex'] = 0;
             $cursor['commentOffsetId'] = 0;
-            $run['stage'] = count($cursor['commentPostIds']) > 0 ? 'comments' : 'finishing';
+            $run['stage'] = count($cursor['commentPostIds']) > 0
+                ? TelegramParserStage::Comments->value
+                : TelegramParserStage::Finishing->value;
             $run['progress'] = count($cursor['commentPostIds']) > 0 ? 70 : 95;
         } else {
             $cursor['messagesOffsetId'] = $nextOffsetId;
@@ -190,7 +196,7 @@ class TelegramParserCollector
         $postIds = is_array($cursor['commentPostIds'] ?? null) ? array_map('intval', $cursor['commentPostIds']) : [];
         $postIndex = (int) ($cursor['commentPostIndex'] ?? 0);
         if ($postIndex >= count($postIds)) {
-            $run['stage'] = 'finishing';
+            $run['stage'] = TelegramParserStage::Finishing->value;
             $run['progress'] = 95;
 
             return $run;
@@ -259,7 +265,7 @@ class TelegramParserCollector
         $totalPosts = max(1, count($postIds));
         $run['progress'] = min(99, 70 + (int) floor(($processedPosts / $totalPosts) * 29));
         if ($processedPosts >= count($postIds)) {
-            $run['stage'] = 'finishing';
+            $run['stage'] = TelegramParserStage::Finishing->value;
             $run['progress'] = 95;
         }
 
@@ -281,8 +287,8 @@ class TelegramParserCollector
     {
         $run['result'] = $this->buildResultSnapshot($run);
 
-        $run['status'] = 'completed';
-        $run['stage'] = 'completed';
+        $run['status'] = ParserRunStatus::Completed->value;
+        $run['stage'] = TelegramParserStage::Completed->value;
         $run['progress'] = 100;
         $run['error'] = null;
 
@@ -295,8 +301,8 @@ class TelegramParserCollector
      */
     private function fail(array $run, string $message): array
     {
-        $run['status'] = 'failed';
-        $run['stage'] = 'failed';
+        $run['status'] = ParserRunStatus::Failed->value;
+        $run['stage'] = TelegramParserStage::Failed->value;
         $run['progress'] = 100;
         $run['error'] = $message;
 

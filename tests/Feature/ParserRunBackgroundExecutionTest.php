@@ -6,7 +6,7 @@ use App\Jobs\ProcessParserRun;
 use App\Models\User;
 use App\Modules\ParserSupport\Contracts\ParserRunJobDispatcherInterface;
 use App\Modules\ParserSupport\ParserRunBackgroundProcessorRegistry;
-use App\Modules\ParserSupport\ParserRunExecutionConfig;
+use App\Modules\ParserSupport\ParserRunConfig;
 use App\Modules\Telegram\DTO\Request\TelegramParserStartDTO;
 use App\Modules\Telegram\Parser\Contracts\TelegramParserApplicationServiceInterface;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -100,7 +100,7 @@ class ParserRunBackgroundExecutionTest extends TestCase
         config()->set('osint.parser_runs.queue.name', 'parser-runs');
         config()->set('osint.parser_runs.queue.step_delay_seconds', 2);
 
-        app()->forgetInstance(ParserRunExecutionConfig::class);
+        app()->forgetInstance(ParserRunConfig::class);
         app()->forgetInstance(ParserRunJobDispatcherInterface::class);
     }
 }

@@ -4,7 +4,6 @@ namespace App\Modules\Bluesky\Parser;
 
 use App\Modules\Bluesky\Enums\BlueskyParserInteractionKind;
 use App\Modules\Bluesky\Enums\BlueskyParserStage;
-use App\Modules\ParserSupport\Enums\ParserRunStatus;
 use App\Modules\ParserSupport\JsonRunStore;
 
 final class BlueskyParserRunStore extends JsonRunStore
@@ -20,17 +19,13 @@ final class BlueskyParserRunStore extends JsonRunStore
      */
     protected function initialState(int $userId, string $runId, array $context, string $now): array
     {
-        return [
-            'runId' => $runId,
-            'userId' => $userId,
-            'status' => ParserRunStatus::Running->value,
-            'stage' => BlueskyParserStage::Profile->value,
-            'progress' => 1,
-            'error' => null,
-            'createdAt' => $now,
-            'updatedAt' => $now,
-            'context' => $context,
-            'cursor' => [
+        return $this->buildInitialState(
+            userId: $userId,
+            runId: $runId,
+            now: $now,
+            stage: BlueskyParserStage::Profile->value,
+            context: $context,
+            cursor: [
                 'feedCursor' => '',
                 'feedPage' => 0,
                 'followersCursor' => '',
@@ -40,9 +35,8 @@ final class BlueskyParserRunStore extends JsonRunStore
                 'interactionPostIndex' => 0,
                 'interactionKind' => BlueskyParserInteractionKind::Likes->value,
                 'interactionCursor' => '',
-                'nextAdvanceAt' => 0,
             ],
-            'stats' => [
+            stats: [
                 'processedPosts' => 0,
                 'processedAuthoredReplies' => 0,
                 'processedReceivedReplies' => 0,
@@ -50,7 +44,7 @@ final class BlueskyParserRunStore extends JsonRunStore
                 'processedFollows' => 0,
                 'processedReactions' => 0,
             ],
-            'data' => [
+            data: [
                 'profile' => null,
                 'postIds' => [],
                 'authoredReplyIds' => [],
@@ -65,12 +59,6 @@ final class BlueskyParserRunStore extends JsonRunStore
                 'followsIndex' => [],
                 'reactionsIndex' => [],
             ],
-            'result' => null,
-        ];
-    }
-
-    protected function runPath(int $userId, string $runId): string
-    {
-        return sprintf('bluesky-parser-runs/%d/%s.json', $userId, $runId);
+        );
     }
 }

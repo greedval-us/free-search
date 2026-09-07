@@ -4,8 +4,9 @@ namespace App\Modules\Mastodon\Parser\Contracts;
 
 use App\Modules\Mastodon\DTO\Request\MastodonParserStartDTO;
 use App\Modules\Mastodon\DTO\Result\MastodonParserRunStatusDTO;
+use App\Modules\ParserSupport\Contracts\ParserRunApplicationServiceInterface;
 
-interface MastodonParserApplicationServiceInterface
+interface MastodonParserApplicationServiceInterface extends ParserRunApplicationServiceInterface
 {
     public function start(MastodonParserStartDTO $input): MastodonParserRunStatusDTO;
 
@@ -13,13 +14,4 @@ interface MastodonParserApplicationServiceInterface
 
     public function stop(int $userId, string $runId): ?MastodonParserRunStatusDTO;
 
-    /**
-     * @return array<int, array<string, mixed>>
-     */
-    public function history(int $userId): array;
-
-    /**
-     * @return array<string, mixed>
-     */
-    public function getDownloadPayload(int $userId, string $runId): array;
 }

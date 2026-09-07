@@ -33,7 +33,6 @@ final class FailedJobIndexPage extends AdminIndexPage
                 ->format(AdminPanelDateFormatter::DATE_TIME_FORMAT)
                 ->sortable(),
             Text::make(__('admin_panel.fields.queue'), 'queue')->sortable(),
-            Text::make(__('admin_panel.fields.connection'), 'connection')->sortable(),
             Text::make(__('admin_panel.fields.job'), 'payload', static fn (FailedJob $job): string => self::resolveJobDisplayName($job->payload)),
             Text::make(__('admin_panel.fields.error'), 'exception', static fn (FailedJob $job): string => self::resolveExceptionSummary($job->exception)),
         ];
@@ -56,5 +55,4 @@ final class FailedJobIndexPage extends AdminIndexPage
             $this->last24HoursTag('failed_at'),
         ];
     }
-
 }

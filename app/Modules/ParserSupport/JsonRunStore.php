@@ -2,12 +2,22 @@
 
 namespace App\Modules\ParserSupport;
 
+use App\Modules\ParserSupport\Enums\ParserRunStatus;
+use Illuminate\Filesystem\FilesystemAdapter;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
+use JsonException;
+use RuntimeException;
+use UnexpectedValueException;
 
 abstract class JsonRunStore
 {
     protected const DISK = 'private';
+
+    private const INITIAL_PROGRESS = 1;
+
+    private const INITIAL_ADVANCE_TIMESTAMP = 0;
 
     public function __construct(
         private readonly ParserRunMetadataSynchronizer $metadataSynchronizer,
@@ -39,7 +49,18 @@ abstract class JsonRunStore
         }
 
         $raw = $this->disk()->get($path);
-        $decoded = json_decode($raw, true);
+        try {
+            $decoded = json_decode($raw, true, flags: JSON_THROW_ON_ERROR);
+        } catch (JsonException $exception) {
+            Log::warning('Unable to decode parser run JSON.', [
+                'module' => $this->moduleKey(),
+                'user_id' => $userId,
+                'run_id' => $runId,
+                'exception' => $exception::class,
+            ]);
+
+            return null;
+        }
 
         return is_array($decoded) ? $decoded : null;
     }
@@ -67,18 +88,24 @@ abstract class JsonRunStore
             }
 
             $contents = stream_get_contents($handle);
-            $run = json_decode($contents !== false ? $contents : '', true);
+            $run = json_decode($contents !== false ? $contents : '', true, flags: JSON_THROW_ON_ERROR);
             if (! is_array($run)) {
-                $run = [];
+                throw new UnexpectedValueException("Parser run [{$runId}] does not contain a JSON object.");
             }
 
             $run = $callback($run);
             $run['updatedAt'] = now()->toIso8601String();
 
-            ftruncate($handle, 0);
-            rewind($handle);
-            fwrite($handle, $this->encodeRun($run));
-            fflush($handle);
+            $encodedRun = $this->encodeRun($run);
+            if (! ftruncate($handle, 0) || ! rewind($handle)) {
+                throw new RuntimeException("Unable to prepare parser run [{$runId}] for writing.");
+            }
+
+            $writtenBytes = fwrite($handle, $encodedRun);
+            if ($writtenBytes !== strlen($encodedRun) || ! fflush($handle)) {
+                throw new RuntimeException("Unable to persist parser run [{$runId}].");
+            }
+
             flock($handle, LOCK_UN);
             $this->syncMetadata($userId, $runId, $run, $relativePath);
 
@@ -95,7 +122,9 @@ abstract class JsonRunStore
     {
         $path = $this->runPath($userId, $runId);
 
-        $this->disk()->put($path, $this->encodeRun($run));
+        if (! $this->disk()->put($path, $this->encodeRun($run))) {
+            throw new RuntimeException("Unable to persist parser run [{$runId}].");
+        }
 
         $this->syncMetadata($userId, $runId, $run, $path);
     }
@@ -108,7 +137,47 @@ abstract class JsonRunStore
 
     abstract protected function moduleKey(): string;
 
-    abstract protected function runPath(int $userId, string $runId): string;
+    /**
+     * @param  array<string, mixed>  $context
+     * @param  array<string, mixed>  $cursor
+     * @param  array<string, int>  $stats
+     * @param  array<string, mixed>  $data
+     * @return array<string, mixed>
+     */
+    final protected function buildInitialState(
+        int $userId,
+        string $runId,
+        string $now,
+        string $stage,
+        array $context,
+        array $cursor,
+        array $stats,
+        array $data,
+    ): array {
+        return [
+            'runId' => $runId,
+            'userId' => $userId,
+            'status' => ParserRunStatus::Running->value,
+            'stage' => $stage,
+            'progress' => self::INITIAL_PROGRESS,
+            'error' => null,
+            'createdAt' => $now,
+            'updatedAt' => $now,
+            'context' => $context,
+            'cursor' => [
+                'nextAdvanceAt' => self::INITIAL_ADVANCE_TIMESTAMP,
+                ...$cursor,
+            ],
+            'stats' => $stats,
+            'data' => $data,
+            'result' => null,
+        ];
+    }
+
+    final protected function runPath(int $userId, string $runId): string
+    {
+        return sprintf('%s-parser-runs/%d/%s.json', $this->moduleKey(), $userId, $runId);
+    }
 
     /**
      * @param array<string, mixed> $run
@@ -127,7 +196,7 @@ abstract class JsonRunStore
         );
     }
 
-    private function disk()
+    private function disk(): FilesystemAdapter
     {
         return Storage::disk(static::DISK);
     }
@@ -137,6 +206,6 @@ abstract class JsonRunStore
      */
     private function encodeRun(array $run): string
     {
-        return json_encode($run, JSON_UNESCAPED_UNICODE);
+        return json_encode($run, JSON_UNESCAPED_UNICODE | JSON_THROW_ON_ERROR);
     }
 }

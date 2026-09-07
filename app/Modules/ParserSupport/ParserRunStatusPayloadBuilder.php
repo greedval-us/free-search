@@ -6,6 +6,8 @@ use App\Models\ParserRun;
 
 class ParserRunStatusPayloadBuilder
 {
+    private const DEFAULT_STAGE = 'idle';
+
     /**
      * @param array<string, mixed> $run
      * @param array<string, string> $statsMap outputKey => runStatsKey
@@ -23,7 +25,7 @@ class ParserRunStatusPayloadBuilder
             'ok' => true,
             'runId' => $runId,
             'status' => $status,
-            'stage' => (string) ($run['stage'] ?? 'idle'),
+            'stage' => (string) ($run['stage'] ?? self::DEFAULT_STAGE),
             'progress' => ParserRun::normalizeProgress($run['progress'] ?? null),
             'error' => $run['error'] ?? null,
             'downloadUrl' => $isDownloadable

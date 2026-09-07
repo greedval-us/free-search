@@ -4,13 +4,16 @@ namespace App\Modules\Mastodon\Parser;
 
 use App\Modules\Export\Excel\SheetDefinition;
 use App\Modules\Mastodon\Parser\Contracts\MastodonParserExportBuilderInterface;
+use App\Modules\Mastodon\Support\MastodonModuleConfig;
 use Carbon\Carbon;
 use PhpOffice\PhpSpreadsheet\Shared\Date as ExcelDate;
 use PhpOffice\PhpSpreadsheet\Style\NumberFormat;
 
 final class MastodonParserExportBuilder implements MastodonParserExportBuilderInterface
 {
-    private const TIMEZONE = 'UTC';
+    public function __construct(private readonly MastodonModuleConfig $config)
+    {
+    }
 
     /**
      * @param array<string, mixed> $payload
@@ -200,9 +203,7 @@ final class MastodonParserExportBuilder implements MastodonParserExportBuilderIn
 
     private function timezone(): string
     {
-        $timezone = (string) config('app.timezone', self::TIMEZONE);
-
-        return trim($timezone) !== '' ? $timezone : self::TIMEZONE;
+        return $this->config->timezone();
     }
 
     /**

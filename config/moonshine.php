@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use App\Http\Middleware\AuthorizeMoonShineResourceAccess;
 use App\Http\Middleware\RestrictMoonShineAccess;
 use App\Http\Middleware\ThrottleMoonShineLoginAttempts;
 use App\MoonShine\Layouts\MoonShineLayout;
@@ -14,7 +15,7 @@ use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Session\Middleware\AuthenticateSession;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
-use MoonShine\ColorManager\Palettes\PurplePalette;
+use MoonShine\ColorManager\Palettes\CyanPalette;
 use MoonShine\Crud\Forms\FiltersForm;
 use MoonShine\Crud\Forms\LoginForm;
 use MoonShine\Laravel\Exceptions\MoonShineNotFoundException;
@@ -26,15 +27,14 @@ use MoonShine\Laravel\Pages\LoginPage;
 use MoonShine\Laravel\Pages\ProfilePage;
 
 return [
-    'title' => env('MOONSHINE_TITLE', 'MoonShine'),
-    'logo' => '/vendor/moonshine/logo-small.svg',
-    'logo_small' => '/vendor/moonshine/logo-small.svg',
+    'title' => env('MOONSHINE_TITLE', 'Uraboros Control'),
+    'logo' => '/favicon.svg',
+    'logo_small' => '/favicon.svg',
 
     'favicons' => [
-        'apple-touch' => '/vendor/moonshine/apple-touch-icon.png',
-        '32' => '/vendor/moonshine/favicon-32x32.png',
-        '16' => '/vendor/moonshine/favicon-16x16.png',
-        'safari-pinned-tab' => '/vendor/moonshine/safari-pinned-tab.svg',
+        '32' => '/favicon.ico',
+        '16' => '/favicon.ico',
+        'safari-pinned-tab' => '/favicon.svg',
     ],
 
     // Default flags
@@ -100,6 +100,7 @@ return [
         'model' => MoonshineUser::class,
         'middleware' => [
             Authenticate::class,
+            AuthorizeMoonShineResourceAccess::class,
         ],
         'pipelines' => [],
     ],
@@ -114,7 +115,7 @@ return [
 
     // Layout, palette, pages, forms
     'layout' => MoonShineLayout::class,
-    'palette' => PurplePalette::class,
+    'palette' => CyanPalette::class,
 
     'forms' => [
         'login' => LoginForm::class,

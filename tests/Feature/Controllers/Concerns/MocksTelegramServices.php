@@ -2,6 +2,7 @@
 
 namespace Tests\Feature\Controllers\Concerns;
 
+use App\Http\Responses\Contracts\TelegramMediaResponderInterface;
 use App\Modules\Telegram\Analytics\Contracts\TelegramAnalyticsApplicationServiceInterface;
 use App\Modules\Telegram\Analytics\Contracts\TelegramAnalyticsRangeResolverInterface;
 use App\Modules\Telegram\DTO\Result\AnalyticsSummaryResultDTO;
@@ -10,7 +11,6 @@ use App\Modules\Telegram\DTO\Result\SearchMessagesResultDTO;
 use App\Modules\Telegram\DTO\Result\TelegramParserRunStatusDTO;
 use App\Modules\Telegram\Parser\Contracts\TelegramParserApplicationServiceInterface;
 use App\Modules\Telegram\Search\Contracts\TelegramSearchApplicationServiceInterface;
-use App\Modules\Telegram\Support\Contracts\TelegramMediaResponderInterface;
 use Carbon\Carbon;
 
 trait MocksTelegramServices

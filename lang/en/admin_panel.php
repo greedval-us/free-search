@@ -4,8 +4,30 @@ declare(strict_types=1);
 
 return [
     'navigation' => [
+        'overview' => 'Overview',
+        'product' => 'Product & audience',
+        'revenue' => 'Subscriptions',
         'operations' => 'Operations',
-        'security' => 'Security',
+        'access' => 'Access & audit',
+    ],
+
+    'sections' => [
+        'user_identity' => 'User identity',
+        'access_management' => 'Access management',
+    ],
+
+    'descriptions' => [
+        'users' => 'Registered accounts, access status, current plans and daily quota balances.',
+        'subscriptions' => 'Subscription periods and statuses. Changes here immediately affect access.',
+        'activation_tokens' => 'Single-use Plus and Pro activation codes issued to users.',
+        'feature_usage' => 'Daily quota consumption grouped by user and product capability.',
+        'parser_runs' => 'Parser ownership, progress, output files and execution errors.',
+        'request_logs' => 'Recent authenticated requests for performance and error investigation.',
+        'queue' => 'Pending and currently reserved Laravel background jobs.',
+        'failed_jobs' => 'Background jobs that stopped with an exception and require investigation.',
+        'staff' => 'Accounts allowed to sign in to this control panel.',
+        'audit' => 'Immutable record of sensitive changes made through the control panel.',
+        'roles' => 'Fixed access profiles for control-panel staff.',
     ],
 
     'resources' => [
@@ -17,6 +39,7 @@ return [
         'user_subscriptions' => 'User subscriptions',
         'feature_usage_daily' => 'Daily feature usage',
         'subscription_activation_tokens' => 'Subscription activation tokens',
+        'parser_runs' => 'Parser runs',
     ],
 
     'fields' => [
@@ -69,6 +92,13 @@ return [
         'used_by' => 'Used by user',
         'note' => 'Note',
         'token_status' => 'Token status',
+        'run_id' => 'Run ID',
+        'started_at' => 'Started at',
+        'last_activity_at' => 'Last activity',
+        'progress' => 'Progress',
+        'stage' => 'Stage',
+        'file_size' => 'File size',
+        'user_id' => 'User ID',
     ],
 
     'tags' => [
@@ -76,6 +106,7 @@ return [
         'errors_4xx' => 'Errors 4xx',
         'errors_5xx' => 'Errors 5xx',
         'slow_1500' => 'Slow > 1500ms',
+        'slow_requests' => 'Slow > :millisecondsms',
         'today' => 'Today',
         'retrying' => 'Retrying',
         'ready_now' => 'Ready now',
@@ -87,6 +118,10 @@ return [
         'active_subscriptions' => 'Active subscriptions',
         'available_tokens' => 'Available tokens',
         'used_tokens' => 'Used tokens',
+        'parser_running' => 'Running',
+        'parser_failed' => 'Failed',
+        'parser_completed_today' => 'Completed today',
+        'in_progress' => 'In progress',
     ],
 
     'values' => [
@@ -108,6 +143,22 @@ return [
         'available' => 'available',
         'used' => 'used',
         'generated_after_save' => 'Will be generated after save',
+        'ready' => 'ready',
+        'in_progress' => 'in progress',
+        'delayed' => 'scheduled',
+    ],
+
+    'roles' => [
+        'admin' => 'Administrator',
+        'analyst' => 'Analyst',
+        'developer' => 'Developer',
+    ],
+
+    'parser_statuses' => [
+        'running' => 'Running',
+        'completed' => 'Completed',
+        'failed' => 'Failed',
+        'stopped' => 'Stopped',
     ],
 
     'quota_modules' => [
@@ -115,6 +166,7 @@ return [
         'site-intel' => 'Site Intel',
         'telegram' => 'Telegram',
         'youtube' => 'YouTube',
+        'bluesky' => 'Bluesky',
     ],
 
     'quota_capabilities' => [

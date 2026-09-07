@@ -4,8 +4,30 @@ declare(strict_types=1);
 
 return [
     'navigation' => [
+        'overview' => 'Обзор',
+        'product' => 'Продукт и аудитория',
+        'revenue' => 'Подписки',
         'operations' => 'Операции',
-        'security' => 'Безопасность',
+        'access' => 'Доступ и аудит',
+    ],
+
+    'sections' => [
+        'user_identity' => 'Данные пользователя',
+        'access_management' => 'Управление доступом',
+    ],
+
+    'descriptions' => [
+        'users' => 'Аккаунты, состояние доступа, текущие тарифы и остатки дневных лимитов.',
+        'subscriptions' => 'Сроки и статусы подписок. Изменения сразу влияют на доступ пользователя.',
+        'activation_tokens' => 'Одноразовые коды активации тарифов Plus и Pro.',
+        'feature_usage' => 'Дневной расход лимитов по пользователям и возможностям сервиса.',
+        'parser_runs' => 'Владельцы, прогресс, файлы результатов и ошибки запусков парсеров.',
+        'request_logs' => 'Недавние запросы пользователей для анализа ошибок и производительности.',
+        'queue' => 'Ожидающие и выполняемые фоновые задачи Laravel.',
+        'failed_jobs' => 'Фоновые задачи, завершившиеся исключением и требующие проверки.',
+        'staff' => 'Учетные записи сотрудников с доступом к панели управления.',
+        'audit' => 'Неизменяемая история важных действий в панели управления.',
+        'roles' => 'Фиксированные профили доступа сотрудников.',
     ],
 
     'resources' => [
@@ -17,6 +39,7 @@ return [
         'user_subscriptions' => 'Подписки пользователей',
         'feature_usage_daily' => 'Дневное использование квот',
         'subscription_activation_tokens' => 'Токены активации подписки',
+        'parser_runs' => 'Запуски парсеров',
     ],
 
     'fields' => [
@@ -69,6 +92,13 @@ return [
         'used_by' => 'Использовал пользователь',
         'note' => 'Примечание',
         'token_status' => 'Статус токена',
+        'run_id' => 'ID запуска',
+        'started_at' => 'Запущен',
+        'last_activity_at' => 'Последняя активность',
+        'progress' => 'Прогресс',
+        'stage' => 'Этап',
+        'file_size' => 'Размер файла',
+        'user_id' => 'ID пользователя',
     ],
 
     'tags' => [
@@ -76,6 +106,7 @@ return [
         'errors_4xx' => 'Ошибки 4xx',
         'errors_5xx' => 'Ошибки 5xx',
         'slow_1500' => 'Медленные > 1500мс',
+        'slow_requests' => 'Медленные > :milliseconds мс',
         'today' => 'Сегодня',
         'retrying' => 'Повторные попытки',
         'ready_now' => 'Готово сейчас',
@@ -87,6 +118,10 @@ return [
         'active_subscriptions' => 'Активные подписки',
         'available_tokens' => 'Доступные токены',
         'used_tokens' => 'Использованные токены',
+        'parser_running' => 'В работе',
+        'parser_failed' => 'С ошибкой',
+        'parser_completed_today' => 'Завершены сегодня',
+        'in_progress' => 'Выполняются',
     ],
 
     'values' => [
@@ -108,6 +143,22 @@ return [
         'available' => 'доступен',
         'used' => 'использован',
         'generated_after_save' => 'Будет сгенерирован после сохранения',
+        'ready' => 'готова',
+        'in_progress' => 'выполняется',
+        'delayed' => 'запланирована',
+    ],
+
+    'roles' => [
+        'admin' => 'Администратор',
+        'analyst' => 'Аналитик',
+        'developer' => 'Разработчик',
+    ],
+
+    'parser_statuses' => [
+        'running' => 'В работе',
+        'completed' => 'Завершен',
+        'failed' => 'Ошибка',
+        'stopped' => 'Остановлен',
     ],
 
     'quota_modules' => [
@@ -115,6 +166,7 @@ return [
         'site-intel' => 'Site Intel',
         'telegram' => 'Telegram',
         'youtube' => 'YouTube',
+        'bluesky' => 'Bluesky',
     ],
 
     'quota_capabilities' => [

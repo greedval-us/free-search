@@ -6,6 +6,7 @@ namespace App\MoonShine\Resources\MoonShineUser\Pages;
 
 use App\MoonShine\Resources\MoonShineUser\MoonShineUserResource;
 use App\MoonShine\Resources\MoonShineUserRole\MoonShineUserRoleResource;
+use App\MoonShine\Support\AdminRole;
 use Illuminate\Database\Eloquent\Builder;
 use MoonShine\Contracts\UI\ComponentContract;
 use MoonShine\Contracts\UI\FieldContract;
@@ -36,7 +37,7 @@ final class MoonShineUserIndexPage extends IndexPage
             BelongsTo::make(
                 __('moonshine::ui.resource.role'),
                 'moonshineUserRole',
-                formatted: static fn (MoonshineUserRole $model) => $model->name,
+                formatted: static fn (MoonshineUserRole $model): string => AdminRole::fromDatabaseName($model->name)?->label() ?? $model->name,
                 resource: MoonShineUserRoleResource::class,
             )->badge(Color::PURPLE),
 
@@ -61,9 +62,9 @@ final class MoonShineUserIndexPage extends IndexPage
             BelongsTo::make(
                 __('moonshine::ui.resource.role'),
                 'moonshineUserRole',
-                formatted: static fn (MoonshineUserRole $model) => $model->name,
+                formatted: static fn (MoonshineUserRole $model): string => AdminRole::fromDatabaseName($model->name)?->label() ?? $model->name,
                 resource: MoonShineUserRoleResource::class,
-            )->valuesQuery(static fn (Builder $q) => $q->select(['id', 'name'])),
+            )->valuesQuery(static fn (Builder $q): Builder => $q->select(['id', 'name'])),
 
             Email::make(__('moonshine::ui.resource.email'), 'email'),
         ];

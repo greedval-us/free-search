@@ -2,9 +2,9 @@
 
 namespace App\Modules\YouTube\Parser;
 
-use App\Models\ParserRun;
-use App\Modules\ParserSupport\Contracts\ParserRunBackgroundProcessorInterface;
+use App\Modules\ParserSupport\AbstractParserApplicationService;
 use App\Modules\ParserSupport\ParserRunExecutionCoordinator;
+use App\Modules\ParserSupport\ParserRunGuard;
 use App\Modules\ParserSupport\ParserRunHistoryRepository;
 use App\Modules\ParserSupport\ParserRunStatusPayloadBuilder;
 use App\Modules\YouTube\Actions\Request\VideoCommentsAction;
@@ -14,7 +14,7 @@ use App\Modules\YouTube\DTO\Result\YouTubeCommentsResultDTO;
 use App\Modules\YouTube\DTO\Result\YouTubeParserRunStatusDTO;
 use App\Modules\YouTube\Parser\Contracts\YouTubeParserApplicationServiceInterface;
 
-class YouTubeParserApplicationService implements ParserRunBackgroundProcessorInterface, YouTubeParserApplicationServiceInterface
+class YouTubeParserApplicationService extends AbstractParserApplicationService implements YouTubeParserApplicationServiceInterface
 {
     public const MODULE_KEY = 'youtube';
 
@@ -24,14 +24,24 @@ class YouTubeParserApplicationService implements ParserRunBackgroundProcessorInt
 
     public function __construct(
         private readonly VideoCommentsAction $videoCommentsAction,
-        private readonly YouTubeParserRunStore $runStore,
-        private readonly YouTubeParserCollector $collector,
-        private readonly YouTubeParserRunGuard $runGuard,
-        private readonly ParserRunExecutionCoordinator $executionCoordinator,
-        private readonly ParserRunStatusPayloadBuilder $statusPayloadBuilder,
-        private readonly ParserRunHistoryRepository $historyRepository,
-        private readonly YouTubeParserHistoryPresenter $historyPresenter,
-    ) {}
+        YouTubeParserRunStore $runStore,
+        YouTubeParserCollector $collector,
+        ParserRunGuard $runGuard,
+        ParserRunExecutionCoordinator $executionCoordinator,
+        ParserRunStatusPayloadBuilder $statusPayloadBuilder,
+        ParserRunHistoryRepository $historyRepository,
+        YouTubeParserHistoryPresenter $historyPresenter,
+    ) {
+        parent::__construct(
+            $runStore,
+            $collector,
+            $runGuard,
+            $executionCoordinator,
+            $statusPayloadBuilder,
+            $historyRepository,
+            $historyPresenter,
+        );
+    }
 
     public function comments(YouTubeCommentsQueryDTO $query): YouTubeCommentsResultDTO
     {
@@ -40,36 +50,21 @@ class YouTubeParserApplicationService implements ParserRunBackgroundProcessorInt
 
     public function start(YouTubeParserStartDTO $input): YouTubeParserRunStatusDTO
     {
-        $run = $this->executionCoordinator->start(
-            $this->runStore,
-            self::MODULE_KEY,
-            $input->userId,
-            $input->toContext(),
-        );
+        $run = $this->startRun($input->userId, $input->toContext());
 
         return $this->presentRun($run);
     }
 
     public function status(int $userId, string $runId): ?YouTubeParserRunStatusDTO
     {
-        $run = $this->executionCoordinator->status(
-            $this->runStore,
-            $userId,
-            $runId,
-            fn (array $state): array => $this->collector->advance($state),
-        );
+        $run = $this->statusRun($userId, $runId);
 
         return is_array($run) ? $this->presentRun($run) : null;
     }
 
     public function stop(int $userId, string $runId): ?YouTubeParserRunStatusDTO
     {
-        $run = $this->executionCoordinator->stop(
-            $this->runStore,
-            $userId,
-            $runId,
-            fn (array $state): array => $this->collector->buildResultSnapshot($state),
-        );
+        $run = $this->stopRun($userId, $runId);
 
         return is_array($run) ? $this->presentRun($run) : null;
     }
@@ -79,56 +74,13 @@ class YouTubeParserApplicationService implements ParserRunBackgroundProcessorInt
         return self::MODULE_KEY;
     }
 
-    public function advanceRun(int $userId, string $runId): bool
-    {
-        $run = $this->executionCoordinator->advance(
-            $this->runStore,
-            $userId,
-            $runId,
-            fn (array $state): array => $this->collector->advance($state),
-        );
-
-        return $this->executionCoordinator->shouldContinue($run);
-    }
-
-    public function failRun(int $userId, string $runId, string $message): void
-    {
-        $this->executionCoordinator->fail($this->runStore, $userId, $runId, $message);
-    }
-
-    /**
-     * @return array<int, array<string, mixed>>
-     */
-    public function history(int $userId): array
-    {
-        return $this->historyRepository
-            ->forUser($userId, self::MODULE_KEY)
-            ->map(function (ParserRun $metadata) use ($userId): array {
-                $run = $this->runStore->get($userId, $metadata->run_id);
-
-                return $this->historyPresenter->present($metadata, $run);
-            })
-            ->values()
-            ->all();
-    }
-
-    /**
-     * @return array<string, mixed>
-     */
-    public function getDownloadPayload(int $userId, string $runId): array
-    {
-        $run = $this->runGuard->requireExistingRun($this->runStore->get($userId, $runId));
-
-        return $this->runGuard->requireDownloadablePayload($run);
-    }
-
     /**
      * @param  array<string, mixed>  $run
      */
     private function presentRun(array $run): YouTubeParserRunStatusDTO
     {
         return new YouTubeParserRunStatusDTO(
-            $this->statusPayloadBuilder->build(
+            $this->buildStatusPayload(
                 run: $run,
                 statsMap: [
                     'processedComments' => 'processedComments',

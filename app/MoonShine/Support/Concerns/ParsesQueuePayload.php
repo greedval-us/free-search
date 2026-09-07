@@ -9,12 +9,12 @@ trait ParsesQueuePayload
     protected static function resolveJobDisplayName(string $payload): string
     {
         $decoded = json_decode($payload, true);
-        if (!is_array($decoded)) {
+        if (! is_array($decoded)) {
             return __('admin_panel.values.unknown');
         }
 
         $display = $decoded['displayName'] ?? $decoded['job'] ?? null;
-        if (!is_string($display) || $display === '') {
+        if (! is_string($display) || $display === '') {
             return __('admin_panel.values.unknown');
         }
 

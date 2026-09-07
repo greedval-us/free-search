@@ -10,18 +10,24 @@ use App\Modules\YouTube\DTO\Result\YouTubeAnalyticsResultDTO;
 use App\Modules\YouTube\Presenters\YouTubeChannelPresenter;
 use App\Modules\YouTube\Presenters\YouTubeVideoPresenter;
 use App\Modules\YouTube\Support\YouTubeChannelResolver;
+use App\Modules\YouTube\Support\YouTubeModuleConfig;
 use Carbon\CarbonInterface;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Arr;
 
 class AnalyticsSummaryAction extends AbstractYouTubeAction
 {
+    private const RELATED_VIDEOS_LIMIT = 10;
+
+    private const API_MAX_RESULTS = 50;
+
     public function __construct(
         YouTubeGatewayInterface $gateway,
         private readonly YouTubeAnalyticsReportBuilder $reportBuilder,
         private readonly YouTubeVideoPresenter $videoPresenter,
         private readonly YouTubeChannelPresenter $channelPresenter,
         private readonly YouTubeChannelResolver $channelResolver,
+        private readonly YouTubeModuleConfig $config,
     ) {
         parent::__construct($gateway);
     }
@@ -33,7 +39,7 @@ class AnalyticsSummaryAction extends AbstractYouTubeAction
         if ($params['mode'] === 'channel' || $params['channelId'] !== '') {
             return $this->channelSummary(
                 channelId: $params['channelId'],
-                periodDays: (int) ($params['periodDays'] ?? 7),
+                periodDays: (int) ($params['periodDays'] ?? $this->config->analyticsDefaultPeriodDays()),
                 dateFrom: (string) ($params['dateFrom'] ?? ''),
                 dateTo: (string) ($params['dateTo'] ?? ''),
             );
@@ -51,7 +57,7 @@ class AnalyticsSummaryAction extends AbstractYouTubeAction
         }
 
         $relatedVideos = $video['channelId'] !== ''
-            ? array_values($this->latestChannelVideos($video['channelId'], 10))
+            ? array_values($this->latestChannelVideos($video['channelId'], self::RELATED_VIDEOS_LIMIT))
             : [];
         $comparisonVideos = $relatedVideos === [] ? [$video] : $relatedVideos;
 
@@ -67,7 +73,12 @@ class AnalyticsSummaryAction extends AbstractYouTubeAction
     {
         $resolvedChannelId = $this->channelResolver->resolve($channelId);
         $range = $this->resolveDateRange($periodDays, $dateFrom, $dateTo);
-        $videos = array_values($this->latestChannelVideos($resolvedChannelId, 50, $range['from'], $range['to']));
+        $videos = array_values($this->latestChannelVideos(
+            $resolvedChannelId,
+            self::API_MAX_RESULTS,
+            $range['from'],
+            $range['to'],
+        ));
 
         return $this->summaryPayload(
             mode: 'channel',
@@ -95,7 +106,7 @@ class AnalyticsSummaryAction extends AbstractYouTubeAction
             'leaders' => $this->reportBuilder->leaders($videos),
             'insights' => $this->reportBuilder->insights($videos, $video),
             'topTags' => $this->reportBuilder->topTags($videos),
-            'topVideos' => $this->reportBuilder->topBy($videos, 'views', 50),
+            'topVideos' => $this->reportBuilder->topBy($videos, 'views', self::API_MAX_RESULTS),
         ]);
     }
 
@@ -163,7 +174,7 @@ class AnalyticsSummaryAction extends AbstractYouTubeAction
 
         $payload = $this->gateway->videos([
             'id' => implode(',', $videoIds),
-            'maxResults' => 50,
+            'maxResults' => self::API_MAX_RESULTS,
         ]);
 
         return collect($payload['items'] ?? [])
@@ -185,7 +196,7 @@ class AnalyticsSummaryAction extends AbstractYouTubeAction
 
         $payload = $this->gateway->channels([
             'id' => implode(',', $channelIds),
-            'maxResults' => 50,
+            'maxResults' => self::API_MAX_RESULTS,
         ]);
 
         return collect($payload['items'] ?? [])
@@ -205,7 +216,9 @@ class AnalyticsSummaryAction extends AbstractYouTubeAction
             ];
         }
 
-        $days = in_array($periodDays, [1, 3, 7], true) ? $periodDays : 7;
+        $days = in_array($periodDays, $this->config->analyticsPeriodDays(), true)
+            ? $periodDays
+            : $this->config->analyticsDefaultPeriodDays();
 
         return [
             'from' => now()->subDays($days - 1)->startOfDay(),

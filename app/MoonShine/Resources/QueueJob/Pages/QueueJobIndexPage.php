@@ -27,15 +27,19 @@ final class QueueJobIndexPage extends AdminIndexPage
      */
     protected function fields(): iterable
     {
-        $dateFormatter = new AdminPanelDateFormatter();
+        $dateFormatter = new AdminPanelDateFormatter;
 
         return [
             ID::make()->sortable(),
             Text::make(__('admin_panel.fields.queue'), 'queue')->sortable(),
+            Text::make(
+                __('admin_panel.fields.status'),
+                'reserved_at',
+                static fn (QueueJob $job): string => self::statusLabel($job),
+            ),
             Number::make(__('admin_panel.fields.attempts'), 'attempts')->sortable(),
             Text::make(__('admin_panel.fields.created_at'), 'created_at', static fn (QueueJob $job): string => $dateFormatter->formatUnixTimestamp($job->created_at)),
             Text::make(__('admin_panel.fields.available_at'), 'available_at', static fn (QueueJob $job): string => $dateFormatter->formatUnixTimestamp($job->available_at)),
-            Text::make(__('admin_panel.fields.reserved_at'), 'reserved_at', static fn (QueueJob $job): string => $dateFormatter->formatUnixTimestamp($job->reserved_at)),
             Text::make(__('admin_panel.fields.job'), 'payload', static fn (QueueJob $job): string => self::resolveJobDisplayName($job->payload)),
         ];
     }
@@ -59,9 +63,33 @@ final class QueueJobIndexPage extends AdminIndexPage
             ),
             $this->customTag(
                 __('admin_panel.tags.ready_now'),
-                static fn (Builder $query): Builder => $query->where('available_at', '<=', time()),
+                static fn (Builder $query): Builder => $query
+                    ->where('available_at', '<=', time())
+                    ->where(static function (Builder $query): void {
+                        $query->whereNull('reserved_at')->orWhere('reserved_at', 0);
+                    }),
                 'clock',
             ),
+            $this->customTag(
+                __('admin_panel.tags.in_progress'),
+                static fn (Builder $query): Builder => $query
+                    ->whereNotNull('reserved_at')
+                    ->where('reserved_at', '>', 0),
+                'play-circle',
+            ),
         ];
+    }
+
+    private static function statusLabel(QueueJob $job): string
+    {
+        if ((int) $job->reserved_at > 0) {
+            return __('admin_panel.values.in_progress');
+        }
+
+        if ((int) $job->available_at <= time()) {
+            return __('admin_panel.values.ready');
+        }
+
+        return __('admin_panel.values.delayed');
     }
 }

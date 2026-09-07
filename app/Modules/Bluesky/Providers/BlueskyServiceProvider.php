@@ -34,7 +34,8 @@ final class BlueskyServiceProvider extends BindingsServiceProvider
         $this->app->singleton(
             BlueskyModuleConfig::class,
             static fn (): BlueskyModuleConfig => BlueskyModuleConfig::fromArray(
-                (array) config('osint.bluesky', [])
+                (array) config('osint.bluesky', []),
+                (string) config('app.timezone', 'UTC'),
             )
         );
 
