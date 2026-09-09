@@ -4,7 +4,6 @@ namespace App\Modules\TelegramBot\Jobs;
 
 use App\Modules\TelegramBot\Application\ArtifactRegistry;
 use App\Modules\TelegramBot\Application\BotAccess;
-use App\Modules\TelegramBot\Application\DeliveryOutbox;
 use App\Modules\TelegramBot\Domain\Contracts\BotTransport;
 use App\Modules\TelegramBot\Domain\DTO\BotButton;
 use App\Modules\TelegramBot\Domain\DTO\BotScreen;
@@ -25,7 +24,7 @@ final class DeliverBotMessage extends BotJob
         parent::__construct($telegramId);
     }
 
-    public function handle(BotConfig $config, BotAccess $access, DeliveryOutbox $outbox, BotTransport $transport,
+    public function handle(BotConfig $config, BotAccess $access, BotTransport $transport,
         ArtifactRegistry $artifacts, TemporaryDocuments $files, NotificationText $notifications): void
     {
         if (! $config->active()) {
@@ -36,7 +35,7 @@ final class DeliverBotMessage extends BotJob
             return;
         }
         $link = $delivery->link;
-        if (! $access->allows($link) || ! $outbox->subscribed($link, $delivery->kind, $delivery->automatic)) {
+        if (! $access->allowsDelivery($link, $delivery->kind, $delivery->automatic)) {
             $delivery->update(['status' => BotDelivery::SKIPPED]);
 
             return;
@@ -49,7 +48,7 @@ final class DeliverBotMessage extends BotJob
                 try {
                     // Rendering can be slow. Recheck consent and ownership immediately before upload.
                     $current = BotLink::query()->with(['user', 'chat'])->find($link->id);
-                    if (! $access->allows($current) || ! $outbox->subscribed($current, $delivery->kind, $delivery->automatic)) {
+                    if (! $access->allowsDelivery($current, $delivery->kind, $delivery->automatic)) {
                         $delivery->update(['status' => BotDelivery::SKIPPED]);
 
                         return;
@@ -76,12 +75,12 @@ final class DeliverBotMessage extends BotJob
             }
             $delivery->update(['status' => BotDelivery::SENT, 'sent_at' => now(), 'error_code' => null]);
         } catch (ArtifactUnavailable $exception) {
-            $this->unavailable($delivery, $exception->reason, $transport, $config, $access, $outbox);
+            $this->unavailable($delivery, $exception->reason, $transport, $config, $access);
         } catch (HttpExceptionInterface $exception) {
             if (! in_array($exception->getStatusCode(), [404, 410], true)) {
                 throw $exception;
             }
-            $this->unavailable($delivery, 'file_unavailable', $transport, $config, $access, $outbox);
+            $this->unavailable($delivery, 'file_unavailable', $transport, $config, $access);
         } catch (TelegramTransportException $exception) {
             if (in_array($exception->apiCode, [400, 403], true)) {
                 $delivery->update(['status' => BotDelivery::FAILED, 'error_code' => 'telegram_'.$exception->apiCode]);
@@ -97,10 +96,10 @@ final class DeliverBotMessage extends BotJob
             ->update(['status' => BotDelivery::FAILED, 'error_code' => 'delivery_failed']);
     }
 
-    private function unavailable(BotDelivery $delivery, string $reason, BotTransport $transport, BotConfig $config, BotAccess $access, DeliveryOutbox $outbox): void
+    private function unavailable(BotDelivery $delivery, string $reason, BotTransport $transport, BotConfig $config, BotAccess $access): void
     {
         $link = BotLink::query()->with(['user', 'chat'])->find($delivery->link_id);
-        if ($access->allows($link) && $outbox->subscribed($link, $delivery->kind, $delivery->automatic)) {
+        if ($access->allowsDelivery($link, $delivery->kind, $delivery->automatic)) {
             $transport->message($link->telegraph_chat_id, new BotScreen(__('telegram_bot.errors.'.$reason, [], $link->locale), [
                 new BotButton(__('telegram_bot.menu.webapp', [], $link->locale), 'url', $config->siteUrl()),
             ]));

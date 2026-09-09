@@ -21,6 +21,7 @@ final class ArtifactTest extends TelegramBotTestCase
         $this->completedRun($link->user_id);
         $run = ParserRun::query()->sole();
         $provider = app(ParserArtifactProvider::class);
+        $this->assertSame(['xlsx', 'json'], $provider->listing($link->user_id, 1)->items()[0]['formats']);
         $files = app(TemporaryDocuments::class);
         $originalLocale = app()->getLocale();
         $json = $provider->document($link->user_id, $run->id, 'json', 'en');

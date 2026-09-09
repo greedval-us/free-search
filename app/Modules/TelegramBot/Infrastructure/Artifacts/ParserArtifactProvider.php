@@ -22,6 +22,8 @@ final readonly class ParserArtifactProvider implements ArtifactProvider
 {
     use Localizable;
 
+    private const FORMATS = ['xlsx', 'json'];
+
     public function __construct(private BotConfig $config, private Container $container, private TemporaryDocuments $files) {}
 
     public function key(): string
@@ -32,13 +34,13 @@ final readonly class ParserArtifactProvider implements ArtifactProvider
     public function listing(int $userId, int $page): Paginator
     {
         return $this->query($userId)->latest('id')->simplePaginate($this->config->integer('page_size'), ['*'], 'page', $page)
-            ->through(fn (ParserRun $run): array => ['id' => $run->id, 'label' => ucfirst($run->module).' / '.$run->started_at?->format('d.m H:i'), 'formats' => ['xlsx', 'json']]);
+            ->through(fn (ParserRun $run): array => ['id' => $run->id, 'label' => ucfirst($run->module).' / '.$run->started_at?->format('d.m H:i'), 'formats' => self::FORMATS]);
     }
 
     public function document(int $userId, int $id, string $format, string $locale): BotDocument
     {
         $run = $this->query($userId)->find($id);
-        if ($run === null || ! in_array($format, ['xlsx', 'json'], true)) {
+        if ($run === null || ! in_array($format, self::FORMATS, true)) {
             throw new ArtifactUnavailable;
         }
 

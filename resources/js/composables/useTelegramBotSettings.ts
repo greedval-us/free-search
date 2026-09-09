@@ -8,6 +8,14 @@ import type {
 } from '@/types/telegramBot';
 
 const LINK_POLL_INTERVAL_MS = 5000;
+type SettingsAction = keyof TelegramBotState['routes'];
+const ACTION_METHODS = {
+    status: 'GET',
+    issue: 'POST',
+    confirm: 'POST',
+    disconnect: 'DELETE',
+    preferences: 'PATCH',
+} as const satisfies Record<SettingsAction, string>;
 
 export const useTelegramBotSettings = (initial: TelegramBotState) => {
     const { t } = useI18n();
@@ -34,10 +42,7 @@ export const useTelegramBotSettings = (initial: TelegramBotState) => {
         }
     };
 
-    const run = async (
-        action: keyof TelegramBotState['routes'],
-        body?: unknown
-    ) => {
+    const run = async (action: SettingsAction, body?: unknown) => {
         clearTimeout(timer);
         controller?.abort();
         controller = new AbortController();
@@ -49,14 +54,7 @@ export const useTelegramBotSettings = (initial: TelegramBotState) => {
             const result = await apiRequestOrThrow<
                 TelegramBotState & { url?: string }
             >(state.value.routes[action], {
-                method:
-                    action === 'status'
-                        ? 'GET'
-                        : action === 'disconnect'
-                          ? 'DELETE'
-                          : action === 'preferences'
-                            ? 'PATCH'
-                            : 'POST',
+                method: ACTION_METHODS[action],
                 body,
                 headers: {
                     'X-CSRF-TOKEN':

@@ -18,7 +18,7 @@ final readonly class DeliveryOutbox
     /** @param array<string, mixed> $payload */
     public function enqueue(BotLink $link, string $kind, string $reference, array $payload = [], bool $automatic = true, ?string $requestId = null): bool
     {
-        if (! $this->access->allows($link) || ! $this->subscribed($link, $kind, $automatic)) {
+        if (! $this->access->allowsDelivery($link, $kind, $automatic)) {
             return false;
         }
         $delivery = BotDelivery::query()->firstOrCreate([
@@ -29,16 +29,6 @@ final readonly class DeliveryOutbox
         }
 
         return true;
-    }
-
-    public function subscribed(BotLink $link, string $kind, bool $automatic): bool
-    {
-        return match ($kind) {
-            'notification' => $link->notifications_enabled,
-            'broadcast' => $link->broadcasts_enabled,
-            'parser' => ! $automatic || $link->exports_enabled,
-            default => false,
-        };
     }
 
     public function retryPending(): void

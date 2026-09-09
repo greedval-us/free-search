@@ -22,4 +22,18 @@ final readonly class BotAccess
             && $chat !== null && (string) $chat->chat_id === $link->telegram_id
             && (int) $chat->telegraph_bot_id === $this->config->botId();
     }
+
+    public function allowsDelivery(?BotLink $link, string $kind, bool $automatic): bool
+    {
+        if (! $this->allows($link)) {
+            return false;
+        }
+
+        return match ($kind) {
+            'notification' => $link->notifications_enabled,
+            'broadcast' => $link->broadcasts_enabled,
+            'parser' => ! $automatic || $link->exports_enabled,
+            default => false,
+        };
+    }
 }

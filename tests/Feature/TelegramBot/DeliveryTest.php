@@ -3,9 +3,14 @@
 namespace Tests\Feature\TelegramBot;
 
 use App\Modules\TelegramBot\Application\AccountLinkService;
+use App\Modules\TelegramBot\Application\ArtifactRegistry;
 use App\Modules\TelegramBot\Application\DeliveryOutbox;
+use App\Modules\TelegramBot\Domain\Contracts\ArtifactProvider;
 use App\Modules\TelegramBot\Domain\Contracts\BotTransport;
+use App\Modules\TelegramBot\Domain\DTO\BotDocument;
+use App\Modules\TelegramBot\Domain\Exceptions\ArtifactUnavailable;
 use App\Modules\TelegramBot\Domain\Exceptions\TelegramTransportException;
+use App\Modules\TelegramBot\Infrastructure\Artifacts\TemporaryDocuments;
 use App\Modules\TelegramBot\Infrastructure\NotificationText;
 use App\Modules\TelegramBot\Jobs\DeliverBotMessage;
 use App\Modules\TelegramBot\Jobs\Middleware\TelegramCooldown;
@@ -16,6 +21,7 @@ use Illuminate\Support\Facades\Bus;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Queue;
 use Illuminate\Support\Facades\Storage;
+use PHPUnit\Framework\Attributes\DataProvider;
 
 final class DeliveryTest extends TelegramBotTestCase
 {
@@ -133,6 +139,79 @@ final class DeliveryTest extends TelegramBotTestCase
         app()->call([new DeliverBotMessage($delivery->id, $link->telegram_id), 'handle']);
         $this->assertSame(BotDelivery::FAILED, $delivery->fresh()->status);
         $this->assertSame('telegram_403', $delivery->fresh()->error_code);
+    }
+
+    #[DataProvider('accessRevokedDuringRendering')]
+    public function test_access_is_rechecked_after_rendering_and_temporary_documents_are_removed(bool $automatic, bool $blocked): void
+    {
+        $link = $this->linkedUser(preferences: ['exports_enabled' => true]);
+        app(DeliveryOutbox::class)->enqueue($link, 'parser', '1', ['format' => 'json'], $automatic);
+        $delivery = BotDelivery::query()->sole();
+        $provider = $this->mock(ArtifactProvider::class);
+        $provider->shouldReceive('key')->andReturn('parser');
+        $provider->shouldReceive('document')->once()->andReturnUsing(function () use ($link, $blocked): BotDocument {
+            $document = app(TemporaryDocuments::class)->create('test.json', function (string $path): void {
+                Storage::disk('local')->put($path, '{}');
+            });
+            if ($blocked) {
+                $link->user->update(['is_blocked' => true]);
+            } else {
+                $link->update(['exports_enabled' => false]);
+            }
+
+            return $document;
+        });
+        $this->instance(ArtifactRegistry::class, new ArtifactRegistry([$provider]));
+
+        app()->call([new DeliverBotMessage($delivery->id, $link->telegram_id), 'handle']);
+
+        $this->assertSame(BotDelivery::SKIPPED, $delivery->fresh()->status);
+        $this->assertSame([], Storage::disk('local')->allFiles(config('telegram_bot.temporary_directory')));
+        Telegraph::assertNothingSent();
+    }
+
+    public static function accessRevokedDuringRendering(): array
+    {
+        return [
+            'automatic export opted out' => [true, false],
+            'automatic export user blocked' => [true, true],
+            'manual export user blocked' => [false, true],
+        ];
+    }
+
+    #[DataProvider('unavailableDocumentConsent')]
+    public function test_unavailable_file_notice_rechecks_consent(bool $optedOut): void
+    {
+        $link = $this->linkedUser(preferences: ['exports_enabled' => true]);
+        app(DeliveryOutbox::class)->enqueue($link, 'parser', '1', ['format' => 'json']);
+        $delivery = BotDelivery::query()->sole();
+        $provider = $this->mock(ArtifactProvider::class);
+        $provider->shouldReceive('key')->andReturn('parser');
+        $provider->shouldReceive('document')->once()->andReturnUsing(function () use ($link, $optedOut): never {
+            if ($optedOut) {
+                $link->update(['exports_enabled' => false]);
+            }
+            throw new ArtifactUnavailable;
+        });
+        $this->instance(ArtifactRegistry::class, new ArtifactRegistry([$provider]));
+
+        app()->call([new DeliverBotMessage($delivery->id, $link->telegram_id), 'handle']);
+
+        $this->assertSame(BotDelivery::SKIPPED, $delivery->fresh()->status);
+        $this->assertSame('file_unavailable', $delivery->fresh()->error_code);
+        if ($optedOut) {
+            Telegraph::assertNothingSent();
+        } else {
+            Telegraph::assertSent(__('telegram_bot.errors.file_unavailable', [], $link->locale));
+        }
+    }
+
+    public static function unavailableDocumentConsent(): array
+    {
+        return [
+            'notice allowed' => [false],
+            'consent revoked during lookup' => [true],
+        ];
     }
 
     public function test_queue_failure_preserves_outbox_and_does_not_fail_website_notification(): void

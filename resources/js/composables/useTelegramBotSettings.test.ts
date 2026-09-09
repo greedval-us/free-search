@@ -67,6 +67,45 @@ describe('useTelegramBotSettings', () => {
         expect(request).not.toHaveBeenCalled();
     });
 
+    it.each([
+        ['refresh', '/status', 'GET'],
+        ['issue', '/issue', 'POST'],
+        ['confirm', '/confirm', 'POST'],
+        ['disconnect', '/disconnect', 'DELETE'],
+    ] as const)(
+        'uses the existing HTTP method for %s',
+        async (action, url, method) => {
+            request.mockResolvedValue(initial());
+            const settings = useTelegramBotSettings(pending());
+
+            await settings[action]();
+
+            expect(request).toHaveBeenCalledWith(
+                url,
+                expect.objectContaining({ method, retry: { attempts: 0 } })
+            );
+        }
+    );
+
+    it('updates preferences using PATCH without refreshing notifications', async () => {
+        request.mockResolvedValue(initial());
+        const settings = useTelegramBotSettings(initial());
+        const preferences = {
+            locale: 'ru' as const,
+            notifications_enabled: true,
+            exports_enabled: false,
+            broadcasts_enabled: false,
+        };
+
+        await settings.save(preferences);
+
+        expect(request).toHaveBeenCalledWith(
+            '/preferences',
+            expect.objectContaining({ method: 'PATCH', body: preferences })
+        );
+        expect(reload).not.toHaveBeenCalled();
+    });
+
     it('polls pending linking until Telegram claims it and never confirms automatically', async () => {
         request.mockResolvedValue({
             ...pending(),
