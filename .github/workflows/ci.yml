@@ -52,6 +52,12 @@ jobs:
       - name: Run frontend quality checks
         run: npm run quality:check
 
+      - name: Run frontend unit tests
+        run: npm run test:unit
+
+      - name: Check PHP style
+        run: composer run lint:check
+
   tests:
     name: tests
     runs-on: ubuntu-latest

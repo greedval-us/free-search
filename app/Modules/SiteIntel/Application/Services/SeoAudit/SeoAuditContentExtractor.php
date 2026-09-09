@@ -67,12 +67,14 @@ final class SeoAuditContentExtractor
 
             if (str_starts_with($href, '/')) {
                 $internal++;
+
                 continue;
             }
 
             $hrefHost = (string) parse_url($href, PHP_URL_HOST);
             if ($hrefHost === '' || $host === '') {
                 $internal++;
+
                 continue;
             }
 
@@ -201,7 +203,7 @@ final class SeoAuditContentExtractor
         }
 
         $parts = parse_url($baseUrl);
-        if (!is_array($parts) || !isset($parts['scheme'], $parts['host'])) {
+        if (! is_array($parts) || ! isset($parts['scheme'], $parts['host'])) {
             return null;
         }
 
@@ -209,7 +211,7 @@ final class SeoAuditContentExtractor
         $host = (string) $parts['host'];
 
         if (str_starts_with($href, '//')) {
-            return $scheme . ':' . $href;
+            return $scheme.':'.$href;
         }
 
         if (str_starts_with($href, '/')) {
@@ -217,7 +219,7 @@ final class SeoAuditContentExtractor
         }
 
         $path = (string) ($parts['path'] ?? '/');
-        $basePath = str_ends_with($path, '/') ? $path : dirname($path) . '/';
+        $basePath = str_ends_with($path, '/') ? $path : dirname($path).'/';
         if ($basePath === './') {
             $basePath = '/';
         }

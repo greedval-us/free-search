@@ -11,7 +11,7 @@ final class ShifrHashRequest extends AbstractShifrRequest
     {
         return [
             'text' => ['required', 'string', 'max:20000'],
-            'algorithm' => ['nullable', 'string', 'in:' . HashAlgorithms::validationRuleList()],
+            'algorithm' => ['nullable', 'string', 'in:'.HashAlgorithms::validationRuleList()],
             'hmac_key' => ['nullable', 'string', 'max:1000'],
             'locale' => $this->localeRule(),
         ];

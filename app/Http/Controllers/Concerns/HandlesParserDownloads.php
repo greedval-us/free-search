@@ -13,7 +13,7 @@ trait HandlesParserDownloads
     private const SUPPORTED_DOWNLOAD_LOCALES = ['ru', 'en'];
 
     /**
-     * @param array<string, mixed> $payload
+     * @param  array<string, mixed>  $payload
      */
     protected function streamJsonDownload(array $payload, string $filename): StreamedResponse
     {
@@ -37,5 +37,4 @@ trait HandlesParserDownloads
             in_array($locale, self::SUPPORTED_DOWNLOAD_LOCALES, true) ? $locale : 'en',
         );
     }
-
 }

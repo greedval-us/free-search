@@ -31,7 +31,7 @@ final class ProcessClassicCipherAction
     public function execute(ClassicCipherLookupDTO $dto): ?ShifrResultDataInterface
     {
         foreach ($this->processors as $processor) {
-            if (!$processor->supports($dto->cipher)) {
+            if (! $processor->supports($dto->cipher)) {
                 continue;
             }
 

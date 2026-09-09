@@ -12,12 +12,11 @@ class ModulePinService implements ModulePinServiceInterface
 {
     public function __construct(
         private readonly DashboardModuleRegistry $moduleRegistry,
-    ) {
-    }
+    ) {}
 
     public function toggle(User $user, string $moduleKey): void
     {
-        if (!$this->moduleRegistry->isSupported($moduleKey) || !Schema::hasTable('user_module_pins')) {
+        if (! $this->moduleRegistry->isSupported($moduleKey) || ! Schema::hasTable('user_module_pins')) {
             return;
         }
 
@@ -43,7 +42,7 @@ class ModulePinService implements ModulePinServiceInterface
      */
     public function listForUser(User $user): array
     {
-        if (!Schema::hasTable('user_module_pins')) {
+        if (! Schema::hasTable('user_module_pins')) {
             return [];
         }
 

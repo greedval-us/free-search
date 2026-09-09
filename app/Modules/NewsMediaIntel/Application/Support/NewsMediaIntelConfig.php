@@ -7,7 +7,7 @@ use App\Modules\NewsMediaIntel\Enums\NewsFeedSource;
 final class NewsMediaIntelConfig
 {
     /**
-     * @param array<string, mixed> $config
+     * @param  array<string, mixed>  $config
      */
     public static function fromArray(array $config): self
     {
@@ -79,8 +79,7 @@ final class NewsMediaIntelConfig
         private readonly bool $dedupTrimTrailingSlash,
         /** @var array<int, string> */
         private readonly array $dedupQueryTrackers,
-    ) {
-    }
+    ) {}
 
     public function maxMentions(): int
     {
@@ -213,8 +212,8 @@ final class NewsMediaIntelConfig
     }
 
     /**
-     * @param array<string, mixed> $config
-     * @param array<int, string> $path
+     * @param  array<string, mixed>  $config
+     * @param  array<int, string>  $path
      */
     private static function stringValue(array $config, array $path, string $default): string
     {
@@ -224,8 +223,8 @@ final class NewsMediaIntelConfig
     }
 
     /**
-     * @param array<string, mixed> $config
-     * @param array<int, string> $path
+     * @param  array<string, mixed>  $config
+     * @param  array<int, string>  $path
      */
     private static function intValue(array $config, array $path, int $default): int
     {
@@ -235,8 +234,8 @@ final class NewsMediaIntelConfig
     }
 
     /**
-     * @param array<string, mixed> $config
-     * @param array<int, string> $path
+     * @param  array<string, mixed>  $config
+     * @param  array<int, string>  $path
      */
     private static function boolValue(array $config, array $path, bool $default): bool
     {
@@ -246,20 +245,20 @@ final class NewsMediaIntelConfig
     }
 
     /**
-     * @param array<string, mixed> $config
-     * @param array<int, string> $path
+     * @param  array<string, mixed>  $config
+     * @param  array<int, string>  $path
      * @return array<int, string>
      */
     private static function stringListValue(array $config, array $path): array
     {
         $value = self::valueByPath($config, $path);
-        if (!is_array($value)) {
+        if (! is_array($value)) {
             return [];
         }
 
         $result = [];
         foreach ($value as $item) {
-            if (!is_string($item)) {
+            if (! is_string($item)) {
                 continue;
             }
 
@@ -275,15 +274,15 @@ final class NewsMediaIntelConfig
     }
 
     /**
-     * @param array<string, mixed> $config
-     * @param array<int, string> $path
+     * @param  array<string, mixed>  $config
+     * @param  array<int, string>  $path
      */
     private static function valueByPath(array $config, array $path): mixed
     {
         $cursor = $config;
 
         foreach ($path as $segment) {
-            if (!is_array($cursor) || !array_key_exists($segment, $cursor)) {
+            if (! is_array($cursor) || ! array_key_exists($segment, $cursor)) {
                 return null;
             }
 
@@ -294,21 +293,21 @@ final class NewsMediaIntelConfig
     }
 
     /**
-     * @param array<string, mixed> $config
+     * @param  array<string, mixed>  $config
      * @return array<int, string>
      */
     private static function resolveProviderOrder(array $config): array
     {
         $default = self::allowedProviderKeys();
         $raw = self::valueByPath($config, ['fetcher', 'provider_order']);
-        if (!is_array($raw)) {
+        if (! is_array($raw)) {
             return $default;
         }
 
         $allowed = array_fill_keys(self::allowedProviderKeys(), true);
         $items = [];
         foreach ($raw as $item) {
-            if (!is_string($item)) {
+            if (! is_string($item)) {
                 continue;
             }
 
@@ -317,7 +316,7 @@ final class NewsMediaIntelConfig
                 continue;
             }
 
-            if (!array_key_exists($key, $allowed)) {
+            if (! array_key_exists($key, $allowed)) {
                 continue;
             }
 

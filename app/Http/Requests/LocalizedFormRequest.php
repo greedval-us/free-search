@@ -19,7 +19,7 @@ abstract class LocalizedFormRequest extends FormRequest
      */
     protected function localeRule(): array
     {
-        return ['nullable', 'string', 'in:' . implode(',', self::SUPPORTED_LOCALES)];
+        return ['nullable', 'string', 'in:'.implode(',', self::SUPPORTED_LOCALES)];
     }
 
     protected function resolveLocale(): string

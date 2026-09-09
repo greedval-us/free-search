@@ -21,8 +21,7 @@ final class TelegramMediaResponder implements TelegramMediaResponderInterface
 
     public function __construct(
         private readonly TelegramGatewayInterface $telegramGateway,
-    ) {
-    }
+    ) {}
 
     public function respond(array $mediaPayload): BinaryFileResponse
     {

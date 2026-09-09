@@ -2,19 +2,19 @@
 
 namespace App\Modules\SiteIntel\Application\Services;
 
-use App\Modules\SiteIntel\Application\Contracts\SeoAuditServiceInterface;
 use App\Modules\SiteIntel\Application\Contracts\SeoAuditHttpFetcherInterface;
+use App\Modules\SiteIntel\Application\Contracts\SeoAuditServiceInterface;
 use App\Modules\SiteIntel\Application\Services\SeoAudit\SeoAuditContentExtractor;
 use App\Modules\SiteIntel\Application\Services\SeoAudit\SeoAuditCrawlAnalyzer;
+use App\Modules\SiteIntel\Application\Services\SeoAudit\SeoAuditCrawlBudgetAnalyzer;
 use App\Modules\SiteIntel\Application\Services\SeoAudit\SeoAuditCrawlerInspector;
+use App\Modules\SiteIntel\Application\Services\SeoAudit\SeoAuditInternationalAnalyzer;
+use App\Modules\SiteIntel\Application\Services\SeoAudit\SeoAuditProfileResolver;
+use App\Modules\SiteIntel\Application\Services\SeoAudit\SeoAuditQualityAnalyzer;
 use App\Modules\SiteIntel\Application\Services\SeoAudit\SeoAuditRecommendationBuilder;
 use App\Modules\SiteIntel\Application\Services\SeoAudit\SeoAuditScoreCalculator;
 use App\Modules\SiteIntel\Application\Services\SeoAudit\SeoAuditSitemapUrlAuditor;
 use App\Modules\SiteIntel\Application\Services\SeoAudit\SeoAuditTechnicalSignalsResolver;
-use App\Modules\SiteIntel\Application\Services\SeoAudit\SeoAuditQualityAnalyzer;
-use App\Modules\SiteIntel\Application\Services\SeoAudit\SeoAuditInternationalAnalyzer;
-use App\Modules\SiteIntel\Application\Services\SeoAudit\SeoAuditCrawlBudgetAnalyzer;
-use App\Modules\SiteIntel\Application\Services\SeoAudit\SeoAuditProfileResolver;
 use App\Modules\SiteIntel\DTO\Result\SeoAuditResultDTO;
 use Carbon\Carbon;
 
@@ -33,8 +33,7 @@ final class SeoAuditService implements SeoAuditServiceInterface
         private readonly SeoAuditProfileResolver $profileResolver,
         private readonly SeoAuditScoreCalculator $scoreCalculator,
         private readonly SeoAuditRecommendationBuilder $recommendationBuilder,
-    ) {
-    }
+    ) {}
 
     public function audit(string $url, int $crawlLimit = 8, ?string $platformType = null): SeoAuditResultDTO
     {

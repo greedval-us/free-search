@@ -5,7 +5,7 @@ namespace App\Modules\ParserSupport\Concerns;
 trait InteractsWithParserHistoryPayload
 {
     /**
-     * @param array<string, mixed>|null $payload
+     * @param  array<string, mixed>|null  $payload
      * @return array<string, mixed>
      */
     protected function context(?array $payload): array
@@ -14,7 +14,7 @@ trait InteractsWithParserHistoryPayload
     }
 
     /**
-     * @param array<string, mixed>|null $payload
+     * @param  array<string, mixed>|null  $payload
      * @return array<string, mixed>
      */
     protected function stats(?array $payload): array
@@ -23,7 +23,7 @@ trait InteractsWithParserHistoryPayload
     }
 
     /**
-     * @param array<string, mixed>|null $payload
+     * @param  array<string, mixed>|null  $payload
      * @return array<string, mixed>
      */
     protected function result(?array $payload): array
@@ -37,7 +37,7 @@ trait InteractsWithParserHistoryPayload
     }
 
     /**
-     * @param array<string, mixed>|null $payload
+     * @param  array<string, mixed>|null  $payload
      * @return array<string, mixed>
      */
     private function payloadSection(?array $payload, string $key): array

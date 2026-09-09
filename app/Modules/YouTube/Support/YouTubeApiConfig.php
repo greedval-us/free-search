@@ -5,7 +5,7 @@ namespace App\Modules\YouTube\Support;
 final class YouTubeApiConfig
 {
     /**
-     * @param array<string, mixed> $config
+     * @param  array<string, mixed>  $config
      */
     public static function fromArray(array $config): self
     {
@@ -27,8 +27,7 @@ final class YouTubeApiConfig
         private readonly int $timeoutSeconds,
         private readonly int $retryAttempts,
         private readonly int $retryDelayMilliseconds,
-    ) {
-    }
+    ) {}
 
     public function apiKey(): string
     {
@@ -56,7 +55,7 @@ final class YouTubeApiConfig
     }
 
     /**
-     * @param array<string, mixed> $config
+     * @param  array<string, mixed>  $config
      */
     private static function stringValue(array $config, string $key, string $default): string
     {
@@ -66,7 +65,7 @@ final class YouTubeApiConfig
     }
 
     /**
-     * @param array<string, mixed> $config
+     * @param  array<string, mixed>  $config
      */
     private static function intValue(array $config, string $key, int $default): int
     {
@@ -75,4 +74,3 @@ final class YouTubeApiConfig
         return is_numeric($value) ? (int) $value : $default;
     }
 }
-

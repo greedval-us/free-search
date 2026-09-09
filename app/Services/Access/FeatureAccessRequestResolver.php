@@ -25,7 +25,7 @@ final readonly class FeatureAccessRequestResolver implements FeatureAccessReques
             return new FeatureAccessRequest(
                 resource: $pageResource,
                 consume: false,
-                counts: true,
+                counts: false,
             );
         }
 
@@ -34,10 +34,14 @@ final readonly class FeatureAccessRequestResolver implements FeatureAccessReques
             return null;
         }
 
+        // Stateful operations charge only when the application creates new work.
+        $routes = config('access.protected_routes', []);
+        $countsInMiddleware = $policy->counts && ! ($routes[$routeName]['consume_in_service'] ?? false);
+
         return new FeatureAccessRequest(
             resource: $policy->resource,
-            consume: $this->shouldConsume($request, $policy),
-            counts: $policy->counts,
+            consume: $countsInMiddleware,
+            counts: $countsInMiddleware,
         );
     }
 
@@ -61,41 +65,5 @@ final readonly class FeatureAccessRequestResolver implements FeatureAccessReques
         $resource = $tabs[(string) $request->query('tab', '')] ?? null;
 
         return is_string($resource) && $resource !== '' ? $resource : null;
-    }
-
-    private function shouldConsume(Request $request, AccessResourcePolicy $policy): bool
-    {
-        if (! $policy->counts) {
-            return false;
-        }
-
-        return ! $this->hasNonCountingQueryValue($request);
-    }
-
-    private function hasNonCountingQueryValue(Request $request): bool
-    {
-        return $this->matchesNonCountingQueryValues($request, config('access.non_counting_query_values', []));
-    }
-
-    /**
-     * @param  mixed  $queryValues
-     */
-    private function matchesNonCountingQueryValues(Request $request, mixed $queryValues): bool
-    {
-        if (! is_array($queryValues)) {
-            return false;
-        }
-
-        foreach ($queryValues as $key => $values) {
-            if (! is_string($key) || ! is_array($values)) {
-                continue;
-            }
-
-            if (in_array((string) $request->query($key, ''), $values, true)) {
-                return true;
-            }
-        }
-
-        return false;
     }
 }

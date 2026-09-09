@@ -5,8 +5,8 @@ namespace App\Modules\SiteIntel\Application\Services\SiteIntelAnalytics;
 final class SiteIntelAnalyticsSignalResolver
 {
     /**
-     * @param array<string, mixed> $siteHealth
-     * @param array<string, mixed> $domainLite
+     * @param  array<string, mixed>  $siteHealth
+     * @param  array<string, mixed>  $domainLite
      * @return array<int, string>
      */
     public function riskSignals(array $siteHealth, array $domainLite): array
@@ -18,8 +18,8 @@ final class SiteIntelAnalyticsSignalResolver
     }
 
     /**
-     * @param array<string, mixed> $siteHealth
-     * @param array<string, mixed> $domainLite
+     * @param  array<string, mixed>  $siteHealth
+     * @param  array<string, mixed>  $domainLite
      * @return array<int, string>
      */
     public function strengthSignals(array $siteHealth, array $domainLite, int $headersCoveragePercent): array

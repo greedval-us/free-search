@@ -13,11 +13,10 @@ final class BlueskyParserHistoryPresenter implements ParserRunHistoryPresenterIn
 
     public function __construct(
         private readonly ParserRunHistoryItemBuilder $historyItemBuilder,
-    ) {
-    }
+    ) {}
 
     /**
-     * @param array<string, mixed>|null $run
+     * @param  array<string, mixed>|null  $run
      * @return array<string, mixed>
      */
     public function present(ParserRun $metadata, ?array $run): array

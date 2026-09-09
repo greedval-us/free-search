@@ -19,7 +19,7 @@ final class SeoAuditTechnicalSignalsResolver
         return [
             'metaRobots' => (string) ($meta['robots'] ?? ''),
             'xRobotsTag' => $xRobotsTag,
-            'indexable' => !$isNoindex,
+            'indexable' => ! $isNoindex,
             'reason' => $isNoindex ? 'noindex' : 'indexable',
         ];
     }
@@ -153,7 +153,7 @@ final class SeoAuditTechnicalSignalsResolver
         preg_match_all('/<script\b[^>]*src\s*=\s*(["\'])(.*?)\1[^>]*>/is', $html, $scriptTags);
         foreach (($scriptTags[0] ?? []) as $tag) {
             $lower = mb_strtolower((string) $tag);
-            if (!str_contains($lower, ' defer') && !str_contains($lower, ' async')) {
+            if (! str_contains($lower, ' defer') && ! str_contains($lower, ' async')) {
                 $blockingScripts++;
             }
         }

@@ -3,13 +3,18 @@
 namespace Tests\Feature;
 
 use App\Jobs\ProcessParserRun;
+use App\Models\ParserRun;
 use App\Models\User;
+use App\Modules\ParserSupport\Contracts\ParserRunBackgroundProcessorInterface;
 use App\Modules\ParserSupport\Contracts\ParserRunJobDispatcherInterface;
 use App\Modules\ParserSupport\ParserRunBackgroundProcessorRegistry;
 use App\Modules\ParserSupport\ParserRunConfig;
 use App\Modules\Telegram\DTO\Request\TelegramParserStartDTO;
 use App\Modules\Telegram\Parser\Contracts\TelegramParserApplicationServiceInterface;
+use App\Modules\Telegram\Parser\TelegramParserRunStore;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Queue\WorkerOptions;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Queue;
 use Illuminate\Support\Facades\Storage;
 use Tests\TestCase;
@@ -17,6 +22,40 @@ use Tests\TestCase;
 class ParserRunBackgroundExecutionTest extends TestCase
 {
     use RefreshDatabase;
+
+    public function test_waiting_for_telegram_lock_does_not_exhaust_attempts(): void
+    {
+        Storage::fake('private');
+        $user = User::factory()->create();
+        $run = app(TelegramParserRunStore::class)->create($user->id, ['query' => 'waiting']);
+        $command = new ProcessParserRun('telegram', $user->id, $run['runId']);
+        $lock = Cache::lock($command->middleware()[0]->getLockKey($command), 300);
+        $this->assertTrue($lock->get());
+        $queue = Queue::connection('database');
+        $queue->push($command, '', 'test-parser-lock');
+        $worker = app('queue.worker');
+        try {
+            for ($attempt = 0; $attempt < 5; $attempt++) {
+                $job = $queue->pop('test-parser-lock');
+                $worker->process('database', $job, new WorkerOptions);
+                $this->assertTrue($job->isReleased());
+                $this->assertFalse($job->hasFailed());
+                $this->travel(3)->seconds();
+            }
+            $this->assertSame('running', ParserRun::query()->where('run_id', $run['runId'])->value('status'));
+            $lock->release();
+            $processor = $this->createMock(ParserRunBackgroundProcessorInterface::class);
+            $processor->method('moduleKey')->willReturn('telegram');
+            $processor->expects($this->once())->method('advanceRun')->with($user->id, $run['runId'])->willReturn(false);
+            app()->instance(ParserRunBackgroundProcessorRegistry::class, new ParserRunBackgroundProcessorRegistry([$processor]));
+            $job = $queue->pop('test-parser-lock');
+            $worker->process('database', $job, new WorkerOptions);
+            $this->assertTrue($job->isDeleted());
+        } finally {
+            $lock->release();
+            $this->travelBack();
+        }
+    }
 
     public function test_all_parser_modules_register_background_processors(): void
     {

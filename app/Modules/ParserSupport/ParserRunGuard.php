@@ -9,7 +9,7 @@ use App\Models\ParserRun;
 class ParserRunGuard
 {
     /**
-     * @param array<string, mixed>|null $run
+     * @param  array<string, mixed>|null  $run
      * @return array<string, mixed>
      */
     public function requireExistingRun(?array $run): array
@@ -25,7 +25,7 @@ class ParserRunGuard
     }
 
     /**
-     * @param array<string, mixed> $run
+     * @param  array<string, mixed>  $run
      * @return array<string, mixed>
      */
     public function requireDownloadablePayload(array $run): array

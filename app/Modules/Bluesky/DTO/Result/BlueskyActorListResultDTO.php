@@ -7,16 +7,15 @@ use App\Support\Contracts\ArrayPayloadable;
 final class BlueskyActorListResultDTO implements ArrayPayloadable
 {
     /**
-     * @param array<int, array<string, mixed>> $items
-     * @param array{limit: int, cursor: string|null, nextCursor: string|null, hasMore: bool} $pagination
-     * @param array<string, mixed> $meta
+     * @param  array<int, array<string, mixed>>  $items
+     * @param  array{limit: int, cursor: string|null, nextCursor: string|null, hasMore: bool}  $pagination
+     * @param  array<string, mixed>  $meta
      */
     public function __construct(
         public readonly array $items,
         public readonly array $pagination,
         public readonly array $meta,
-    ) {
-    }
+    ) {}
 
     public function toArray(): array
     {

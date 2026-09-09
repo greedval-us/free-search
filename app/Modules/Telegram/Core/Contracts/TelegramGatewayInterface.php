@@ -15,12 +15,12 @@ interface TelegramGatewayInterface
     public function getInfo(string $id): ?ChannelInfoDTO;
 
     /**
-     * @param array<string, mixed> $filter
+     * @param  array<string, mixed>  $filter
      */
     public function getMessages(array $filter): ?ChannelMessagesDTO;
 
     /**
-     * @param array<string, mixed> $filter
+     * @param  array<string, mixed>  $filter
      */
     public function getParticipants(array $filter): ?ChannelParticipantsDTO;
 
@@ -40,7 +40,7 @@ interface TelegramGatewayInterface
     public function getMessageMedia(string $channel, int $messageId): ?array;
 
     /**
-     * @param array<string, mixed> $media
+     * @param  array<string, mixed>  $media
      */
     public function downloadMediaToFile(array $media, string $path): string;
 }

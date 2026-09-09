@@ -7,7 +7,7 @@ use App\Modules\Shifr\DTO\Contracts\ShifrResultDataInterface;
 final class HashResultDTO implements ShifrResultDataInterface
 {
     /**
-     * @param array<string, mixed> $analysis
+     * @param  array<string, mixed>  $analysis
      */
     public function __construct(
         public readonly string $algorithm,
@@ -15,8 +15,7 @@ final class HashResultDTO implements ShifrResultDataInterface
         public readonly string $value,
         public readonly int $inputLength,
         public readonly array $analysis,
-    ) {
-    }
+    ) {}
 
     public function toArray(): array
     {
@@ -29,4 +28,3 @@ final class HashResultDTO implements ShifrResultDataInterface
         ];
     }
 }
-

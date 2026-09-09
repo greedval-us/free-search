@@ -5,11 +5,17 @@ namespace App\Modules\Telegram\DTO\Response\Messages;
 class PhotoSizeDTO
 {
     public string $_;
+
     public ?string $type = null;
+
     public ?int $w = null;
+
     public ?int $h = null;
+
     public ?int $size = null;
+
     public ?array $sizes = null;
+
     public ?string $bytes = null;
 
     public array $raw = [];

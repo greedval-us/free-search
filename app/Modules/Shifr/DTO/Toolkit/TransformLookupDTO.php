@@ -7,6 +7,5 @@ final class TransformLookupDTO
     public function __construct(
         public readonly string $input,
         public readonly string $operation,
-    ) {
-    }
+    ) {}
 }

@@ -12,8 +12,7 @@ class SearchTelegramMessagesAction
     public function __construct(
         private readonly TelegramGatewayInterface $gateway,
         private readonly TelegramMessagePresenter $messagePresenter,
-    ) {
-    }
+    ) {}
 
     public function handle(SearchMessagesQueryDTO $query): SearchMessagesResultDTO
     {
@@ -57,7 +56,7 @@ class SearchTelegramMessagesAction
     }
 
     /**
-     * @param array<string, mixed> $filter
+     * @param  array<string, mixed>  $filter
      */
     private function authorIdFilter(array $filter): ?int
     {
@@ -164,8 +163,8 @@ class SearchTelegramMessagesAction
     }
 
     /**
-     * @param array<string, mixed> $payload
-     * @param array<int, array<int, string>> $paths
+     * @param  array<string, mixed>  $payload
+     * @param  array<int, array<int, string>>  $paths
      */
     private function extractPeerPayload(array $payload, array $paths): ?array
     {

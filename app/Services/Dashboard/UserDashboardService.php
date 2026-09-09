@@ -9,6 +9,7 @@ use App\Services\Dashboard\Contracts\SavedQueryServiceInterface;
 use App\Services\Dashboard\Contracts\UserDashboardServiceInterface;
 use App\Support\Activity\RequestLogSchemaInspector;
 use App\Support\Dashboard\DashboardModuleRegistry;
+use Illuminate\Database\Eloquent\Builder;
 
 class UserDashboardService implements UserDashboardServiceInterface
 {
@@ -21,18 +22,17 @@ class UserDashboardService implements UserDashboardServiceInterface
         private readonly ModulePinServiceInterface $modulePinService,
         private readonly SavedQueryServiceInterface $savedQueryService,
         private readonly RequestLogSchemaInspector $schemaInspector,
-    ) {
-    }
+    ) {}
 
     /**
-     * @param array<string, mixed> $filters
+     * @param  array<string, mixed>  $filters
      * @return array<string, mixed>
      */
     public function build(User $user, array $filters = []): array
     {
         $normalizedFilters = $this->filterNormalizer->normalize($filters);
 
-        if (!$this->schemaInspector->hasExtendedSchema()) {
+        if (! $this->schemaInspector->hasExtendedSchema()) {
             return $this->emptyPayload($normalizedFilters);
         }
 
@@ -54,7 +54,7 @@ class UserDashboardService implements UserDashboardServiceInterface
     }
 
     /**
-     * @param array<string, mixed> $filters
+     * @param  array<string, mixed>  $filters
      * @return array<string, mixed>
      */
     private function emptyPayload(array $filters): array
@@ -78,7 +78,7 @@ class UserDashboardService implements UserDashboardServiceInterface
     }
 
     /**
-     * @return \Illuminate\Database\Eloquent\Builder<RequestLog>
+     * @return Builder<RequestLog>
      */
     private function baseQueryForUser(User $user)
     {

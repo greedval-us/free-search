@@ -11,8 +11,7 @@ final class DomainLiteWhoisLookup
         private readonly DomainLiteWhoisClientInterface $whoisClient,
         private readonly DomainLiteWhoisParser $whoisParser,
         private readonly SiteIntelConfig $config,
-    ) {
-    }
+    ) {}
 
     /**
      * @return array<string, mixed>

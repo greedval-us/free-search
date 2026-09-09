@@ -2,10 +2,8 @@
 
 namespace Tests\Feature\Controllers;
 
-use App\Exceptions\PublicException;
 use App\Models\User;
 use App\Modules\Telegram\Analytics\Contracts\TelegramAnalyticsApplicationServiceInterface;
-use App\Modules\Telegram\Analytics\Contracts\TelegramAnalyticsRangeResolverInterface;
 use App\Modules\Telegram\DTO\Request\SearchCommentsQueryDTO;
 use App\Modules\Telegram\DTO\Request\SearchMessagesQueryDTO;
 use App\Modules\Telegram\DTO\Request\TelegramAnalyticsParamsDTO;
@@ -169,10 +167,11 @@ class TelegramControllerIsolationTest extends TestCase
         $to = Carbon::parse('2026-05-07 23:59:59');
 
         $this->mockTelegramAnalyticsRange($from, $to);
-        $this->mock(TelegramAnalyticsApplicationServiceInterface::class, function ($mock) use ($from, $to): void {
+        $this->mock(TelegramAnalyticsApplicationServiceInterface::class, function ($mock) use ($user, $from, $to): void {
             $mock->shouldReceive('buildSummary')
                 ->once()
                 ->with(
+                    $user->id,
                     Mockery::on(
                         fn (TelegramAnalyticsParamsDTO $params): bool => $params->chatUsername === 'channel'
                             && $params->scorePriority === 'reach'
@@ -180,7 +179,6 @@ class TelegramControllerIsolationTest extends TestCase
                     ),
                     $from,
                     $to,
-                    'previous'
                 )
                 ->andReturn(new AnalyticsSummaryResultDTO([
                     'chatUsername' => 'channel',

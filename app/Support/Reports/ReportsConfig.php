@@ -5,7 +5,7 @@ namespace App\Support\Reports;
 final class ReportsConfig
 {
     /**
-     * @param array<string, mixed> $config
+     * @param  array<string, mixed>  $config
      */
     public static function fromArray(array $config, string $timezone): self
     {
@@ -22,8 +22,7 @@ final class ReportsConfig
         private readonly string $generatedAtFormat,
         private readonly string $filenameTimestampFormat,
         private readonly string $downloadContentType,
-    ) {
-    }
+    ) {}
 
     public function timezone(): string
     {
@@ -46,7 +45,7 @@ final class ReportsConfig
     }
 
     /**
-     * @param array<string, mixed> $config
+     * @param  array<string, mixed>  $config
      */
     private static function stringValue(array $config, string $key, string $default): string
     {

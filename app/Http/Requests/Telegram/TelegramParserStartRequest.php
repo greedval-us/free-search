@@ -24,7 +24,7 @@ class TelegramParserStartRequest extends FormRequest
         return [
             'chatUsername' => ['required', 'string', 'max:255'],
             'keyword' => ['nullable', 'string', 'max:255'],
-            'period' => ['required', 'string', 'in:' . implode(',', self::PERIODS)],
+            'period' => ['required', 'string', 'in:'.implode(',', self::PERIODS)],
             'dateFrom' => ['nullable', 'date_format:Y-m-d'],
             'dateTo' => ['nullable', 'date_format:Y-m-d'],
         ];
@@ -33,18 +33,22 @@ class TelegramParserStartRequest extends FormRequest
     public function withValidator(Validator $validator): void
     {
         $validator->after(function (Validator $validator): void {
-            if ($this->keyword() !== null) {
+            if ($validator->errors()->isNotEmpty()) {
                 return;
             }
 
-            if ($this->period() !== 'custom') {
+            if (filled($this->input('keyword'))) {
+                return;
+            }
+
+            if ($this->input('period') !== 'custom') {
                 return;
             }
 
             $dateFrom = $this->input('dateFrom');
             $dateTo = $this->input('dateTo');
 
-            if (!$dateFrom || !$dateTo) {
+            if (! $dateFrom || ! $dateTo) {
                 $validator->errors()->add('dateTo', __('errors.validation.custom_period_requires_both_dates'));
 
                 return;
@@ -57,9 +61,9 @@ class TelegramParserStartRequest extends FormRequest
             }
 
             $from = Carbon::createFromFormat('Y-m-d', $dateFrom, $this->telegramConfig()->timezone())->startOfDay();
-            $to = Carbon::createFromFormat('Y-m-d', $dateTo, $this->telegramConfig()->timezone())->endOfDay();
+            $to = Carbon::createFromFormat('Y-m-d', $dateTo, $this->telegramConfig()->timezone())->startOfDay();
 
-            if ($to->diffInDays($from) > ($this->customRangeMaxDays() - 1)) {
+            if ($from->diffInDays($to) > ($this->customRangeMaxDays() - 1)) {
                 $validator->errors()->add(
                     'dateTo',
                     __('errors.validation.custom_parser_range_max_days', [

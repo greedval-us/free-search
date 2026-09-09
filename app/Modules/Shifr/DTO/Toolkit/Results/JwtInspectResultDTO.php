@@ -7,10 +7,10 @@ use App\Modules\Shifr\DTO\Contracts\ShifrResultDataInterface;
 final class JwtInspectResultDTO implements ShifrResultDataInterface
 {
     /**
-     * @param array<string, mixed>|null $header
-     * @param array<string, mixed>|null $payload
-     * @param array<string, mixed> $timeChecks
-     * @param array<string, mixed> $signature
+     * @param  array<string, mixed>|null  $header
+     * @param  array<string, mixed>|null  $payload
+     * @param  array<string, mixed>  $timeChecks
+     * @param  array<string, mixed>  $signature
      */
     public function __construct(
         public readonly bool $validFormat,
@@ -19,8 +19,7 @@ final class JwtInspectResultDTO implements ShifrResultDataInterface
         public readonly array $timeChecks,
         public readonly array $signature,
         public readonly ?string $error = null,
-    ) {
-    }
+    ) {}
 
     public static function invalidFormat(string $error): self
     {
@@ -51,4 +50,3 @@ final class JwtInspectResultDTO implements ShifrResultDataInterface
         return $data;
     }
 }
-

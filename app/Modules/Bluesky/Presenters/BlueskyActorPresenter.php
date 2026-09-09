@@ -5,7 +5,7 @@ namespace App\Modules\Bluesky\Presenters;
 final class BlueskyActorPresenter
 {
     /**
-     * @param array<string, mixed> $item
+     * @param  array<string, mixed>  $item
      * @return array<string, mixed>
      */
     public function present(array $item): array

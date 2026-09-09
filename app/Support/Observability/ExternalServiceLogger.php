@@ -8,7 +8,7 @@ use Throwable;
 final class ExternalServiceLogger
 {
     /**
-     * @param array<string, mixed> $context
+     * @param  array<string, mixed>  $context
      */
     public function logMisconfiguration(string $service, string $operation, array $context = []): void
     {
@@ -20,7 +20,7 @@ final class ExternalServiceLogger
     }
 
     /**
-     * @param array<string, mixed> $context
+     * @param  array<string, mixed>  $context
      */
     public function logConnectionFailure(
         string $service,
@@ -40,7 +40,7 @@ final class ExternalServiceLogger
     }
 
     /**
-     * @param array<string, mixed> $context
+     * @param  array<string, mixed>  $context
      */
     public function logHttpFailure(
         string $service,
@@ -65,7 +65,7 @@ final class ExternalServiceLogger
     }
 
     /**
-     * @param array<string, mixed> $context
+     * @param  array<string, mixed>  $context
      */
     public function logFallback(
         string $service,
@@ -82,8 +82,8 @@ final class ExternalServiceLogger
     }
 
     /**
-     * @param array<string, mixed> $context
-     * @param array<string, mixed> $extra
+     * @param  array<string, mixed>  $context
+     * @param  array<string, mixed>  $extra
      * @return array<string, mixed>
      */
     private function baseContext(
@@ -101,7 +101,7 @@ final class ExternalServiceLogger
     }
 
     /**
-     * @param array<string, mixed> $context
+     * @param  array<string, mixed>  $context
      * @return array<string, mixed>
      */
     private function sanitize(array $context): array
@@ -125,7 +125,7 @@ final class ExternalServiceLogger
 
             if (is_string($value)) {
                 $sanitized[$key] = mb_strlen($value) > 300
-                    ? mb_substr($value, 0, 300) . '...'
+                    ? mb_substr($value, 0, 300).'...'
                     : $value;
 
                 continue;
@@ -138,7 +138,7 @@ final class ExternalServiceLogger
     }
 
     /**
-     * @param array<int|string, mixed> $value
+     * @param  array<int|string, mixed>  $value
      * @return array<int|string, mixed>
      */
     private function sanitizeNested(array $value): array
@@ -162,7 +162,7 @@ final class ExternalServiceLogger
 
             if (is_string($nestedValue)) {
                 $result[$nestedKey] = mb_strlen($nestedValue) > 300
-                    ? mb_substr($nestedValue, 0, 300) . '...'
+                    ? mb_substr($nestedValue, 0, 300).'...'
                     : $nestedValue;
 
                 continue;
@@ -197,7 +197,7 @@ final class ExternalServiceLogger
         }
 
         return mb_strlen($normalized) > 300
-            ? mb_substr($normalized, 0, 300) . '...'
+            ? mb_substr($normalized, 0, 300).'...'
             : $normalized;
     }
 }

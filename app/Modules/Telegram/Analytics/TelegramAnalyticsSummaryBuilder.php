@@ -14,13 +14,12 @@ class TelegramAnalyticsSummaryBuilder
         private readonly TelegramAnalyticsFraudCalculator $fraudCalculator,
         private readonly TelegramAnalyticsPostMetricsBuilder $postMetricsBuilder,
         private readonly TelegramConfig $config,
-    ) {
-    }
+    ) {}
 
     /**
-     * @param array<int, array<string, mixed>> $items
-     * @param array<string, array<string, mixed>> $timeline
-     * @param array{views: float, forwards: float, replies: float, reactions: float, gifts: float} $weights
+     * @param  array<int, array<string, mixed>>  $items
+     * @param  array<string, array<string, mixed>>  $timeline
+     * @param  array{views: float, forwards: float, replies: float, reactions: float, gifts: float}  $weights
      * @return array<string, mixed>
      */
     public function build(
@@ -172,7 +171,7 @@ class TelegramAnalyticsSummaryBuilder
     }
 
     /**
-     * @param array<string, mixed> $totals
+     * @param  array<string, mixed>  $totals
      * @param array{
      *     views: int,
      *     forwards: int,
@@ -194,7 +193,7 @@ class TelegramAnalyticsSummaryBuilder
     }
 
     /**
-     * @param array<string, mixed> $totals
+     * @param  array<string, mixed>  $totals
      */
     private function finalizeTotals(array &$totals): void
     {
@@ -211,7 +210,7 @@ class TelegramAnalyticsSummaryBuilder
     }
 
     /**
-     * @param array<string, int> $mediaCounts
+     * @param  array<string, int>  $mediaCounts
      */
     private function accumulateMediaDistribution(array &$mediaCounts, string $mediaType): void
     {
@@ -223,8 +222,8 @@ class TelegramAnalyticsSummaryBuilder
     }
 
     /**
-     * @param array<string, int> $reactionCounts
-     * @param array<string, mixed> $item
+     * @param  array<string, int>  $reactionCounts
+     * @param  array<string, mixed>  $item
      */
     private function accumulateReactionDistribution(array &$reactionCounts, array $item): void
     {
@@ -241,7 +240,7 @@ class TelegramAnalyticsSummaryBuilder
     }
 
     /**
-     * @param array<string, array<string, mixed>> $timeline
+     * @param  array<string, array<string, mixed>>  $timeline
      */
     private function accumulateTimeline(
         array &$timeline,
@@ -255,7 +254,7 @@ class TelegramAnalyticsSummaryBuilder
         string $mediaType
     ): void {
         $bucketKey = $this->bucketKey($timestamp, $groupBy);
-        if ($bucketKey === null || !isset($timeline[$bucketKey])) {
+        if ($bucketKey === null || ! isset($timeline[$bucketKey])) {
             return;
         }
 
@@ -270,7 +269,7 @@ class TelegramAnalyticsSummaryBuilder
     }
 
     /**
-     * @param array<string, int> $counts
+     * @param  array<string, int>  $counts
      * @return array<int, array<string, mixed>>
      */
     private function buildDistribution(array $counts): array

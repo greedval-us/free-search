@@ -3,6 +3,7 @@
 namespace App\Modules\Mastodon\Actions\Request;
 
 use App\Modules\Mastodon\Actions\AbstractMastodonAction;
+use App\Modules\Mastodon\Core\Contracts\MastodonGatewayInterface;
 use App\Modules\Mastodon\DTO\Request\MastodonSearchQueryDTO;
 use App\Modules\Mastodon\DTO\Result\MastodonSearchResultDTO;
 use App\Modules\Mastodon\Presenters\MastodonAccountPresenter;
@@ -12,7 +13,7 @@ use App\Modules\Mastodon\Presenters\MastodonStatusPresenter;
 final class SearchResourcesAction extends AbstractMastodonAction
 {
     public function __construct(
-        \App\Modules\Mastodon\Core\Contracts\MastodonGatewayInterface $gateway,
+        MastodonGatewayInterface $gateway,
         private readonly MastodonStatusPresenter $statusPresenter,
         private readonly MastodonAccountPresenter $accountPresenter,
         private readonly MastodonHashtagPresenter $hashtagPresenter,
@@ -60,7 +61,7 @@ final class SearchResourcesAction extends AbstractMastodonAction
     }
 
     /**
-     * @param array<string, mixed> $item
+     * @param  array<string, mixed>  $item
      */
     private function matchesStatusFilters(array $item, MastodonSearchQueryDTO $query): bool
     {
@@ -100,7 +101,7 @@ final class SearchResourcesAction extends AbstractMastodonAction
     }
 
     /**
-     * @param array<string, mixed> $item
+     * @param  array<string, mixed>  $item
      */
     private function matchesAuthorFilter(array $item, string $author): bool
     {
@@ -120,7 +121,7 @@ final class SearchResourcesAction extends AbstractMastodonAction
     }
 
     /**
-     * @param array<string, mixed> $item
+     * @param  array<string, mixed>  $item
      */
     private function matchesDateRangeFilter(array $item, string $dateFrom, string $dateTo): bool
     {
@@ -161,7 +162,7 @@ final class SearchResourcesAction extends AbstractMastodonAction
     }
 
     /**
-     * @param array<string, mixed> $item
+     * @param  array<string, mixed>  $item
      */
     private function matchesAccountFilters(array $item, MastodonSearchQueryDTO $query): bool
     {

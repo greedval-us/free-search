@@ -7,13 +7,13 @@ use App\Support\Contracts\ArrayPayloadable;
 final readonly class BlueskyParserSnapshotDTO implements ArrayPayloadable
 {
     /**
-     * @param array<string, mixed>|null $resolvedActor
-     * @param array<int, array<string, mixed>> $postsIndex
-     * @param array<int, array<string, mixed>> $authoredRepliesIndex
-     * @param array<int, array<string, mixed>> $receivedRepliesIndex
-     * @param array<int, array<string, mixed>> $followersIndex
-     * @param array<int, array<string, mixed>> $followsIndex
-     * @param array<int, array<string, mixed>> $reactionsIndex
+     * @param  array<string, mixed>|null  $resolvedActor
+     * @param  array<int, array<string, mixed>>  $postsIndex
+     * @param  array<int, array<string, mixed>>  $authoredRepliesIndex
+     * @param  array<int, array<string, mixed>>  $receivedRepliesIndex
+     * @param  array<int, array<string, mixed>>  $followersIndex
+     * @param  array<int, array<string, mixed>>  $followsIndex
+     * @param  array<int, array<string, mixed>>  $reactionsIndex
      */
     public function __construct(
         private string $actor,
@@ -24,8 +24,7 @@ final readonly class BlueskyParserSnapshotDTO implements ArrayPayloadable
         private array $followersIndex,
         private array $followsIndex,
         private array $reactionsIndex,
-    ) {
-    }
+    ) {}
 
     /**
      * @return array<string, mixed>

@@ -40,4 +40,3 @@ final class HashAlgorithms
         return implode(',', self::ALL);
     }
 }
-

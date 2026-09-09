@@ -25,15 +25,17 @@ npm run i18n:check
 
 `npm run quality:check` объединяет все frontend checks, кроме Vitest. `i18n:check:strict` доступен локально, но CI использует обычный `i18n:check`.
 
+CI отдельно запускает Vitest и полную проверку PHP-стиля через `composer run lint:check`. Pint использует Laravel preset из `pint.json` и проверяет весь проект, а не только изменённые файлы.
+
 ## GitHub Actions
 
 | Job | Фактические проверки |
 | --- | --- |
-| `quality` | `npm ci`, затем `npm run quality:check` |
+| `quality` | установка зависимостей, `npm run quality:check`, `npm run test:unit`, `composer run lint:check` |
 | `tests` | env + SQLite, asset build, `php artisan test` |
 | `build` | env preparation и `npm run build` |
 
-CI не запускает `npm run test:unit` и не вызывает `composer run test`; PHP style проверяется локально отдельной Composer-командой. Это текущая стратегия, а не заявление о полном покрытии.
+CI запускает PHP-тесты через `php artisan test`, а полную проверку Pint выполняет отдельно в job `quality`. Локальная команда `composer run test` объединяет очистку config cache, Pint и PHP-тесты.
 
 ## Перед merge
 

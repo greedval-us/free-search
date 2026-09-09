@@ -11,4 +11,3 @@ trait ResolvesAuthenticatedUserId
         return (int) $request->user()->id;
     }
 }
-

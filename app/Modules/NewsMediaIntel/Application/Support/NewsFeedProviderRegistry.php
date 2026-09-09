@@ -12,7 +12,7 @@ final class NewsFeedProviderRegistry
     private array $providers = [];
 
     /**
-     * @param iterable<NewsFeedProviderInterface> $providers
+     * @param  iterable<NewsFeedProviderInterface>  $providers
      */
     public function __construct(iterable $providers)
     {
@@ -36,4 +36,3 @@ final class NewsFeedProviderRegistry
         return $this->providers[$normalized] ?? null;
     }
 }
-

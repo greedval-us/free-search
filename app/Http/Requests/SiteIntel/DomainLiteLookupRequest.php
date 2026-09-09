@@ -29,4 +29,3 @@ class DomainLiteLookupRequest extends FormRequest
         return DomainNormalizer::normalizeDomain($this->domain());
     }
 }
-

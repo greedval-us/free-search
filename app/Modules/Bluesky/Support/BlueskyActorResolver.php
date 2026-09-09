@@ -12,8 +12,7 @@ final class BlueskyActorResolver
     public function __construct(
         private readonly BlueskyGatewayInterface $gateway,
         private readonly BlueskyActorPresenter $actorPresenter,
-    ) {
-    }
+    ) {}
 
     /**
      * @return array<string, mixed>

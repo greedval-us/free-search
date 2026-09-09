@@ -16,6 +16,6 @@ enum TelegramReactionIdentityKind: string
             return self::Paid->value;
         }
 
-        return $this->value . ':' . $value;
+        return $this->value.':'.$value;
     }
 }

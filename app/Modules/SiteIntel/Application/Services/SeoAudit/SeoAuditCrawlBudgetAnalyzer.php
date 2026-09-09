@@ -68,12 +68,12 @@ final class SeoAuditCrawlBudgetAnalyzer
     private function analyzeFromAccessLog(string $host, Carbon $from): ?array
     {
         $path = storage_path('logs/access.log');
-        if (!is_file($path) || !is_readable($path)) {
+        if (! is_file($path) || ! is_readable($path)) {
             return null;
         }
 
         $lines = @file($path, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
-        if (!is_array($lines) || $lines === []) {
+        if (! is_array($lines) || $lines === []) {
             return null;
         }
 
@@ -82,15 +82,15 @@ final class SeoAuditCrawlBudgetAnalyzer
         $botAgents = [];
 
         foreach ($lines as $line) {
-            if (!is_string($line) || !str_contains($line, $host)) {
+            if (! is_string($line) || ! str_contains($line, $host)) {
                 continue;
             }
-            if (!$this->isRecentLogLine($line, $from)) {
+            if (! $this->isRecentLogLine($line, $from)) {
                 continue;
             }
 
             $ua = $this->extractQuotedPart($line, self::ACCESS_LOG_USER_AGENT_INDEX);
-            if (!$this->isBotUserAgent($ua)) {
+            if (! $this->isBotUserAgent($ua)) {
                 continue;
             }
 
@@ -129,12 +129,12 @@ final class SeoAuditCrawlBudgetAnalyzer
 
         foreach ($rows as $row) {
             $ua = (string) ($row->user_agent ?? '');
-            if (!$this->isBotUserAgent($ua)) {
+            if (! $this->isBotUserAgent($ua)) {
                 continue;
             }
 
             $path = (string) ($row->path ?? '');
-            if ($host !== '' && $path !== '' && !str_contains($path, '/') && !str_contains($path, $host)) {
+            if ($host !== '' && $path !== '' && ! str_contains($path, '/') && ! str_contains($path, $host)) {
                 continue;
             }
 
@@ -181,7 +181,7 @@ final class SeoAuditCrawlBudgetAnalyzer
     }
 
     /**
-     * @param array<int, string> $values
+     * @param  array<int, string>  $values
      * @return array<int, array<string, mixed>>
      */
     private function topCounts(array $values, int $limit): array

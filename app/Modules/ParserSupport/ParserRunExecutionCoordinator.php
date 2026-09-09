@@ -2,9 +2,13 @@
 
 namespace App\Modules\ParserSupport;
 
+use App\Exceptions\FeatureAccessDeniedException;
+use App\Models\User;
 use App\Modules\ParserSupport\Contracts\ParserRunJobDispatcherInterface;
 use App\Modules\ParserSupport\Enums\ParserRunStatus;
+use App\Services\Access\Contracts\FeatureAccessServiceInterface;
 use Illuminate\Support\Facades\Cache;
+use Throwable;
 
 final readonly class ParserRunExecutionCoordinator
 {
@@ -18,6 +22,7 @@ final readonly class ParserRunExecutionCoordinator
         private ParserRunStateMachine $stateMachine,
         private ParserRunLifecycleManager $lifecycleManager,
         private ParserRunHistoryRepository $historyRepository,
+        private FeatureAccessServiceInterface $featureAccess,
     ) {}
 
     /**
@@ -32,16 +37,34 @@ final readonly class ParserRunExecutionCoordinator
                 $activeRun = $this->historyRepository->activeForUser($userId, $module);
                 if ($activeRun !== null) {
                     $storedRun = $runStore->get($userId, $activeRun->run_id);
-                    if (is_array($storedRun)) {
+                    if ($this->shouldContinue($storedRun)) {
                         return $storedRun;
                     }
                 }
 
-                $run = $runStore->create($userId, $context);
+                $user = User::query()->findOrFail($userId);
+                $resource = $module.'.parser';
+                $decision = $this->featureAccess->consumeResource($user, $resource);
+                if (! $decision->allowed) {
+                    throw new FeatureAccessDeniedException($decision);
+                }
 
-                $this->jobDispatcher->dispatch($module, $userId, (string) $run['runId']);
+                try {
+                    $run = $runStore->create($userId, $context);
+                    $this->jobDispatcher->dispatch($module, $userId, (string) $run['runId']);
 
-                return $run;
+                    return $run;
+                } catch (Throwable $exception) {
+                    try {
+                        if (isset($run)) {
+                            $this->fail($runStore, $userId, (string) $run['runId'], __('errors.api.service_unavailable'));
+                        }
+                    } finally {
+                        $this->featureAccess->refundResource($user, $resource);
+                    }
+
+                    throw $exception;
+                }
             },
         );
     }

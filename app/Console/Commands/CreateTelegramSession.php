@@ -53,10 +53,11 @@ class CreateTelegramSession extends Command
             $availableSessions = $this->getMadelineProto()->availableSessionNames();
 
             $this->info(sprintf('Successfully logged in. Session "%s" is ready.', $sessionName));
-            $this->line('Active Telegram sessions: ' . implode(', ', $availableSessions));
+            $this->line('Active Telegram sessions: '.implode(', ', $availableSessions));
 
         } catch (\Exception $e) {
-            $this->error('Authentication failed: ' . $e->getMessage());
+            $this->error('Authentication failed: '.$e->getMessage());
+
             return 1;
         }
 

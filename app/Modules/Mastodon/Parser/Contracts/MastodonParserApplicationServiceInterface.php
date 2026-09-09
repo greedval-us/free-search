@@ -13,5 +13,4 @@ interface MastodonParserApplicationServiceInterface extends ParserRunApplication
     public function status(int $userId, string $runId): ?MastodonParserRunStatusDTO;
 
     public function stop(int $userId, string $runId): ?MastodonParserRunStatusDTO;
-
 }

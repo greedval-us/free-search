@@ -2,9 +2,9 @@
 
 namespace App\Http\Requests\Bluesky;
 
+use App\Http\Requests\Bluesky\Concerns\ResolvesBlueskyModuleConfig;
 use App\Http\Requests\Concerns\NormalizesBooleanInputs;
 use App\Http\Requests\LocalizedFormRequest;
-use App\Http\Requests\Bluesky\Concerns\ResolvesBlueskyModuleConfig;
 use App\Modules\Bluesky\DTO\Request\BlueskyAnalyticsQueryDTO;
 use Illuminate\Validation\Rule;
 

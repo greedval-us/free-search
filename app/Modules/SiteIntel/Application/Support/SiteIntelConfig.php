@@ -5,7 +5,7 @@ namespace App\Modules\SiteIntel\Application\Support;
 final class SiteIntelConfig
 {
     /**
-     * @param array<string, mixed> $config
+     * @param  array<string, mixed>  $config
      */
     public static function fromArray(array $config): self
     {
@@ -38,8 +38,7 @@ final class SiteIntelConfig
         private readonly int $whoisReadTimeoutSeconds,
         private readonly int $whoisReadChunkSize,
         private readonly int $whoisMaxResponseBytes,
-    ) {
-    }
+    ) {}
 
     public function siteHealthUserAgent(): string
     {
@@ -97,8 +96,8 @@ final class SiteIntelConfig
     }
 
     /**
-     * @param array<string, mixed> $config
-     * @param array<int, string> $path
+     * @param  array<string, mixed>  $config
+     * @param  array<int, string>  $path
      */
     private static function stringValue(array $config, array $path, string $default): string
     {
@@ -106,8 +105,8 @@ final class SiteIntelConfig
     }
 
     /**
-     * @param array<string, mixed> $config
-     * @param array<int, string> $path
+     * @param  array<string, mixed>  $config
+     * @param  array<int, string>  $path
      */
     private static function intValue(array $config, array $path, int $default): int
     {
@@ -117,8 +116,8 @@ final class SiteIntelConfig
     }
 
     /**
-     * @param array<string, mixed> $config
-     * @param array<int, string> $path
+     * @param  array<string, mixed>  $config
+     * @param  array<int, string>  $path
      */
     private static function boolValue(array $config, array $path, bool $default): bool
     {
@@ -131,8 +130,8 @@ final class SiteIntelConfig
     }
 
     /**
-     * @param array<string, mixed> $config
-     * @param array<int, string> $path
+     * @param  array<string, mixed>  $config
+     * @param  array<int, string>  $path
      */
     private static function stringAt(array $config, array $path): ?string
     {
@@ -142,15 +141,15 @@ final class SiteIntelConfig
     }
 
     /**
-     * @param array<string, mixed> $config
-     * @param array<int, string> $path
+     * @param  array<string, mixed>  $config
+     * @param  array<int, string>  $path
      */
     private static function valueByPath(array $config, array $path): mixed
     {
         $cursor = $config;
 
         foreach ($path as $segment) {
-            if (!is_array($cursor) || !array_key_exists($segment, $cursor)) {
+            if (! is_array($cursor) || ! array_key_exists($segment, $cursor)) {
                 return null;
             }
 
@@ -160,4 +159,3 @@ final class SiteIntelConfig
         return $cursor;
     }
 }
-

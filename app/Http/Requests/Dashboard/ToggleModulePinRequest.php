@@ -30,6 +30,6 @@ class ToggleModulePinRequest extends FormRequest
 
     private function moduleRegistry(): DashboardModuleRegistry
     {
-        return new DashboardModuleRegistry();
+        return new DashboardModuleRegistry;
     }
 }

@@ -12,6 +12,5 @@ final readonly class BlueskyAnalyticsQueryDTO
         public string $dateFrom = '',
         public string $dateTo = '',
         public bool $resolve = true,
-    ) {
-    }
+    ) {}
 }

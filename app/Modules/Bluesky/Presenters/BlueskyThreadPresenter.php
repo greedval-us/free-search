@@ -8,11 +8,10 @@ final class BlueskyThreadPresenter
 {
     public function __construct(
         private readonly BlueskyPostPresenter $postPresenter,
-    ) {
-    }
+    ) {}
 
     /**
-     * @param array<string, mixed> $payload
+     * @param  array<string, mixed>  $payload
      */
     public function present(array $payload, string $uri, int $depth, int $parentHeight): BlueskyThreadResultDTO
     {
@@ -32,7 +31,7 @@ final class BlueskyThreadPresenter
     }
 
     /**
-     * @param array<string, mixed> $node
+     * @param  array<string, mixed>  $node
      * @return array<string, mixed>|null
      */
     private function presentThreadNode(array $node): ?array
@@ -54,7 +53,7 @@ final class BlueskyThreadPresenter
     }
 
     /**
-     * @param array<string, mixed> $node
+     * @param  array<string, mixed>  $node
      * @return array<int, array<string, mixed>>
      */
     private function collectAncestors(array $node): array
@@ -77,7 +76,7 @@ final class BlueskyThreadPresenter
     }
 
     /**
-     * @param array<string, mixed> $node
+     * @param  array<string, mixed>  $node
      * @return array<int, array<string, mixed>>
      */
     private function collectReplies(array $node): array

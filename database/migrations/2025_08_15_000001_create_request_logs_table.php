@@ -24,7 +24,7 @@ return new class extends Migration
             $table->string('ip_address', 45)->nullable();
             $table->string('user_agent')->nullable();
             $table->timestamp('created_at')->useCurrent();
-            
+
             $table->index(['user_id', 'created_at']);
             $table->index(['method', 'path']);
             $table->index('created_at');

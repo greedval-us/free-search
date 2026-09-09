@@ -13,6 +13,5 @@ final readonly class MoonShineLoginContext
         public string $userAgent,
         public string $guard,
         public string $timestampIso,
-    ) {
-    }
+    ) {}
 }

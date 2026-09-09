@@ -14,8 +14,7 @@ final class BlueskySearchController extends Controller
 {
     public function __construct(
         private readonly BlueskySearchApplicationServiceInterface $service,
-    ) {
-    }
+    ) {}
 
     public function search(BlueskySearchRequest $request): JsonResponse
     {

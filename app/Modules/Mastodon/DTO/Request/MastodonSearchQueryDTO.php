@@ -18,8 +18,7 @@ final readonly class MastodonSearchQueryDTO
         public string $dateFrom = '',
         public string $dateTo = '',
         public string $instanceDomain = '',
-    ) {
-    }
+    ) {}
 
     /**
      * @return array<string, mixed>

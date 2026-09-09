@@ -9,8 +9,8 @@ use App\Support\Contracts\ArrayPayloadable;
 final class BlueskyParserStateDTO implements ArrayPayloadable
 {
     /**
-     * @param array<string, mixed> $context
-     * @param array<string, mixed>|null $result
+     * @param  array<string, mixed>  $context
+     * @param  array<string, mixed>|null  $result
      */
     public function __construct(
         private readonly string $runId,
@@ -25,11 +25,10 @@ final class BlueskyParserStateDTO implements ArrayPayloadable
         private BlueskyParserCursorDTO $cursor,
         private BlueskyParserCollectedDataDTO $data,
         private ?array $result = null,
-    ) {
-    }
+    ) {}
 
     /**
-     * @param array<string, mixed> $payload
+     * @param  array<string, mixed>  $payload
      */
     public static function fromArray(array $payload): self
     {
@@ -95,7 +94,7 @@ final class BlueskyParserStateDTO implements ArrayPayloadable
     }
 
     /**
-     * @param array<string, mixed> $result
+     * @param  array<string, mixed>  $result
      */
     public function complete(array $result, BlueskyParserStage $stage = BlueskyParserStage::Completed): void
     {

@@ -93,6 +93,7 @@ class ClassicCipherTransposition
         foreach (mb_str_split(mb_strtoupper($text)) as $char) {
             if ($char === ' ') {
                 $tokens[] = $separator;
+
                 continue;
             }
 
@@ -112,6 +113,7 @@ class ClassicCipherTransposition
         foreach ($parts as $token) {
             if ($token === $separator) {
                 $result .= ' ';
+
                 continue;
             }
 

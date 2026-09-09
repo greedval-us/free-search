@@ -5,10 +5,15 @@ namespace App\Modules\Telegram\DTO\Response\Messages;
 class MessageEntityDTO
 {
     public string $_;
+
     public int $offset;
+
     public int $length;
+
     public ?string $type = null;
+
     public ?string $url = null;
+
     public ?string $language = null;
 
     public array $raw = [];

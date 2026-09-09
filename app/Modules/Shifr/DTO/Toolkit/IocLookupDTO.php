@@ -6,6 +6,5 @@ final class IocLookupDTO
 {
     public function __construct(
         public readonly string $input,
-    ) {
-    }
+    ) {}
 }

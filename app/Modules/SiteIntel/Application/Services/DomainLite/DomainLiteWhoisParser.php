@@ -54,7 +54,7 @@ final class DomainLiteWhoisParser
     }
 
     /**
-     * @param string[] $labels
+     * @param  string[]  $labels
      */
     private function extractDate(string $text, array $labels): ?Carbon
     {
@@ -76,7 +76,7 @@ final class DomainLiteWhoisParser
     }
 
     /**
-     * @param string[] $labels
+     * @param  string[]  $labels
      */
     private function extractValue(string $text, array $labels): ?string
     {
@@ -92,7 +92,7 @@ final class DomainLiteWhoisParser
 
     private function extractByLabel(string $text, string $label): ?string
     {
-        $pattern = '/^' . preg_quote($label, '/') . '\s*:\s*(.+)$/im';
+        $pattern = '/^'.preg_quote($label, '/').'\s*:\s*(.+)$/im';
         if (preg_match($pattern, $text, $matches) !== 1) {
             return null;
         }
@@ -100,4 +100,3 @@ final class DomainLiteWhoisParser
         return trim((string) $matches[1]);
     }
 }
-

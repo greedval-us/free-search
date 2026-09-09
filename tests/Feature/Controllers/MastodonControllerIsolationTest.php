@@ -8,6 +8,8 @@ use App\Modules\Mastodon\Analytics\Contracts\MastodonAnalyticsApplicationService
 use App\Modules\Mastodon\DTO\Request\MastodonAnalyticsQueryDTO;
 use App\Modules\Mastodon\DTO\Request\MastodonParserStartDTO;
 use App\Modules\Mastodon\DTO\Request\MastodonSearchQueryDTO;
+use App\Modules\Mastodon\DTO\Result\MastodonAccountFollowersResultDTO;
+use App\Modules\Mastodon\DTO\Result\MastodonAccountStatusesResultDTO;
 use App\Modules\Mastodon\DTO\Result\MastodonAnalyticsResultDTO;
 use App\Modules\Mastodon\DTO\Result\MastodonParserRunStatusDTO;
 use App\Modules\Mastodon\DTO\Result\MastodonSearchResultDTO;
@@ -189,7 +191,7 @@ class MastodonControllerIsolationTest extends TestCase
             $mock->shouldReceive('accountStatuses')
                 ->once()
                 ->with('109999', 10, null)
-                ->andReturn(new \App\Modules\Mastodon\DTO\Result\MastodonAccountStatusesResultDTO(
+                ->andReturn(new MastodonAccountStatusesResultDTO(
                     statuses: [[
                         'id' => 'status-42',
                         'content' => 'Account status',
@@ -218,7 +220,7 @@ class MastodonControllerIsolationTest extends TestCase
             $mock->shouldReceive('accountFollowers')
                 ->once()
                 ->with('109999', 10, null)
-                ->andReturn(new \App\Modules\Mastodon\DTO\Result\MastodonAccountFollowersResultDTO(
+                ->andReturn(new MastodonAccountFollowersResultDTO(
                     accounts: [[
                         'id' => 'follower-1',
                         'acct' => 'analyst@example.social',
@@ -394,6 +396,10 @@ class MastodonControllerIsolationTest extends TestCase
 
         $this
             ->actingAs($user)
+            ->getJson(route('mastodon.analytics.summary', ['mode' => 'account', 'target' => '@analyst@example.social']))
+            ->assertOk();
+
+        $this
             ->get(route('mastodon.analytics.report', [
                 'mode' => 'account',
                 'target' => '@analyst@example.social',

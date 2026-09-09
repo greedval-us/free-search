@@ -7,10 +7,10 @@ use App\Models\User;
 use App\Modules\Bluesky\Analytics\Contracts\BlueskyAnalyticsApplicationServiceInterface;
 use App\Modules\Bluesky\DTO\Request\BlueskyAnalyticsQueryDTO;
 use App\Modules\Bluesky\DTO\Request\BlueskyParserStartDTO;
-use App\Modules\Bluesky\DTO\Result\BlueskyAnalyticsResultDTO;
-use App\Modules\Bluesky\DTO\Result\BlueskyParserRunStatusDTO;
 use App\Modules\Bluesky\DTO\Request\BlueskySearchQueryDTO;
 use App\Modules\Bluesky\DTO\Result\BlueskyActorListResultDTO;
+use App\Modules\Bluesky\DTO\Result\BlueskyAnalyticsResultDTO;
+use App\Modules\Bluesky\DTO\Result\BlueskyParserRunStatusDTO;
 use App\Modules\Bluesky\DTO\Result\BlueskySearchResultDTO;
 use App\Modules\Bluesky\DTO\Result\BlueskyThreadResultDTO;
 use App\Modules\Bluesky\Parser\Contracts\BlueskyParserApplicationServiceInterface;
@@ -413,6 +413,10 @@ class BlueskyControllerIsolationTest extends TestCase
 
         $this
             ->actingAs($user)
+            ->getJson(route('bluesky.analytics.summary', ['mode' => 'account', 'target' => 'analyst.bsky.social']))
+            ->assertOk();
+
+        $this
             ->get(route('bluesky.analytics.report', [
                 'mode' => 'account',
                 'target' => 'analyst.bsky.social',

@@ -8,7 +8,6 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use JsonException;
-use RuntimeException;
 use UnexpectedValueException;
 
 abstract class JsonRunStore
@@ -21,10 +20,11 @@ abstract class JsonRunStore
 
     public function __construct(
         private readonly ParserRunMetadataSynchronizer $metadataSynchronizer,
+        private readonly ParserRunFileStorage $files,
     ) {}
 
     /**
-     * @param array<string, mixed> $context
+     * @param  array<string, mixed>  $context
      * @return array<string, mixed>
      */
     public function create(int $userId, array $context): array
@@ -49,6 +49,10 @@ abstract class JsonRunStore
         }
 
         $raw = $this->disk()->get($path);
+        if (! is_string($raw)) {
+            return null;
+        }
+
         try {
             $decoded = json_decode($raw, true, flags: JSON_THROW_ON_ERROR);
         } catch (JsonException $exception) {
@@ -66,29 +70,21 @@ abstract class JsonRunStore
     }
 
     /**
-     * @param callable(array<string, mixed>): array<string, mixed> $callback
+     * @param  callable(array<string, mixed>): array<string, mixed>  $callback
      * @return array<string, mixed>|null
      */
     public function mutate(int $userId, string $runId, callable $callback): ?array
     {
         $relativePath = $this->runPath($userId, $runId);
         $path = $this->disk()->path($relativePath);
-        if (! is_file($path)) {
-            return null;
-        }
 
-        $handle = fopen($path, 'c+');
-        if ($handle === false) {
-            return null;
-        }
-
-        try {
-            if (! flock($handle, LOCK_EX)) {
+        return $this->files->withExclusiveLock($path, function () use ($userId, $runId, $relativePath, $path, $callback): ?array {
+            if (! is_file($path)) {
                 return null;
             }
 
-            $contents = stream_get_contents($handle);
-            $run = json_decode($contents !== false ? $contents : '', true, flags: JSON_THROW_ON_ERROR);
+            $contents = $this->disk()->get($relativePath);
+            $run = json_decode($contents ?? '', true, flags: JSON_THROW_ON_ERROR);
             if (! is_array($run)) {
                 throw new UnexpectedValueException("Parser run [{$runId}] does not contain a JSON object.");
             }
@@ -96,41 +92,29 @@ abstract class JsonRunStore
             $run = $callback($run);
             $run['updatedAt'] = now()->toIso8601String();
 
-            $encodedRun = $this->encodeRun($run);
-            if (! ftruncate($handle, 0) || ! rewind($handle)) {
-                throw new RuntimeException("Unable to prepare parser run [{$runId}] for writing.");
-            }
-
-            $writtenBytes = fwrite($handle, $encodedRun);
-            if ($writtenBytes !== strlen($encodedRun) || ! fflush($handle)) {
-                throw new RuntimeException("Unable to persist parser run [{$runId}].");
-            }
-
-            flock($handle, LOCK_UN);
+            $this->files->replace($path, $this->encodeRun($run));
+            // Keep file and metadata writes ordered under the same exclusive lock.
             $this->syncMetadata($userId, $runId, $run, $relativePath);
 
             return $run;
-        } finally {
-            fclose($handle);
-        }
+        });
     }
 
     /**
-     * @param array<string, mixed> $run
+     * @param  array<string, mixed>  $run
      */
     public function write(int $userId, string $runId, array $run): void
     {
         $path = $this->runPath($userId, $runId);
-
-        if (! $this->disk()->put($path, $this->encodeRun($run))) {
-            throw new RuntimeException("Unable to persist parser run [{$runId}].");
-        }
-
-        $this->syncMetadata($userId, $runId, $run, $path);
+        $absolutePath = $this->disk()->path($path);
+        $this->files->withExclusiveLock($absolutePath, function () use ($userId, $runId, $path, $absolutePath, $run): void {
+            $this->files->replace($absolutePath, $this->encodeRun($run));
+            $this->syncMetadata($userId, $runId, $run, $path);
+        });
     }
 
     /**
-     * @param array<string, mixed> $context
+     * @param  array<string, mixed>  $context
      * @return array<string, mixed>
      */
     abstract protected function initialState(int $userId, string $runId, array $context, string $now): array;
@@ -180,7 +164,7 @@ abstract class JsonRunStore
     }
 
     /**
-     * @param array<string, mixed> $run
+     * @param  array<string, mixed>  $run
      */
     private function syncMetadata(int $userId, string $runId, array $run, ?string $path = null): void
     {
@@ -202,7 +186,7 @@ abstract class JsonRunStore
     }
 
     /**
-     * @param array<string, mixed> $run
+     * @param  array<string, mixed>  $run
      */
     private function encodeRun(array $run): string
     {

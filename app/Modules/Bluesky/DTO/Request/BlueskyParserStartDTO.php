@@ -7,8 +7,7 @@ final readonly class BlueskyParserStartDTO
     public function __construct(
         public int $userId,
         public string $actor,
-    ) {
-    }
+    ) {}
 
     /**
      * @return array<string, mixed>

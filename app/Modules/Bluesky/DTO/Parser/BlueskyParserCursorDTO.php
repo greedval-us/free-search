@@ -18,11 +18,10 @@ final class BlueskyParserCursorDTO implements ArrayPayloadable
         private BlueskyParserInteractionKind $interactionKind = BlueskyParserInteractionKind::Likes,
         private ?string $interactionCursor = null,
         private int $nextAdvanceAt = 0,
-    ) {
-    }
+    ) {}
 
     /**
-     * @param array<string, mixed> $payload
+     * @param  array<string, mixed>  $payload
      */
     public static function fromArray(array $payload): self
     {

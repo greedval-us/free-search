@@ -9,4 +9,3 @@ interface SiteHealthHttpInspectorInterface
      */
     public function inspect(string $url): array;
 }
-

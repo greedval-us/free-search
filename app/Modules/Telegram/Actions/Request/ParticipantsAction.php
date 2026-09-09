@@ -4,7 +4,6 @@ namespace App\Modules\Telegram\Actions\Request;
 
 use App\Modules\Telegram\Actions\AbstractTelegramAction;
 
-
 class ParticipantsAction extends AbstractTelegramAction
 {
     public function execute(array $filter): ?array
@@ -24,10 +23,12 @@ class ParticipantsAction extends AbstractTelegramAction
                     message: 'Participants list is not accessible without admin rights for this chat/channel',
                     data: $filter
                 );
+
                 return null;
             }
 
             $this->logError($e, $filter);
+
             return null;
         }
     }

@@ -11,12 +11,10 @@ use PhpOffice\PhpSpreadsheet\Style\NumberFormat;
 
 class TelegramParserExportBuilder implements TelegramParserExportBuilderInterface
 {
-    public function __construct(private readonly TelegramConfig $config)
-    {
-    }
+    public function __construct(private readonly TelegramConfig $config) {}
 
     /**
-     * @param array<string, mixed> $payload
+     * @param  array<string, mixed>  $payload
      * @return array<int, SheetDefinition>
      */
     public function buildSheets(array $payload): array
@@ -30,7 +28,7 @@ class TelegramParserExportBuilder implements TelegramParserExportBuilderInterfac
     }
 
     /**
-     * @param array<string, mixed> $payload
+     * @param  array<string, mixed>  $payload
      */
     private function buildSummarySheet(array $payload): SheetDefinition
     {
@@ -68,7 +66,7 @@ class TelegramParserExportBuilder implements TelegramParserExportBuilderInterfac
     }
 
     /**
-     * @param array<string, mixed> $payload
+     * @param  array<string, mixed>  $payload
      */
     private function buildMessagesSheet(array $payload): SheetDefinition
     {
@@ -76,7 +74,7 @@ class TelegramParserExportBuilder implements TelegramParserExportBuilderInterfac
         $rows = [];
 
         foreach ($messages as $message) {
-            if (!is_array($message)) {
+            if (! is_array($message)) {
                 continue;
             }
 
@@ -90,7 +88,7 @@ class TelegramParserExportBuilder implements TelegramParserExportBuilderInterfac
                 $this->sumReactionCounts($message['reactions'] ?? []),
                 $this->summarizeReactions($message['reactions'] ?? []),
                 count($this->normalizeIntArray($message['reactionSenderIds'] ?? [])),
-                !empty($message['gifts']['hasGift']) ? 'yes' : 'no',
+                ! empty($message['gifts']['hasGift']) ? 'yes' : 'no',
                 $this->summarizeGiftTypes($message['gifts'] ?? []),
                 (string) (($message['media']['label'] ?? $message['media']['type'] ?? '') ?: ''),
                 (string) ($message['message'] ?? ''),
@@ -127,7 +125,7 @@ class TelegramParserExportBuilder implements TelegramParserExportBuilderInterfac
     }
 
     /**
-     * @param array<string, mixed> $payload
+     * @param  array<string, mixed>  $payload
      */
     private function buildCommentsSheet(array $payload): SheetDefinition
     {
@@ -135,7 +133,7 @@ class TelegramParserExportBuilder implements TelegramParserExportBuilderInterfac
         $rows = [];
 
         foreach ($comments as $comment) {
-            if (!is_array($comment)) {
+            if (! is_array($comment)) {
                 continue;
             }
 
@@ -171,7 +169,7 @@ class TelegramParserExportBuilder implements TelegramParserExportBuilderInterfac
     }
 
     /**
-     * @param array<string, mixed> $payload
+     * @param  array<string, mixed>  $payload
      */
     private function buildReactionsSheet(array $payload): SheetDefinition
     {
@@ -179,7 +177,7 @@ class TelegramParserExportBuilder implements TelegramParserExportBuilderInterfac
         $rows = [];
 
         foreach ($reactions as $reaction) {
-            if (!is_array($reaction)) {
+            if (! is_array($reaction)) {
                 continue;
             }
 
@@ -214,18 +212,18 @@ class TelegramParserExportBuilder implements TelegramParserExportBuilderInterfac
     }
 
     /**
-     * @param array<int, mixed> $messages
+     * @param  array<int, mixed>  $messages
      */
     private function countMessagesWithMedia(array $messages): int
     {
         $count = 0;
 
         foreach ($messages as $message) {
-            if (!is_array($message)) {
+            if (! is_array($message)) {
                 continue;
             }
 
-            if (!empty($message['media']['hasMedia'])) {
+            if (! empty($message['media']['hasMedia'])) {
                 $count++;
             }
         }
@@ -234,18 +232,18 @@ class TelegramParserExportBuilder implements TelegramParserExportBuilderInterfac
     }
 
     /**
-     * @param array<int, mixed> $messages
+     * @param  array<int, mixed>  $messages
      */
     private function countMessagesWithGifts(array $messages): int
     {
         $count = 0;
 
         foreach ($messages as $message) {
-            if (!is_array($message)) {
+            if (! is_array($message)) {
                 continue;
             }
 
-            if (!empty($message['gifts']['hasGift'])) {
+            if (! empty($message['gifts']['hasGift'])) {
                 $count++;
             }
         }
@@ -254,14 +252,14 @@ class TelegramParserExportBuilder implements TelegramParserExportBuilderInterfac
     }
 
     /**
-     * @param array<int, mixed> $items
+     * @param  array<int, mixed>  $items
      */
     private function countTotalReactions(array $items): int
     {
         $total = 0;
 
         foreach ($items as $item) {
-            if (!is_array($item)) {
+            if (! is_array($item)) {
                 continue;
             }
 
@@ -280,7 +278,7 @@ class TelegramParserExportBuilder implements TelegramParserExportBuilderInterfac
 
     private function excelDate(mixed $value): mixed
     {
-        if (!is_numeric($value)) {
+        if (! is_numeric($value)) {
             return null;
         }
 
@@ -291,14 +289,14 @@ class TelegramParserExportBuilder implements TelegramParserExportBuilderInterfac
 
     private function sumReactionCounts(mixed $value): int
     {
-        if (!is_array($value)) {
+        if (! is_array($value)) {
             return 0;
         }
 
         $total = 0;
 
         foreach ($value as $reaction) {
-            if (!is_array($reaction)) {
+            if (! is_array($reaction)) {
                 continue;
             }
 
@@ -310,14 +308,14 @@ class TelegramParserExportBuilder implements TelegramParserExportBuilderInterfac
 
     private function summarizeReactions(mixed $value): string
     {
-        if (!is_array($value)) {
+        if (! is_array($value)) {
             return '';
         }
 
         $parts = [];
 
         foreach ($value as $reaction) {
-            if (!is_array($reaction)) {
+            if (! is_array($reaction)) {
                 continue;
             }
 
@@ -340,7 +338,7 @@ class TelegramParserExportBuilder implements TelegramParserExportBuilderInterfac
 
     private function summarizeGiftTypes(mixed $value): string
     {
-        if (!is_array($value)) {
+        if (! is_array($value)) {
             return '';
         }
 
@@ -357,7 +355,7 @@ class TelegramParserExportBuilder implements TelegramParserExportBuilderInterfac
      */
     private function normalizeIntArray(mixed $value): array
     {
-        if (!is_array($value)) {
+        if (! is_array($value)) {
             return [];
         }
 

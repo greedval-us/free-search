@@ -8,7 +8,6 @@ use App\Modules\Shifr\Support\HashAlgorithms;
 
 final class ComputeHashAction
 {
-
     public function execute(HashLookupDTO $dto): HashResultDTO
     {
         $algorithm = strtolower($dto->algorithm);
@@ -30,22 +29,22 @@ final class ComputeHashAction
 
     private function resolveAlgorithm(string $algorithm, bool $isHmac): string
     {
-        if (!in_array($algorithm, HashAlgorithms::ALL, true)) {
+        if (! in_array($algorithm, HashAlgorithms::ALL, true)) {
             return HashAlgorithms::DEFAULT;
         }
 
         $available = array_map('strtolower', hash_algos());
-        if (!in_array($algorithm, $available, true)) {
+        if (! in_array($algorithm, $available, true)) {
             return HashAlgorithms::DEFAULT;
         }
 
-        if (!$isHmac) {
+        if (! $isHmac) {
             return $algorithm;
         }
 
         if (function_exists('hash_hmac_algos')) {
             $hmacAvailable = array_map('strtolower', hash_hmac_algos());
-            if (!in_array($algorithm, $hmacAvailable, true)) {
+            if (! in_array($algorithm, $hmacAvailable, true)) {
                 return HashAlgorithms::DEFAULT;
             }
         }

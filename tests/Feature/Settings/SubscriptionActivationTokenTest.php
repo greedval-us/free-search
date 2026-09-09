@@ -2,10 +2,10 @@
 
 namespace Tests\Feature\Settings;
 
-use Carbon\CarbonImmutable;
 use App\Models\SubscriptionActivationToken;
 use App\Models\User;
 use App\Models\UserSubscription;
+use Carbon\CarbonImmutable;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 

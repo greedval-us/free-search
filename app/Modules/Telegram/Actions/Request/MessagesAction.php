@@ -17,6 +17,7 @@ class MessagesAction extends AbstractTelegramAction
             );
         } catch (\Throwable $e) {
             $this->logError($e, $filter);
+
             return null;
         }
     }

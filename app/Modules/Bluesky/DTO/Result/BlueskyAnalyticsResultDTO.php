@@ -7,16 +7,16 @@ use App\Support\Contracts\ArrayPayloadable;
 final readonly class BlueskyAnalyticsResultDTO implements ArrayPayloadable
 {
     /**
-     * @param array<string, mixed>|null $profile
-     * @param array<string, mixed> $meta
-     * @param array<string, mixed> $summary
-     * @param array<int, array<string, mixed>> $timeline
-     * @param array<int, array<string, mixed>> $topDomains
-     * @param array<int, array<string, mixed>> $topTags
-     * @param array<int, array<string, mixed>> $topAuthors
-     * @param array<int, array<string, mixed>> $topMentions
-     * @param array<int, array<string, mixed>> $topLanguages
-     * @param array<int, array<string, mixed>> $topPosts
+     * @param  array<string, mixed>|null  $profile
+     * @param  array<string, mixed>  $meta
+     * @param  array<string, mixed>  $summary
+     * @param  array<int, array<string, mixed>>  $timeline
+     * @param  array<int, array<string, mixed>>  $topDomains
+     * @param  array<int, array<string, mixed>>  $topTags
+     * @param  array<int, array<string, mixed>>  $topAuthors
+     * @param  array<int, array<string, mixed>>  $topMentions
+     * @param  array<int, array<string, mixed>>  $topLanguages
+     * @param  array<int, array<string, mixed>>  $topPosts
      */
     public function __construct(
         public ?array $profile,
@@ -29,8 +29,7 @@ final readonly class BlueskyAnalyticsResultDTO implements ArrayPayloadable
         public array $topMentions,
         public array $topLanguages,
         public array $topPosts,
-    ) {
-    }
+    ) {}
 
     /**
      * @return array<string, mixed>

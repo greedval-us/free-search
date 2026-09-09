@@ -15,7 +15,7 @@ final class AtbashResultDTO implements ShifrResultDataInterface
     {
         return [
             'original' => $this->original,
-            'result'   => $this->result,
+            'result' => $this->result,
         ];
     }
 }

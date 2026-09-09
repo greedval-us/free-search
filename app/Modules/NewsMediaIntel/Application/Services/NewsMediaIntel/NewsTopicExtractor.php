@@ -10,11 +10,10 @@ final class NewsTopicExtractor
 {
     public function __construct(
         private readonly NewsMediaIntelConfig $config,
-    ) {
-    }
+    ) {}
 
     /**
-     * @param array<int, NewsMentionDTO> $mentions
+     * @param  array<int, NewsMentionDTO>  $mentions
      * @return array<int, NewsTopicDTO>
      */
     public function extract(array $mentions): array
@@ -22,7 +21,7 @@ final class NewsTopicExtractor
         $bucket = [];
 
         foreach ($mentions as $mention) {
-            $text = mb_strtolower(trim($mention->title . ' ' . $mention->snippet));
+            $text = mb_strtolower(trim($mention->title.' '.$mention->snippet));
             $words = preg_split('/[^\p{L}\p{N}]+/u', $text) ?: [];
 
             foreach ($words as $word) {

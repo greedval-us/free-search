@@ -2,13 +2,13 @@
 
 namespace App\Modules\Bluesky\Search;
 
-use App\Modules\Bluesky\Actions\Request\SearchContentAction;
+use App\Modules\Bluesky\Actions\Request\LoadActorFollowersAction;
+use App\Modules\Bluesky\Actions\Request\LoadActorFollowsAction;
+use App\Modules\Bluesky\Actions\Request\LoadAuthorFeedAction;
 use App\Modules\Bluesky\Actions\Request\LoadPostLikesAction;
 use App\Modules\Bluesky\Actions\Request\LoadPostRepostsAction;
 use App\Modules\Bluesky\Actions\Request\LoadPostThreadAction;
-use App\Modules\Bluesky\Actions\Request\LoadAuthorFeedAction;
-use App\Modules\Bluesky\Actions\Request\LoadActorFollowersAction;
-use App\Modules\Bluesky\Actions\Request\LoadActorFollowsAction;
+use App\Modules\Bluesky\Actions\Request\SearchContentAction;
 use App\Modules\Bluesky\DTO\Request\BlueskySearchQueryDTO;
 use App\Modules\Bluesky\DTO\Result\BlueskyActorListResultDTO;
 use App\Modules\Bluesky\DTO\Result\BlueskyPostListResultDTO;
@@ -26,8 +26,7 @@ final class BlueskySearchApplicationService implements BlueskySearchApplicationS
         private readonly LoadAuthorFeedAction $loadAuthorFeedAction,
         private readonly LoadActorFollowersAction $loadActorFollowersAction,
         private readonly LoadActorFollowsAction $loadActorFollowsAction,
-    ) {
-    }
+    ) {}
 
     public function search(BlueskySearchQueryDTO $query): BlueskySearchResultDTO
     {

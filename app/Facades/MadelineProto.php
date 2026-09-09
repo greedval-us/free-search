@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Facades;
 
 use App\Support\MadelineProto\MadelineProtoManager;

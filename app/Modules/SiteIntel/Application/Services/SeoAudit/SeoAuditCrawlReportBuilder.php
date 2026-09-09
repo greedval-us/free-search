@@ -24,16 +24,16 @@ final class SeoAuditCrawlReportBuilder
         $edges = [];
 
         foreach ($pageLinks as $source => $targets) {
-            if (!isset($knownUrls[$source])) {
+            if (! isset($knownUrls[$source])) {
                 continue;
             }
 
             foreach ($targets as $target) {
-                if (!isset($knownUrls[$target])) {
+                if (! isset($knownUrls[$target])) {
                     continue;
                 }
 
-                $edgeKey = $source . '|' . $target;
+                $edgeKey = $source.'|'.$target;
                 if (isset($edges[$edgeKey])) {
                     continue;
                 }
@@ -69,7 +69,7 @@ final class SeoAuditCrawlReportBuilder
                 'outDegree' => (int) ($outDegree[$url] ?? 0),
                 'riskFlags' => [
                     'non200' => $status < 200 || $status >= 300,
-                    'noindex' => !$indexable,
+                    'noindex' => ! $indexable,
                     'orphanRisk' => $isOrphanRisk,
                 ],
             ];
@@ -110,6 +110,7 @@ final class SeoAuditCrawlReportBuilder
             $canonical = trim((string) ($page['canonical'] ?? ''));
             if ($canonical === '') {
                 $missing[] = $url;
+
                 continue;
             }
 
@@ -118,7 +119,7 @@ final class SeoAuditCrawlReportBuilder
                 $crossDomain[] = ['url' => $url, 'canonical' => $canonical];
             }
 
-            if (!$this->isValidCanonical($canonical)) {
+            if (! $this->isValidCanonical($canonical)) {
                 $invalid[] = ['url' => $url, 'canonical' => $canonical];
             }
 
@@ -167,7 +168,7 @@ final class SeoAuditCrawlReportBuilder
                 }
             }
 
-            if ($tags !== [] && !$hasSelf) {
+            if ($tags !== [] && ! $hasSelf) {
                 $pagesWithoutSelf[] = $url;
             }
 

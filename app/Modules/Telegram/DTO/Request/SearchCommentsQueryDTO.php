@@ -9,7 +9,5 @@ class SearchCommentsQueryDTO
         public readonly int $postId,
         public readonly int $limit,
         public readonly int $offsetId,
-    ) {
-    }
+    ) {}
 }
-

@@ -36,6 +36,7 @@ final class ClassicCipherVigenere
             [$alphabet, $charPos] = $this->detectAlphabetAndPosition($upper, $latin, $cyr);
             if ($alphabet === null || $charPos === null) {
                 $output .= $char;
+
                 continue;
             }
 
@@ -43,6 +44,7 @@ final class ClassicCipherVigenere
             $shift = mb_strpos($alphabet, $keyChar);
             if ($shift === false) {
                 $output .= $char;
+
                 continue;
             }
 

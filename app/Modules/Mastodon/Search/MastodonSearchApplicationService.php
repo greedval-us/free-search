@@ -23,8 +23,7 @@ final class MastodonSearchApplicationService implements MastodonSearchApplicatio
         private readonly LoadAccountStatusesAction $loadAccountStatusesAction,
         private readonly LoadAccountFollowersAction $loadAccountFollowersAction,
         private readonly LoadTagTimelineAction $loadTagTimelineAction,
-    ) {
-    }
+    ) {}
 
     public function search(MastodonSearchQueryDTO $query): MastodonSearchResultDTO
     {

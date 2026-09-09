@@ -11,12 +11,10 @@ use PhpOffice\PhpSpreadsheet\Style\NumberFormat;
 
 final class BlueskyParserExportBuilder implements BlueskyParserExportBuilderInterface
 {
-    public function __construct(private readonly BlueskyModuleConfig $config)
-    {
-    }
+    public function __construct(private readonly BlueskyModuleConfig $config) {}
 
     /**
-     * @param array<string, mixed> $payload
+     * @param  array<string, mixed>  $payload
      * @return array<int, SheetDefinition>
      */
     public function buildSheets(array $payload): array
@@ -33,7 +31,7 @@ final class BlueskyParserExportBuilder implements BlueskyParserExportBuilderInte
     }
 
     /**
-     * @param array<string, mixed> $payload
+     * @param  array<string, mixed>  $payload
      */
     private function buildSummarySheet(array $payload): SheetDefinition
     {
@@ -84,7 +82,7 @@ final class BlueskyParserExportBuilder implements BlueskyParserExportBuilderInte
     }
 
     /**
-     * @param array<string, mixed> $payload
+     * @param  array<string, mixed>  $payload
      */
     private function buildPostsSheet(array $payload): SheetDefinition
     {
@@ -95,7 +93,7 @@ final class BlueskyParserExportBuilder implements BlueskyParserExportBuilderInte
     }
 
     /**
-     * @param array<string, mixed> $payload
+     * @param  array<string, mixed>  $payload
      */
     private function buildAuthoredRepliesSheet(array $payload): SheetDefinition
     {
@@ -106,7 +104,7 @@ final class BlueskyParserExportBuilder implements BlueskyParserExportBuilderInte
     }
 
     /**
-     * @param array<int, array<string, mixed>> $items
+     * @param  array<int, array<string, mixed>>  $items
      */
     private function buildPostSheet(string $title, array $items): SheetDefinition
     {
@@ -161,7 +159,7 @@ final class BlueskyParserExportBuilder implements BlueskyParserExportBuilderInte
     }
 
     /**
-     * @param array<string, mixed> $payload
+     * @param  array<string, mixed>  $payload
      */
     private function buildReceivedRepliesSheet(array $payload): SheetDefinition
     {
@@ -217,7 +215,7 @@ final class BlueskyParserExportBuilder implements BlueskyParserExportBuilderInte
     }
 
     /**
-     * @param array<string, mixed> $payload
+     * @param  array<string, mixed>  $payload
      */
     private function buildActorsSheet(array $payload, string $key, string $title): SheetDefinition
     {
@@ -261,7 +259,7 @@ final class BlueskyParserExportBuilder implements BlueskyParserExportBuilderInte
     }
 
     /**
-     * @param array<string, mixed> $payload
+     * @param  array<string, mixed>  $payload
      */
     private function buildReactionsSheet(array $payload): SheetDefinition
     {
@@ -329,14 +327,14 @@ final class BlueskyParserExportBuilder implements BlueskyParserExportBuilderInte
     }
 
     /**
-     * @param array<int, array<string, mixed>> $items
+     * @param  array<int, array<string, mixed>>  $items
      */
     private function countBoolField(array $items, string $field): int
     {
         $count = 0;
 
         foreach ($items as $item) {
-            if (!empty($item[$field])) {
+            if (! empty($item[$field])) {
                 $count++;
             }
         }
@@ -345,7 +343,7 @@ final class BlueskyParserExportBuilder implements BlueskyParserExportBuilderInte
     }
 
     /**
-     * @param array<int, array<string, mixed>> $items
+     * @param  array<int, array<string, mixed>>  $items
      */
     private function sumIntField(array $items, string $field): int
     {
@@ -359,7 +357,7 @@ final class BlueskyParserExportBuilder implements BlueskyParserExportBuilderInte
     }
 
     /**
-     * @param array<int, array<string, mixed>> $items
+     * @param  array<int, array<string, mixed>>  $items
      */
     private function countUniqueNestedValues(array $items, string $field): int
     {
@@ -381,7 +379,7 @@ final class BlueskyParserExportBuilder implements BlueskyParserExportBuilderInte
     }
 
     /**
-     * @param array<int, array<string, mixed>> $reactions
+     * @param  array<int, array<string, mixed>>  $reactions
      */
     private function countKind(array $reactions, string $kind): int
     {
@@ -397,7 +395,7 @@ final class BlueskyParserExportBuilder implements BlueskyParserExportBuilderInte
     }
 
     /**
-     * @param array<int, array<string, mixed>> $reactions
+     * @param  array<int, array<string, mixed>>  $reactions
      */
     private function countUniqueActorDid(array $reactions): int
     {

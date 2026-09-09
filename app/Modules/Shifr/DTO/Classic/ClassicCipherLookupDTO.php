@@ -17,6 +17,5 @@ final class ClassicCipherLookupDTO
         public readonly string $playfairKey,
         public readonly string $columnKey,
         public readonly string $morseSeparator,
-    ) {
-    }
+    ) {}
 }

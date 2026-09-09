@@ -14,7 +14,7 @@ final class SiteHealthSecurityHeadersExtractor
     ];
 
     /**
-     * @param array<string, mixed> $headers
+     * @param  array<string, mixed>  $headers
      * @return array<string, array<string, mixed>>
      */
     public function extract(array $headers): array
@@ -44,4 +44,3 @@ final class SiteHealthSecurityHeadersExtractor
         return $result;
     }
 }
-

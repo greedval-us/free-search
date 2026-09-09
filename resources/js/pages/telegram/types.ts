@@ -143,6 +143,7 @@ export type CommentsResponse = {
 };
 
 export type TelegramAnalyticsSummary = {
+    previousReport?: TelegramAnalyticsSummary | null;
     range: {
         chatUsername: string;
         dateFrom: string;

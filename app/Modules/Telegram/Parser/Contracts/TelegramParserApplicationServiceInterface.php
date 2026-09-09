@@ -2,9 +2,9 @@
 
 namespace App\Modules\Telegram\Parser\Contracts;
 
+use App\Modules\ParserSupport\Contracts\ParserRunApplicationServiceInterface;
 use App\Modules\Telegram\DTO\Request\TelegramParserStartDTO;
 use App\Modules\Telegram\DTO\Result\TelegramParserRunStatusDTO;
-use App\Modules\ParserSupport\Contracts\ParserRunApplicationServiceInterface;
 
 interface TelegramParserApplicationServiceInterface extends ParserRunApplicationServiceInterface
 {
@@ -13,5 +13,4 @@ interface TelegramParserApplicationServiceInterface extends ParserRunApplication
     public function status(int $userId, string $runId): ?TelegramParserRunStatusDTO;
 
     public function stop(int $userId, string $runId): ?TelegramParserRunStatusDTO;
-
 }

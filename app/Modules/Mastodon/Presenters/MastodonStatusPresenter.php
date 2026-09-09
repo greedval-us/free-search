@@ -9,11 +9,10 @@ final class MastodonStatusPresenter
 {
     public function __construct(
         private readonly MastodonAccountPresenter $accountPresenter,
-    ) {
-    }
+    ) {}
 
     /**
-     * @param array<string, mixed> $item
+     * @param  array<string, mixed>  $item
      * @return array<string, mixed>
      */
     public function present(array $item): array
@@ -53,7 +52,7 @@ final class MastodonStatusPresenter
     }
 
     /**
-     * @param array<string, mixed> $item
+     * @param  array<string, mixed>  $item
      * @return array<int, array<string, string>>
      */
     private function presentMentions(array $item): array
@@ -70,7 +69,7 @@ final class MastodonStatusPresenter
     }
 
     /**
-     * @param array<string, mixed> $item
+     * @param  array<string, mixed>  $item
      * @return array<int, string>
      */
     private function presentTags(array $item): array
@@ -83,7 +82,7 @@ final class MastodonStatusPresenter
     }
 
     /**
-     * @param array<string, mixed> $item
+     * @param  array<string, mixed>  $item
      * @return array<int, string>
      */
     private function extractLinks(array $item): array
@@ -105,7 +104,7 @@ final class MastodonStatusPresenter
     }
 
     /**
-     * @param array<int, string> $links
+     * @param  array<int, string>  $links
      * @return array<int, string>
      */
     private function extractDomains(array $links): array
@@ -119,7 +118,7 @@ final class MastodonStatusPresenter
     }
 
     /**
-     * @param array<string, mixed> $item
+     * @param  array<string, mixed>  $item
      */
     private function resolvePostType(array $item): string
     {

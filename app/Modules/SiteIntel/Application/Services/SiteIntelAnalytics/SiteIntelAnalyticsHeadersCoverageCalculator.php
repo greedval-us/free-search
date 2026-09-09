@@ -5,7 +5,7 @@ namespace App\Modules\SiteIntel\Application\Services\SiteIntelAnalytics;
 final class SiteIntelAnalyticsHeadersCoverageCalculator
 {
     /**
-     * @param array<string, mixed> $siteHealth
+     * @param  array<string, mixed>  $siteHealth
      * @return array{present: int, total: int, percent: int}
      */
     public function calculate(array $siteHealth): array

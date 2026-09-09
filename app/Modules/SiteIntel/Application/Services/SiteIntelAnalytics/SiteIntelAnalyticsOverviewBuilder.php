@@ -11,13 +11,13 @@ final class SiteIntelAnalyticsOverviewBuilder
     private const SCORE_MEDIUM_THRESHOLD = 45;
 
     /**
-     * @param array<string, mixed> $siteHealth
-     * @param array<string, mixed> $domainLite
-     * @param array{healthScore: int, domainRiskScore: int, overallScore: int} $scores
-     * @param array{present: int, total: int, percent: int} $headersCoverage
-     * @param array<int, string> $riskSignals
-     * @param array<int, string> $strengthSignals
-     * @param array<int, string> $recommendations
+     * @param  array<string, mixed>  $siteHealth
+     * @param  array<string, mixed>  $domainLite
+     * @param  array{healthScore: int, domainRiskScore: int, overallScore: int}  $scores
+     * @param  array{present: int, total: int, percent: int}  $headersCoverage
+     * @param  array<int, string>  $riskSignals
+     * @param  array<int, string>  $strengthSignals
+     * @param  array<int, string>  $recommendations
      * @return array<string, mixed>
      */
     public function build(
@@ -59,7 +59,7 @@ final class SiteIntelAnalyticsOverviewBuilder
     }
 
     /**
-     * @param array<string, mixed> $domainLite
+     * @param  array<string, mixed>  $domainLite
      * @return array{a: int, aaaa: int, ns: int, mx: int}
      */
     private function dnsStats(array $domainLite): array

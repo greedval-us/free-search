@@ -7,8 +7,7 @@ final class TimelinePointDTO
     public function __construct(
         public readonly string $date,
         public readonly int $mentions,
-    ) {
-    }
+    ) {}
 
     /**
      * @return array{date: string, mentions: int}
@@ -21,4 +20,3 @@ final class TimelinePointDTO
         ];
     }
 }
-

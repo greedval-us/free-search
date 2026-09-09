@@ -7,7 +7,7 @@ use Illuminate\Support\Str;
 final class TelegramAnalyticsPostMetricsBuilder
 {
     /**
-     * @param array<string, mixed> $item
+     * @param  array<string, mixed>  $item
      * @return array{
      *     date: int,
      *     views: int,
@@ -28,7 +28,7 @@ final class TelegramAnalyticsPostMetricsBuilder
 
         $forwards = max(0, (int) ($item['forwards'] ?? 0));
         $replies = max(0, (int) ($item['repliesCount'] ?? 0));
-        $gifts = !empty($item['gifts']['hasGift']) ? 1 : 0;
+        $gifts = ! empty($item['gifts']['hasGift']) ? 1 : 0;
 
         return [
             'date' => (int) ($item['date'] ?? 0),
@@ -43,7 +43,7 @@ final class TelegramAnalyticsPostMetricsBuilder
     }
 
     /**
-     * @param array{views: float, forwards: float, replies: float, reactions: float, gifts: float} $weights
+     * @param  array{views: float, forwards: float, replies: float, reactions: float, gifts: float}  $weights
      */
     public function calculateScore(
         int $views,
@@ -61,7 +61,7 @@ final class TelegramAnalyticsPostMetricsBuilder
     }
 
     /**
-     * @param array<string, mixed> $item
+     * @param  array<string, mixed>  $item
      * @param array{
      *     date: int,
      *     views: int,

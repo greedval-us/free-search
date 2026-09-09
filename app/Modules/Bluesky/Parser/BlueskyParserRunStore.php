@@ -14,7 +14,7 @@ final class BlueskyParserRunStore extends JsonRunStore
     }
 
     /**
-     * @param array<string, mixed> $context
+     * @param  array<string, mixed>  $context
      * @return array<string, mixed>
      */
     protected function initialState(int $userId, string $runId, array $context, string $now): array

@@ -2,8 +2,8 @@
 
 namespace App\Http\Requests\Shifr;
 
-use App\Modules\Shifr\Enums\ShifrCipherDirection;
 use App\Modules\Shifr\DTO\Classic\ClassicCipherLookupDTO;
+use App\Modules\Shifr\Enums\ShifrCipherDirection;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\Validator;
 
@@ -19,7 +19,7 @@ final class ShifrClassicCipherRequest extends AbstractShifrRequest
         return [
             'text' => ['required', 'string', 'max:20000'],
             'cipher' => ['required', 'string', 'in:caesar,atbash,rot13,rot47,rot5,vigenere,rail_fence,xor,affine,playfair,columnar,morse'],
-            'direction' => ['required', 'string', 'in:' . ShifrCipherDirection::ruleList()],
+            'direction' => ['required', 'string', 'in:'.ShifrCipherDirection::ruleList()],
             'shift' => ['nullable', 'integer', 'min:-1000', 'max:1000'],
             'key' => [
                 'nullable',
@@ -67,7 +67,7 @@ final class ShifrClassicCipherRequest extends AbstractShifrRequest
                 $validator->errors()->add('direction', __('errors.validation.shifr_transform_only_direction'));
             }
 
-            if (!$this->isTransformOnlyCipher($cipher) && $direction === ShifrCipherDirection::Transform->value) {
+            if (! $this->isTransformOnlyCipher($cipher) && $direction === ShifrCipherDirection::Transform->value) {
                 $validator->errors()->add('direction', __('errors.validation.shifr_transform_only_for_rot'));
             }
         });

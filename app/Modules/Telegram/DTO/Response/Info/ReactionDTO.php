@@ -5,8 +5,11 @@ namespace App\Modules\Telegram\DTO\Response\Info;
 class ReactionDTO
 {
     public string $_;
+
     public string $emoticon;
+
     public ?int $document_id = null;
+
     public array $raw = [];
 
     public function __construct(array $data)

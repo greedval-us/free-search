@@ -31,32 +31,38 @@ class TelegramAnalyticsRequest extends LocalizedFormRequest
             'chatUsername' => ['required', 'string', 'max:255'],
             'keyword' => ['nullable', 'string', 'max:255'],
             'locale' => $this->localeRule(),
-            'periodDays' => ['nullable', 'integer', 'min:' . $this->periodMinDays(), 'max:' . $this->periodMaxDays()],
+            'periodDays' => ['nullable', 'integer', 'min:'.$this->periodMinDays(), 'max:'.$this->periodMaxDays()],
             'dateFrom' => ['nullable', 'date_format:Y-m-d'],
             'dateTo' => ['nullable', 'date_format:Y-m-d'],
-            'scorePriority' => ['nullable', 'string', 'in:' . implode(',', self::SCORE_PRIORITIES)],
+            'scorePriority' => ['nullable', 'string', 'in:'.implode(',', self::SCORE_PRIORITIES)],
         ];
     }
 
     public function withValidator(Validator $validator): void
     {
         $validator->after(function (Validator $validator): void {
+            if ($validator->errors()->isNotEmpty()) {
+                return;
+            }
+
             $dateFrom = $this->input('dateFrom');
             $dateTo = $this->input('dateTo');
 
-            if (($dateFrom && !$dateTo) || (!$dateFrom && $dateTo)) {
+            if (($dateFrom && ! $dateTo) || (! $dateFrom && $dateTo)) {
                 $validator->errors()->add('dateTo', __('errors.validation.custom_range_requires_both_dates'));
             }
 
             if ($dateFrom && $dateTo && $dateFrom > $dateTo) {
                 $validator->errors()->add('dateFrom', __('errors.validation.date_from_before_or_equal_date_to'));
+
+                return;
             }
 
             if ($dateFrom && $dateTo) {
                 $rangeStart = Carbon::createFromFormat('Y-m-d', $dateFrom, $this->telegramConfig()->timezone())->startOfDay();
-                $rangeEnd = Carbon::createFromFormat('Y-m-d', $dateTo, $this->telegramConfig()->timezone())->endOfDay();
+                $rangeEnd = Carbon::createFromFormat('Y-m-d', $dateTo, $this->telegramConfig()->timezone())->startOfDay();
 
-                if ($rangeEnd->diffInDays($rangeStart) > ($this->customRangeMaxDays() - 1)) {
+                if ($rangeStart->diffInDays($rangeEnd) > ($this->customRangeMaxDays() - 1)) {
                     $validator->errors()->add(
                         'dateTo',
                         __('errors.validation.custom_analytics_range_max_days', [

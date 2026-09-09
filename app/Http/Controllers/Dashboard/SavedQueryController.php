@@ -14,8 +14,7 @@ class SavedQueryController extends Controller
 {
     public function __construct(
         private readonly SavedQueryServiceInterface $savedQueryService,
-    ) {
-    }
+    ) {}
 
     public function store(SaveQueryRequest $request): RedirectResponse
     {

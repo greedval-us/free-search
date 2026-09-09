@@ -10,6 +10,7 @@ use App\Modules\Mastodon\Support\MastodonApiConfig;
 use App\Support\Observability\ExternalServiceLogger;
 use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Http\Client\PendingRequest;
+use Illuminate\Http\Client\Response;
 use Illuminate\Support\Facades\Http;
 
 final class MastodonApiClient implements MastodonGatewayInterface
@@ -17,8 +18,7 @@ final class MastodonApiClient implements MastodonGatewayInterface
     public function __construct(
         private readonly MastodonApiConfig $config,
         private readonly ExternalServiceLogger $externalServiceLogger,
-    ) {
-    }
+    ) {}
 
     public function search(array $params): array
     {
@@ -93,7 +93,7 @@ final class MastodonApiClient implements MastodonGatewayInterface
     /**
      * @param  array<string, mixed>  $query
      */
-    private function request(string $endpoint, array $query): \Illuminate\Http\Client\Response
+    private function request(string $endpoint, array $query): Response
     {
         if ($this->config->apiToken() === '') {
             $this->externalServiceLogger->logMisconfiguration('mastodon', $endpoint);

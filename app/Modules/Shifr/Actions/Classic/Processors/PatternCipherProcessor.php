@@ -18,8 +18,7 @@ final class PatternCipherProcessor implements ClassicCipherProcessorInterface
         private readonly ClassicCipherAffinePlayfair $affinePlayfair,
         private readonly ClassicCipherTransposition $transposition,
         private readonly ClassicCipherResultFactory $resultFactory,
-    ) {
-    }
+    ) {}
 
     public function supports(string $cipher): bool
     {

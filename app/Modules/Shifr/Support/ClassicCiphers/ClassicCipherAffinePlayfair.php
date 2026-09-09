@@ -38,8 +38,9 @@ final class ClassicCipherAffinePlayfair
 
         $output = '';
         foreach (mb_str_split($text) as $char) {
-            if (!preg_match('/[A-Za-z]/', $char)) {
+            if (! preg_match('/[A-Za-z]/', $char)) {
                 $output .= $char;
+
                 continue;
             }
 
@@ -98,6 +99,7 @@ final class ClassicCipherAffinePlayfair
                 $shift = $decrypt ? -1 : 1;
                 $result .= $matrix[$ar][($ac + $shift + 5) % 5];
                 $result .= $matrix[$br][($bc + $shift + 5) % 5];
+
                 continue;
             }
 
@@ -105,6 +107,7 @@ final class ClassicCipherAffinePlayfair
                 $shift = $decrypt ? -1 : 1;
                 $result .= $matrix[($ar + $shift + 5) % 5][$ac];
                 $result .= $matrix[($br + $shift + 5) % 5][$bc];
+
                 continue;
             }
 
@@ -123,7 +126,7 @@ final class ClassicCipherAffinePlayfair
         $alphabet = 'ABCDEFGHIKLMNOPQRSTUVWXYZ';
         $normalizedKey = strtoupper(preg_replace('/[^A-Za-z]/', '', $key) ?? '');
         $normalizedKey = str_replace('J', 'I', $normalizedKey);
-        $raw = $normalizedKey . $alphabet;
+        $raw = $normalizedKey.$alphabet;
 
         $seen = [];
         $letters = [];
@@ -179,6 +182,7 @@ final class ClassicCipherAffinePlayfair
             if ($a === $b) {
                 $pairs[] = [$a, 'X'];
                 $i++;
+
                 continue;
             }
 

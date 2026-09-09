@@ -8,7 +8,7 @@ final class CaesarCipherResultDTO implements ShifrResultDataInterface
 {
     public function __construct(
         public readonly string $original,
-        public readonly int    $shift,
+        public readonly int $shift,
         public readonly string $result
     ) {}
 
@@ -16,8 +16,8 @@ final class CaesarCipherResultDTO implements ShifrResultDataInterface
     {
         return [
             'original' => $this->original,
-            'shift'    => $this->shift,
-            'result'   => $this->result,
+            'shift' => $this->shift,
+            'result' => $this->result,
         ];
     }
 }

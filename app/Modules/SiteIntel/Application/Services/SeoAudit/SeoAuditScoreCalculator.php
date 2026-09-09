@@ -46,8 +46,7 @@ final class SeoAuditScoreCalculator
     public function __construct(
         private readonly SeoAuditTechnicalThresholds $thresholds,
         private readonly SeoAuditScoringProfilePolicy $profilePolicy,
-    ) {
-    }
+    ) {}
 
     /**
      * @param  array<string, mixed>  $meta
@@ -143,7 +142,7 @@ final class SeoAuditScoreCalculator
         if ($this->thresholds->hasHighRenderBlocking((int) ($performance['renderBlocking']['total'] ?? 0))) {
             $applySignal('render_blocking_resources', $weights['render_blocking']);
         }
-        if (($pagination['isPaginated'] ?? false) === true && !(($pagination['hasRelPrev'] ?? false) && ($pagination['hasRelNext'] ?? false))) {
+        if (($pagination['isPaginated'] ?? false) === true && ! (($pagination['hasRelPrev'] ?? false) && ($pagination['hasRelNext'] ?? false))) {
             $applySignal('pagination_signals_incomplete');
         }
         if ((int) ($quality['anchors']['empty'] ?? 0) > 0) {
@@ -213,5 +212,4 @@ final class SeoAuditScoreCalculator
             'signals' => $signals,
         ];
     }
-
 }

@@ -5,7 +5,7 @@ namespace App\Modules\Telegram\Analytics;
 class TelegramAnalyticsFunnelCalculator
 {
     /**
-     * @param array<int, array{views: int, interactions: int, reactions: int}> $candidates
+     * @param  array<int, array{views: int, interactions: int, reactions: int}>  $candidates
      * @return array{
      *     stages: array<int, array{
      *         key: string,
@@ -84,7 +84,7 @@ class TelegramAnalyticsFunnelCalculator
     }
 
     /**
-     * @param array<int, int> $values
+     * @param  array<int, int>  $values
      */
     private function resolvePositiveMedianThreshold(array $values): int
     {

@@ -13,7 +13,7 @@ abstract class Controller
     use HandlesHtmlReports;
 
     /**
-     * @param array<string, mixed> $payload
+     * @param  array<string, mixed>  $payload
      */
     protected function jsonPayload(array $payload, int $status = 200): JsonResponse
     {
@@ -21,7 +21,7 @@ abstract class Controller
     }
 
     /**
-     * @param array<string, mixed> $payload
+     * @param  array<string, mixed>  $payload
      */
     protected function jsonOk(array $payload = [], int $status = 200): JsonResponse
     {
@@ -44,7 +44,7 @@ abstract class Controller
     }
 
     /**
-     * @param array<string, mixed> $payload
+     * @param  array<string, mixed>  $payload
      */
     protected function jsonError(string $message, int $status = 422, array $payload = []): JsonResponse
     {
@@ -93,8 +93,8 @@ abstract class Controller
     }
 
     /**
-     * @param array<string, mixed> $report
-     * @param array<string, mixed> $extraViewData
+     * @param  array<string, mixed>  $report
+     * @param  array<string, mixed>  $extraViewData
      */
     protected function localizedHtmlReportResponse(
         string $locale,

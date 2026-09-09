@@ -8,19 +8,19 @@ use App\Support\Contracts\ArrayPayloadable;
 final class BlueskyParserCollectedDataDTO implements ArrayPayloadable
 {
     /**
-     * @param array<string, mixed>|null $profile
-     * @param array<string, bool> $postIds
-     * @param array<string, bool> $authoredReplyIds
-     * @param array<string, bool> $receivedReplyIds
-     * @param array<string, bool> $followersIds
-     * @param array<string, bool> $followsIds
-     * @param array<string, bool> $reactionIds
-     * @param array<int, array<string, mixed>> $postsIndex
-     * @param array<int, array<string, mixed>> $authoredRepliesIndex
-     * @param array<int, array<string, mixed>> $receivedRepliesIndex
-     * @param array<int, array<string, mixed>> $followersIndex
-     * @param array<int, array<string, mixed>> $followsIndex
-     * @param array<int, array<string, mixed>> $reactionsIndex
+     * @param  array<string, mixed>|null  $profile
+     * @param  array<string, bool>  $postIds
+     * @param  array<string, bool>  $authoredReplyIds
+     * @param  array<string, bool>  $receivedReplyIds
+     * @param  array<string, bool>  $followersIds
+     * @param  array<string, bool>  $followsIds
+     * @param  array<string, bool>  $reactionIds
+     * @param  array<int, array<string, mixed>>  $postsIndex
+     * @param  array<int, array<string, mixed>>  $authoredRepliesIndex
+     * @param  array<int, array<string, mixed>>  $receivedRepliesIndex
+     * @param  array<int, array<string, mixed>>  $followersIndex
+     * @param  array<int, array<string, mixed>>  $followsIndex
+     * @param  array<int, array<string, mixed>>  $reactionsIndex
      */
     public function __construct(
         private ?array $profile = null,
@@ -36,11 +36,10 @@ final class BlueskyParserCollectedDataDTO implements ArrayPayloadable
         private array $followersIndex = [],
         private array $followsIndex = [],
         private array $reactionsIndex = [],
-    ) {
-    }
+    ) {}
 
     /**
-     * @param array<string, mixed> $payload
+     * @param  array<string, mixed>  $payload
      */
     public static function fromArray(array $payload): self
     {
@@ -70,7 +69,7 @@ final class BlueskyParserCollectedDataDTO implements ArrayPayloadable
     }
 
     /**
-     * @param array<string, mixed> $profile
+     * @param  array<string, mixed>  $profile
      */
     public function setProfile(array $profile): void
     {
@@ -88,7 +87,7 @@ final class BlueskyParserCollectedDataDTO implements ArrayPayloadable
     }
 
     /**
-     * @param array<string, mixed> $item
+     * @param  array<string, mixed>  $item
      */
     public function recordFeedItem(array $item): void
     {
@@ -119,7 +118,7 @@ final class BlueskyParserCollectedDataDTO implements ArrayPayloadable
     }
 
     /**
-     * @param array<string, mixed> $item
+     * @param  array<string, mixed>  $item
      */
     public function recordFollower(array $item): void
     {
@@ -133,7 +132,7 @@ final class BlueskyParserCollectedDataDTO implements ArrayPayloadable
     }
 
     /**
-     * @param array<string, mixed> $item
+     * @param  array<string, mixed>  $item
      */
     public function recordFollow(array $item): void
     {
@@ -147,7 +146,7 @@ final class BlueskyParserCollectedDataDTO implements ArrayPayloadable
     }
 
     /**
-     * @param array<string, mixed> $item
+     * @param  array<string, mixed>  $item
      */
     public function recordReaction(
         string $postUri,
@@ -178,7 +177,7 @@ final class BlueskyParserCollectedDataDTO implements ArrayPayloadable
     }
 
     /**
-     * @param array<int, array<string, mixed>> $replies
+     * @param  array<int, array<string, mixed>>  $replies
      */
     public function recordReceivedReplies(string $rootPostUri, array $replies): void
     {

@@ -5,12 +5,19 @@ namespace App\Modules\Telegram\DTO\Response\Messages;
 class ReplyHeaderDTO
 {
     public string $_;
+
     public ?int $reply_to_msg_id = null;
+
     public ?int $reply_to_top_id = null;
+
     public mixed $reply_to_peer_id = null;
+
     public bool $forum_topic = false;
+
     public bool $quote = false;
+
     public ?string $quote_text = null;
+
     public array $quote_entities = [];
 
     public array $raw = [];

@@ -27,8 +27,7 @@ final class ShiftMirrorCipherProcessor implements ClassicCipherProcessorInterfac
         private readonly Rot13TransformAction $rot13Transform,
         private readonly Rot47TransformAction $rot47Transform,
         private readonly ClassicCipherResultFactory $resultFactory,
-    ) {
-    }
+    ) {}
 
     public function supports(string $cipher): bool
     {
@@ -92,7 +91,6 @@ final class ShiftMirrorCipherProcessor implements ClassicCipherProcessorInterfac
 
     /**
      * ROT5 is symmetric, so one transform is enough.
-     *
      */
     private function transformRot5(string $message): AtbashResultDTO
     {

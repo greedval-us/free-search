@@ -5,7 +5,7 @@ namespace App\Modules\Telegram\Support;
 final class TelegramConfigFactory
 {
     /**
-     * @param array<string, mixed> $config
+     * @param  array<string, mixed>  $config
      */
     public function make(array $config, string $timezone): TelegramConfig
     {
@@ -52,7 +52,7 @@ final class TelegramConfigFactory
     }
 
     /**
-     * @param array<string, mixed> $scoreProfiles
+     * @param  array<string, mixed>  $scoreProfiles
      * @return array<string, array{views: float, forwards: float, replies: float, reactions: float, gifts: float}>
      */
     private function normalizeScoreProfiles(array $scoreProfiles): array
@@ -62,8 +62,9 @@ final class TelegramConfigFactory
 
         foreach ($defaults as $profile => $weights) {
             $candidate = $scoreProfiles[$profile] ?? null;
-            if (!is_array($candidate)) {
+            if (! is_array($candidate)) {
                 $normalized[$profile] = $weights;
+
                 continue;
             }
 
@@ -93,8 +94,8 @@ final class TelegramConfigFactory
     }
 
     /**
-     * @param array<string, mixed> $config
-     * @param array<int, string> $path
+     * @param  array<string, mixed>  $config
+     * @param  array<int, string>  $path
      * @return array<string, mixed>
      */
     private function arrayAt(array $config, array $path): array
@@ -105,8 +106,8 @@ final class TelegramConfigFactory
     }
 
     /**
-     * @param array<string, mixed> $config
-     * @param array<int, string> $path
+     * @param  array<string, mixed>  $config
+     * @param  array<int, string>  $path
      */
     private function intValue(array $config, array $path, int $default): int
     {
@@ -116,15 +117,15 @@ final class TelegramConfigFactory
     }
 
     /**
-     * @param array<string, mixed> $config
-     * @param array<int, string> $path
+     * @param  array<string, mixed>  $config
+     * @param  array<int, string>  $path
      */
     private function valueByPath(array $config, array $path): mixed
     {
         $cursor = $config;
 
         foreach ($path as $segment) {
-            if (!is_array($cursor) || !array_key_exists($segment, $cursor)) {
+            if (! is_array($cursor) || ! array_key_exists($segment, $cursor)) {
                 return null;
             }
 

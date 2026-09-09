@@ -3,8 +3,8 @@
 namespace App\Modules\YouTube\Parser;
 
 use App\Modules\ParserSupport\Contracts\ParserRunCollectorInterface;
-use App\Modules\YouTube\DTO\Parser\YouTubeParserStateDTO;
 use App\Modules\YouTube\Core\Contracts\YouTubeGatewayInterface;
+use App\Modules\YouTube\DTO\Parser\YouTubeParserStateDTO;
 use App\Modules\YouTube\Enums\YouTubeParserStage;
 use App\Modules\YouTube\Presenters\YouTubeCommentThreadPresenter;
 use Illuminate\Support\Arr;
@@ -12,17 +12,17 @@ use Illuminate\Support\Arr;
 class YouTubeParserCollector implements ParserRunCollectorInterface
 {
     private const THREADS_LIMIT = 100;
+
     private const REPLIES_LIMIT = 100;
 
     public function __construct(
         private readonly YouTubeGatewayInterface $gateway,
         private readonly YouTubeCommentThreadPresenter $commentThreadPresenter,
         private readonly YouTubeParserSnapshotBuilder $snapshotBuilder,
-    ) {
-    }
+    ) {}
 
     /**
-     * @param array<string, mixed> $run
+     * @param  array<string, mixed>  $run
      * @return array<string, mixed>
      */
     public function advance(array $run): array
@@ -42,7 +42,7 @@ class YouTubeParserCollector implements ParserRunCollectorInterface
     }
 
     /**
-     * @param array<string, mixed> $run
+     * @param  array<string, mixed>  $run
      * @return array<string, mixed>
      */
     public function buildResultSnapshot(array $run): array
@@ -53,7 +53,7 @@ class YouTubeParserCollector implements ParserRunCollectorInterface
     }
 
     /**
-     * @param array<string, mixed> $run
+     * @param  array<string, mixed>  $run
      * @return array<string, mixed>
      */
     private function advanceComments(YouTubeParserStateDTO $state): array
@@ -127,7 +127,7 @@ class YouTubeParserCollector implements ParserRunCollectorInterface
     }
 
     /**
-     * @param array<string, mixed> $run
+     * @param  array<string, mixed>  $run
      * @return array<string, mixed>
      */
     private function advanceReplies(YouTubeParserStateDTO $state): array
@@ -196,7 +196,7 @@ class YouTubeParserCollector implements ParserRunCollectorInterface
     }
 
     /**
-     * @param array<string, mixed> $run
+     * @param  array<string, mixed>  $run
      * @return array<string, mixed>
      */
     private function finish(YouTubeParserStateDTO $state): array

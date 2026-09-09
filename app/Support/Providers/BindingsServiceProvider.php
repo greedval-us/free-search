@@ -18,4 +18,3 @@ abstract class BindingsServiceProvider extends ServiceProvider
         }
     }
 }
-

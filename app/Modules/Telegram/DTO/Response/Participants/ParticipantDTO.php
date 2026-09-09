@@ -5,17 +5,27 @@ namespace App\Modules\Telegram\DTO\Response\Participants;
 class ParticipantDTO
 {
     public string $_;
+
     public int $flags = 0;
+
     public int $user_id;
+
     public int $date;
+
     public bool $self;
+
     public bool $can_edit = false;
+
     public ?int $inviter_id = null;
+
     public ?int $promoted_by = null;
+
     public ?int $kicked_by = null;
+
     public ?int $banned_rights_until_date = null;
 
     public ?AdminRightsDTO $admin_rights = null;
+
     public array $raw = [];
 
     public function __construct(array $data)
@@ -34,7 +44,7 @@ class ParticipantDTO
             : null;
 
         $this->admin_rights = isset($data['admin_rights'])
-            ? new AdminRightsDTO((array)$data['admin_rights'])
+            ? new AdminRightsDTO((array) $data['admin_rights'])
             : null;
         $this->raw = $data;
     }

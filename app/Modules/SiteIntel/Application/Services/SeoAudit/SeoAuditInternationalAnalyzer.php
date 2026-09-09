@@ -5,7 +5,7 @@ namespace App\Modules\SiteIntel\Application\Services\SeoAudit;
 final class SeoAuditInternationalAnalyzer
 {
     /**
-     * @param array<string, mixed> $crawl
+     * @param  array<string, mixed>  $crawl
      * @return array<string, mixed>
      */
     public function analyze(array $crawl): array
@@ -36,7 +36,7 @@ final class SeoAuditInternationalAnalyzer
                 }
 
                 $target = $this->findPageByUrl($pages, $href);
-                if ($target !== null && !$this->hasReciprocalReference($target, $url)) {
+                if ($target !== null && ! $this->hasReciprocalReference($target, $url)) {
                     $missingReciprocal[] = [
                         'source' => $url,
                         'target' => $href,
@@ -49,7 +49,7 @@ final class SeoAuditInternationalAnalyzer
             $clusterKey = implode('|', array_values(array_unique($langs)));
             $clusters[$clusterKey] = ($clusters[$clusterKey] ?? 0) + 1;
 
-            if (!$hasXDefault) {
+            if (! $hasXDefault) {
                 $missingXDefault[] = $url;
             }
         }
@@ -71,7 +71,7 @@ final class SeoAuditInternationalAnalyzer
     }
 
     /**
-     * @param array<int, array<string, mixed>> $pages
+     * @param  array<int, array<string, mixed>>  $pages
      * @return array<string, mixed>|null
      */
     private function findPageByUrl(array $pages, string $url): ?array
@@ -87,7 +87,7 @@ final class SeoAuditInternationalAnalyzer
     }
 
     /**
-     * @param array<string, mixed> $page
+     * @param  array<string, mixed>  $page
      */
     private function hasReciprocalReference(array $page, string $url): bool
     {
@@ -107,4 +107,3 @@ final class SeoAuditInternationalAnalyzer
         return rtrim(mb_strtolower(trim($url)), '/');
     }
 }
-

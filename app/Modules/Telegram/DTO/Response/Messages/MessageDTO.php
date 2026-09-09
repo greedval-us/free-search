@@ -5,52 +5,87 @@ namespace App\Modules\Telegram\DTO\Response\Messages;
 class MessageDTO
 {
     public string $_;
+
     public int $flags;
+
     public int $flags2;
+
     public bool $out;
+
     public bool $mentioned;
+
     public bool $media_unread;
+
     public bool $silent;
+
     public bool $post;
+
     public bool $from_scheduled;
+
     public bool $legacy;
+
     public bool $edit_hide;
+
     public bool $pinned;
+
     public bool $noforwards;
+
     public bool $invert_media;
+
     public bool $offline;
+
     public bool $video_processing_pending;
+
     public bool $paid_suggested_post_stars;
+
     public bool $paid_suggested_post_ton;
+
     public bool $edit_date_hidden;
+
     public bool $grouped;
 
     public int $id;
+
     public int $from_id;
+
     public int $peer_id;
+
     public int $date;
+
     public string $message;
+
     public ?int $edit_date = null;
+
     public ?int $grouped_id = null;
 
     public ?MessageRepliesDTO $replies = null;
+
     public ?ReplyHeaderDTO $reply_to = null;
+
     /** @var MessageEntityDTO[]|null */
     public ?array $entities = null;
+
     public MediaDTO|array|string|null $media = null;
+
     /** @var ReactionDTO[]|null */
     public ?array $reactions = null;
 
     public ?int $forward_from = null;
+
     public ?int $views = null;
+
     public ?int $forwards = null;
 
     public ?int $via_bot_id = null;
+
     public ?string $author_signature = null;
+
     public ?string $post_author = null;
+
     public ?int $ttl_period = null;
 
     public array|int|string|null $from_id_raw = null;
+
     public array|int|string|null $peer_id_raw = null;
 
     public array $raw = [];
@@ -95,9 +130,9 @@ class MessageDTO
             ? new ReplyHeaderDTO($data['reply_to'])
             : null;
 
-        if (!empty($data['entities'])) {
+        if (! empty($data['entities'])) {
             foreach ($data['entities'] as $e) {
-                $this->entities[] = new MessageEntityDTO((array)$e);
+                $this->entities[] = new MessageEntityDTO((array) $e);
             }
         }
 
@@ -105,9 +140,9 @@ class MessageDTO
             ? new MediaDTO($data['media'])
             : $data['media'] ?? null;
 
-        if (!empty($data['reactions']['results'])) {
+        if (! empty($data['reactions']['results'])) {
             foreach ($data['reactions']['results'] as $r) {
-                $this->reactions[] = new ReactionDTO((array)$r);
+                $this->reactions[] = new ReactionDTO((array) $r);
             }
         }
 

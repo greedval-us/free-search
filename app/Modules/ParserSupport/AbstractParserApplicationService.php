@@ -3,8 +3,8 @@
 namespace App\Modules\ParserSupport;
 
 use App\Models\ParserRun;
-use App\Modules\ParserSupport\Contracts\ParserRunBackgroundProcessorInterface;
 use App\Modules\ParserSupport\Contracts\ParserRunApplicationServiceInterface;
+use App\Modules\ParserSupport\Contracts\ParserRunBackgroundProcessorInterface;
 use App\Modules\ParserSupport\Contracts\ParserRunCollectorInterface;
 use App\Modules\ParserSupport\Contracts\ParserRunHistoryPresenterInterface;
 

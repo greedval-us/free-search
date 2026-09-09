@@ -2,8 +2,8 @@
 
 namespace App\Providers;
 
-use App\Support\MadelineProto\MadelineProtoConfig;
 use App\Support\MadelineProto\MadelineProtoClientFactory;
+use App\Support\MadelineProto\MadelineProtoConfig;
 use App\Support\MadelineProto\MadelineProtoManager;
 use App\Support\MadelineProto\MadelineProtoSessionPool;
 use Illuminate\Support\ServiceProvider;

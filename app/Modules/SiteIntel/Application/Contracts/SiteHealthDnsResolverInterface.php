@@ -9,4 +9,3 @@ interface SiteHealthDnsResolverInterface
      */
     public function resolve(string $host): array;
 }
-

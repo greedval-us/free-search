@@ -9,7 +9,7 @@ final class ParserRunStateMachineTest extends TestCase
 {
     public function test_stop_transitions_running_run_to_stopped_and_builds_snapshot(): void
     {
-        $stateMachine = new ParserRunStateMachine();
+        $stateMachine = new ParserRunStateMachine;
         $snapshot = ['items' => [1, 2, 3]];
 
         $state = $stateMachine->stop([
@@ -26,7 +26,7 @@ final class ParserRunStateMachineTest extends TestCase
 
     public function test_stop_does_not_overwrite_failed_state_or_clear_error(): void
     {
-        $stateMachine = new ParserRunStateMachine();
+        $stateMachine = new ParserRunStateMachine;
 
         $state = $stateMachine->stop([
             'status' => 'failed',

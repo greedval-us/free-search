@@ -12,8 +12,7 @@ class SearchTelegramCommentsAction
     public function __construct(
         private readonly TelegramGatewayInterface $gateway,
         private readonly TelegramCommentPresenter $commentPresenter,
-    ) {
-    }
+    ) {}
 
     public function handle(SearchCommentsQueryDTO $query): SearchCommentsResultDTO
     {

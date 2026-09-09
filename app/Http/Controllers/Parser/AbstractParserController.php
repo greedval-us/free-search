@@ -82,7 +82,7 @@ abstract class AbstractParserController extends Controller
     }
 
     /**
-     * @param array<string, mixed> $payload
+     * @param  array<string, mixed>  $payload
      */
     private function exportFilename(array $payload, string $extension): string
     {

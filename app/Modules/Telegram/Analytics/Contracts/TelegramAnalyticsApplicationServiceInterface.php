@@ -10,13 +10,14 @@ use Carbon\Carbon;
 interface TelegramAnalyticsApplicationServiceInterface
 {
     public function buildSummary(
+        int $userId,
         TelegramAnalyticsParamsDTO $params,
         Carbon $from,
         Carbon $to,
-        ?string $snapshotRole = null
     ): AnalyticsSummaryResultDTO;
 
     public function buildReport(
+        int $userId,
         TelegramAnalyticsParamsDTO $params,
         Carbon $from,
         Carbon $to

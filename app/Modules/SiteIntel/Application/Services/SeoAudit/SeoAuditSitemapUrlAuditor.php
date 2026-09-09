@@ -8,8 +8,7 @@ final class SeoAuditSitemapUrlAuditor
 {
     public function __construct(
         private readonly SeoAuditHttpFetcherInterface $httpFetcher,
-    ) {
-    }
+    ) {}
 
     /**
      * @return array<string, mixed>
@@ -58,7 +57,7 @@ final class SeoAuditSitemapUrlAuditor
         $urls = [];
         foreach (($matches[1] ?? []) as $raw) {
             $url = trim(strip_tags(html_entity_decode((string) $raw)));
-            if ($url === '' || !str_starts_with($url, 'http')) {
+            if ($url === '' || ! str_starts_with($url, 'http')) {
                 continue;
             }
             $urls[] = $url;

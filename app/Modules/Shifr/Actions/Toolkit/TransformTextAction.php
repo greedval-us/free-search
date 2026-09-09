@@ -2,8 +2,8 @@
 
 namespace App\Modules\Shifr\Actions\Toolkit;
 
-use App\Modules\Shifr\DTO\Toolkit\TransformLookupDTO;
 use App\Modules\Shifr\DTO\Toolkit\Results\TransformResultDTO;
+use App\Modules\Shifr\DTO\Toolkit\TransformLookupDTO;
 
 final class TransformTextAction
 {
@@ -43,7 +43,7 @@ final class TransformTextAction
     private function safeHexDecode(string $input): string
     {
         $trimmed = trim($input);
-        if ($trimmed === '' || (strlen($trimmed) % 2) !== 0 || !preg_match('/^[a-fA-F0-9]+$/', $trimmed)) {
+        if ($trimmed === '' || (strlen($trimmed) % 2) !== 0 || ! preg_match('/^[a-fA-F0-9]+$/', $trimmed)) {
             return '';
         }
 

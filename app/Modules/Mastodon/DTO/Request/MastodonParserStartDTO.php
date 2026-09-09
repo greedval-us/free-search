@@ -7,8 +7,7 @@ final readonly class MastodonParserStartDTO
     public function __construct(
         public int $userId,
         public string $account,
-    ) {
-    }
+    ) {}
 
     /**
      * @return array<string, mixed>

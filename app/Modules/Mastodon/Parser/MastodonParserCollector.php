@@ -2,12 +2,12 @@
 
 namespace App\Modules\Mastodon\Parser;
 
-use App\Modules\ParserSupport\Contracts\ParserRunCollectorInterface;
-use App\Modules\Mastodon\DTO\Parser\MastodonParserStateDTO;
 use App\Modules\Mastodon\Core\Contracts\MastodonGatewayInterface;
+use App\Modules\Mastodon\DTO\Parser\MastodonParserStateDTO;
 use App\Modules\Mastodon\Enums\MastodonParserStage;
 use App\Modules\Mastodon\Presenters\MastodonAccountPresenter;
 use App\Modules\Mastodon\Presenters\MastodonStatusPresenter;
+use App\Modules\ParserSupport\Contracts\ParserRunCollectorInterface;
 
 final class MastodonParserCollector implements ParserRunCollectorInterface
 {
@@ -18,11 +18,10 @@ final class MastodonParserCollector implements ParserRunCollectorInterface
         private readonly MastodonAccountPresenter $accountPresenter,
         private readonly MastodonStatusPresenter $statusPresenter,
         private readonly MastodonParserSnapshotBuilder $snapshotBuilder,
-    ) {
-    }
+    ) {}
 
     /**
-     * @param array<string, mixed> $run
+     * @param  array<string, mixed>  $run
      * @return array<string, mixed>
      */
     public function advance(array $run): array
@@ -42,7 +41,7 @@ final class MastodonParserCollector implements ParserRunCollectorInterface
     }
 
     /**
-     * @param array<string, mixed> $run
+     * @param  array<string, mixed>  $run
      * @return array<string, mixed>
      */
     public function buildResultSnapshot(array $run): array
@@ -53,7 +52,7 @@ final class MastodonParserCollector implements ParserRunCollectorInterface
     }
 
     /**
-     * @param array<string, mixed> $run
+     * @param  array<string, mixed>  $run
      * @return array<string, mixed>
      */
     private function advanceStatuses(MastodonParserStateDTO $state): array
@@ -109,7 +108,7 @@ final class MastodonParserCollector implements ParserRunCollectorInterface
     }
 
     /**
-     * @param array<string, mixed> $run
+     * @param  array<string, mixed>  $run
      * @return array<string, mixed>
      */
     private function advanceComments(MastodonParserStateDTO $state): array
@@ -151,7 +150,7 @@ final class MastodonParserCollector implements ParserRunCollectorInterface
     }
 
     /**
-     * @param array<string, mixed> $run
+     * @param  array<string, mixed>  $run
      * @return array<string, mixed>
      */
     private function finish(MastodonParserStateDTO $state): array

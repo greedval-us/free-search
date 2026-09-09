@@ -18,8 +18,11 @@ use App\Modules\ParserSupport\Contracts\ParserRunCollectorInterface;
 final class BlueskyParserCollector implements ParserRunCollectorInterface
 {
     private const FEED_LIMIT = 50;
+
     private const GRAPH_LIMIT = 100;
+
     private const INTERACTION_LIMIT = 100;
+
     private const THREAD_DEPTH = 6;
 
     public function __construct(
@@ -31,11 +34,10 @@ final class BlueskyParserCollector implements ParserRunCollectorInterface
         private readonly LoadPostRepostsAction $loadPostRepostsAction,
         private readonly LoadPostThreadAction $loadPostThreadAction,
         private readonly BlueskyParserSnapshotBuilder $snapshotBuilder,
-    ) {
-    }
+    ) {}
 
     /**
-     * @param array<string, mixed> $run
+     * @param  array<string, mixed>  $run
      * @return array<string, mixed>
      */
     public function advance(array $run): array
@@ -58,7 +60,7 @@ final class BlueskyParserCollector implements ParserRunCollectorInterface
     }
 
     /**
-     * @param array<string, mixed> $run
+     * @param  array<string, mixed>  $run
      * @return array<string, mixed>
      */
     public function buildResultSnapshot(array $run): array
@@ -370,7 +372,7 @@ final class BlueskyParserCollector implements ParserRunCollectorInterface
     }
 
     /**
-     * @param array<int, array<string, mixed>> $nodes
+     * @param  array<int, array<string, mixed>>  $nodes
      * @return array<int, array<string, mixed>>
      */
     private function flattenReplies(array $nodes): array
@@ -395,8 +397,6 @@ final class BlueskyParserCollector implements ParserRunCollectorInterface
         return $items;
     }
 
-    /**
-     */
     private function interactionProgress(BlueskyParserCollectedDataDTO $data, int $processedPosts): int
     {
         $total = count($data->authoredItems());

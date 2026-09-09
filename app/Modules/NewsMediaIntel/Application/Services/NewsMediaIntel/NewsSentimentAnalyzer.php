@@ -10,11 +10,10 @@ final class NewsSentimentAnalyzer
 {
     public function __construct(
         private readonly NewsMediaIntelConfig $config,
-    ) {
-    }
+    ) {}
 
     /**
-     * @param array<int, NewsMentionDTO> $mentions
+     * @param  array<int, NewsMentionDTO>  $mentions
      */
     public function summarize(array $mentions): SentimentSummaryDTO
     {
@@ -23,7 +22,7 @@ final class NewsSentimentAnalyzer
         $negative = 0;
 
         foreach ($mentions as $mention) {
-            $text = mb_strtolower(trim($mention->title . ' ' . $mention->snippet));
+            $text = mb_strtolower(trim($mention->title.' '.$mention->snippet));
             $score = 0;
 
             foreach ($this->config->sentimentPositiveWords() as $word) {

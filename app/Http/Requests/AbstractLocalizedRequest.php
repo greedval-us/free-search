@@ -14,4 +14,3 @@ abstract class AbstractLocalizedRequest extends LocalizedFormRequest
         return $this->resolveLocale();
     }
 }
-

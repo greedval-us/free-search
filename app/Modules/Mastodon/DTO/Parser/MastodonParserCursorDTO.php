@@ -7,7 +7,7 @@ use App\Support\Contracts\ArrayPayloadable;
 final class MastodonParserCursorDTO implements ArrayPayloadable
 {
     /**
-     * @param array<int, string> $commentStatusIds
+     * @param  array<int, string>  $commentStatusIds
      */
     public function __construct(
         private ?string $statusesMaxId = null,
@@ -16,11 +16,10 @@ final class MastodonParserCursorDTO implements ArrayPayloadable
         private array $commentStatusIds = [],
         private int $commentStatusIndex = 0,
         private int $nextAdvanceAt = 0,
-    ) {
-    }
+    ) {}
 
     /**
-     * @param array<string, mixed> $payload
+     * @param  array<string, mixed>  $payload
      */
     public static function fromArray(array $payload): self
     {
@@ -76,7 +75,7 @@ final class MastodonParserCursorDTO implements ArrayPayloadable
     }
 
     /**
-     * @param array<int, string> $ids
+     * @param  array<int, string>  $ids
      */
     public function setCommentStatusIds(array $ids): void
     {

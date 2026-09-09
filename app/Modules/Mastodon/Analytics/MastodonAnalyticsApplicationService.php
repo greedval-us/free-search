@@ -14,14 +14,14 @@ use App\Modules\Mastodon\Presenters\MastodonStatusPresenter;
 final class MastodonAnalyticsApplicationService implements MastodonAnalyticsApplicationServiceInterface
 {
     private const SEARCH_PICK_LIMIT = 10;
+
     public function __construct(
         private readonly MastodonGatewayInterface $gateway,
         private readonly MastodonStatusPresenter $statusPresenter,
         private readonly MastodonAccountPresenter $accountPresenter,
         private readonly MastodonHashtagPresenter $hashtagPresenter,
         private readonly MastodonAnalyticsReportBuilder $reportBuilder,
-    ) {
-    }
+    ) {}
 
     public function summary(MastodonAnalyticsQueryDTO $query): MastodonAnalyticsResultDTO
     {
@@ -90,7 +90,7 @@ final class MastodonAnalyticsApplicationService implements MastodonAnalyticsAppl
     }
 
     /**
-     * @param callable(?string): array<string, mixed> $fetch
+     * @param  callable(?string): array<string, mixed>  $fetch
      * @return array{0: array<int, array<string, mixed>>, 1: int}
      */
     private function collectStatuses(callable $fetch, int $pages, string $dateFrom, string $dateTo): array
@@ -131,7 +131,7 @@ final class MastodonAnalyticsApplicationService implements MastodonAnalyticsAppl
     }
 
     /**
-     * @param array<int, array<string, mixed>> $statuses
+     * @param  array<int, array<string, mixed>>  $statuses
      * @return array<int, array<string, mixed>>
      */
     private function filterStatusesByDate(array $statuses, string $dateFrom, string $dateTo): array
@@ -229,7 +229,7 @@ final class MastodonAnalyticsApplicationService implements MastodonAnalyticsAppl
     }
 
     /**
-     * @param array<string, mixed> $account
+     * @param  array<string, mixed>  $account
      */
     private function matchesAccountTarget(array $account, string $needle): bool
     {
@@ -242,5 +242,4 @@ final class MastodonAnalyticsApplicationService implements MastodonAnalyticsAppl
             || $username === ltrim($needle, '@')
             || $url === $needle;
     }
-
 }

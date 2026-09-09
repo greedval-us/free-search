@@ -2,17 +2,17 @@
 
 namespace App\Modules\Telegram;
 
+use App\Facades\MadelineProto;
+use App\Modules\Telegram\Actions\Request\CommentsAction;
 use App\Modules\Telegram\Actions\Request\InfoAction;
 use App\Modules\Telegram\Actions\Request\MessagesAction;
 use App\Modules\Telegram\Actions\Request\ParticipantsAction;
-use App\Modules\Telegram\Actions\Request\CommentsAction;
 use App\Modules\Telegram\Core\Contracts\TelegramGatewayInterface;
 use App\Modules\Telegram\DTO\Request\SearchMessagesDTO;
 use App\Modules\Telegram\DTO\Request\SearchParticipantsDTO;
+use App\Modules\Telegram\DTO\Response\Info\ChannelInfoDTO;
 use App\Modules\Telegram\DTO\Response\Messages\ChannelMessagesDTO;
 use App\Modules\Telegram\DTO\Response\Participants\ChannelParticipantsDTO;
-use App\Modules\Telegram\DTO\Response\Info\ChannelInfoDTO;
-use App\Facades\MadelineProto;
 use App\Support\MadelineProto\MadelineProtoManager;
 use danog\MadelineProto\API;
 use Illuminate\Support\Facades\Log;
@@ -36,7 +36,7 @@ class TelegramService implements TelegramGatewayInterface
     {
         try {
             $data = $this->infoAction->execute(id: $id);
-            if (!$this->isValidInfoResponse($data)) {
+            if (! $this->isValidInfoResponse($data)) {
                 return null;
             }
 
@@ -46,17 +46,18 @@ class TelegramService implements TelegramGatewayInterface
                 'id' => $id,
                 'error' => $e->getMessage(),
             ]);
+
             return null;
         }
     }
 
-    public function getMessages(array $filter): ChannelMessagesDTO|null
+    public function getMessages(array $filter): ?ChannelMessagesDTO
     {
         try {
             $dto = SearchMessagesDTO::fromArray(params: $filter);
             $data = $this->messagesAction->execute(filter: $dto->toArray());
 
-            if (!$this->isValidMessagesResponse($data)) {
+            if (! $this->isValidMessagesResponse($data)) {
                 return null;
             }
 
@@ -66,17 +67,18 @@ class TelegramService implements TelegramGatewayInterface
                 'filter' => $this->sanitizeFilterForLogs($filter),
                 'error' => $e->getMessage(),
             ]);
+
             return null;
         }
     }
 
-    public function getParticipants(array $filter): ChannelParticipantsDTO|null
+    public function getParticipants(array $filter): ?ChannelParticipantsDTO
     {
         try {
             $dto = SearchParticipantsDTO::fromArray(params: $filter);
             $data = $this->participantsAction->execute(filter: $dto->toArray());
 
-            if (!$this->isValidParticipantsResponse($data)) {
+            if (! $this->isValidParticipantsResponse($data)) {
                 return null;
             }
 
@@ -86,6 +88,7 @@ class TelegramService implements TelegramGatewayInterface
                 'filter' => $this->sanitizeFilterForLogs($filter),
                 'error' => $e->getMessage(),
             ]);
+
             return null;
         }
     }
@@ -107,7 +110,7 @@ class TelegramService implements TelegramGatewayInterface
                 offsetId: max(self::INITIAL_COMMENTS_OFFSET_ID, $offsetId),
             );
 
-            if (!is_array($result) || !isset($result[0]) || !is_array($result[0])) {
+            if (! is_array($result) || ! isset($result[0]) || ! is_array($result[0])) {
                 return [
                     'items' => [],
                     'nextOffsetId' => null,
@@ -153,17 +156,17 @@ class TelegramService implements TelegramGatewayInterface
             $messages = is_array($response['messages'] ?? null) ? $response['messages'] : [];
             $message = $messages[0] ?? null;
 
-            if (!is_array($message)) {
+            if (! is_array($message)) {
                 return null;
             }
 
             $media = $message['media'] ?? null;
-            if (!is_array($media)) {
+            if (! is_array($media)) {
                 return null;
             }
 
             $downloadInfo = $client->getDownloadInfo($media);
-            if (!is_array($downloadInfo) || empty($downloadInfo)) {
+            if (! is_array($downloadInfo) || empty($downloadInfo)) {
                 return null;
             }
 
@@ -197,7 +200,7 @@ class TelegramService implements TelegramGatewayInterface
 
     private function isValidInfoResponse(?array $data): bool
     {
-        return is_array($data) && !empty($data);
+        return is_array($data) && ! empty($data);
     }
 
     private function isValidMessagesResponse(?array $data): bool

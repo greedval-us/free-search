@@ -91,6 +91,10 @@ final class SiteHealthHttpInspector implements SiteHealthHttpInspectorInterface
                 break;
             }
 
+            if ($step === $this->maxRedirects()) {
+                break;
+            }
+
             $currentUrl = $resolved;
         }
 

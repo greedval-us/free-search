@@ -15,10 +15,10 @@ class SearchTelegramMessagesActionTest extends TestCase
 {
     public function test_it_uses_api_from_id_when_author_peer_can_be_resolved(): void
     {
-        $gateway = new ResolvedPeerTelegramSearchGateway();
+        $gateway = new ResolvedPeerTelegramSearchGateway;
         $action = new SearchTelegramMessagesAction(
             $gateway,
-            new TelegramMessagePresenter(),
+            new TelegramMessagePresenter,
         );
 
         $result = $action->handle(new SearchMessagesQueryDTO(
@@ -50,10 +50,10 @@ class SearchTelegramMessagesActionTest extends TestCase
 
     public function test_it_returns_error_when_author_peer_cannot_be_resolved(): void
     {
-        $gateway = new UnresolvedPeerTelegramSearchGateway();
+        $gateway = new UnresolvedPeerTelegramSearchGateway;
         $action = new SearchTelegramMessagesAction(
             $gateway,
-            new TelegramMessagePresenter(),
+            new TelegramMessagePresenter,
         );
 
         $result = $action->handle(new SearchMessagesQueryDTO(

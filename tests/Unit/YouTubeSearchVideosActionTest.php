@@ -17,12 +17,12 @@ class YouTubeSearchVideosActionTest extends TestCase
 {
     public function test_channel_filter_handle_is_resolved_before_search_request(): void
     {
-        $gateway = new FakeYouTubeSearchGateway();
+        $gateway = new FakeYouTubeSearchGateway;
         $action = new SearchVideosAction(
             $gateway,
-            new YouTubeSearchItemPresenter(new YouTubeUrlBuilder()),
-            new YouTubeVideoPresenter(new YouTubeDurationFormatter(), new YouTubeUrlBuilder()),
-            new YouTubeChannelResolver($gateway, new YouTubeChannelInputNormalizer()),
+            new YouTubeSearchItemPresenter(new YouTubeUrlBuilder),
+            new YouTubeVideoPresenter(new YouTubeDurationFormatter, new YouTubeUrlBuilder),
+            new YouTubeChannelResolver($gateway, new YouTubeChannelInputNormalizer),
         );
 
         $action->handle(new YouTubeSearchQueryDTO(

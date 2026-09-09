@@ -27,14 +27,15 @@ final class DomainLiteWhoisClient implements DomainLiteWhoisClientInterface
                     'errorNumber' => $errorNumber,
                 ]
             );
+
             return null;
         }
 
         stream_set_timeout($socket, $this->readTimeoutSeconds());
-        fwrite($socket, $domain . "\r\n");
+        fwrite($socket, $domain."\r\n");
 
         $response = '';
-        while (!feof($socket)) {
+        while (! feof($socket)) {
             $chunk = fgets($socket, $this->readChunkSize());
             if ($chunk === false) {
                 break;

@@ -18,7 +18,7 @@ final class DomainLiteDnsResolver implements DomainLiteDnsResolverInterface
         $txtRecords = $this->queryDns($domain, defined('DNS_TXT') ? DNS_TXT : null);
         $caaRecords = $this->queryDns($domain, defined('DNS_CAA') ? DNS_CAA : null);
         $dnskeyRecords = $this->queryDns($domain, defined('DNS_DNSKEY') ? DNS_DNSKEY : null);
-        $dmarcRecords = $this->queryDns('_dmarc.' . $domain, defined('DNS_TXT') ? DNS_TXT : null);
+        $dmarcRecords = $this->queryDns('_dmarc.'.$domain, defined('DNS_TXT') ? DNS_TXT : null);
 
         $a = [];
         foreach ($aRecords as $record) {
@@ -184,4 +184,3 @@ final class DomainLiteDnsResolver implements DomainLiteDnsResolverInterface
         return is_array($result) ? $result : [];
     }
 }
-

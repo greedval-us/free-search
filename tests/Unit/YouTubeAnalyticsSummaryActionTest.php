@@ -19,13 +19,13 @@ class YouTubeAnalyticsSummaryActionTest extends TestCase
 {
     public function test_channel_handle_is_resolved_before_video_search(): void
     {
-        $gateway = new FakeYouTubeAnalyticsGateway();
+        $gateway = new FakeYouTubeAnalyticsGateway;
         $action = new AnalyticsSummaryAction(
             $gateway,
-            new YouTubeAnalyticsReportBuilder(),
-            new YouTubeVideoPresenter(new YouTubeDurationFormatter(), new YouTubeUrlBuilder()),
-            new YouTubeChannelPresenter(new YouTubeUrlBuilder()),
-            new YouTubeChannelResolver($gateway, new YouTubeChannelInputNormalizer()),
+            new YouTubeAnalyticsReportBuilder,
+            new YouTubeVideoPresenter(new YouTubeDurationFormatter, new YouTubeUrlBuilder),
+            new YouTubeChannelPresenter(new YouTubeUrlBuilder),
+            new YouTubeChannelResolver($gateway, new YouTubeChannelInputNormalizer),
             YouTubeModuleConfig::fromArray([], 'UTC'),
         );
 

@@ -5,11 +5,17 @@ namespace App\Modules\SiteIntel\Application\Services\SeoAudit;
 final class SeoAuditTechnicalThresholds
 {
     public const int TITLE_MIN = 15;
+
     public const int TITLE_MAX = 65;
+
     public const int DESCRIPTION_MIN = 50;
+
     public const int DESCRIPTION_MAX = 170;
+
     public const int TTFB_SLOW_MS = 1200;
+
     public const int PAGE_SIZE_HEAVY_KB = 1500;
+
     public const int RENDER_BLOCKING_HIGH = 6;
 
     public function isTitleOutOfRange(int $length): bool
@@ -37,4 +43,3 @@ final class SeoAuditTechnicalThresholds
         return $total > self::RENDER_BLOCKING_HIGH;
     }
 }
-

@@ -7,6 +7,5 @@ interface SiteHealthSslInspectorInterface
     /**
      * @return array<string, mixed>
      */
-    public function inspect(string $host, bool $isHttps): array;
+    public function inspect(string $url): array;
 }
-

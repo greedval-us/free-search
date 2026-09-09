@@ -6,14 +6,14 @@ use App\Exceptions\SubscriptionActivationException;
 use App\Models\SubscriptionActivationToken;
 use App\Models\User;
 use App\Models\UserSubscription;
-use App\Support\Notifications\UserNotificationService;
+use App\Support\Access\Enums\AccountPlan;
 use Carbon\CarbonImmutable;
 use Illuminate\Support\Facades\DB;
 
 final class SubscriptionActivationService
 {
     public function __construct(
-        private readonly UserNotificationService $userNotificationService,
+        private readonly SubscriptionManager $subscriptions,
     ) {}
 
     public function activate(User $user, string $rawToken): UserSubscription
@@ -40,32 +40,14 @@ final class SubscriptionActivationService
             }
 
             $now = CarbonImmutable::now(config('app.timezone'));
-            $hadActiveSubscription = UserSubscription::query()
-                ->where('user_id', $user->id)
-                ->where('status', UserSubscription::STATUS_ACTIVE)
-                ->where('ends_at', '>', $now)
-                ->exists();
+            $plan = AccountPlan::tryFrom($token->plan);
+            if ($plan === null || $plan === AccountPlan::Free) {
+                throw SubscriptionActivationException::invalid();
+            }
 
-            UserSubscription::query()
-                ->where('user_id', $user->id)
-                ->where('status', UserSubscription::STATUS_ACTIVE)
-                ->where('ends_at', '>', $now)
-                ->update([
-                    'status' => UserSubscription::STATUS_CANCELED,
-                    'ends_at' => $now,
-                    'updated_at' => $now,
-                ]);
-
-            $subscription = UserSubscription::query()->create([
-                'user_id' => $user->id,
-                'plan' => $token->plan,
-                'status' => UserSubscription::STATUS_ACTIVE,
-                'starts_at' => $now,
-                'ends_at' => $now->addMonth(),
-                'metadata' => [
-                    'source' => 'activation_token',
-                    'activation_token_id' => $token->id,
-                ],
+            $subscription = $this->subscriptions->replace($user, $plan, [
+                'source' => 'activation_token',
+                'activation_token_id' => $token->id,
             ]);
 
             $token->forceFill([
@@ -73,12 +55,6 @@ final class SubscriptionActivationService
                 'used_by_user_id' => $user->id,
                 'used_subscription_id' => $subscription->id,
             ])->save();
-
-            $this->userNotificationService->sendSubscriptionActivated(
-                user: $user,
-                subscription: $subscription,
-                renewed: $hadActiveSubscription,
-            );
 
             return $subscription;
         });

@@ -12,17 +12,17 @@ use App\Modules\Telegram\Presenters\TelegramMessagePresenter;
 class TelegramParserCollector implements ParserRunCollectorInterface
 {
     private const MESSAGE_LIMIT = 50;
+
     private const COMMENT_LIMIT = 20;
 
     public function __construct(
         private readonly TelegramGatewayInterface $telegramService,
         private readonly TelegramMessagePresenter $messagePresenter,
         private readonly TelegramCommentPresenter $commentPresenter,
-    ) {
-    }
+    ) {}
 
     /**
-     * @param array<string, mixed> $run
+     * @param  array<string, mixed>  $run
      * @return array<string, mixed>
      */
     public function advance(array $run): array
@@ -43,7 +43,7 @@ class TelegramParserCollector implements ParserRunCollectorInterface
     }
 
     /**
-     * @param array<string, mixed> $run
+     * @param  array<string, mixed>  $run
      * @return array<string, mixed>
      */
     public function buildResultSnapshot(array $run): array
@@ -73,7 +73,7 @@ class TelegramParserCollector implements ParserRunCollectorInterface
     }
 
     /**
-     * @param array<string, mixed> $run
+     * @param  array<string, mixed>  $run
      * @return array<string, mixed>
      */
     private function advanceMessages(array $run): array
@@ -92,10 +92,10 @@ class TelegramParserCollector implements ParserRunCollectorInterface
 
         $keyword = trim((string) ($context['keyword'] ?? ''));
         $range = is_array($context['range'] ?? null) ? $context['range'] : [];
-        if ($keyword === '' && !empty($range['minTimestamp'])) {
+        if ($keyword === '' && ! empty($range['minTimestamp'])) {
             $filter['min_date'] = (int) $range['minTimestamp'];
         }
-        if ($keyword === '' && !empty($range['maxTimestamp'])) {
+        if ($keyword === '' && ! empty($range['maxTimestamp'])) {
             $filter['max_date'] = (int) $range['maxTimestamp'];
         }
 
@@ -112,7 +112,7 @@ class TelegramParserCollector implements ParserRunCollectorInterface
 
         $presented = $this->messagePresenter->presentMessages($dto->messages ?? [], (string) ($context['chatUsername'] ?? ''));
         foreach ($presented as $message) {
-            if (!is_array($message)) {
+            if (! is_array($message)) {
                 continue;
             }
 
@@ -140,7 +140,7 @@ class TelegramParserCollector implements ParserRunCollectorInterface
         $nextOffsetId = $this->messagePresenter->resolveNextOffsetId($dto->messages ?? []);
         $hasMore = $nextOffsetId !== null && count($dto->messages ?? []) >= self::MESSAGE_LIMIT;
 
-        if ($nextOffsetId === null || !$hasMore) {
+        if ($nextOffsetId === null || ! $hasMore) {
             $info = $this->telegramService->getInfo((string) ($context['chatUsername'] ?? ''));
             $isChannel = (bool) ($info?->chat?->broadcast ?? false);
             $commentPostIds = [];
@@ -183,7 +183,7 @@ class TelegramParserCollector implements ParserRunCollectorInterface
     }
 
     /**
-     * @param array<string, mixed> $run
+     * @param  array<string, mixed>  $run
      * @return array<string, mixed>
      */
     private function advanceComments(array $run): array
@@ -219,7 +219,7 @@ class TelegramParserCollector implements ParserRunCollectorInterface
         $items = is_array($presented['items'] ?? null) ? $presented['items'] : [];
 
         foreach ($items as $comment) {
-            if (!is_array($comment)) {
+            if (! is_array($comment)) {
                 continue;
             }
 
@@ -228,7 +228,7 @@ class TelegramParserCollector implements ParserRunCollectorInterface
                 continue;
             }
 
-            $compositeId = $postId . ':' . $commentId;
+            $compositeId = $postId.':'.$commentId;
             if (isset($commentIds[$compositeId])) {
                 continue;
             }
@@ -280,7 +280,7 @@ class TelegramParserCollector implements ParserRunCollectorInterface
     }
 
     /**
-     * @param array<string, mixed> $run
+     * @param  array<string, mixed>  $run
      * @return array<string, mixed>
      */
     private function finish(array $run): array
@@ -296,7 +296,7 @@ class TelegramParserCollector implements ParserRunCollectorInterface
     }
 
     /**
-     * @param array<string, mixed> $run
+     * @param  array<string, mixed>  $run
      * @return array<string, mixed>
      */
     private function fail(array $run, string $message): array

@@ -9,4 +9,3 @@ interface SeoAuditHttpFetcherInterface
      */
     public function fetch(string $url): array;
 }
-

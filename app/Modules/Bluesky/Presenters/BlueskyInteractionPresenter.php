@@ -6,11 +6,10 @@ final class BlueskyInteractionPresenter
 {
     public function __construct(
         private readonly BlueskyActorPresenter $actorPresenter,
-    ) {
-    }
+    ) {}
 
     /**
-     * @param array<string, mixed> $item
+     * @param  array<string, mixed>  $item
      * @return array<string, mixed>
      */
     public function presentLike(array $item): array
@@ -23,7 +22,7 @@ final class BlueskyInteractionPresenter
     }
 
     /**
-     * @param array<string, mixed> $item
+     * @param  array<string, mixed>  $item
      * @return array<string, mixed>
      */
     public function presentRepostActor(array $item): array

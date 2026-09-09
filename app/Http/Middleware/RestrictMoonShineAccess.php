@@ -16,7 +16,7 @@ class RestrictMoonShineAccess
     public function handle(Request $request, Closure $next): Response
     {
         $enforce = (bool) config('moonshine.access.enforce_ip_allowlist', false);
-        if (!$enforce || !app()->environment('production')) {
+        if (! $enforce || ! app()->environment('production')) {
             return $next($request);
         }
 
@@ -27,7 +27,7 @@ class RestrictMoonShineAccess
             abort(403);
         }
 
-        if (!in_array((string) $request->ip(), $allowed, true)) {
+        if (! in_array((string) $request->ip(), $allowed, true)) {
             abort(403);
         }
 
