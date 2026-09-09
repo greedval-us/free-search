@@ -1,0 +1,124 @@
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import type * as Vue from 'vue';
+import { useTelegramBotSettings } from '@/composables/useTelegramBotSettings';
+import type { TelegramBotState } from '@/types/telegramBot';
+
+const { request, dispose } = vi.hoisted(() => ({
+    request: vi.fn(),
+    dispose: vi.fn(),
+}));
+vi.mock('@/lib/api', () => ({
+    apiRequestOrThrow: request,
+    ApiError: class extends Error {},
+}));
+vi.mock('@/composables/useI18n', () => ({
+    useI18n: () => ({ t: (key: string) => key }),
+}));
+vi.mock('vue', async (importOriginal) => ({
+    ...(await importOriginal<typeof Vue>()),
+    onMounted: (callback: () => void) => callback(),
+    onScopeDispose: dispose,
+}));
+
+const initial = (): TelegramBotState => ({
+    available: true,
+    username: 'test_bot',
+    link: null,
+    pending: null,
+    routes: {
+        status: '/status',
+        issue: '/issue',
+        confirm: '/confirm',
+        disconnect: '/disconnect',
+        preferences: '/preferences',
+    },
+});
+const pending = (): TelegramBotState => ({
+    ...initial(),
+    pending: {
+        id: 'request-id',
+        telegram_id: null,
+        expires_at: '2026-09-09T13:00:00Z',
+    },
+});
+
+describe('useTelegramBotSettings', () => {
+    beforeEach(() => {
+        vi.useFakeTimers();
+        request.mockReset();
+        dispose.mockReset();
+        vi.stubGlobal('document', {
+            querySelector: () => ({ content: 'csrf' }),
+        });
+    });
+    afterEach(() => {
+        dispose.mock.calls.forEach(([callback]) => callback());
+        vi.clearAllTimers();
+        vi.useRealTimers();
+        vi.unstubAllGlobals();
+    });
+
+    it('does not poll disabled or idle settings', async () => {
+        useTelegramBotSettings({ ...initial(), available: false });
+        await vi.advanceTimersByTimeAsync(15000);
+        expect(request).not.toHaveBeenCalled();
+    });
+
+    it('polls pending linking until Telegram claims it and never confirms automatically', async () => {
+        request.mockResolvedValue({
+            ...pending(),
+            pending: { ...pending().pending, telegram_id: '12345' },
+        });
+        const settings = useTelegramBotSettings(pending());
+        await vi.advanceTimersByTimeAsync(15000);
+        expect(request).toHaveBeenCalledTimes(1);
+        expect(request).toHaveBeenCalledWith(
+            '/status',
+            expect.objectContaining({ method: 'GET', retry: { attempts: 0 } })
+        );
+        expect(settings.state.value.pending?.telegram_id).toBe('12345');
+        expect(settings.state.value.link).toBeNull();
+    });
+
+    it('aborts stale requests and ignores their responses after a newer action', async () => {
+        let resolve!: (state: TelegramBotState & { url: string }) => void;
+        request
+            .mockImplementationOnce(
+                () =>
+                    new Promise((done) => {
+                        resolve = done;
+                    })
+            )
+            .mockResolvedValueOnce(initial());
+        const settings = useTelegramBotSettings(initial());
+        const first = settings.issue();
+        const signal = request.mock.calls[0][1].signal as AbortSignal;
+        await settings.disconnect();
+        resolve({ ...pending(), url: 'https://t.me/test_bot?start=secret' });
+        await first;
+        expect(signal.aborted).toBe(true);
+        expect(settings.state.value.pending).toBeNull();
+        expect(settings.linkUrl.value).toBe('');
+    });
+
+    it('clears ephemeral link and cancels polling when the page scope ends', async () => {
+        request.mockResolvedValue({
+            ...pending(),
+            url: 'https://t.me/test_bot?start=secret',
+        });
+        const settings = useTelegramBotSettings(initial());
+        await settings.issue();
+        expect(settings.linkUrl.value).toContain('start=');
+        expect(request).toHaveBeenCalledWith(
+            '/issue',
+            expect.objectContaining({
+                headers: { 'X-CSRF-TOKEN': 'csrf' },
+                retry: { attempts: 0 },
+            })
+        );
+        dispose.mock.calls[0][0]();
+        await vi.advanceTimersByTimeAsync(15000);
+        expect(settings.linkUrl.value).toBe('');
+        expect(request).toHaveBeenCalledTimes(1);
+    });
+});

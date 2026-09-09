@@ -26,6 +26,7 @@
 ## Модули и подсистемы
 
 - [Telegram](modules/telegram.md)
+- [Telegram Bot / Telegraph](modules/telegram-bot.md)
 - [YouTube](modules/youtube.md)
 - [Bluesky](modules/bluesky.md)
 - [Mastodon](modules/mastodon.md)

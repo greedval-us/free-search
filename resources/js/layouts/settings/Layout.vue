@@ -27,6 +27,10 @@ const sidebarNavItems = computed<NavItem[]>(() => [
         href: '/settings/notifications',
     },
     {
+        title: t('telegramBot.title'),
+        href: '/settings/telegram',
+    },
+    {
         title: t('settings.appearance'),
         href: editAppearance(),
     },

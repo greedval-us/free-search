@@ -17,6 +17,7 @@ use App\Providers\MadelineProtoServiceProvider;
 use App\Providers\MoonShineServiceProvider;
 use App\Providers\SecurityServiceProvider;
 use App\Providers\SupportServiceProvider;
+use App\Providers\TelegramBotServiceProvider;
 
 return [
     AppServiceProvider::class,
@@ -31,6 +32,7 @@ return [
     MastodonServiceProvider::class,
     NewsMediaIntelServiceProvider::class,
     TelegramServiceProvider::class,
+    TelegramBotServiceProvider::class,
     YouTubeServiceProvider::class,
     ShifrServiceProvider::class,
     FortifyServiceProvider::class,
