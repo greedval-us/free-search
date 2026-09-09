@@ -85,4 +85,42 @@ final class WebhookAndMenuTest extends TelegramBotTestCase
         $this->assertCount(1, $screen->buttons);
         $this->assertSame('menu', $screen->buttons[0]->value);
     }
+
+    public function test_linked_menus_offer_parser_exports_without_reports_in_both_locales(): void
+    {
+        $link = $this->linkedUser();
+
+        foreach (['ru', 'en'] as $locale) {
+            $context = new BotContext($link->telegraph_chat_id, $link->telegram_id, $locale, '12', $link->id, $link->user_id);
+            $screen = app(BotRouter::class)->dispatch('menu', $context);
+            $files = collect($screen->buttons)->where('type', 'action')->where('value', 'files')->values();
+
+            $this->assertCount(1, $files);
+            $this->assertSame(['k' => 'parser'], $files[0]->parameters);
+            $this->assertSame(__('telegram_bot.menu.exports', [], $locale), $files[0]->label);
+        }
+    }
+
+    public function test_old_report_buttons_are_handled_without_queueing_downloads(): void
+    {
+        $link = $this->linkedUser(preferences: ['exports_enabled' => true]);
+
+        foreach (['action:files;k:report', 'action:send;k:report;i:1;f:html'] as $index => $data) {
+            $update = BotUpdate::fromArray([
+                'update_id' => 20 + $index,
+                'callback_query' => [
+                    'id' => 'old-report-'.$index,
+                    'from' => ['id' => (int) $link->telegram_id, 'is_bot' => false],
+                    'message' => ['chat' => ['id' => (int) $link->telegram_id, 'type' => 'private']],
+                    'data' => $data,
+                ],
+            ]);
+
+            app()->call([new ProcessBotUpdate($this->bot->id, $update), 'handle']);
+        }
+
+        Telegraph::assertSent(__('telegram_bot.errors.file_unavailable', [], $link->locale));
+        $this->assertDatabaseCount('telegram_bot_deliveries', 0);
+        Queue::assertNothingPushed();
+    }
 }

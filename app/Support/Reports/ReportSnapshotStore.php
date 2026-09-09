@@ -2,7 +2,6 @@
 
 namespace App\Support\Reports;
 
-use App\Support\Reports\Events\ReportSnapshotStored;
 use Illuminate\Contracts\Cache\Repository as CacheRepository;
 use Illuminate\Contracts\Config\Repository as ConfigRepository;
 use Symfony\Component\HttpKernel\Exception\GoneHttpException;
@@ -27,8 +26,6 @@ final readonly class ReportSnapshotStore
             $report,
             $ttl,
         );
-
-        event(new ReportSnapshotStored($userId, $feature, $parameters, now()->addSeconds($ttl)));
 
         return $report;
     }

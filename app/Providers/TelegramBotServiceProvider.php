@@ -15,7 +15,6 @@ use App\Modules\TelegramBot\Infrastructure\BotEventSubscriber;
 use App\Modules\TelegramBot\Infrastructure\TelegraphTransport;
 use App\Modules\TelegramBot\Jobs\BotJob;
 use App\Modules\TelegramBot\Support\BotConfig;
-use App\Support\Reports\Events\ReportSnapshotStored;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Http\Request;
 use Illuminate\Notifications\Events\NotificationSent;
@@ -42,7 +41,6 @@ final class TelegramBotServiceProvider extends ServiceProvider
         $this->commands([ConfigureBotWebhook::class, BroadcastBotMessage::class, MaintainBotDeliveries::class]);
 
         Event::listen(NotificationSent::class, [BotEventSubscriber::class, 'notificationSent']);
-        Event::listen(ReportSnapshotStored::class, [BotEventSubscriber::class, 'reportStored']);
         ParserRun::saved(fn (ParserRun $run) => $this->app->make(BotEventSubscriber::class)->parserSaved($run));
 
         RateLimiter::for('telegram-bot', fn (BotJob $job) => [

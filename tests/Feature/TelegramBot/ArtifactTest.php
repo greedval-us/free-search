@@ -3,13 +3,13 @@
 namespace Tests\Feature\TelegramBot;
 
 use App\Models\ParserRun;
+use App\Modules\TelegramBot\Application\ArtifactRegistry;
 use App\Modules\TelegramBot\Domain\DTO\BotDocument;
 use App\Modules\TelegramBot\Domain\Exceptions\ArtifactUnavailable;
 use App\Modules\TelegramBot\Infrastructure\Artifacts\ParserArtifactProvider;
-use App\Modules\TelegramBot\Infrastructure\Artifacts\ReportArtifactProvider;
 use App\Modules\TelegramBot\Infrastructure\Artifacts\TemporaryDocuments;
-use App\Modules\TelegramBot\Models\BotReport;
 use App\Support\Reports\ReportSnapshotStore;
+use Illuminate\Support\Facades\Queue;
 use Illuminate\Support\Facades\Storage;
 use PhpOffice\PhpSpreadsheet\IOFactory;
 
@@ -56,32 +56,24 @@ final class ArtifactTest extends TelegramBotTestCase
         $provider->document($link->user_id, $run->id, 'json', 'en');
     }
 
-    public function test_report_catalog_stores_metadata_and_downloads_only_existing_owned_snapshot(): void
+    public function test_website_reports_remain_cached_without_bot_metadata_or_delivery(): void
     {
-        $link = $this->linkedUser();
+        $link = $this->linkedUser(preferences: ['exports_enabled' => true]);
         $store = app(ReportSnapshotStore::class);
-        $store->store($link->user_id, 'site-intel.seo-audit', ['target' => 'example.com'], []);
-        $record = BotReport::query()->sole();
-        $this->assertSame(['target' => 'example.com'], $record->parameters);
-        $this->assertArrayNotHasKey('report', $record->getAttributes());
-        $provider = app(ReportArtifactProvider::class);
-        $document = $provider->document($link->user_id, $record->id, 'html', 'en');
-        $this->assertStringContainsString('<html', file_get_contents($document->path));
-        app(TemporaryDocuments::class)->remove($document);
-        $this->assertCount(0, $provider->listing($link->user_id + 1, 1)->items());
-        $this->expectException(ArtifactUnavailable::class);
-        $provider->document($link->user_id + 1, $record->id, 'html', 'en');
+        $parameters = ['target' => 'example.com'];
+        $report = ['title' => 'Website report'];
+
+        $this->assertSame($report, $store->store($link->user_id, 'site-intel.seo-audit', $parameters, $report));
+        $this->assertSame($report, $store->get($link->user_id, 'site-intel.seo-audit', $parameters));
+        $this->assertDatabaseCount('telegram_bot_reports', 0);
+        $this->assertDatabaseCount('telegram_bot_deliveries', 0);
+        Queue::assertNothingPushed();
     }
 
-    public function test_expired_snapshot_is_not_recomputed_by_bot(): void
+    public function test_report_artifacts_are_not_registered(): void
     {
-        config()->set('access.report_snapshot_ttl_seconds', 1);
-        $link = $this->linkedUser();
-        app(ReportSnapshotStore::class)->store($link->user_id, 'site-intel.seo-audit', [], []);
-        $record = BotReport::query()->sole();
-        $this->travel(2)->seconds();
         $this->expectException(ArtifactUnavailable::class);
-        app(ReportArtifactProvider::class)->document($link->user_id, $record->id, 'html', 'en');
+        app(ArtifactRegistry::class)->get('report');
     }
 
     public function test_oversized_files_are_removed_and_cleanup_cannot_remove_original_files(): void

@@ -173,6 +173,35 @@ final class UserNotificationService
         );
     }
 
+    public function sendTelegramBotLinked(User $user, string $telegramId): void
+    {
+        $this->sendTelegramBotLinkChanged($user, $telegramId, linked: true);
+    }
+
+    public function sendTelegramBotUnlinked(User $user, string $telegramId): void
+    {
+        $this->sendTelegramBotLinkChanged($user, $telegramId, linked: false);
+    }
+
+    private function sendTelegramBotLinkChanged(User $user, string $telegramId, bool $linked): void
+    {
+        $key = $linked ? 'telegramBotLinked' : 'telegramBotUnlinked';
+
+        // Each completed change matters, including relinking within the same hour.
+        $user->notify(new SystemDatabaseNotification([
+            'title_key' => 'systemNotifications.'.$key.'.title',
+            'body_key' => 'systemNotifications.'.$key.'.body',
+            'body_params' => ['telegramId' => $telegramId],
+            'url' => '/settings/telegram',
+            'kind' => 'security',
+            'meta' => [
+                'event' => $linked ? 'telegram_bot_linked' : 'telegram_bot_unlinked',
+                'telegram_id' => $telegramId,
+                'changed_at' => now()->toIso8601String(),
+            ],
+        ]));
+    }
+
     public function sendSubscriptionExpiringTomorrow(
         User $user,
         UserSubscription $subscription,

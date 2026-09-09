@@ -3,10 +3,12 @@ import type * as Vue from 'vue';
 import { useTelegramBotSettings } from '@/composables/useTelegramBotSettings';
 import type { TelegramBotState } from '@/types/telegramBot';
 
-const { request, dispose } = vi.hoisted(() => ({
+const { request, dispose, reload } = vi.hoisted(() => ({
     request: vi.fn(),
     dispose: vi.fn(),
+    reload: vi.fn(),
 }));
+vi.mock('@inertiajs/vue3', () => ({ router: { reload } }));
 vi.mock('@/lib/api', () => ({
     apiRequestOrThrow: request,
     ApiError: class extends Error {},
@@ -47,6 +49,7 @@ describe('useTelegramBotSettings', () => {
         vi.useFakeTimers();
         request.mockReset();
         dispose.mockReset();
+        reload.mockReset();
         vi.stubGlobal('document', {
             querySelector: () => ({ content: 'csrf' }),
         });
@@ -78,7 +81,33 @@ describe('useTelegramBotSettings', () => {
         );
         expect(settings.state.value.pending?.telegram_id).toBe('12345');
         expect(settings.state.value.link).toBeNull();
+        expect(reload).not.toHaveBeenCalled();
     });
+
+    it.each(['confirm', 'disconnect'] as const)(
+        'refreshes shared notifications after a successful %s',
+        async (action) => {
+            request.mockResolvedValue(initial());
+            const settings = useTelegramBotSettings(pending());
+
+            await settings[action]();
+
+            expect(reload).toHaveBeenCalledExactlyOnceWith({ only: ['auth'] });
+        }
+    );
+
+    it.each(['confirm', 'disconnect'] as const)(
+        'does not refresh notifications when %s fails',
+        async (action) => {
+            request.mockRejectedValue(new Error('Request failed'));
+            const settings = useTelegramBotSettings(pending());
+
+            await settings[action]();
+
+            expect(reload).not.toHaveBeenCalled();
+            expect(settings.error.value).toBe('telegramBot.error');
+        }
+    );
 
     it('aborts stale requests and ignores their responses after a newer action', async () => {
         let resolve!: (state: TelegramBotState & { url: string }) => void;

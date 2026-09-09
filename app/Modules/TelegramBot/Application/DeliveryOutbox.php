@@ -36,7 +36,7 @@ final readonly class DeliveryOutbox
         return match ($kind) {
             'notification' => $link->notifications_enabled,
             'broadcast' => $link->broadcasts_enabled,
-            'parser', 'report' => ! $automatic || $link->exports_enabled,
+            'parser' => ! $automatic || $link->exports_enabled,
             default => false,
         };
     }

@@ -6,6 +6,7 @@ use App\Models\User;
 use App\Modules\TelegramBot\Models\BotLink;
 use App\Modules\TelegramBot\Models\LinkRequest;
 use App\Modules\TelegramBot\Support\BotConfig;
+use App\Support\Notifications\UserNotificationService;
 use DefStudio\Telegraph\Models\TelegraphChat;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Database\UniqueConstraintViolationException;
@@ -16,7 +17,7 @@ use Symfony\Component\HttpKernel\Exception\ServiceUnavailableHttpException;
 
 final readonly class AccountLinkService
 {
-    public function __construct(private BotConfig $config) {}
+    public function __construct(private BotConfig $config, private UserNotificationService $notifications) {}
 
     public function issue(User $user, string $locale): string
     {
@@ -93,6 +94,7 @@ final readonly class AccountLinkService
                     'locale' => $request->locale,
                 ]);
                 $request->delete();
+                $this->notifications->sendTelegramBotLinked($lockedUser, $link->telegram_id);
 
                 return $link;
             });
@@ -111,6 +113,7 @@ final readonly class AccountLinkService
                     $locked->forceFill(['telegram_id' => null])->save();
                 }
                 $link->delete();
+                $this->notifications->sendTelegramBotUnlinked($locked, $link->telegram_id);
             }
             LinkRequest::query()->where('user_id', $user->id)->delete();
         });

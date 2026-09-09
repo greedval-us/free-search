@@ -2,13 +2,13 @@
 
 return [
     'menu' => [
-        'exports' => 'My exports', 'reports' => 'My reports', 'settings' => 'Link account / Settings',
+        'exports' => 'My exports', 'settings' => 'Link account / Settings',
         'help' => 'Help', 'webapp' => 'Open Uraboros', 'back' => 'Main menu', 'previous' => 'Previous', 'next' => 'Next',
     ],
     'screens' => [
         'main' => 'Uraboros. Select an action below.',
-        'unlinked' => 'Link your verified website account in Telegram settings to receive notifications, exports and reports. Only private chats are supported.',
-        'help' => 'Generate exports and reports on the website, then download them here. Turn on automatic file delivery and announcements separately in settings. Files already sent to Telegram cannot be recalled by website cleanup. The WebApp uses your normal website sign-in.',
+        'unlinked' => 'Link your verified website account in Telegram settings to receive notifications and parser exports. Only private chats are supported.',
+        'help' => 'Generate parser exports on the website, then download them here. Turn on automatic file delivery and announcements separately in settings. Files already sent to Telegram cannot be recalled by website cleanup. The WebApp uses your normal website sign-in.',
         'confirm_on_site' => 'Telegram confirmed. Return to the website, check the displayed Telegram ID and confirm the link. No account data is available until that confirmation.',
         'invalid_link' => 'This link is invalid, expired or already claimed. Create a new link from your website account.',
         'files' => 'Choose a file. Only your currently available results are listed.',

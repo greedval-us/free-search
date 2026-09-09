@@ -1,3 +1,4 @@
+import { router } from '@inertiajs/vue3';
 import { onMounted, onScopeDispose, ref } from 'vue';
 import { useI18n } from '@/composables/useI18n';
 import { ApiError, apiRequestOrThrow } from '@/lib/api';
@@ -80,6 +81,10 @@ export const useTelegramBotSettings = (initial: TelegramBotState) => {
 
             if (!next.pending) {
                 linkUrl.value = '';
+            }
+
+            if (action === 'confirm' || action === 'disconnect') {
+                router.reload({ only: ['auth'] });
             }
         } catch (exception) {
             if (disposed || current !== version) {

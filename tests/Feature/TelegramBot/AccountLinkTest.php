@@ -31,11 +31,13 @@ final class AccountLinkTest extends TelegramBotTestCase
         $this->assertStringNotContainsString('token_hash', $response->getContent());
         $this->assertNull($request->telegram_id);
         $this->postJson(route('telegram-bot.link.confirm'), ['request_id' => $request->id])->assertUnprocessable();
+        $this->assertDatabaseCount('notifications', 0);
 
         $chat = $this->chat();
         $this->assertTrue(app(AccountLinkService::class)->claim($token, '10001', $chat->id));
         $this->assertDatabaseCount('telegram_bot_links', 0);
         $this->assertNull($user->fresh()->telegram_id);
+        $this->assertDatabaseCount('notifications', 0);
         $this->getJson(route('telegram-bot.settings.status'))->assertJsonPath('data.pending.telegram_id', '10001');
         $this->postJson(route('telegram-bot.link.confirm'), ['request_id' => $request->id])->assertOk()->assertJsonPath('data.link.telegram_id', '10001');
         $this->assertSame('10001', $user->fresh()->telegram_id);
@@ -44,6 +46,20 @@ final class AccountLinkTest extends TelegramBotTestCase
         $link = BotLink::query()->sole();
         $this->assertFalse($link->exports_enabled);
         $this->assertFalse($link->broadcasts_enabled);
+        $notification = $user->notifications()->sole();
+        $this->assertNull($notification->read_at);
+        $this->assertSame('systemNotifications.telegramBotLinked.title', $notification->data['title_key']);
+        $this->assertSame('systemNotifications.telegramBotLinked.body', $notification->data['body_key']);
+        $this->assertSame(['telegramId' => '10001'], $notification->data['body_params']);
+        $this->assertSame('/settings/telegram', $notification->data['url']);
+        $this->assertSame('security', $notification->data['kind']);
+
+        $this->postJson(route('telegram-bot.link.confirm'), ['request_id' => $request->id])->assertUnprocessable();
+        $this->assertDatabaseCount('notifications', 1);
+        $this->get(route('telegram-bot.settings'))->assertInertia(fn (AssertableInertia $page) => $page
+            ->where('auth.notifications.unreadCount', 1)
+            ->where('auth.notifications.items.0.titleKey', 'systemNotifications.telegramBotLinked.title')
+            ->where('auth.notifications.items.0.bodyParams.telegramId', '10001'));
     }
 
     public function test_expired_and_replaced_tokens_cannot_be_claimed(): void
@@ -73,6 +89,7 @@ final class AccountLinkTest extends TelegramBotTestCase
         $request = LinkRequest::query()->sole();
         $this->actingAs(User::factory()->create())->postJson(route('telegram-bot.link.confirm'), ['request_id' => $request->id])->assertUnprocessable();
         $this->assertDatabaseCount('telegram_bot_links', 0);
+        $this->assertDatabaseCount('notifications', 0);
     }
 
     public function test_existing_telegram_account_cannot_be_stolen_by_another_site_user(): void
@@ -114,5 +131,13 @@ final class AccountLinkTest extends TelegramBotTestCase
         $this->deleteJson(route('telegram-bot.link.disconnect'))->assertOk()->assertJsonPath('data.link', null);
         $this->assertNull($own->user->fresh()->telegram_id);
         $this->assertNotNull($other->fresh());
+        $notification = $own->user->notifications()->sole();
+        $this->assertNull($notification->read_at);
+        $this->assertSame('systemNotifications.telegramBotUnlinked.title', $notification->data['title_key']);
+        $this->assertSame(['telegramId' => '10001'], $notification->data['body_params']);
+        $this->assertSame(0, $other->user->notifications()->count());
+
+        $this->deleteJson(route('telegram-bot.link.disconnect'))->assertOk();
+        $this->assertDatabaseCount('notifications', 1);
     }
 }

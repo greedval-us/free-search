@@ -48,6 +48,41 @@ final class DeliveryTest extends TelegramBotTestCase
         $this->assertSame(BotDelivery::SKIPPED, $delivery->fresh()->status);
     }
 
+    public function test_reports_cannot_be_queued_even_with_file_delivery_enabled(): void
+    {
+        $link = $this->linkedUser(preferences: ['exports_enabled' => true]);
+        $outbox = app(DeliveryOutbox::class);
+
+        foreach ([true, false] as $automatic) {
+            $this->assertFalse($outbox->enqueue($link, 'report', '1', ['format' => 'html'], $automatic));
+        }
+
+        $this->assertDatabaseCount('telegram_bot_deliveries', 0);
+        Queue::assertNothingPushed();
+        Telegraph::assertNothingSent();
+    }
+
+    public function test_legacy_pending_reports_are_skipped_without_sending(): void
+    {
+        $link = $this->linkedUser(preferences: ['exports_enabled' => true]);
+
+        foreach ([true, false] as $automatic) {
+            $delivery = BotDelivery::query()->create([
+                'link_id' => $link->id,
+                'deduplication_key' => hash('sha256', 'legacy-report:'.(int) $automatic),
+                'kind' => 'report',
+                'reference' => '1',
+                'payload' => ['format' => 'html'],
+                'automatic' => $automatic,
+            ]);
+
+            app()->call([new DeliverBotMessage($delivery->id, $link->telegram_id), 'handle']);
+            $this->assertSame(BotDelivery::SKIPPED, $delivery->fresh()->status);
+        }
+
+        Telegraph::assertNothingSent();
+    }
+
     public function test_disconnect_removes_queued_deliveries_and_blocking_prevents_new_ones(): void
     {
         $link = $this->linkedUser();

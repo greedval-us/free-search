@@ -7,6 +7,7 @@ use App\Modules\TelegramBot\Domain\DTO\BotScreen;
 use App\Modules\TelegramBot\Domain\Exceptions\TelegramTransportException;
 use App\Modules\TelegramBot\Jobs\DeliverBotMessage;
 use App\Modules\TelegramBot\Models\BotDelivery;
+use App\Modules\TelegramBot\Models\BotReport;
 use DefStudio\Telegraph\Facades\Telegraph;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Queue;
@@ -63,5 +64,24 @@ final class OperationsTest extends TelegramBotTestCase
             $this->assertStringNotContainsString($this->bot->token, $exception->getMessage());
             $this->assertNull($exception->getPrevious());
         }
+    }
+
+    public function test_pruning_still_removes_expired_legacy_report_metadata(): void
+    {
+        $link = $this->linkedUser();
+        $record = BotReport::query()->create([
+            'user_id' => $link->user_id,
+            'fingerprint' => hash('sha256', 'legacy-report'),
+            'feature' => 'site-intel.seo-audit',
+            'parameters' => ['target' => 'example.com'],
+            'expires_at' => now()->subSecond(),
+        ]);
+
+        $this->artisan('telegram-bot:maintain', ['--prune' => true])->assertSuccessful();
+
+        $this->assertModelMissing($record);
+        $this->assertDatabaseCount('telegram_bot_links', 1);
+        Queue::assertNothingPushed();
+        Telegraph::assertNothingSent();
     }
 }

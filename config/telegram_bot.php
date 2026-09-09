@@ -10,7 +10,6 @@ use App\Modules\TelegramBot\Application\Actions\FilesAction;
 use App\Modules\TelegramBot\Application\Actions\MenuAction;
 use App\Modules\TelegramBot\Application\Actions\SendFileAction;
 use App\Modules\TelegramBot\Infrastructure\Artifacts\ParserArtifactProvider;
-use App\Modules\TelegramBot\Infrastructure\Artifacts\ReportArtifactProvider;
 use App\Modules\YouTube\Parser\Contracts\YouTubeParserApplicationServiceInterface;
 use App\Modules\YouTube\Parser\Contracts\YouTubeParserExportBuilderInterface;
 
@@ -45,11 +44,10 @@ return [
     'cleanup_time' => '04:30',
     'http_limits' => ['status' => 30, 'link' => 6, 'preferences' => 10],
     'actions' => [MenuAction::class, FilesAction::class, SendFileAction::class],
-    'artifact_providers' => [ParserArtifactProvider::class, ReportArtifactProvider::class],
+    'artifact_providers' => [ParserArtifactProvider::class],
     'menus' => [
         'main' => [
             ['label' => 'menu.exports', 'action' => 'files', 'parameters' => ['k' => 'parser'], 'linked' => true],
-            ['label' => 'menu.reports', 'action' => 'files', 'parameters' => ['k' => 'report'], 'linked' => true],
             ['label' => 'menu.settings', 'path' => '/settings/telegram'],
             ['label' => 'menu.help', 'action' => 'menu', 'parameters' => ['p' => 'help']],
             ['label' => 'menu.webapp', 'path' => '/dashboard', 'webapp' => true],
@@ -64,13 +62,5 @@ return [
         'youtube' => ['service' => YouTubeParserApplicationServiceInterface::class, 'builder' => YouTubeParserExportBuilderInterface::class],
         'mastodon' => ['service' => MastodonParserApplicationServiceInterface::class, 'builder' => MastodonParserExportBuilderInterface::class],
         'bluesky' => ['service' => BlueskyParserApplicationServiceInterface::class, 'builder' => BlueskyParserExportBuilderInterface::class],
-    ],
-    'reports' => [
-        'telegram.analytics' => ['view' => 'reports.telegram.analytics', 'wrapped' => true],
-        'youtube.analytics' => ['view' => 'reports.youtube.analytics'],
-        'mastodon.analytics' => ['view' => 'reports.mastodon.analytics'],
-        'bluesky.analytics' => ['view' => 'reports.bluesky.analytics'],
-        'site-intel.analytics' => ['view' => 'reports.site-intel.analytics'],
-        'site-intel.seo-audit' => ['view' => 'reports.site-intel.seo-audit'],
     ],
 ];

@@ -30,5 +30,13 @@
     "passwordReset": {
         "title": "Password reset",
         "body": "Your account password was reset through account recovery."
+    },
+    "telegramBotLinked": {
+        "title": "Telegram bot linked",
+        "body": "Telegram account with ID {telegramId} was linked to your account. If this was not you, disconnect it in Telegram settings and change your password."
+    },
+    "telegramBotUnlinked": {
+        "title": "Telegram bot disconnected",
+        "body": "Telegram account with ID {telegramId} was disconnected. The bot no longer has access to your account through this connection."
     }
 }
