@@ -30,6 +30,8 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
@@ -51,6 +53,19 @@ jobs:
 
       - name: Run frontend quality checks
         run: npm run quality:check
+
+      - name: Run frontend unit tests
+        run: npm run test:unit
+
+      - name: Check PHP style in changed files
+        env:
+          BASE_SHA: ${{ github.event.pull_request.base.sha || github.event.before }}
+        run: |
+          if ! git cat-file -e "${BASE_SHA}^{commit}" 2>/dev/null; then
+            BASE_SHA=$(git rev-parse --verify HEAD^ 2>/dev/null || git hash-object -t tree /dev/null)
+          fi
+          git diff --name-only --diff-filter=ACMR -z "$BASE_SHA" HEAD -- '*.php' |
+            xargs -0 -r vendor/bin/pint --test --
 
   tests:
     name: tests

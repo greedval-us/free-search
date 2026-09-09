@@ -30,6 +30,7 @@ return [
         ],
     ],
     'api' => [
+        'report_expired' => 'The report is unavailable or has expired. Run the analysis again.',
         'generic' => 'Something went wrong. Please try again later.',
         'validation' => 'Please check the entered data and try again.',
         'unauthorized' => 'Please sign in and try again.',

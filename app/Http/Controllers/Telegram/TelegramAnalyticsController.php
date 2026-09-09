@@ -14,18 +14,17 @@ class TelegramAnalyticsController extends BaseTelegramController
     public function __construct(
         private readonly TelegramAnalyticsApplicationServiceInterface $analyticsApplicationService,
         private readonly TelegramAnalyticsRangeResolverInterface $rangeResolver,
-    ) {
-    }
+    ) {}
 
     public function summary(TelegramAnalyticsRequest $request): JsonResponse
     {
         $params = $request->toParamsDTO();
         $range = $this->rangeResolver->resolveRange($request->toRangeDTO());
         $data = $this->analyticsApplicationService->buildSummary(
+            $request->user()->id,
             $params,
             $range['from'],
             $range['to'],
-            (string) $request->query('snapshotRole', '')
         );
 
         return $this->jsonData($data->data);
@@ -35,7 +34,7 @@ class TelegramAnalyticsController extends BaseTelegramController
     {
         $params = $request->toParamsDTO();
         $range = $this->rangeResolver->resolveRange($request->toRangeDTO());
-        $reportData = $this->analyticsApplicationService->buildReport($params, $range['from'], $range['to']);
+        $reportData = $this->analyticsApplicationService->buildReport($request->user()->id, $params, $range['from'], $range['to']);
         $data = $reportData->report;
         $previousData = $reportData->previousReport;
 

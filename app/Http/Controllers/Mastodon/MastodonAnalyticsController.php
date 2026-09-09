@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Mastodon;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Mastodon\MastodonAnalyticsRequest;
 use App\Modules\Mastodon\Analytics\Contracts\MastodonAnalyticsApplicationServiceInterface;
+use App\Support\Reports\ReportSnapshotStore;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Response;
 use Illuminate\View\View;
@@ -13,18 +14,22 @@ final class MastodonAnalyticsController extends Controller
 {
     public function __construct(
         private readonly MastodonAnalyticsApplicationServiceInterface $service,
-    ) {
-    }
+        private readonly ReportSnapshotStore $snapshots,
+    ) {}
 
     public function summary(MastodonAnalyticsRequest $request): JsonResponse
     {
-        return $this->jsonDataFrom($this->service->summary($request->toDTO()));
+        $query = $request->toDTO();
+
+        return $this->jsonData($this->snapshots->store(
+            $request->user()->id, 'mastodon.analytics', get_object_vars($query), $this->service->summary($query)->toArray(),
+        ));
     }
 
     public function report(MastodonAnalyticsRequest $request): View|Response
     {
         $query = $request->toDTO();
-        $report = $this->service->summary($query)->toArray();
+        $report = $this->snapshots->get($request->user()->id, 'mastodon.analytics', get_object_vars($query));
         $target = $query->target !== '' ? $query->target : 'report';
 
         return $this->localizedHtmlReportResponse(

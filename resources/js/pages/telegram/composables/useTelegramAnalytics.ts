@@ -137,30 +137,8 @@ export const useTelegramAnalytics = (t: TranslateFn) => {
         return query;
     };
 
-    const buildQueryForRange = (dateFrom: string, dateTo: string) => {
-        const locale =
-            typeof document !== 'undefined' &&
-            document.documentElement.lang.toLowerCase().startsWith('ru')
-                ? 'ru'
-                : 'en';
-        const query = new URLSearchParams({
-            chatUsername: normalizedChatUsername(),
-            scorePriority: form.scorePriority,
-            locale,
-            dateFrom,
-            dateTo,
-        });
-
-        if (normalizedKeyword()) {
-            query.set('keyword', normalizedKeyword());
-        }
-
-        return query;
-    };
-
     const summaryUrl = () => {
         const query = buildQuery();
-        query.set('snapshotRole', 'current');
 
         return `/telegram/analytics/summary?${query.toString()}`;
     };
@@ -178,12 +156,9 @@ export const useTelegramAnalytics = (t: TranslateFn) => {
             locale,
         });
 
-        const snapshotKeyword = snapshot?.range.keyword?.trim();
-        const formKeyword = normalizedKeyword();
-        const keyword =
-            snapshotKeyword && snapshotKeyword.length > 0
-                ? snapshotKeyword
-                : formKeyword;
+        const keyword = snapshot
+            ? (snapshot.range.keyword?.trim() ?? '')
+            : normalizedKeyword();
 
         if (keyword) {
             query.set('keyword', keyword);
@@ -262,47 +237,7 @@ export const useTelegramAnalytics = (t: TranslateFn) => {
 
             payload.value = apiResult.data;
 
-            const currentFrom = new Date(payload.value.range.dateFrom);
-            const currentTo = new Date(payload.value.range.dateTo);
-
-            if (
-                !Number.isNaN(currentFrom.getTime()) &&
-                !Number.isNaN(currentTo.getTime())
-            ) {
-                comparisonLoading.value = true;
-                const spanMs = Math.max(
-                    0,
-                    currentTo.getTime() - currentFrom.getTime()
-                );
-                const previousTo = new Date(currentFrom.getTime() - 1000);
-                const previousFrom = new Date(previousTo.getTime() - spanMs);
-                const previousQuery = buildQueryForRange(
-                    formatDate(previousFrom),
-                    formatDate(previousTo)
-                );
-
-                try {
-                    previousQuery.set('snapshotRole', 'previous');
-                    const previousResult =
-                        await apiRequest<TelegramAnalyticsSummary>(
-                            '/telegram/analytics/summary',
-                            {
-                                method: 'GET',
-                                query: Object.fromEntries(
-                                    previousQuery.entries()
-                                ),
-                            }
-                        );
-
-                    if (previousResult.ok) {
-                        previousPayload.value = previousResult.data;
-                    }
-                } catch {
-                    previousPayload.value = null;
-                } finally {
-                    comparisonLoading.value = false;
-                }
-            }
+            previousPayload.value = apiResult.data.previousReport ?? null;
         } catch (exception) {
             error.value = resolveClientErrorMessage(
                 exception,

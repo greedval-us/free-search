@@ -15,7 +15,9 @@ final class ProcessParserRun implements ShouldBeUniqueUntilProcessing, ShouldQue
 {
     public const TIMEOUT_SECONDS = 120;
 
-    private const MAX_ATTEMPTS = 3;
+    private const MAX_EXCEPTIONS = 3;
+
+    private const RETRY_WINDOW_SECONDS = 3600;
 
     private const UNIQUE_FOR_SECONDS = 3600;
 
@@ -27,7 +29,12 @@ final class ProcessParserRun implements ShouldBeUniqueUntilProcessing, ShouldQue
 
     use Queueable;
 
-    public int $tries = self::MAX_ATTEMPTS;
+    // Lock releases are not failures. Bound retries by time and real exceptions instead.
+    public int $tries = 0;
+
+    public int $maxExceptions = self::MAX_EXCEPTIONS;
+
+    public int $retryDeadline;
 
     public int $timeout = self::TIMEOUT_SECONDS;
 
@@ -39,7 +46,14 @@ final class ProcessParserRun implements ShouldBeUniqueUntilProcessing, ShouldQue
         public readonly string $module,
         public readonly int $userId,
         public readonly string $runId,
-    ) {}
+    ) {
+        $this->retryDeadline = time() + self::RETRY_WINDOW_SECONDS;
+    }
+
+    public function retryUntil(): int
+    {
+        return $this->retryDeadline;
+    }
 
     public function handle(
         ParserRunBackgroundProcessorRegistry $registry,

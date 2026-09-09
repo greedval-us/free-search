@@ -18,13 +18,14 @@ stateDiagram-v2
 
 Application Service передаёт context в module `*ParserRunStore`. `ParserRunExecutionCoordinator` под cache lock не допускает второй active run того же module для пользователя, создаёт UUID/initial state, записывает JSON на private disk и синхронизирует `parser_runs` metadata. При queue mode dispatch идёт в `ProcessParserRun`.
 
-Job выполняет один collector step и, если status всё ещё `running`, планирует следующий с `PARSER_RUN_QUEUE_STEP_DELAY_SECONDS`. Job имеет `tries=3`, timeout 120 seconds и unique id; Telegram steps дополнительно serialized через `WithoutOverlapping`. При выключенной queue status request сам вызывает один `advance`.
+Job выполняет один collector step и, если status всё ещё `running`, планирует следующий с `PARSER_RUN_QUEUE_STEP_DELAY_SECONDS`. Таймаут составляет 120 секунд. Повторы ограничены тремя исключениями и фиксированным часовым окном, которое сохраняется при сериализации задачи. Ожидание `WithoutOverlapping` не считается исключением. При выключенной queue status request сам вызывает один `advance`.
 
 ## State и storage
 
 - Полный context/cursor/collected data/result snapshot: module JSON file на disk `private`.
 - Index/history metadata: `parser_runs` (`run_id`, user, module, status, stage, progress, error, file details, timestamps/expiry).
-- File mutation использует exclusive file lock; metadata синхронизируется после write.
+- `ParserRunFileStorage` сериализует запись через стабильный `.lock` в каталоге пользователя и атомарно заменяет JSON временным файлом из того же каталога. Читатель видит предыдущий или новый полный документ, не ожидая завершения collector step.
+- Метаданные синхронизируются до освобождения блокировки. Очистка использует ту же блокировку и повторно проверяет срок хранения; при ошибке удаления запись сохраняется для следующей попытки. Нулевой файл `.lock` сохраняется как стабильный объект синхронизации.
 - История из DB ограничена `PARSER_RUN_HISTORY_LIMIT` и user/module ownership.
 
 Модульные stages различаются: Telegram собирает messages/comments; YouTube comments/replies; Bluesky profile/feed/followers/follows/interactions; Mastodon statuses/comments.

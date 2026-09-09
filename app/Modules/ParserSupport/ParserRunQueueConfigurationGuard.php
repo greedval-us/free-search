@@ -20,7 +20,7 @@ final class ParserRunQueueConfigurationGuard
         $connection = (string) config('queue.default', 'database');
         $driver = (string) config("queue.connections.{$connection}.driver", '');
 
-        if ($driver !== 'redis') {
+        if (! in_array($driver, ['redis', 'database', 'beanstalkd'], true)) {
             return;
         }
 
@@ -31,7 +31,8 @@ final class ParserRunQueueConfigurationGuard
         }
 
         throw new LogicException(sprintf(
-            'Redis queue retry_after (%d) must be greater than parser job timeout (%d).',
+            'Queue connection %s retry_after (%d) must be greater than parser job timeout (%d).',
+            $connection,
             $retryAfter,
             ProcessParserRun::TIMEOUT_SECONDS,
         ));

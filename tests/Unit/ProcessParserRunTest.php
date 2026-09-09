@@ -12,6 +12,16 @@ use PHPUnit\Framework\TestCase;
 
 class ProcessParserRunTest extends TestCase
 {
+    public function test_retry_deadline_is_fixed_when_the_job_is_serialized(): void
+    {
+        $job = new ProcessParserRun('telegram', 10, 'run-id');
+        $restored = unserialize(serialize($job));
+        $this->assertSame($job->retryUntil(), $restored->retryUntil());
+        $this->assertGreaterThan(time(), $restored->retryUntil());
+        $this->assertSame(0, $restored->tries);
+        $this->assertSame(3, $restored->maxExceptions);
+    }
+
     public function test_it_schedules_next_step_while_run_is_active(): void
     {
         $processor = $this->createMock(ParserRunBackgroundProcessorInterface::class);

@@ -6,9 +6,10 @@ namespace App\MoonShine\Resources\AppUser;
 
 use App\Models\AdminAuditLog;
 use App\Models\User;
-use App\Models\UserSubscription;
 use App\MoonShine\Resources\AppUser\Pages\AppUserFormPage;
 use App\MoonShine\Resources\AppUser\Pages\AppUserIndexPage;
+use App\Services\Subscriptions\SubscriptionManager;
+use App\Support\Access\Enums\AccountPlan;
 use Illuminate\Contracts\Database\Eloquent\Builder;
 use MoonShine\Contracts\Core\TypeCasts\DataWrapperContract;
 use MoonShine\Laravel\Resources\ModelResource;
@@ -209,53 +210,14 @@ class AppUserResource extends ModelResource
             return;
         }
 
-        $plan = (string) request()->input('subscription_plan', User::SUBSCRIPTION_PLAN_FREE);
-        if (! in_array($plan, [
-            User::SUBSCRIPTION_PLAN_FREE,
-            User::SUBSCRIPTION_PLAN_PLUS,
-            User::SUBSCRIPTION_PLAN_PRO,
-        ], true)) {
+        $plan = AccountPlan::tryFrom((string) request()->input('subscription_plan'));
+        if ($plan === null) {
             return;
         }
 
-        $now = now();
-
-        if ($plan === User::SUBSCRIPTION_PLAN_FREE) {
-            $user->subscriptions()
-                ->where('status', UserSubscription::STATUS_ACTIVE)
-                ->where('ends_at', '>', $now)
-                ->update([
-                    'status' => UserSubscription::STATUS_CANCELED,
-                    'ends_at' => $now,
-                    'updated_at' => $now,
-                ]);
-
-            return;
-        }
-
-        $activeSubscription = $user->activeSubscription()->first();
-        if ($activeSubscription instanceof UserSubscription && $activeSubscription->plan === $plan) {
-            return;
-        }
-
-        $user->subscriptions()
-            ->where('status', UserSubscription::STATUS_ACTIVE)
-            ->where('ends_at', '>', $now)
-            ->update([
-                'status' => UserSubscription::STATUS_CANCELED,
-                'ends_at' => $now,
-                'updated_at' => $now,
-            ]);
-
-        $user->subscriptions()->create([
-            'plan' => $plan,
-            'status' => UserSubscription::STATUS_ACTIVE,
-            'starts_at' => $now,
-            'ends_at' => $now->copy()->addMonth(),
-            'metadata' => [
-                'source' => 'moonshine',
-                'actor_admin_id' => auth('moonshine')->id(),
-            ],
-        ]);
+        app(SubscriptionManager::class)->replace($user, $plan, [
+            'source' => 'moonshine',
+            'actor_admin_id' => auth('moonshine')->id(),
+        ], keepSamePlan: true);
     }
 }

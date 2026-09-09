@@ -8,85 +8,49 @@ use App\Modules\Telegram\DTO\Request\TelegramAnalyticsParamsDTO;
 use App\Modules\Telegram\DTO\Result\AnalyticsReportResultDTO;
 use App\Modules\Telegram\DTO\Result\AnalyticsSummaryResultDTO;
 use App\Modules\Telegram\Support\TelegramConfig;
+use App\Support\Reports\ReportSnapshotStore;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Log;
+use Throwable;
 
 class TelegramAnalyticsApplicationService implements TelegramAnalyticsApplicationServiceInterface
 {
     public function __construct(
         private readonly TelegramAnalyticsService $analyticsService,
         private readonly TelegramAnalyticsRangeResolverInterface $rangeResolver,
-        private readonly TelegramAnalyticsSnapshotStore $snapshotStore,
+        private readonly ReportSnapshotStore $snapshotStore,
         private readonly TelegramConfig $config,
-    ) {
-    }
+    ) {}
 
     public function buildSummary(
+        int $userId,
         TelegramAnalyticsParamsDTO $params,
         Carbon $from,
         Carbon $to,
-        ?string $snapshotRole = null
-    ): AnalyticsSummaryResultDTO
-    {
+    ): AnalyticsSummaryResultDTO {
         $data = $this->loadCachedAnalytics($params, $from, $to);
-        $this->storeSummarySnapshot($params, $from, $to, $data);
-
-        $snapshotRole = strtolower(trim((string) $snapshotRole));
-        if (in_array($snapshotRole, ['current', 'previous'], true)) {
-            $this->snapshotStore->storeNamedSnapshot($snapshotRole, $data);
+        $previousRange = $this->rangeResolver->resolvePreviousRange($from, $to);
+        $previous = [];
+        try {
+            $previous = $this->loadCachedAnalytics($params, $previousRange['from'], $previousRange['to']);
+        } catch (Throwable $exception) {
+            Log::warning('Telegram comparison unavailable; current summary preserved.', ['exception' => $exception::class]);
         }
 
-        return new AnalyticsSummaryResultDTO($data);
+        $this->snapshotStore->store($userId, 'telegram.analytics', $this->reportParameters($params, $from, $to), [
+            'report' => $data,
+            'previousReport' => $previous,
+        ]);
+
+        return new AnalyticsSummaryResultDTO([...$data, 'previousReport' => $previous !== [] ? $previous : null]);
     }
 
-    public function buildReport(TelegramAnalyticsParamsDTO $params, Carbon $from, Carbon $to): AnalyticsReportResultDTO
+    public function buildReport(int $userId, TelegramAnalyticsParamsDTO $params, Carbon $from, Carbon $to): AnalyticsReportResultDTO
     {
-        $namedCurrent = $this->snapshotStore->getNamedSnapshot('current');
-        $namedPrevious = $this->snapshotStore->getNamedSnapshot('previous');
+        $snapshot = $this->snapshotStore->get($userId, 'telegram.analytics', $this->reportParameters($params, $from, $to));
 
-        $matchesCurrent = $this->snapshotStore->matchesRequest(
-            $namedCurrent,
-            $params->chatUsername,
-            $params->scorePriority,
-            $params->keyword,
-            $from,
-            $to
-        );
-
-        $data = $matchesCurrent ? $namedCurrent : null;
-        $previousData = $matchesCurrent && $this->snapshotStore->matchesRequest(
-            $namedPrevious,
-            $params->chatUsername,
-            $params->scorePriority,
-            $params->keyword
-        )
-            ? $namedPrevious
-            : null;
-
-        if (!is_array($data)) {
-            $data = $this->snapshotStore->getSummarySnapshot(
-                $params->chatUsername,
-                $from,
-                $to,
-                $params->scorePriority,
-                $params->keyword
-            ) ?? $this->loadCachedAnalytics($params, $from, $to);
-        }
-        $this->storeSummarySnapshot($params, $from, $to, $data);
-
-        if (!is_array($previousData)) {
-            $previousRange = $this->rangeResolver->resolvePreviousRangeForReport($data, $from, $to);
-            $previousData = $this->snapshotStore->getSummarySnapshot(
-                $params->chatUsername,
-                $previousRange['from'],
-                $previousRange['to'],
-                $params->scorePriority,
-                $params->keyword
-            ) ?? $this->loadCachedAnalytics($params, $previousRange['from'], $previousRange['to']);
-            $this->storeSummarySnapshot($params, $previousRange['from'], $previousRange['to'], $previousData);
-        }
-
-        return new AnalyticsReportResultDTO($data, $previousData);
+        return new AnalyticsReportResultDTO($snapshot['report'], $snapshot['previousReport']);
     }
 
     /**
@@ -108,18 +72,11 @@ class TelegramAnalyticsApplicationService implements TelegramAnalyticsApplicatio
     }
 
     /**
-     * @param array<string, mixed> $data
+     * @return array<string, mixed>
      */
-    private function storeSummarySnapshot(TelegramAnalyticsParamsDTO $params, Carbon $from, Carbon $to, array $data): void
+    private function reportParameters(TelegramAnalyticsParamsDTO $params, Carbon $from, Carbon $to): array
     {
-        $this->snapshotStore->storeSummarySnapshot(
-            $params->chatUsername,
-            $from,
-            $to,
-            $params->scorePriority,
-            $params->keyword,
-            $data
-        );
+        return [...get_object_vars($params), 'from' => $from->toIso8601String(), 'to' => $to->toIso8601String()];
     }
 
     private function analyticsCacheKey(TelegramAnalyticsParamsDTO $params, Carbon $from, Carbon $to): string

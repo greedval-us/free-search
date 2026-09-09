@@ -14,7 +14,11 @@ php artisan queue:work
 php artisan queue:work --queue=parser-runs,default
 ```
 
-Worker должен работать постоянно и перезапускаться после deploy. Следите за `failed_jobs`; MoonShine имеет read-only operational resources для queue/failed jobs. Job timeout 120 seconds, tries 3; Telegram использует overlap lock.
+Worker должен работать постоянно и перезапускаться после deploy. Следите за `failed_jobs`; MoonShine имеет read-only operational resources для queue/failed jobs. Таймаут задачи составляет 120 секунд. Ожидание Telegram overlap lock не расходует лимит ошибок: задача ограничена окном повторов в один час и тремя реальными исключениями.
+
+`retry_after` для database, Redis и Beanstalkd должен быть больше таймаута задачи. Значение по умолчанию составляет 150 секунд; проверьте `DB_QUEUE_RETRY_AFTER`, `REDIS_QUEUE_RETRY_AFTER` и `BEANSTALKD_QUEUE_RETRY_AFTER` при деплое.
+
+При переходе на атомарное JSON-хранилище сначала дождитесь завершения текущих шагов и остановите старые воркеры. Старые и новые процессы записи нельзя запускать одновременно: новый код использует стабильный файл `.lock` в каталоге пользователя вместо блокировки самого JSON. После обновления кода и конфигурации запустите воркеры снова. JSON-данные и таблица метаданных не требуют переноса.
 
 При `PARSER_RUN_QUEUE_ENABLED=false` status polling advances run синхронно. Этот режим полезен для локальной диагностики, но меняет timing/failure model.
 

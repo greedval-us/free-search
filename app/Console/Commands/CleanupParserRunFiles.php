@@ -4,9 +4,12 @@ namespace App\Console\Commands;
 
 use App\Models\ParserRun;
 use App\Modules\ParserSupport\ParserRunConfig;
+use App\Modules\ParserSupport\ParserRunFileStorage;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
+use RuntimeException;
+use Throwable;
 
 class CleanupParserRunFiles extends Command
 {
@@ -14,13 +17,14 @@ class CleanupParserRunFiles extends Command
 
     protected $description = 'Delete expired parser run JSON files from private storage and remove their metadata.';
 
-    public function handle(ParserRunConfig $config): int
+    public function handle(ParserRunConfig $config, ParserRunFileStorage $files): int
     {
         $isDryRun = (bool) $this->option('dry-run');
         $batchSize = $config->cleanupBatchSize();
         $matchedRuns = 0;
         $deletedFiles = 0;
         $deletedRows = 0;
+        $failedFiles = 0;
 
         if (! ParserRun::query()->expired()->exists()) {
             $this->info('No expired parser runs found.');
@@ -34,9 +38,11 @@ class CleanupParserRunFiles extends Command
             ->orderBy('id')
             ->chunkById($batchSize, function ($runs) use (
                 $isDryRun,
+                $files,
                 &$matchedRuns,
                 &$deletedFiles,
-                &$deletedRows
+                &$deletedRows,
+                &$failedFiles
             ): void {
                 foreach ($runs as $run) {
                     $matchedRuns++;
@@ -47,10 +53,28 @@ class CleanupParserRunFiles extends Command
                         continue;
                     }
 
-                    $deletedFiles += (int) $this->deleteStoredFile($run);
+                    try {
+                        $path = Storage::disk($run->file_disk)->path($run->file_path);
+                        $files->withExclusiveLock($path, function () use ($run, &$deletedFiles, &$deletedRows): void {
+                            $current = $run->fresh();
+                            if ($current === null || ! $current->expires_at?->isPast()) {
+                                return;
+                            }
 
-                    $run->delete();
-                    $deletedRows++;
+                            $deletedFiles += (int) $this->deleteStoredFile($current);
+                            $current->delete();
+                            $deletedRows++;
+                        });
+                    } catch (Throwable $exception) {
+                        $failedFiles++;
+                        Log::error('Parser run file cleanup failed; metadata retained for retry.', [
+                            'run_id' => $run->run_id,
+                            'exception' => $exception::class,
+                        ]);
+
+                        continue;
+                    }
+
                 }
             });
 
@@ -68,6 +92,12 @@ class CleanupParserRunFiles extends Command
         ));
         $this->logSummary($config, false, $matchedRuns, $deletedRows, $deletedFiles);
 
+        if ($failedFiles > 0) {
+            $this->error(sprintf('Unable to delete %d files. Their metadata was retained for retry.', $failedFiles));
+
+            return self::FAILURE;
+        }
+
         return self::SUCCESS;
     }
 
@@ -79,7 +109,11 @@ class CleanupParserRunFiles extends Command
             return false;
         }
 
-        return $disk->delete($run->file_path);
+        if (! $disk->delete($run->file_path)) {
+            throw new RuntimeException('Unable to delete expired parser file.');
+        }
+
+        return true;
     }
 
     private function dryRunMessage(ParserRun $run): string
@@ -93,8 +127,7 @@ class CleanupParserRunFiles extends Command
         int $matchedRuns,
         int $deletedRows,
         int $deletedFiles,
-    ): void
-    {
+    ): void {
         Log::info('Parser run cleanup completed.', [
             'dry_run' => $isDryRun,
             'matched_runs' => $matchedRuns,

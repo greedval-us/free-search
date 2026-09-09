@@ -23,10 +23,6 @@ return new class extends Migration
 
     public function down(): void
     {
-        $adminRoleId = DB::table('moonshine_user_roles')
-            ->where('name', AdminRole::Admin->databaseName())
-            ->value('id');
-
         $staffRoleIds = DB::table('moonshine_user_roles')
             ->whereIn('name', [
                 AdminRole::Analyst->databaseName(),
@@ -34,10 +30,8 @@ return new class extends Migration
             ])
             ->pluck('id');
 
-        if ($adminRoleId !== null && $staffRoleIds->isNotEmpty()) {
-            DB::table('moonshine_users')
-                ->whereIn('moonshine_user_role_id', $staffRoleIds)
-                ->update(['moonshine_user_role_id' => $adminRoleId]);
+        if (DB::table('moonshine_users')->whereIn('moonshine_user_role_id', $staffRoleIds)->exists()) {
+            throw new RuntimeException('Reassign staff roles explicitly before rolling back this migration.');
         }
 
         DB::table('moonshine_user_roles')

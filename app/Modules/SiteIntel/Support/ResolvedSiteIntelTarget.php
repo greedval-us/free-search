@@ -23,4 +23,11 @@ final readonly class ResolvedSiteIntelTarget
 
         return sprintf('%s:%d:%s', $this->host, $this->port, $ip);
     }
+
+    public function sslSocketAddress(): string
+    {
+        $ip = str_contains($this->ip, ':') ? '['.$this->ip.']' : $this->ip;
+
+        return sprintf('ssl://%s:%d', $ip, $this->port);
+    }
 }

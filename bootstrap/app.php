@@ -105,6 +105,7 @@ return Application::configure(basePath: dirname(__DIR__))
                     SymfonyResponse::HTTP_UNAUTHORIZED => [__('errors.api.unauthorized'), 'unauthorized'],
                     SymfonyResponse::HTTP_FORBIDDEN => [__('errors.api.forbidden'), 'forbidden'],
                     SymfonyResponse::HTTP_NOT_FOUND => [__('errors.api.not_found'), 'not_found'],
+                    SymfonyResponse::HTTP_GONE => [__('errors.api.report_expired'), 'report_expired'],
                     SymfonyResponse::HTTP_TOO_MANY_REQUESTS => [__('errors.api.too_many_requests'), 'too_many_requests'],
                     SymfonyResponse::HTTP_SERVICE_UNAVAILABLE => [__('errors.api.service_unavailable'), 'service_unavailable'],
                     default => [__('errors.api.generic'), 'http_error'],

@@ -147,11 +147,7 @@ return [
         ],
     ],
 
-    'non_counting_query_values' => [
-        'snapshotRole' => [
-            'previous',
-        ],
-    ],
+    'report_snapshot_ttl_seconds' => (int) env('REPORT_SNAPSHOT_TTL_SECONDS', 3600),
 
     'protected_routes' => [
         'bluesky.analytics.summary' => ['resource' => 'bluesky.analytics', 'counts' => true],

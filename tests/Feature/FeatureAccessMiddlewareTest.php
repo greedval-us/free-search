@@ -138,7 +138,7 @@ class FeatureAccessMiddlewareTest extends TestCase
         ]));
     }
 
-    public function test_previous_analytics_snapshot_does_not_consume_quota(): void
+    public function test_snapshot_query_flag_cannot_exempt_a_new_request_from_quota(): void
     {
         Route::get('/_feature-access-summary-test', static fn () => response()->json(['ok' => true]))
             ->middleware('feature.access')
@@ -167,7 +167,7 @@ class FeatureAccessMiddlewareTest extends TestCase
         $this->assertDatabaseHas('feature_usage_daily', [
             'user_id' => $user->id,
             'feature' => 'telegram.analytics',
-            'used' => 1,
+            'used' => 2,
         ]);
     }
 
@@ -263,7 +263,7 @@ class FeatureAccessMiddlewareTest extends TestCase
         ]);
     }
 
-    public function test_non_counting_query_values_can_be_added_from_config(): void
+    public function test_legacy_non_counting_query_config_cannot_bypass_quota(): void
     {
         Route::get('/_feature-access-non-counting-query-test', static fn () => response()->json(['ok' => true]))
             ->middleware('feature.access')
@@ -277,7 +277,6 @@ class FeatureAccessMiddlewareTest extends TestCase
             ],
         ]);
         Config::set('access.non_counting_query_values', [
-            ...config('access.non_counting_query_values'),
             'mode' => [
                 'preview',
             ],
@@ -290,9 +289,10 @@ class FeatureAccessMiddlewareTest extends TestCase
             ->getJson('/_feature-access-non-counting-query-test?mode=preview')
             ->assertOk();
 
-        $this->assertDatabaseMissing('feature_usage_daily', [
+        $this->assertDatabaseHas('feature_usage_daily', [
             'user_id' => $user->id,
             'feature' => 'telegram.analytics',
+            'used' => 1,
         ]);
     }
 
