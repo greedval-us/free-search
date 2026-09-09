@@ -41,6 +41,10 @@ class TelegramAnalyticsRequest extends LocalizedFormRequest
     public function withValidator(Validator $validator): void
     {
         $validator->after(function (Validator $validator): void {
+            if ($validator->errors()->isNotEmpty()) {
+                return;
+            }
+
             $dateFrom = $this->input('dateFrom');
             $dateTo = $this->input('dateTo');
 
@@ -50,13 +54,15 @@ class TelegramAnalyticsRequest extends LocalizedFormRequest
 
             if ($dateFrom && $dateTo && $dateFrom > $dateTo) {
                 $validator->errors()->add('dateFrom', __('errors.validation.date_from_before_or_equal_date_to'));
+
+                return;
             }
 
             if ($dateFrom && $dateTo) {
                 $rangeStart = Carbon::createFromFormat('Y-m-d', $dateFrom, $this->telegramConfig()->timezone())->startOfDay();
-                $rangeEnd = Carbon::createFromFormat('Y-m-d', $dateTo, $this->telegramConfig()->timezone())->endOfDay();
+                $rangeEnd = Carbon::createFromFormat('Y-m-d', $dateTo, $this->telegramConfig()->timezone())->startOfDay();
 
-                if ($rangeEnd->diffInDays($rangeStart) > ($this->customRangeMaxDays() - 1)) {
+                if ($rangeStart->diffInDays($rangeEnd) > ($this->customRangeMaxDays() - 1)) {
                     $validator->errors()->add(
                         'dateTo',
                         __('errors.validation.custom_analytics_range_max_days', [

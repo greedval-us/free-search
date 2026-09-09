@@ -35,7 +35,11 @@ class YouTubeAnalyticsRequest extends LocalizedFormRequest
     public function withValidator(Validator $validator): void
     {
         $validator->after(function (Validator $validator): void {
-            $mode = (string) ($this->input('mode') ?? '');
+            if ($validator->errors()->isNotEmpty()) {
+                return;
+            }
+
+            $mode = $this->input('mode') ?? (filled($this->input('channelId')) ? 'channel' : 'video');
             $dateFrom = trim((string) ($this->input('dateFrom') ?? ''));
             $dateTo = trim((string) ($this->input('dateTo') ?? ''));
 
@@ -44,15 +48,13 @@ class YouTubeAnalyticsRequest extends LocalizedFormRequest
             }
 
             if ($dateFrom === '' || $dateTo === '') {
+                $validator->errors()->add('dateTo', __('errors.validation.custom_range_requires_both_dates'));
+
                 return;
             }
 
-            try {
-                $from = Carbon::createFromFormat('Y-m-d', $dateFrom, $this->youtubeModuleConfig()->timezone())->startOfDay();
-                $to = Carbon::createFromFormat('Y-m-d', $dateTo, $this->youtubeModuleConfig()->timezone())->endOfDay();
-            } catch (\Throwable) {
-                return;
-            }
+            $from = Carbon::createFromFormat('Y-m-d', $dateFrom, $this->youtubeModuleConfig()->timezone())->startOfDay();
+            $to = Carbon::createFromFormat('Y-m-d', $dateTo, $this->youtubeModuleConfig()->timezone())->startOfDay();
 
             if ($from->greaterThan($to)) {
                 $validator->errors()->add('dateFrom', __('errors.validation.date_from_before_or_equal_date_to'));

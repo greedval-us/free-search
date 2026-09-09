@@ -31,11 +31,26 @@ final class FeatureAccessService implements FeatureAccessServiceInterface
         return $this->decide($user, $this->policyResolver->resourcePolicy($resource, $counts), false);
     }
 
+    public function consumeResource(User $user, string $resource): FeatureAccessDecision
+    {
+        return $this->decide($user, $this->policyResolver->resourcePolicy($resource), true);
+    }
+
+    public function refundResource(User $user, string $resource): void
+    {
+        $this->release($user, $this->policyResolver->resourcePolicy($resource));
+    }
+
     public function refund(User $user, string $routeName): void
     {
         $policy = $this->policyResolver->routePolicy($routeName)
             ?? $this->policyResolver->resourcePolicy('analytics');
 
+        $this->release($user, $policy);
+    }
+
+    private function release(User $user, AccessResourcePolicy $policy): void
+    {
         if (! $policy->counts || $this->policyResolver->canBypass($user)) {
             return;
         }

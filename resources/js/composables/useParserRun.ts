@@ -72,17 +72,25 @@ export const useParserRun = <
     const historyRetentionDays = ref(7);
     const pollTimer = ref<number | null>(null);
     const pollRequestInFlight = ref(false);
+    let disposed = false;
+    let pollingVersion = 0;
+    const isCurrent = (version: number) =>
+        !disposed && version === pollingVersion;
     const pollIntervalMs = options.pollIntervalMs ?? 3000;
     const endpoint = (suffix: string) =>
         `${options.endpointBase.replace(/\/$/, '')}/${suffix}`;
 
     const clearPolling = () => {
+        // Ignore responses belonging to a stopped, replaced or unmounted run.
+        pollingVersion += 1;
+
         if (pollTimer.value !== null) {
             window.clearTimeout(pollTimer.value);
             pollTimer.value = null;
         }
 
         pollRequestInFlight.value = false;
+        historyLoading.value = false;
     };
 
     const applyPayload = (payload: StatusPayload) => {
@@ -104,12 +112,21 @@ export const useParserRun = <
     };
 
     const refreshHistory = async () => {
+        if (disposed) {
+            return;
+        }
+
+        const version = pollingVersion;
         historyLoading.value = true;
 
         try {
             const response = await apiRequest<
                 ParserRunHistoryResponse<HistoryItem>
             >(endpoint('history'), { method: 'GET' });
+
+            if (!isCurrent(version)) {
+                return;
+            }
 
             if (!response.ok) {
                 throw new Error(
@@ -133,9 +150,13 @@ export const useParserRun = <
                 await pollStatus();
             }
         } catch {
-            historyItems.value = [];
+            if (isCurrent(version)) {
+                historyItems.value = [];
+            }
         } finally {
-            historyLoading.value = false;
+            if (isCurrent(version)) {
+                historyLoading.value = false;
+            }
         }
     };
 
@@ -156,16 +177,26 @@ export const useParserRun = <
     };
 
     const schedulePoll = () => {
+        if (disposed || !loading.value || !runId.value) {
+            return;
+        }
+
+        if (pollTimer.value !== null) {
+            window.clearTimeout(pollTimer.value);
+        }
+
         pollTimer.value = window.setTimeout(() => {
+            pollTimer.value = null;
             void pollStatus();
         }, pollIntervalMs);
     };
 
     const pollStatus = async () => {
-        if (!runId.value || pollRequestInFlight.value) {
+        if (disposed || !runId.value || pollRequestInFlight.value) {
             return;
         }
 
+        const version = pollingVersion;
         pollRequestInFlight.value = true;
 
         try {
@@ -173,6 +204,10 @@ export const useParserRun = <
                 endpoint(`status/${runId.value}`),
                 { method: 'GET' }
             );
+
+            if (!isCurrent(version)) {
+                return;
+            }
 
             if (!response.ok) {
                 throw new Error(
@@ -193,6 +228,10 @@ export const useParserRun = <
                 return;
             }
         } catch (pollError) {
+            if (!isCurrent(version)) {
+                return;
+            }
+
             loading.value = false;
             error.value = resolveClientErrorMessage(
                 pollError,
@@ -202,14 +241,21 @@ export const useParserRun = <
 
             return;
         } finally {
-            pollRequestInFlight.value = false;
+            if (isCurrent(version)) {
+                pollRequestInFlight.value = false;
+            }
         }
 
         schedulePoll();
     };
 
     const startRun = async (body: unknown): Promise<boolean> => {
+        if (disposed || loading.value) {
+            return false;
+        }
+
         clearPolling();
+        const version = pollingVersion;
         resetState();
         error.value = null;
         loading.value = true;
@@ -229,6 +275,10 @@ export const useParserRun = <
                 }
             );
 
+            if (!isCurrent(version)) {
+                return false;
+            }
+
             if (!response.ok || !response.data.runId) {
                 throw new Error(
                     resolveApiErrorMessage(
@@ -245,6 +295,10 @@ export const useParserRun = <
 
             return true;
         } catch (startError) {
+            if (!isCurrent(version)) {
+                return false;
+            }
+
             stage.value = options.failedStage;
             error.value = resolveClientErrorMessage(
                 startError,
@@ -257,7 +311,12 @@ export const useParserRun = <
     };
 
     const stop = () => {
+        if (disposed) {
+            return;
+        }
+
         clearPolling();
+        const version = pollingVersion;
         loading.value = false;
 
         if (stage.value !== 'completed' && stage.value !== 'failed') {
@@ -272,7 +331,11 @@ export const useParserRun = <
 
         requestStop(activeRunId)
             .then((payload) => {
-                if (!payload || payload.runId !== runId.value) {
+                if (
+                    !isCurrent(version) ||
+                    !payload ||
+                    payload.runId !== runId.value
+                ) {
                     return;
                 }
 
@@ -300,6 +363,7 @@ export const useParserRun = <
     });
 
     onBeforeUnmount(() => {
+        disposed = true;
         clearPolling();
     });
 

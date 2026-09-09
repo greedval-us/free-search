@@ -25,7 +25,7 @@ final readonly class FeatureAccessRequestResolver implements FeatureAccessReques
             return new FeatureAccessRequest(
                 resource: $pageResource,
                 consume: false,
-                counts: true,
+                counts: false,
             );
         }
 
@@ -34,10 +34,14 @@ final readonly class FeatureAccessRequestResolver implements FeatureAccessReques
             return null;
         }
 
+        // Stateful operations charge only when the application creates new work.
+        $routes = config('access.protected_routes', []);
+        $countsInMiddleware = $policy->counts && ! ($routes[$routeName]['consume_in_service'] ?? false);
+
         return new FeatureAccessRequest(
             resource: $policy->resource,
-            consume: $policy->counts,
-            counts: $policy->counts,
+            consume: $countsInMiddleware,
+            counts: $countsInMiddleware,
         );
     }
 

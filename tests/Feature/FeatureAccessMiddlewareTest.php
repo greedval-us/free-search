@@ -117,7 +117,7 @@ class FeatureAccessMiddlewareTest extends TestCase
         ]));
     }
 
-    public function test_direct_page_tab_request_redirects_when_quota_is_exhausted(): void
+    public function test_direct_page_tab_request_remains_available_when_quota_is_exhausted(): void
     {
         $user = $this->createSubscribedUser();
 
@@ -132,10 +132,12 @@ class FeatureAccessMiddlewareTest extends TestCase
             ->actingAs($user)
             ->get('/site-intel?tab=seoAudit');
 
-        $response->assertRedirect(route('billing.edit', [
+        $response->assertOk();
+        $this->assertDatabaseHas('feature_usage_daily', [
+            'user_id' => $user->id,
             'feature' => 'site-intel.seo-audit',
-            'reason' => 'quota',
-        ]));
+            'used' => 10,
+        ]);
     }
 
     public function test_snapshot_query_flag_cannot_exempt_a_new_request_from_quota(): void

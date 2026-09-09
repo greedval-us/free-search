@@ -33,11 +33,15 @@ class TelegramParserStartRequest extends FormRequest
     public function withValidator(Validator $validator): void
     {
         $validator->after(function (Validator $validator): void {
-            if ($this->keyword() !== null) {
+            if ($validator->errors()->isNotEmpty()) {
                 return;
             }
 
-            if ($this->period() !== 'custom') {
+            if (filled($this->input('keyword'))) {
+                return;
+            }
+
+            if ($this->input('period') !== 'custom') {
                 return;
             }
 
@@ -57,9 +61,9 @@ class TelegramParserStartRequest extends FormRequest
             }
 
             $from = Carbon::createFromFormat('Y-m-d', $dateFrom, $this->telegramConfig()->timezone())->startOfDay();
-            $to = Carbon::createFromFormat('Y-m-d', $dateTo, $this->telegramConfig()->timezone())->endOfDay();
+            $to = Carbon::createFromFormat('Y-m-d', $dateTo, $this->telegramConfig()->timezone())->startOfDay();
 
-            if ($to->diffInDays($from) > ($this->customRangeMaxDays() - 1)) {
+            if ($from->diffInDays($to) > ($this->customRangeMaxDays() - 1)) {
                 $validator->errors()->add(
                     'dateTo',
                     __('errors.validation.custom_parser_range_max_days', [

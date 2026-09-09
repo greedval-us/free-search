@@ -29,9 +29,8 @@ const selectTab = (tab: string): void => {
     const accessKey = definition?.accessKey ?? tab;
     const access = page.props.auth?.access?.features?.[accessKey];
 
-    if (access && !access.allowed) {
-        const reason = access.limit > 0 ? 'quota' : 'plan';
-        router.visit(`/settings/billing?feature=${accessKey}&reason=${reason}`);
+    if (access && access.limit <= 0) {
+        router.visit(`/settings/billing?feature=${accessKey}&reason=plan`);
         return;
     }
 
