@@ -12,8 +12,8 @@ use App\Modules\YouTube\Presenters\YouTubeVideoPresenter;
 use App\Modules\YouTube\Support\YouTubeChannelResolver;
 use App\Modules\YouTube\Support\YouTubeModuleConfig;
 use Carbon\CarbonInterface;
-use Illuminate\Support\Carbon;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Carbon;
 
 class AnalyticsSummaryAction extends AbstractYouTubeAction
 {

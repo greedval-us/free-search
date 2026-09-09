@@ -17,11 +17,10 @@ class DashboardFilterNormalizer
 
     public function __construct(
         private readonly DashboardModuleRegistry $moduleRegistry,
-    ) {
-    }
+    ) {}
 
     /**
-     * @param array<string, mixed> $filters
+     * @param  array<string, mixed>  $filters
      * @return array<string, string>
      */
     public function normalize(array $filters): array
@@ -32,11 +31,11 @@ class DashboardFilterNormalizer
         $dateFrom = trim((string) ($filters['date_from'] ?? ''));
         $dateTo = trim((string) ($filters['date_to'] ?? ''));
 
-        if (!$this->moduleRegistry->isSupported($moduleKey)) {
+        if (! $this->moduleRegistry->isSupported($moduleKey)) {
             $moduleKey = '';
         }
 
-        if (!array_key_exists($period, $this->periodDays)) {
+        if (! array_key_exists($period, $this->periodDays)) {
             $period = '30d';
         }
 

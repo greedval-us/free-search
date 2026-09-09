@@ -3,6 +3,7 @@
 namespace App\Modules\Telegram\Actions\Request;
 
 use App\Modules\Telegram\Actions\AbstractTelegramAction;
+use danog\MadelineProto\API;
 
 class CommentsAction extends AbstractTelegramAction
 {
@@ -77,15 +78,14 @@ class CommentsAction extends AbstractTelegramAction
     }
 
     private function loadComments(
-        \danog\MadelineProto\API $client,
+        API $client,
         string $channelId,
         int $postId,
         int $limit,
         int $maxPages,
         int $offsetId,
         int $delayMs
-    ): array
-    {
+    ): array {
         $messages = [];
         $nextOffsetId = $offsetId;
         $hasMore = false;
@@ -127,7 +127,7 @@ class CommentsAction extends AbstractTelegramAction
 
             $hasMore = count($batch) >= $limit && $nextOffsetId > 0;
 
-            if (!$hasMore || $page >= $maxPages) {
+            if (! $hasMore || $page >= $maxPages) {
                 break;
             }
 

@@ -13,8 +13,7 @@ class TelegramMessageRangeLoader
         private readonly TelegramGatewayInterface $telegramService,
         private readonly TelegramMessagePresenter $messagePresenter,
         private readonly TelegramConfig $config,
-    ) {
-    }
+    ) {}
 
     /**
      * @return array<int, object>

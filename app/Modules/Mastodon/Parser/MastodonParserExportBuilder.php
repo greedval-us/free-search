@@ -11,12 +11,10 @@ use PhpOffice\PhpSpreadsheet\Style\NumberFormat;
 
 final class MastodonParserExportBuilder implements MastodonParserExportBuilderInterface
 {
-    public function __construct(private readonly MastodonModuleConfig $config)
-    {
-    }
+    public function __construct(private readonly MastodonModuleConfig $config) {}
 
     /**
-     * @param array<string, mixed> $payload
+     * @param  array<string, mixed>  $payload
      * @return array<int, SheetDefinition>
      */
     public function buildSheets(array $payload): array
@@ -29,7 +27,7 @@ final class MastodonParserExportBuilder implements MastodonParserExportBuilderIn
     }
 
     /**
-     * @param array<string, mixed> $payload
+     * @param  array<string, mixed>  $payload
      */
     private function buildSummarySheet(array $payload): SheetDefinition
     {
@@ -73,7 +71,7 @@ final class MastodonParserExportBuilder implements MastodonParserExportBuilderIn
     }
 
     /**
-     * @param array<string, mixed> $payload
+     * @param  array<string, mixed>  $payload
      */
     private function buildStatusesSheet(array $payload): SheetDefinition
     {
@@ -81,7 +79,7 @@ final class MastodonParserExportBuilder implements MastodonParserExportBuilderIn
         $rows = [];
 
         foreach ($statuses as $status) {
-            if (!is_array($status)) {
+            if (! is_array($status)) {
                 continue;
             }
 
@@ -129,7 +127,7 @@ final class MastodonParserExportBuilder implements MastodonParserExportBuilderIn
     }
 
     /**
-     * @param array<string, mixed> $payload
+     * @param  array<string, mixed>  $payload
      */
     private function buildCommentsSheet(array $payload): SheetDefinition
     {
@@ -137,7 +135,7 @@ final class MastodonParserExportBuilder implements MastodonParserExportBuilderIn
         $rows = [];
 
         foreach ($comments as $comment) {
-            if (!is_array($comment)) {
+            if (! is_array($comment)) {
                 continue;
             }
 
@@ -188,7 +186,7 @@ final class MastodonParserExportBuilder implements MastodonParserExportBuilderIn
 
     private function excelDate(mixed $value): mixed
     {
-        if (!is_string($value) || trim($value) === '') {
+        if (! is_string($value) || trim($value) === '') {
             return null;
         }
 
@@ -207,14 +205,14 @@ final class MastodonParserExportBuilder implements MastodonParserExportBuilderIn
     }
 
     /**
-     * @param array<int, array<string, mixed>> $items
+     * @param  array<int, array<string, mixed>>  $items
      */
     private function countBoolField(array $items, string $field): int
     {
         $count = 0;
 
         foreach ($items as $item) {
-            if (!empty($item[$field])) {
+            if (! empty($item[$field])) {
                 $count++;
             }
         }
@@ -223,7 +221,7 @@ final class MastodonParserExportBuilder implements MastodonParserExportBuilderIn
     }
 
     /**
-     * @param array<int, array<string, mixed>> $items
+     * @param  array<int, array<string, mixed>>  $items
      */
     private function sumIntField(array $items, string $field): int
     {
@@ -237,7 +235,7 @@ final class MastodonParserExportBuilder implements MastodonParserExportBuilderIn
     }
 
     /**
-     * @param array<int, array<string, mixed>> $items
+     * @param  array<int, array<string, mixed>>  $items
      */
     private function countUniqueScalar(array $items, string $field): int
     {

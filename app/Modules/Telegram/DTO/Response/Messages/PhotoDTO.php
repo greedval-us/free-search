@@ -5,16 +5,22 @@ namespace App\Modules\Telegram\DTO\Response\Messages;
 class PhotoDTO
 {
     public string $_;
+
     public bool $has_stickers = false;
+
     public int $id = 0;
+
     public ?int $access_hash = null;
+
     public ?string $file_reference = null;
+
     public ?int $date = null;
 
     /** @var PhotoSizeDTO[] */
     public array $sizes = [];
 
     public ?int $dc_id = null;
+
     public array $raw = [];
 
     public function __construct(array $data)
@@ -33,7 +39,7 @@ class PhotoDTO
         $this->date = $data['date'] ?? null;
 
         foreach ($data['sizes'] ?? [] as $size) {
-            $this->sizes[] = new PhotoSizeDTO((array)$size);
+            $this->sizes[] = new PhotoSizeDTO((array) $size);
         }
 
         $this->dc_id = $data['dc_id'] ?? null;

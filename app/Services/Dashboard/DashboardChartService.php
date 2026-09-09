@@ -3,18 +3,20 @@
 namespace App\Services\Dashboard;
 
 use App\Models\RequestLog;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Collection;
 
 class DashboardChartService
 {
     /**
-     * @param \Illuminate\Database\Eloquent\Builder<RequestLog> $query
+     * @param  Builder<RequestLog>  $query
      * @return array<int, array<string, mixed>>
      */
     public function build($query, int $days): array
     {
         $startDay = now()->startOfDay()->subDays($days - 1);
 
-        /** @var \Illuminate\Support\Collection<string, int> $rows */
+        /** @var Collection<string, int> $rows */
         $rows = (clone $query)
             ->where('created_at', '>=', $startDay)
             ->selectRaw('DATE(created_at) as day, COUNT(*) as total')
@@ -56,4 +58,3 @@ class DashboardChartService
         return $result;
     }
 }
-

@@ -9,12 +9,10 @@ class TelegramAnalyticsOpinionLeadersBuilder
 {
     private const LEADERS_LIMIT = 8;
 
-    public function __construct(private readonly TelegramConfig $config)
-    {
-    }
+    public function __construct(private readonly TelegramConfig $config) {}
 
     /**
-     * @param array<string, mixed> $item
+     * @param  array<string, mixed>  $item
      * @return array{authorKey: string|null, authorId: int|null, authorLabel: string|null}
      */
     public function resolveContext(array $item): array
@@ -29,10 +27,10 @@ class TelegramAnalyticsOpinionLeadersBuilder
     }
 
     /**
-     * @param array<string, array<string, mixed>> $authorStats
-     * @param array<string, array<string, array<string, mixed>>> $authorDailyStats
-     * @param array{authorKey: string|null, authorId: int|null, authorLabel: string|null} $context
-     * @param array{views: float, forwards: float, replies: float, reactions: float, gifts: float} $weights
+     * @param  array<string, array<string, mixed>>  $authorStats
+     * @param  array<string, array<string, array<string, mixed>>>  $authorDailyStats
+     * @param  array{authorKey: string|null, authorId: int|null, authorLabel: string|null}  $context
+     * @param  array{views: float, forwards: float, replies: float, reactions: float, gifts: float}  $weights
      */
     public function accumulate(
         array &$authorStats,
@@ -46,11 +44,11 @@ class TelegramAnalyticsOpinionLeadersBuilder
         array $weights
     ): void {
         $authorKey = $context['authorKey'] ?? null;
-        if (!is_string($authorKey) || $authorKey === '') {
+        if (! is_string($authorKey) || $authorKey === '') {
             return;
         }
 
-        if (!isset($authorStats[$authorKey])) {
+        if (! isset($authorStats[$authorKey])) {
             $authorStats[$authorKey] = [
                 'authorKey' => $authorKey,
                 'authorId' => $context['authorId'],
@@ -79,7 +77,7 @@ class TelegramAnalyticsOpinionLeadersBuilder
         $day = Carbon::createFromTimestamp($timestamp, $this->config->timezone());
         $dayKey = $day->format('Y-m-d');
 
-        if (!isset($authorDailyStats[$authorKey][$dayKey])) {
+        if (! isset($authorDailyStats[$authorKey][$dayKey])) {
             $authorDailyStats[$authorKey][$dayKey] = [
                 'authorKey' => $authorKey,
                 'authorId' => $context['authorId'],
@@ -106,7 +104,7 @@ class TelegramAnalyticsOpinionLeadersBuilder
     }
 
     /**
-     * @param array<string, array<string, mixed>> $authorStats
+     * @param  array<string, array<string, mixed>>  $authorStats
      * @return array<int, array<string, mixed>>
      */
     public function buildLeaders(array $authorStats): array
@@ -127,8 +125,8 @@ class TelegramAnalyticsOpinionLeadersBuilder
     }
 
     /**
-     * @param array<string, array<string, array<string, mixed>>> $authorDailyStats
-     * @param array<int, string> $leaderKeys
+     * @param  array<string, array<string, array<string, mixed>>>  $authorDailyStats
+     * @param  array<int, string>  $leaderKeys
      * @return array<int, array<string, mixed>>
      */
     public function buildLeadersDaily(array $authorDailyStats, array $leaderKeys): array
@@ -140,12 +138,12 @@ class TelegramAnalyticsOpinionLeadersBuilder
         $daily = [];
 
         foreach ($leaderKeys as $leaderKey) {
-            if (!isset($authorDailyStats[$leaderKey]) || !is_array($authorDailyStats[$leaderKey])) {
+            if (! isset($authorDailyStats[$leaderKey]) || ! is_array($authorDailyStats[$leaderKey])) {
                 continue;
             }
 
             foreach ($authorDailyStats[$leaderKey] as $dayStats) {
-                if (!is_array($dayStats)) {
+                if (! is_array($dayStats)) {
                     continue;
                 }
 
@@ -169,30 +167,30 @@ class TelegramAnalyticsOpinionLeadersBuilder
     }
 
     /**
-     * @param array<string, mixed> $item
+     * @param  array<string, mixed>  $item
      */
     private function resolveAuthorKey(array $item): ?string
     {
         $authorId = $item['authorId'] ?? null;
         if (is_int($authorId) && $authorId > 0) {
-            return 'id:' . $authorId;
+            return 'id:'.$authorId;
         }
 
         $signature = trim((string) ($item['authorSignature'] ?? ''));
         if ($signature !== '') {
-            return 'signature:' . mb_strtolower($signature);
+            return 'signature:'.mb_strtolower($signature);
         }
 
         $postAuthor = trim((string) ($item['postAuthor'] ?? ''));
         if ($postAuthor !== '') {
-            return 'post_author:' . mb_strtolower($postAuthor);
+            return 'post_author:'.mb_strtolower($postAuthor);
         }
 
         return null;
     }
 
     /**
-     * @param array<string, mixed> $item
+     * @param  array<string, mixed>  $item
      */
     private function resolveAuthorLabel(array $item): ?string
     {
@@ -208,11 +206,11 @@ class TelegramAnalyticsOpinionLeadersBuilder
 
         $authorId = $item['authorId'] ?? null;
 
-        return is_int($authorId) && $authorId > 0 ? 'ID ' . $authorId : null;
+        return is_int($authorId) && $authorId > 0 ? 'ID '.$authorId : null;
     }
 
     /**
-     * @param array{views: float, forwards: float, replies: float, reactions: float, gifts: float} $weights
+     * @param  array{views: float, forwards: float, replies: float, reactions: float, gifts: float}  $weights
      */
     private function calculateScore(
         int $views,

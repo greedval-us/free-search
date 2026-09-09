@@ -5,9 +5,13 @@ namespace App\Modules\Telegram\DTO\Response\Messages;
 class ChatPhotoDTO
 {
     public string $_;
+
     public bool $has_video = false;
+
     public ?int $photo_id = null;
+
     public ?string $stripped_thumb = null;
+
     public ?int $dc_id = null;
 
     public array $raw = [];

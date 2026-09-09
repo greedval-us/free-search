@@ -19,8 +19,7 @@ final class ShifrController extends Controller
     public function __construct(
         private readonly ShifrToolkitServiceInterface $toolkitService,
         private readonly ShifrClassicCipherServiceInterface $classicCipherService,
-    ) {
-    }
+    ) {}
 
     public function hash(ShifrHashRequest $request): JsonResponse
     {
@@ -64,7 +63,7 @@ final class ShifrController extends Controller
     }
 
     /**
-     * @param callable(): ShifrResultDataInterface $resolver
+     * @param  callable(): ShifrResultDataInterface  $resolver
      */
     private function respondWithData(AbstractShifrRequest $request, callable $resolver): JsonResponse
     {
@@ -74,7 +73,7 @@ final class ShifrController extends Controller
     }
 
     /**
-     * @param callable(): ShifrResultDataInterface|null $resolver
+     * @param  callable(): ShifrResultDataInterface|null  $resolver
      */
     private function respondWithOptionalData(
         AbstractShifrRequest $request,

@@ -6,4 +6,3 @@ interface DomainLiteWhoisClientInterface
 {
     public function query(string $server, string $domain): ?string;
 }
-

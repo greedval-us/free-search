@@ -20,7 +20,7 @@ class SearchCommentsRequest extends FormRequest
         return [
             'chatUsername' => ['required', 'string', 'max:255'],
             'postId' => ['required', 'integer', 'min:1'],
-            'limit' => ['nullable', 'integer', 'min:1', 'max:' . $this->commentsLimitMax()],
+            'limit' => ['nullable', 'integer', 'min:1', 'max:'.$this->commentsLimitMax()],
             'offsetId' => ['nullable', 'integer', 'min:0'],
         ];
     }

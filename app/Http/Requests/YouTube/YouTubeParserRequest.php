@@ -21,7 +21,7 @@ class YouTubeParserRequest extends FormRequest
     {
         return [
             'videoId' => ['required', 'string', 'max:2048'],
-            'limit' => ['nullable', 'integer', 'min:1', 'max:' . $this->youtubeModuleConfig()->parserCommentsLimitMax()],
+            'limit' => ['nullable', 'integer', 'min:1', 'max:'.$this->youtubeModuleConfig()->parserCommentsLimitMax()],
             'pageToken' => ['nullable', 'string', 'max:2048'],
             'order' => ['nullable', Rule::in(['relevance', 'time'])],
             'searchTerms' => ['nullable', 'string', 'max:255'],
@@ -48,5 +48,4 @@ class YouTubeParserRequest extends FormRequest
     {
         return $this->toDTO()->toArray();
     }
-
 }

@@ -6,6 +6,5 @@ final class NewsMediaIntelLookupDTO
 {
     public function __construct(
         public readonly string $query,
-    ) {
-    }
+    ) {}
 }

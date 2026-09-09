@@ -20,4 +20,3 @@ interface SavedQueryServiceInterface
      */
     public function listForUser(User $user, int $limit = 40): array;
 }
-

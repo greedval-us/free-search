@@ -8,11 +8,10 @@ final class NewsMentionDeduplicator
 {
     public function __construct(
         private readonly NewsMentionFingerprintFactory $fingerprints,
-    ) {
-    }
+    ) {}
 
     /**
-     * @param array<int, NewsMentionDTO> $mentions
+     * @param  array<int, NewsMentionDTO>  $mentions
      * @return array<int, NewsMentionDTO>
      */
     public function deduplicate(array $mentions): array
@@ -73,7 +72,7 @@ final class NewsMentionDeduplicator
         $existingHasValidDate = $this->hasValidPublishedAt($existing->publishedAt);
         $candidateHasValidDate = $this->hasValidPublishedAt($candidate->publishedAt);
 
-        if (!$existingHasValidDate && $candidateHasValidDate) {
+        if (! $existingHasValidDate && $candidateHasValidDate) {
             return true;
         }
 

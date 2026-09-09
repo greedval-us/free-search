@@ -10,6 +10,7 @@ use App\Modules\YouTube\DTO\Result\YouTubeParserRunStatusDTO;
 use App\Modules\YouTube\DTO\Result\YouTubeSearchResultDTO;
 use App\Modules\YouTube\Parser\Contracts\YouTubeParserApplicationServiceInterface;
 use App\Modules\YouTube\Search\Contracts\YouTubeSearchApplicationServiceInterface;
+
 trait MocksYouTubeServices
 {
     private function mockYouTubeSearch(YouTubeSearchResultDTO $result): void

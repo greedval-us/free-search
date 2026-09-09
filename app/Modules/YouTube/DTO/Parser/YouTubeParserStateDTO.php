@@ -9,8 +9,8 @@ use App\Support\Contracts\ArrayPayloadable;
 final class YouTubeParserStateDTO implements ArrayPayloadable
 {
     /**
-     * @param array<string, mixed> $context
-     * @param array<string, mixed>|null $result
+     * @param  array<string, mixed>  $context
+     * @param  array<string, mixed>|null  $result
      */
     public function __construct(
         private readonly string $runId,
@@ -25,11 +25,10 @@ final class YouTubeParserStateDTO implements ArrayPayloadable
         private YouTubeParserCursorDTO $cursor,
         private YouTubeParserCollectedDataDTO $data,
         private ?array $result = null,
-    ) {
-    }
+    ) {}
 
     /**
-     * @param array<string, mixed> $payload
+     * @param  array<string, mixed>  $payload
      */
     public static function fromArray(array $payload): self
     {
@@ -87,7 +86,7 @@ final class YouTubeParserStateDTO implements ArrayPayloadable
     }
 
     /**
-     * @param array<string, mixed> $result
+     * @param  array<string, mixed>  $result
      */
     public function complete(array $result, YouTubeParserStage $stage = YouTubeParserStage::Completed): void
     {

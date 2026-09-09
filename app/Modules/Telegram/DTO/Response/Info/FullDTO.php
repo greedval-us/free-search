@@ -5,51 +5,97 @@ namespace App\Modules\Telegram\DTO\Response\Info;
 class FullDTO
 {
     public string $_;
+
     public int $flags;
+
     public bool $can_view_participants;
+
     public bool $can_set_username;
+
     public bool $can_set_stickers;
+
     public bool $hidden_prehistory;
+
     public bool $can_set_location;
+
     public bool $has_scheduled;
+
     public bool $can_view_stats;
+
     public bool $blocked;
+
     public int $flags2;
+
     public bool $can_delete_channel;
+
     public bool $antispam;
+
     public bool $participants_hidden;
+
     public bool $translations_disabled;
+
     public bool $stories_pinned_available;
+
     public bool $view_forum_as_messages;
+
     public bool $restricted_sponsored;
+
     public bool $can_view_revenue;
+
     public bool $paid_media_allowed;
+
     public bool $can_view_stars_revenue;
+
     public bool $paid_reactions_available;
+
     public bool $stargifts_available;
+
     public bool $paid_messages_available;
+
     public int $id;
+
     public string $about;
+
     public ?int $participants_count;
+
     public ?int $online_count;
+
     public ?int $read_inbox_max_id;
+
     public ?int $read_outbox_max_id;
+
     public ?int $unread_count;
+
     public ?ChatPhotoDTO $chat_photo;
+
     public ?int $pinned_msg_id;
+
     public ?int $linked_chat_id;
+
     public ?int $pts;
+
     public ?AvailableReactionsDTO $available_reactions;
+
     public ?int $reactions_limit;
+
     public ?int $stargifts_count;
+
     public array $bot_info;
+
     public ?int $slowmode_seconds = null;
+
     public ?int $ttl_period = null;
+
     public ?int $migrated_from_chat_id = null;
+
     public ?int $migrated_from_max_id = null;
+
     public mixed $exported_invite = null;
+
     public mixed $notify_settings = null;
+
     public mixed $stats_dc = null;
+
     public array $raw = [];
 
     public function __construct(array $data)

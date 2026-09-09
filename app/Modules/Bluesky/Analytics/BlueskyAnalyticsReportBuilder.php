@@ -8,11 +8,12 @@ use Illuminate\Support\Collection;
 final class BlueskyAnalyticsReportBuilder
 {
     private const TOP_POSTS_LIMIT = 8;
+
     private const TOP_VALUES_LIMIT = 10;
 
     /**
-     * @param array<int, array<string, mixed>> $posts
-     * @param array<string, mixed>|null $profile
+     * @param  array<int, array<string, mixed>>  $posts
+     * @param  array<string, mixed>|null  $profile
      */
     public function build(
         string $mode,
@@ -65,7 +66,7 @@ final class BlueskyAnalyticsReportBuilder
     }
 
     /**
-     * @param Collection<int, array<string, mixed>> $posts
+     * @param  Collection<int, array<string, mixed>>  $posts
      * @return array<int, array<string, mixed>>
      */
     private function buildTimeline(Collection $posts): array
@@ -94,7 +95,7 @@ final class BlueskyAnalyticsReportBuilder
     }
 
     /**
-     * @param Collection<int, mixed> $values
+     * @param  Collection<int, mixed>  $values
      * @return array<int, array<string, mixed>>
      */
     private function countScalarValues(Collection $values, string $key): array
@@ -114,7 +115,7 @@ final class BlueskyAnalyticsReportBuilder
     }
 
     /**
-     * @param Collection<int, array<string, mixed>> $posts
+     * @param  Collection<int, array<string, mixed>>  $posts
      * @return array<int, array<string, mixed>>
      */
     private function buildTopAuthors(Collection $posts): array
@@ -137,7 +138,7 @@ final class BlueskyAnalyticsReportBuilder
     }
 
     /**
-     * @param Collection<int, array<string, mixed>> $posts
+     * @param  Collection<int, array<string, mixed>>  $posts
      * @return array<int, array<string, mixed>>
      */
     private function buildTopMentions(Collection $posts): array
@@ -159,7 +160,7 @@ final class BlueskyAnalyticsReportBuilder
     }
 
     /**
-     * @param array<string, mixed>|null $profile
+     * @param  array<string, mixed>|null  $profile
      */
     private function buildResolvedTarget(string $mode, ?array $profile, string $target): string
     {

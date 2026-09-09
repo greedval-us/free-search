@@ -8,8 +8,7 @@ final class SeoAuditRecommendationBuilder
 {
     public function __construct(
         private readonly SeoAuditTechnicalThresholds $thresholds,
-    ) {
-    }
+    ) {}
 
     /**
      * @param  array<string, mixed>  $meta
@@ -98,7 +97,7 @@ final class SeoAuditRecommendationBuilder
         if ($this->thresholds->hasHighRenderBlocking((int) ($performance['renderBlocking']['total'] ?? 0))) {
             $items[] = ['priority' => SiteIntelRecommendationPriority::Medium->value, 'key' => 'reduce_render_blocking'];
         }
-        if (($pagination['isPaginated'] ?? false) === true && !(($pagination['hasRelPrev'] ?? false) && ($pagination['hasRelNext'] ?? false))) {
+        if (($pagination['isPaginated'] ?? false) === true && ! (($pagination['hasRelPrev'] ?? false) && ($pagination['hasRelNext'] ?? false))) {
             $items[] = ['priority' => SiteIntelRecommendationPriority::Low->value, 'key' => 'fix_pagination_rel_links'];
         }
         if ((int) ($quality['anchors']['empty'] ?? 0) > 0) {

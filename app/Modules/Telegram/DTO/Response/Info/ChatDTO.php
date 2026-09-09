@@ -5,29 +5,53 @@ namespace App\Modules\Telegram\DTO\Response\Info;
 class ChatDTO
 {
     public string $_;
+
     public int $flags;
+
     public bool $creator;
+
     public bool $left;
+
     public bool $broadcast;
+
     public bool $verified;
+
     public bool $megagroup;
+
     public bool $restricted;
+
     public bool $signatures;
+
     public bool $min;
+
     public bool $scam;
+
     public bool $has_link;
+
     public bool $has_geo;
+
     public bool $slowmode_enabled;
+
     public bool $forum;
+
     public bool $gigagroup;
+
     public int $id;
+
     public string $title;
+
     public ?string $username;
+
     public ?PhotoDTO $photo;
+
     public int $date;
+
     public ?string $about = null;
+
     public ?int $participants_count = null;
+
     public array $usernames = [];
+
     public array $raw = [];
 
     public function __construct(array $data)

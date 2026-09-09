@@ -8,11 +8,11 @@ use App\Support\Contracts\ArrayPayloadable;
 final class MastodonParserCollectedDataDTO implements ArrayPayloadable
 {
     /**
-     * @param array<string, mixed>|null $account
-     * @param array<string, bool> $statusIds
-     * @param array<string, bool> $commentIds
-     * @param array<int, array<string, mixed>> $statusesIndex
-     * @param array<int, array<string, mixed>> $commentsIndex
+     * @param  array<string, mixed>|null  $account
+     * @param  array<string, bool>  $statusIds
+     * @param  array<string, bool>  $commentIds
+     * @param  array<int, array<string, mixed>>  $statusesIndex
+     * @param  array<int, array<string, mixed>>  $commentsIndex
      */
     public function __construct(
         private ?array $account = null,
@@ -20,11 +20,10 @@ final class MastodonParserCollectedDataDTO implements ArrayPayloadable
         private array $commentIds = [],
         private array $statusesIndex = [],
         private array $commentsIndex = [],
-    ) {
-    }
+    ) {}
 
     /**
-     * @param array<string, mixed> $payload
+     * @param  array<string, mixed>  $payload
      */
     public static function fromArray(array $payload): self
     {
@@ -46,7 +45,7 @@ final class MastodonParserCollectedDataDTO implements ArrayPayloadable
     }
 
     /**
-     * @param array<string, mixed> $account
+     * @param  array<string, mixed>  $account
      */
     public function setAccount(array $account): void
     {
@@ -85,7 +84,7 @@ final class MastodonParserCollectedDataDTO implements ArrayPayloadable
     }
 
     /**
-     * @param array<string, mixed> $presented
+     * @param  array<string, mixed>  $presented
      */
     public function appendStatus(array $presented): bool
     {
@@ -102,7 +101,7 @@ final class MastodonParserCollectedDataDTO implements ArrayPayloadable
     }
 
     /**
-     * @param array<string, mixed> $presented
+     * @param  array<string, mixed>  $presented
      */
     public function shouldLoadCommentsForStatus(array $presented): bool
     {
@@ -112,7 +111,7 @@ final class MastodonParserCollectedDataDTO implements ArrayPayloadable
     }
 
     /**
-     * @param array<string, mixed> $presented
+     * @param  array<string, mixed>  $presented
      */
     public function appendComment(string $rootStatusId, array $presented): void
     {
@@ -122,7 +121,7 @@ final class MastodonParserCollectedDataDTO implements ArrayPayloadable
             return;
         }
 
-        $compositeId = $rootStatusId . ':' . $commentId;
+        $compositeId = $rootStatusId.':'.$commentId;
         if (isset($this->commentIds[$compositeId])) {
             return;
         }

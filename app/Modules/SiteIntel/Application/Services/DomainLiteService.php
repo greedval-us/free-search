@@ -2,8 +2,8 @@
 
 namespace App\Modules\SiteIntel\Application\Services;
 
-use App\Modules\SiteIntel\Application\Contracts\DomainLiteServiceInterface;
 use App\Modules\SiteIntel\Application\Contracts\DomainLiteDnsResolverInterface;
+use App\Modules\SiteIntel\Application\Contracts\DomainLiteServiceInterface;
 use App\Modules\SiteIntel\Application\Services\DomainLite\DomainLiteRiskScoreCalculator;
 use App\Modules\SiteIntel\Application\Services\DomainLite\DomainLiteWhoisLookup;
 use App\Modules\SiteIntel\DTO\Result\DomainLiteResultDTO;
@@ -15,8 +15,7 @@ final class DomainLiteService implements DomainLiteServiceInterface
         private readonly DomainLiteDnsResolverInterface $dnsResolver,
         private readonly DomainLiteWhoisLookup $whoisLookup,
         private readonly DomainLiteRiskScoreCalculator $riskScoreCalculator,
-    ) {
-    }
+    ) {}
 
     public function lookup(string $domain): DomainLiteResultDTO
     {
@@ -35,7 +34,7 @@ final class DomainLiteService implements DomainLiteServiceInterface
     }
 
     /**
-     * @param array<string, mixed> $whois
+     * @param  array<string, mixed>  $whois
      * @return array<string, mixed>
      */
     private function enrichWhois(array $whois): array

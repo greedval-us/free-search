@@ -5,22 +5,33 @@ namespace App\Modules\Telegram\DTO\Response\Messages;
 class UserDTO
 {
     public string $_;
+
     public int $id;
+
     public string $first_name;
+
     public ?string $last_name = null;
+
     public ?string $username = null;
 
     public ?object $photo = null;
+
     public ?array $status = null;
 
     public bool $bot = false;
+
     public bool $verified = false;
+
     public bool $restricted = false;
+
     public bool $scam = false;
+
     public bool $fake = false;
+
     public bool $premium = false;
 
     public ?string $phone = null;
+
     public ?string $language_code = null;
 
     public array $raw = [];
@@ -33,7 +44,7 @@ class UserDTO
         $this->last_name = $data['last_name'] ?? null;
         $this->username = $data['username'] ?? null;
 
-        $this->photo = isset($data['photo']) ? (object)$data['photo'] : null;
+        $this->photo = isset($data['photo']) ? (object) $data['photo'] : null;
         $this->status = $data['status'] ?? null;
 
         $this->bot = $data['bot'] ?? false;

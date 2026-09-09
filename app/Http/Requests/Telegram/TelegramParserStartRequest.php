@@ -24,7 +24,7 @@ class TelegramParserStartRequest extends FormRequest
         return [
             'chatUsername' => ['required', 'string', 'max:255'],
             'keyword' => ['nullable', 'string', 'max:255'],
-            'period' => ['required', 'string', 'in:' . implode(',', self::PERIODS)],
+            'period' => ['required', 'string', 'in:'.implode(',', self::PERIODS)],
             'dateFrom' => ['nullable', 'date_format:Y-m-d'],
             'dateTo' => ['nullable', 'date_format:Y-m-d'],
         ];
@@ -44,7 +44,7 @@ class TelegramParserStartRequest extends FormRequest
             $dateFrom = $this->input('dateFrom');
             $dateTo = $this->input('dateTo');
 
-            if (!$dateFrom || !$dateTo) {
+            if (! $dateFrom || ! $dateTo) {
                 $validator->errors()->add('dateTo', __('errors.validation.custom_period_requires_both_dates'));
 
                 return;

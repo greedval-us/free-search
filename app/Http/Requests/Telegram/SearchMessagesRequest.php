@@ -25,7 +25,7 @@ class SearchMessagesRequest extends FormRequest
             'fromUsername' => ['nullable', 'string', 'max:255'],
             'dateFrom' => ['nullable', 'date_format:Y-m-d'],
             'dateTo' => ['nullable', 'date_format:Y-m-d'],
-            'limit' => ['nullable', 'integer', 'min:1', 'max:' . $this->messagesLimitMax()],
+            'limit' => ['nullable', 'integer', 'min:1', 'max:'.$this->messagesLimitMax()],
             'offsetId' => ['nullable', 'integer', 'min:0'],
         ];
     }
@@ -83,11 +83,11 @@ class SearchMessagesRequest extends FormRequest
             }
         }
 
-        if (!empty($validated['dateFrom'])) {
+        if (! empty($validated['dateFrom'])) {
             $filter['min_date'] = Carbon::createFromFormat('Y-m-d', $validated['dateFrom'], $this->telegramConfig()->timezone())->startOfDay()->timestamp;
         }
 
-        if (!empty($validated['dateTo'])) {
+        if (! empty($validated['dateTo'])) {
             $filter['max_date'] = Carbon::createFromFormat('Y-m-d', $validated['dateTo'], $this->telegramConfig()->timezone())->endOfDay()->timestamp;
         }
 

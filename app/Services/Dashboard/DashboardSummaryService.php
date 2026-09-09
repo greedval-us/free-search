@@ -4,17 +4,17 @@ namespace App\Services\Dashboard;
 
 use App\Models\RequestLog;
 use App\Support\Dashboard\DashboardModuleRegistry;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Carbon;
 
 class DashboardSummaryService
 {
     public function __construct(
         private readonly DashboardModuleRegistry $moduleRegistry,
-    ) {
-    }
+    ) {}
 
     /**
-     * @param \Illuminate\Database\Eloquent\Builder<RequestLog> $query
+     * @param  Builder<RequestLog>  $query
      * @return array<string, int>
      */
     public function buildSummary($query): array
@@ -35,7 +35,7 @@ class DashboardSummaryService
     }
 
     /**
-     * @param \Illuminate\Database\Eloquent\Builder<RequestLog> $query
+     * @param  Builder<RequestLog>  $query
      * @return array<string, mixed>|null
      */
     public function buildFavoriteModule($query): ?array
@@ -46,7 +46,7 @@ class DashboardSummaryService
             ->orderByDesc('total')
             ->first();
 
-        if (!$record instanceof RequestLog || !is_string($record->module_key)) {
+        if (! $record instanceof RequestLog || ! is_string($record->module_key)) {
             return null;
         }
 
@@ -57,8 +57,8 @@ class DashboardSummaryService
     }
 
     /**
-     * @param \Illuminate\Database\Eloquent\Builder<RequestLog> $query
-     * @param array<string, bool> $pinnedLookup
+     * @param  Builder<RequestLog>  $query
+     * @param  array<string, bool>  $pinnedLookup
      * @return array<int, array<string, mixed>>
      */
     public function buildModuleCards($query, array $pinnedLookup): array
@@ -107,4 +107,3 @@ class DashboardSummaryService
         return null;
     }
 }
-

@@ -19,7 +19,7 @@ final class DomainNormalizer
         $trimmed = preg_replace('/:\d+$/', '', $trimmed) ?? $trimmed;
         $trimmed = trim($trimmed, ". \t\n\r\0\x0B");
 
-        if ($trimmed === '' || !preg_match('/^(?:[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?\.)+[a-z]{2,}$/', $trimmed)) {
+        if ($trimmed === '' || ! preg_match('/^(?:[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?\.)+[a-z]{2,}$/', $trimmed)) {
             return null;
         }
 
@@ -33,10 +33,10 @@ final class DomainNormalizer
             return null;
         }
 
-        $candidate = str_contains($trimmed, '://') ? $trimmed : 'https://' . $trimmed;
+        $candidate = str_contains($trimmed, '://') ? $trimmed : 'https://'.$trimmed;
         $parts = parse_url($candidate);
 
-        if (!is_array($parts) || !isset($parts['host'])) {
+        if (! is_array($parts) || ! isset($parts['host'])) {
             return null;
         }
 
@@ -46,7 +46,7 @@ final class DomainNormalizer
         }
 
         $scheme = strtolower((string) ($parts['scheme'] ?? 'https'));
-        if (!in_array($scheme, ['http', 'https'], true)) {
+        if (! in_array($scheme, ['http', 'https'], true)) {
             $scheme = 'https';
         }
 
@@ -55,9 +55,8 @@ final class DomainNormalizer
             $path = '/';
         }
 
-        $query = isset($parts['query']) && $parts['query'] !== '' ? '?' . $parts['query'] : '';
+        $query = isset($parts['query']) && $parts['query'] !== '' ? '?'.$parts['query'] : '';
 
         return sprintf('%s://%s%s%s', $scheme, $host, $path, $query);
     }
 }
-

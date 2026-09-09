@@ -5,7 +5,7 @@ namespace App\Http\Requests\Concerns;
 trait NormalizesBooleanInputs
 {
     /**
-     * @param array<int, string> $keys
+     * @param  array<int, string>  $keys
      */
     protected function normalizeBooleanInputs(array $keys): void
     {

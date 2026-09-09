@@ -10,12 +10,12 @@ final class YouTubeInputNormalizer
             return '';
         }
 
-        if (!str_contains($value, '://') && !str_contains($value, 'youtube.com') && !str_contains($value, 'youtu.be')) {
+        if (! str_contains($value, '://') && ! str_contains($value, 'youtube.com') && ! str_contains($value, 'youtu.be')) {
             return $value;
         }
 
         $parts = parse_url($value);
-        if (!is_array($parts)) {
+        if (! is_array($parts)) {
             return $value;
         }
 

@@ -29,7 +29,7 @@ class RequestQueryPreviewResolver
     ];
 
     /**
-     * @param array<string, mixed> $payload
+     * @param  array<string, mixed>  $payload
      */
     public function resolve(array $payload): ?string
     {

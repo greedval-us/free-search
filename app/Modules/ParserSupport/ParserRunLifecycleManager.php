@@ -7,7 +7,7 @@ use App\Modules\ParserSupport\Enums\ParserRunStatus;
 final class ParserRunLifecycleManager
 {
     /**
-     * @param array<string, mixed> $run
+     * @param  array<string, mixed>  $run
      */
     public function isRunning(array $run): bool
     {
@@ -15,7 +15,7 @@ final class ParserRunLifecycleManager
     }
 
     /**
-     * @param array<string, mixed> $run
+     * @param  array<string, mixed>  $run
      * @return array<string, mixed>
      */
     public function markFailed(array $run, string $message, string $stage = 'failed'): array
@@ -29,8 +29,8 @@ final class ParserRunLifecycleManager
     }
 
     /**
-     * @param array<string, mixed> $run
-     * @param array<string, mixed> $result
+     * @param  array<string, mixed>  $run
+     * @param  array<string, mixed>  $result
      * @return array<string, mixed>
      */
     public function markCompleted(array $run, array $result, string $stage = 'completed'): array

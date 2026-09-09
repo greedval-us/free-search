@@ -13,11 +13,11 @@ class BlueskySearchContentActionTest extends TestCase
 {
     public function test_it_applies_local_filters_and_preserves_gateway_cursors(): void
     {
-        $gateway = new FakeBlueskySearchGateway();
+        $gateway = new FakeBlueskySearchGateway;
         $action = new SearchContentAction(
             $gateway,
-            new BlueskyPostPresenter(new BlueskyActorPresenter()),
-            new BlueskyActorPresenter(),
+            new BlueskyPostPresenter(new BlueskyActorPresenter),
+            new BlueskyActorPresenter,
         );
 
         $result = $action->handle(new BlueskySearchQueryDTO(

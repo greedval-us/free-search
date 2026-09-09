@@ -7,8 +7,8 @@ use App\Models\ParserRun;
 final class ParserRunHistoryItemBuilder
 {
     /**
-     * @param array<string, mixed>|null $run
-     * @param null|callable(array<string, mixed>|null, ParserRun): array<string, mixed> $extra
+     * @param  array<string, mixed>|null  $run
+     * @param  null|callable(array<string, mixed>|null, ParserRun): array<string, mixed>  $extra
      * @return array<string, mixed>
      */
     public function build(

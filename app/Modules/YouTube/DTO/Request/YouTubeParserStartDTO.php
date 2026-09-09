@@ -7,8 +7,7 @@ final readonly class YouTubeParserStartDTO
     public function __construct(
         public int $userId,
         public string $videoId,
-    ) {
-    }
+    ) {}
 
     /**
      * @return array<string, mixed>

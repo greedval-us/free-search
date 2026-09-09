@@ -13,5 +13,4 @@ interface BlueskyParserApplicationServiceInterface extends ParserRunApplicationS
     public function status(int $userId, string $runId): ?BlueskyParserRunStatusDTO;
 
     public function stop(int $userId, string $runId): ?BlueskyParserRunStatusDTO;
-
 }

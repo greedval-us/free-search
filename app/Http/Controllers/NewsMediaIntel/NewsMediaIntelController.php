@@ -11,8 +11,7 @@ final class NewsMediaIntelController extends Controller
 {
     public function __construct(
         private readonly NewsMediaIntelServiceInterface $newsMediaIntelService,
-    ) {
-    }
+    ) {}
 
     public function lookup(NewsMediaIntelLookupRequest $request): JsonResponse
     {

@@ -3,8 +3,8 @@
 namespace App\Modules\Telegram\Analytics;
 
 use App\Modules\Telegram\Core\Contracts\TelegramGatewayInterface;
-use App\Modules\Telegram\Presenters\TelegramMessagePresenter;
 use App\Modules\Telegram\DTO\Response\Info\ChannelInfoDTO;
+use App\Modules\Telegram\Presenters\TelegramMessagePresenter;
 use App\Modules\Telegram\Support\TelegramConfig;
 use Carbon\Carbon;
 
@@ -16,14 +16,11 @@ class TelegramAnalyticsService
         private readonly TelegramMessageRangeLoader $messageRangeLoader,
         private readonly TelegramAnalyticsSummaryBuilder $summaryBuilder,
         private readonly TelegramConfig $config,
-    ) {
-    }
+    ) {}
 
     /**
      * Build analytics payload for a channel and a time range.
      *
-     * @param string|null $scorePriority
-     * @param string|null $keyword
      * @return array<string, mixed>
      */
     public function build(
@@ -50,7 +47,7 @@ class TelegramAnalyticsService
                 'chatUsername' => $chatUsername,
                 'dateFrom' => $dateFrom->toIso8601String(),
                 'dateTo' => $dateTo->toIso8601String(),
-                'label' => $dateFrom->format('d.m.Y') . ' - ' . $dateTo->format('d.m.Y'),
+                'label' => $dateFrom->format('d.m.Y').' - '.$dateTo->format('d.m.Y'),
                 'periodDays' => max(1, min($this->periodMaxDays(), $dateFrom->diffInDays($dateTo) + 1)),
                 'groupBy' => $groupBy,
                 'keyword' => $keyword,
@@ -107,7 +104,7 @@ class TelegramAnalyticsService
         $profiles = $this->scoreProfiles();
         $priority = strtolower(trim((string) $priority));
 
-        if (!array_key_exists($priority, $profiles)) {
+        if (! array_key_exists($priority, $profiles)) {
             $priority = 'balanced';
         }
 
@@ -123,7 +120,7 @@ class TelegramAnalyticsService
     private function buildGroupInfo(string $chatUsername): ?array
     {
         $info = $this->telegramService->getInfo($chatUsername);
-        if (!$info instanceof ChannelInfoDTO || $info->chat === null) {
+        if (! $info instanceof ChannelInfoDTO || $info->chat === null) {
             return null;
         }
 

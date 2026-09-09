@@ -15,15 +15,15 @@ final class MadelineProtoSessionPool
     {
         $directory = $this->config->sessionDirectoryPath();
 
-        if (!is_dir($directory)) {
+        if (! is_dir($directory)) {
             return [];
         }
 
-        $matches = glob($directory . DIRECTORY_SEPARATOR . 'session*.madeline') ?: [];
+        $matches = glob($directory.DIRECTORY_SEPARATOR.'session*.madeline') ?: [];
         $names = [];
 
         foreach ($matches as $path) {
-            if (!is_file($path) && !is_dir($path)) {
+            if (! is_file($path) && ! is_dir($path)) {
                 continue;
             }
 
@@ -74,7 +74,7 @@ final class MadelineProtoSessionPool
         }
 
         try {
-            if (!flock($handle, LOCK_EX)) {
+            if (! flock($handle, LOCK_EX)) {
                 return $sessionNames[0];
             }
 

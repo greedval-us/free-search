@@ -26,4 +26,3 @@ class SaveQueryRequest extends FormRequest
         return (int) $this->validated('request_log_id');
     }
 }
-

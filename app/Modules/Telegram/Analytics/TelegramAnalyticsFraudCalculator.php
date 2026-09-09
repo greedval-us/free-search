@@ -7,9 +7,7 @@ use Illuminate\Support\Str;
 
 class TelegramAnalyticsFraudCalculator
 {
-    public function __construct(private readonly TelegramConfig $config)
-    {
-    }
+    public function __construct(private readonly TelegramConfig $config) {}
 
     /**
      * @param array<int, array{
@@ -24,9 +22,9 @@ class TelegramAnalyticsFraudCalculator
      *     gifts: int,
      *     interactions: int
      * }> $posts
-     * @param array<int, array<string, mixed>> $timeline
-     * @param array<string, mixed> $totals
-     * @param array<string, mixed> $audience
+     * @param  array<int, array<string, mixed>>  $timeline
+     * @param  array<string, mixed>  $totals
+     * @param  array<string, mixed>  $audience
      * @return array<string, mixed>
      */
     public function build(array $posts, array $timeline, array $totals, array $audience): array
@@ -157,8 +155,7 @@ class TelegramAnalyticsFraudCalculator
         $reactionRatioCluster = $triggerRules['reaction_ratio_cluster'] ?? [];
         $highRatioReactions = count(array_filter(
             $posts,
-            static fn (array $post): bool =>
-                ((int) ($post['views'] ?? 0)) >= (int) ($reactionRatioCluster['views_min'] ?? 20)
+            static fn (array $post): bool => ((int) ($post['views'] ?? 0)) >= (int) ($reactionRatioCluster['views_min'] ?? 20)
                 && ((int) ($post['reactions'] ?? 0)) >= (int) ($reactionRatioCluster['reactions_min'] ?? 10)
                 && (((int) ($post['reactions'] ?? 0)) / max(1, (int) ($post['views'] ?? 0))) >= (float) ($reactionRatioCluster['ratio_min'] ?? 0.5)
         ));

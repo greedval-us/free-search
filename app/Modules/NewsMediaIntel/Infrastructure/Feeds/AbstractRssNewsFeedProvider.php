@@ -14,18 +14,17 @@ abstract class AbstractRssNewsFeedProvider
     public function __construct(
         protected readonly NewsMediaIntelConfig $config,
         protected readonly ExternalServiceLogger $externalServiceLogger,
-    ) {
-    }
+    ) {}
 
     /**
-     * @param array<string, string> $tokens
+     * @param  array<string, string>  $tokens
      */
     protected function buildUrlFromTemplate(string $template, string $query, array $tokens = []): string
     {
         $replacements = ['{query}' => urlencode($query)];
 
         foreach ($tokens as $key => $value) {
-            $replacements['{' . $key . '}'] = urlencode($value);
+            $replacements['{'.$key.'}'] = urlencode($value);
         }
 
         return strtr($template, $replacements);
@@ -47,22 +46,25 @@ abstract class AbstractRssNewsFeedProvider
             $this->externalServiceLogger->logConnectionFailure($source, 'fetchRss', $exception, [
                 'url' => $url,
             ]);
+
             return [];
         }
 
-        if (!$response->ok()) {
+        if (! $response->ok()) {
             $this->externalServiceLogger->logHttpFailure($source, 'fetchRss', $response->status(), [
                 'url' => $url,
             ], $response->body());
+
             return [];
         }
 
         libxml_use_internal_errors(true);
         $rss = simplexml_load_string((string) $response->body());
-        if (!$rss instanceof SimpleXMLElement) {
+        if (! $rss instanceof SimpleXMLElement) {
             $this->externalServiceLogger->logFallback($source, 'fetchRss', 'invalid_xml', [
                 'url' => $url,
             ]);
+
             return [];
         }
 
@@ -99,7 +101,7 @@ abstract class AbstractRssNewsFeedProvider
 
         foreach ($item->getNamespaces(true) as $namespaceUri) {
             $children = $item->children($namespaceUri);
-            if (!$children instanceof SimpleXMLElement) {
+            if (! $children instanceof SimpleXMLElement) {
                 continue;
             }
 

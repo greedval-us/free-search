@@ -7,7 +7,7 @@ final class BlueskyModuleConfig
     private const DEFAULT_TIMEZONE = 'UTC';
 
     /**
-     * @param array<string, mixed> $config
+     * @param  array<string, mixed>  $config
      */
     public static function fromArray(array $config, string $timezone = self::DEFAULT_TIMEZONE): self
     {
@@ -26,8 +26,7 @@ final class BlueskyModuleConfig
         private readonly int $searchLimitMax,
         private readonly string $defaultType,
         private readonly string $defaultSort,
-    ) {
-    }
+    ) {}
 
     public function timezone(): string
     {
@@ -55,7 +54,7 @@ final class BlueskyModuleConfig
     }
 
     /**
-     * @param array<string, mixed> $config
+     * @param  array<string, mixed>  $config
      */
     private static function stringValue(array $config, string $key, string $default): string
     {
@@ -65,7 +64,7 @@ final class BlueskyModuleConfig
     }
 
     /**
-     * @param array<string, mixed> $config
+     * @param  array<string, mixed>  $config
      */
     private static function intValue(array $config, string $key, int $default): int
     {

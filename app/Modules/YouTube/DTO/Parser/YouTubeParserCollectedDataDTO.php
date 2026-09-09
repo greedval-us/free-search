@@ -7,11 +7,11 @@ use App\Support\Contracts\ArrayPayloadable;
 final class YouTubeParserCollectedDataDTO implements ArrayPayloadable
 {
     /**
-     * @param array<string, bool> $commentIds
-     * @param array<string, bool> $replyIds
-     * @param array<string, string> $threadParentMap
-     * @param array<int, array<string, mixed>> $commentsIndex
-     * @param array<int, array<string, mixed>> $repliesIndex
+     * @param  array<string, bool>  $commentIds
+     * @param  array<string, bool>  $replyIds
+     * @param  array<string, string>  $threadParentMap
+     * @param  array<int, array<string, mixed>>  $commentsIndex
+     * @param  array<int, array<string, mixed>>  $repliesIndex
      */
     public function __construct(
         private array $commentIds = [],
@@ -19,11 +19,10 @@ final class YouTubeParserCollectedDataDTO implements ArrayPayloadable
         private array $threadParentMap = [],
         private array $commentsIndex = [],
         private array $repliesIndex = [],
-    ) {
-    }
+    ) {}
 
     /**
-     * @param array<string, mixed> $payload
+     * @param  array<string, mixed>  $payload
      */
     public static function fromArray(array $payload): self
     {
@@ -68,7 +67,7 @@ final class YouTubeParserCollectedDataDTO implements ArrayPayloadable
     }
 
     /**
-     * @param array<string, mixed> $presented
+     * @param  array<string, mixed>  $presented
      */
     public function appendCommentThread(array $presented, string $videoId): bool
     {
@@ -101,7 +100,7 @@ final class YouTubeParserCollectedDataDTO implements ArrayPayloadable
     }
 
     /**
-     * @param array<string, mixed> $reply
+     * @param  array<string, mixed>  $reply
      */
     public function appendEmbeddedReply(array $reply, string $commentId, string $threadId): bool
     {
@@ -127,7 +126,7 @@ final class YouTubeParserCollectedDataDTO implements ArrayPayloadable
     }
 
     /**
-     * @param array<string, mixed> $snippet
+     * @param  array<string, mixed>  $snippet
      */
     public function appendReplySnippet(array $snippet, string $replyId, string $parentCommentId, string $threadId): bool
     {

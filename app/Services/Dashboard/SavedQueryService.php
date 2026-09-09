@@ -13,8 +13,7 @@ class SavedQueryService implements SavedQueryServiceInterface
 {
     public function __construct(
         private readonly RequestLogRunUrlBuilder $runUrlBuilder,
-    ) {
-    }
+    ) {}
 
     /**
      * @throws ModelNotFoundException
@@ -26,7 +25,7 @@ class SavedQueryService implements SavedQueryServiceInterface
             ->where('user_id', $user->id)
             ->firstOrFail();
 
-        if (!is_string($log->module_key) || !is_string($log->query_preview) || trim($log->query_preview) === '') {
+        if (! is_string($log->module_key) || ! is_string($log->query_preview) || trim($log->query_preview) === '') {
             return;
         }
 

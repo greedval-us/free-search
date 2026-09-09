@@ -48,7 +48,7 @@ final class InspectJwtAction
 
         if ($dto->secret !== null && is_array($header)) {
             $alg = (string) ($header['alg'] ?? '');
-            $verified = $this->verifyHsSignature($alg, $headerB64 . '.' . $payloadB64, $signatureRaw, $dto->secret);
+            $verified = $this->verifyHsSignature($alg, $headerB64.'.'.$payloadB64, $signatureRaw, $dto->secret);
             $signature['verified'] = $verified['verified'];
             $signature['verificationReason'] = $verified['reason'];
         }
@@ -73,7 +73,7 @@ final class InspectJwtAction
             'HS512' => 'sha512',
         ];
 
-        if (!isset($map[$alg])) {
+        if (! isset($map[$alg])) {
             return ['verified' => null, 'reason' => __('errors.domain.shifr.jwt_unsupported_algorithm')];
         }
 

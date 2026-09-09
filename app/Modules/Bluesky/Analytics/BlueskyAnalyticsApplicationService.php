@@ -22,8 +22,7 @@ final class BlueskyAnalyticsApplicationService implements BlueskyAnalyticsApplic
         private readonly BlueskyActorPresenter $actorPresenter,
         private readonly BlueskyActorResolver $actorResolver,
         private readonly BlueskyAnalyticsReportBuilder $reportBuilder,
-    ) {
-    }
+    ) {}
 
     public function summary(BlueskyAnalyticsQueryDTO $query): BlueskyAnalyticsResultDTO
     {
@@ -187,7 +186,7 @@ final class BlueskyAnalyticsApplicationService implements BlueskyAnalyticsApplic
     }
 
     /**
-     * @param array<int, array<string, mixed>> $posts
+     * @param  array<int, array<string, mixed>>  $posts
      * @return array<int, array<string, mixed>>
      */
     private function filterPostsByDate(array $posts, string $dateFrom, string $dateTo): array
@@ -219,7 +218,7 @@ final class BlueskyAnalyticsApplicationService implements BlueskyAnalyticsApplic
     }
 
     /**
-     * @param Collection<int, array<string, mixed>> $posts
+     * @param  Collection<int, array<string, mixed>>  $posts
      * @return array<int, array<string, mixed>>
      */
     private function buildTopMentions(Collection $posts): array

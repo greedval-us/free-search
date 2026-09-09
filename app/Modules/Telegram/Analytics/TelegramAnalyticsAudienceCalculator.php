@@ -7,13 +7,11 @@ use Carbon\Carbon;
 
 class TelegramAnalyticsAudienceCalculator
 {
-    public function __construct(private readonly TelegramConfig $config)
-    {
-    }
+    public function __construct(private readonly TelegramConfig $config) {}
 
     /**
-     * @param array<string, array<string, mixed>> $authorStats
-     * @param array<int, int> $hourlyActivity
+     * @param  array<string, array<string, mixed>>  $authorStats
+     * @param  array<int, int>  $hourlyActivity
      * @return array{
      *     activeAuthors: int,
      *     singleMessageAuthors: int,
@@ -81,7 +79,7 @@ class TelegramAnalyticsAudienceCalculator
     }
 
     /**
-     * @param array<int, int> $hourlyActivity
+     * @param  array<int, int>  $hourlyActivity
      */
     public function accumulateHourActivity(array &$hourlyActivity, int $timestamp): void
     {

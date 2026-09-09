@@ -7,9 +7,9 @@ use App\Support\Contracts\ArrayPayloadable;
 final class NewsMediaIntelResultDTO implements ArrayPayloadable
 {
     /**
-     * @param array<int, NewsMentionDTO> $mentions
-     * @param array<int, NewsTopicDTO> $topics
-     * @param array<int, TimelinePointDTO> $timeline
+     * @param  array<int, NewsMentionDTO>  $mentions
+     * @param  array<int, NewsTopicDTO>  $topics
+     * @param  array<int, TimelinePointDTO>  $timeline
      */
     public function __construct(
         public readonly string $query,
@@ -17,8 +17,7 @@ final class NewsMediaIntelResultDTO implements ArrayPayloadable
         public readonly array $topics,
         public readonly array $timeline,
         public readonly SentimentSummaryDTO $sentiment,
-    ) {
-    }
+    ) {}
 
     /**
      * @return array<string, mixed>

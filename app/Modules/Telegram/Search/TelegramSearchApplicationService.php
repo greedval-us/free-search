@@ -7,10 +7,10 @@ use App\Modules\Telegram\DTO\Request\SearchMediaQueryDTO;
 use App\Modules\Telegram\DTO\Request\SearchMessagesQueryDTO;
 use App\Modules\Telegram\DTO\Result\SearchCommentsResultDTO;
 use App\Modules\Telegram\DTO\Result\SearchMessagesResultDTO;
-use App\Modules\Telegram\Search\Contracts\TelegramSearchApplicationServiceInterface;
 use App\Modules\Telegram\Search\Actions\LoadTelegramMessageMediaAction;
 use App\Modules\Telegram\Search\Actions\SearchTelegramCommentsAction;
 use App\Modules\Telegram\Search\Actions\SearchTelegramMessagesAction;
+use App\Modules\Telegram\Search\Contracts\TelegramSearchApplicationServiceInterface;
 
 class TelegramSearchApplicationService implements TelegramSearchApplicationServiceInterface
 {
@@ -18,8 +18,7 @@ class TelegramSearchApplicationService implements TelegramSearchApplicationServi
         private readonly SearchTelegramMessagesAction $searchMessagesAction,
         private readonly SearchTelegramCommentsAction $searchCommentsAction,
         private readonly LoadTelegramMessageMediaAction $loadMessageMediaAction,
-    ) {
-    }
+    ) {}
 
     public function messages(SearchMessagesQueryDTO $query): SearchMessagesResultDTO
     {
@@ -36,4 +35,3 @@ class TelegramSearchApplicationService implements TelegramSearchApplicationServi
         return $this->loadMessageMediaAction->handle($query);
     }
 }
-

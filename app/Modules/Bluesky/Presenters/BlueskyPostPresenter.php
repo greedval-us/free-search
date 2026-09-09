@@ -8,11 +8,10 @@ final class BlueskyPostPresenter
 {
     public function __construct(
         private readonly BlueskyActorPresenter $actorPresenter,
-    ) {
-    }
+    ) {}
 
     /**
-     * @param array<string, mixed> $item
+     * @param  array<string, mixed>  $item
      * @return array<string, mixed>
      */
     public function present(array $item): array
@@ -63,8 +62,8 @@ final class BlueskyPostPresenter
     }
 
     /**
-     * @param array<string, mixed> $record
-     * @param array<string, mixed> $item
+     * @param  array<string, mixed>  $record
+     * @param  array<string, mixed>  $item
      * @return array<int, string>
      */
     private function extractLinks(array $record, array $item): array
@@ -89,7 +88,7 @@ final class BlueskyPostPresenter
     }
 
     /**
-     * @param array<string, mixed> $record
+     * @param  array<string, mixed>  $record
      * @return array<int, string>
      */
     private function extractHashtags(array $record): array
@@ -112,7 +111,7 @@ final class BlueskyPostPresenter
     }
 
     /**
-     * @param array<string, mixed> $record
+     * @param  array<string, mixed>  $record
      * @return array<int, string>
      */
     private function extractMentions(array $record): array
@@ -131,7 +130,7 @@ final class BlueskyPostPresenter
     }
 
     /**
-     * @param array<string, mixed> $item
+     * @param  array<string, mixed>  $item
      */
     private function hasMediaEmbed(array $item): bool
     {
@@ -147,7 +146,7 @@ final class BlueskyPostPresenter
     }
 
     /**
-     * @param array<string, mixed> $item
+     * @param  array<string, mixed>  $item
      * @return array<string, mixed>
      */
     private function extractMedia(array $item): array
@@ -201,7 +200,7 @@ final class BlueskyPostPresenter
     }
 
     /**
-     * @param array<string, mixed> $item
+     * @param  array<string, mixed>  $item
      */
     private function embedType(array $item): string
     {

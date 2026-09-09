@@ -12,8 +12,7 @@ class DashboardController extends Controller
 {
     public function __construct(
         private readonly UserDashboardServiceInterface $dashboardService,
-    ) {
-    }
+    ) {}
 
     public function __invoke(DashboardFiltersRequest $request): Response
     {

@@ -5,7 +5,7 @@ namespace App\Modules\SiteIntel\Application\Services\SiteIntelAnalytics;
 final class SiteIntelAnalyticsRecommendationBuilder
 {
     /**
-     * @param array<int, string> $riskSignals
+     * @param  array<int, string>  $riskSignals
      * @return array<int, string>
      */
     public function build(array $riskSignals, int $headersCoveragePercent, ?int $daysToDomainExpiry): array

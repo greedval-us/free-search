@@ -7,7 +7,7 @@ use App\Support\Contracts\ArrayPayloadable;
 final class YouTubeParserCursorDTO implements ArrayPayloadable
 {
     /**
-     * @param array<int, string> $replyThreadIds
+     * @param  array<int, string>  $replyThreadIds
      */
     public function __construct(
         private ?string $commentsPageToken = null,
@@ -17,11 +17,10 @@ final class YouTubeParserCursorDTO implements ArrayPayloadable
         private int $replyThreadIndex = 0,
         private ?string $replyPageToken = null,
         private int $nextAdvanceAt = 0,
-    ) {
-    }
+    ) {}
 
     /**
-     * @param array<string, mixed> $payload
+     * @param  array<string, mixed>  $payload
      */
     public static function fromArray(array $payload): self
     {
@@ -78,7 +77,7 @@ final class YouTubeParserCursorDTO implements ArrayPayloadable
     }
 
     /**
-     * @param array<int, string> $ids
+     * @param  array<int, string>  $ids
      */
     public function setReplyThreadIds(array $ids): void
     {

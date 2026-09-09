@@ -8,7 +8,7 @@ use Throwable;
 class PublicException extends RuntimeException
 {
     /**
-     * @param array<string, string|int|float> $replace
+     * @param  array<string, string|int|float>  $replace
      */
     public function __construct(
         private readonly string $translationKey,

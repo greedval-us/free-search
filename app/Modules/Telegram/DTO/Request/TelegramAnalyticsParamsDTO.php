@@ -8,7 +8,5 @@ class TelegramAnalyticsParamsDTO
         public readonly string $chatUsername,
         public readonly string $scorePriority,
         public readonly ?string $keyword,
-    ) {
-    }
+    ) {}
 }
-

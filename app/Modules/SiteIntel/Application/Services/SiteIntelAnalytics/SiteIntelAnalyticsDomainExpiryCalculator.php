@@ -7,12 +7,12 @@ use Carbon\Carbon;
 final class SiteIntelAnalyticsDomainExpiryCalculator
 {
     /**
-     * @param array<string, mixed> $domainLite
+     * @param  array<string, mixed>  $domainLite
      */
     public function calculateDaysToExpiry(array $domainLite): ?int
     {
         $expiresAt = $domainLite['whois']['expiresAt'] ?? null;
-        if (!is_string($expiresAt) || trim($expiresAt) === '') {
+        if (! is_string($expiresAt) || trim($expiresAt) === '') {
             return null;
         }
 

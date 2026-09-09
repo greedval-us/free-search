@@ -5,24 +5,41 @@ namespace App\Modules\Telegram\DTO\Response\Participants;
 class AdminRightsDTO
 {
     public string $_;
+
     public int $flags = 0;
 
     public bool $change_info;
+
     public bool $post_messages;
+
     public bool $edit_messages;
+
     public bool $delete_messages;
+
     public bool $ban_users;
+
     public bool $invite_users;
+
     public bool $pin_messages;
+
     public bool $add_admins;
+
     public bool $anonymous;
+
     public bool $manage_call;
+
     public bool $other;
+
     public bool $manage_topics;
+
     public bool $post_stories;
+
     public bool $edit_stories;
+
     public bool $delete_stories;
+
     public bool $manage_direct_messages;
+
     public array $raw = [];
 
     public function __construct(array $data)

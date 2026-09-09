@@ -3,6 +3,7 @@
 namespace App\Modules\Bluesky\Actions\Request;
 
 use App\Modules\Bluesky\Actions\AbstractBlueskyAction;
+use App\Modules\Bluesky\Core\Contracts\BlueskyGatewayInterface;
 use App\Modules\Bluesky\DTO\Request\BlueskySearchQueryDTO;
 use App\Modules\Bluesky\DTO\Result\BlueskySearchResultDTO;
 use App\Modules\Bluesky\Presenters\BlueskyActorPresenter;
@@ -11,7 +12,7 @@ use App\Modules\Bluesky\Presenters\BlueskyPostPresenter;
 final class SearchContentAction extends AbstractBlueskyAction
 {
     public function __construct(
-        \App\Modules\Bluesky\Core\Contracts\BlueskyGatewayInterface $gateway,
+        BlueskyGatewayInterface $gateway,
         private readonly BlueskyPostPresenter $postPresenter,
         private readonly BlueskyActorPresenter $actorPresenter,
     ) {
@@ -86,7 +87,7 @@ final class SearchContentAction extends AbstractBlueskyAction
     }
 
     /**
-     * @param array<string, mixed> $item
+     * @param  array<string, mixed>  $item
      */
     private function matchesPostFilters(array $item, BlueskySearchQueryDTO $query): bool
     {
@@ -118,7 +119,7 @@ final class SearchContentAction extends AbstractBlueskyAction
     }
 
     /**
-     * @param array<string, mixed> $item
+     * @param  array<string, mixed>  $item
      */
     private function matchesAuthorFilter(array $item, string $author): bool
     {
@@ -138,7 +139,7 @@ final class SearchContentAction extends AbstractBlueskyAction
     }
 
     /**
-     * @param array<string, mixed> $item
+     * @param  array<string, mixed>  $item
      */
     private function matchesLanguageFilter(array $item, string $language): bool
     {
@@ -152,7 +153,7 @@ final class SearchContentAction extends AbstractBlueskyAction
     }
 
     /**
-     * @param array<string, mixed> $item
+     * @param  array<string, mixed>  $item
      */
     private function matchesMentionsFilter(array $item, string $mentions): bool
     {
@@ -166,7 +167,7 @@ final class SearchContentAction extends AbstractBlueskyAction
     }
 
     /**
-     * @param array<string, mixed> $item
+     * @param  array<string, mixed>  $item
      */
     private function matchesDomainFilter(array $item, string $domain): bool
     {
@@ -180,7 +181,7 @@ final class SearchContentAction extends AbstractBlueskyAction
     }
 
     /**
-     * @param array<string, mixed> $item
+     * @param  array<string, mixed>  $item
      */
     private function matchesUrlFilter(array $item, string $url): bool
     {
@@ -194,7 +195,7 @@ final class SearchContentAction extends AbstractBlueskyAction
     }
 
     /**
-     * @param array<string, mixed> $item
+     * @param  array<string, mixed>  $item
      */
     private function matchesTagFilter(array $item, string $tag): bool
     {
@@ -208,7 +209,7 @@ final class SearchContentAction extends AbstractBlueskyAction
     }
 
     /**
-     * @param array<string, mixed> $item
+     * @param  array<string, mixed>  $item
      */
     private function matchesDateRangeFilter(array $item, string $since, string $until): bool
     {

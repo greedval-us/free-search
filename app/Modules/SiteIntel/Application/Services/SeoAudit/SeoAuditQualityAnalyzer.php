@@ -36,6 +36,7 @@ final class SeoAuditQualityAnalyzer
 
             if ($text === '') {
                 $empty++;
+
                 continue;
             }
 
@@ -63,16 +64,16 @@ final class SeoAuditQualityAnalyzer
         $multipleH1 = (preg_match_all('/<h1\b[^>]*>/i', $html) ?: 0) > 1;
 
         $issues = [];
-        if (!$doctype) {
+        if (! $doctype) {
             $issues[] = 'missing_doctype';
         }
-        if (!$htmlTag) {
+        if (! $htmlTag) {
             $issues[] = 'missing_html_tag';
         }
-        if (!$headTag) {
+        if (! $headTag) {
             $issues[] = 'missing_head_tag';
         }
-        if (!$bodyTag) {
+        if (! $bodyTag) {
             $issues[] = 'missing_body_tag';
         }
         if ($multipleH1) {
@@ -158,6 +159,7 @@ final class SeoAuditQualityAnalyzer
 
             if (str_starts_with($href, '/')) {
                 $internal++;
+
                 continue;
             }
 
@@ -176,4 +178,3 @@ final class SeoAuditQualityAnalyzer
         ];
     }
 }
-

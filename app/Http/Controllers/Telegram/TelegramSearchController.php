@@ -15,8 +15,7 @@ class TelegramSearchController extends BaseTelegramController
     public function __construct(
         private readonly TelegramSearchApplicationServiceInterface $searchApplicationService,
         private readonly TelegramMediaResponderInterface $mediaResponder,
-    ) {
-    }
+    ) {}
 
     public function messages(SearchMessagesRequest $request): JsonResponse
     {

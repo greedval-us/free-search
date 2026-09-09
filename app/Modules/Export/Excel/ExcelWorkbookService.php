@@ -9,7 +9,7 @@ use Symfony\Component\HttpFoundation\BinaryFileResponse;
 class ExcelWorkbookService implements ExcelWorkbookServiceInterface
 {
     /**
-     * @param array<int, SheetDefinition> $definitions
+     * @param  array<int, SheetDefinition>  $definitions
      */
     public function download(string $filename, array $definitions): BinaryFileResponse
     {

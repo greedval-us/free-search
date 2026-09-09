@@ -29,4 +29,3 @@ final class SiteHealthDnsResolver implements SiteHealthDnsResolverInterface
         ];
     }
 }
-

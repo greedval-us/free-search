@@ -23,7 +23,7 @@ final class MadelineProtoManager
             ? $this->config->normalizeSessionName($sessionName)
             : $this->sessionPool->nextSessionName();
 
-        if (!array_key_exists($resolvedSessionName, $this->clients)) {
+        if (! array_key_exists($resolvedSessionName, $this->clients)) {
             $this->clients[$resolvedSessionName] = $this->factory->make($resolvedSessionName);
         }
 

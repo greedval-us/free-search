@@ -10,8 +10,7 @@ final class NewsMentionDTO
         public readonly string $snippet,
         public readonly string $link,
         public readonly string $publishedAt,
-    ) {
-    }
+    ) {}
 
     /**
      * @return array<string, string>
@@ -27,4 +26,3 @@ final class NewsMentionDTO
         ];
     }
 }
-

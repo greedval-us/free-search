@@ -3,13 +3,14 @@
 namespace App\Modules\Mastodon\Actions\Request;
 
 use App\Modules\Mastodon\Actions\AbstractMastodonAction;
+use App\Modules\Mastodon\Core\Contracts\MastodonGatewayInterface;
 use App\Modules\Mastodon\DTO\Result\MastodonTagTimelineResultDTO;
 use App\Modules\Mastodon\Presenters\MastodonStatusPresenter;
 
 final class LoadTagTimelineAction extends AbstractMastodonAction
 {
     public function __construct(
-        \App\Modules\Mastodon\Core\Contracts\MastodonGatewayInterface $gateway,
+        MastodonGatewayInterface $gateway,
         private readonly MastodonStatusPresenter $statusPresenter,
     ) {
         parent::__construct($gateway);
@@ -38,7 +39,7 @@ final class LoadTagTimelineAction extends AbstractMastodonAction
     }
 
     /**
-     * @param array<int, array<string, mixed>> $statuses
+     * @param  array<int, array<string, mixed>>  $statuses
      * @return array<string, mixed>
      */
     private function buildAnalytics(array $statuses): array

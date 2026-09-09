@@ -5,8 +5,8 @@ namespace App\Modules\SiteIntel\Application\Services\SiteIntelAnalytics;
 final class SiteIntelAnalyticsScoreCalculator
 {
     /**
-     * @param array<string, mixed> $siteHealth
-     * @param array<string, mixed> $domainLite
+     * @param  array<string, mixed>  $siteHealth
+     * @param  array<string, mixed>  $domainLite
      * @return array{healthScore: int, domainRiskScore: int, overallScore: int}
      */
     public function calculate(array $siteHealth, array $domainLite): array

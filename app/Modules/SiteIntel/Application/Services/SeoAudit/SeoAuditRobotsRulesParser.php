@@ -29,7 +29,7 @@ final class SeoAuditRobotsRulesParser
 
         foreach ($lines as $line) {
             $clean = trim((string) preg_replace('/#.*/', '', (string) $line));
-            if ($clean === '' || !str_contains($clean, ':')) {
+            if ($clean === '' || ! str_contains($clean, ':')) {
                 continue;
             }
 
@@ -43,16 +43,19 @@ final class SeoAuditRobotsRulesParser
                     $current = ['userAgents' => [], 'allow' => [], 'disallow' => [], 'crawlDelay' => null];
                 }
                 $current['userAgents'][] = $value;
+
                 continue;
             }
 
             if ($key === 'allow') {
                 $current['allow'][] = $value;
+
                 continue;
             }
 
             if ($key === 'disallow') {
                 $current['disallow'][] = $value;
+
                 continue;
             }
 
@@ -90,4 +93,3 @@ final class SeoAuditRobotsRulesParser
         ];
     }
 }
-

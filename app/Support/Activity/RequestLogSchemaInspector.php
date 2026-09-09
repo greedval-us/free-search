@@ -14,7 +14,7 @@ class RequestLogSchemaInspector
             return $this->hasExtendedRequestLogSchema;
         }
 
-        if (!Schema::hasTable('request_logs')) {
+        if (! Schema::hasTable('request_logs')) {
             $this->hasExtendedRequestLogSchema = false;
 
             return false;
@@ -30,4 +30,3 @@ class RequestLogSchemaInspector
         return $this->hasExtendedRequestLogSchema;
     }
 }
-

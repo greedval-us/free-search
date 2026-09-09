@@ -5,7 +5,7 @@ namespace App\Support\Activity;
 class RequestLogRunUrlBuilder
 {
     /**
-     * @param array<string, mixed> $payload
+     * @param  array<string, mixed>  $payload
      */
     public function build(string $path, ?string $method, array $payload): ?string
     {
@@ -19,7 +19,7 @@ class RequestLogRunUrlBuilder
     }
 
     /**
-     * @param array<string, mixed> $payload
+     * @param  array<string, mixed>  $payload
      */
     private function buildModuleUrl(string $path, array $payload): ?string
     {
@@ -27,7 +27,7 @@ class RequestLogRunUrlBuilder
         $definitions = config('activity.run_url_routes', []);
         $definition = $definitions[$path] ?? null;
 
-        if (!is_array($definition)) {
+        if (! is_array($definition)) {
             return null;
         }
 
@@ -54,15 +54,15 @@ class RequestLogRunUrlBuilder
     }
 
     /**
-     * @param array<string, mixed> $payload
-     * @param array<int, string> $keys
+     * @param  array<string, mixed>  $payload
+     * @param  array<int, string>  $keys
      */
     private function readString(array $payload, array $keys): ?string
     {
         foreach ($keys as $key) {
             $value = $payload[$key] ?? null;
 
-            if (!is_scalar($value)) {
+            if (! is_scalar($value)) {
                 continue;
             }
 
@@ -77,7 +77,7 @@ class RequestLogRunUrlBuilder
     }
 
     /**
-     * @param array<string, mixed> $payload
+     * @param  array<string, mixed>  $payload
      */
     private function readIntString(array $payload, string $key): ?string
     {
@@ -95,13 +95,13 @@ class RequestLogRunUrlBuilder
     }
 
     /**
-     * @param array<string, string|null> $params
+     * @param  array<string, string|null>  $params
      */
     private function buildUrl(string $basePath, array $params): string
     {
         $query = [];
         foreach ($params as $key => $value) {
-            if (!is_string($value) || trim($value) === '') {
+            if (! is_string($value) || trim($value) === '') {
                 continue;
             }
 

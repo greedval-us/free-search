@@ -3,13 +3,15 @@
 namespace App\Modules\Mastodon\Actions\Request;
 
 use App\Modules\Mastodon\Actions\AbstractMastodonAction;
+use App\Modules\Mastodon\Core\Contracts\MastodonGatewayInterface;
 use App\Modules\Mastodon\DTO\Result\MastodonStatusContextResultDTO;
 use App\Modules\Mastodon\Presenters\MastodonStatusPresenter;
+use Illuminate\Support\Collection;
 
 final class LoadStatusContextAction extends AbstractMastodonAction
 {
     public function __construct(
-        \App\Modules\Mastodon\Core\Contracts\MastodonGatewayInterface $gateway,
+        MastodonGatewayInterface $gateway,
         private readonly MastodonStatusPresenter $statusPresenter,
     ) {
         parent::__construct($gateway);
@@ -34,7 +36,7 @@ final class LoadStatusContextAction extends AbstractMastodonAction
     }
 
     /**
-     * @param array<int, array<string, mixed>> $descendants
+     * @param  array<int, array<string, mixed>>  $descendants
      * @return array<int, array<string, mixed>>
      */
     private function buildDescendantsTree(array $descendants, string $rootStatusId): array
@@ -67,11 +69,11 @@ final class LoadStatusContextAction extends AbstractMastodonAction
     }
 
     /**
-     * @param array<string, mixed> $item
-     * @param \Illuminate\Support\Collection<string, \Illuminate\Support\Collection<int, array<string, mixed>>> $groupedByParent
+     * @param  array<string, mixed>  $item
+     * @param  Collection<string, Collection<int, array<string, mixed>>>  $groupedByParent
      * @return array<string, mixed>
      */
-    private function attachReplies(array $item, \Illuminate\Support\Collection $groupedByParent): array
+    private function attachReplies(array $item, Collection $groupedByParent): array
     {
         $children = $groupedByParent
             ->get((string) ($item['id'] ?? ''), collect())

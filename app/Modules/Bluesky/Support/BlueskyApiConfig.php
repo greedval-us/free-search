@@ -5,7 +5,7 @@ namespace App\Modules\Bluesky\Support;
 final class BlueskyApiConfig
 {
     /**
-     * @param array<string, mixed> $config
+     * @param  array<string, mixed>  $config
      */
     public static function fromArray(array $config): self
     {
@@ -26,8 +26,7 @@ final class BlueskyApiConfig
         private readonly int $timeoutSeconds,
         private readonly int $retryAttempts,
         private readonly int $retryDelayMilliseconds,
-    ) {
-    }
+    ) {}
 
     public function identifier(): string
     {
@@ -60,7 +59,7 @@ final class BlueskyApiConfig
     }
 
     /**
-     * @param array<string, mixed> $config
+     * @param  array<string, mixed>  $config
      */
     private static function stringValue(array $config, string $key, string $default): string
     {
@@ -70,7 +69,7 @@ final class BlueskyApiConfig
     }
 
     /**
-     * @param array<string, mixed> $config
+     * @param  array<string, mixed>  $config
      */
     private static function intValue(array $config, string $key, int $default): int
     {

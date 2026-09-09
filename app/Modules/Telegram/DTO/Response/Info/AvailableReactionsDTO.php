@@ -5,10 +5,14 @@ namespace App\Modules\Telegram\DTO\Response\Info;
 class AvailableReactionsDTO
 {
     public string $_ = '';
+
     public array $hash = [];
+
     /** @var ReactionDTO[] */
     public array $reactions = [];
+
     public array $recent_reactions = [];
+
     public array $raw = [];
 
     public function __construct(array $data)

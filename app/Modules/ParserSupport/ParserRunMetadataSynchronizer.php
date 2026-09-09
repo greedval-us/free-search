@@ -13,7 +13,7 @@ final class ParserRunMetadataSynchronizer
     ) {}
 
     /**
-     * @param array<string, mixed> $run
+     * @param  array<string, mixed>  $run
      */
     public function sync(string $module, int $userId, string $disk, string $path, array $run): void
     {
@@ -59,7 +59,7 @@ final class ParserRunMetadataSynchronizer
 
     private function timestamp(mixed $value): ?CarbonImmutable
     {
-        if (!is_string($value) || $value === '') {
+        if (! is_string($value) || $value === '') {
             return null;
         }
 

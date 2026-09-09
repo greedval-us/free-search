@@ -8,8 +8,7 @@ final class NewsMentionFingerprintFactory
 {
     public function __construct(
         private readonly NewsMediaIntelConfig $config,
-    ) {
-    }
+    ) {}
 
     public function linkKey(string $link): string
     {
@@ -19,7 +18,7 @@ final class NewsMentionFingerprintFactory
         }
 
         $parts = parse_url($raw);
-        if (!is_array($parts)) {
+        if (! is_array($parts)) {
             return mb_strtolower($raw);
         }
 
@@ -36,12 +35,12 @@ final class NewsMentionFingerprintFactory
 
         $query = $this->normalizedQuery((string) ($parts['query'] ?? ''));
 
-        return $host . $path . ($query === '' ? '' : '?' . $query);
+        return $host.$path.($query === '' ? '' : '?'.$query);
     }
 
     public function contentKey(string $title, string $snippet): string
     {
-        $text = trim($title . ' ' . $snippet);
+        $text = trim($title.' '.$snippet);
         if ($text === '') {
             return '';
         }
@@ -62,7 +61,7 @@ final class NewsMentionFingerprintFactory
 
         parse_str($query, $params);
 
-        if (!is_array($params) || $params === []) {
+        if (! is_array($params) || $params === []) {
             return '';
         }
 
@@ -84,4 +83,3 @@ final class NewsMentionFingerprintFactory
         return http_build_query($params);
     }
 }
-

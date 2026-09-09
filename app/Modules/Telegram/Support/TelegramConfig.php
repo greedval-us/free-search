@@ -5,9 +5,9 @@ namespace App\Modules\Telegram\Support;
 final class TelegramConfig
 {
     /**
-     * @param array<string, mixed> $analyticsFraudPostRules
-     * @param array<string, mixed> $analyticsFraudTriggerRules
-     * @param array<string, array{views: float, forwards: float, replies: float, reactions: float, gifts: float}> $analyticsScoreProfiles
+     * @param  array<string, mixed>  $analyticsFraudPostRules
+     * @param  array<string, mixed>  $analyticsFraudTriggerRules
+     * @param  array<string, array{views: float, forwards: float, replies: float, reactions: float, gifts: float}>  $analyticsScoreProfiles
      */
     public function __construct(
         private readonly string $timezone,
@@ -37,8 +37,7 @@ final class TelegramConfig
         private readonly int $searchCommentsLimitDefault,
         private readonly int $searchCommentsLimitMax,
         private readonly int $parserCustomRangeMaxDays,
-    ) {
-    }
+    ) {}
 
     public function timezone(): string
     {

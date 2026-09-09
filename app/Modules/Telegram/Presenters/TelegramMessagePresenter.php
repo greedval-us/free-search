@@ -88,7 +88,7 @@ class TelegramMessagePresenter
         $result = [];
         $senderIdsByReaction = $this->extractReactionSenderIdsByReaction($message);
 
-        if (!is_array($message->reactions ?? null)) {
+        if (! is_array($message->reactions ?? null)) {
             return $result;
         }
 
@@ -154,7 +154,7 @@ class TelegramMessagePresenter
         }
 
         return [
-            'hasGift' => !empty($entries),
+            'hasGift' => ! empty($entries),
             'types' => array_values(array_unique($types)),
             'senderIds' => array_values(array_unique(array_filter($senderIds, static fn (int $id): bool => $id > 0))),
             'entries' => array_values($entries),
@@ -183,7 +183,7 @@ class TelegramMessagePresenter
     {
         $ids = [];
 
-        if (!is_array($payload)) {
+        if (! is_array($payload)) {
             return $ids;
         }
 
@@ -235,7 +235,7 @@ class TelegramMessagePresenter
         $map = [];
 
         foreach (['recent_reactions', 'top_reactors', 'recent_reactors'] as $key) {
-            if (!isset($reactions[$key])) {
+            if (! isset($reactions[$key])) {
                 continue;
             }
 
@@ -251,7 +251,7 @@ class TelegramMessagePresenter
 
     private function collectReactionEntries(mixed $payload, array &$map): void
     {
-        if (!is_array($payload)) {
+        if (! is_array($payload)) {
             return;
         }
 
@@ -273,7 +273,7 @@ class TelegramMessagePresenter
     private function describeReaction(array $payload): ?array
     {
         $reaction = $payload['reaction'] ?? $payload;
-        if (!is_array($reaction) && !is_string($reaction)) {
+        if (! is_array($reaction) && ! is_string($reaction)) {
             return null;
         }
 
@@ -321,7 +321,7 @@ class TelegramMessagePresenter
 
     private function collectGiftEntries(mixed $payload, array &$entries): void
     {
-        if (!is_array($payload)) {
+        if (! is_array($payload)) {
             return;
         }
 
@@ -353,7 +353,7 @@ class TelegramMessagePresenter
         $ids = [];
 
         foreach ($map as $senderIds) {
-            if (!is_array($senderIds)) {
+            if (! is_array($senderIds)) {
                 continue;
             }
 
@@ -373,7 +373,7 @@ class TelegramMessagePresenter
             return $value;
         }
 
-        if (!is_string($value)) {
+        if (! is_string($value)) {
             return $value;
         }
 

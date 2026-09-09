@@ -2,9 +2,9 @@
 
 namespace App\Modules\SiteIntel\Application\Services;
 
-use App\Modules\SiteIntel\Application\Contracts\SiteIntelAnalyticsServiceInterface;
 use App\Modules\SiteIntel\Application\Contracts\DomainLiteServiceInterface;
 use App\Modules\SiteIntel\Application\Contracts\SiteHealthServiceInterface;
+use App\Modules\SiteIntel\Application\Contracts\SiteIntelAnalyticsServiceInterface;
 use App\Modules\SiteIntel\Application\Services\SiteIntelAnalytics\SiteIntelAnalyticsDomainExpiryCalculator;
 use App\Modules\SiteIntel\Application\Services\SiteIntelAnalytics\SiteIntelAnalyticsHeadersCoverageCalculator;
 use App\Modules\SiteIntel\Application\Services\SiteIntelAnalytics\SiteIntelAnalyticsOverviewBuilder;
@@ -25,8 +25,7 @@ final class SiteIntelAnalyticsService implements SiteIntelAnalyticsServiceInterf
         private readonly SiteIntelAnalyticsSignalResolver $signalResolver,
         private readonly SiteIntelAnalyticsRecommendationBuilder $recommendationBuilder,
         private readonly SiteIntelAnalyticsOverviewBuilder $overviewBuilder,
-    ) {
-    }
+    ) {}
 
     public function analyze(string $url, string $domain): SiteIntelAnalyticsResultDTO
     {

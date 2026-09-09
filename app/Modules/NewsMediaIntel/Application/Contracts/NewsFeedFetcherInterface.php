@@ -11,4 +11,3 @@ interface NewsFeedFetcherInterface
      */
     public function fetchAll(string $query): array;
 }
-

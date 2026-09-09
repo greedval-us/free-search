@@ -9,8 +9,7 @@ class LoadTelegramMessageMediaAction
 {
     public function __construct(
         private readonly TelegramGatewayInterface $gateway,
-    ) {
-    }
+    ) {}
 
     /**
      * @return array<string, mixed>|null

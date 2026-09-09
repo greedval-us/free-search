@@ -11,8 +11,7 @@ final class ShifrClassicCipherService implements ShifrClassicCipherServiceInterf
 {
     public function __construct(
         private readonly ProcessClassicCipherAction $processClassicCipherAction,
-    ) {
-    }
+    ) {}
 
     public function process(ClassicCipherLookupDTO $dto): ?ShifrResultDataInterface
     {

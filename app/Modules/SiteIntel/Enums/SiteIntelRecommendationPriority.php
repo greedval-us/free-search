@@ -8,4 +8,3 @@ enum SiteIntelRecommendationPriority: string
     case Medium = 'medium';
     case Low = 'low';
 }
-

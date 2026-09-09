@@ -4,6 +4,7 @@ namespace App\Services\Dashboard;
 
 use App\Models\RequestLog;
 use App\Support\Activity\RequestLogRunUrlBuilder;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Carbon;
 
 class DashboardActivityFeedService
@@ -11,12 +12,11 @@ class DashboardActivityFeedService
     public function __construct(
         private readonly RequestLogRunUrlBuilder $runUrlBuilder,
         private readonly DashboardFilterNormalizer $filterNormalizer,
-    ) {
-    }
+    ) {}
 
     /**
-     * @param \Illuminate\Database\Eloquent\Builder<RequestLog> $query
-     * @param array<string, string> $filters
+     * @param  Builder<RequestLog>  $query
+     * @param  array<string, string>  $filters
      * @return array<int, array<string, mixed>>
      */
     public function build($query, array $filters): array
@@ -48,9 +48,9 @@ class DashboardActivityFeedService
     }
 
     /**
-     * @param \Illuminate\Database\Eloquent\Builder<RequestLog> $query
-     * @param array<string, string> $filters
-     * @return \Illuminate\Database\Eloquent\Builder<RequestLog>
+     * @param  Builder<RequestLog>  $query
+     * @param  array<string, string>  $filters
+     * @return Builder<RequestLog>
      */
     private function applyFilters($query, array $filters)
     {
@@ -64,7 +64,7 @@ class DashboardActivityFeedService
 
         $hasExplicitDates = $filters['date_from'] !== '' || $filters['date_to'] !== '';
 
-        if (!$hasExplicitDates && $filters['period'] !== '') {
+        if (! $hasExplicitDates && $filters['period'] !== '') {
             $days = $this->filterNormalizer->resolvePeriodDays($filters['period']);
 
             if ($days > 0) {

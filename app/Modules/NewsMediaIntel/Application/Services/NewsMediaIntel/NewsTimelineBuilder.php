@@ -8,7 +8,7 @@ use App\Modules\NewsMediaIntel\Domain\DTO\TimelinePointDTO;
 final class NewsTimelineBuilder
 {
     /**
-     * @param array<int, NewsMentionDTO> $mentions
+     * @param  array<int, NewsMentionDTO>  $mentions
      * @return array<int, TimelinePointDTO>
      */
     public function build(array $mentions): array

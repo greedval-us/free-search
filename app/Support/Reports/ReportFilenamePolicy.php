@@ -7,9 +7,7 @@ use Carbon\CarbonInterface;
 
 final class ReportFilenamePolicy implements ReportFilenamePolicyInterface
 {
-    public function __construct(private readonly ReportsConfig $config)
-    {
-    }
+    public function __construct(private readonly ReportsConfig $config) {}
 
     public function build(string $prefix, string $target, ?CarbonInterface $now = null): string
     {
@@ -21,8 +19,7 @@ final class ReportFilenamePolicy implements ReportFilenamePolicyInterface
         string $target,
         string $extension,
         ?CarbonInterface $now = null,
-    ): string
-    {
+    ): string {
         $timestamp = ($now ?? now($this->config->timezone()))->format($this->timestampFormat());
 
         return sprintf(

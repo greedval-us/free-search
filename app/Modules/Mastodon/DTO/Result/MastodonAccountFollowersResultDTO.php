@@ -7,13 +7,12 @@ use App\Support\Contracts\ArrayPayloadable;
 final class MastodonAccountFollowersResultDTO implements ArrayPayloadable
 {
     /**
-     * @param array<int, array<string, mixed>> $accounts
+     * @param  array<int, array<string, mixed>>  $accounts
      */
     public function __construct(
         public readonly array $accounts,
         public readonly array $pagination,
-    ) {
-    }
+    ) {}
 
     /**
      * @return array<string, mixed>

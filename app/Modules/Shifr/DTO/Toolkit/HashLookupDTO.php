@@ -8,6 +8,5 @@ final class HashLookupDTO
         public readonly string $input,
         public readonly string $algorithm,
         public readonly ?string $hmacKey,
-    ) {
-    }
+    ) {}
 }

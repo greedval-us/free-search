@@ -48,8 +48,8 @@ final class DomainLiteRiskScoreCalculator
     private const SCORE_MEDIUM_THRESHOLD = 30;
 
     /**
-     * @param array<string, mixed> $dns
-     * @param array<string, mixed> $whois
+     * @param  array<string, mixed>  $dns
+     * @param  array<string, mixed>  $whois
      * @return array<string, mixed>
      */
     public function calculate(array $dns, array $whois): array

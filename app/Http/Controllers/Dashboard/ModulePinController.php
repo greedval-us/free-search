@@ -12,8 +12,7 @@ class ModulePinController extends Controller
 {
     public function __construct(
         private readonly ModulePinServiceInterface $modulePinService,
-    ) {
-    }
+    ) {}
 
     public function toggle(ToggleModulePinRequest $request): RedirectResponse
     {

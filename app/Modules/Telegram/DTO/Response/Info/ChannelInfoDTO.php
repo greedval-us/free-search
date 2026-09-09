@@ -5,12 +5,19 @@ namespace App\Modules\Telegram\DTO\Response\Info;
 class ChannelInfoDTO
 {
     public int $channel_id;
+
     public int $bot_api_id;
+
     public string $type;
+
     public ?ChatDTO $chat;
+
     public ?FullDTO $full;
+
     public int $inserted;
+
     public int $id;
+
     public array $raw = [];
 
     public function __construct(array $data)

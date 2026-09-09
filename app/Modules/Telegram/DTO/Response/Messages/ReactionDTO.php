@@ -5,10 +5,15 @@ namespace App\Modules\Telegram\DTO\Response\Messages;
 class ReactionDTO
 {
     public ?string $emoticon = null;
+
     public ?int $count = null;
+
     public ?string $reaction_type = null;
+
     public ?int $document_id = null;
+
     public bool $is_paid = false;
+
     public ?string $display = null;
 
     public array $raw = [];

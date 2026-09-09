@@ -11,12 +11,10 @@ use PhpOffice\PhpSpreadsheet\Style\NumberFormat;
 
 class YouTubeParserExportBuilder implements YouTubeParserExportBuilderInterface
 {
-    public function __construct(private readonly YouTubeModuleConfig $config)
-    {
-    }
+    public function __construct(private readonly YouTubeModuleConfig $config) {}
 
     /**
-     * @param array<string, mixed> $payload
+     * @param  array<string, mixed>  $payload
      * @return array<int, SheetDefinition>
      */
     public function buildSheets(array $payload): array
@@ -29,7 +27,7 @@ class YouTubeParserExportBuilder implements YouTubeParserExportBuilderInterface
     }
 
     /**
-     * @param array<string, mixed> $payload
+     * @param  array<string, mixed>  $payload
      */
     private function buildSummarySheet(array $payload): SheetDefinition
     {
@@ -63,7 +61,7 @@ class YouTubeParserExportBuilder implements YouTubeParserExportBuilderInterface
     }
 
     /**
-     * @param array<string, mixed> $payload
+     * @param  array<string, mixed>  $payload
      */
     private function buildCommentsSheet(array $payload): SheetDefinition
     {
@@ -71,7 +69,7 @@ class YouTubeParserExportBuilder implements YouTubeParserExportBuilderInterface
         $rows = [];
 
         foreach ($comments as $comment) {
-            if (!is_array($comment)) {
+            if (! is_array($comment)) {
                 continue;
             }
 
@@ -112,7 +110,7 @@ class YouTubeParserExportBuilder implements YouTubeParserExportBuilderInterface
     }
 
     /**
-     * @param array<string, mixed> $payload
+     * @param  array<string, mixed>  $payload
      */
     private function buildRepliesSheet(array $payload): SheetDefinition
     {
@@ -120,7 +118,7 @@ class YouTubeParserExportBuilder implements YouTubeParserExportBuilderInterface
         $rows = [];
 
         foreach ($replies as $reply) {
-            if (!is_array($reply)) {
+            if (! is_array($reply)) {
                 continue;
             }
 
@@ -160,7 +158,7 @@ class YouTubeParserExportBuilder implements YouTubeParserExportBuilderInterface
 
     private function excelDate(mixed $value): mixed
     {
-        if (!is_string($value) || trim($value) === '') {
+        if (! is_string($value) || trim($value) === '') {
             return null;
         }
 
@@ -174,8 +172,8 @@ class YouTubeParserExportBuilder implements YouTubeParserExportBuilderInterface
     }
 
     /**
-     * @param array<int, array<string, mixed>> $comments
-     * @param array<int, array<string, mixed>> $replies
+     * @param  array<int, array<string, mixed>>  $comments
+     * @param  array<int, array<string, mixed>>  $replies
      */
     private function countUniqueAuthors(array $comments, array $replies): int
     {
@@ -193,7 +191,7 @@ class YouTubeParserExportBuilder implements YouTubeParserExportBuilderInterface
     }
 
     /**
-     * @param array<int, array<string, mixed>> $comments
+     * @param  array<int, array<string, mixed>>  $comments
      */
     private function countCommentsWithReplies(array $comments): int
     {
@@ -209,7 +207,7 @@ class YouTubeParserExportBuilder implements YouTubeParserExportBuilderInterface
     }
 
     /**
-     * @param array<int, array<string, mixed>> $items
+     * @param  array<int, array<string, mixed>>  $items
      */
     private function sumIntField(array $items, string $field): int
     {
@@ -223,8 +221,8 @@ class YouTubeParserExportBuilder implements YouTubeParserExportBuilderInterface
     }
 
     /**
-     * @param array<int, array<string, mixed>> $comments
-     * @param array<int, array<string, mixed>> $replies
+     * @param  array<int, array<string, mixed>>  $comments
+     * @param  array<int, array<string, mixed>>  $replies
      */
     private function firstPublishedAt(array $comments, array $replies): string
     {
@@ -232,8 +230,8 @@ class YouTubeParserExportBuilder implements YouTubeParserExportBuilderInterface
     }
 
     /**
-     * @param array<int, array<string, mixed>> $comments
-     * @param array<int, array<string, mixed>> $replies
+     * @param  array<int, array<string, mixed>>  $comments
+     * @param  array<int, array<string, mixed>>  $replies
      */
     private function lastPublishedAt(array $comments, array $replies): string
     {
@@ -241,7 +239,7 @@ class YouTubeParserExportBuilder implements YouTubeParserExportBuilderInterface
     }
 
     /**
-     * @param array<int, array<string, mixed>> $items
+     * @param  array<int, array<string, mixed>>  $items
      */
     private function publishedAtBoundary(array $items, bool $first): string
     {

@@ -13,4 +13,3 @@ interface ModulePinServiceInterface
      */
     public function listForUser(User $user): array;
 }
-

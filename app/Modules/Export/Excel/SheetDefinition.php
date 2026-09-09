@@ -5,12 +5,12 @@ namespace App\Modules\Export\Excel;
 final readonly class SheetDefinition
 {
     /**
-     * @param array<int, string> $headings
-     * @param array<int, array<int, mixed>> $rows
-     * @param array<string, string> $columnFormats
-     * @param array<string, float|int> $columnWidths
-     * @param array<int, string> $hyperlinkColumns
-     * @param array<int, string> $centeredColumns
+     * @param  array<int, string>  $headings
+     * @param  array<int, array<int, mixed>>  $rows
+     * @param  array<string, string>  $columnFormats
+     * @param  array<string, float|int>  $columnWidths
+     * @param  array<int, string>  $hyperlinkColumns
+     * @param  array<int, string>  $centeredColumns
      */
     public function __construct(
         public string $title,
@@ -20,6 +20,5 @@ final readonly class SheetDefinition
         public array $columnWidths = [],
         public array $hyperlinkColumns = [],
         public array $centeredColumns = [],
-    ) {
-    }
+    ) {}
 }

@@ -5,12 +5,19 @@ namespace App\Modules\Telegram\DTO\Response\Messages;
 class MessageRepliesDTO
 {
     public string $_;
+
     public bool $comments;
+
     public int $replies;
+
     public int $replies_pts;
+
     public ?int $channel_id = null;
+
     public ?int $max_id = null;
+
     public ?int $read_max_id = null;
+
     public array $recent_repliers = [];
 
     public array $raw = [];

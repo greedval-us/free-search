@@ -9,8 +9,8 @@ class ParserRunStatusPayloadBuilder
     private const DEFAULT_STAGE = 'idle';
 
     /**
-     * @param array<string, mixed> $run
-     * @param array<string, string> $statsMap outputKey => runStatsKey
+     * @param  array<string, mixed>  $run
+     * @param  array<string, string>  $statsMap  outputKey => runStatsKey
      * @return array<string, mixed>
      */
     public function build(array $run, array $statsMap, string $excelRoute, string $jsonRoute): array

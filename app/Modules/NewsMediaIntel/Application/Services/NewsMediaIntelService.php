@@ -22,8 +22,7 @@ final class NewsMediaIntelService implements NewsMediaIntelServiceInterface
         private readonly NewsTimelineBuilder $timelineBuilder,
         private readonly NewsSentimentAnalyzer $sentimentAnalyzer,
         private readonly NewsMediaIntelConfig $config,
-    ) {
-    }
+    ) {}
 
     public function monitor(NewsMediaIntelLookupDTO $lookup): NewsMediaIntelResultDTO
     {

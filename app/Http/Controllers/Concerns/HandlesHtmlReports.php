@@ -12,8 +12,8 @@ use Illuminate\View\View;
 trait HandlesHtmlReports
 {
     /**
-     * @param array<string, mixed> $report
-     * @param array<string, mixed> $extra
+     * @param  array<string, mixed>  $report
+     * @param  array<string, mixed>  $extra
      * @return array<string, mixed>
      */
     protected function reportViewData(array $report, array $extra = []): array
@@ -26,7 +26,7 @@ trait HandlesHtmlReports
     }
 
     /**
-     * @param array<string, mixed> $viewData
+     * @param  array<string, mixed>  $viewData
      */
     protected function htmlReportResponse(
         string $view,
@@ -35,7 +35,7 @@ trait HandlesHtmlReports
         string $filenamePrefix,
         string $filenameTarget,
     ): View|Response {
-        if (!$download) {
+        if (! $download) {
             return view($view, $viewData);
         }
 
@@ -47,7 +47,7 @@ trait HandlesHtmlReports
         return response()
             ->view($view, $viewData)
             ->header('Content-Type', $this->reportContentType())
-            ->header('Content-Disposition', 'attachment; filename="' . $filename . '"');
+            ->header('Content-Disposition', 'attachment; filename="'.$filename.'"');
     }
 
     private function reportGeneratedAtFormat(): string

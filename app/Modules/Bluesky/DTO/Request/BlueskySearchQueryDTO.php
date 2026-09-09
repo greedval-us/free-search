@@ -18,8 +18,7 @@ final readonly class BlueskySearchQueryDTO
         public string $tag = '',
         public string $since = '',
         public string $until = '',
-    ) {
-    }
+    ) {}
 
     public function includesPosts(): bool
     {

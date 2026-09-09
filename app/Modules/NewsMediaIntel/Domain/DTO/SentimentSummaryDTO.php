@@ -8,8 +8,7 @@ final class SentimentSummaryDTO
         public readonly int $positive,
         public readonly int $neutral,
         public readonly int $negative,
-    ) {
-    }
+    ) {}
 
     /**
      * @return array{positive: int, neutral: int, negative: int}
@@ -23,4 +22,3 @@ final class SentimentSummaryDTO
         ];
     }
 }
-

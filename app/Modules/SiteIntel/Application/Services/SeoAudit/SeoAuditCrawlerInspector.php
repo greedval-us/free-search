@@ -9,15 +9,14 @@ final class SeoAuditCrawlerInspector
     public function __construct(
         private readonly SeoAuditHttpFetcherInterface $httpFetcher,
         private readonly SeoAuditRobotsRulesParser $robotsRulesParser,
-    ) {
-    }
+    ) {}
 
     /**
      * @return array<string, mixed>
      */
     public function checkRobotsTxt(string $origin): array
     {
-        $url = rtrim($origin, '/') . '/robots.txt';
+        $url = rtrim($origin, '/').'/robots.txt';
         $response = $this->httpFetcher->fetch($url);
         $content = $response['body'];
 
@@ -41,7 +40,7 @@ final class SeoAuditCrawlerInspector
      */
     public function checkSitemap(string $origin, string $sitemapFromRobots): array
     {
-        $candidate = $sitemapFromRobots !== '' ? $sitemapFromRobots : rtrim($origin, '/') . '/sitemap.xml';
+        $candidate = $sitemapFromRobots !== '' ? $sitemapFromRobots : rtrim($origin, '/').'/sitemap.xml';
         $response = $this->httpFetcher->fetch($candidate);
 
         $urlCount = 0;

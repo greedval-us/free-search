@@ -56,6 +56,7 @@ class YouTubeAnalyticsRequest extends LocalizedFormRequest
 
             if ($from->greaterThan($to)) {
                 $validator->errors()->add('dateFrom', __('errors.validation.date_from_before_or_equal_date_to'));
+
                 return;
             }
 
@@ -99,5 +100,4 @@ class YouTubeAnalyticsRequest extends LocalizedFormRequest
     {
         return $this->resolveLocale();
     }
-
 }

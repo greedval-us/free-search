@@ -32,10 +32,10 @@ final class SiteHealthScoreCalculator
     private const SCORE_MEDIUM_THRESHOLD = 55;
 
     /**
-     * @param array<string, mixed> $dns
-     * @param array<string, mixed> $http
-     * @param array<string, mixed> $ssl
-     * @param array<string, array<string, mixed>> $securityHeaders
+     * @param  array<string, mixed>  $dns
+     * @param  array<string, mixed>  $http
+     * @param  array<string, mixed>  $ssl
+     * @param  array<string, array<string, mixed>>  $securityHeaders
      * @return array<string, mixed>
      */
     public function calculate(array $dns, array $http, array $ssl, array $securityHeaders): array
@@ -83,7 +83,7 @@ final class SiteHealthScoreCalculator
         foreach ($securityHeaders as $headerName => $headerInfo) {
             if (($headerInfo['present'] ?? false) !== true) {
                 $applySignal(
-                    'missing_' . str_replace('-', '_', $headerName),
+                    'missing_'.str_replace('-', '_', $headerName),
                     self::MISSING_SECURITY_HEADER_PENALTY,
                 );
             }

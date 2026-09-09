@@ -29,4 +29,3 @@ class SiteHealthCheckRequest extends FormRequest
         return DomainNormalizer::normalizeUrl($this->target());
     }
 }
-

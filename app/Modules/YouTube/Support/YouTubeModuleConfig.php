@@ -15,7 +15,7 @@ final class YouTubeModuleConfig
     private const DEFAULT_SEARCH_LIMIT = 10;
 
     /**
-     * @param array<string, mixed> $config
+     * @param  array<string, mixed>  $config
      */
     public static function fromArray(array $config, string $timezone): self
     {
@@ -32,7 +32,7 @@ final class YouTubeModuleConfig
             $config['analytics_default_period_days'] ?? null,
             self::DEFAULT_ANALYTICS_RANGE_DAYS,
         );
-        if (!in_array($defaultPeriodDays, $periodDays, true)) {
+        if (! in_array($defaultPeriodDays, $periodDays, true)) {
             $defaultPeriodDays = max($periodDays);
         }
 
@@ -69,7 +69,7 @@ final class YouTubeModuleConfig
     }
 
     /**
-     * @param array<int, int> $analyticsPeriodDays
+     * @param  array<int, int>  $analyticsPeriodDays
      */
     public function __construct(
         private readonly string $timezone,
@@ -80,8 +80,7 @@ final class YouTubeModuleConfig
         private readonly int $parserCommentsLimitMax,
         private readonly int $searchLimitDefault,
         private readonly int $searchLimitMax,
-    ) {
-    }
+    ) {}
 
     public function timezone(): string
     {
@@ -126,22 +125,18 @@ final class YouTubeModuleConfig
         return $this->searchLimitMax;
     }
 
-    /**
-     * @param mixed $value
-     */
     private static function intValue(mixed $value, int $default): int
     {
         return is_numeric($value) ? (int) $value : $default;
     }
 
     /**
-     * @param mixed $value
-     * @param array<int, int> $default
+     * @param  array<int, int>  $default
      * @return array<int, int>
      */
     private static function intList(mixed $value, array $default): array
     {
-        if (!is_array($value)) {
+        if (! is_array($value)) {
             return $default;
         }
 

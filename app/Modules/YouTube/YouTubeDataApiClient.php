@@ -17,8 +17,7 @@ class YouTubeDataApiClient implements YouTubeGatewayInterface
     public function __construct(
         private readonly YouTubeApiConfig $config,
         private readonly ExternalServiceLogger $externalServiceLogger,
-    ) {
-    }
+    ) {}
 
     public function search(array $params): array
     {

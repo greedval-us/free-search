@@ -3,13 +3,14 @@
 namespace App\Modules\Mastodon\Actions\Request;
 
 use App\Modules\Mastodon\Actions\AbstractMastodonAction;
+use App\Modules\Mastodon\Core\Contracts\MastodonGatewayInterface;
 use App\Modules\Mastodon\DTO\Result\MastodonAccountFollowersResultDTO;
 use App\Modules\Mastodon\Presenters\MastodonAccountPresenter;
 
 final class LoadAccountFollowersAction extends AbstractMastodonAction
 {
     public function __construct(
-        \App\Modules\Mastodon\Core\Contracts\MastodonGatewayInterface $gateway,
+        MastodonGatewayInterface $gateway,
         private readonly MastodonAccountPresenter $accountPresenter,
     ) {
         parent::__construct($gateway);

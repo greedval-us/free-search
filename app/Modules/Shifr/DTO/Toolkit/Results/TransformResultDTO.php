@@ -11,8 +11,7 @@ final class TransformResultDTO implements ShifrResultDataInterface
         public readonly int $inputLength,
         public readonly int $outputLength,
         public readonly string $value,
-    ) {
-    }
+    ) {}
 
     public function toArray(): array
     {
@@ -24,4 +23,3 @@ final class TransformResultDTO implements ShifrResultDataInterface
         ];
     }
 }
-

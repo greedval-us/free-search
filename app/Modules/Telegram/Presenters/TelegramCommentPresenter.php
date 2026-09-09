@@ -9,7 +9,7 @@ class TelegramCommentPresenter
         $items = [];
 
         foreach (($commentsPage['items'] ?? []) as $comment) {
-            if (!is_array($comment)) {
+            if (! is_array($comment)) {
                 continue;
             }
 
@@ -62,7 +62,7 @@ class TelegramCommentPresenter
     }
 
     /**
-     * @param array<string, mixed> $comment
+     * @param  array<string, mixed>  $comment
      * @return array<int, array<string, mixed>>
      */
     private function extractReactions(array $comment): array
@@ -72,7 +72,7 @@ class TelegramCommentPresenter
         $items = [];
 
         foreach ($results as $result) {
-            if (!is_array($result)) {
+            if (! is_array($result)) {
                 continue;
             }
 
@@ -90,7 +90,7 @@ class TelegramCommentPresenter
             }
 
             $items[] = [
-                'key' => $documentId !== null && $documentId > 0 ? 'document:' . $documentId : 'emoji:' . md5($emoji),
+                'key' => $documentId !== null && $documentId > 0 ? 'document:'.$documentId : 'emoji:'.md5($emoji),
                 'emoji' => $emoji !== '' ? $emoji : 'Reaction',
                 'count' => $count,
                 'senderIds' => [],

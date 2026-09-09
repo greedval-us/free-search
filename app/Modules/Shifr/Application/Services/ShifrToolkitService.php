@@ -10,11 +10,11 @@ use App\Modules\Shifr\Application\Contracts\ShifrToolkitServiceInterface;
 use App\Modules\Shifr\DTO\Toolkit\HashLookupDTO;
 use App\Modules\Shifr\DTO\Toolkit\IocLookupDTO;
 use App\Modules\Shifr\DTO\Toolkit\JwtLookupDTO;
-use App\Modules\Shifr\DTO\Toolkit\TransformLookupDTO;
 use App\Modules\Shifr\DTO\Toolkit\Results\HashResultDTO;
 use App\Modules\Shifr\DTO\Toolkit\Results\IocExtractResultDTO;
 use App\Modules\Shifr\DTO\Toolkit\Results\JwtInspectResultDTO;
 use App\Modules\Shifr\DTO\Toolkit\Results\TransformResultDTO;
+use App\Modules\Shifr\DTO\Toolkit\TransformLookupDTO;
 
 final class ShifrToolkitService implements ShifrToolkitServiceInterface
 {
@@ -23,8 +23,7 @@ final class ShifrToolkitService implements ShifrToolkitServiceInterface
         private readonly TransformTextAction $transformTextAction,
         private readonly ExtractIocsAction $extractIocsAction,
         private readonly InspectJwtAction $inspectJwtAction,
-    ) {
-    }
+    ) {}
 
     public function hash(HashLookupDTO $dto): HashResultDTO
     {

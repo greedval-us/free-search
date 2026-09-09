@@ -11,8 +11,7 @@ final class SeoAuditCrawlAnalyzer
         private readonly SeoAuditContentExtractor $contentExtractor,
         private readonly SeoAuditTechnicalSignalsResolver $technicalSignalsResolver,
         private readonly SeoAuditCrawlReportBuilder $reportBuilder,
-    ) {
-    }
+    ) {}
 
     /**
      * @return array<string, mixed>
@@ -31,7 +30,7 @@ final class SeoAuditCrawlAnalyzer
 
         while ($queue !== [] && count($pages) < $limit) {
             $url = array_shift($queue);
-            if (!is_string($url) || isset($visited[$url])) {
+            if (! is_string($url) || isset($visited[$url])) {
                 continue;
             }
 
@@ -67,7 +66,7 @@ final class SeoAuditCrawlAnalyzer
             $links = $this->contentExtractor->extractCrawlableLinks($html, $finalUrl, $host);
             $pageLinks[$finalUrl] = $links;
             foreach ($links as $link) {
-                if (!isset($visited[$link]) && !in_array($link, $queue, true) && count($queue) + count($pages) < ($limit * 4)) {
+                if (! isset($visited[$link]) && ! in_array($link, $queue, true) && count($queue) + count($pages) < ($limit * 4)) {
                     $queue[] = $link;
                 }
             }

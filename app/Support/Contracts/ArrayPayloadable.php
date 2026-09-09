@@ -9,4 +9,3 @@ interface ArrayPayloadable
      */
     public function toArray(): array;
 }
-

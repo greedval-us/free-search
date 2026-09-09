@@ -9,8 +9,8 @@ use App\Support\Contracts\ArrayPayloadable;
 final class MastodonParserStateDTO implements ArrayPayloadable
 {
     /**
-     * @param array<string, mixed> $context
-     * @param array<string, mixed>|null $result
+     * @param  array<string, mixed>  $context
+     * @param  array<string, mixed>|null  $result
      */
     public function __construct(
         private readonly string $runId,
@@ -25,11 +25,10 @@ final class MastodonParserStateDTO implements ArrayPayloadable
         private MastodonParserCursorDTO $cursor,
         private MastodonParserCollectedDataDTO $data,
         private ?array $result = null,
-    ) {
-    }
+    ) {}
 
     /**
-     * @param array<string, mixed> $payload
+     * @param  array<string, mixed>  $payload
      */
     public static function fromArray(array $payload): self
     {
@@ -87,7 +86,7 @@ final class MastodonParserStateDTO implements ArrayPayloadable
     }
 
     /**
-     * @param array<string, mixed> $result
+     * @param  array<string, mixed>  $result
      */
     public function complete(array $result, MastodonParserStage $stage = MastodonParserStage::Completed): void
     {

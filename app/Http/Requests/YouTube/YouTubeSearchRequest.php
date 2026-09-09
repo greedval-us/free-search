@@ -33,7 +33,7 @@ class YouTubeSearchRequest extends FormRequest
             'videoDuration' => ['nullable', Rule::in(['any', 'short', 'medium', 'long'])],
             'videoDefinition' => ['nullable', Rule::in(['any', 'high', 'standard'])],
             'videoCaption' => ['nullable', Rule::in(['any', 'closedCaption', 'none'])],
-            'limit' => ['nullable', 'integer', 'min:1', 'max:' . $this->youtubeModuleConfig()->searchLimitMax()],
+            'limit' => ['nullable', 'integer', 'min:1', 'max:'.$this->youtubeModuleConfig()->searchLimitMax()],
             'pageToken' => ['nullable', 'string', 'max:255'],
         ];
     }

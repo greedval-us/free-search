@@ -4,8 +4,8 @@ namespace App\Modules\NewsMediaIntel\Infrastructure\Feeds;
 
 use App\Modules\NewsMediaIntel\Application\Contracts\NewsFeedProviderInterface;
 use App\Modules\NewsMediaIntel\Application\Support\NewsMediaIntelConfig;
-use App\Modules\NewsMediaIntel\Enums\NewsFeedSource;
 use App\Modules\NewsMediaIntel\Domain\DTO\NewsMentionDTO;
+use App\Modules\NewsMediaIntel\Enums\NewsFeedSource;
 use App\Support\Observability\ExternalServiceLogger;
 use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Support\Facades\Http;
@@ -15,8 +15,7 @@ final class NewsApiProvider implements NewsFeedProviderInterface
     public function __construct(
         private readonly NewsMediaIntelConfig $config,
         private readonly ExternalServiceLogger $externalServiceLogger,
-    ) {
-    }
+    ) {}
 
     public function key(): string
     {
@@ -33,6 +32,7 @@ final class NewsApiProvider implements NewsFeedProviderInterface
             $this->externalServiceLogger->logFallback('newsapi', 'fetch', 'missing_api_key', [
                 'query' => $query,
             ]);
+
             return [];
         }
 
@@ -56,32 +56,34 @@ final class NewsApiProvider implements NewsFeedProviderInterface
                 'language' => $language,
                 'pageSize' => $pageSize,
             ]);
+
             return [];
         }
 
-        if (!$response->ok()) {
+        if (! $response->ok()) {
             $this->externalServiceLogger->logHttpFailure('newsapi', 'fetch', $response->status(), [
                 'query' => $query,
                 'baseUrl' => $baseUrl,
                 'language' => $language,
                 'pageSize' => $pageSize,
             ], $response->body());
+
             return [];
         }
 
         $payload = $response->json();
-        if (!is_array($payload)) {
+        if (! is_array($payload)) {
             return [];
         }
 
         $articles = $payload['articles'] ?? [];
-        if (!is_array($articles)) {
+        if (! is_array($articles)) {
             return [];
         }
 
         $items = [];
         foreach ($articles as $article) {
-            if (!is_array($article)) {
+            if (! is_array($article)) {
                 continue;
             }
 

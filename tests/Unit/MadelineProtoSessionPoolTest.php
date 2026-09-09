@@ -46,24 +46,24 @@ class MadelineProtoSessionPoolTest extends TestCase
 
     private function makeConfig(string $suffix): MadelineProtoConfig
     {
-        $uniqueSuffix = $suffix . '-' . bin2hex(random_bytes(4));
+        $uniqueSuffix = $suffix.'-'.bin2hex(random_bytes(4));
 
         return MadelineProtoConfig::fromArray([
             'api_id' => 1,
             'api_hash' => 'hash',
-            'session_path' => 'framework/testing/' . $uniqueSuffix . '/sessions',
-            'log_path' => 'logs/' . $uniqueSuffix . '.log',
+            'session_path' => 'framework/testing/'.$uniqueSuffix.'/sessions',
+            'log_path' => 'logs/'.$uniqueSuffix.'.log',
         ]);
     }
 
     private function touchFile(string $path): void
     {
         $directory = dirname($path);
-        if (!is_dir($directory)) {
+        if (! is_dir($directory)) {
             mkdir($directory, 0777, true);
         }
 
-        if (!is_file($path)) {
+        if (! is_file($path)) {
             file_put_contents($path, 'session');
         }
 
@@ -72,7 +72,7 @@ class MadelineProtoSessionPoolTest extends TestCase
 
     private function touchDirectory(string $path): void
     {
-        if (!is_dir($path)) {
+        if (! is_dir($path)) {
             mkdir($path, 0777, true);
         }
 
@@ -92,7 +92,7 @@ class MadelineProtoSessionPoolTest extends TestCase
 
     private function deleteDirectory(string $path): void
     {
-        if (!is_dir($path)) {
+        if (! is_dir($path)) {
             return;
         }
 
@@ -106,10 +106,11 @@ class MadelineProtoSessionPoolTest extends TestCase
                 continue;
             }
 
-            $fullPath = $path . DIRECTORY_SEPARATOR . $item;
+            $fullPath = $path.DIRECTORY_SEPARATOR.$item;
 
             if (is_dir($fullPath)) {
                 $this->deleteDirectory($fullPath);
+
                 continue;
             }
 

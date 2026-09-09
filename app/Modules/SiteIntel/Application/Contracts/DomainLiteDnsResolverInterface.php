@@ -9,4 +9,3 @@ interface DomainLiteDnsResolverInterface
      */
     public function resolve(string $domain): array;
 }
-

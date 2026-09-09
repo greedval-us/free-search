@@ -7,9 +7,8 @@ use App\Models\User;
 interface UserDashboardServiceInterface
 {
     /**
-     * @param array<string, mixed> $filters
+     * @param  array<string, mixed>  $filters
      * @return array<string, mixed>
      */
     public function build(User $user, array $filters = []): array;
 }
-

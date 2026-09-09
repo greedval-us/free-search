@@ -14,8 +14,7 @@ final class MastodonSearchController extends Controller
 {
     public function __construct(
         private readonly MastodonSearchApplicationServiceInterface $service,
-    ) {
-    }
+    ) {}
 
     public function search(MastodonSearchRequest $request): JsonResponse
     {

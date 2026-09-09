@@ -26,6 +26,7 @@ final class Rot47TransformAction
 
             if ($ord >= 33 && $ord <= 126) {
                 $result .= chr(33 + (($ord - 33 + 47) % 94));
+
                 continue;
             }
 

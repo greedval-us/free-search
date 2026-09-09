@@ -7,6 +7,7 @@ use App\Exceptions\Domain\DomainValidationException;
 class SearchParticipantsDTO
 {
     private const DEFAULT_FILTER = 'channelParticipantsRecent';
+
     private const ALLOWED_FILTERS = [
         'channelParticipantsRecent',
         'channelParticipantsAdmins',
@@ -36,7 +37,7 @@ class SearchParticipantsDTO
         }
 
         $filter = (string) ($params['filter'] ?? self::DEFAULT_FILTER);
-        if (!in_array($filter, self::ALLOWED_FILTERS, true)) {
+        if (! in_array($filter, self::ALLOWED_FILTERS, true)) {
             throw DomainValidationException::because(
                 __('errors.domain.telegram.participants_filter_unsupported', ['filter' => $filter])
             );

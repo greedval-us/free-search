@@ -9,7 +9,7 @@ final class MadelineProtoConfig
     private const DEFAULT_SESSION_NAME = 'default';
 
     /**
-     * @param array<string, mixed> $config
+     * @param  array<string, mixed>  $config
      */
     public static function fromArray(array $config): self
     {
@@ -26,8 +26,7 @@ final class MadelineProtoConfig
         private readonly ?string $apiHash,
         private readonly string $sessionPath,
         private readonly string $logPath,
-    ) {
-    }
+    ) {}
 
     public function apiId(): int
     {
@@ -66,10 +65,10 @@ final class MadelineProtoConfig
         $normalized = $this->normalizeSessionName($sessionName);
 
         if ($normalized === self::DEFAULT_SESSION_NAME) {
-            return $this->sessionDirectoryPath() . DIRECTORY_SEPARATOR . 'session.madeline';
+            return $this->sessionDirectoryPath().DIRECTORY_SEPARATOR.'session.madeline';
         }
 
-        return $this->sessionDirectoryPath() . DIRECTORY_SEPARATOR . sprintf('session.%s.madeline', $normalized);
+        return $this->sessionDirectoryPath().DIRECTORY_SEPARATOR.sprintf('session.%s.madeline', $normalized);
     }
 
     public function logFilePath(): string
@@ -95,15 +94,15 @@ final class MadelineProtoConfig
         $directory = dirname($basePath);
 
         if ($extension === '') {
-            return $directory . DIRECTORY_SEPARATOR . sprintf('%s-%s', $filename, $normalized);
+            return $directory.DIRECTORY_SEPARATOR.sprintf('%s-%s', $filename, $normalized);
         }
 
-        return $directory . DIRECTORY_SEPARATOR . sprintf('%s-%s.%s', $filename, $normalized, $extension);
+        return $directory.DIRECTORY_SEPARATOR.sprintf('%s-%s.%s', $filename, $normalized, $extension);
     }
 
     public function sessionPoolStateFilePath(): string
     {
-        return $this->sessionDirectoryPath() . DIRECTORY_SEPARATOR . 'session-pool.state';
+        return $this->sessionDirectoryPath().DIRECTORY_SEPARATOR.'session-pool.state';
     }
 
     public function normalizeSessionName(string $sessionName): string
@@ -123,7 +122,7 @@ final class MadelineProtoConfig
             return self::DEFAULT_SESSION_NAME;
         }
 
-        if (!preg_match('/^session\.([a-z0-9_-]+)\.madeline$/i', $basename, $matches)) {
+        if (! preg_match('/^session\.([a-z0-9_-]+)\.madeline$/i', $basename, $matches)) {
             return null;
         }
 

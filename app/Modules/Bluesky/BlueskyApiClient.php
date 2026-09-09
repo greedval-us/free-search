@@ -10,6 +10,7 @@ use App\Modules\Bluesky\Support\BlueskyApiConfig;
 use App\Support\Observability\ExternalServiceLogger;
 use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Http\Client\PendingRequest;
+use Illuminate\Http\Client\Response;
 use Illuminate\Support\Facades\Http;
 
 final class BlueskyApiClient implements BlueskyGatewayInterface
@@ -22,8 +23,7 @@ final class BlueskyApiClient implements BlueskyGatewayInterface
     public function __construct(
         private readonly BlueskyApiConfig $config,
         private readonly ExternalServiceLogger $externalServiceLogger,
-    ) {
-    }
+    ) {}
 
     public function searchPosts(array $params): array
     {
@@ -103,7 +103,7 @@ final class BlueskyApiClient implements BlueskyGatewayInterface
     }
 
     /**
-     * @param array<string, mixed> $query
+     * @param  array<string, mixed>  $query
      * @return array<string, mixed>
      */
     private function get(string $endpoint, array $query): array
@@ -114,9 +114,9 @@ final class BlueskyApiClient implements BlueskyGatewayInterface
     }
 
     /**
-     * @param array<string, mixed> $query
+     * @param  array<string, mixed>  $query
      */
-    private function request(string $endpoint, array $query): \Illuminate\Http\Client\Response
+    private function request(string $endpoint, array $query): Response
     {
         $this->guardConfig();
 
