@@ -11,6 +11,7 @@ import shifr from './shifr.json';
 import siteIntel from './siteIntel.json';
 import systemNotifications from './systemNotifications.json';
 import telegram from './telegram.json';
+import telegramBot from './telegramBot.json';
 import terms from './terms.json';
 import userMenu from './userMenu.json';
 import welcome from './welcome.json';
@@ -30,6 +31,7 @@ const ru = {
     siteIntel,
     systemNotifications,
     telegram,
+    telegramBot,
     terms,
     userMenu,
     welcome,

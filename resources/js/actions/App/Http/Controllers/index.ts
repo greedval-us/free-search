@@ -1,3 +1,4 @@
+import TelegramBot from './TelegramBot'
 import SitemapController from './SitemapController'
 import DashboardController from './DashboardController'
 import Dashboard from './Dashboard'
@@ -12,7 +13,8 @@ import YouTube from './YouTube'
 import Wiki from './Wiki'
 import Settings from './Settings'
 const Controllers = {
-    SitemapController: Object.assign(SitemapController, SitemapController),
+    TelegramBot: Object.assign(TelegramBot, TelegramBot),
+SitemapController: Object.assign(SitemapController, SitemapController),
 DashboardController: Object.assign(DashboardController, DashboardController),
 Dashboard: Object.assign(Dashboard, Dashboard),
 Notifications: Object.assign(Notifications, Notifications),
