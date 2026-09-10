@@ -105,6 +105,11 @@ final class MadelineProtoConfig
         return $this->sessionDirectoryPath().DIRECTORY_SEPARATOR.'session-pool.state';
     }
 
+    public function pendingSessionMarkerPath(string $sessionName): string
+    {
+        return $this->sessionFilePathFor($sessionName).'.pending';
+    }
+
     public function normalizeSessionName(string $sessionName): string
     {
         $normalized = strtolower(trim($sessionName));

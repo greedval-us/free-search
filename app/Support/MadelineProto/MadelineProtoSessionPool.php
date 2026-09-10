@@ -32,6 +32,10 @@ final class MadelineProtoSessionPool
                 continue;
             }
 
+            if (file_exists($this->config->pendingSessionMarkerPath($sessionName))) {
+                continue;
+            }
+
             $names[$sessionName] = $sessionName;
         }
 

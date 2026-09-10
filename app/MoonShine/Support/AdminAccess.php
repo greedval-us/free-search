@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\MoonShine\Support;
 
 use App\MoonShine\Pages\TelegramBotOverviewPage;
+use App\MoonShine\Pages\TelegramSessionsPage;
 use App\MoonShine\Resources\AdminAuditLog\AdminAuditLogResource;
 use App\MoonShine\Resources\AppUser\AppUserResource;
 use App\MoonShine\Resources\FailedJob\FailedJobResource;
@@ -27,6 +28,7 @@ final class AdminAccess
      * @var array<class-string, list<AdminRole>>
      */
     private const RESOURCE_ROLES = [
+        TelegramSessionsPage::class => [AdminRole::Admin, AdminRole::Developer],
         TelegramBotOverviewPage::class => [AdminRole::Admin, AdminRole::Analyst, AdminRole::Developer],
         TelegramBotLinkResource::class => [AdminRole::Admin, AdminRole::Analyst],
         TelegramBotDeliveryResource::class => [AdminRole::Admin, AdminRole::Developer],

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\MoonShine\Support;
 
 use App\MoonShine\Pages\TelegramBotOverviewPage;
+use App\MoonShine\Pages\TelegramSessionsPage;
 use App\MoonShine\Resources\AdminAuditLog\AdminAuditLogResource;
 use App\MoonShine\Resources\AppUser\AppUserResource;
 use App\MoonShine\Resources\FailedJob\FailedJobResource;
@@ -116,6 +117,7 @@ final class AdminNavigationCatalog
                 'icon' => 'server-stack',
                 'resources' => [
                     ParserRunResource::class,
+                    TelegramSessionsPage::class,
                     RequestLogResource::class,
                     QueueJobResource::class,
                     FailedJobResource::class,

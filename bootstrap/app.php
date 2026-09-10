@@ -51,6 +51,8 @@ return Application::configure(basePath: dirname(__DIR__))
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
+        $exceptions->dontFlash(['phone_number', 'phone_code']);
+
         $resolveApiLocale = static function (Request $request): string {
             $locale = strtolower(trim((string) $request->input('locale', app()->getLocale())));
 

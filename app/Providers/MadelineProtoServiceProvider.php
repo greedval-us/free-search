@@ -2,6 +2,8 @@
 
 namespace App\Providers;
 
+use App\Support\MadelineProto\Authentication\MadelineSessionAuthenticator;
+use App\Support\MadelineProto\Authentication\SessionAuthenticator;
 use App\Support\MadelineProto\MadelineProtoClientFactory;
 use App\Support\MadelineProto\MadelineProtoConfig;
 use App\Support\MadelineProto\MadelineProtoManager;
@@ -22,6 +24,7 @@ class MadelineProtoServiceProvider extends ServiceProvider
         $this->app->singleton(MadelineProtoClientFactory::class);
         $this->app->singleton(MadelineProtoSessionPool::class);
         $this->app->singleton(MadelineProtoManager::class);
+        $this->app->bind(SessionAuthenticator::class, MadelineSessionAuthenticator::class);
     }
 
     public function boot(): void

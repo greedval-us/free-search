@@ -44,6 +44,20 @@ class MadelineProtoSessionPoolTest extends TestCase
         $this->assertSame('default', $pool->nextSessionName());
     }
 
+    public function test_pending_sessions_are_excluded_until_explicitly_published(): void
+    {
+        $config = $this->makeConfig('pending-session');
+        $this->touchFile($config->sessionFilePathFor('default'));
+        $this->touchDirectory($config->sessionFilePathFor('pending'));
+        $this->touchFile($config->pendingSessionMarkerPath('pending'));
+        $pool = new MadelineProtoSessionPool($config);
+
+        $this->assertSame(['default'], $pool->availableSessionNames());
+        $this->assertSame('default', $pool->nextSessionName());
+        unlink($config->pendingSessionMarkerPath('pending'));
+        $this->assertSame(['default', 'pending'], $pool->availableSessionNames());
+    }
+
     private function makeConfig(string $suffix): MadelineProtoConfig
     {
         $uniqueSuffix = $suffix.'-'.bin2hex(random_bytes(4));
