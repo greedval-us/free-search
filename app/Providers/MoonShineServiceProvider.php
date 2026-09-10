@@ -57,6 +57,7 @@ class MoonShineServiceProvider extends ServiceProvider
             ->resources(AdminNavigationCatalog::resources())
             ->pages([
                 ...$core->getConfig()->getPages(),
+                ...AdminNavigationCatalog::pages(),
             ]);
     }
 }

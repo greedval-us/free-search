@@ -9,6 +9,7 @@ use App\MoonShine\Support\AdminControlAnalyticsService;
 use App\MoonShine\Support\AdminDashboardConfig;
 use App\MoonShine\Support\AdminNavigationCatalog;
 use App\MoonShine\Support\AdminRole;
+use MoonShine\Contracts\Core\PageContract;
 use MoonShine\Contracts\Core\ResourceContract;
 use MoonShine\Contracts\UI\ComponentContract;
 use MoonShine\Laravel\Models\MoonshineUser;
@@ -168,7 +169,7 @@ class Dashboard extends Page
             }
 
             $resource = $this->getCore()->getInstances($resourceClass);
-            if (! $resource instanceof ResourceContract) {
+            if (! $resource instanceof ResourceContract && ! $resource instanceof PageContract) {
                 continue;
             }
 
