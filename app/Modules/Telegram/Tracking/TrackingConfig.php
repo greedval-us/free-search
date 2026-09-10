@@ -6,6 +6,13 @@ use App\Support\Access\Enums\AccountPlan;
 
 final class TrackingConfig
 {
+    private const MAX_PAGE_SIZE = 100;
+
+    public function pageSize(): int
+    {
+        return min(self::MAX_PAGE_SIZE, $this->integer('page_size'));
+    }
+
     public function integer(string $key): int
     {
         return max(1, (int) config('telegram_tracking.'.$key));

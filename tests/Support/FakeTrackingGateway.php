@@ -13,14 +13,17 @@ final class FakeTrackingGateway implements TrackingGateway
 
     public array $requests = [];
 
+    public array $resolutions = [];
+
     public ?TrackingException $failure = null;
 
     public ?Closure $onResolve = null;
 
     public ?Closure $onHistory = null;
 
-    public function resolve(array $groups): array
+    public function resolve(array $groups, ?string $keyword = null): array
     {
+        $this->resolutions[] = ['groups' => $groups, 'keyword' => $keyword];
         if ($this->onResolve !== null) {
             ($this->onResolve)();
         }
@@ -33,9 +36,10 @@ final class FakeTrackingGateway implements TrackingGateway
         ], $groups, array_keys($groups));
     }
 
-    public function history(TelegramTrackingSource $source): array
+    public function fetch(TelegramTrackingSource $source): array
     {
-        $this->requests[] = ['offset' => $source->offset_id, 'cursor' => $source->cursor_id, 'window_end' => $source->window_end];
+        $this->requests[] = ['offset' => $source->offset_id, 'cursor' => $source->cursor_id,
+            'window_start' => $source->window_start, 'window_end' => $source->window_end, 'method' => $source->collection_method];
         if ($this->onHistory !== null) {
             ($this->onHistory)();
         }

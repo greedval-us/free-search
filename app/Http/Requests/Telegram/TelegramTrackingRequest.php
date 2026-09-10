@@ -39,7 +39,7 @@ final class TelegramTrackingRequest extends FormRequest
                 'notify_bot' => ['required_if:action,preferences', 'boolean']];
         }
         $rules = ['groups' => ['required', 'array', 'list', 'min:1', 'max:'.$config->integer('max_sources')],
-            'groups.*' => ['required', 'string', 'distinct', 'regex:/^(?:[a-z][a-z0-9_]{3,31}|-[1-9][0-9]{0,18})$/']];
+            'groups.*' => ['bail', 'required', 'string', 'not_regex:/\s/u', 'distinct', 'regex:/^(?:[a-z][a-z0-9_]{3,31}|-[1-9][0-9]{0,18})$/']];
         if ($this->routeIs('telegram.tracking.validate')) {
             return $rules;
         }
@@ -48,5 +48,10 @@ final class TelegramTrackingRequest extends FormRequest
             'query' => $this->input('mode') === 'user' ? ['required', 'string', 'regex:/^[1-9][0-9]{0,18}$/']
                 : ['required', 'string', 'min:'.$config->integer('keyword_min_length'), 'max:'.$config->integer('keyword_max_length')],
             'notify_bot' => ['sometimes', 'boolean']];
+    }
+
+    public function messages(): array
+    {
+        return ['groups.*.not_regex' => __('telegram_tracking.validation.groups_one_per_line')];
     }
 }

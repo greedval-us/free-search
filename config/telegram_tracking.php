@@ -10,6 +10,7 @@ return [
     'renewal_window_days' => 7,
     'retention_days' => 7,
     'interval_hours' => (int) env('TELEGRAM_TRACKING_INTERVAL_HOURS', 6),
+    'search_overlap_seconds' => (int) env('TELEGRAM_TRACKING_SEARCH_OVERLAP_SECONDS', 300),
     'max_interval_hours' => 24,
     'sources_per_interval' => 30,
     'page_size' => 100,

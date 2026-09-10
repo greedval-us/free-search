@@ -40,13 +40,13 @@ final readonly class TrackingCollector
             }
             if ($source->window_end === null) {
                 $initialized = TelegramTrackingSource::query()->whereKey($sourceId)->where('lease_token', $token)
-                    ->update(['window_end' => now(), 'offset_id' => 0, 'high_id' => $source->cursor_id]);
+                    ->update($this->newWindow($source));
                 if (! $initialized) {
                     return;
                 }
                 $source->refresh();
             }
-            $messages = $this->gateway->history($source);
+            $messages = $this->gateway->fetch($source);
             $this->persist($source, $token, $messages);
         } catch (TrackingException $exception) {
             $this->retry($sourceId, $token, $exception);
@@ -56,6 +56,24 @@ final readonly class TrackingCollector
         } finally {
             $lock->release();
         }
+    }
+
+    private function newWindow(TelegramTrackingSource $source): array
+    {
+        $search = $source->tracking->mode === 'keyword';
+        $from = $source->collect_from;
+        if ($search && $source->checked_at !== null) {
+            $overlap = $source->checked_at->subSeconds($this->config->integer('search_overlap_seconds'));
+            $from = $from->max($overlap);
+        }
+
+        return [
+            'window_start' => $from,
+            'window_end' => now()->startOfSecond(),
+            'collection_method' => $search ? TelegramTrackingSource::SEARCH : TelegramTrackingSource::HISTORY,
+            'offset_id' => 0,
+            'high_id' => $source->cursor_id,
+        ];
     }
 
     private function persist(TelegramTrackingSource $snapshot, string $token, array $messages): void
@@ -110,6 +128,8 @@ final readonly class TrackingCollector
             'high_id' => $page->complete ? 0 : $page->highId,
             'checked_at' => $page->complete ? $source->window_end : $source->checked_at,
             'window_end' => $page->complete ? null : $source->window_end,
+            'window_start' => $page->complete ? null : $source->window_start,
+            'collection_method' => $page->complete ? null : $source->collection_method,
             'pending_matches' => $page->complete ? 0 : $pending,
             'lease_token' => null, 'lease_until' => null, 'error_code' => null, 'failure_count' => 0,
             'next_check_at' => $nextCheck,

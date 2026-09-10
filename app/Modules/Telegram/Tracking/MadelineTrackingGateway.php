@@ -14,14 +14,15 @@ use Throwable;
 
 final readonly class MadelineTrackingGateway implements TrackingGateway
 {
-    public function __construct(private MadelineProtoManager $manager, private MadelineProtoConfig $sessions, private TrackingConfig $config) {}
+    public function __construct(private MadelineProtoManager $manager, private MadelineProtoConfig $sessions,
+        private TrackingConfig $config, private TrackingMessageReader $reader) {}
 
-    public function resolve(array $groups): array
+    public function resolve(array $groups, ?string $keyword = null): array
     {
         $session = $this->manager->availableSessionNames()[0] ?? throw new TrackingException('session_unavailable');
-        $key = 'telegram-tracking:validation:'.hash('sha256', $session.json_encode($groups));
+        $key = 'telegram-tracking:validation:search-v1:'.hash('sha256', json_encode([$session, $groups, $keyword]));
 
-        return Cache::remember($key, $this->config->integer('validation_cache_seconds'), fn () => $this->request($session, function (API $client) use ($groups, $session): array {
+        return Cache::remember($key, $this->config->integer('validation_cache_seconds'), fn () => $this->request($session, function (API $client) use ($groups, $session, $keyword): array {
             $resolved = [];
             foreach ($groups as $group) {
                 if ($resolved !== []) {
@@ -32,9 +33,9 @@ final readonly class MadelineTrackingGateway implements TrackingGateway
                     throw new TrackingException('group_unavailable');
                 }
                 $peer = (string) $info['bot_api_id'];
-                // Existence alone is insufficient: verify readable history without joining.
+                // Probe the operation used by this task; never join to obtain access.
                 sleep($this->config->integer('request_gap_seconds'));
-                $client->messages->getHistory(peer: (int) $peer, limit: 1, floodWaitLimit: 0);
+                $this->reader->checkAccess((int) $peer, $keyword, $this->messagesRequest($client));
                 $chat = $info['Chat'] ?? [];
                 $resolved[$peer] = ['session_name' => $session, 'peer_id' => $peer,
                     'username' => $chat['username'] ?? null, 'title' => mb_substr((string) ($chat['title'] ?? $group), 0, 255)];
@@ -47,18 +48,14 @@ final readonly class MadelineTrackingGateway implements TrackingGateway
         }));
     }
 
-    public function history(TelegramTrackingSource $source): array
+    public function fetch(TelegramTrackingSource $source): array
     {
-        return $this->request($source->session_name, function (API $client) use ($source): array {
-            $result = $client->messages->getHistory(peer: (int) $source->peer_id,
-                offset_id: $source->offset_id, offset_date: $source->offset_id === 0 ? $source->window_end->timestamp + 1 : 0,
-                min_id: $source->cursor_id, limit: $this->config->integer('page_size'), floodWaitLimit: 0);
-            if (! isset($result['messages']) || ! is_array($result['messages'])) {
-                throw new TrackingException('collection_failed');
-            }
+        return $this->request($source->session_name, fn (API $client) => $this->reader->fetch($source, $this->messagesRequest($client)));
+    }
 
-            return $result['messages'];
-        });
+    private function messagesRequest(API $client): Closure
+    {
+        return static fn (string $method, array $parameters): array => $client->messages->{$method}(...$parameters);
     }
 
     private function request(string $session, Closure $callback): array
@@ -90,7 +87,7 @@ final readonly class MadelineTrackingGateway implements TrackingGateway
         } catch (TrackingException $exception) {
             throw $exception;
         } catch (Throwable $exception) {
-            $unavailable = preg_match('/CHANNEL_PRIVATE|CHANNEL_INVALID|CHAT_ID_INVALID|PEER_ID_INVALID|USERNAME_NOT_OCCUPIED|USERNAME_INVALID/', $exception->getMessage());
+            $unavailable = preg_match('/CHANNEL_PRIVATE|CHANNEL_INVALID|CHAT_ID_INVALID|CHAT_ADMIN_REQUIRED|PEER_ID_INVALID|PEER_ID_NOT_SUPPORTED|USERNAME_NOT_OCCUPIED|USERNAME_INVALID/', $exception->getMessage());
             throw new TrackingException($unavailable ? 'group_unavailable' : 'collection_failed');
         } finally {
             $gap = $this->config->integer('request_gap_seconds');

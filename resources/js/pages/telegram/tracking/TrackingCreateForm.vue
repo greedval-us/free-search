@@ -7,6 +7,7 @@ const props = defineProps<{
     limits: TrackingList;
     busy: boolean;
     validatedGroups: string[];
+    groupsError: string;
 }>();
 defineEmits<{ create: []; validate: [] }>();
 const form = defineModel<TrackingForm>({ required: true });
@@ -16,6 +17,7 @@ const canCreate = computed(
         props.limits.active_count < props.limits.limit &&
         form.value.name.trim().length > 0 &&
         form.value.groups.trim().length > 0 &&
+        !props.groupsError &&
         (form.value.mode === 'user'
             ? /^[1-9]\d{0,18}$/.test(form.value.query.trim())
             : [...form.value.query.trim()].length >=
@@ -85,9 +87,11 @@ const canCreate = computed(
                     :inputmode="form.mode === 'user' ? 'numeric' : 'text'"
                     required
                 /><span class="text-xs text-muted-foreground">{{
-                    t('telegramTracking.matchHelp', {
-                        min: limits.keyword_min_length,
-                    })
+                    form.mode === 'keyword'
+                        ? t('telegramTracking.matchHelp', {
+                              min: limits.keyword_min_length,
+                          })
+                        : t('telegramTracking.userHelp')
                 }}</span></label
             >
             <label class="intel-field md:col-span-2 xl:col-span-3"
@@ -98,13 +102,28 @@ const canCreate = computed(
                 }}</span
                 ><textarea
                     v-model="form.groups"
-                    class="intel-input min-h-24 resize-y"
+                    class="intel-scroll intel-input min-h-24 resize-y"
+                    :aria-invalid="Boolean(groupsError)"
+                    :aria-describedby="
+                        groupsError
+                            ? 'tracking-groups-help tracking-groups-error'
+                            : 'tracking-groups-help'
+                    "
                     rows="3"
                     :placeholder="t('telegramTracking.groupsPlaceholder')"
+                    @keydown.space.prevent
                     required
-                /><span class="text-xs text-muted-foreground">{{
-                    t('telegramTracking.noJoin')
-                }}</span></label
+                /><span
+                    id="tracking-groups-help"
+                    class="text-xs text-muted-foreground"
+                    >{{ t('telegramTracking.noJoin') }}</span
+                ><span
+                    v-if="groupsError"
+                    id="tracking-groups-error"
+                    role="alert"
+                    class="text-xs text-destructive"
+                    >{{ groupsError }}</span
+                ></label
             >
         </div>
         <p
@@ -130,7 +149,7 @@ const canCreate = computed(
             <button
                 type="button"
                 class="intel-button-secondary"
-                :disabled="busy || !form.groups.trim()"
+                :disabled="busy || !form.groups.trim() || Boolean(groupsError)"
                 @click="$emit('validate')"
             >
                 {{ t('telegramTracking.validate') }}</button

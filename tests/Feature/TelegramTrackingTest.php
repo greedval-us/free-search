@@ -84,6 +84,36 @@ class TelegramTrackingTest extends TestCase
     {
         $this->gateway->failure = new TrackingException('group_unavailable');
         $this->actingAs($this->user)->postJson('/telegram/tracking', $this->input())->assertUnprocessable()->assertJsonPath('code', 'group_unavailable');
+        $this->assertSame('test', $this->gateway->resolutions[0]['keyword']);
+        $this->assertDatabaseCount('telegram_trackings', 0);
+        $this->assertDatabaseCount('telegram_tracking_sources', 0);
+    }
+
+    public static function groupSeparators(): array
+    {
+        $cases = [];
+        foreach (['en', 'ru'] as $locale) {
+            foreach (['space' => ' ', 'tab' => "\t", 'non-breaking space' => "\u{00a0}", 'embedded newline' => "\n"] as $name => $separator) {
+                $cases[$locale.' '.$name] = [$locale, $separator];
+            }
+        }
+
+        return $cases;
+    }
+
+    #[DataProvider('groupSeparators')]
+    public function test_group_entries_cannot_contain_multiple_sources(string $locale, string $separator): void
+    {
+        $this->gateway->onResolve = fn () => $this->fail('Invalid groups must not reach Telegram.');
+        $this->actingAs($this->user)->withCredentials()->withUnencryptedCookie('locale', $locale);
+        foreach (['/telegram/tracking', '/telegram/tracking/validate'] as $endpoint) {
+            $response = $this->postJson($endpoint, $this->input(['groups' => ['@firstgroup'.$separator.'@secondgroup']]))
+                ->assertUnprocessable()->assertJsonValidationErrors('groups.0');
+            $this->assertSame(
+                trans('telegram_tracking.validation.groups_one_per_line', [], $locale),
+                $response->json('errors')['groups.0'][0],
+            );
+        }
         $this->assertDatabaseCount('telegram_trackings', 0);
     }
 
@@ -214,11 +244,17 @@ class TelegramTrackingTest extends TestCase
         $this->assertSame(2, $source->fresh()->offset_id);
         $this->assertSame(0, $this->user->notifications()->count());
         $this->collect($source);
+        $this->assertSame(0, $source->fresh()->cursor_id);
+        $this->assertSame(1, $source->fresh()->offset_id);
+        $this->assertSame(3, $source->fresh()->pending_matches);
+        $this->assertSame(0, $this->user->notifications()->count());
+        $this->collect($source);
         $this->assertSame(3, $source->fresh()->cursor_id);
         $this->assertNull($source->fresh()->window_end);
         $this->assertSame(1, $this->user->notifications()->count());
         $this->assertSame(3, $this->user->notifications()->first()->data['body_params']['count']);
         $this->gateway->pages = [[$this->message(3)]];
+        $this->collect($source);
         $this->collect($source);
         $this->assertDatabaseCount('telegram_tracking_messages', 3);
         $this->assertSame(1, $this->user->notifications()->count());
@@ -367,6 +403,145 @@ class TelegramTrackingTest extends TestCase
         $this->assertSame(24, $config->interval(10000));
         config(['telegram_tracking.queue.connection' => 'sync']);
         $this->actingAs($this->user)->postJson('/telegram/tracking', $this->input())->assertUnprocessable()->assertJsonPath('code', 'queue_unavailable');
+    }
+
+    public function test_search_pins_window_across_delays_and_finds_late_indexed_messages_without_duplicates(): void
+    {
+        $source = $this->create()->sources()->first();
+        $this->assertSame('test', $this->gateway->resolutions[0]['keyword']);
+        $this->travel(6)->hours();
+        $end = now();
+        $message = $this->message(10);
+        $late = $this->message(9);
+        $this->gateway->pages = [[$message], []];
+        $this->collect($source);
+        $this->assertNull($source->fresh()->checked_at);
+        $this->assertTrue($source->fresh()->window_end->equalTo($end));
+        $this->travel(10)->hours();
+        $this->collect($source);
+
+        $this->assertTrue($source->fresh()->checked_at->equalTo($end));
+        $this->assertTrue($this->gateway->requests[0]['window_end']->equalTo($this->gateway->requests[1]['window_end']));
+        $this->assertTrue($this->gateway->requests[0]['window_start']->equalTo($this->gateway->requests[1]['window_start']));
+        $this->assertSame(10, $source->fresh()->cursor_id);
+        $this->assertSame(1, $this->user->notifications()->count());
+
+        $this->gateway->pages = [[$message, $late], []];
+        $this->collect($source);
+        $overlap = app(TrackingConfig::class)->integer('search_overlap_seconds');
+        $this->assertTrue($source->fresh()->window_start->equalTo($end->subSeconds($overlap)));
+        $this->collect($source);
+        $this->assertDatabaseCount('telegram_tracking_messages', 2);
+        $this->assertSame(2, $this->user->notifications()->count());
+        foreach ($this->user->notifications as $notification) {
+            $this->assertSame(1, $notification->data['body_params']['count']);
+        }
+    }
+
+    public function test_empty_search_advances_time_and_resume_does_not_collect_the_paused_period(): void
+    {
+        $task = $this->create();
+        $source = $task->sources()->first();
+        $this->travel(6)->hours();
+        $end = now();
+        $this->collect($source);
+        $this->assertTrue($source->fresh()->checked_at->equalTo($end));
+        $this->assertSame(0, $source->fresh()->cursor_id);
+
+        $this->travel(6)->hours();
+        $this->collect($source);
+        $this->assertTrue($this->gateway->requests[1]['window_start']->equalTo($end->subSeconds(app(TrackingConfig::class)->integer('search_overlap_seconds'))));
+        $this->change($task, 'pause')->assertOk();
+        $this->travel(1)->days();
+        $resumed = now();
+        $this->change($task, 'resume')->assertOk();
+        $this->travel(6)->hours();
+        $this->collect($source);
+        $this->assertTrue($this->gateway->requests[2]['window_start']->equalTo($resumed));
+        $this->assertSame(0, $this->user->notifications()->count());
+    }
+
+    public function test_search_failure_after_partial_page_retains_window_and_progress_for_retry(): void
+    {
+        $source = $this->create()->sources()->first();
+        $this->travel(6)->hours();
+        $this->gateway->pages = [[$this->message(10)]];
+        $this->collect($source);
+        $window = $source->fresh()->window_end;
+        $this->gateway->failure = new TrackingException('search_incomplete');
+        $this->collect($source);
+
+        $this->assertSame('search_incomplete', $source->fresh()->error_code);
+        $this->assertSame(10, $source->fresh()->offset_id);
+        $this->assertSame(0, $source->fresh()->cursor_id);
+        $this->assertNull($source->fresh()->checked_at);
+        $this->assertTrue($source->fresh()->window_end->equalTo($window));
+        $this->assertSame(0, $this->user->notifications()->count());
+
+        $this->gateway->failure = null;
+        $this->collect($source);
+        $this->assertTrue($source->fresh()->checked_at->equalTo($window));
+        $this->assertNull($source->fresh()->window_start);
+        $this->assertNull($source->fresh()->collection_method);
+        $this->assertSame(1, $this->user->notifications()->count());
+    }
+
+    public function test_existing_history_window_finishes_before_switching_to_search(): void
+    {
+        $source = $this->create()->sources()->first();
+        $this->travel(6)->hours();
+        $source->update(['window_end' => now(), 'offset_id' => 11, 'high_id' => 12]);
+        $this->gateway->pages = [[$this->message(10, 'not a keyword match')]];
+        $this->collect($source);
+        $this->assertSame(11, $this->gateway->requests[0]['offset']);
+        $this->assertDatabaseCount('telegram_tracking_messages', 0);
+        $this->assertNull($source->fresh()->window_end);
+        $this->assertSame(12, $source->fresh()->cursor_id);
+
+        $this->travel(6)->hours();
+        $this->collect($source);
+        $this->assertSame(TelegramTrackingSource::SEARCH, $this->gateway->requests[1]['method']);
+        $this->assertSame(0, $this->gateway->requests[1]['offset']);
+    }
+
+    public function test_sender_id_mode_still_reads_history_and_checks_exact_sender(): void
+    {
+        $task = app(TrackingService::class)->create($this->user, $this->input(['mode' => 'user', 'query' => '42']));
+        $source = $task->sources()->first();
+        $this->travel(6)->hours();
+        $this->gateway->pages = [[$this->message(1, 'Any message')]];
+        $this->collect($source);
+
+        $this->assertNull($this->gateway->resolutions[0]['keyword']);
+        $this->assertSame(TelegramTrackingSource::HISTORY, $this->gateway->requests[0]['method']);
+        $this->assertDatabaseCount('telegram_tracking_messages', 1);
+        $this->assertSame(1, $this->user->notifications()->count());
+        $this->assertNotNull($source->fresh()->checked_at);
+    }
+
+    public function test_search_migration_preserves_legacy_progress_and_collected_messages(): void
+    {
+        $task = app(TrackingService::class)->create($this->user, $this->input(['groups' => ['publicgroup', 'anothergroup']]));
+        [$source, $idle] = $task->sources()->orderBy('id')->get()->all();
+        $this->travel(6)->hours();
+        $this->gateway->pages = [[$this->message(10)]];
+        $this->collect($source);
+        $source->refresh();
+        $progress = $source->only(['cursor_id', 'offset_id', 'high_id', 'pending_matches', 'window_end', 'checked_at']);
+
+        // Recreate the pre-upgrade schema in the isolated test database.
+        $migration = require database_path('migrations/2026_09_10_130000_add_search_windows_to_telegram_tracking_sources.php');
+        $migration->down();
+        $migration->up();
+
+        $source->refresh();
+        $this->assertEquals($progress, $source->only(array_keys($progress)));
+        $this->assertTrue($source->window_start->equalTo($source->collect_from));
+        $this->assertSame(TelegramTrackingSource::HISTORY, $source->collection_method);
+        $this->assertNull($idle->fresh()->window_start);
+        $this->assertNull($idle->fresh()->collection_method);
+        $this->assertDatabaseCount('telegram_tracking_messages', 1);
+        $this->assertDatabaseCount('telegram_tracking_sources', 2);
     }
 
     private function input(array $overrides = []): array

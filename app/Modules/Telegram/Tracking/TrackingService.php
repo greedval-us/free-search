@@ -19,7 +19,7 @@ final readonly class TrackingService
         // The definitive quota check runs under a row lock after network validation.
         $this->lifecycle->synchronize($user->id);
         $this->checkCapacity($user);
-        $sources = $this->gateway->resolve($data['groups']);
+        $sources = $this->gateway->resolve($data['groups'], $data['mode'] === 'keyword' ? $data['query'] : null);
 
         return DB::transaction(function () use ($user, $data, $sources): TelegramTracking {
             $locked = User::query()->lockForUpdate()->findOrFail($user->id);
@@ -76,7 +76,7 @@ final readonly class TrackingService
             ...$this->activationAttributes($user),
         ]);
         $task->sources()->update([
-            'collect_from' => now(), 'window_end' => null,
+            'collect_from' => now(), 'window_start' => null, 'window_end' => null, 'collection_method' => null,
             'offset_id' => 0, 'high_id' => 0, 'lease_token' => null, 'lease_until' => null,
             'error_code' => null, 'failure_count' => 0,
             'next_check_at' => now()->addHours($this->config->interval()),

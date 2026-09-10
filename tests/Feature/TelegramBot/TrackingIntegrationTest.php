@@ -104,6 +104,8 @@ final class TrackingIntegrationTest extends TelegramBotTestCase
         $source->update(['lease_token' => 'tracking-test']);
         $this->gateway->pages = [[['_' => 'message', 'id' => 1, 'message' => 'test message', 'date' => now()->subMinute()->timestamp]]];
         app(TrackingCollector::class)->collect($source->id, 'tracking-test');
+        $source->refresh()->update(['lease_token' => 'tracking-test-final']);
+        app(TrackingCollector::class)->collect($source->id, 'tracking-test-final');
 
         return $task;
     }

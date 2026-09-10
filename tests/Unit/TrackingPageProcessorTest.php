@@ -104,6 +104,43 @@ class TrackingPageProcessorTest extends TestCase
         app(TrackingPageProcessor::class)->process($this->source, [[], $this->message(0)]);
     }
 
+    public function test_search_continues_after_short_page_and_trusts_telegram_text_matching(): void
+    {
+        $this->source->collection_method = TelegramTrackingSource::SEARCH;
+        $page = app(TrackingPageProcessor::class)->process($this->source, [$this->message(8, ['message' => 'API-selected result'])]);
+
+        $this->assertFalse($page->complete);
+        $this->assertSame(8, $page->offsetId);
+        $this->assertCount(1, $page->matches);
+        $this->assertTrue(app(TrackingPageProcessor::class)->process($this->source, [])->complete);
+    }
+
+    public function test_search_keeps_overlap_matches_below_cursor_and_rechecks_time_bounds(): void
+    {
+        $this->source->collection_method = TelegramTrackingSource::SEARCH;
+        $this->source->cursor_id = 10;
+        $this->source->high_id = 10;
+        $this->source->window_start = now()->subMinutes(5);
+        $page = app(TrackingPageProcessor::class)->process($this->source, [
+            $this->message(12, ['date' => now()->addSecond()->timestamp]),
+            $this->message(9),
+            $this->message(8, ['date' => now()->subMinutes(6)->timestamp]),
+        ]);
+
+        $this->assertFalse($page->complete);
+        $this->assertSame([9], array_column($page->matches, 'message_id'));
+        $this->assertSame(10, $page->highId);
+        $this->assertSame(8, $page->offsetId);
+    }
+
+    public function test_repeated_short_search_page_is_rejected(): void
+    {
+        $this->source->collection_method = TelegramTrackingSource::SEARCH;
+        $this->source->offset_id = 8;
+        $this->expectException(TrackingException::class);
+        app(TrackingPageProcessor::class)->process($this->source, [$this->message(8)]);
+    }
+
     private function message(int $id, array $overrides = []): array
     {
         return array_replace([

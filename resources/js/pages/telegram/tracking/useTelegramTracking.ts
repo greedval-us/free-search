@@ -1,4 +1,4 @@
-import { onBeforeUnmount, onMounted, ref, watch } from 'vue';
+import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue';
 import { useI18n } from '@/composables/useI18n';
 import { ApiError, apiRequestOrThrow } from '@/lib/api';
 import type { RequestOptions } from '@/lib/api';
@@ -103,18 +103,37 @@ export const useTelegramTracking = () => {
         }
     };
 
-    const groups = () =>
+    const groupLines = computed(() =>
         form.value.groups
-            .split(/\r?\n/)
+            .split(/\r\n?|\n/)
             .map((value) => value.trim())
-            .filter(Boolean);
+            .filter(Boolean)
+    );
+    const groupsError = computed(() =>
+        groupLines.value.some((value) => /\s/u.test(value))
+            ? t('telegramTracking.groupsOnePerLine')
+            : ''
+    );
+    const groups = () => {
+        if (groupsError.value) {
+            throw new ApiError({ ok: false, message: groupsError.value });
+        }
+
+        return groupLines.value;
+    };
     const validateGroups = () =>
         perform(async () => {
+            const input = form.value.groups;
             const result = await request<{ groups: { title: string }[] }>(
                 '/validate',
                 { method: 'POST', body: { groups: groups() } }
             );
-            validatedGroups.value = result.groups.map((group) => group.title);
+
+            if (form.value.groups === input) {
+                validatedGroups.value = result.groups.map(
+                    (group) => group.title
+                );
+            }
         });
     const create = () =>
         perform(async () => {
@@ -175,6 +194,7 @@ export const useTelegramTracking = () => {
         busy,
         error,
         form,
+        groupsError,
         validatedGroups,
         validateGroups,
         create,

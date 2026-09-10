@@ -161,6 +161,69 @@ describe('Telegram tracking state', () => {
         );
     });
 
+    it.each([' ', '\t', '\u00a0'])(
+        'rejects groups separated by %j before validating or creating',
+        async (separator) => {
+            const state = useTelegramTracking();
+            const input = `@first_group${separator}@second_group`;
+            state.form.value.groups = input;
+
+            expect(state.groupsError.value).toBe(
+                'telegramTracking.groupsOnePerLine'
+            );
+            await state.validateGroups();
+            await state.create();
+
+            expect(hooks.request).not.toHaveBeenCalled();
+            expect(state.form.value.groups).toBe(input);
+            expect(state.error.value).toBe('telegramTracking.groupsOnePerLine');
+            expect(state.busy.value).toBe(false);
+            state.form.value.groups = '@first_group\n@second_group';
+            expect(state.groupsError.value).toBe('');
+        }
+    );
+
+    it.each(['\n', '\r\n', '\r'])(
+        'accepts one group per line with %j line endings',
+        async (newline) => {
+            hooks.request.mockResolvedValue({ groups: [] });
+            const state = useTelegramTracking();
+            state.form.value.groups = ` @first_group ${newline}${newline} https://t.me/second_group `;
+
+            await state.validateGroups();
+
+            expect(state.groupsError.value).toBe('');
+            expect(hooks.request).toHaveBeenCalledWith(
+                '/telegram/tracking/validate',
+                expect.objectContaining({
+                    method: 'POST',
+                    body: {
+                        groups: ['@first_group', 'https://t.me/second_group'],
+                    },
+                })
+            );
+        }
+    );
+
+    it('ignores validation results for groups edited while the request was pending', async () => {
+        let finish!: (value: unknown) => void;
+        hooks.request.mockImplementationOnce(
+            () =>
+                new Promise((resolve) => {
+                    finish = resolve;
+                })
+        );
+        const state = useTelegramTracking();
+        state.form.value.groups = '@first_group';
+        const pending = state.validateGroups();
+        state.form.value.groups = '@second_group';
+        await nextTick();
+        finish({ groups: [{ title: 'First group' }] });
+        await pending;
+
+        expect(state.validatedGroups.value).toEqual([]);
+    });
+
     it('does not submit the same action twice while a request is pending', async () => {
         let finish!: (value: unknown) => void;
         hooks.request.mockImplementationOnce(

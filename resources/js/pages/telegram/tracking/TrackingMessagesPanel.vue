@@ -30,7 +30,7 @@ const date = (value: string) => new Date(value).toLocaleString(locale.value);
             {{ t('telegramTracking.noMessages') }}
         </p>
         <div
-            class="max-h-[65dvh] space-y-3 overflow-y-auto overscroll-contain pr-1"
+            class="intel-scroll max-h-[65dvh] space-y-3 overflow-y-auto overscroll-contain pr-1"
         >
             <article
                 v-for="message in messages"

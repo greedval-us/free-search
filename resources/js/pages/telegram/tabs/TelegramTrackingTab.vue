@@ -17,6 +17,7 @@ const {
     busy,
     error,
     form,
+    groupsError,
     validatedGroups,
     validateGroups,
     create,
@@ -28,7 +29,7 @@ const {
 
 <template>
     <section
-        class="min-h-0 min-w-0 flex-1 overflow-y-auto overscroll-contain p-1"
+        class="intel-scroll min-h-0 min-w-0 flex-1 overflow-y-auto overscroll-contain p-1"
         :aria-label="t('telegramTracking.title')"
         :aria-busy="busy"
     >
@@ -75,6 +76,7 @@ const {
                     :limits="list"
                     :busy="busy"
                     :validated-groups="validatedGroups"
+                    :groups-error="groupsError"
                     @create="create"
                     @validate="validateGroups"
                 />

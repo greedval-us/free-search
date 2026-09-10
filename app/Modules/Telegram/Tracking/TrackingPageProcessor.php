@@ -11,11 +11,13 @@ final readonly class TrackingPageProcessor
     /** @param list<array<string, mixed>> $messages */
     public function process(TelegramTrackingSource $source, array $messages): TrackingPage
     {
-        $complete = count($messages) < $this->config->integer('page_size');
+        $search = $source->usesSearch();
+        // Search can return short non-final pages; only an empty page ends the window.
+        $complete = $search ? $messages === [] : count($messages) < $this->config->pageSize();
         $offset = null;
         $high = $source->high_id;
         $matches = [];
-        $from = $source->collect_from->timestamp;
+        $from = ($source->window_start ?? $source->collect_from)->timestamp;
         $until = $source->window_end->timestamp;
 
         foreach ($messages as $message) {
@@ -25,14 +27,16 @@ final readonly class TrackingPageProcessor
             }
             // Advance across all message types, including non-matches and service messages.
             $offset = $offset === null ? $id : min($offset, $id);
-            $high = max($high, $id);
             $date = (int) ($message['date'] ?? 0);
-            if ($id <= $source->cursor_id || ($date > 0 && $date < $from)) {
+            if ($date > 0 && $date <= $until) {
+                $high = max($high, $id);
+            }
+            if (! $search && ($id <= $source->cursor_id || ($date > 0 && $date < $from))) {
                 $complete = true;
 
                 continue;
             }
-            if ($date < $from || $date > $until || ! $this->matcher->matches($source->tracking, $message)) {
+            if ($date < $from || $date > $until || ! $this->matcher->matches($source->tracking, $message, $search)) {
                 continue;
             }
             $matches[] = [

@@ -8,6 +8,10 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class TelegramTrackingSource extends Model
 {
+    public const HISTORY = 'history';
+
+    public const SEARCH = 'search';
+
     protected $guarded = ['id'];
 
     protected $hidden = ['session_name', 'lease_token', 'lease_until'];
@@ -22,10 +26,15 @@ class TelegramTrackingSource extends Model
         return $this->lease_token === $token && $this->tracking->status === TelegramTracking::ACTIVE;
     }
 
+    public function usesSearch(): bool
+    {
+        return $this->collection_method === self::SEARCH;
+    }
+
     protected function casts(): array
     {
         return ['cursor_id' => 'integer', 'offset_id' => 'integer', 'high_id' => 'integer',
-            'collect_from' => 'immutable_datetime', 'window_end' => 'immutable_datetime',
+            'collect_from' => 'immutable_datetime', 'window_start' => 'immutable_datetime', 'window_end' => 'immutable_datetime',
             'checked_at' => 'immutable_datetime', 'next_check_at' => 'immutable_datetime', 'lease_until' => 'immutable_datetime'];
     }
 
