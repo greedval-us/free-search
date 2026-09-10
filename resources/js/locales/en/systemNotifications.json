@@ -1,4 +1,12 @@
 {
+    "trackingMatches": {
+        "title": "New tracking matches",
+        "body": "{name}: found {count} message(s) in {group}. Open tracking to view the results."
+    },
+    "trackingPaused": {
+        "title": "Tracking paused",
+        "body": "{name} was paused because account or plan access changed. Review it and resume manually."
+    },
     "welcome": {
         "title": "Welcome",
         "body": "Your account was created successfully. Welcome to the Uraboros workspace."

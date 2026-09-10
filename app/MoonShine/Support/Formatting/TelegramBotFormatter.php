@@ -25,6 +25,7 @@ final class TelegramBotFormatter
         return [
             'notification' => __('admin_bot.kinds.notification'),
             'parser' => __('admin_bot.kinds.parser'),
+            'tracking' => __('admin_bot.kinds.tracking'),
             'broadcast' => __('admin_bot.kinds.broadcast'),
             'report' => __('admin_bot.kinds.report'),
         ];

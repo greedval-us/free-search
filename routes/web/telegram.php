@@ -3,6 +3,7 @@
 use App\Http\Controllers\Telegram\TelegramAnalyticsController;
 use App\Http\Controllers\Telegram\TelegramParserController;
 use App\Http\Controllers\Telegram\TelegramSearchController;
+use App\Http\Controllers\Telegram\TelegramTrackingController;
 use App\Support\Http\RouteThrottle;
 use Illuminate\Support\Facades\Route;
 
@@ -11,6 +12,15 @@ Route::inertia('telegram', 'Telegram')
     ->name('telegram');
 
 Route::prefix('telegram')->name('telegram.')->group(function (): void {
+    Route::prefix('tracking')->name('tracking.')->group(function (): void {
+        Route::get('/', [TelegramTrackingController::class, 'index'])->middleware(RouteThrottle::PARSER_STATUS)->name('index');
+        Route::post('validate', [TelegramTrackingController::class, 'validateGroups'])->middleware(RouteThrottle::TELEGRAM_TRACKING_VALIDATION)->name('validate');
+        Route::post('/', [TelegramTrackingController::class, 'store'])->middleware(RouteThrottle::TELEGRAM_TRACKING_VALIDATION)->name('store');
+        Route::patch('{tracking}', [TelegramTrackingController::class, 'change'])->whereNumber('tracking')->middleware(RouteThrottle::PARSER_CONTROL)->name('change');
+        Route::get('{tracking}/messages', [TelegramTrackingController::class, 'messages'])->whereNumber('tracking')->middleware(RouteThrottle::PARSER_STATUS)->name('messages');
+        Route::get('{tracking}/export/{format}', [TelegramTrackingController::class, 'download'])->whereNumber('tracking')->whereIn('format', ['xlsx', 'json'])->middleware(RouteThrottle::PARSER_DOWNLOAD)->name('download');
+    });
+
     Route::prefix('search')->name('search.')->group(function (): void {
         Route::get('messages', [TelegramSearchController::class, 'messages'])
             ->middleware(RouteThrottle::TELEGRAM_SEARCH)

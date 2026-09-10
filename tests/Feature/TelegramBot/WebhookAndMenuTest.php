@@ -86,7 +86,7 @@ final class WebhookAndMenuTest extends TelegramBotTestCase
         $this->assertSame('menu', $screen->buttons[0]->value);
     }
 
-    public function test_linked_menus_offer_parser_exports_without_reports_in_both_locales(): void
+    public function test_linked_menus_offer_parser_and_tracking_exports_without_legacy_reports_in_both_locales(): void
     {
         $link = $this->linkedUser();
 
@@ -95,9 +95,11 @@ final class WebhookAndMenuTest extends TelegramBotTestCase
             $screen = app(BotRouter::class)->dispatch('menu', $context);
             $files = collect($screen->buttons)->where('type', 'action')->where('value', 'files')->values();
 
-            $this->assertCount(1, $files);
+            $this->assertCount(2, $files);
             $this->assertSame(['k' => 'parser'], $files[0]->parameters);
             $this->assertSame(__('telegram_bot.menu.exports', [], $locale), $files[0]->label);
+            $this->assertSame(['k' => 'tracking'], $files[1]->parameters);
+            $this->assertSame(__('telegram_bot.menu.tracking', [], $locale), $files[1]->label);
         }
     }
 

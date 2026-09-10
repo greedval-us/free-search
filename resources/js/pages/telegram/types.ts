@@ -1,4 +1,4 @@
-export type TelegramTabValue = 'search' | 'analytics' | 'parser';
+export type TelegramTabValue = 'search' | 'analytics' | 'parser' | 'tracking';
 
 export type TelegramParserPeriod = 'day' | 'week' | 'month' | 'custom';
 

@@ -59,6 +59,7 @@ return [
         'failed' => 'Failed',
     ],
     'kinds' => [
+        'tracking' => 'Tracking report',
         'notification' => 'Personal notification',
         'parser' => 'Parser export',
         'broadcast' => 'Announcement',

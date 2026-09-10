@@ -59,6 +59,7 @@ return [
         'failed' => 'Ошибка',
     ],
     'kinds' => [
+        'tracking' => 'Отчёт отслеживания',
         'notification' => 'Личное уведомление',
         'parser' => 'Выгрузка парсера',
         'broadcast' => 'Анонс',
