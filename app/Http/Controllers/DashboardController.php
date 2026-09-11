@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\Dashboard\DashboardFiltersRequest;
 use App\Models\User;
+use App\Modules\Telegram\Tracking\TrackingCapacity;
 use App\Services\Dashboard\Contracts\UserDashboardServiceInterface;
 use Inertia\Inertia;
 use Inertia\Response;
@@ -14,13 +15,14 @@ class DashboardController extends Controller
         private readonly UserDashboardServiceInterface $dashboardService,
     ) {}
 
-    public function __invoke(DashboardFiltersRequest $request): Response
+    public function __invoke(DashboardFiltersRequest $request, TrackingCapacity $capacity): Response
     {
         /** @var User $user */
         $user = $request->user();
 
         return Inertia::render('Dashboard', [
             'dashboard' => $this->dashboardService->build($user, $request->filters()),
+            'tracking' => fn () => $capacity->forUser($user),
         ]);
     }
 }

@@ -25,8 +25,8 @@
 
 - `app/Modules/Telegram/Tracking`: lifecycle, configuration, queue scheduling, incremental collector, gateway and reports.
 - `TrackingMessageReader` builds and validates search/history requests through the gateway's installed MadelineProto client. `TrackingPageProcessor` interprets a page without database writes; `TrackingCollector` owns fixed windows, leases, persistence, checkpoints and retry. `TrackingNotifications` owns the shared bell/bot notification payloads.
-- `TrackingService` owns user actions; `TrackingLifecycle` reconciles expiry and subscription entitlement. Listing and renewal use the same renewal-window rule on the task model.
-- The Vue tracking tab composes a creation form, task cards and a results panel with shared pagination. `useTelegramTracking` owns API calls, form state, polling and cancellation.
+- `TrackingService` owns user actions; `TrackingLifecycle` reconciles expiry and subscription entitlement. `TrackingCapacity` shares active-slot counting between mutation checks, the tracking API and My Activity. Its dashboard/API summary reconciles lifecycle first and returns the configured limit, active count and remaining slots; these are not daily request quotas. Listing and renewal use the same renewal-window rule on the task model.
+- The Vue tracking tab composes a creation dialog, compact task cards and a results panel with shared pagination. Desktop uses independently scrolling list/detail columns; narrow screens show one pane with a back action, preserving list scroll. `TrackingTaskDetails` owns the selected task's controls and source details. Hints reuse the site's touch/keyboard-accessible `HelpTooltip`. `useTelegramTracking` owns API calls, form state, polling and cancellation.
 - `app/Http/Requests/Telegram/TelegramTrackingRequest.php`: HTTP input validation and normalization.
 - `app/Http/Controllers/Telegram/TelegramTrackingController.php`: authenticated responses and downloads.
 - `app/Integrations/TelegramBot/TrackingArtifactProvider.php`: explicit integration adapter between module contracts. Neither feature module imports the other.

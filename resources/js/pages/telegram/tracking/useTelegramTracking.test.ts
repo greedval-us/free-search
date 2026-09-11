@@ -40,7 +40,13 @@ const task: TrackingTask = {
     can_renew: false,
     sources: [],
 };
-const listing = { items: [task], has_more: false, limit: 1, active_count: 1 };
+const listing = {
+    items: [task],
+    has_more: false,
+    limit: 1,
+    active_count: 1,
+    remaining: 0,
+};
 
 describe('Telegram tracking state', () => {
     beforeEach(() => {
@@ -83,7 +89,7 @@ describe('Telegram tracking state', () => {
         );
         const state = useTelegramTracking();
         state.form.value.query = 'ab';
-        await state.create();
+        expect(await state.create()).toBeUndefined();
         expect(state.form.value.query).toBe('ab');
         expect(state.error.value).toBe('Too short');
         expect(state.busy.value).toBe(false);
@@ -115,7 +121,7 @@ describe('Telegram tracking state', () => {
             notify_bot: true,
         };
 
-        await state.create();
+        expect(await state.create()).toBe(task.id);
 
         expect(hooks.request).toHaveBeenNthCalledWith(
             1,
@@ -159,6 +165,55 @@ describe('Telegram tracking state', () => {
             '/telegram/tracking/1/messages',
             expect.objectContaining({ query: { page: 2, locale: 'ru' } })
         );
+    });
+
+    it('clears the detail view and pagination without reopening it on refresh', async () => {
+        hooks.request
+            .mockResolvedValueOnce({ items: [], has_more: true })
+            .mockResolvedValueOnce(listing);
+        const state = useTelegramTracking();
+        await state.show(task, 2);
+        state.clearSelection();
+        await state.refresh();
+
+        expect(state.selected.value).toBeNull();
+        expect(state.messages.value).toEqual([]);
+        expect(state.messagePage.value).toBe(1);
+        expect(state.hasMoreMessages.value).toBe(false);
+        expect(hooks.request).toHaveBeenCalledTimes(2);
+    });
+
+    it('keeps the old selection on a failed switch instead of mixing task and message data', async () => {
+        hooks.request
+            .mockResolvedValueOnce({ items: [], has_more: true })
+            .mockRejectedValueOnce(new Error('Offline'));
+        const state = useTelegramTracking();
+        await state.show(task, 2);
+        await state.show({ ...task, id: 2, name: 'Another task' });
+
+        expect(state.selected.value?.id).toBe(task.id);
+        expect(state.messagePage.value).toBe(2);
+        expect(state.hasMoreMessages.value).toBe(true);
+        expect(state.error.value).toBe('telegramTracking.error');
+    });
+
+    it('updates selected task controls even when reloading its messages fails', async () => {
+        hooks.request
+            .mockResolvedValueOnce({ items: [], has_more: false })
+            .mockResolvedValueOnce({
+                ...listing,
+                items: [{ ...task, status: 'paused' }],
+                active_count: 0,
+                remaining: 1,
+            })
+            .mockRejectedValueOnce(new Error('Offline'));
+        const state = useTelegramTracking();
+        await state.show(task);
+        await state.refresh();
+
+        expect(state.selected.value?.status).toBe('paused');
+        expect(state.list.value?.remaining).toBe(1);
+        expect(state.error.value).toBe('telegramTracking.error');
     });
 
     it.each([' ', '\t', '\u00a0'])(

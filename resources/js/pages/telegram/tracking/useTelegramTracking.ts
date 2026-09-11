@@ -48,7 +48,7 @@ export const useTelegramTracking = () => {
             retry: { attempts: 0 },
         });
 
-    const perform = async (operation: () => Promise<void>) => {
+    const perform = async <T>(operation: () => Promise<T>) => {
         if (busy.value) {
             return;
         }
@@ -57,7 +57,7 @@ export const useTelegramTracking = () => {
         error.value = '';
 
         try {
-            await operation();
+            return await operation();
         } catch (exception) {
             if (!controller.signal.aborted) {
                 error.value =
@@ -70,6 +70,13 @@ export const useTelegramTracking = () => {
         } finally {
             busy.value = false;
         }
+    };
+
+    const clearSelection = () => {
+        selected.value = null;
+        messages.value = [];
+        messagePage.value = 1;
+        hasMoreMessages.value = false;
     };
 
     const loadMessages = async (task: TrackingTask, nextPage = 1) => {
@@ -95,10 +102,10 @@ export const useTelegramTracking = () => {
             );
 
             if (updated) {
+                selected.value = updated;
                 await loadMessages(updated, messagePage.value);
             } else {
-                selected.value = null;
-                messages.value = [];
+                clearSelection();
             }
         }
     };
@@ -152,6 +159,8 @@ export const useTelegramTracking = () => {
             if (task) {
                 await loadMessages(task);
             }
+
+            return created.id;
         });
     const change = (task: TrackingTask, action: TrackingAction) =>
         perform(async () => {
@@ -201,5 +210,6 @@ export const useTelegramTracking = () => {
         change,
         show,
         refresh,
+        clearSelection,
     };
 };

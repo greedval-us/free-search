@@ -1,5 +1,12 @@
 {
     "title": "Tracking",
+    "help": "How tracking works",
+    "remaining": "Available: {count}",
+    "details": "Sources and dates",
+    "export": "Download report:",
+    "cancel": "Cancel",
+    "backToTasks": "Back to tracking list",
+    "limitReached": "All slots are in use. Pause a task or change your plan.",
     "schedule": "Checks every {hours} hours; up to {max} under load. Telegram may delay checks.",
     "error": "Could not load tracking. Please try again.",
     "refresh": "Refresh",

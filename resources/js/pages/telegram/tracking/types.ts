@@ -46,11 +46,15 @@ export type TrackingMessage = {
     url: string | null;
 };
 
-export type TrackingList = {
-    items: TrackingTask[];
-    has_more: boolean;
+export type TrackingCapacity = {
     limit: number;
     active_count: number;
+    remaining: number;
+};
+
+export type TrackingList = TrackingCapacity & {
+    items: TrackingTask[];
+    has_more: boolean;
     max_sources: number;
     keyword_min_length: number;
     interval_hours: number;

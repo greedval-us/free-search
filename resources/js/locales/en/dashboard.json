@@ -8,6 +8,14 @@
         "subtitle": "Track real search queries, recent actions, and quickly return to your modules.",
         "badge": "Search history is saved automatically"
     },
+    "tracking": {
+        "title": "Telegram tracking",
+        "active": "Active",
+        "remaining": "Available",
+        "limit": "Plan limit",
+        "open": "Open tracking",
+        "help": "Concurrent tracking slots, not daily requests. Paused and finished tasks do not use slots."
+    },
     "plan": {
         "title": "Your plan",
         "manage": "Manage plan",

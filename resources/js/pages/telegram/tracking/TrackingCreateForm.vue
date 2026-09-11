@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { computed } from 'vue';
+import HelpTooltip from '@/components/ui/HelpTooltip.vue';
 import { useI18n } from '@/composables/useI18n';
 import type { TrackingForm, TrackingList } from './types';
 
@@ -14,7 +15,7 @@ const form = defineModel<TrackingForm>({ required: true });
 const { t } = useI18n();
 const canCreate = computed(
     () =>
-        props.limits.active_count < props.limits.limit &&
+        props.limits.remaining > 0 &&
         form.value.name.trim().length > 0 &&
         form.value.groups.trim().length > 0 &&
         !props.groupsError &&
@@ -26,58 +27,64 @@ const canCreate = computed(
 </script>
 
 <template>
-    <form
-        class="intel-panel-strong space-y-4 p-4 sm:p-5"
-        @submit.prevent="$emit('create')"
-    >
-        <div class="flex flex-wrap justify-between gap-2">
-            <h3 class="font-semibold">
-                {{ t('telegramTracking.new') }}
-            </h3>
-            <span class="text-sm text-primary">{{
-                t('telegramTracking.quota', {
-                    used: limits.active_count,
-                    limit: limits.limit,
-                })
-            }}</span>
-        </div>
-        <p class="text-sm text-muted-foreground">
-            {{
-                t('telegramTracking.retention', {
-                    months: limits.duration_months,
-                    days: limits.retention_days,
-                })
-            }}
+    <form class="min-w-0 space-y-4" @submit.prevent="$emit('create')">
+        <p
+            v-if="!limits.remaining"
+            role="status"
+            class="rounded-lg border border-border p-3 text-sm text-muted-foreground"
+        >
+            {{ t('telegramTracking.limitReached') }}
         </p>
-        <div class="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
-            <label class="intel-field"
-                ><span class="intel-label">{{
-                    t('telegramTracking.name')
-                }}</span
-                ><input
-                    v-model="form.name"
-                    class="intel-input"
-                    maxlength="100"
-                    required
-            /></label>
-            <label class="intel-field"
-                ><span class="intel-label">{{
-                    t('telegramTracking.mode')
-                }}</span
-                ><select v-model="form.mode" class="intel-select">
+        <div class="intel-field">
+            <label for="tracking-name" class="intel-label">{{
+                t('telegramTracking.name')
+            }}</label>
+            <input
+                id="tracking-name"
+                v-model="form.name"
+                class="intel-input"
+                maxlength="100"
+                required
+            />
+        </div>
+        <div class="grid min-w-0 gap-4 sm:grid-cols-2">
+            <div class="intel-field min-w-0">
+                <label
+                    for="tracking-mode"
+                    class="intel-label flex min-h-8 items-center"
+                    >{{ t('telegramTracking.mode') }}</label
+                >
+                <select
+                    id="tracking-mode"
+                    v-model="form.mode"
+                    class="intel-select"
+                >
                     <option value="keyword">
                         {{ t('telegramTracking.modes.keyword') }}
                     </option>
                     <option value="user">
                         {{ t('telegramTracking.modes.user') }}
                     </option>
-                </select></label
-            >
-            <label class="intel-field"
-                ><span class="intel-label">{{
-                    t(`telegramTracking.modes.${form.mode}`)
-                }}</span
-                ><input
+                </select>
+            </div>
+            <div class="intel-field min-w-0">
+                <div class="flex items-center justify-between gap-1">
+                    <label for="tracking-query" class="intel-label">{{
+                        t(`telegramTracking.modes.${form.mode}`)
+                    }}</label>
+                    <HelpTooltip
+                        :label="t(`telegramTracking.modes.${form.mode}`)"
+                        :text="
+                            form.mode === 'keyword'
+                                ? t('telegramTracking.matchHelp', {
+                                      min: limits.keyword_min_length,
+                                  })
+                                : t('telegramTracking.userHelp')
+                        "
+                    />
+                </div>
+                <input
+                    id="tracking-query"
                     v-model="form.query"
                     class="intel-input"
                     :maxlength="form.mode === 'user' ? 19 : 120"
@@ -86,77 +93,83 @@ const canCreate = computed(
                     "
                     :inputmode="form.mode === 'user' ? 'numeric' : 'text'"
                     required
-                /><span class="text-xs text-muted-foreground">{{
-                    form.mode === 'keyword'
-                        ? t('telegramTracking.matchHelp', {
-                              min: limits.keyword_min_length,
-                          })
-                        : t('telegramTracking.userHelp')
-                }}</span></label
-            >
-            <label class="intel-field md:col-span-2 xl:col-span-3"
-                ><span class="intel-label">{{
-                    t('telegramTracking.groups', {
-                        max: limits.max_sources,
-                    })
-                }}</span
-                ><textarea
-                    v-model="form.groups"
-                    class="intel-scroll intel-input min-h-24 resize-y"
-                    :aria-invalid="Boolean(groupsError)"
-                    :aria-describedby="
-                        groupsError
-                            ? 'tracking-groups-help tracking-groups-error'
-                            : 'tracking-groups-help'
+                />
+            </div>
+        </div>
+        <div class="intel-field">
+            <div class="flex items-center justify-between gap-2">
+                <label for="tracking-groups" class="intel-label">{{
+                    t('telegramTracking.groups', { max: limits.max_sources })
+                }}</label>
+                <HelpTooltip
+                    :label="
+                        t('telegramTracking.groups', {
+                            max: limits.max_sources,
+                        })
                     "
-                    rows="3"
-                    :placeholder="t('telegramTracking.groupsPlaceholder')"
-                    @keydown.space.prevent
-                    required
-                /><span
-                    id="tracking-groups-help"
-                    class="text-xs text-muted-foreground"
-                    >{{ t('telegramTracking.noJoin') }}</span
-                ><span
-                    v-if="groupsError"
-                    id="tracking-groups-error"
-                    role="alert"
-                    class="text-xs text-destructive"
-                    >{{ groupsError }}</span
-                ></label
+                    :text="t('telegramTracking.noJoin')"
+                />
+            </div>
+            <textarea
+                id="tracking-groups"
+                v-model="form.groups"
+                class="intel-scroll intel-input min-h-24 resize-y"
+                :aria-invalid="Boolean(groupsError)"
+                :aria-describedby="
+                    groupsError ? 'tracking-groups-error' : undefined
+                "
+                rows="3"
+                :placeholder="t('telegramTracking.groupsPlaceholder')"
+                @keydown.space.prevent
+                required
+            />
+            <span
+                v-if="groupsError"
+                id="tracking-groups-error"
+                role="alert"
+                class="text-xs text-destructive"
+                >{{ groupsError }}</span
             >
         </div>
         <p
             v-if="validatedGroups.length"
             role="status"
-            class="text-sm text-primary"
+            class="text-sm [overflow-wrap:anywhere] text-primary"
         >
             {{ t('telegramTracking.validated') }}:
             {{ validatedGroups.join(', ') }}
         </p>
-        <label class="flex cursor-pointer items-center gap-2 text-sm"
-            ><input v-model="form.notify_bot" type="checkbox" />{{
-                t('telegramTracking.notifyBot')
-            }}</label
+        <div class="flex flex-wrap items-center gap-x-2 gap-y-1">
+            <label
+                class="flex min-h-11 cursor-pointer items-center gap-2 text-sm"
+                ><input
+                    v-model="form.notify_bot"
+                    type="checkbox"
+                    class="size-4 shrink-0 cursor-pointer accent-primary"
+                />{{ t('telegramTracking.notifyBot') }}</label
+            >
+            <HelpTooltip
+                :label="t('telegramTracking.notifyBot')"
+                :text="t('telegramTracking.botHelp')"
+            />
+            <a
+                href="/settings/telegram"
+                class="inline-flex min-h-9 items-center text-xs text-primary underline"
+                >{{ t('telegramTracking.botSettings') }}</a
+            >
+        </div>
+        <div
+            class="grid gap-2 border-t border-border/60 pt-4 sm:flex sm:justify-end"
         >
-        <p class="text-xs text-muted-foreground">
-            {{ t('telegramTracking.botHelp') }}
-            <a href="/settings/telegram" class="text-primary underline">{{
-                t('telegramTracking.botSettings')
-            }}</a>
-        </p>
-        <div class="flex flex-wrap gap-2">
             <button
                 type="button"
                 class="intel-button-secondary"
                 :disabled="busy || !form.groups.trim() || Boolean(groupsError)"
                 @click="$emit('validate')"
             >
-                {{ t('telegramTracking.validate') }}</button
-            ><button
-                class="intel-button-primary"
-                :disabled="busy || !canCreate"
-            >
+                {{ t('telegramTracking.validate') }}
+            </button>
+            <button class="intel-button-primary" :disabled="busy || !canCreate">
                 {{ t('telegramTracking.create') }}
             </button>
         </div>
