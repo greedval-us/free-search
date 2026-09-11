@@ -33,6 +33,7 @@ final readonly class BotAccess
             'notification' => $link->notifications_enabled,
             'broadcast' => $link->broadcasts_enabled,
             'parser' => ! $automatic || $link->exports_enabled,
+            'tracking' => ! $automatic,
             default => false,
         };
     }

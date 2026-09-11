@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\MoonShine\Support;
 
+use App\MoonShine\Pages\TelegramBotOverviewPage;
+use App\MoonShine\Pages\TelegramSessionsPage;
 use App\MoonShine\Resources\AdminAuditLog\AdminAuditLogResource;
 use App\MoonShine\Resources\AppUser\AppUserResource;
 use App\MoonShine\Resources\FailedJob\FailedJobResource;
@@ -14,7 +16,11 @@ use App\MoonShine\Resources\ParserRun\ParserRunResource;
 use App\MoonShine\Resources\QueueJob\QueueJobResource;
 use App\MoonShine\Resources\RequestLog\RequestLogResource;
 use App\MoonShine\Resources\SubscriptionActivationToken\SubscriptionActivationTokenResource;
+use App\MoonShine\Resources\TelegramBotDelivery\TelegramBotDeliveryResource;
+use App\MoonShine\Resources\TelegramBotLink\TelegramBotLinkResource;
 use App\MoonShine\Resources\UserSubscription\UserSubscriptionResource;
+use MoonShine\Contracts\Core\PageContract;
+use MoonShine\Contracts\Core\ResourceContract;
 
 final class AdminNavigationCatalog
 {
@@ -25,6 +31,7 @@ final class AdminNavigationCatalog
     {
         return match ($role) {
             AdminRole::Admin => [
+                TelegramBotOverviewPage::class,
                 AppUserResource::class,
                 UserSubscriptionResource::class,
                 ParserRunResource::class,
@@ -33,12 +40,14 @@ final class AdminNavigationCatalog
                 AdminAuditLogResource::class,
             ],
             AdminRole::Analyst => [
+                TelegramBotOverviewPage::class,
                 AppUserResource::class,
                 FeatureUsageDailyResource::class,
                 UserSubscriptionResource::class,
                 ParserRunResource::class,
             ],
             AdminRole::Developer => [
+                TelegramBotOverviewPage::class,
                 ParserRunResource::class,
                 RequestLogResource::class,
                 QueueJobResource::class,
@@ -54,6 +63,9 @@ final class AdminNavigationCatalog
     public static function resourceKey(string $resourceClass): string
     {
         return match ($resourceClass) {
+            TelegramBotOverviewPage::class => 'telegram_bot',
+            TelegramBotLinkResource::class => 'telegram_bot_links',
+            TelegramBotDeliveryResource::class => 'telegram_bot_deliveries',
             AppUserResource::class => 'users',
             UserSubscriptionResource::class => 'subscriptions',
             SubscriptionActivationTokenResource::class => 'activation_tokens',
@@ -76,6 +88,15 @@ final class AdminNavigationCatalog
     {
         return [
             [
+                'title' => static fn (): string => __('admin_bot.navigation'),
+                'icon' => 'paper-airplane',
+                'resources' => [
+                    TelegramBotOverviewPage::class,
+                    TelegramBotLinkResource::class,
+                    TelegramBotDeliveryResource::class,
+                ],
+            ],
+            [
                 'title' => static fn (): string => __('admin_panel.navigation.product'),
                 'icon' => 'chart-pie',
                 'resources' => [
@@ -96,6 +117,7 @@ final class AdminNavigationCatalog
                 'icon' => 'server-stack',
                 'resources' => [
                     ParserRunResource::class,
+                    TelegramSessionsPage::class,
                     RequestLogResource::class,
                     QueueJobResource::class,
                     FailedJobResource::class,
@@ -117,15 +139,27 @@ final class AdminNavigationCatalog
      */
     public static function resources(): array
     {
+        return [...self::entriesOfType(ResourceContract::class), MoonShineUserRoleResource::class];
+    }
+
+    /** @return list<class-string<PageContract>> */
+    public static function pages(): array
+    {
+        return self::entriesOfType(PageContract::class);
+    }
+
+    /** @return list<class-string> */
+    private static function entriesOfType(string $contract): array
+    {
         $all = [];
 
         foreach (self::menuGroups() as $group) {
             foreach ($group['resources'] as $resourceClass) {
-                $all[$resourceClass] = $resourceClass;
+                if (is_a($resourceClass, $contract, true)) {
+                    $all[$resourceClass] = $resourceClass;
+                }
             }
         }
-
-        $all[MoonShineUserRoleResource::class] = MoonShineUserRoleResource::class;
 
         return array_values($all);
     }

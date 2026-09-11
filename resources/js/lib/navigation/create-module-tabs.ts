@@ -1,7 +1,7 @@
 import type { Component } from 'vue';
 import { MODULE_TAB_ICONS } from './tab-icons';
 
-type ModuleTabKey = 'search' | 'analytics' | 'parser';
+type ModuleTabKey = 'search' | 'analytics' | 'parser' | 'tracking';
 
 type ModuleTabInput = {
     key: ModuleTabKey;

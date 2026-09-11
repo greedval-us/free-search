@@ -1,0 +1,56 @@
+<?php
+
+namespace App\Modules\Telegram\Tracking;
+
+use App\Models\TelegramTrackingSource;
+
+final readonly class TrackingPageProcessor
+{
+    public function __construct(private TrackingConfig $config, private TrackingMatcher $matcher) {}
+
+    /** @param list<array<string, mixed>> $messages */
+    public function process(TelegramTrackingSource $source, array $messages): TrackingPage
+    {
+        $search = $source->usesSearch();
+        // Search can return short non-final pages; only an empty page ends the window.
+        $complete = $search ? $messages === [] : count($messages) < $this->config->pageSize();
+        $offset = null;
+        $high = $source->high_id;
+        $matches = [];
+        $from = ($source->window_start ?? $source->collect_from)->timestamp;
+        $until = $source->window_end->timestamp;
+
+        foreach ($messages as $message) {
+            $id = (int) ($message['id'] ?? 0);
+            if ($id <= 0) {
+                continue;
+            }
+            // Advance across all message types, including non-matches and service messages.
+            $offset = $offset === null ? $id : min($offset, $id);
+            $date = (int) ($message['date'] ?? 0);
+            if ($date > 0 && $date <= $until) {
+                $high = max($high, $id);
+            }
+            if (! $search && ($id <= $source->cursor_id || ($date > 0 && $date < $from))) {
+                $complete = true;
+
+                continue;
+            }
+            if ($date < $from || $date > $until || ! $this->matcher->matches($source->tracking, $message, $search)) {
+                continue;
+            }
+            $matches[] = [
+                'message_id' => $id,
+                'sender_id' => isset($message['from_id']['user_id']) ? (string) $message['from_id']['user_id'] : null,
+                'text' => (string) ($message['message'] ?? ''),
+                'sent_at' => $date,
+            ];
+        }
+
+        if (! $complete && ($offset === null || ($source->offset_id > 0 && $offset >= $source->offset_id))) {
+            throw new TrackingException('pagination_stalled');
+        }
+
+        return new TrackingPage($complete, $offset, $high, $matches);
+    }
+}

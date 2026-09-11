@@ -24,6 +24,9 @@ final readonly class BotEventSubscriber
             return;
         }
         $this->safely(function () use ($event): void {
+            if (($event->response->data['telegram_bot'] ?? true) === false) {
+                return;
+            }
             $link = BotLink::query()->where('user_id', $event->notifiable->id)->first();
             if ($link !== null) {
                 $this->outbox->enqueue($link, 'notification', $event->response->id);

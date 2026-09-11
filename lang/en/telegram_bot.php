@@ -2,6 +2,7 @@
 
 return [
     'menu' => [
+        'tracking' => 'Tracking reports',
         'exports' => 'My exports', 'settings' => 'Link account / Settings',
         'help' => 'Help', 'webapp' => 'Open Uraboros', 'back' => 'Main menu', 'previous' => 'Previous', 'next' => 'Next',
     ],

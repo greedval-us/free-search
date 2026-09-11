@@ -8,6 +8,9 @@ use App\MoonShine\Support\AdminAccess;
 use App\MoonShine\Support\AdminDashboardConfig;
 use App\MoonShine\Support\AdminNavigationCatalog;
 use App\Support\Observability\MoonShineSecurityConfig;
+use Illuminate\Cache\RateLimiting\Limit;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\ServiceProvider;
 use MoonShine\Contracts\Core\DependencyInjection\CoreContract;
 use MoonShine\Contracts\Core\ResourceContract;
@@ -40,6 +43,11 @@ class MoonShineServiceProvider extends ServiceProvider
      */
     public function boot(CoreContract $core): void
     {
+        RateLimiter::for('telegram-session-auth', static fn (Request $request): Limit => Limit::perMinute(
+            (int) config('madelineproto.admin_auth.requests_per_minute'),
+        )->by('telegram-session:'.(auth('moonshine')->id() ?? $request->ip())));
+        $this->loadRoutesFrom(base_path('routes/moonshine.php'));
+
         $core->getConfig()->authorizationRules(
             static fn (
                 ResourceContract $resource,
@@ -57,6 +65,7 @@ class MoonShineServiceProvider extends ServiceProvider
             ->resources(AdminNavigationCatalog::resources())
             ->pages([
                 ...$core->getConfig()->getPages(),
+                ...AdminNavigationCatalog::pages(),
             ]);
     }
 }

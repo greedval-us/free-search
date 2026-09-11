@@ -12,6 +12,8 @@ class RequestPayloadSanitizer
     private array $maskedKeys = [
         'password',
         'password_confirmation',
+        'phone_code',
+        'phone_number',
         'token',
         'secret',
         'api_key',

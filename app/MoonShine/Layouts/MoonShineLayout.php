@@ -29,7 +29,7 @@ final class MoonShineLayout extends AppLayout
     {
         return [
             ...parent::assets(),
-            Css::make('/admin/moonshine.css?v=1'),
+            Css::make('/admin/moonshine.css?v=3'),
         ];
     }
 

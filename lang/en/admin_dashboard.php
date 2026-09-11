@@ -19,6 +19,7 @@ return [
     ],
 
     'quick_links' => [
+        'telegram_bot' => 'Bot audience, deliveries and diagnostics',
         'users' => 'Accounts, plans and limits',
         'subscriptions' => 'Active and expired plans',
         'activation_tokens' => 'Issue access codes',

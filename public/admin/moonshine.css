@@ -4,6 +4,101 @@
     --ur-admin-line: rgba(14, 116, 144, 0.16);
 }
 
+.ur-session-form {
+    display: grid;
+    justify-items: start;
+    gap: 0.65rem;
+    margin: 1rem 0;
+}
+
+.ur-session-form .form-input {
+    width: 100%;
+    max-width: 32rem;
+    min-width: 0;
+}
+
+.ur-session-form label {
+    font-weight: 600;
+}
+
+.ur-session-alert {
+    padding: 1rem;
+    border: 1px solid #d97706;
+    border-radius: 1rem;
+    background: rgba(245, 158, 11, 0.1);
+}
+
+.ur-session-restart summary {
+    cursor: pointer;
+    margin: 1rem 0;
+}
+
+.ur-bot-note {
+    margin: 0.8rem 0;
+    font-size: 0.8rem;
+    line-height: 1.6;
+    color: var(--ur-admin-muted);
+}
+
+.ur-bot-overview {
+    min-width: 0;
+}
+
+.ur-bot-overview h3 {
+    font-size: 0.95rem;
+    font-weight: 700;
+}
+
+.dark .ur-bot-overview {
+    --ur-admin-muted: #94a3b8;
+}
+
+.ur-admin-hero .ur-bot-note {
+    color: #94a3b8;
+}
+
+.ur-bot-facts {
+    display: grid;
+    gap: 0.7rem;
+    margin: 1rem 0;
+}
+
+.ur-bot-facts > div {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 0.5rem 1rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid var(--ur-admin-line);
+}
+
+.ur-bot-facts dt {
+    color: var(--ur-admin-muted);
+}
+
+.ur-bot-facts dd {
+    font-weight: 600;
+    overflow-wrap: anywhere;
+}
+
+.ur-bot-table-scroll {
+    max-height: 24rem;
+    overflow: auto;
+    margin-top: 0.8rem;
+}
+
+.ur-bot-table {
+    width: 100%;
+    min-width: 22rem;
+    text-align: left;
+}
+
+.ur-bot-table th,
+.ur-bot-table td {
+    padding: 0.65rem;
+    border-bottom: 1px solid var(--ur-admin-line);
+}
+
 body {
     background-image:
         radial-gradient(circle at 82% 0%, rgba(34, 211, 238, 0.12), transparent 28rem),

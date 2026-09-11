@@ -17,6 +17,8 @@ return [
     ],
 
     'descriptions' => [
+        'telegram_bot_links' => 'Confirmed bot connections and delivery preferences. Read only; connection changes belong to the account owner.',
+        'telegram_bot_deliveries' => 'Delivery metadata only. No message contents, documents or credentials. Records expire and are removed when accounts disconnect.',
         'users' => 'Registered accounts, access status, current plans and daily quota balances.',
         'subscriptions' => 'Subscription periods and statuses. Changes here immediately affect access.',
         'activation_tokens' => 'Single-use Plus and Pro activation codes issued to users.',

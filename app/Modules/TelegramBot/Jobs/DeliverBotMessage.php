@@ -42,7 +42,7 @@ final class DeliverBotMessage extends BotJob
         }
 
         try {
-            if ($delivery->kind === 'parser') {
+            if (in_array($delivery->kind, ['parser', 'tracking'], true)) {
                 $document = $artifacts->get($delivery->kind)->document($link->user_id, (int) $delivery->reference,
                     (string) ($delivery->payload['format'] ?? ''), $link->locale);
                 try {

@@ -56,6 +56,8 @@ final class DeliveryAccessTest extends TelegramBotTestCase
             'automatic export opted in' => ['parser', true, ['exports_enabled' => true], true],
             'automatic export opted out' => ['parser', true, [], false],
             'manual export remains available' => ['parser', false, [], true],
+            'manual tracking remains available' => ['tracking', false, [], true],
+            'unsolicited tracking files rejected' => ['tracking', true, ['exports_enabled' => true], false],
             'notification consent does not allow exports' => ['parser', true, ['notifications_enabled' => true], false],
             'legacy automatic report rejected' => ['report', true, ['exports_enabled' => true], false],
             'legacy manual report rejected' => ['report', false, ['exports_enabled' => true], false],
@@ -82,7 +84,7 @@ final class DeliveryAccessTest extends TelegramBotTestCase
         };
         $link->refresh();
 
-        foreach (['notification', 'broadcast', 'parser'] as $kind) {
+        foreach (['notification', 'broadcast', 'parser', 'tracking'] as $kind) {
             foreach ([true, false] as $automatic) {
                 $this->assertFalse(app(DeliveryOutbox::class)->enqueue($link, $kind, 'test', automatic: $automatic));
             }

@@ -17,10 +17,20 @@ use App\Modules\Telegram\Search\TelegramSearchApplicationService;
 use App\Modules\Telegram\Support\TelegramConfig;
 use App\Modules\Telegram\Support\TelegramConfigFactory;
 use App\Modules\Telegram\TelegramService;
+use App\Modules\Telegram\Tracking\Console\MaintainTracking;
+use App\Modules\Telegram\Tracking\Contracts\TrackingGateway;
+use App\Modules\Telegram\Tracking\MadelineTrackingGateway;
 use App\Support\Providers\BindingsServiceProvider;
+use Illuminate\Support\Facades\Schedule;
 
 final class TelegramServiceProvider extends BindingsServiceProvider
 {
+    public function boot(): void
+    {
+        $this->commands([MaintainTracking::class]);
+        Schedule::command('telegram:tracking-maintain')->everyMinute()->withoutOverlapping();
+    }
+
     public function register(): void
     {
         parent::register();
@@ -42,6 +52,7 @@ final class TelegramServiceProvider extends BindingsServiceProvider
     protected function bindings(): array
     {
         return [
+            TrackingGateway::class => MadelineTrackingGateway::class,
             TelegramGatewayInterface::class => TelegramService::class,
             TelegramSearchApplicationServiceInterface::class => TelegramSearchApplicationService::class,
             TelegramParserApplicationServiceInterface::class => TelegramParserApplicationService::class,

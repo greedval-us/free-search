@@ -12,6 +12,8 @@ final class RouteThrottle
 
     public const TELEGRAM_MEDIA = 'throttle:120,1';
 
+    public const TELEGRAM_TRACKING_VALIDATION = 'throttle:6,1';
+
     public const STANDARD_SEARCH = 'throttle:30,1';
 
     public const FEDIVERSE_SEARCH = 'throttle:45,1';

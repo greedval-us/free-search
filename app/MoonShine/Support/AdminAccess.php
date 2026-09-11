@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\MoonShine\Support;
 
+use App\MoonShine\Pages\TelegramBotOverviewPage;
+use App\MoonShine\Pages\TelegramSessionsPage;
 use App\MoonShine\Resources\AdminAuditLog\AdminAuditLogResource;
 use App\MoonShine\Resources\AppUser\AppUserResource;
 use App\MoonShine\Resources\FailedJob\FailedJobResource;
@@ -14,6 +16,8 @@ use App\MoonShine\Resources\ParserRun\ParserRunResource;
 use App\MoonShine\Resources\QueueJob\QueueJobResource;
 use App\MoonShine\Resources\RequestLog\RequestLogResource;
 use App\MoonShine\Resources\SubscriptionActivationToken\SubscriptionActivationTokenResource;
+use App\MoonShine\Resources\TelegramBotDelivery\TelegramBotDeliveryResource;
+use App\MoonShine\Resources\TelegramBotLink\TelegramBotLinkResource;
 use App\MoonShine\Resources\UserSubscription\UserSubscriptionResource;
 use MoonShine\Laravel\Models\MoonshineUser;
 use MoonShine\Support\Enums\Ability;
@@ -24,6 +28,10 @@ final class AdminAccess
      * @var array<class-string, list<AdminRole>>
      */
     private const RESOURCE_ROLES = [
+        TelegramSessionsPage::class => [AdminRole::Admin, AdminRole::Developer],
+        TelegramBotOverviewPage::class => [AdminRole::Admin, AdminRole::Analyst, AdminRole::Developer],
+        TelegramBotLinkResource::class => [AdminRole::Admin, AdminRole::Analyst],
+        TelegramBotDeliveryResource::class => [AdminRole::Admin, AdminRole::Developer],
         AppUserResource::class => [AdminRole::Admin, AdminRole::Analyst],
         UserSubscriptionResource::class => [AdminRole::Admin, AdminRole::Analyst],
         SubscriptionActivationTokenResource::class => [AdminRole::Admin],
@@ -64,6 +72,11 @@ final class AdminAccess
      */
     public function allows(?MoonshineUser $user, string $resourceClass, Ability $ability): bool
     {
+        if (in_array($resourceClass, [TelegramBotLinkResource::class, TelegramBotDeliveryResource::class], true)
+            && ! in_array($ability, self::READ_ABILITIES, true)) {
+            return false;
+        }
+
         $role = $this->role($user);
 
         if ($role === AdminRole::Admin) {

@@ -3,6 +3,9 @@
 namespace App\Console\Commands;
 
 use App\Facades\MadelineProto;
+use App\Support\MadelineProto\Authentication\SessionConnectionException;
+use App\Support\MadelineProto\Authentication\SessionFiles;
+use App\Support\MadelineProto\MadelineProtoConfig;
 use App\Support\MadelineProto\MadelineProtoManager;
 use Illuminate\Console\Command;
 
@@ -27,7 +30,26 @@ class CreateTelegramSession extends Command
      */
     public function handle()
     {
-        $sessionName = (string) $this->argument('name');
+        $sessionName = app(MadelineProtoConfig::class)->normalizeSessionName((string) $this->argument('name'));
+        $files = app(SessionFiles::class);
+
+        try {
+            return $files->locked($sessionName, function () use ($sessionName, $files): int {
+                if ($files->pending($sessionName)) {
+                    throw new SessionConnectionException('busy');
+                }
+
+                return $this->authenticate($sessionName);
+            });
+        } catch (SessionConnectionException $exception) {
+            $this->error(__('admin_telegram_sessions.errors.'.$exception->reason));
+
+            return self::FAILURE;
+        }
+    }
+
+    private function authenticate(string $sessionName): int
+    {
         $madelineProto = $this->getMadelineProto()->client($sessionName);
 
         $this->info(sprintf('Starting Telegram authentication process for session "%s"...', $sessionName));
