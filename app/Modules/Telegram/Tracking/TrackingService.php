@@ -11,7 +11,8 @@ use Illuminate\Support\Facades\DB;
 
 final readonly class TrackingService
 {
-    public function __construct(private TrackingConfig $config, private TrackingGateway $gateway, private TrackingLifecycle $lifecycle) {}
+    public function __construct(private TrackingConfig $config, private TrackingGateway $gateway,
+        private TrackingLifecycle $lifecycle, private TrackingCapacity $capacity) {}
 
     public function create(User $user, array $data): TelegramTracking
     {
@@ -106,7 +107,7 @@ final readonly class TrackingService
         if ($user->isBlocked() || ! $user->hasVerifiedEmail()) {
             throw new TrackingException('account_unavailable');
         }
-        if ($this->openTasks($user)->active()->count() >= $this->config->limit($user->currentPlan())) {
+        if ($this->capacity->activeCount($user) >= $this->config->limit($user->currentPlan())) {
             throw new TrackingException('limit');
         }
     }

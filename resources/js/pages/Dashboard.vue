@@ -16,6 +16,8 @@ import {
 import { computed, onBeforeUnmount, onMounted } from 'vue';
 import { useI18n } from '@/composables/useI18n';
 import { dashboard as dashboardRoute } from '@/routes';
+import TrackingCapacityCard from './dashboard/TrackingCapacityCard.vue';
+import type { TrackingCapacity } from './telegram/tracking/types';
 
 interface Summary {
     total_actions: number;
@@ -83,6 +85,7 @@ interface DashboardPayload {
 const props = withDefaults(
     defineProps<{
         dashboard?: DashboardPayload;
+        tracking?: TrackingCapacity;
     }>(),
     {
         dashboard: () => ({
@@ -486,6 +489,8 @@ onBeforeUnmount(() => {
                     </div>
                 </div>
             </section>
+
+            <TrackingCapacityCard v-if="tracking" :capacity="tracking" />
 
             <section
                 class="grid grid-cols-1 gap-2 sm:grid-cols-2 xl:grid-cols-4"

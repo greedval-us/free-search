@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { ref } from 'vue';
 import {
     Tooltip,
     TooltipContent,
@@ -12,16 +13,18 @@ defineProps<{
     widthClass?: string;
     align?: 'left' | 'right';
 }>();
+const open = ref(false);
 </script>
 
 <template>
     <TooltipProvider :delay-duration="100">
-        <Tooltip>
+        <Tooltip v-model:open="open" disable-closing-trigger>
             <TooltipTrigger as-child>
                 <button
                     type="button"
                     class="inline-flex h-8 w-8 shrink-0 cursor-help items-center justify-center rounded-full border border-border text-xs font-semibold text-muted-foreground transition hover:bg-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
                     :aria-label="label"
+                    @click="open = !open"
                 >
                     ?
                 </button>
