@@ -2,8 +2,12 @@
 
 namespace App\Services\Seo;
 
+use App\Services\PublicSite\PublicFeatureCatalog;
+
 final class SitemapService
 {
+    public function __construct(private readonly PublicFeatureCatalog $features) {}
+
     /**
      * @return list<array{loc: string, priority: string, changefreq: string}>
      */
@@ -12,7 +16,7 @@ final class SitemapService
         /** @var list<array{route: string, priority: string, changefreq: string}> $pages */
         $pages = config('seo.sitemap.pages', []);
 
-        return array_map(
+        $publicPages = array_map(
             static fn (array $page): array => [
                 'loc' => route($page['route'], absolute: true),
                 'priority' => $page['priority'],
@@ -20,6 +24,15 @@ final class SitemapService
             ],
             $pages
         );
+
+        return [...$publicPages, ...array_map(
+            static fn (array $feature): array => [
+                'loc' => route('features.show', ['feature' => $feature['slug']], absolute: true),
+                'priority' => '0.7',
+                'changefreq' => 'monthly',
+            ],
+            $this->features->pages()
+        )];
     }
 
     public function toXml(): string

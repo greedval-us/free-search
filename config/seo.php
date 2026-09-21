@@ -5,6 +5,11 @@ return [
     'sitemap' => [
         'pages' => [
             [
+                'route' => 'features.index',
+                'priority' => '0.8',
+                'changefreq' => 'monthly',
+            ],
+            [
                 'route' => 'home',
                 'priority' => '1.0',
                 'changefreq' => 'weekly',
