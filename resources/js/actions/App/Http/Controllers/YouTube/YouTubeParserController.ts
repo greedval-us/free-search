@@ -1,7 +1,7 @@
 import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFormDefinition, applyUrlDefaults } from './../../../../../wayfinder'
 /**
 * @see \App\Http\Controllers\YouTube\YouTubeParserController::commentsPreview
- * @see app/Http/Controllers/YouTube/YouTubeParserController.php:35
+ * @see app/Http/Controllers/YouTube/YouTubeParserController.php:47
  * @route '/youtube/search/comments-preview'
  */
 export const commentsPreview = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -16,7 +16,7 @@ commentsPreview.definition = {
 
 /**
 * @see \App\Http\Controllers\YouTube\YouTubeParserController::commentsPreview
- * @see app/Http/Controllers/YouTube/YouTubeParserController.php:35
+ * @see app/Http/Controllers/YouTube/YouTubeParserController.php:47
  * @route '/youtube/search/comments-preview'
  */
 commentsPreview.url = (options?: RouteQueryOptions) => {
@@ -25,7 +25,7 @@ commentsPreview.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\YouTube\YouTubeParserController::commentsPreview
- * @see app/Http/Controllers/YouTube/YouTubeParserController.php:35
+ * @see app/Http/Controllers/YouTube/YouTubeParserController.php:47
  * @route '/youtube/search/comments-preview'
  */
 commentsPreview.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -34,7 +34,7 @@ commentsPreview.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => (
 })
 /**
 * @see \App\Http\Controllers\YouTube\YouTubeParserController::commentsPreview
- * @see app/Http/Controllers/YouTube/YouTubeParserController.php:35
+ * @see app/Http/Controllers/YouTube/YouTubeParserController.php:47
  * @route '/youtube/search/comments-preview'
  */
 commentsPreview.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -44,7 +44,7 @@ commentsPreview.head = (options?: RouteQueryOptions): RouteDefinition<'head'> =>
 
     /**
 * @see \App\Http\Controllers\YouTube\YouTubeParserController::commentsPreview
- * @see app/Http/Controllers/YouTube/YouTubeParserController.php:35
+ * @see app/Http/Controllers/YouTube/YouTubeParserController.php:47
  * @route '/youtube/search/comments-preview'
  */
     const commentsPreviewForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -54,7 +54,7 @@ commentsPreview.head = (options?: RouteQueryOptions): RouteDefinition<'head'> =>
 
             /**
 * @see \App\Http\Controllers\YouTube\YouTubeParserController::commentsPreview
- * @see app/Http/Controllers/YouTube/YouTubeParserController.php:35
+ * @see app/Http/Controllers/YouTube/YouTubeParserController.php:47
  * @route '/youtube/search/comments-preview'
  */
         commentsPreviewForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -63,7 +63,7 @@ commentsPreview.head = (options?: RouteQueryOptions): RouteDefinition<'head'> =>
         })
             /**
 * @see \App\Http\Controllers\YouTube\YouTubeParserController::commentsPreview
- * @see app/Http/Controllers/YouTube/YouTubeParserController.php:35
+ * @see app/Http/Controllers/YouTube/YouTubeParserController.php:47
  * @route '/youtube/search/comments-preview'
  */
         commentsPreviewForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -79,7 +79,7 @@ commentsPreview.head = (options?: RouteQueryOptions): RouteDefinition<'head'> =>
     commentsPreview.form = commentsPreviewForm
 /**
 * @see \App\Http\Controllers\YouTube\YouTubeParserController::comments
- * @see app/Http/Controllers/YouTube/YouTubeParserController.php:30
+ * @see app/Http/Controllers/YouTube/YouTubeParserController.php:42
  * @route '/youtube/parser/comments'
  */
 export const comments = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -94,7 +94,7 @@ comments.definition = {
 
 /**
 * @see \App\Http\Controllers\YouTube\YouTubeParserController::comments
- * @see app/Http/Controllers/YouTube/YouTubeParserController.php:30
+ * @see app/Http/Controllers/YouTube/YouTubeParserController.php:42
  * @route '/youtube/parser/comments'
  */
 comments.url = (options?: RouteQueryOptions) => {
@@ -103,7 +103,7 @@ comments.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\YouTube\YouTubeParserController::comments
- * @see app/Http/Controllers/YouTube/YouTubeParserController.php:30
+ * @see app/Http/Controllers/YouTube/YouTubeParserController.php:42
  * @route '/youtube/parser/comments'
  */
 comments.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -112,7 +112,7 @@ comments.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
 })
 /**
 * @see \App\Http\Controllers\YouTube\YouTubeParserController::comments
- * @see app/Http/Controllers/YouTube/YouTubeParserController.php:30
+ * @see app/Http/Controllers/YouTube/YouTubeParserController.php:42
  * @route '/youtube/parser/comments'
  */
 comments.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -122,7 +122,7 @@ comments.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 
     /**
 * @see \App\Http\Controllers\YouTube\YouTubeParserController::comments
- * @see app/Http/Controllers/YouTube/YouTubeParserController.php:30
+ * @see app/Http/Controllers/YouTube/YouTubeParserController.php:42
  * @route '/youtube/parser/comments'
  */
     const commentsForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -132,7 +132,7 @@ comments.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 
             /**
 * @see \App\Http\Controllers\YouTube\YouTubeParserController::comments
- * @see app/Http/Controllers/YouTube/YouTubeParserController.php:30
+ * @see app/Http/Controllers/YouTube/YouTubeParserController.php:42
  * @route '/youtube/parser/comments'
  */
         commentsForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -141,7 +141,7 @@ comments.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
         })
             /**
 * @see \App\Http\Controllers\YouTube\YouTubeParserController::comments
- * @see app/Http/Controllers/YouTube/YouTubeParserController.php:30
+ * @see app/Http/Controllers/YouTube/YouTubeParserController.php:42
  * @route '/youtube/parser/comments'
  */
         commentsForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -157,7 +157,7 @@ comments.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     comments.form = commentsForm
 /**
 * @see \App\Http\Controllers\YouTube\YouTubeParserController::start
- * @see app/Http/Controllers/YouTube/YouTubeParserController.php:45
+ * @see app/Http/Controllers/YouTube/YouTubeParserController.php:57
  * @route '/youtube/parser/start'
  */
 export const start = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -172,7 +172,7 @@ start.definition = {
 
 /**
 * @see \App\Http\Controllers\YouTube\YouTubeParserController::start
- * @see app/Http/Controllers/YouTube/YouTubeParserController.php:45
+ * @see app/Http/Controllers/YouTube/YouTubeParserController.php:57
  * @route '/youtube/parser/start'
  */
 start.url = (options?: RouteQueryOptions) => {
@@ -181,7 +181,7 @@ start.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\YouTube\YouTubeParserController::start
- * @see app/Http/Controllers/YouTube/YouTubeParserController.php:45
+ * @see app/Http/Controllers/YouTube/YouTubeParserController.php:57
  * @route '/youtube/parser/start'
  */
 start.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -191,7 +191,7 @@ start.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
 
     /**
 * @see \App\Http\Controllers\YouTube\YouTubeParserController::start
- * @see app/Http/Controllers/YouTube/YouTubeParserController.php:45
+ * @see app/Http/Controllers/YouTube/YouTubeParserController.php:57
  * @route '/youtube/parser/start'
  */
     const startForm = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -201,7 +201,7 @@ start.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
 
             /**
 * @see \App\Http\Controllers\YouTube\YouTubeParserController::start
- * @see app/Http/Controllers/YouTube/YouTubeParserController.php:45
+ * @see app/Http/Controllers/YouTube/YouTubeParserController.php:57
  * @route '/youtube/parser/start'
  */
         startForm.post = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -212,7 +212,7 @@ start.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
     start.form = startForm
 /**
 * @see \App\Http\Controllers\YouTube\YouTubeParserController::status
- * @see app/Http/Controllers/YouTube/YouTubeParserController.php:50
+ * @see app/Http/Controllers/YouTube/YouTubeParserController.php:34
  * @route '/youtube/parser/status/{runId}'
  */
 export const status = (args: { runId: string | number } | [runId: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -227,7 +227,7 @@ status.definition = {
 
 /**
 * @see \App\Http\Controllers\YouTube\YouTubeParserController::status
- * @see app/Http/Controllers/YouTube/YouTubeParserController.php:50
+ * @see app/Http/Controllers/YouTube/YouTubeParserController.php:34
  * @route '/youtube/parser/status/{runId}'
  */
 status.url = (args: { runId: string | number } | [runId: string | number ] | string | number, options?: RouteQueryOptions) => {
@@ -255,7 +255,7 @@ status.url = (args: { runId: string | number } | [runId: string | number ] | str
 
 /**
 * @see \App\Http\Controllers\YouTube\YouTubeParserController::status
- * @see app/Http/Controllers/YouTube/YouTubeParserController.php:50
+ * @see app/Http/Controllers/YouTube/YouTubeParserController.php:34
  * @route '/youtube/parser/status/{runId}'
  */
 status.get = (args: { runId: string | number } | [runId: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -264,7 +264,7 @@ status.get = (args: { runId: string | number } | [runId: string | number ] | str
 })
 /**
 * @see \App\Http\Controllers\YouTube\YouTubeParserController::status
- * @see app/Http/Controllers/YouTube/YouTubeParserController.php:50
+ * @see app/Http/Controllers/YouTube/YouTubeParserController.php:34
  * @route '/youtube/parser/status/{runId}'
  */
 status.head = (args: { runId: string | number } | [runId: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -274,7 +274,7 @@ status.head = (args: { runId: string | number } | [runId: string | number ] | st
 
     /**
 * @see \App\Http\Controllers\YouTube\YouTubeParserController::status
- * @see app/Http/Controllers/YouTube/YouTubeParserController.php:50
+ * @see app/Http/Controllers/YouTube/YouTubeParserController.php:34
  * @route '/youtube/parser/status/{runId}'
  */
     const statusForm = (args: { runId: string | number } | [runId: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -284,7 +284,7 @@ status.head = (args: { runId: string | number } | [runId: string | number ] | st
 
             /**
 * @see \App\Http\Controllers\YouTube\YouTubeParserController::status
- * @see app/Http/Controllers/YouTube/YouTubeParserController.php:50
+ * @see app/Http/Controllers/YouTube/YouTubeParserController.php:34
  * @route '/youtube/parser/status/{runId}'
  */
         statusForm.get = (args: { runId: string | number } | [runId: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -293,7 +293,7 @@ status.head = (args: { runId: string | number } | [runId: string | number ] | st
         })
             /**
 * @see \App\Http\Controllers\YouTube\YouTubeParserController::status
- * @see app/Http/Controllers/YouTube/YouTubeParserController.php:50
+ * @see app/Http/Controllers/YouTube/YouTubeParserController.php:34
  * @route '/youtube/parser/status/{runId}'
  */
         statusForm.head = (args: { runId: string | number } | [runId: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -309,7 +309,7 @@ status.head = (args: { runId: string | number } | [runId: string | number ] | st
     status.form = statusForm
 /**
 * @see \App\Http\Controllers\YouTube\YouTubeParserController::stop
- * @see app/Http/Controllers/YouTube/YouTubeParserController.php:57
+ * @see app/Http/Controllers/YouTube/YouTubeParserController.php:41
  * @route '/youtube/parser/stop/{runId}'
  */
 export const stop = (args: { runId: string | number } | [runId: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -324,7 +324,7 @@ stop.definition = {
 
 /**
 * @see \App\Http\Controllers\YouTube\YouTubeParserController::stop
- * @see app/Http/Controllers/YouTube/YouTubeParserController.php:57
+ * @see app/Http/Controllers/YouTube/YouTubeParserController.php:41
  * @route '/youtube/parser/stop/{runId}'
  */
 stop.url = (args: { runId: string | number } | [runId: string | number ] | string | number, options?: RouteQueryOptions) => {
@@ -352,7 +352,7 @@ stop.url = (args: { runId: string | number } | [runId: string | number ] | strin
 
 /**
 * @see \App\Http\Controllers\YouTube\YouTubeParserController::stop
- * @see app/Http/Controllers/YouTube/YouTubeParserController.php:57
+ * @see app/Http/Controllers/YouTube/YouTubeParserController.php:41
  * @route '/youtube/parser/stop/{runId}'
  */
 stop.post = (args: { runId: string | number } | [runId: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -362,7 +362,7 @@ stop.post = (args: { runId: string | number } | [runId: string | number ] | stri
 
     /**
 * @see \App\Http\Controllers\YouTube\YouTubeParserController::stop
- * @see app/Http/Controllers/YouTube/YouTubeParserController.php:57
+ * @see app/Http/Controllers/YouTube/YouTubeParserController.php:41
  * @route '/youtube/parser/stop/{runId}'
  */
     const stopForm = (args: { runId: string | number } | [runId: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -372,7 +372,7 @@ stop.post = (args: { runId: string | number } | [runId: string | number ] | stri
 
             /**
 * @see \App\Http\Controllers\YouTube\YouTubeParserController::stop
- * @see app/Http/Controllers/YouTube/YouTubeParserController.php:57
+ * @see app/Http/Controllers/YouTube/YouTubeParserController.php:41
  * @route '/youtube/parser/stop/{runId}'
  */
         stopForm.post = (args: { runId: string | number } | [runId: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -383,7 +383,7 @@ stop.post = (args: { runId: string | number } | [runId: string | number ] | stri
     stop.form = stopForm
 /**
 * @see \App\Http\Controllers\YouTube\YouTubeParserController::history
- * @see app/Http/Controllers/YouTube/YouTubeParserController.php:64
+ * @see app/Http/Controllers/YouTube/YouTubeParserController.php:48
  * @route '/youtube/parser/history'
  */
 export const history = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -398,7 +398,7 @@ history.definition = {
 
 /**
 * @see \App\Http\Controllers\YouTube\YouTubeParserController::history
- * @see app/Http/Controllers/YouTube/YouTubeParserController.php:64
+ * @see app/Http/Controllers/YouTube/YouTubeParserController.php:48
  * @route '/youtube/parser/history'
  */
 history.url = (options?: RouteQueryOptions) => {
@@ -407,7 +407,7 @@ history.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\YouTube\YouTubeParserController::history
- * @see app/Http/Controllers/YouTube/YouTubeParserController.php:64
+ * @see app/Http/Controllers/YouTube/YouTubeParserController.php:48
  * @route '/youtube/parser/history'
  */
 history.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -416,7 +416,7 @@ history.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
 })
 /**
 * @see \App\Http\Controllers\YouTube\YouTubeParserController::history
- * @see app/Http/Controllers/YouTube/YouTubeParserController.php:64
+ * @see app/Http/Controllers/YouTube/YouTubeParserController.php:48
  * @route '/youtube/parser/history'
  */
 history.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -426,7 +426,7 @@ history.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 
     /**
 * @see \App\Http\Controllers\YouTube\YouTubeParserController::history
- * @see app/Http/Controllers/YouTube/YouTubeParserController.php:64
+ * @see app/Http/Controllers/YouTube/YouTubeParserController.php:48
  * @route '/youtube/parser/history'
  */
     const historyForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -436,7 +436,7 @@ history.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 
             /**
 * @see \App\Http\Controllers\YouTube\YouTubeParserController::history
- * @see app/Http/Controllers/YouTube/YouTubeParserController.php:64
+ * @see app/Http/Controllers/YouTube/YouTubeParserController.php:48
  * @route '/youtube/parser/history'
  */
         historyForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -445,7 +445,7 @@ history.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
         })
             /**
 * @see \App\Http\Controllers\YouTube\YouTubeParserController::history
- * @see app/Http/Controllers/YouTube/YouTubeParserController.php:64
+ * @see app/Http/Controllers/YouTube/YouTubeParserController.php:48
  * @route '/youtube/parser/history'
  */
         historyForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -461,7 +461,7 @@ history.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     history.form = historyForm
 /**
 * @see \App\Http\Controllers\YouTube\YouTubeParserController::downloadExcel
- * @see app/Http/Controllers/YouTube/YouTubeParserController.php:73
+ * @see app/Http/Controllers/YouTube/YouTubeParserController.php:57
  * @route '/youtube/parser/download-excel/{runId}'
  */
 export const downloadExcel = (args: { runId: string | number } | [runId: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -476,7 +476,7 @@ downloadExcel.definition = {
 
 /**
 * @see \App\Http\Controllers\YouTube\YouTubeParserController::downloadExcel
- * @see app/Http/Controllers/YouTube/YouTubeParserController.php:73
+ * @see app/Http/Controllers/YouTube/YouTubeParserController.php:57
  * @route '/youtube/parser/download-excel/{runId}'
  */
 downloadExcel.url = (args: { runId: string | number } | [runId: string | number ] | string | number, options?: RouteQueryOptions) => {
@@ -504,7 +504,7 @@ downloadExcel.url = (args: { runId: string | number } | [runId: string | number 
 
 /**
 * @see \App\Http\Controllers\YouTube\YouTubeParserController::downloadExcel
- * @see app/Http/Controllers/YouTube/YouTubeParserController.php:73
+ * @see app/Http/Controllers/YouTube/YouTubeParserController.php:57
  * @route '/youtube/parser/download-excel/{runId}'
  */
 downloadExcel.get = (args: { runId: string | number } | [runId: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -513,7 +513,7 @@ downloadExcel.get = (args: { runId: string | number } | [runId: string | number 
 })
 /**
 * @see \App\Http\Controllers\YouTube\YouTubeParserController::downloadExcel
- * @see app/Http/Controllers/YouTube/YouTubeParserController.php:73
+ * @see app/Http/Controllers/YouTube/YouTubeParserController.php:57
  * @route '/youtube/parser/download-excel/{runId}'
  */
 downloadExcel.head = (args: { runId: string | number } | [runId: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -523,7 +523,7 @@ downloadExcel.head = (args: { runId: string | number } | [runId: string | number
 
     /**
 * @see \App\Http\Controllers\YouTube\YouTubeParserController::downloadExcel
- * @see app/Http/Controllers/YouTube/YouTubeParserController.php:73
+ * @see app/Http/Controllers/YouTube/YouTubeParserController.php:57
  * @route '/youtube/parser/download-excel/{runId}'
  */
     const downloadExcelForm = (args: { runId: string | number } | [runId: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -533,7 +533,7 @@ downloadExcel.head = (args: { runId: string | number } | [runId: string | number
 
             /**
 * @see \App\Http\Controllers\YouTube\YouTubeParserController::downloadExcel
- * @see app/Http/Controllers/YouTube/YouTubeParserController.php:73
+ * @see app/Http/Controllers/YouTube/YouTubeParserController.php:57
  * @route '/youtube/parser/download-excel/{runId}'
  */
         downloadExcelForm.get = (args: { runId: string | number } | [runId: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -542,7 +542,7 @@ downloadExcel.head = (args: { runId: string | number } | [runId: string | number
         })
             /**
 * @see \App\Http\Controllers\YouTube\YouTubeParserController::downloadExcel
- * @see app/Http/Controllers/YouTube/YouTubeParserController.php:73
+ * @see app/Http/Controllers/YouTube/YouTubeParserController.php:57
  * @route '/youtube/parser/download-excel/{runId}'
  */
         downloadExcelForm.head = (args: { runId: string | number } | [runId: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -558,7 +558,7 @@ downloadExcel.head = (args: { runId: string | number } | [runId: string | number
     downloadExcel.form = downloadExcelForm
 /**
 * @see \App\Http\Controllers\YouTube\YouTubeParserController::downloadJson
- * @see app/Http/Controllers/YouTube/YouTubeParserController.php:87
+ * @see app/Http/Controllers/YouTube/YouTubeParserController.php:67
  * @route '/youtube/parser/download-json/{runId}'
  */
 export const downloadJson = (args: { runId: string | number } | [runId: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -573,7 +573,7 @@ downloadJson.definition = {
 
 /**
 * @see \App\Http\Controllers\YouTube\YouTubeParserController::downloadJson
- * @see app/Http/Controllers/YouTube/YouTubeParserController.php:87
+ * @see app/Http/Controllers/YouTube/YouTubeParserController.php:67
  * @route '/youtube/parser/download-json/{runId}'
  */
 downloadJson.url = (args: { runId: string | number } | [runId: string | number ] | string | number, options?: RouteQueryOptions) => {
@@ -601,7 +601,7 @@ downloadJson.url = (args: { runId: string | number } | [runId: string | number ]
 
 /**
 * @see \App\Http\Controllers\YouTube\YouTubeParserController::downloadJson
- * @see app/Http/Controllers/YouTube/YouTubeParserController.php:87
+ * @see app/Http/Controllers/YouTube/YouTubeParserController.php:67
  * @route '/youtube/parser/download-json/{runId}'
  */
 downloadJson.get = (args: { runId: string | number } | [runId: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -610,7 +610,7 @@ downloadJson.get = (args: { runId: string | number } | [runId: string | number ]
 })
 /**
 * @see \App\Http\Controllers\YouTube\YouTubeParserController::downloadJson
- * @see app/Http/Controllers/YouTube/YouTubeParserController.php:87
+ * @see app/Http/Controllers/YouTube/YouTubeParserController.php:67
  * @route '/youtube/parser/download-json/{runId}'
  */
 downloadJson.head = (args: { runId: string | number } | [runId: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -620,7 +620,7 @@ downloadJson.head = (args: { runId: string | number } | [runId: string | number 
 
     /**
 * @see \App\Http\Controllers\YouTube\YouTubeParserController::downloadJson
- * @see app/Http/Controllers/YouTube/YouTubeParserController.php:87
+ * @see app/Http/Controllers/YouTube/YouTubeParserController.php:67
  * @route '/youtube/parser/download-json/{runId}'
  */
     const downloadJsonForm = (args: { runId: string | number } | [runId: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -630,7 +630,7 @@ downloadJson.head = (args: { runId: string | number } | [runId: string | number 
 
             /**
 * @see \App\Http\Controllers\YouTube\YouTubeParserController::downloadJson
- * @see app/Http/Controllers/YouTube/YouTubeParserController.php:87
+ * @see app/Http/Controllers/YouTube/YouTubeParserController.php:67
  * @route '/youtube/parser/download-json/{runId}'
  */
         downloadJsonForm.get = (args: { runId: string | number } | [runId: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -639,7 +639,7 @@ downloadJson.head = (args: { runId: string | number } | [runId: string | number 
         })
             /**
 * @see \App\Http\Controllers\YouTube\YouTubeParserController::downloadJson
- * @see app/Http/Controllers/YouTube/YouTubeParserController.php:87
+ * @see app/Http/Controllers/YouTube/YouTubeParserController.php:67
  * @route '/youtube/parser/download-json/{runId}'
  */
         downloadJsonForm.head = (args: { runId: string | number } | [runId: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({

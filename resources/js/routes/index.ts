@@ -211,8 +211,8 @@ register.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     
     register.form = registerForm
 /**
-* @see \Inertia\Controller::__invoke
- * @see vendor/inertiajs/inertia-laravel/src/Controller.php:13
+* @see \App\Http\Controllers\PublicSiteController::home
+ * @see app/Http/Controllers/PublicSiteController.php:15
  * @route '/'
  */
 export const home = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -226,8 +226,8 @@ home.definition = {
 } satisfies RouteDefinition<["get","head"]>
 
 /**
-* @see \Inertia\Controller::__invoke
- * @see vendor/inertiajs/inertia-laravel/src/Controller.php:13
+* @see \App\Http\Controllers\PublicSiteController::home
+ * @see app/Http/Controllers/PublicSiteController.php:15
  * @route '/'
  */
 home.url = (options?: RouteQueryOptions) => {
@@ -235,8 +235,8 @@ home.url = (options?: RouteQueryOptions) => {
 }
 
 /**
-* @see \Inertia\Controller::__invoke
- * @see vendor/inertiajs/inertia-laravel/src/Controller.php:13
+* @see \App\Http\Controllers\PublicSiteController::home
+ * @see app/Http/Controllers/PublicSiteController.php:15
  * @route '/'
  */
 home.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -244,8 +244,8 @@ home.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     method: 'get',
 })
 /**
-* @see \Inertia\Controller::__invoke
- * @see vendor/inertiajs/inertia-laravel/src/Controller.php:13
+* @see \App\Http\Controllers\PublicSiteController::home
+ * @see app/Http/Controllers/PublicSiteController.php:15
  * @route '/'
  */
 home.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -254,8 +254,8 @@ home.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 })
 
     /**
-* @see \Inertia\Controller::__invoke
- * @see vendor/inertiajs/inertia-laravel/src/Controller.php:13
+* @see \App\Http\Controllers\PublicSiteController::home
+ * @see app/Http/Controllers/PublicSiteController.php:15
  * @route '/'
  */
     const homeForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -264,8 +264,8 @@ home.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     })
 
             /**
-* @see \Inertia\Controller::__invoke
- * @see vendor/inertiajs/inertia-laravel/src/Controller.php:13
+* @see \App\Http\Controllers\PublicSiteController::home
+ * @see app/Http/Controllers/PublicSiteController.php:15
  * @route '/'
  */
         homeForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -273,8 +273,8 @@ home.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
             method: 'get',
         })
             /**
-* @see \Inertia\Controller::__invoke
- * @see vendor/inertiajs/inertia-laravel/src/Controller.php:13
+* @see \App\Http\Controllers\PublicSiteController::home
+ * @see app/Http/Controllers/PublicSiteController.php:15
  * @route '/'
  */
         homeForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -446,7 +446,7 @@ terms.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     terms.form = termsForm
 /**
 * @see \App\Http\Controllers\SitemapController::__invoke
- * @see app/Http/Controllers/SitemapController.php:15
+ * @see app/Http/Controllers/SitemapController.php:14
  * @route '/sitemap.xml'
  */
 export const sitemap = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -461,7 +461,7 @@ sitemap.definition = {
 
 /**
 * @see \App\Http\Controllers\SitemapController::__invoke
- * @see app/Http/Controllers/SitemapController.php:15
+ * @see app/Http/Controllers/SitemapController.php:14
  * @route '/sitemap.xml'
  */
 sitemap.url = (options?: RouteQueryOptions) => {
@@ -470,7 +470,7 @@ sitemap.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\SitemapController::__invoke
- * @see app/Http/Controllers/SitemapController.php:15
+ * @see app/Http/Controllers/SitemapController.php:14
  * @route '/sitemap.xml'
  */
 sitemap.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -479,7 +479,7 @@ sitemap.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
 })
 /**
 * @see \App\Http\Controllers\SitemapController::__invoke
- * @see app/Http/Controllers/SitemapController.php:15
+ * @see app/Http/Controllers/SitemapController.php:14
  * @route '/sitemap.xml'
  */
 sitemap.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -489,7 +489,7 @@ sitemap.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 
     /**
 * @see \App\Http\Controllers\SitemapController::__invoke
- * @see app/Http/Controllers/SitemapController.php:15
+ * @see app/Http/Controllers/SitemapController.php:14
  * @route '/sitemap.xml'
  */
     const sitemapForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -499,7 +499,7 @@ sitemap.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 
             /**
 * @see \App\Http\Controllers\SitemapController::__invoke
- * @see app/Http/Controllers/SitemapController.php:15
+ * @see app/Http/Controllers/SitemapController.php:14
  * @route '/sitemap.xml'
  */
         sitemapForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -508,7 +508,7 @@ sitemap.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
         })
             /**
 * @see \App\Http\Controllers\SitemapController::__invoke
- * @see app/Http/Controllers/SitemapController.php:15
+ * @see app/Http/Controllers/SitemapController.php:14
  * @route '/sitemap.xml'
  */
         sitemapForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({

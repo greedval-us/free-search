@@ -1,7 +1,7 @@
 import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFormDefinition } from './../../wayfinder'
 /**
 * @see \App\Http\Controllers\NewsMediaIntel\NewsMediaIntelController::lookup
- * @see app/Http/Controllers/NewsMediaIntel/NewsMediaIntelController.php:17
+ * @see app/Http/Controllers/NewsMediaIntel/NewsMediaIntelController.php:16
  * @route '/news-media-intel/lookup'
  */
 export const lookup = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -16,7 +16,7 @@ lookup.definition = {
 
 /**
 * @see \App\Http\Controllers\NewsMediaIntel\NewsMediaIntelController::lookup
- * @see app/Http/Controllers/NewsMediaIntel/NewsMediaIntelController.php:17
+ * @see app/Http/Controllers/NewsMediaIntel/NewsMediaIntelController.php:16
  * @route '/news-media-intel/lookup'
  */
 lookup.url = (options?: RouteQueryOptions) => {
@@ -25,7 +25,7 @@ lookup.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\NewsMediaIntel\NewsMediaIntelController::lookup
- * @see app/Http/Controllers/NewsMediaIntel/NewsMediaIntelController.php:17
+ * @see app/Http/Controllers/NewsMediaIntel/NewsMediaIntelController.php:16
  * @route '/news-media-intel/lookup'
  */
 lookup.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -34,7 +34,7 @@ lookup.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
 })
 /**
 * @see \App\Http\Controllers\NewsMediaIntel\NewsMediaIntelController::lookup
- * @see app/Http/Controllers/NewsMediaIntel/NewsMediaIntelController.php:17
+ * @see app/Http/Controllers/NewsMediaIntel/NewsMediaIntelController.php:16
  * @route '/news-media-intel/lookup'
  */
 lookup.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -44,7 +44,7 @@ lookup.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 
     /**
 * @see \App\Http\Controllers\NewsMediaIntel\NewsMediaIntelController::lookup
- * @see app/Http/Controllers/NewsMediaIntel/NewsMediaIntelController.php:17
+ * @see app/Http/Controllers/NewsMediaIntel/NewsMediaIntelController.php:16
  * @route '/news-media-intel/lookup'
  */
     const lookupForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -54,7 +54,7 @@ lookup.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 
             /**
 * @see \App\Http\Controllers\NewsMediaIntel\NewsMediaIntelController::lookup
- * @see app/Http/Controllers/NewsMediaIntel/NewsMediaIntelController.php:17
+ * @see app/Http/Controllers/NewsMediaIntel/NewsMediaIntelController.php:16
  * @route '/news-media-intel/lookup'
  */
         lookupForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -63,7 +63,7 @@ lookup.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
         })
             /**
 * @see \App\Http\Controllers\NewsMediaIntel\NewsMediaIntelController::lookup
- * @see app/Http/Controllers/NewsMediaIntel/NewsMediaIntelController.php:17
+ * @see app/Http/Controllers/NewsMediaIntel/NewsMediaIntelController.php:16
  * @route '/news-media-intel/lookup'
  */
         lookupForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({

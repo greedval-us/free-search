@@ -1,7 +1,7 @@
 import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFormDefinition, applyUrlDefaults } from './../../../../../wayfinder'
 /**
 * @see \App\Http\Controllers\Dashboard\SavedQueryController::store
- * @see app/Http/Controllers/Dashboard/SavedQueryController.php:20
+ * @see app/Http/Controllers/Dashboard/SavedQueryController.php:19
  * @route '/dashboard/saved-queries'
  */
 export const store = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -16,7 +16,7 @@ store.definition = {
 
 /**
 * @see \App\Http\Controllers\Dashboard\SavedQueryController::store
- * @see app/Http/Controllers/Dashboard/SavedQueryController.php:20
+ * @see app/Http/Controllers/Dashboard/SavedQueryController.php:19
  * @route '/dashboard/saved-queries'
  */
 store.url = (options?: RouteQueryOptions) => {
@@ -25,7 +25,7 @@ store.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\Dashboard\SavedQueryController::store
- * @see app/Http/Controllers/Dashboard/SavedQueryController.php:20
+ * @see app/Http/Controllers/Dashboard/SavedQueryController.php:19
  * @route '/dashboard/saved-queries'
  */
 store.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -35,7 +35,7 @@ store.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
 
     /**
 * @see \App\Http\Controllers\Dashboard\SavedQueryController::store
- * @see app/Http/Controllers/Dashboard/SavedQueryController.php:20
+ * @see app/Http/Controllers/Dashboard/SavedQueryController.php:19
  * @route '/dashboard/saved-queries'
  */
     const storeForm = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -45,7 +45,7 @@ store.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
 
             /**
 * @see \App\Http\Controllers\Dashboard\SavedQueryController::store
- * @see app/Http/Controllers/Dashboard/SavedQueryController.php:20
+ * @see app/Http/Controllers/Dashboard/SavedQueryController.php:19
  * @route '/dashboard/saved-queries'
  */
         storeForm.post = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -56,7 +56,7 @@ store.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
     store.form = storeForm
 /**
 * @see \App\Http\Controllers\Dashboard\SavedQueryController::destroy
- * @see app/Http/Controllers/Dashboard/SavedQueryController.php:29
+ * @see app/Http/Controllers/Dashboard/SavedQueryController.php:28
  * @route '/dashboard/saved-queries/{savedQuery}'
  */
 export const destroy = (args: { savedQuery: number | { id: number } } | [savedQuery: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
@@ -71,7 +71,7 @@ destroy.definition = {
 
 /**
 * @see \App\Http\Controllers\Dashboard\SavedQueryController::destroy
- * @see app/Http/Controllers/Dashboard/SavedQueryController.php:29
+ * @see app/Http/Controllers/Dashboard/SavedQueryController.php:28
  * @route '/dashboard/saved-queries/{savedQuery}'
  */
 destroy.url = (args: { savedQuery: number | { id: number } } | [savedQuery: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
@@ -104,7 +104,7 @@ destroy.url = (args: { savedQuery: number | { id: number } } | [savedQuery: numb
 
 /**
 * @see \App\Http\Controllers\Dashboard\SavedQueryController::destroy
- * @see app/Http/Controllers/Dashboard/SavedQueryController.php:29
+ * @see app/Http/Controllers/Dashboard/SavedQueryController.php:28
  * @route '/dashboard/saved-queries/{savedQuery}'
  */
 destroy.delete = (args: { savedQuery: number | { id: number } } | [savedQuery: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
@@ -114,7 +114,7 @@ destroy.delete = (args: { savedQuery: number | { id: number } } | [savedQuery: n
 
     /**
 * @see \App\Http\Controllers\Dashboard\SavedQueryController::destroy
- * @see app/Http/Controllers/Dashboard/SavedQueryController.php:29
+ * @see app/Http/Controllers/Dashboard/SavedQueryController.php:28
  * @route '/dashboard/saved-queries/{savedQuery}'
  */
     const destroyForm = (args: { savedQuery: number | { id: number } } | [savedQuery: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -129,7 +129,7 @@ destroy.delete = (args: { savedQuery: number | { id: number } } | [savedQuery: n
 
             /**
 * @see \App\Http\Controllers\Dashboard\SavedQueryController::destroy
- * @see app/Http/Controllers/Dashboard/SavedQueryController.php:29
+ * @see app/Http/Controllers/Dashboard/SavedQueryController.php:28
  * @route '/dashboard/saved-queries/{savedQuery}'
  */
         destroyForm.delete = (args: { savedQuery: number | { id: number } } | [savedQuery: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({

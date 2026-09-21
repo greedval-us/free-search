@@ -6,6 +6,7 @@ import hasMany from './has-many'
 import belongsToManyPivot from './belongs-to-many-pivot'
 import crud from './crud'
 import resource from './resource'
+import telegramSessions from './telegram-sessions'
 /**
 * @see \MoonShine\Laravel\Http\Controllers\AuthenticateController::login
  * @see vendor/moonshine/moonshine/src/Laravel/src/Http/Controllers/AuthenticateController.php:25
@@ -1093,6 +1094,7 @@ page: Object.assign(page, page),
 crud: Object.assign(crud, crud),
 handler: Object.assign(handler, handler),
 resource: Object.assign(resource, resource),
+telegramSessions: Object.assign(telegramSessions, telegramSessions),
 }
 
 export default moonshine
