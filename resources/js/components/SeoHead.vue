@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { Head, usePage } from '@inertiajs/vue3';
 import { computed } from 'vue';
+import { useLocale } from '@/composables/useLocale';
 
 type SharedSeoProps = {
     defaultImage?: string;
@@ -52,7 +53,7 @@ const imageUrl = computed(() => {
     return new URL(image, `${normalizedSiteUrl.value}/`).toString();
 });
 
-const locale = computed(() => String(page.props.locale ?? 'en'));
+const { locale } = useLocale();
 const openGraphLocale = computed(() =>
     locale.value === 'ru' ? 'ru_RU' : 'en_US'
 );

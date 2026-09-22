@@ -1,10 +1,11 @@
 import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFormDefinition, applyUrlDefaults } from './../../wayfinder'
+import tracking from './tracking'
 import search from './search'
 import analytics from './analytics'
 import parser from './parser'
 /**
 * @see \App\Http\Controllers\Telegram\TelegramSearchController::media
- * @see app/Http/Controllers/Telegram/TelegramSearchController.php:31
+ * @see app/Http/Controllers/Telegram/TelegramSearchController.php:30
  * @route '/telegram/media/{chatUsername}/{messageId}'
  */
 export const media = (args: { chatUsername: string | number, messageId: string | number } | [chatUsername: string | number, messageId: string | number ], options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -19,7 +20,7 @@ media.definition = {
 
 /**
 * @see \App\Http\Controllers\Telegram\TelegramSearchController::media
- * @see app/Http/Controllers/Telegram/TelegramSearchController.php:31
+ * @see app/Http/Controllers/Telegram/TelegramSearchController.php:30
  * @route '/telegram/media/{chatUsername}/{messageId}'
  */
 media.url = (args: { chatUsername: string | number, messageId: string | number } | [chatUsername: string | number, messageId: string | number ], options?: RouteQueryOptions) => {
@@ -45,7 +46,7 @@ media.url = (args: { chatUsername: string | number, messageId: string | number }
 
 /**
 * @see \App\Http\Controllers\Telegram\TelegramSearchController::media
- * @see app/Http/Controllers/Telegram/TelegramSearchController.php:31
+ * @see app/Http/Controllers/Telegram/TelegramSearchController.php:30
  * @route '/telegram/media/{chatUsername}/{messageId}'
  */
 media.get = (args: { chatUsername: string | number, messageId: string | number } | [chatUsername: string | number, messageId: string | number ], options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -54,7 +55,7 @@ media.get = (args: { chatUsername: string | number, messageId: string | number }
 })
 /**
 * @see \App\Http\Controllers\Telegram\TelegramSearchController::media
- * @see app/Http/Controllers/Telegram/TelegramSearchController.php:31
+ * @see app/Http/Controllers/Telegram/TelegramSearchController.php:30
  * @route '/telegram/media/{chatUsername}/{messageId}'
  */
 media.head = (args: { chatUsername: string | number, messageId: string | number } | [chatUsername: string | number, messageId: string | number ], options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -64,7 +65,7 @@ media.head = (args: { chatUsername: string | number, messageId: string | number 
 
     /**
 * @see \App\Http\Controllers\Telegram\TelegramSearchController::media
- * @see app/Http/Controllers/Telegram/TelegramSearchController.php:31
+ * @see app/Http/Controllers/Telegram/TelegramSearchController.php:30
  * @route '/telegram/media/{chatUsername}/{messageId}'
  */
     const mediaForm = (args: { chatUsername: string | number, messageId: string | number } | [chatUsername: string | number, messageId: string | number ], options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -74,7 +75,7 @@ media.head = (args: { chatUsername: string | number, messageId: string | number 
 
             /**
 * @see \App\Http\Controllers\Telegram\TelegramSearchController::media
- * @see app/Http/Controllers/Telegram/TelegramSearchController.php:31
+ * @see app/Http/Controllers/Telegram/TelegramSearchController.php:30
  * @route '/telegram/media/{chatUsername}/{messageId}'
  */
         mediaForm.get = (args: { chatUsername: string | number, messageId: string | number } | [chatUsername: string | number, messageId: string | number ], options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -83,7 +84,7 @@ media.head = (args: { chatUsername: string | number, messageId: string | number 
         })
             /**
 * @see \App\Http\Controllers\Telegram\TelegramSearchController::media
- * @see app/Http/Controllers/Telegram/TelegramSearchController.php:31
+ * @see app/Http/Controllers/Telegram/TelegramSearchController.php:30
  * @route '/telegram/media/{chatUsername}/{messageId}'
  */
         mediaForm.head = (args: { chatUsername: string | number, messageId: string | number } | [chatUsername: string | number, messageId: string | number ], options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -98,7 +99,8 @@ media.head = (args: { chatUsername: string | number, messageId: string | number 
     
     media.form = mediaForm
 const telegram = {
-    search: Object.assign(search, search),
+    tracking: Object.assign(tracking, tracking),
+search: Object.assign(search, search),
 media: Object.assign(media, media),
 analytics: Object.assign(analytics, analytics),
 parser: Object.assign(parser, parser),

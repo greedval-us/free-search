@@ -1,0 +1,197 @@
+{
+    "homeTitle": "Uraboros: public-source research and Telegram monitoring",
+    "homeDescription": "Explore public sources, collect posts and comments, monitor selected Telegram channels and receive exports through the bot. Discover URABOROS capabilities and limitations.",
+    "beta": "Open beta • public-source research",
+    "heroTitle": "From public sources",
+    "heroAccent": "to useful findings.",
+    "heroText": "Find publications and collect posts and comments into usable exports. Follow a topic in selected Telegram sources, then return to the website or bot for the results.",
+    "start": "Create an account",
+    "signIn": "Sign in",
+    "openWorkspace": "Open workspace",
+    "explore": "Explore capabilities",
+    "freeNote": "A free plan with limits is available. Your account shows the available usage and subscription conditions.",
+    "accountNote": "This page describes the tool. Using it requires an account with verified email and is subject to your plan limits.",
+    "catalog": "Capabilities",
+    "catalogTitle": "Choose a tool for your task",
+    "catalogDescription": "Learn what input to provide, what results to expect and which limitations matter. No registration needed to explore.",
+    "details": "How it works",
+    "allFeatures": "All capabilities",
+    "language": "Switch interface language",
+    "navigation": "Main navigation",
+    "footerNavigation": "Service information",
+    "breadcrumb": "Breadcrumb",
+    "skip": "Skip to content",
+    "privacy": "Privacy",
+    "terms": "Terms of service",
+    "footer": "Search, collection and analysis of public data. Tools are actively developed in beta.",
+    "previewLabel": "One workflow • Telegram",
+    "previewNote": "Workflow illustration, not live results. Opening this page does not start data collection.",
+    "preview": {
+        "sources": {
+            "title": "You choose the sources",
+            "text": "Accessible groups or channels and the topic you want to follow."
+        },
+        "collection": {
+            "title": "The service checks new messages",
+            "text": "Periodically collects matches by keyword or sender ID."
+        },
+        "result": {
+            "title": "You work with the findings",
+            "text": "Messages on the website, Excel or JSON reports, alerts through your linked bot."
+        }
+    },
+    "scenariosLabel": "More than a list of tools",
+    "scenariosTitle": "Start with what you want to learn",
+    "scenarios": {
+        "monitor": {
+            "title": "Follow a topic",
+            "text": "Monitor selected Telegram sources and return to matching messages instead of checking each chat manually."
+        },
+        "research": {
+            "title": "Collect material for analysis",
+            "text": "Export YouTube comments or posts from supported social platforms to study a discussion and develop your own conclusions."
+        },
+        "check": {
+            "title": "Check a website and its context",
+            "text": "Review HTTP, DNS, SSL and SEO signals. Get a starting point for technical investigation, not an unsupported security verdict."
+        }
+    },
+    "expectationsLabel": "Clear expectations",
+    "expectationsTitle": "A research tool, not a promise to find everything",
+    "expectationsText": "URABOROS helps collect and organize accessible data. Coverage depends on the source, its policies and the availability of publications.",
+    "faq": {
+        "access": {
+            "question": "What can I explore without an account?",
+            "answer": "Capabilities, use cases and limitations are public. Search, collection, history and personal notifications require signing in and verifying your email."
+        },
+        "coverage": {
+            "question": "Does this search the entire internet in real time?",
+            "answer": "No. Modules use supported sources and their APIs. Telegram tracking periodically checks selected accessible groups and channels without joining them. Source restrictions and delays can affect results."
+        },
+        "data": {
+            "question": "Can I return to results later?",
+            "answer": "Parser runs have history and repeat downloads until retention expires. Tracking has its own retention rules. Analytics reports can be temporary; each capability page explains its limitations."
+        }
+    },
+    "nextStep": "From discovery to work",
+    "ctaTitle": "Start with one task of your own",
+    "ctaText": "Create an account, verify your email and choose a module. History and saved queries help you return to your work.",
+    "example": "Example use case",
+    "inputLabel": "01 • Input",
+    "inputTitle": "What to provide",
+    "resultLabel": "02 • Output",
+    "resultTitle": "What you receive",
+    "how": "Getting started",
+    "limitTitle": "Important limitations",
+    "related": "Other capabilities",
+    "features": {
+        "telegram-tracking": {
+            "title": "Telegram monitoring",
+            "summary": "Periodically find new messages by keyword or sender ID in selected groups and channels. Receive alerts and download a report.",
+            "example": "Collect topic mentions from selected industry channels",
+            "audience": "For analysts, editors and researchers who need a growing collection of messages from specific sources.",
+            "input": "A task name, up to {sources} accessible groups or channels, one per line, and either a keyword or a numeric Telegram sender ID. The service checks source accessibility before creating the task.",
+            "result": "Matching messages with dates, sources and links where available. Excel or JSON reports covering the task lifetime, website notifications and optional alerts through your linked bot.",
+            "step1": "Open Telegram → Tracking and create a task with sources and a search condition.",
+            "step2": "Optionally enable bot alerts. The first check is scheduled after creation, not performed instantly.",
+            "step3": "Review messages, download reports, pause or renew the task.",
+            "limit": "The base check interval is {hours} hours, increasing with load up to {maxHours} hours; Telegram restrictions or outages may delay it further. The service does not join chats or unlock private sources. Messages deleted before a check may be missed.\nA task lasts {months} month(s) and can be renewed. Data is kept throughout its lifetime and for {days} days after completion. Pausing does not extend its lifetime; the paused period is not backfilled after resuming. Task capacity depends on your plan."
+        },
+        "telegram": {
+            "title": "Telegram search and collection",
+            "summary": "Search messages, explore source activity and collect posts with comments for further work in Excel or JSON.",
+            "example": "Build a collection of channel posts for a selected period",
+            "audience": "For studying discussions, preparing research material and comparing available activity metrics.",
+            "input": "An accessible channel or group, a query and parameters for the selected mode. Analytics and collection forms provide the supported sampling controls.",
+            "result": "Search results, analytics summaries or background collection of posts and comments. Parser runs support history, stopping and repeat Excel/JSON downloads.",
+            "step1": "Open Telegram and choose search, analytics or collection.",
+            "step2": "Provide a source and parameters. For background collection, follow the run status.",
+            "step3": "Explore the results or download the export from run history.",
+            "limit": "Access depends on the source and Telegram restrictions. The service does not expose private or deleted messages. Parser files are retained for {parserDays} days; analytics reports are temporary and are not stored parser exports."
+        },
+        "youtube": {
+            "title": "YouTube search and comments",
+            "summary": "Find videos, review available content metrics and collect comments with replies into a structured export.",
+            "example": "Study feedback under a product video",
+            "audience": "For creators, editors and analysts who want to work with discussions beyond the video page.",
+            "input": "A search phrase, video URL or ID, or a channel for the selected mode. Configure collection parameters in the parser form.",
+            "result": "Search results, summaries of accessible data and Excel/JSON exports of comments and replies. Completed and stopped runs remain available in history.",
+            "step1": "Find a video through search or open the parser with its ID.",
+            "step2": "Configure comment collection and start the task.",
+            "step3": "Open history and download the result for your own analysis.",
+            "limit": "Results depend on YouTube API quotas and video/comment availability. This is not access to private YouTube Studio analytics. Parser files are retained for {parserDays} days."
+        },
+        "bluesky": {
+            "title": "Bluesky research",
+            "summary": "Find posts and profiles, explore discussions, reactions and public connections. Collect profile and activity data.",
+            "example": "Explore a topic and the activity of its participants",
+            "audience": "For public-community researchers and Bluesky content analysts.",
+            "input": "A query, profile or topic depending on the mode. Supported profile identifiers include handles and DIDs.",
+            "result": "Posts, discussion threads, accessible likes, reposts and account connections. Analytics and background collection with history and Excel/JSON exports.",
+            "step1": "Choose Bluesky search, analytics or the parser.",
+            "step2": "Enter a profile or query and explore available context.",
+            "step3": "To keep a dataset, run collection and download its file from history.",
+            "limit": "Coverage depends on the API, record visibility and collection limits. A public connection does not prove a real-world relationship. Parser files are retained for {parserDays} days."
+        },
+        "mastodon": {
+            "title": "Mastodon research",
+            "summary": "Search accounts, posts and hashtags, explore discussion context and collect accessible posts with comments.",
+            "example": "Collect a selected account's posts for research",
+            "audience": "For working with public federated data through the connected Mastodon server.",
+            "input": "An account, query or hashtag for the selected mode. Resolving remote profiles depends on the connected server.",
+            "result": "Accounts and posts, discussion context, analytics summaries and parser exports in Excel/JSON.",
+            "step1": "Open Mastodon and choose a mode.",
+            "step2": "Enter an account or topic and check the available results.",
+            "step3": "Start collection if you need an export, then return through history.",
+            "limit": "One Mastodon server cannot see the entire federation. Post visibility, server policies and API limits affect results. Parser files are retained for {parserDays} days."
+        },
+        "site-intel": {
+            "title": "Website checks and SEO",
+            "summary": "Inspect HTTP, DNS, SSL and domain information. Review technical SEO signals, links and recommendations for accessible pages.",
+            "example": "Perform an initial technical review of a website",
+            "audience": "For website owners, developers and analysts who need a starting point for further checks.",
+            "input": "A public domain or URL. Choose reachability checks, domain information, analytics or an SEO audit.",
+            "result": "Technical metrics, detected signals and recommendations. Analytics and SEO audit results support HTML reports.",
+            "step1": "Provide a public website and choose a check.",
+            "step2": "Wait for results and review individual signals, not just the score.",
+            "step3": "Open or download the available HTML report for further work.",
+            "limit": "Results reflect the time of the check and a bounded crawl. This is not a comprehensive security audit, a guarantee of trustworthiness or a search-ranking prediction. Reports are temporary, not an archive of parser exports."
+        },
+        "news-media-intel": {
+            "title": "News and media search",
+            "summary": "Bring available news about a topic into one collection, explore publication timelines and recurring themes.",
+            "example": "Build an initial view of how an event is covered",
+            "audience": "For editors and researchers who need a starting collection of links, not a promise of a complete media archive.",
+            "input": "A topic, brand, person or event and the available search parameters.",
+            "result": "Mentions with partial deduplication, a timeline, frequent topics and an approximate dictionary-based sentiment summary.",
+            "step1": "Enter a topic in News & Media Intel.",
+            "step2": "Review publications, sources and their distribution over time.",
+            "step3": "Visit the original sources and verify context before drawing conclusions.",
+            "limit": "This searches available news APIs/RSS, rather than monitoring a topic automatically on a schedule. Sentiment is heuristic, not proof of an author's position. Parser run history and exports are not implemented for this module."
+        },
+        "shifr": {
+            "title": "Shifr utilities",
+            "summary": "Compute hashes, transform text, extract indicators from text fragments and inspect JWT structure.",
+            "example": "Extract domains and IP addresses from a text fragment",
+            "audience": "Supporting operations for technical analysis and learning, alongside the main tools.",
+            "input": "Text and an operation: hashing, transformation, IOC extraction, JWT inspection or a classic cipher.",
+            "result": "Transformed output, detected indicators or a parsed token structure. No separate background collection job.",
+            "step1": "Select an operation in Shifr.",
+            "step2": "Enter non-secret text and set the parameters.",
+            "step3": "Inspect the result and use it in your task.",
+            "limit": "Do not enter active passwords, private keys or production tokens. JWT inspection does not establish authenticity, and classic ciphers are not intended to protect sensitive data."
+        },
+        "telegram-bot": {
+            "title": "URABOROS Telegram bot",
+            "summary": "Receive notifications you opted into and collection files in Telegram. Open the workspace from the bot menu.",
+            "example": "Receive a finished export without checking the website manually",
+            "audience": "For website users who prefer receiving files and notifications in their messenger.",
+            "input": "A website account with verified email. Create a link in Telegram settings, open it in the bot and confirm the connection on the website.",
+            "result": "An inline menu, available files from your own runs, tracking reports and notifications according to your preferences. Automatic delivery of new exports is a separate opt-in.",
+            "step1": "Open Telegram settings on the website and start linking.",
+            "step2": "Start the bot using the provided link, then return to the website and confirm your Telegram ID.",
+            "step3": "Choose notifications and automatic delivery or request an available file through the menu.",
+            "limit": "The bot does not bypass plan limits or restore deleted exports. WebApp opens the website with its normal authentication, not automatic sign-in. Copies already sent to Telegram are not removed when the website cleans up files. Bot availability depends on the service operator's configuration."
+        }
+    }
+}

@@ -6,6 +6,7 @@ import mastodon from './mastodon.json';
 import navigation from './navigation.json';
 import newsMediaIntel from './newsMediaIntel.json';
 import privacy from './privacy.json';
+import publicSite from './publicSite.json';
 import settings from './settings.json';
 import shifr from './shifr.json';
 import siteIntel from './siteIntel.json';
@@ -27,6 +28,7 @@ const ru = {
     navigation,
     newsMediaIntel,
     privacy,
+    publicSite,
     settings,
     shifr,
     siteIntel,

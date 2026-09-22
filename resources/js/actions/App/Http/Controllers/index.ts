@@ -1,4 +1,6 @@
 import TelegramBot from './TelegramBot'
+import MoonShine from './MoonShine'
+import PublicSiteController from './PublicSiteController'
 import SitemapController from './SitemapController'
 import DashboardController from './DashboardController'
 import Dashboard from './Dashboard'
@@ -14,6 +16,8 @@ import Wiki from './Wiki'
 import Settings from './Settings'
 const Controllers = {
     TelegramBot: Object.assign(TelegramBot, TelegramBot),
+MoonShine: Object.assign(MoonShine, MoonShine),
+PublicSiteController: Object.assign(PublicSiteController, PublicSiteController),
 SitemapController: Object.assign(SitemapController, SitemapController),
 DashboardController: Object.assign(DashboardController, DashboardController),
 Dashboard: Object.assign(Dashboard, Dashboard),

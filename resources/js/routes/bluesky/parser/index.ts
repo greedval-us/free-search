@@ -1,7 +1,7 @@
 import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFormDefinition, applyUrlDefaults } from './../../../wayfinder'
 /**
 * @see \App\Http\Controllers\Bluesky\BlueskyParserController::start
- * @see app/Http/Controllers/Bluesky/BlueskyParserController.php:29
+ * @see app/Http/Controllers/Bluesky/BlueskyParserController.php:41
  * @route '/bluesky/parser/start'
  */
 export const start = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -16,7 +16,7 @@ start.definition = {
 
 /**
 * @see \App\Http\Controllers\Bluesky\BlueskyParserController::start
- * @see app/Http/Controllers/Bluesky/BlueskyParserController.php:29
+ * @see app/Http/Controllers/Bluesky/BlueskyParserController.php:41
  * @route '/bluesky/parser/start'
  */
 start.url = (options?: RouteQueryOptions) => {
@@ -25,7 +25,7 @@ start.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\Bluesky\BlueskyParserController::start
- * @see app/Http/Controllers/Bluesky/BlueskyParserController.php:29
+ * @see app/Http/Controllers/Bluesky/BlueskyParserController.php:41
  * @route '/bluesky/parser/start'
  */
 start.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -35,7 +35,7 @@ start.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
 
     /**
 * @see \App\Http\Controllers\Bluesky\BlueskyParserController::start
- * @see app/Http/Controllers/Bluesky/BlueskyParserController.php:29
+ * @see app/Http/Controllers/Bluesky/BlueskyParserController.php:41
  * @route '/bluesky/parser/start'
  */
     const startForm = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -45,7 +45,7 @@ start.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
 
             /**
 * @see \App\Http\Controllers\Bluesky\BlueskyParserController::start
- * @see app/Http/Controllers/Bluesky/BlueskyParserController.php:29
+ * @see app/Http/Controllers/Bluesky/BlueskyParserController.php:41
  * @route '/bluesky/parser/start'
  */
         startForm.post = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -402,7 +402,7 @@ downloadExcel.head = (args: { runId: string | number } | [runId: string | number
     downloadExcel.form = downloadExcelForm
 /**
 * @see \App\Http\Controllers\Bluesky\BlueskyParserController::downloadJson
- * @see app/Http/Controllers/Bluesky/BlueskyParserController.php:71
+ * @see app/Http/Controllers/Bluesky/BlueskyParserController.php:67
  * @route '/bluesky/parser/download-json/{runId}'
  */
 export const downloadJson = (args: { runId: string | number } | [runId: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -417,7 +417,7 @@ downloadJson.definition = {
 
 /**
 * @see \App\Http\Controllers\Bluesky\BlueskyParserController::downloadJson
- * @see app/Http/Controllers/Bluesky/BlueskyParserController.php:71
+ * @see app/Http/Controllers/Bluesky/BlueskyParserController.php:67
  * @route '/bluesky/parser/download-json/{runId}'
  */
 downloadJson.url = (args: { runId: string | number } | [runId: string | number ] | string | number, options?: RouteQueryOptions) => {
@@ -445,7 +445,7 @@ downloadJson.url = (args: { runId: string | number } | [runId: string | number ]
 
 /**
 * @see \App\Http\Controllers\Bluesky\BlueskyParserController::downloadJson
- * @see app/Http/Controllers/Bluesky/BlueskyParserController.php:71
+ * @see app/Http/Controllers/Bluesky/BlueskyParserController.php:67
  * @route '/bluesky/parser/download-json/{runId}'
  */
 downloadJson.get = (args: { runId: string | number } | [runId: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -454,7 +454,7 @@ downloadJson.get = (args: { runId: string | number } | [runId: string | number ]
 })
 /**
 * @see \App\Http\Controllers\Bluesky\BlueskyParserController::downloadJson
- * @see app/Http/Controllers/Bluesky/BlueskyParserController.php:71
+ * @see app/Http/Controllers/Bluesky/BlueskyParserController.php:67
  * @route '/bluesky/parser/download-json/{runId}'
  */
 downloadJson.head = (args: { runId: string | number } | [runId: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -464,7 +464,7 @@ downloadJson.head = (args: { runId: string | number } | [runId: string | number 
 
     /**
 * @see \App\Http\Controllers\Bluesky\BlueskyParserController::downloadJson
- * @see app/Http/Controllers/Bluesky/BlueskyParserController.php:71
+ * @see app/Http/Controllers/Bluesky/BlueskyParserController.php:67
  * @route '/bluesky/parser/download-json/{runId}'
  */
     const downloadJsonForm = (args: { runId: string | number } | [runId: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -474,7 +474,7 @@ downloadJson.head = (args: { runId: string | number } | [runId: string | number 
 
             /**
 * @see \App\Http\Controllers\Bluesky\BlueskyParserController::downloadJson
- * @see app/Http/Controllers/Bluesky/BlueskyParserController.php:71
+ * @see app/Http/Controllers/Bluesky/BlueskyParserController.php:67
  * @route '/bluesky/parser/download-json/{runId}'
  */
         downloadJsonForm.get = (args: { runId: string | number } | [runId: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -483,7 +483,7 @@ downloadJson.head = (args: { runId: string | number } | [runId: string | number 
         })
             /**
 * @see \App\Http\Controllers\Bluesky\BlueskyParserController::downloadJson
- * @see app/Http/Controllers/Bluesky/BlueskyParserController.php:71
+ * @see app/Http/Controllers/Bluesky/BlueskyParserController.php:67
  * @route '/bluesky/parser/download-json/{runId}'
  */
         downloadJsonForm.head = (args: { runId: string | number } | [runId: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
