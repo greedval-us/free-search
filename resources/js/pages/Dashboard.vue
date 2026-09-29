@@ -4,7 +4,6 @@ import {
     BarChart3,
     BookmarkPlus,
     Compass,
-    CreditCard,
     Flame,
     History,
     Pin,
@@ -16,6 +15,8 @@ import {
 import { computed, onBeforeUnmount, onMounted } from 'vue';
 import { useI18n } from '@/composables/useI18n';
 import { dashboard as dashboardRoute } from '@/routes';
+import DashboardModuleGrid from './dashboard/DashboardModuleGrid.vue';
+import DashboardPlanCard from './dashboard/DashboardPlanCard.vue';
 import TrackingCapacityCard from './dashboard/TrackingCapacityCard.vue';
 import type { TrackingCapacity } from './telegram/tracking/types';
 
@@ -122,45 +123,10 @@ const props = withDefaults(
 const { t, locale } = useI18n();
 const page = usePage();
 const access = computed(() => page.props.auth.access);
-const chartMax = Math.max(...props.dashboard.chart.map((x) => x.count), 1);
+const chartMax = computed(() =>
+    Math.max(...props.dashboard.chart.map((x) => x.count), 1)
+);
 const BODY_SCROLL_LOCK_CLASS = 'dashboard-scroll-lock';
-
-const quickActions = computed(() => {
-    if (props.dashboard.modules.length > 0) {
-        return props.dashboard.modules.slice(0, 4);
-    }
-
-    return [
-        {
-            key: 'bluesky',
-            count: 0,
-            last_at: null,
-            url: '/bluesky',
-            is_pinned: false,
-        },
-        {
-            key: 'site-intel',
-            count: 0,
-            last_at: null,
-            url: '/site-intel',
-            is_pinned: false,
-        },
-        {
-            key: 'youtube',
-            count: 0,
-            last_at: null,
-            url: '/youtube',
-            is_pinned: false,
-        },
-        {
-            key: 'shifr',
-            count: 0,
-            last_at: null,
-            url: '/shifr',
-            is_pinned: false,
-        },
-    ] as ModuleCard[];
-});
 
 const summaryCards = computed(() => [
     {
@@ -235,62 +201,6 @@ const insightItems = computed(() => [
             : t('dashboard.common.na'),
     },
 ]);
-
-const quotaLabel = (quota: { limit: number; remaining: number }): string => {
-    if (!quota || quota.limit === 0) {
-        return t('dashboard.plan.unavailable');
-    }
-
-    return `${quota.remaining}/${quota.limit}`;
-};
-
-const quotaGroups = computed(() => {
-    const groups: Record<
-        string,
-        Array<{
-            key: string;
-            capability: string;
-            limit: number;
-            remaining: number;
-        }>
-    > = {};
-
-    for (const [key, quota] of Object.entries(access.value.features)) {
-        if (!key.includes('.')) {
-            continue;
-        }
-
-        const [module, ...capabilityParts] = key.split('.');
-        const capability = capabilityParts.join('.');
-
-        groups[module] ??= [];
-        groups[module].push({
-            key,
-            capability,
-            limit: quota.limit,
-            remaining: quota.remaining,
-        });
-    }
-
-    return Object.entries(groups).map(([module, items]) => ({
-        module,
-        items,
-    }));
-});
-
-const quotaModuleLabel = (module: string): string => {
-    const translationKey = `dashboard.plan.modules.${module}`;
-    const translated = t(translationKey);
-
-    return translated === translationKey ? module : translated;
-};
-
-const quotaCapabilityLabel = (capability: string): string => {
-    const translationKey = `dashboard.plan.capabilities.${capability}`;
-    const translated = t(translationKey);
-
-    return translated === translationKey ? capability : translated;
-};
 
 const moduleLabel = (key: string): string => {
     const translationKey = `dashboard.modules.${key}`;
@@ -416,18 +326,22 @@ onBeforeUnmount(() => {
     <Head :title="t('dashboard.meta.title')" />
 
     <div
-        class="mx-auto flex h-full min-h-0 w-full max-w-[1500px] flex-1 flex-col overflow-hidden p-2 sm:p-3"
+        class="mx-auto flex h-full min-h-0 w-full max-w-[1500px] flex-1 flex-col overflow-hidden p-3 sm:p-5 lg:p-6"
     >
         <div
-            class="intel-scroll min-h-0 flex-1 space-y-4 overflow-x-hidden overflow-y-auto pr-1 [scrollbar-gutter:stable_both-edges]"
+            class="intel-scroll min-h-0 flex-1 space-y-5 overflow-y-auto pb-[env(safe-area-inset-bottom)] [overflow-wrap:anywhere]"
         >
-            <section class="intel-hero-panel">
-                <div class="flex flex-wrap items-center justify-between gap-3">
-                    <div class="min-w-0 flex-1 space-y-1">
+            <section class="py-2">
+                <div
+                    class="flex flex-col items-start justify-between gap-3 lg:flex-row"
+                >
+                    <div class="w-full min-w-0 flex-1 space-y-1">
                         <p class="intel-kicker">
                             {{ t('dashboard.header.kicker') }}
                         </p>
-                        <h1 class="text-xl font-semibold sm:text-2xl">
+                        <h1
+                            class="text-2xl font-semibold tracking-tight sm:text-3xl"
+                        >
                             {{ t('dashboard.header.title') }}
                         </h1>
                         <p class="text-sm text-muted-foreground">
@@ -445,56 +359,12 @@ onBeforeUnmount(() => {
                 </div>
             </section>
 
-            <section class="intel-panel bg-card/80">
-                <div class="flex flex-wrap items-center justify-between gap-3">
-                    <div>
-                        <p class="intel-kicker">
-                            {{ t('dashboard.plan.title') }}
-                        </p>
-                        <h2 class="mt-1 text-lg font-semibold uppercase">
-                            {{ access.plan }}
-                        </h2>
-                    </div>
-                    <Link
-                        href="/settings/billing"
-                        class="intel-button-ghost h-9 rounded-xl px-3 text-sm"
-                    >
-                        <CreditCard class="h-4 w-4" />
-                        {{ t('dashboard.plan.manage') }}
-                    </Link>
-                </div>
-                <div class="mt-3 grid gap-2 lg:grid-cols-3">
-                    <div
-                        v-for="group in quotaGroups"
-                        :key="group.module"
-                        class="intel-list-item"
-                    >
-                        <p class="intel-kicker">
-                            {{ quotaModuleLabel(group.module) }}
-                        </p>
-                        <dl class="mt-2 space-y-1.5 text-sm">
-                            <div
-                                v-for="item in group.items"
-                                :key="item.key"
-                                class="flex items-center justify-between gap-3"
-                            >
-                                <dt class="truncate text-muted-foreground">
-                                    {{ quotaCapabilityLabel(item.capability) }}
-                                </dt>
-                                <dd class="shrink-0 font-semibold">
-                                    {{ quotaLabel(item) }}
-                                </dd>
-                            </div>
-                        </dl>
-                    </div>
-                </div>
-            </section>
+            <DashboardModuleGrid
+                :modules="dashboard.modules"
+                :available-modules="dashboard.available_modules"
+            />
 
-            <TrackingCapacityCard v-if="tracking" :capacity="tracking" />
-
-            <section
-                class="grid grid-cols-1 gap-2 sm:grid-cols-2 xl:grid-cols-4"
-            >
+            <section class="grid grid-cols-2 gap-3 xl:grid-cols-4">
                 <article
                     v-for="card in summaryCards"
                     :key="card.key"
@@ -506,36 +376,15 @@ onBeforeUnmount(() => {
                             card.title
                         }}</span>
                     </div>
-                    <p class="mt-2 text-2xl font-semibold tracking-tight">
+                    <p
+                        class="mt-3 text-3xl font-semibold tracking-tight tabular-nums"
+                    >
                         {{ card.value }}
                     </p>
                 </article>
             </section>
 
-            <section class="grid gap-3 xl:grid-cols-2">
-                <article class="intel-panel">
-                    <h2 class="intel-section-heading">
-                        {{ t('dashboard.sections.quickActions') }}
-                    </h2>
-                    <div class="mt-3 grid grid-cols-1 gap-2 sm:grid-cols-2">
-                        <Link
-                            v-for="action in quickActions"
-                            :key="`quick-${action.key}`"
-                            :href="action.url"
-                            class="group flex min-w-0 items-center justify-between gap-3 rounded-lg bg-muted/35 px-3 py-2.5 text-sm font-medium transition-colors hover:bg-accent/70"
-                        >
-                            <span class="truncate">{{
-                                moduleLabel(action.key)
-                            }}</span>
-                            <span
-                                class="intel-badge-count transition group-hover:text-foreground"
-                            >
-                                {{ action.count }}
-                            </span>
-                        </Link>
-                    </div>
-                </article>
-
+            <section>
                 <article class="intel-panel">
                     <h2 class="intel-section-heading">
                         {{ t('dashboard.sections.insights') }}
@@ -585,7 +434,7 @@ onBeforeUnmount(() => {
                         {{ t('dashboard.sections.topModules') }}
                     </h3>
                     <ul
-                        class="intel-scroll mt-2 max-h-56 space-y-2 overflow-y-auto pr-1 sm:max-h-72"
+                        class="intel-scroll mt-2 space-y-2 md:max-h-72 md:overflow-y-auto md:pr-1"
                     >
                         <li
                             v-for="module in dashboard.modules"
@@ -601,7 +450,7 @@ onBeforeUnmount(() => {
                                 <div class="flex items-center gap-2">
                                     <button
                                         type="button"
-                                        class="rounded p-1 text-muted-foreground hover:bg-background/70 hover:text-foreground"
+                                        class="inline-flex size-11 shrink-0 items-center justify-center rounded-lg text-muted-foreground hover:bg-background/70 hover:text-foreground"
                                         :aria-label="
                                             module.is_pinned
                                                 ? t(
@@ -645,14 +494,12 @@ onBeforeUnmount(() => {
                     </ul>
                 </article>
 
-                <article
-                    class="intel-panel min-h-0 lg:col-span-2 2xl:col-span-1"
-                >
+                <article class="intel-panel min-h-0">
                     <h2 class="intel-section-heading">
                         {{ t('dashboard.sections.weekly') }}
                     </h2>
                     <div class="intel-scroll mt-4 overflow-x-auto pb-1">
-                        <div class="grid min-w-[420px] grid-cols-7 gap-2">
+                        <div class="grid grid-cols-7 gap-1 sm:gap-2">
                             <div
                                 v-for="point in dashboard.chart"
                                 :key="point.date"
@@ -690,7 +537,7 @@ onBeforeUnmount(() => {
                         {{ t('dashboard.sections.savedQueries') }}
                     </h2>
                     <ul
-                        class="intel-scroll mt-3 max-h-64 space-y-2 overflow-y-auto pr-1 sm:max-h-[26rem]"
+                        class="intel-scroll mt-3 space-y-2 md:max-h-[26rem] md:overflow-y-auto md:pr-1"
                     >
                         <li
                             v-for="saved in dashboard.saved_queries"
@@ -714,13 +561,13 @@ onBeforeUnmount(() => {
                                 <Link
                                     v-if="saved.run_url"
                                     :href="saved.run_url"
-                                    class="text-xs text-primary hover:underline"
+                                    class="inline-flex min-h-11 items-center text-sm text-primary hover:underline"
                                 >
                                     {{ t('dashboard.saved.run') }}
                                 </Link>
                                 <button
                                     type="button"
-                                    class="inline-flex items-center gap-1 text-xs text-destructive hover:opacity-80"
+                                    class="inline-flex min-h-11 items-center gap-1.5 px-2 text-sm text-destructive hover:opacity-80"
                                     @click="deleteSavedQuery(saved.id)"
                                 >
                                     <Trash2 class="h-3.5 w-3.5" />
@@ -745,7 +592,7 @@ onBeforeUnmount(() => {
                 </h2>
 
                 <div
-                    class="mt-3 grid gap-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5"
+                    class="mt-3 grid items-end gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5"
                 >
                     <select
                         v-model="filterForm.module_key"
@@ -788,19 +635,25 @@ onBeforeUnmount(() => {
                         </option>
                     </select>
 
-                    <input
-                        v-model="filterForm.date_from"
-                        type="date"
-                        class="intel-filter-control"
-                        :aria-label="t('dashboard.filters.dateFromLabel')"
-                    />
+                    <label class="min-w-0"
+                        ><span class="intel-label">{{
+                            t('dashboard.filters.dateFromLabel')
+                        }}</span
+                        ><input
+                            v-model="filterForm.date_from"
+                            type="date"
+                            class="intel-filter-control"
+                    /></label>
 
-                    <input
-                        v-model="filterForm.date_to"
-                        type="date"
-                        class="intel-filter-control"
-                        :aria-label="t('dashboard.filters.dateToLabel')"
-                    />
+                    <label class="min-w-0"
+                        ><span class="intel-label">{{
+                            t('dashboard.filters.dateToLabel')
+                        }}</span
+                        ><input
+                            v-model="filterForm.date_to"
+                            type="date"
+                            class="intel-filter-control"
+                    /></label>
                 </div>
 
                 <div class="mt-2 flex flex-wrap gap-2">
@@ -808,7 +661,7 @@ onBeforeUnmount(() => {
                         v-for="button in filterActions"
                         :key="button.key"
                         type="button"
-                        class="intel-button-ghost h-8 rounded-xl"
+                        class="intel-button-ghost min-h-11 justify-center rounded-xl"
                         @click="button.action"
                     >
                         <component :is="button.icon" class="h-3.5 w-3.5" />
@@ -817,7 +670,7 @@ onBeforeUnmount(() => {
                 </div>
 
                 <ul
-                    class="intel-scroll mt-3 max-h-[26rem] space-y-2 overflow-y-auto pr-1"
+                    class="intel-scroll mt-3 space-y-2 md:max-h-[26rem] md:overflow-y-auto md:pr-1"
                 >
                     <li
                         v-for="row in dashboard.activity_feed"
@@ -837,13 +690,13 @@ onBeforeUnmount(() => {
                             <Link
                                 v-if="row.run_url"
                                 :href="row.run_url"
-                                class="text-xs text-primary hover:underline"
+                                class="inline-flex min-h-11 items-center text-sm text-primary hover:underline"
                             >
                                 {{ t('dashboard.recent.runAgain') }}
                             </Link>
                             <button
                                 type="button"
-                                class="inline-flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground"
+                                class="inline-flex min-h-11 items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground"
                                 @click="saveQuery(row.request_log_id)"
                             >
                                 <BookmarkPlus class="h-3.5 w-3.5" />
@@ -860,6 +713,8 @@ onBeforeUnmount(() => {
                     </li>
                 </ul>
             </section>
+            <TrackingCapacityCard v-if="tracking" :capacity="tracking" />
+            <DashboardPlanCard :access="access" />
         </div>
     </div>
 </template>

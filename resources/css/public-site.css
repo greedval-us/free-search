@@ -1,14 +1,14 @@
 .public-shell {
-    --public-bg: #07101f;
-    --public-panel: #0d192b;
-    --public-text: #e6ecff;
-    --public-muted: #b5c5dd;
-    --public-accent: #67e8d5;
-    --public-border: #29384d;
+    --public-bg: #080f1b;
+    --public-panel: #111d2d;
+    --public-text: #eef4fc;
+    --public-muted: #a5b5ca;
+    --public-accent: #67e8f9;
+    --public-border: #26364a;
     min-height: 100vh;
     color: var(--public-text);
     background:
-        radial-gradient(ellipse at 80% 0%, #12313b 0%, transparent 34%),
+        radial-gradient(ellipse at 85% 8%, #12323d 0%, transparent 30%),
         var(--public-bg);
     font-family: 'Instrument Sans', sans-serif;
     overflow-wrap: anywhere;
@@ -24,7 +24,7 @@
     cursor: pointer;
 }
 .public-container {
-    max-width: 1200px;
+    max-width: 1280px;
     padding: 0 28px;
     margin: auto;
 }
@@ -33,7 +33,7 @@
     align-items: center;
     justify-content: space-between;
     gap: 24px;
-    padding: 24px 0;
+    padding: 20px 0;
     border-bottom: 1px solid var(--public-border);
 }
 .public-brand {
@@ -52,6 +52,16 @@
     align-items: center;
     gap: 20px;
     font-size: 14px;
+}
+.public-menu-toggle {
+    display: none;
+    width: 44px;
+    height: 44px;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid var(--public-border);
+    border-radius: 12px;
+    background: var(--public-panel);
 }
 .public-nav > a:not(.public-button),
 .public-locale {
@@ -86,7 +96,7 @@
     border: 1px solid var(--public-accent);
 }
 .public-button-primary:hover {
-    background: #99f6e4;
+    background: #a5f3fc;
 }
 .public-button-secondary {
     color: var(--public-text);
@@ -121,10 +131,10 @@
 }
 .public-shell h1 {
     max-width: 19ch;
-    font-size: clamp(2.25rem, 4.6vw, 3.8rem);
-    font-weight: 500;
-    line-height: 1.07;
-    letter-spacing: -0.035em;
+    font-size: clamp(2.25rem, 4.6vw, 4.25rem);
+    font-weight: 600;
+    line-height: 1.08;
+    letter-spacing: -0.045em;
     text-wrap: balance;
 }
 .public-shell h1 span {
@@ -161,16 +171,16 @@
 .public-hero {
     display: grid;
     grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr);
-    gap: 64px;
+    gap: 72px;
     align-items: center;
-    padding: 80px 0;
+    padding: 88px 0 80px;
 }
 .public-workflow {
     min-width: 0;
-    padding: 28px;
+    padding: 32px;
     border: 1px solid #365b64;
-    border-radius: 20px;
-    background: linear-gradient(135deg, #112b35, var(--public-panel));
+    border-radius: 24px;
+    background: linear-gradient(145deg, #152e3a, var(--public-panel) 70%);
     box-shadow: 0 24px 80px #0003;
 }
 .public-workflow ol {
@@ -180,8 +190,8 @@
 .public-workflow li {
     display: flex;
     position: relative;
-    gap: 18px;
-    padding-bottom: 30px;
+    gap: 16px;
+    padding-bottom: 28px;
 }
 .public-workflow li:last-child {
     padding-bottom: 0;
@@ -190,18 +200,22 @@
     content: '';
     position: absolute;
     width: 1px;
-    top: 18px;
+    top: 44px;
     bottom: 0;
-    left: 5px;
+    left: 21px;
     background: #365b64;
 }
 .public-workflow-dot {
-    width: 11px;
-    height: 11px;
-    flex: 0 0 11px;
-    border: 2px solid var(--public-accent);
-    border-radius: 50%;
-    margin-top: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 44px;
+    height: 44px;
+    flex: 0 0 44px;
+    color: var(--public-accent);
+    background: #183b49;
+    border: 1px solid #365b64;
+    border-radius: 14px;
 }
 .public-workflow strong {
     font-weight: 500;
@@ -221,7 +235,7 @@
     line-height: 1.5;
 }
 .public-section {
-    padding: 56px 0;
+    padding: 64px 0;
     border-top: 1px solid var(--public-border);
 }
 .public-section-heading {
@@ -242,7 +256,10 @@
 }
 .public-scenarios article {
     min-width: 0;
-    padding-right: 20px;
+    padding: 24px;
+    border: 1px solid var(--public-border);
+    border-radius: 20px;
+    background: linear-gradient(145deg, #111e2d, #0c1725);
 }
 .public-number {
     display: block;
@@ -274,14 +291,29 @@
     min-width: 0;
     padding: 24px;
     border: 1px solid var(--public-border);
-    border-radius: 16px;
+    border-radius: 20px;
     background: var(--public-panel);
-    transition: border-color 0.15s;
+    transition:
+        border-color 0.2s,
+        background-color 0.2s;
     text-decoration: none;
     color: var(--public-text);
 }
 .public-feature-card:hover {
     border-color: var(--public-accent);
+    background: #142538;
+}
+.public-feature-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 48px;
+    height: 48px;
+    margin-bottom: 24px;
+    border: 1px solid #315063;
+    border-radius: 14px;
+    background: #17323f;
+    color: var(--public-accent);
 }
 .public-feature-card > p {
     color: var(--public-muted);
@@ -442,11 +474,20 @@
     }
     .public-header {
         gap: 16px;
-        padding: 20px 0;
+        padding: 14px 0;
+    }
+    .public-menu-toggle {
+        display: inline-flex;
     }
     .public-nav {
+        display: none;
         width: 100%;
         gap: 8px 16px;
+        padding-top: 12px;
+        border-top: 1px solid var(--public-border);
+    }
+    .public-nav.is-open {
+        display: flex;
     }
     .public-nav .public-button {
         width: 100%;
@@ -473,7 +514,7 @@
         gap: 24px;
     }
     .public-scenarios article {
-        padding: 0;
+        padding: 22px;
     }
     .public-workflow,
     .public-feature-card,

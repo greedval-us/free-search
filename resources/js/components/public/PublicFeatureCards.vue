@@ -2,6 +2,7 @@
 import { Link } from '@inertiajs/vue3';
 import { ArrowRight } from 'lucide-vue-next';
 import { useI18n } from '@/composables/useI18n';
+import { moduleIcon } from '@/lib/modulePresentation';
 import type { PublicFeature } from '@/types/publicSite';
 withDefaults(
     defineProps<{ features: PublicFeature[]; headingTag?: 'h2' | 'h3' }>(),
@@ -18,6 +19,9 @@ const { t } = useI18n();
             :href="feature.url"
             class="public-feature-card"
         >
+            <span class="public-feature-icon" aria-hidden="true"
+                ><component :is="moduleIcon(feature.slug)" :size="23"
+            /></span>
             <component :is="headingTag">{{
                 t(`publicSite.features.${feature.slug}.title`)
             }}</component>

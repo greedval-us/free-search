@@ -38,7 +38,7 @@ const { t } = useI18n()
       data-slot="sidebar"
       data-mobile="true"
       :side="side"
-      class="bg-sidebar text-sidebar-foreground w-(--sidebar-width) p-0 [&>button]:hidden"
+      class="bg-sidebar text-sidebar-foreground w-(--sidebar-width) p-0"
       :style="{
         '--sidebar-width': SIDEBAR_WIDTH_MOBILE,
       }"
@@ -47,7 +47,7 @@ const { t } = useI18n()
         <SheetTitle>{{ t('common.sidebar') }}</SheetTitle>
         <SheetDescription>{{ t('common.mobileSidebarDescription') }}</SheetDescription>
       </SheetHeader>
-      <div class="flex h-full w-full flex-col">
+      <div class="flex h-full w-full flex-col pt-10 pb-[env(safe-area-inset-bottom)]">
         <slot />
       </div>
     </SheetContent>

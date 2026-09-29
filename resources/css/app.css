@@ -90,13 +90,13 @@
 }
 
 :root {
-    --background: hsl(204 100% 98%);
+    --background: hsl(210 35% 97%);
     --foreground: hsl(222 84% 14%);
     --card: hsl(0 0% 100%);
     --card-foreground: hsl(222 84% 14%);
     --popover: hsl(0 0% 100%);
     --popover-foreground: hsl(222 84% 14%);
-    --primary: hsl(189 94% 43%);
+    --primary: hsl(191 90% 31%);
     --primary-foreground: hsl(0 0% 100%);
     --secondary: hsl(204 48% 93%);
     --secondary-foreground: hsl(222 60% 18%);
@@ -106,8 +106,8 @@
     --accent-foreground: hsl(222 60% 20%);
     --destructive: hsl(0 84% 60%);
     --destructive-foreground: hsl(0 0% 98%);
-    --border: hsl(205 35% 85%);
-    --input: hsl(205 35% 85%);
+    --border: hsl(214 26% 88%);
+    --input: hsl(214 26% 80%);
     --ring: hsl(189 94% 43%);
     --chart-1: hsl(189 94% 43%);
     --chart-2: hsl(160 70% 35%);
@@ -115,7 +115,7 @@
     --chart-4: hsl(43 90% 50%);
     --chart-5: hsl(330 75% 50%);
     --radius: 0.75rem;
-    --sidebar-background: hsl(206 57% 96%);
+    --sidebar-background: hsl(210 33% 95%);
     --sidebar-foreground: hsl(222 84% 14%);
     --sidebar-primary: hsl(189 94% 43%);
     --sidebar-primary-foreground: hsl(0 0% 100%);
@@ -127,7 +127,7 @@
 }
 
 .dark {
-    --background: hsl(222 84% 5%);
+    --background: hsl(222 45% 7%);
     --foreground: hsl(210 40% 96%);
     --card: hsl(222 47% 11%);
     --card-foreground: hsl(210 40% 96%);
@@ -207,15 +207,15 @@
 
 @layer utilities {
     .intel-module-shell {
-        @apply flex h-full min-h-0 max-w-full min-w-0 flex-1 flex-col gap-3 overflow-y-auto p-2 sm:p-3 md:overflow-y-hidden;
+        @apply flex h-full min-h-0 max-w-full min-w-0 flex-1 flex-col gap-4 overflow-y-auto p-3 sm:p-4 md:overflow-y-hidden lg:p-5;
     }
 
     .intel-panel {
-        @apply min-w-0 rounded-xl border border-sidebar-border/75 bg-card/95 p-3 shadow-sm sm:p-4;
+        @apply min-w-0 rounded-2xl border border-border/80 bg-card p-4 shadow-xs sm:p-5;
     }
 
     .intel-panel-strong {
-        @apply min-w-0 rounded-xl border border-sidebar-border/85 bg-card p-3 shadow-sm sm:p-4;
+        @apply min-w-0 rounded-2xl border border-border bg-card p-4 shadow-xs sm:p-5;
     }
 
     .intel-surface {
@@ -239,7 +239,7 @@
     }
 
     .intel-empty {
-        @apply rounded-md border border-dashed border-border p-6 text-center text-sm text-muted-foreground;
+        @apply rounded-xl border border-dashed border-border bg-muted/20 px-5 py-10 text-center text-sm leading-relaxed text-muted-foreground;
     }
 
     .intel-field {
@@ -252,7 +252,7 @@
 
     .intel-input,
     .intel-select {
-        @apply h-10 w-full min-w-0 rounded-md border border-input bg-background px-3 text-base transition-[color,box-shadow] outline-none focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 sm:text-sm;
+        @apply h-11 w-full min-w-0 rounded-xl border border-input bg-background px-3 text-base transition-[color,box-shadow] outline-none focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/25 sm:text-sm;
     }
 
     .intel-input:disabled,
@@ -301,15 +301,15 @@
     }
 
     .intel-tabbar {
-        @apply min-w-0 rounded-xl border border-border/70 bg-card p-1 shadow-sm;
+        @apply min-w-0 rounded-2xl border border-border/70 bg-muted/60 p-1;
     }
 
     .intel-tab {
-        @apply inline-flex min-h-10 shrink-0 items-center rounded-xl px-3.5 py-2 text-xs font-semibold whitespace-nowrap transition-all;
+        @apply inline-flex min-h-11 shrink-0 items-center rounded-xl px-4 py-2 text-sm font-medium whitespace-nowrap transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring;
     }
 
     .intel-tab-active {
-        @apply bg-primary text-primary-foreground shadow-[0_10px_24px_-14px_rgba(8,145,178,0.95)];
+        @apply bg-card text-primary shadow-sm ring-1 ring-border/70;
     }
 
     .intel-tab-inactive {
@@ -317,11 +317,11 @@
     }
 
     .intel-button-primary {
-        @apply inline-flex min-h-10 cursor-pointer items-center justify-center gap-2 rounded-xl bg-primary px-4 py-2 text-center text-sm font-semibold whitespace-normal text-primary-foreground shadow-[0_16px_30px_-18px_rgba(8,145,178,0.95)] transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-60;
+        @apply inline-flex min-h-11 cursor-pointer items-center justify-center gap-2 rounded-xl bg-primary px-4 py-2 text-center text-sm font-semibold whitespace-normal text-primary-foreground shadow-sm transition-colors hover:bg-primary/90 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring disabled:cursor-not-allowed disabled:opacity-60;
     }
 
     .intel-button-secondary {
-        @apply inline-flex min-h-10 cursor-pointer items-center justify-center gap-2 rounded-xl border border-input bg-background/85 px-4 py-2 text-center text-sm font-medium whitespace-normal text-foreground transition hover:bg-accent disabled:cursor-not-allowed disabled:opacity-60;
+        @apply inline-flex min-h-11 cursor-pointer items-center justify-center gap-2 rounded-xl border border-input bg-background/85 px-4 py-2 text-center text-sm font-medium whitespace-normal text-foreground transition-colors hover:bg-accent focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring disabled:cursor-not-allowed disabled:opacity-60;
     }
 
     .intel-button-ghost {
@@ -389,11 +389,11 @@
     }
 
     .intel-section-heading {
-        @apply text-sm font-semibold tracking-wide text-muted-foreground uppercase;
+        @apply text-base font-semibold tracking-tight text-foreground;
     }
 
     .intel-filter-control {
-        @apply h-9 w-full min-w-0 rounded-xl border border-input bg-background px-2.5 text-sm transition outline-none focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50;
+        @apply h-11 w-full min-w-0 rounded-xl border border-input bg-background px-3 text-base transition outline-none focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/25 sm:text-sm;
     }
 
     .intel-empty-row {

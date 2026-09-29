@@ -16,5 +16,6 @@
     "notificationsUnread": "Непрочитанных: {count}",
     "notificationsEmpty": "Новых уведомлений нет",
     "notificationsPlaceholder": "Здесь будут появляться важные обновления, события и новости сервиса для пользователей.",
-    "markAllNotificationsRead": "Отметить все"
+    "markAllNotificationsRead": "Отметить все",
+    "moduleTabs": "Разделы инструмента"
 }

@@ -22,7 +22,7 @@ type ModuleNavDefinition = {
     showInHeader?: boolean;
 };
 
-const moduleNavDefinitions: readonly ModuleNavDefinition[] = [
+export const moduleNavDefinitions: readonly ModuleNavDefinition[] = [
     {
         key: 'dashboard',
         labelKey: 'navigation.dashboard',

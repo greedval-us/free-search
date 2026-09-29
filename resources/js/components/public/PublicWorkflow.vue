@@ -1,6 +1,12 @@
 <script setup lang="ts">
+import { FileCheck2, Radar, Send } from 'lucide-vue-next';
 import { useI18n } from '@/composables/useI18n';
 const { t } = useI18n();
+const steps = [
+    { key: 'sources', icon: Send },
+    { key: 'collection', icon: Radar },
+    { key: 'result', icon: FileCheck2 },
+];
 </script>
 
 <template>
@@ -9,11 +15,15 @@ const { t } = useI18n();
             {{ t('publicSite.previewLabel') }}
         </figcaption>
         <ol>
-            <li v-for="step in ['sources', 'collection', 'result']" :key="step">
-                <span class="public-workflow-dot" aria-hidden="true"></span>
+            <li v-for="step in steps" :key="step.key">
+                <span class="public-workflow-dot" aria-hidden="true"
+                    ><component :is="step.icon" :size="20"
+                /></span>
                 <div>
-                    <strong>{{ t(`publicSite.preview.${step}.title`) }}</strong>
-                    <p>{{ t(`publicSite.preview.${step}.text`) }}</p>
+                    <strong>{{
+                        t(`publicSite.preview.${step.key}.title`)
+                    }}</strong>
+                    <p>{{ t(`publicSite.preview.${step.key}.text`) }}</p>
                 </div>
             </li>
         </ol>

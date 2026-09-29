@@ -4,8 +4,8 @@
     },
     "header": {
         "kicker": "Workspace",
-        "title": "Your activity",
-        "subtitle": "Track real search queries, recent actions, and quickly return to your modules.",
+        "title": "Where will you start?",
+        "subtitle": "Tools for exploring open sources, your history and saved queries — together in one workspace.",
         "badge": "Search history is saved automatically"
     },
     "tracking": {
@@ -31,7 +31,8 @@
             "seo-audit": "SEO audit",
             "parser": "Data collection"
         },
-        "unavailable": "Unavailable"
+        "unavailable": "Unavailable",
+        "showLimits": "Limits by tool"
     },
     "summary": {
         "total": "All queries",
@@ -44,7 +45,7 @@
         "topModules": "Top modules",
         "weekly": "Weekly activity",
         "recentQueries": "Recent queries",
-        "quickActions": "Quick actions",
+        "quickActions": "Your tools",
         "insights": "Insights",
         "savedQueries": "Saved queries"
     },
@@ -66,7 +67,8 @@
         "open": "Open module",
         "pinAria": "Pin module",
         "unpinAria": "Unpin module",
-        "empty": "No module activity yet. Open a module to run your first query."
+        "empty": "No module activity yet. Open a module to run your first query.",
+        "pinned": "Pinned tool"
     },
     "weekly": {
         "empty": "No activity this week yet. New queries will appear here."
@@ -102,5 +104,15 @@
     },
     "common": {
         "na": "n/a"
+    },
+    "toolsHint": "Choose a source and start exploring. Pinned tools appear first.",
+    "toolDescriptions": {
+        "bluesky": "Search posts, profiles and conversations.",
+        "mastodon": "Posts, accounts and hashtags across the Fediverse.",
+        "telegram": "Search, collect messages and track channels.",
+        "youtube": "Videos, comments and channel analytics.",
+        "site-intel": "Website, domain and SEO checks.",
+        "news-media-intel": "Search news and explore media coverage.",
+        "shifr": "Hashes, encodings and text utilities."
     }
 }

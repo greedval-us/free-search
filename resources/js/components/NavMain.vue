@@ -24,9 +24,10 @@ const { setOpenMobile } = useSidebar();
 <template>
     <SidebarGroup class="px-2 py-0">
         <SidebarGroupLabel>{{ t('navigation.platform') }}</SidebarGroupLabel>
-        <SidebarMenu>
+        <SidebarMenu class="gap-1.5">
             <SidebarMenuItem v-for="item in items" :key="item.title">
                 <SidebarMenuButton
+                    class="h-11 rounded-xl px-3 text-sm data-[active=true]:bg-primary/10 data-[active=true]:text-primary data-[active=true]:ring-1 data-[active=true]:ring-primary/20"
                     as-child
                     :is-active="isCurrentUrl(item.href)"
                     :tooltip="item.title"

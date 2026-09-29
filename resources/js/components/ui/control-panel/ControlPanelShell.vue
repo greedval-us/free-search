@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ChevronDown, ChevronUp } from 'lucide-vue-next';
+import type { Component } from 'vue';
 import HelpTooltip from '@/components/ui/HelpTooltip.vue';
 
 defineProps<{
@@ -9,7 +10,7 @@ defineProps<{
     subtitle: string;
     collapsedText: string;
     collapsed: boolean;
-    icon: object;
+    icon: Component;
     iconClass?: string;
     bodyClass?: string;
 }>();
@@ -20,20 +21,24 @@ const emit = defineEmits<{
 </script>
 
 <template>
-    <section class="intel-panel-strong sticky top-0 z-10 min-w-0 shrink-0">
+    <section
+        class="intel-panel-strong min-w-0 shrink-0 md:sticky md:top-0 md:z-10"
+    >
         <div class="flex min-w-0 items-start justify-between gap-3">
             <div class="min-w-0 space-y-1">
-                <div class="flex min-w-0 items-center gap-2 text-base font-semibold">
+                <div
+                    class="flex min-w-0 items-center gap-2 text-base font-semibold"
+                >
                     <component
                         :is="icon"
                         class="h-4 w-4 shrink-0"
-                        :class="iconClass ?? 'text-cyan-400'"
+                        :class="iconClass ?? 'text-primary'"
                     />
                     <h2 class="min-w-0 break-words">{{ title }}</h2>
                     <HelpTooltip :label="helpLabel" :text="helpText" />
                 </div>
                 <p
-                    class="break-words text-sm leading-relaxed text-muted-foreground"
+                    class="text-sm leading-relaxed break-words text-muted-foreground"
                 >
                     {{ collapsed ? collapsedText : subtitle }}
                 </p>
@@ -41,7 +46,7 @@ const emit = defineEmits<{
 
             <button
                 type="button"
-                class="inline-flex h-10 w-10 shrink-0 cursor-pointer items-center justify-center rounded-full border border-input text-sm text-foreground transition hover:bg-accent"
+                class="inline-flex size-11 shrink-0 cursor-pointer items-center justify-center rounded-xl border border-input text-sm text-foreground transition-colors hover:bg-accent focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
                 :aria-expanded="!collapsed"
                 :aria-label="collapsed ? subtitle : collapsedText"
                 :title="collapsed ? subtitle : collapsedText"

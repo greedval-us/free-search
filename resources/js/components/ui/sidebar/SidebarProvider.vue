@@ -19,7 +19,7 @@ const emits = defineEmits<{
   "update:open": [open: boolean]
 }>()
 
-const isMobile = useMediaQuery("(max-width: 768px)")
+const isMobile = useMediaQuery("(width < 768px)")
 const openMobile = ref(false)
 
 const open = useVModel(props, "open", emits, {
@@ -73,7 +73,7 @@ provideSidebarContext({
         '--sidebar-width': SIDEBAR_WIDTH,
         '--sidebar-width-icon': SIDEBAR_WIDTH_ICON,
       }"
-      :class="cn('group/sidebar-wrapper has-data-[variant=inset]:bg-sidebar flex h-svh w-full overflow-hidden', props.class)"
+      :class="cn('group/sidebar-wrapper has-data-[variant=inset]:bg-sidebar flex h-dvh w-full overflow-hidden', props.class)"
       v-bind="$attrs"
     >
       <slot />
