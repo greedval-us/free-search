@@ -1,0 +1,32 @@
+{
+    "status": {
+        "idle": "Ready",
+        "running": "Collecting",
+        "completed": "Completed",
+        "failed": "Failed",
+        "stopped": "Stopped",
+        "unknown": "Unknown status"
+    },
+    "history": {
+        "title": "Collection history",
+        "description": "Collections and available exports from the last {days} days.",
+        "retention": "Files are kept for {days} days",
+        "count": "Collections: {count}",
+        "loading": "Loading collection history…",
+        "empty": "Start a collection to see its progress and available exports here.",
+        "created": "Started",
+        "expires": "Files expire",
+        "unknown": "Unknown source",
+        "partial": "Partial data",
+        "unavailable": "—"
+    },
+    "actions": {
+        "collection": "Collection controls",
+        "exports": "Export files",
+        "downloadExcel": "Download Excel for {title}",
+        "downloadJson": "Download JSON for {title}"
+    },
+    "progress": {
+        "value": "{progress}% · {stage}"
+    }
+}

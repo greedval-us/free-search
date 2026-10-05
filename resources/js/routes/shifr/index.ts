@@ -4,15 +4,15 @@ import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFo
  * @see app/Http/Controllers/Shifr/ShifrController.php:24
  * @route '/shifr/hash'
  */
-export const hash = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+export const hash = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
     url: hash.url(options),
-    method: 'get',
+    method: 'post',
 })
 
 hash.definition = {
-    methods: ["get","head"],
+    methods: ["post"],
     url: '/shifr/hash',
-} satisfies RouteDefinition<["get","head"]>
+} satisfies RouteDefinition<["post"]>
 
 /**
 * @see \App\Http\Controllers\Shifr\ShifrController::hash
@@ -28,18 +28,9 @@ hash.url = (options?: RouteQueryOptions) => {
  * @see app/Http/Controllers/Shifr/ShifrController.php:24
  * @route '/shifr/hash'
  */
-hash.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+hash.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
     url: hash.url(options),
-    method: 'get',
-})
-/**
-* @see \App\Http\Controllers\Shifr\ShifrController::hash
- * @see app/Http/Controllers/Shifr/ShifrController.php:24
- * @route '/shifr/hash'
- */
-hash.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
-    url: hash.url(options),
-    method: 'head',
+    method: 'post',
 })
 
     /**
@@ -47,9 +38,9 @@ hash.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
  * @see app/Http/Controllers/Shifr/ShifrController.php:24
  * @route '/shifr/hash'
  */
-    const hashForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+    const hashForm = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
         action: hash.url(options),
-        method: 'get',
+        method: 'post',
     })
 
             /**
@@ -57,23 +48,9 @@ hash.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
  * @see app/Http/Controllers/Shifr/ShifrController.php:24
  * @route '/shifr/hash'
  */
-        hashForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+        hashForm.post = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
             action: hash.url(options),
-            method: 'get',
-        })
-            /**
-* @see \App\Http\Controllers\Shifr\ShifrController::hash
- * @see app/Http/Controllers/Shifr/ShifrController.php:24
- * @route '/shifr/hash'
- */
-        hashForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
-            action: hash.url({
-                        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
-                            _method: 'HEAD',
-                            ...(options?.query ?? options?.mergeQuery ?? {}),
-                        }
-                    }),
-            method: 'get',
+            method: 'post',
         })
     
     hash.form = hashForm
@@ -82,15 +59,15 @@ hash.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
  * @see app/Http/Controllers/Shifr/ShifrController.php:32
  * @route '/shifr/transform'
  */
-export const transform = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+export const transform = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
     url: transform.url(options),
-    method: 'get',
+    method: 'post',
 })
 
 transform.definition = {
-    methods: ["get","head"],
+    methods: ["post"],
     url: '/shifr/transform',
-} satisfies RouteDefinition<["get","head"]>
+} satisfies RouteDefinition<["post"]>
 
 /**
 * @see \App\Http\Controllers\Shifr\ShifrController::transform
@@ -106,18 +83,9 @@ transform.url = (options?: RouteQueryOptions) => {
  * @see app/Http/Controllers/Shifr/ShifrController.php:32
  * @route '/shifr/transform'
  */
-transform.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+transform.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
     url: transform.url(options),
-    method: 'get',
-})
-/**
-* @see \App\Http\Controllers\Shifr\ShifrController::transform
- * @see app/Http/Controllers/Shifr/ShifrController.php:32
- * @route '/shifr/transform'
- */
-transform.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
-    url: transform.url(options),
-    method: 'head',
+    method: 'post',
 })
 
     /**
@@ -125,9 +93,9 @@ transform.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
  * @see app/Http/Controllers/Shifr/ShifrController.php:32
  * @route '/shifr/transform'
  */
-    const transformForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+    const transformForm = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
         action: transform.url(options),
-        method: 'get',
+        method: 'post',
     })
 
             /**
@@ -135,23 +103,9 @@ transform.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
  * @see app/Http/Controllers/Shifr/ShifrController.php:32
  * @route '/shifr/transform'
  */
-        transformForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+        transformForm.post = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
             action: transform.url(options),
-            method: 'get',
-        })
-            /**
-* @see \App\Http\Controllers\Shifr\ShifrController::transform
- * @see app/Http/Controllers/Shifr/ShifrController.php:32
- * @route '/shifr/transform'
- */
-        transformForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
-            action: transform.url({
-                        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
-                            _method: 'HEAD',
-                            ...(options?.query ?? options?.mergeQuery ?? {}),
-                        }
-                    }),
-            method: 'get',
+            method: 'post',
         })
     
     transform.form = transformForm
@@ -160,15 +114,15 @@ transform.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
  * @see app/Http/Controllers/Shifr/ShifrController.php:40
  * @route '/shifr/ioc-extract'
  */
-export const iocExtract = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+export const iocExtract = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
     url: iocExtract.url(options),
-    method: 'get',
+    method: 'post',
 })
 
 iocExtract.definition = {
-    methods: ["get","head"],
+    methods: ["post"],
     url: '/shifr/ioc-extract',
-} satisfies RouteDefinition<["get","head"]>
+} satisfies RouteDefinition<["post"]>
 
 /**
 * @see \App\Http\Controllers\Shifr\ShifrController::iocExtract
@@ -184,18 +138,9 @@ iocExtract.url = (options?: RouteQueryOptions) => {
  * @see app/Http/Controllers/Shifr/ShifrController.php:40
  * @route '/shifr/ioc-extract'
  */
-iocExtract.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+iocExtract.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
     url: iocExtract.url(options),
-    method: 'get',
-})
-/**
-* @see \App\Http\Controllers\Shifr\ShifrController::iocExtract
- * @see app/Http/Controllers/Shifr/ShifrController.php:40
- * @route '/shifr/ioc-extract'
- */
-iocExtract.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
-    url: iocExtract.url(options),
-    method: 'head',
+    method: 'post',
 })
 
     /**
@@ -203,9 +148,9 @@ iocExtract.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
  * @see app/Http/Controllers/Shifr/ShifrController.php:40
  * @route '/shifr/ioc-extract'
  */
-    const iocExtractForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+    const iocExtractForm = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
         action: iocExtract.url(options),
-        method: 'get',
+        method: 'post',
     })
 
             /**
@@ -213,23 +158,9 @@ iocExtract.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
  * @see app/Http/Controllers/Shifr/ShifrController.php:40
  * @route '/shifr/ioc-extract'
  */
-        iocExtractForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+        iocExtractForm.post = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
             action: iocExtract.url(options),
-            method: 'get',
-        })
-            /**
-* @see \App\Http\Controllers\Shifr\ShifrController::iocExtract
- * @see app/Http/Controllers/Shifr/ShifrController.php:40
- * @route '/shifr/ioc-extract'
- */
-        iocExtractForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
-            action: iocExtract.url({
-                        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
-                            _method: 'HEAD',
-                            ...(options?.query ?? options?.mergeQuery ?? {}),
-                        }
-                    }),
-            method: 'get',
+            method: 'post',
         })
     
     iocExtract.form = iocExtractForm
@@ -238,15 +169,15 @@ iocExtract.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
  * @see app/Http/Controllers/Shifr/ShifrController.php:48
  * @route '/shifr/jwt-inspect'
  */
-export const jwtInspect = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+export const jwtInspect = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
     url: jwtInspect.url(options),
-    method: 'get',
+    method: 'post',
 })
 
 jwtInspect.definition = {
-    methods: ["get","head"],
+    methods: ["post"],
     url: '/shifr/jwt-inspect',
-} satisfies RouteDefinition<["get","head"]>
+} satisfies RouteDefinition<["post"]>
 
 /**
 * @see \App\Http\Controllers\Shifr\ShifrController::jwtInspect
@@ -262,18 +193,9 @@ jwtInspect.url = (options?: RouteQueryOptions) => {
  * @see app/Http/Controllers/Shifr/ShifrController.php:48
  * @route '/shifr/jwt-inspect'
  */
-jwtInspect.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+jwtInspect.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
     url: jwtInspect.url(options),
-    method: 'get',
-})
-/**
-* @see \App\Http\Controllers\Shifr\ShifrController::jwtInspect
- * @see app/Http/Controllers/Shifr/ShifrController.php:48
- * @route '/shifr/jwt-inspect'
- */
-jwtInspect.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
-    url: jwtInspect.url(options),
-    method: 'head',
+    method: 'post',
 })
 
     /**
@@ -281,9 +203,9 @@ jwtInspect.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
  * @see app/Http/Controllers/Shifr/ShifrController.php:48
  * @route '/shifr/jwt-inspect'
  */
-    const jwtInspectForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+    const jwtInspectForm = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
         action: jwtInspect.url(options),
-        method: 'get',
+        method: 'post',
     })
 
             /**
@@ -291,23 +213,9 @@ jwtInspect.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
  * @see app/Http/Controllers/Shifr/ShifrController.php:48
  * @route '/shifr/jwt-inspect'
  */
-        jwtInspectForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+        jwtInspectForm.post = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
             action: jwtInspect.url(options),
-            method: 'get',
-        })
-            /**
-* @see \App\Http\Controllers\Shifr\ShifrController::jwtInspect
- * @see app/Http/Controllers/Shifr/ShifrController.php:48
- * @route '/shifr/jwt-inspect'
- */
-        jwtInspectForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
-            action: jwtInspect.url({
-                        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
-                            _method: 'HEAD',
-                            ...(options?.query ?? options?.mergeQuery ?? {}),
-                        }
-                    }),
-            method: 'get',
+            method: 'post',
         })
     
     jwtInspect.form = jwtInspectForm
@@ -316,15 +224,15 @@ jwtInspect.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
  * @see app/Http/Controllers/Shifr/ShifrController.php:56
  * @route '/shifr/classic'
  */
-export const classic = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+export const classic = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
     url: classic.url(options),
-    method: 'get',
+    method: 'post',
 })
 
 classic.definition = {
-    methods: ["get","head"],
+    methods: ["post"],
     url: '/shifr/classic',
-} satisfies RouteDefinition<["get","head"]>
+} satisfies RouteDefinition<["post"]>
 
 /**
 * @see \App\Http\Controllers\Shifr\ShifrController::classic
@@ -340,18 +248,9 @@ classic.url = (options?: RouteQueryOptions) => {
  * @see app/Http/Controllers/Shifr/ShifrController.php:56
  * @route '/shifr/classic'
  */
-classic.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+classic.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
     url: classic.url(options),
-    method: 'get',
-})
-/**
-* @see \App\Http\Controllers\Shifr\ShifrController::classic
- * @see app/Http/Controllers/Shifr/ShifrController.php:56
- * @route '/shifr/classic'
- */
-classic.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
-    url: classic.url(options),
-    method: 'head',
+    method: 'post',
 })
 
     /**
@@ -359,9 +258,9 @@ classic.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
  * @see app/Http/Controllers/Shifr/ShifrController.php:56
  * @route '/shifr/classic'
  */
-    const classicForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+    const classicForm = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
         action: classic.url(options),
-        method: 'get',
+        method: 'post',
     })
 
             /**
@@ -369,23 +268,9 @@ classic.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
  * @see app/Http/Controllers/Shifr/ShifrController.php:56
  * @route '/shifr/classic'
  */
-        classicForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+        classicForm.post = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
             action: classic.url(options),
-            method: 'get',
-        })
-            /**
-* @see \App\Http\Controllers\Shifr\ShifrController::classic
- * @see app/Http/Controllers/Shifr/ShifrController.php:56
- * @route '/shifr/classic'
- */
-        classicForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
-            action: classic.url({
-                        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
-                            _method: 'HEAD',
-                            ...(options?.query ?? options?.mergeQuery ?? {}),
-                        }
-                    }),
-            method: 'get',
+            method: 'post',
         })
     
     classic.form = classicForm

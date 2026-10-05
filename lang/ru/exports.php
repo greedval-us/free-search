@@ -5,6 +5,13 @@ return [
         'yes' => 'да',
         'no' => 'нет',
         'reaction' => 'Реакция',
+        'collection_status' => 'Статус сбора',
+        'collection_complete' => 'Сбор завершён полностью',
+        'collection_statuses' => [
+            'completed' => 'Завершён',
+            'stopped' => 'Остановлен',
+            'failed' => 'Ошибка',
+        ],
     ],
     'telegram' => [
         'sheets' => [

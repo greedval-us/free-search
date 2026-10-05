@@ -3,6 +3,7 @@
 namespace App\Http\Requests\Telegram;
 
 use App\Modules\Telegram\Tracking\TrackingConfig;
+use App\Rules\PublicTelegramUsername;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
@@ -39,7 +40,7 @@ final class TelegramTrackingRequest extends FormRequest
                 'notify_bot' => ['required_if:action,preferences', 'boolean']];
         }
         $rules = ['groups' => ['required', 'array', 'list', 'min:1', 'max:'.$config->integer('max_sources')],
-            'groups.*' => ['bail', 'required', 'string', 'not_regex:/\s/u', 'distinct', 'regex:/^(?:[a-z][a-z0-9_]{3,31}|-[1-9][0-9]{0,18})$/']];
+            'groups.*' => ['bail', 'required', 'string', 'not_regex:/\s/u', 'distinct', new PublicTelegramUsername]];
         if ($this->routeIs('telegram.tracking.validate')) {
             return $rules;
         }

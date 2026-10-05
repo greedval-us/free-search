@@ -9,7 +9,16 @@ import {
     Send,
     Youtube,
 } from 'lucide-vue-next';
-import { dashboard } from '@/routes';
+import {
+    bluesky,
+    dashboard,
+    mastodon,
+    newsMediaIntel,
+    shifr,
+    siteIntel,
+    telegram,
+    youtube,
+} from '@/routes';
 import type { NavItem } from '@/types';
 
 type Translate = (key: string) => string;
@@ -33,47 +42,47 @@ export const moduleNavDefinitions: readonly ModuleNavDefinition[] = [
     {
         key: 'bluesky',
         labelKey: 'navigation.bluesky',
-        href: '/bluesky',
+        href: bluesky(),
         icon: Cloud,
         showInHeader: true,
     },
     {
         key: 'mastodon',
         labelKey: 'navigation.mastodon',
-        href: '/mastodon',
+        href: mastodon(),
         icon: AtSign,
         showInHeader: true,
     },
     {
         key: 'telegram',
         labelKey: 'navigation.telegram',
-        href: '/telegram',
+        href: telegram(),
         icon: Send,
         showInHeader: true,
     },
     {
         key: 'youtube',
         labelKey: 'navigation.youtube',
-        href: '/youtube',
+        href: youtube(),
         icon: Youtube,
         showInHeader: true,
     },
     {
         key: 'site-intel',
         labelKey: 'navigation.siteIntel',
-        href: '/site-intel',
+        href: siteIntel(),
         icon: Radar,
     },
     {
         key: 'news-media-intel',
         labelKey: 'navigation.newsMediaIntel',
-        href: '/news-media-intel',
+        href: newsMediaIntel(),
         icon: Newspaper,
     },
     {
         key: 'shifr',
         labelKey: 'navigation.shifr',
-        href: '/shifr',
+        href: shifr(),
         icon: Fingerprint,
     },
 ];

@@ -32,7 +32,9 @@ final class AddSecurityHeaders
         $response = $next($request);
 
         foreach (config('security.headers.values', []) as $name => $value) {
-            $response->headers->set($name, (string) $value);
+            if (! $response->headers->has($name)) {
+                $response->headers->set($name, (string) $value);
+            }
         }
 
         if ($request->isSecure() && config('security.hsts.enabled', true)) {
@@ -42,7 +44,7 @@ final class AddSecurityHeaders
             );
         }
 
-        if ($nonce !== null) {
+        if ($nonce !== null && ! $response->headers->has('Content-Security-Policy')) {
             $response->headers->set(
                 'Content-Security-Policy',
                 $this->contentSecurityPolicy->build($nonce)

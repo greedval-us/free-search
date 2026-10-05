@@ -295,7 +295,9 @@
     background: var(--public-panel);
     transition:
         border-color 0.2s,
-        background-color 0.2s;
+        background-color 0.2s,
+        transform 0.2s,
+        box-shadow 0.2s;
     text-decoration: none;
     color: var(--public-text);
 }
@@ -537,8 +539,24 @@
         gap: 8px 20px;
     }
 }
+@media (prefers-reduced-motion: no-preference) {
+    .public-hero > *,
+    .public-page-intro {
+        animation: workspace-enter 300ms ease-out both;
+    }
+    .public-hero > :last-child {
+        animation-delay: 80ms;
+    }
+}
+@media (hover: hover) and (prefers-reduced-motion: no-preference) {
+    .public-feature-card:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 12px 32px #0003;
+    }
+}
 @media (prefers-reduced-motion: reduce) {
     .public-shell * {
         transition: none;
+        animation: none;
     }
 }

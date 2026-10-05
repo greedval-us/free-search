@@ -34,6 +34,7 @@ const selectTab = (tab: string): void => {
         router.visit(
             billing({ query: { feature: accessKey, reason: 'plan' } })
         );
+
         return;
     }
 
@@ -47,8 +48,13 @@ const focusTab = (event: KeyboardEvent): void => {
         ).querySelectorAll<HTMLButtonElement>('[role="tab"]')
     );
     const index = buttons.indexOf(event.target as HTMLButtonElement);
-    if (index < 0) return;
+
+    if (index < 0) {
+        return;
+    }
+
     let next: number;
+
     switch (event.key) {
         case 'ArrowRight':
             next = (index + 1) % buttons.length;
@@ -65,6 +71,7 @@ const focusTab = (event: KeyboardEvent): void => {
         default:
             return;
     }
+
     event.preventDefault();
     buttons[next]?.focus();
     buttons[next]?.scrollIntoView({ block: 'nearest', inline: 'nearest' });
@@ -101,13 +108,16 @@ const focusTab = (event: KeyboardEvent): void => {
             </button>
         </div>
 
-        <div
-            :id="`module-panel-${activeTab}`"
-            class="flex min-h-0 min-w-0 flex-none flex-col gap-4 md:flex-1"
-            role="tabpanel"
-            :aria-labelledby="`module-tab-${activeTab}`"
-        >
-            <slot />
-        </div>
+        <Transition name="workspace-panel" mode="out-in">
+            <div
+                :id="`module-panel-${activeTab}`"
+                :key="activeTab"
+                class="flex min-h-0 min-w-0 flex-none flex-col gap-4 md:flex-1"
+                role="tabpanel"
+                :aria-labelledby="`module-tab-${activeTab}`"
+            >
+                <slot />
+            </div>
+        </Transition>
     </IntelModuleLayout>
 </template>

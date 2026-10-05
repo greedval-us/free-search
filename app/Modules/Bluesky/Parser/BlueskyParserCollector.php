@@ -14,6 +14,7 @@ use App\Modules\Bluesky\Enums\BlueskyParserInteractionKind;
 use App\Modules\Bluesky\Enums\BlueskyParserStage;
 use App\Modules\Bluesky\Support\BlueskyActorResolver;
 use App\Modules\ParserSupport\Contracts\ParserRunCollectorInterface;
+use RuntimeException;
 
 final class BlueskyParserCollector implements ParserRunCollectorInterface
 {
@@ -132,6 +133,7 @@ final class BlueskyParserCollector implements ParserRunCollectorInterface
         }
 
         $nextCursor = $feed->pagination['nextCursor'] ?? null;
+        $cursor->rememberPage('feed', $cursor->feedCursor(), $nextCursor);
         if (is_string($nextCursor) && $nextCursor !== '') {
             $cursor->setFeedCursor($nextCursor);
             $state->setProgress(min(40, 5 + ($cursor->incrementFeedPage() * 4)));
@@ -168,6 +170,7 @@ final class BlueskyParserCollector implements ParserRunCollectorInterface
         }
 
         $nextCursor = $followers->pagination['nextCursor'] ?? null;
+        $cursor->rememberPage('followers', $cursor->followersCursor(), $nextCursor);
         if (is_string($nextCursor) && $nextCursor !== '') {
             $cursor->setFollowersCursor($nextCursor);
             $state->setProgress(min(55, 45 + ($cursor->incrementFollowersPage() * 2)));
@@ -204,6 +207,7 @@ final class BlueskyParserCollector implements ParserRunCollectorInterface
         }
 
         $nextCursor = $follows->pagination['nextCursor'] ?? null;
+        $cursor->rememberPage('follows', $cursor->followsCursor(), $nextCursor);
         if (is_string($nextCursor) && $nextCursor !== '') {
             $cursor->setFollowsCursor($nextCursor);
             $state->setProgress(min(70, 60 + ($cursor->incrementFollowsPage() * 2)));
@@ -276,6 +280,7 @@ final class BlueskyParserCollector implements ParserRunCollectorInterface
         }
 
         $nextCursor = $likes->pagination['nextCursor'] ?? null;
+        $cursor->rememberPage('interaction:likes', $cursor->interactionCursor(), $nextCursor);
         if (is_string($nextCursor) && $nextCursor !== '') {
             $cursor->setInteractionCursor($nextCursor);
         } else {
@@ -313,6 +318,7 @@ final class BlueskyParserCollector implements ParserRunCollectorInterface
         }
 
         $nextCursor = $reposts->pagination['nextCursor'] ?? null;
+        $cursor->rememberPage('interaction:reposts', $cursor->interactionCursor(), $nextCursor);
         if (is_string($nextCursor) && $nextCursor !== '') {
             $cursor->setInteractionCursor($nextCursor);
         } else {
@@ -333,8 +339,18 @@ final class BlueskyParserCollector implements ParserRunCollectorInterface
         string $postUri,
         int $postIndex,
     ): array {
-        $thread = $this->loadPostThreadAction->handle($postUri, self::THREAD_DEPTH, 0);
+        $cursor = $state->cursor();
+        $target = $cursor->replyTarget($postUri);
+        $thread = $this->loadPostThreadAction->handle($target, self::THREAD_DEPTH, 0);
+        if ($thread->root === null || ($thread->root['uri'] ?? '') !== $target) {
+            throw new RuntimeException('Bluesky reply thread is unavailable.');
+        }
+        $seen = [];
+        $frontier = $this->replyFrontier([$thread->root], $seen);
         $state->data()->recordReceivedReplies($postUri, $this->flattenReplies($thread->replies));
+        if (! $cursor->advanceReplyFrontier($target, $frontier)) {
+            return $state->toArray();
+        }
 
         return $this->moveToNextInteractionPost($state, $postIndex);
     }
@@ -395,6 +411,27 @@ final class BlueskyParserCollector implements ParserRunCollectorInterface
         }
 
         return $items;
+    }
+
+    private function replyFrontier(array $nodes, array &$seen): array
+    {
+        $frontier = [];
+        foreach ($nodes as $node) {
+            if (! is_array($node) || ! is_string($node['uri'] ?? null) || $node['uri'] === '') {
+                throw new RuntimeException('Bluesky reply node is invalid.');
+            }
+            if (isset($seen[$node['uri']])) {
+                throw new RuntimeException('Bluesky reply thread contains a cycle.');
+            }
+            $seen[$node['uri']] = true;
+            $children = is_array($node['replies'] ?? null) ? $node['replies'] : [];
+            if ((int) ($node['replyCount'] ?? 0) > count($children)) {
+                $frontier[] = $node['uri'];
+            }
+            $frontier = array_merge($frontier, $this->replyFrontier($children, $seen));
+        }
+
+        return array_values(array_unique($frontier));
     }
 
     private function interactionProgress(BlueskyParserCollectedDataDTO $data, int $processedPosts): int

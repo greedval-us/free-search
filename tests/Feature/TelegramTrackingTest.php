@@ -366,7 +366,13 @@ class TelegramTrackingTest extends TestCase
         $this->collect($source);
         $this->travel(10)->days();
         app(TrackingScheduler::class)->maintain();
-        $json = $this->actingAs($this->user)->get('/telegram/tracking/'.$task->id.'/export/json')->assertOk()->streamedContent();
+        $download = $this->actingAs($this->user)->get('/telegram/tracking/'.$task->id.'/export/json')
+            ->assertOk()->assertDownload('telegram-tracking-'.$task->id.'.json')
+            ->assertHeader('Content-Type', 'application/json; charset=UTF-8')
+            ->assertHeader('X-Content-Type-Options', 'nosniff')
+            ->assertHeader('Content-Security-Policy');
+        $this->assertStringContainsString('no-store', $download->headers->get('Cache-Control'));
+        $json = $download->streamedContent();
         $this->assertCount(1, json_decode($json, true, flags: JSON_THROW_ON_ERROR)['messages']);
         Storage::fake('local');
         foreach (['en' => 'Message', 'ru' => 'Сообщение'] as $locale => $heading) {

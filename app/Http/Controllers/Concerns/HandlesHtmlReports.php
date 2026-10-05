@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Concerns;
 
+use App\Support\Http\DocumentResponseHeaders;
 use App\Support\Reports\Contracts\ReportFilenamePolicyInterface;
 use App\Support\Reports\ReportsConfig;
 use Carbon\Carbon;
@@ -35,8 +36,10 @@ trait HandlesHtmlReports
         string $filenamePrefix,
         string $filenameTarget,
     ): View|Response {
+        $response = response()->view($view, $viewData, 200, DocumentResponseHeaders::report());
+
         if (! $download) {
-            return view($view, $viewData);
+            return $response;
         }
 
         $filename = $this->htmlReportFilenamePolicy()->build(
@@ -44,10 +47,9 @@ trait HandlesHtmlReports
             target: $filenameTarget,
         );
 
-        return response()
-            ->view($view, $viewData)
+        return $response
             ->header('Content-Type', $this->reportContentType())
-            ->header('Content-Disposition', 'attachment; filename="'.$filename.'"');
+            ->header('Content-Disposition', $response->headers->makeDisposition('attachment', $filename));
     }
 
     private function reportGeneratedAtFormat(): string

@@ -21,6 +21,29 @@ Free Search обрабатывает credentials внешних API, польз�
 - Production web responses используют HSTS, CSP с nonce, Referrer Policy, Permissions Policy и anti-sniffing headers; MoonShine path можно исключить из CSP через конфигурацию.
 - Request/activity logs автоматически удаляются после настраиваемого retention period.
 
+## Модель доступа безопасного пилота
+
+| Источник | Разрешённый доступ | Граница |
+| --- | --- | --- |
+| Telegram | Публичные каналы и супергруппы по username | Каждый запрос заново разрешает username через Telegram; числовые peers, личные диалоги, Saved Messages, invite links, закрытые и защищённые источники отклоняются. Кэш общей сессии не является разрешением доступа. |
+| Telegram comments/media/tracking | Контент проверенного публичного источника | Linked discussion проверяется отдельно; media привязано к запрошенному peer и message ID; tracking повторно проверяет публичность и ID источника перед сбором. |
+| YouTube | Данные, доступные через YouTube Data API | Серверный API key передаётся в `X-Goog-Api-Key`, вне query string. |
+| Bluesky | Данные, доступные настроенной API-сессии | App password отправляется в теле запроса создания сессии, API-запросы используют Authorization header. |
+| Mastodon | Данные, доступные API настроенного instance | Token передаётся в Authorization header; доступность результатов зависит от правил instance и аккаунта. |
+| Parser history/exports | Запуски текущего пользователя | JSON на private disk и metadata scoped по user/module; хранилище принимает только UUID запуска и отклоняет traversal до доступа к файлу. |
+
+Shifr принимает операции только через POST с CSRF. JWT, HMAC/cipher keys и входной текст не включаются в ссылки повторного запуска; чувствительные поля маскируются в activity payload. Старые GET endpoints операций возвращают 405. Ответы Shifr используют `private, no-store`.
+
+Общий frontend API client добавляет CSRF только к изменяющим same-origin запросам, сохраняет `HeadersInit` и не повторяет POST/PUT/PATCH/DELETE без явной retry policy. `AbortSignal` отменяет запрос и ожидание retry. Parser polling отменяется при остановке и unmount; ссылки скачивания принимаются только для HTTP(S) текущего origin без credentials и управляющих символов.
+
+«Новости и медиа» обращается только к настроенному SearXNG через серверный POST `/search` с категорией `news`. Адрес задаётся администратором через config; пользователь не может передать свой upstream URL. HTTP redirects отключены, URL с credentials отклоняются. Результаты преобразуются в обычный текст, ссылки ограничены HTTP(S). Локальный контейнер опубликован только на `127.0.0.1:8088`; JSON-выдача включается в его settings. Передача YouTube API key в header соответствует [рекомендациям Google](https://docs.cloud.google.com/docs/authentication/api-keys-best-practices).
+
+Telegram media получает MIME по содержимому файла, а не по metadata источника. Inline разрешён только для известных растровых изображений, audio/video; HTML, SVG, JavaScript и прочие документы скачиваются как `application/octet-stream`. Ответы документов имеют `nosniff`, sandbox CSP, `no-referrer`, запрет framing и `private, no-store` независимо от production-флага общих headers. HTML-отчёты допускают стили, но sandbox запрещает scripts, формы, сетевые ресурсы и доступ к origin приложения. Общий middleware сохраняет специальную CSP ответа.
+
+Сбор Telegram participants в пилоте отключён: публичный username не делает списки subscribers/скрытых участников публичными и не даёт пользователю права общей сессии администратора. Info DTO содержит только выбранные публичные metadata; session flags, access hashes, invite data и кэш пользователей не выдаются.
+
+Граница пилота проверяется локальными регрессионными тестами с подставными внешними API. Проверка реальных credentials, лимитов и доступности каждого включённого источника остаётся отдельным smoke test перед запуском пилота.
+
 ## Recommended for production
 
 - Используйте HTTPS, secure cookies, `APP_DEBUG=false`, secret manager и регулярную rotation credentials.

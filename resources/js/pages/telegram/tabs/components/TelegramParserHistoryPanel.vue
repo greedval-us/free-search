@@ -1,11 +1,6 @@
 <script setup lang="ts">
-import { computed } from 'vue';
-import type {
-    ParserHistoryField,
-    ParserHistoryStat,
-} from '@/components/ui/parser/history';
+import type { ParserHistoryConfig } from '@/components/ui/parser/history';
 import ParserHistoryPanel from '@/components/ui/parser/ParserHistoryPanel.vue';
-import { useI18n } from '@/composables/useI18n';
 import type { TelegramParserHistoryItem } from '../../types';
 
 defineProps<{
@@ -19,55 +14,30 @@ const emit = defineEmits<{
     downloadJson: [item: TelegramParserHistoryItem];
 }>();
 
-const { t } = useI18n();
-
-const historyPeriodLabel = (value: string | null) => {
-    if (!value) {
-        return '-';
-    }
-
-    const key = `telegram.parser.periods.${value}`;
-    const translated = t(key);
-
-    return translated === key ? value : translated;
-};
-
-const detailFields = computed<ParserHistoryField<TelegramParserHistoryItem>[]>(
-    () => [
+const config = {
+    moduleKey: 'telegram.parser',
+    title: { key: 'chatUsername', prefix: '@' },
+    details: [
         {
-            label: t('telegram.parser.history.period'),
-            value: (item) => historyPeriodLabel(item.period),
+            label: 'telegram.parser.history.period',
+            key: 'period',
+            translationPrefix: 'telegram.parser.periods',
         },
-        {
-            label: t('telegram.parser.history.keyword'),
-            value: (item) => item.keyword,
-        },
-    ]
-);
-
-const statFields = computed<ParserHistoryStat<TelegramParserHistoryItem>[]>(
-    () => [
-        {
-            label: 'telegram.parser.history.messages',
-            value: (item) => item.processedMessages,
-        },
-        {
-            label: 'telegram.parser.history.comments',
-            value: (item) => item.processedComments,
-        },
-    ]
-);
+        { label: 'telegram.parser.history.keyword', key: 'keyword' },
+    ],
+    stats: [
+        { label: 'telegram.parser.history.messages', key: 'processedMessages' },
+        { label: 'telegram.parser.history.comments', key: 'processedComments' },
+    ],
+} satisfies ParserHistoryConfig<TelegramParserHistoryItem>;
 </script>
 
 <template>
     <ParserHistoryPanel
-        module-key="telegram.parser"
+        :config="config"
         :items="items"
         :loading="loading"
         :retention-days="retentionDays"
-        :title="(item) => (item.chatUsername ? `@${item.chatUsername}` : null)"
-        :detail-fields="detailFields"
-        :stat-fields="statFields"
         @download="emit('download', $event)"
         @download-json="emit('downloadJson', $event)"
     />

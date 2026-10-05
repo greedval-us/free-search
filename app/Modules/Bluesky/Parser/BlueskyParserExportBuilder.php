@@ -4,6 +4,7 @@ namespace App\Modules\Bluesky\Parser;
 
 use App\Modules\Bluesky\Parser\Contracts\BlueskyParserExportBuilderInterface;
 use App\Modules\Bluesky\Support\BlueskyModuleConfig;
+use App\Modules\Export\Excel\CollectionSummaryRows;
 use App\Modules\Export\Excel\SheetDefinition;
 use Carbon\Carbon;
 use PhpOffice\PhpSpreadsheet\Shared\Date as ExcelDate;
@@ -46,6 +47,7 @@ final class BlueskyParserExportBuilder implements BlueskyParserExportBuilderInte
             title: (string) __('exports.bluesky.sheets.summary'),
             headings: $this->translations('exports.bluesky.summary.headings'),
             rows: [
+                ...CollectionSummaryRows::fromPayload($payload),
                 [(string) __('exports.bluesky.summary.source'), 'Bluesky'],
                 [(string) __('exports.bluesky.summary.actor_query'), (string) ($payload['actor'] ?? '')],
                 [(string) __('exports.bluesky.summary.resolved_handle'), (string) ($resolvedActor['handle'] ?? '')],

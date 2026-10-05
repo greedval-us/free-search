@@ -22,7 +22,7 @@ const open = ref(false);
             <TooltipTrigger as-child>
                 <button
                     type="button"
-                    class="inline-flex h-8 w-8 shrink-0 cursor-help items-center justify-center rounded-full border border-border text-xs font-semibold text-muted-foreground transition hover:bg-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                    class="inline-flex size-10 shrink-0 cursor-help items-center justify-center rounded-full border border-border text-sm font-semibold text-muted-foreground transition-colors hover:border-primary/40 hover:bg-accent hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none sm:size-8"
                     :aria-label="label"
                     @click="open = !open"
                 >

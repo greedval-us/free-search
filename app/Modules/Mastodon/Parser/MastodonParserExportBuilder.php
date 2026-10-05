@@ -2,6 +2,7 @@
 
 namespace App\Modules\Mastodon\Parser;
 
+use App\Modules\Export\Excel\CollectionSummaryRows;
 use App\Modules\Export\Excel\SheetDefinition;
 use App\Modules\Mastodon\Parser\Contracts\MastodonParserExportBuilderInterface;
 use App\Modules\Mastodon\Support\MastodonModuleConfig;
@@ -39,6 +40,7 @@ final class MastodonParserExportBuilder implements MastodonParserExportBuilderIn
             title: (string) __('exports.mastodon.sheets.summary'),
             headings: $this->translations('exports.mastodon.summary.headings'),
             rows: [
+                ...CollectionSummaryRows::fromPayload($payload),
                 [(string) __('exports.mastodon.summary.source'), 'Mastodon'],
                 [(string) __('exports.mastodon.summary.account_query'), (string) ($payload['account'] ?? '')],
                 [(string) __('exports.mastodon.summary.resolved_account'), (string) ($resolvedAccount['acct'] ?? '')],

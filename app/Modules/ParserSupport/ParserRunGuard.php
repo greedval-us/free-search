@@ -5,6 +5,7 @@ namespace App\Modules\ParserSupport;
 use App\Exceptions\Public\PublicResourceNotFoundException;
 use App\Exceptions\Public\PublicValidationException;
 use App\Models\ParserRun;
+use App\Modules\ParserSupport\Enums\ParserRunStatus;
 
 class ParserRunGuard
 {
@@ -46,6 +47,12 @@ class ParserRunGuard
             );
         }
 
-        return $payload;
+        return [
+            ...$payload,
+            'collection' => [
+                'status' => ParserRun::normalizeStatus($run['status'] ?? null),
+                'complete' => ($run['status'] ?? null) === ParserRunStatus::Completed->value,
+            ],
+        ];
     }
 }

@@ -28,6 +28,7 @@ final class MastodonParserRunStore extends JsonRunStore
                 'statusesMaxId' => '',
                 'statusesPage' => 0,
                 'statusesTotalHint' => 0,
+                'statusesSeenMaxIds' => [],
                 'commentStatusIds' => [],
                 'commentStatusIndex' => 0,
             ],

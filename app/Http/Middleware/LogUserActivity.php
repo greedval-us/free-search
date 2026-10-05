@@ -60,7 +60,10 @@ class LogUserActivity
             return;
         }
 
-        $payload = $this->payloadSanitizer->sanitize($request->all());
+        $payload = $this->payloadSanitizer->sanitize(
+            $request->all(),
+            $moduleKey === 'shifr' ? ['text', 'key'] : [],
+        );
         $queryPreview = $this->queryPreviewResolver->resolve($payload);
         if ($queryPreview === null) {
             return;

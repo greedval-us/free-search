@@ -8,6 +8,7 @@ use App\Modules\Mastodon\Enums\MastodonParserStage;
 use App\Modules\Mastodon\Presenters\MastodonAccountPresenter;
 use App\Modules\Mastodon\Presenters\MastodonStatusPresenter;
 use App\Modules\ParserSupport\Contracts\ParserRunCollectorInterface;
+use RuntimeException;
 
 final class MastodonParserCollector implements ParserRunCollectorInterface
 {
@@ -68,8 +69,20 @@ final class MastodonParserCollector implements ParserRunCollectorInterface
             $cursor->statusesMaxId()
         );
 
-        $items = is_array($payload['items'] ?? null) ? $payload['items'] : [];
+        if (! is_array($payload['items'] ?? null)) {
+            throw new RuntimeException('Mastodon returned an invalid statuses page.');
+        }
+
+        $items = $payload['items'];
+        $previousCount = $data->statusesCount();
         $commentStatusIds = $cursor->commentStatusIds();
+
+        // Rebuild pending roots from collected data to recover older checkpoints.
+        foreach ($data->statusesIndex() as $status) {
+            if ($data->shouldLoadCommentsForStatus($status)) {
+                $commentStatusIds[] = (string) $status['id'];
+            }
+        }
 
         foreach ($items as $item) {
             if (! is_array($item)) {
@@ -84,9 +97,15 @@ final class MastodonParserCollector implements ParserRunCollectorInterface
         }
 
         $cursor->incrementStatusesPage();
+        $cursor->setCommentStatusIds($commentStatusIds);
 
-        $nextMaxId = (string) data_get($payload, 'pagination.nextMaxId', '');
+        $nextMaxId = trim((string) data_get($payload, 'pagination.nextMaxId', ''));
         if ($nextMaxId !== '') {
+            if ($data->statusesCount() === $previousCount) {
+                throw new RuntimeException('Mastodon statuses pagination did not advance.');
+            }
+
+            $cursor->rememberPage($cursor->statusesMaxId(), $nextMaxId);
             $cursor->setStatusesMaxId($nextMaxId);
             $totalHint = $cursor->statusesTotalHint();
             $state->setProgress($totalHint > 0
@@ -94,7 +113,6 @@ final class MastodonParserCollector implements ParserRunCollectorInterface
                 : min(70, 2 + ($cursor->statusesPage() * 3)));
         } else {
             $cursor->setStatusesMaxId(null);
-            $cursor->setCommentStatusIds($commentStatusIds);
             $cursor->setCommentStatusIndex(0);
             $state->setStage(
                 count($cursor->commentStatusIds()) > 0
@@ -127,7 +145,11 @@ final class MastodonParserCollector implements ParserRunCollectorInterface
 
         $rootStatusId = (string) $commentStatusIds[$statusIndex];
         $payload = $this->gateway->context($rootStatusId);
-        $descendants = is_array($payload['descendants'] ?? null) ? $payload['descendants'] : [];
+        if (! is_array($payload['descendants'] ?? null)) {
+            throw new RuntimeException('Mastodon returned an invalid comments context.');
+        }
+
+        $descendants = $payload['descendants'];
 
         foreach ($descendants as $item) {
             if (! is_array($item)) {
@@ -178,6 +200,9 @@ final class MastodonParserCollector implements ParserRunCollectorInterface
 
         $lookup = $this->gateway->lookupAccount($state->accountQuery());
         $account = $this->accountPresenter->present($lookup);
+        if (($account['id'] ?? '') === '') {
+            throw new RuntimeException('Mastodon account could not be resolved.');
+        }
         $data->setAccount($account);
         $cursor->setStatusesTotalHint((int) ($account['statusesCount'] ?? 0));
 

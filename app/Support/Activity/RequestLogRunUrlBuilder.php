@@ -15,6 +15,10 @@ class RequestLogRunUrlBuilder
 
         $normalizedPath = '/'.ltrim($path, '/');
 
+        if (str_starts_with($normalizedPath, '/shifr/')) {
+            return null;
+        }
+
         return $this->buildModuleUrl($normalizedPath, $payload);
     }
 

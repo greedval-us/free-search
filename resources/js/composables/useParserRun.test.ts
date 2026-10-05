@@ -98,10 +98,12 @@ describe('useParserRun', () => {
         vi.stubGlobal('window', {
             setTimeout,
             clearTimeout,
-            location: { href: '' },
+            location: { href: '', origin: 'https://free-search.test' },
+            localStorage: { getItem: () => 'ru' },
         });
         vi.stubGlobal('document', {
             querySelector: () => ({ content: 'test-csrf' }),
+            documentElement: { lang: 'en' },
         });
         apiRequest.mockReset();
         onBeforeUnmount.mockReset();
@@ -175,7 +177,10 @@ describe('useParserRun', () => {
         expect(apiRequest).toHaveBeenNthCalledWith(
             2,
             '/test/parser/status/active-run',
-            { method: 'GET' }
+            expect.objectContaining({
+                method: 'GET',
+                signal: expect.any(AbortSignal),
+            })
         );
     });
 
@@ -185,9 +190,11 @@ describe('useParserRun', () => {
             .mockResolvedValueOnce(historyResponse())
             .mockReturnValueOnce(pending.promise);
         const parser = createParser();
-        await Promise.resolve();
+        await vi.advanceTimersByTimeAsync(0);
         expect(apiRequest).toHaveBeenCalledTimes(2);
+        const signal = apiRequest.mock.calls[1][1].signal as AbortSignal;
         unmount();
+        expect(signal.aborted).toBe(true);
         pending.resolve(statusResponse());
         await vi.advanceTimersByTimeAsync(6000);
         expect(vi.getTimerCount()).toBe(0);
@@ -200,6 +207,9 @@ describe('useParserRun', () => {
         apiRequest.mockReturnValueOnce(pending.promise);
         const parser = createParser();
         unmount();
+        expect(
+            (apiRequest.mock.calls[0][1].signal as AbortSignal).aborted
+        ).toBe(true);
         pending.resolve(historyResponse());
         await vi.advanceTimersByTimeAsync(6000);
         expect(parser.runId.value).toBeNull();
@@ -213,10 +223,12 @@ describe('useParserRun', () => {
             .mockResolvedValueOnce(historyResponse(false))
             .mockReturnValueOnce(pending.promise);
         const parser = createParser();
-        await Promise.resolve();
+        await vi.advanceTimersByTimeAsync(0);
         const started = parser.startRun({});
         expect(await parser.startRun({})).toBe(false);
+        const signal = apiRequest.mock.calls[1][1].signal as AbortSignal;
         unmount();
+        expect(signal.aborted).toBe(true);
         pending.resolve(statusResponse());
         expect(await started).toBe(false);
         expect(parser.runId.value).toBeNull();
@@ -234,8 +246,10 @@ describe('useParserRun', () => {
             )
             .mockResolvedValueOnce(historyResponse(false));
         const parser = createParser();
-        await Promise.resolve();
+        await vi.advanceTimersByTimeAsync(0);
+        const signal = apiRequest.mock.calls[1][1].signal as AbortSignal;
         parser.stop();
+        expect(signal.aborted).toBe(true);
         await vi.advanceTimersByTimeAsync(0);
         pending.resolve(statusResponse());
         await vi.advanceTimersByTimeAsync(6000);
@@ -271,5 +285,135 @@ describe('useParserRun', () => {
         expect(parser.historyLoading.value).toBe(false);
         expect(apiRequest).toHaveBeenCalledTimes(3);
         expect(vi.getTimerCount()).toBe(0);
+    });
+
+    it('finishes immediately when start returns a terminal run', async () => {
+        apiRequest
+            .mockResolvedValueOnce(historyResponse(false))
+            .mockResolvedValueOnce(
+                statusResponse({ status: 'completed', stage: 'completed' })
+            )
+            .mockResolvedValueOnce(historyResponse(false));
+        const parser = createParser();
+        await vi.advanceTimersByTimeAsync(0);
+
+        expect(await parser.startRun({})).toBe(true);
+        await vi.advanceTimersByTimeAsync(6000);
+        expect(parser.loading.value).toBe(false);
+        expect(parser.stage.value).toBe('completed');
+        expect(apiRequest).toHaveBeenCalledTimes(3);
+        expect(vi.getTimerCount()).toBe(0);
+    });
+
+    it('does not apply status from a different run', async () => {
+        apiRequest
+            .mockResolvedValueOnce(historyResponse())
+            .mockResolvedValueOnce(statusResponse({ runId: 'another-run' }));
+        const parser = createParser();
+        await vi.advanceTimersByTimeAsync(6000);
+
+        expect(parser.loading.value).toBe(false);
+        expect(parser.runId.value).toBe('active-run');
+        expect(parser.progress.value).toBe(0);
+        expect(parser.error.value).toBe('Request failed');
+        expect(vi.getTimerCount()).toBe(0);
+    });
+
+    it('avoids duplicate history requests while one is pending', async () => {
+        const pending = deferred<ReturnType<typeof historyResponse>>();
+        apiRequest.mockReturnValueOnce(pending.promise);
+        const parser = createParser();
+
+        await parser.refreshHistory();
+        expect(apiRequest).toHaveBeenCalledTimes(1);
+        pending.resolve(historyResponse(false));
+        await vi.advanceTimersByTimeAsync(0);
+        expect(parser.historyLoading.value).toBe(false);
+    });
+
+    it('blocks unsafe URLs from status and history while preserving valid downloads', async () => {
+        apiRequest
+            .mockResolvedValueOnce({
+                ok: true,
+                data: {
+                    items: [
+                        {
+                            runId: 'active-run',
+                            status: 'running',
+                            downloadUrl: 'javascript:alert(1)',
+                            downloadJsonUrl: 'https://other.test/report',
+                        },
+                    ],
+                    retentionDays: 7,
+                },
+            })
+            .mockResolvedValueOnce(
+                statusResponse({
+                    downloadUrl: 'data:text/html,attack',
+                    downloadJsonUrl: '/parser/report?format=json',
+                })
+            );
+        const parser = createParser();
+        await vi.advanceTimersByTimeAsync(0);
+
+        expect(parser.downloadUrl.value).toBeNull();
+        expect(parser.historyItems.value[0].downloadUrl).toBeNull();
+        expect(parser.historyItems.value[0].downloadJsonUrl).toBeNull();
+        parser.download();
+        parser.downloadHistoryRun(parser.historyItems.value[0]);
+        parser.downloadHistoryRunJson({
+            runId: 'tampered',
+            status: 'completed',
+            downloadUrl: null,
+            downloadJsonUrl: 'https://user:password@free-search.test/report',
+        });
+        expect(window.location.href).toBe('');
+
+        parser.downloadJson();
+        expect(window.location.href).toBe(
+            'https://free-search.test/parser/report?format=json&locale=ru'
+        );
+        parser.downloadHistoryRun({
+            runId: 'completed-run',
+            status: 'completed',
+            downloadUrl: '/parser/report?run=completed-run',
+            downloadJsonUrl: null,
+        });
+        expect(window.location.href).toBe(
+            'https://free-search.test/parser/report?run=completed-run&locale=ru'
+        );
+    });
+
+    it('encodes the run identifier as a single status and stop path segment', async () => {
+        apiRequest
+            .mockResolvedValueOnce({
+                ok: true,
+                data: {
+                    items: [{ runId: '../other?key=value', status: 'running' }],
+                    retentionDays: 7,
+                },
+            })
+            .mockResolvedValueOnce(
+                statusResponse({ runId: '../other?key=value' })
+            )
+            .mockResolvedValueOnce(
+                statusResponse({
+                    runId: '../other?key=value',
+                    status: 'stopped',
+                    stage: 'stopped',
+                })
+            )
+            .mockResolvedValueOnce(historyResponse(false));
+        const parser = createParser();
+        await vi.advanceTimersByTimeAsync(0);
+        parser.stop();
+        await vi.advanceTimersByTimeAsync(0);
+
+        expect(apiRequest.mock.calls[1][0]).toBe(
+            '/test/parser/status/..%2Fother%3Fkey%3Dvalue'
+        );
+        expect(apiRequest.mock.calls[2][0]).toBe(
+            '/test/parser/stop/..%2Fother%3Fkey%3Dvalue'
+        );
     });
 });

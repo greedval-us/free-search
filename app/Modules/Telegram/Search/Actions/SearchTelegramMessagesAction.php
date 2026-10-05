@@ -18,11 +18,9 @@ class SearchTelegramMessagesAction
     {
         $authorId = $this->authorIdFilter($query->filter);
 
-        if ($authorId !== null) {
-            return $this->handleAuthorIdSearch($query, $authorId);
-        }
-
-        $dto = $this->gateway->getMessages($query->filter);
+        $filter = $query->filter;
+        unset($filter['authorId'], $filter['authorUsername']);
+        $dto = $this->gateway->getMessages($filter);
 
         if ($dto === null) {
             return new SearchMessagesResultDTO(
@@ -41,6 +39,16 @@ class SearchTelegramMessagesAction
 
         $items = $this->messagePresenter->presentMessages($dto->messages, $query->chatUsername);
         $nextOffsetId = $this->messagePresenter->resolveNextOffsetId($dto->messages);
+        if ($nextOffsetId !== null && $query->offsetId > 0 && $nextOffsetId >= $query->offsetId) {
+            $nextOffsetId = null;
+        }
+        $authorUsername = $query->filter['authorUsername'] ?? null;
+        if ($authorUsername !== null) {
+            $authorId = $this->publicAuthorId($dto->raw, (string) $authorUsername);
+        }
+        if ($authorId !== null || $authorUsername !== null) {
+            $items = array_values(array_filter($items, static fn (array $item): bool => $authorId !== null && $item['authorId'] === $authorId));
+        }
 
         return new SearchMessagesResultDTO(
             ok: true,
@@ -49,7 +57,7 @@ class SearchTelegramMessagesAction
                 'limit' => $query->limit,
                 'offsetId' => $query->offsetId,
                 'nextOffsetId' => $nextOffsetId,
-                'hasMore' => $nextOffsetId !== null && count($items) >= $query->limit,
+                'hasMore' => $nextOffsetId !== null && $dto->messages !== [],
                 'total' => $dto->count,
             ],
         );
@@ -75,113 +83,17 @@ class SearchTelegramMessagesAction
         return null;
     }
 
-    private function handleAuthorIdSearch(SearchMessagesQueryDTO $query, int $authorId): SearchMessagesResultDTO
+    private function publicAuthorId(array $payload, string $username): ?int
     {
-        $resolvedPeer = $this->resolveAuthorPeer($authorId);
-
-        if ($resolvedPeer === null) {
-            return new SearchMessagesResultDTO(
-                ok: false,
-                message: __('errors.api.telegram.author_peer_resolve_failed'),
-                items: [],
-                pagination: [
-                    'limit' => $query->limit,
-                    'offsetId' => $query->offsetId,
-                    'nextOffsetId' => null,
-                    'hasMore' => false,
-                    'total' => 0,
-                ],
-            );
-        }
-
-        $filter = $query->filter;
-        unset($filter['authorId']);
-        $filter['from_id'] = $resolvedPeer;
-
-        return $this->handle(new SearchMessagesQueryDTO(
-            filter: $filter,
-            limit: $query->limit,
-            offsetId: $query->offsetId,
-            chatUsername: $query->chatUsername,
-        ));
-    }
-
-    private function resolveAuthorPeer(int $authorId): ?array
-    {
-        if ($authorId <= 0) {
-            return null;
-        }
-
-        $info = $this->gateway->getInfo((string) $authorId);
-
-        if ($info === null) {
-            return null;
-        }
-
-        $user = $this->extractPeerPayload($info->raw, [
-            ['User'],
-            ['user'],
-            ['Full', 'User'],
-            ['full', 'user'],
-        ]);
-
-        if (is_array($user) && (int) ($user['id'] ?? 0) > 0 && isset($user['access_hash'])) {
-            return [
-                '_' => 'inputPeerUser',
-                'user_id' => (int) $user['id'],
-                'access_hash' => (int) $user['access_hash'],
-            ];
-        }
-
-        $chat = $this->extractPeerPayload($info->raw, [
-            ['Chat'],
-            ['chat'],
-        ]);
-
-        if (! is_array($chat)) {
-            return null;
-        }
-
-        $chatType = strtolower((string) ($chat['_'] ?? ''));
-
-        if ((int) ($chat['id'] ?? 0) > 0 && isset($chat['access_hash']) && str_contains($chatType, 'channel')) {
-            return [
-                '_' => 'inputPeerChannel',
-                'channel_id' => (int) $chat['id'],
-                'access_hash' => (int) $chat['access_hash'],
-            ];
-        }
-
-        if ((int) ($chat['id'] ?? 0) > 0 && (str_contains($chatType, 'chat') || $chatType === '')) {
-            return [
-                '_' => 'inputPeerChat',
-                'chat_id' => (int) $chat['id'],
-            ];
-        }
-
-        return null;
-    }
-
-    /**
-     * @param  array<string, mixed>  $payload
-     * @param  array<int, array<int, string>>  $paths
-     */
-    private function extractPeerPayload(array $payload, array $paths): ?array
-    {
-        foreach ($paths as $path) {
-            $candidate = $payload;
-
-            foreach ($path as $segment) {
-                if (! is_array($candidate) || ! array_key_exists($segment, $candidate)) {
-                    $candidate = null;
-                    break;
-                }
-
-                $candidate = $candidate[$segment];
+        foreach (array_merge($payload['users'] ?? [], $payload['chats'] ?? []) as $author) {
+            if (is_array($author) && strcasecmp((string) ($author['username'] ?? ''), $username) === 0) {
+                return (int) ($author['id'] ?? 0) ?: null;
             }
-
-            if (is_array($candidate)) {
-                return $candidate;
+            foreach (is_array($author) ? ($author['usernames'] ?? []) : [] as $alias) {
+                if (is_array($alias) && ($alias['active'] ?? false)
+                    && strcasecmp((string) ($alias['username'] ?? ''), $username) === 0) {
+                    return (int) ($author['id'] ?? 0) ?: null;
+                }
             }
         }
 

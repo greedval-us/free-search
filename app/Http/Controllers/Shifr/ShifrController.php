@@ -69,7 +69,7 @@ final class ShifrController extends Controller
     {
         $this->applyRequestLocale($request->locale());
 
-        return $this->jsonDataFrom($resolver());
+        return $this->jsonDataFrom($resolver())->header('Cache-Control', 'private, no-store');
     }
 
     /**
@@ -85,9 +85,9 @@ final class ShifrController extends Controller
         $result = $resolver();
 
         if ($result === null) {
-            return $this->jsonError($notSupportedMessage, 422);
+            return $this->jsonError($notSupportedMessage, 422)->header('Cache-Control', 'private, no-store');
         }
 
-        return $this->jsonDataFrom($result);
+        return $this->jsonDataFrom($result)->header('Cache-Control', 'private, no-store');
     }
 }

@@ -20,7 +20,7 @@ final class LoadAuthorFeedAction extends AbstractBlueskyAction
     {
         $payload = $this->gateway->getAuthorFeed($actor, $limit, $cursor, $filter);
 
-        $items = collect($payload['feed'] ?? [])
+        $items = collect($this->listPayload($payload, 'feed', 'post.uri'))
             ->map(function (array $item): ?array {
                 $post = (array) ($item['post'] ?? []);
 

@@ -2,6 +2,7 @@
 
 namespace App\Modules\Telegram\Parser;
 
+use App\Modules\Export\Excel\CollectionSummaryRows;
 use App\Modules\Export\Excel\SheetDefinition;
 use App\Modules\Telegram\Parser\Contracts\TelegramParserExportBuilderInterface;
 use App\Modules\Telegram\Support\TelegramConfig;
@@ -41,6 +42,7 @@ class TelegramParserExportBuilder implements TelegramParserExportBuilderInterfac
             title: (string) __('exports.telegram.sheets.summary'),
             headings: $this->translations('exports.telegram.summary.headings'),
             rows: [
+                ...CollectionSummaryRows::fromPayload($payload),
                 [(string) __('exports.telegram.summary.source'), 'Telegram'],
                 [(string) __('exports.telegram.summary.channel'), $chatUsername],
                 [(string) __('exports.telegram.summary.channel_url'), $this->buildChatUrl($chatUsername)],

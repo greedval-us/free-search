@@ -5,7 +5,9 @@ import {
     resolveApiErrorMessage,
     resolveClientErrorMessage,
 } from '@/lib/api';
+import type { ApiResult, RequestOptions } from '@/lib/api';
 import { withDownloadLocale } from '@/lib/downloadLocale';
+import { resolveSameOriginUrl } from '@/lib/sameOriginUrl';
 
 export type ParserRunStatus = 'running' | 'completed' | 'failed' | 'stopped';
 
@@ -49,10 +51,6 @@ type ParserRunOptions<
 
 const TERMINAL_STATUSES: ParserRunStatus[] = ['completed', 'failed', 'stopped'];
 
-const csrfToken = () =>
-    document.querySelector<HTMLMetaElement>('meta[name="csrf-token"]')
-        ?.content ?? '';
-
 export const useParserRun = <
     Stage extends string,
     StatusPayload extends ParserRunStatusPayload<Stage>,
@@ -74,15 +72,39 @@ export const useParserRun = <
     const pollRequestInFlight = ref(false);
     let disposed = false;
     let pollingVersion = 0;
+    const requests = new Set<AbortController>();
     const isCurrent = (version: number) =>
         !disposed && version === pollingVersion;
     const pollIntervalMs = options.pollIntervalMs ?? 3000;
     const endpoint = (suffix: string) =>
         `${options.endpointBase.replace(/\/$/, '')}/${suffix}`;
 
+    const request = async <T>(
+        url: string,
+        requestOptions: RequestOptions
+    ): Promise<ApiResult<T>> => {
+        const controller = new AbortController();
+        requests.add(controller);
+
+        try {
+            return await apiRequest<T>(url, {
+                ...requestOptions,
+                signal: controller.signal,
+            });
+        } finally {
+            requests.delete(controller);
+        }
+    };
+
     const clearPolling = () => {
         // Ignore responses belonging to a stopped, replaced or unmounted run.
         pollingVersion += 1;
+
+        for (const controller of requests) {
+            controller.abort();
+        }
+
+        requests.clear();
 
         if (pollTimer.value !== null) {
             window.clearTimeout(pollTimer.value);
@@ -97,9 +119,13 @@ export const useParserRun = <
         stage.value = payload.stage;
         progress.value = payload.progress;
         error.value = payload.error;
-        downloadUrl.value = payload.downloadUrl;
-        downloadJsonUrl.value = payload.downloadJsonUrl;
-        options.applyModulePayload(payload);
+        downloadUrl.value = resolveSameOriginUrl(payload.downloadUrl);
+        downloadJsonUrl.value = resolveSameOriginUrl(payload.downloadJsonUrl);
+        options.applyModulePayload({
+            ...payload,
+            downloadUrl: downloadUrl.value,
+            downloadJsonUrl: downloadJsonUrl.value,
+        });
     };
 
     const resetState = () => {
@@ -112,7 +138,7 @@ export const useParserRun = <
     };
 
     const refreshHistory = async () => {
-        if (disposed) {
+        if (disposed || historyLoading.value) {
             return;
         }
 
@@ -120,7 +146,7 @@ export const useParserRun = <
         historyLoading.value = true;
 
         try {
-            const response = await apiRequest<
+            const response = await request<
                 ParserRunHistoryResponse<HistoryItem>
             >(endpoint('history'), { method: 'GET' });
 
@@ -137,7 +163,11 @@ export const useParserRun = <
                 );
             }
 
-            historyItems.value = response.data.items;
+            historyItems.value = response.data.items.map((item) => ({
+                ...item,
+                downloadUrl: resolveSameOriginUrl(item.downloadUrl),
+                downloadJsonUrl: resolveSameOriginUrl(item.downloadJsonUrl),
+            }));
             historyRetentionDays.value = response.data.retentionDays;
 
             const activeRun = response.data.items.find(
@@ -163,13 +193,10 @@ export const useParserRun = <
     const requestStop = async (
         activeRunId: string
     ): Promise<StatusPayload | null> => {
-        const response = await apiRequest<StatusPayload>(
-            endpoint(`stop/${activeRunId}`),
+        const response = await request<StatusPayload>(
+            endpoint(`stop/${encodeURIComponent(activeRunId)}`),
             {
                 method: 'POST',
-                headers: {
-                    'X-CSRF-TOKEN': csrfToken(),
-                },
             }
         );
 
@@ -197,11 +224,12 @@ export const useParserRun = <
         }
 
         const version = pollingVersion;
+        const activeRunId = runId.value;
         pollRequestInFlight.value = true;
 
         try {
-            const response = await apiRequest<StatusPayload>(
-                endpoint(`status/${runId.value}`),
+            const response = await request<StatusPayload>(
+                endpoint(`status/${encodeURIComponent(activeRunId)}`),
                 { method: 'GET' }
             );
 
@@ -209,7 +237,7 @@ export const useParserRun = <
                 return;
             }
 
-            if (!response.ok) {
+            if (!response.ok || response.data.runId !== activeRunId) {
                 throw new Error(
                     resolveApiErrorMessage(
                         response.message,
@@ -263,17 +291,10 @@ export const useParserRun = <
         progress.value = 1;
 
         try {
-            const response = await apiRequest<StatusPayload>(
-                endpoint('start'),
-                {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-CSRF-TOKEN': csrfToken(),
-                    },
-                    body,
-                }
-            );
+            const response = await request<StatusPayload>(endpoint('start'), {
+                method: 'POST',
+                body,
+            });
 
             if (!isCurrent(version)) {
                 return false;
@@ -290,6 +311,12 @@ export const useParserRun = <
 
             runId.value = response.data.runId;
             applyPayload(response.data);
+
+            if (TERMINAL_STATUSES.includes(response.data.status)) {
+                loading.value = false;
+                clearPolling();
+            }
+
             void refreshHistory();
             schedulePoll();
 
@@ -346,8 +373,10 @@ export const useParserRun = <
     };
 
     const downloadByUrl = (url: string | null) => {
-        if (url) {
-            window.location.href = withDownloadLocale(url);
+        const safeUrl = url ? withDownloadLocale(url) : null;
+
+        if (safeUrl) {
+            window.location.href = safeUrl;
         }
     };
 

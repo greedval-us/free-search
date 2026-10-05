@@ -1,11 +1,6 @@
 <script setup lang="ts">
-import { computed } from 'vue';
-import type {
-    ParserHistoryField,
-    ParserHistoryStat,
-} from '@/components/ui/parser/history';
+import type { ParserHistoryConfig } from '@/components/ui/parser/history';
 import ParserHistoryPanel from '@/components/ui/parser/ParserHistoryPanel.vue';
-import { useI18n } from '@/composables/useI18n';
 import type { MastodonParserHistoryItem } from '../../types';
 
 defineProps<{
@@ -19,40 +14,22 @@ const emit = defineEmits<{
     downloadJson: [item: MastodonParserHistoryItem];
 }>();
 
-const { t } = useI18n();
-
-const detailFields = computed<ParserHistoryField<MastodonParserHistoryItem>[]>(
-    () => [
-        {
-            label: t('mastodon.parser.account'),
-            value: (item) => item.account,
-        },
-    ]
-);
-
-const statFields = computed<ParserHistoryStat<MastodonParserHistoryItem>[]>(
-    () => [
-        {
-            label: 'mastodon.parser.history.statuses',
-            value: (item) => item.processedStatuses,
-        },
-        {
-            label: 'mastodon.parser.history.comments',
-            value: (item) => item.processedComments,
-        },
-    ]
-);
+const config = {
+    moduleKey: 'mastodon.parser',
+    title: { key: 'account' },
+    stats: [
+        { label: 'mastodon.parser.history.statuses', key: 'processedStatuses' },
+        { label: 'mastodon.parser.history.comments', key: 'processedComments' },
+    ],
+} satisfies ParserHistoryConfig<MastodonParserHistoryItem>;
 </script>
 
 <template>
     <ParserHistoryPanel
-        module-key="mastodon.parser"
+        :config="config"
         :items="items"
         :loading="loading"
         :retention-days="retentionDays"
-        :title="(item) => item.account"
-        :detail-fields="detailFields"
-        :stat-fields="statFields"
         @download="emit('download', $event)"
         @download-json="emit('downloadJson', $event)"
     />

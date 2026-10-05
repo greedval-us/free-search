@@ -8,6 +8,7 @@ use App\Modules\Bluesky\BlueskyApiClient;
 use App\Modules\Bluesky\Core\Contracts\BlueskyGatewayInterface;
 use App\Modules\Bluesky\Parser\BlueskyParserApplicationService;
 use App\Modules\Bluesky\Parser\BlueskyParserExportBuilder;
+use App\Modules\Bluesky\Parser\BlueskyParserRunStore;
 use App\Modules\Bluesky\Parser\Contracts\BlueskyParserApplicationServiceInterface;
 use App\Modules\Bluesky\Parser\Contracts\BlueskyParserExportBuilderInterface;
 use App\Modules\Bluesky\Search\BlueskySearchApplicationService;
@@ -16,6 +17,7 @@ use App\Modules\Bluesky\Support\BlueskyActorResolver;
 use App\Modules\Bluesky\Support\BlueskyApiConfig;
 use App\Modules\Bluesky\Support\BlueskyModuleConfig;
 use App\Modules\ParserSupport\Contracts\ParserRunBackgroundProcessorInterface;
+use App\Modules\ParserSupport\JsonRunStore;
 use App\Support\Providers\BindingsServiceProvider;
 
 final class BlueskyServiceProvider extends BindingsServiceProvider
@@ -40,6 +42,11 @@ final class BlueskyServiceProvider extends BindingsServiceProvider
         );
 
         $this->app->singleton(BlueskyActorResolver::class);
+
+        $this->app->tag(
+            [BlueskyParserRunStore::class],
+            JsonRunStore::CONTAINER_TAG,
+        );
 
         $this->app->tag(
             [BlueskyParserApplicationService::class],

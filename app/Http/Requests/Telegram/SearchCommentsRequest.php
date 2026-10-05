@@ -4,6 +4,7 @@ namespace App\Http\Requests\Telegram;
 
 use App\Http\Requests\Telegram\Concerns\ResolvesTelegramConfig;
 use App\Modules\Telegram\DTO\Request\SearchCommentsQueryDTO;
+use App\Rules\PublicTelegramUsername;
 use Illuminate\Foundation\Http\FormRequest;
 
 class SearchCommentsRequest extends FormRequest
@@ -18,7 +19,7 @@ class SearchCommentsRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'chatUsername' => ['required', 'string', 'max:255'],
+            'chatUsername' => ['bail', 'required', 'string', new PublicTelegramUsername],
             'postId' => ['required', 'integer', 'min:1'],
             'limit' => ['nullable', 'integer', 'min:1', 'max:'.$this->commentsLimitMax()],
             'offsetId' => ['nullable', 'integer', 'min:0'],

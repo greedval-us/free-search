@@ -76,10 +76,8 @@ class YouTubeDataApiClient implements YouTubeGatewayInterface
 
         try {
             $response = $this->http()
-                ->get($endpoint, [
-                    ...$query,
-                    'key' => $key,
-                ]);
+                ->withHeaders(['X-Goog-Api-Key' => $key])
+                ->get($endpoint, $query);
         } catch (ConnectionException $exception) {
             $this->externalServiceLogger->logConnectionFailure('youtube', $endpoint, $exception, [
                 'query' => $query,

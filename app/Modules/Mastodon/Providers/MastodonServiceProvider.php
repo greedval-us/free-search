@@ -10,11 +10,13 @@ use App\Modules\Mastodon\Parser\Contracts\MastodonParserApplicationServiceInterf
 use App\Modules\Mastodon\Parser\Contracts\MastodonParserExportBuilderInterface;
 use App\Modules\Mastodon\Parser\MastodonParserApplicationService;
 use App\Modules\Mastodon\Parser\MastodonParserExportBuilder;
+use App\Modules\Mastodon\Parser\MastodonParserRunStore;
 use App\Modules\Mastodon\Search\Contracts\MastodonSearchApplicationServiceInterface;
 use App\Modules\Mastodon\Search\MastodonSearchApplicationService;
 use App\Modules\Mastodon\Support\MastodonApiConfig;
 use App\Modules\Mastodon\Support\MastodonModuleConfig;
 use App\Modules\ParserSupport\Contracts\ParserRunBackgroundProcessorInterface;
+use App\Modules\ParserSupport\JsonRunStore;
 use App\Support\Providers\BindingsServiceProvider;
 
 final class MastodonServiceProvider extends BindingsServiceProvider
@@ -28,6 +30,11 @@ final class MastodonServiceProvider extends BindingsServiceProvider
             static fn (): MastodonApiConfig => MastodonApiConfig::fromArray(
                 (array) config('services.mastodon', [])
             )
+        );
+
+        $this->app->tag(
+            [MastodonParserRunStore::class],
+            JsonRunStore::CONTAINER_TAG,
         );
 
         $this->app->tag(

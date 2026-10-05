@@ -20,9 +20,12 @@ final class ParserRunLifecycleManager
      */
     public function markFailed(array $run, string $message, string $stage = 'failed'): array
     {
+        if (! $this->isRunning($run)) {
+            return $run;
+        }
+
         $run['status'] = ParserRunStatus::Failed->value;
         $run['stage'] = $stage;
-        $run['progress'] = 100;
         $run['error'] = $message;
 
         return $run;

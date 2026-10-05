@@ -15,10 +15,43 @@ use Maatwebsite\Excel\Excel as ExcelWriter;
 use Maatwebsite\Excel\Facades\Excel;
 use PhpOffice\PhpSpreadsheet\Cell\DataType;
 use PhpOffice\PhpSpreadsheet\IOFactory;
+use PHPUnit\Framework\Attributes\DataProvider;
 use Tests\TestCase;
 
 class ParserExportBuildersTest extends TestCase
 {
+    #[DataProvider('collectionExports')]
+    public function test_collection_status_and_completeness_are_visible_in_excel_summaries(string $builderClass, string $locale, string $status, bool $complete, array $expectedRows): void
+    {
+        app()->setLocale($locale);
+        $this->freezeTime();
+
+        $sheets = app($builderClass)->buildSheets([
+            'collection' => ['status' => $status, 'complete' => $complete],
+        ]);
+
+        $this->assertSame($expectedRows, array_slice($sheets[0]->rows, 0, 2));
+    }
+
+    public static function collectionExports(): array
+    {
+        $cases = [];
+        foreach ([TelegramParserExportBuilder::class, YouTubeParserExportBuilder::class, BlueskyParserExportBuilder::class, MastodonParserExportBuilder::class] as $builder) {
+            foreach ([
+                ['en', 'completed', true, [['Collection status', 'Completed'], ['Collection complete', 'yes']]],
+                ['en', 'stopped', false, [['Collection status', 'Stopped'], ['Collection complete', 'no']]],
+                ['en', 'failed', false, [['Collection status', 'Failed'], ['Collection complete', 'no']]],
+                ['ru', 'completed', true, [['Статус сбора', 'Завершён'], ['Сбор завершён полностью', 'да']]],
+                ['ru', 'stopped', false, [['Статус сбора', 'Остановлен'], ['Сбор завершён полностью', 'нет']]],
+                ['ru', 'failed', false, [['Статус сбора', 'Ошибка'], ['Сбор завершён полностью', 'нет']]],
+            ] as $expected) {
+                $cases[$builder.' '.$expected[0].' '.$expected[1]] = [$builder, ...$expected];
+            }
+        }
+
+        return $cases;
+    }
+
     public function test_workbook_export_creates_a_readable_styled_xlsx_file(): void
     {
         $definition = new SheetDefinition(

@@ -18,6 +18,10 @@ class RequestPayloadSanitizer
         'secret',
         'api_key',
         'access_token',
+        'hmac_key',
+        'xor_key',
+        'playfair_key',
+        'column_key',
         'refresh_token',
         'authorization',
         'cookie',
@@ -60,7 +64,7 @@ class RequestPayloadSanitizer
      * @param  array<string, mixed>  $payload
      * @return array<string, mixed>
      */
-    public function sanitize(array $payload): array
+    public function sanitize(array $payload, array $additionalMaskedKeys = []): array
     {
         $result = [];
         foreach ($payload as $key => $value) {
@@ -68,7 +72,7 @@ class RequestPayloadSanitizer
                 continue;
             }
 
-            if ($this->shouldMaskKey($key)) {
+            if ($this->shouldMaskKey($key) || in_array(strtolower($key), $additionalMaskedKeys, true)) {
                 $result[$key] = '***';
 
                 continue;
@@ -83,7 +87,7 @@ class RequestPayloadSanitizer
             }
 
             if (is_array($value)) {
-                $result[$key] = $this->sanitize($value);
+                $result[$key] = $this->sanitize($value, $additionalMaskedKeys);
             }
         }
 
@@ -93,13 +97,15 @@ class RequestPayloadSanitizer
     private function shouldMaskKey(string $key): bool
     {
         $normalized = strtolower(trim($key));
+        $compact = str_replace('_', '', $normalized);
 
-        if (in_array($normalized, $this->maskedKeys, true)) {
+        if (in_array($normalized, $this->maskedKeys, true)
+            || in_array($compact, array_map(static fn (string $masked): string => str_replace('_', '', $masked), $this->maskedKeys), true)) {
             return true;
         }
 
         foreach ($this->maskedKeyFragments as $fragment) {
-            if (str_contains($normalized, $fragment)) {
+            if (str_contains($compact, str_replace('_', '', $fragment))) {
                 return true;
             }
         }

@@ -1,8 +1,16 @@
+import { resolveSameOriginUrl } from '@/lib/sameOriginUrl';
+
 const LOCALE_STORAGE_KEY = 'locale';
 
 export const resolveDownloadLocale = (): 'en' | 'ru' => {
     if (typeof window !== 'undefined') {
-        const storedLocale = window.localStorage.getItem(LOCALE_STORAGE_KEY);
+        let storedLocale: string | null = null;
+
+        try {
+            storedLocale = window.localStorage.getItem(LOCALE_STORAGE_KEY);
+        } catch {
+            // Browsers may disable storage; the document still carries the locale.
+        }
 
         if (storedLocale === 'ru' || storedLocale === 'en') {
             return storedLocale;
@@ -18,8 +26,14 @@ export const resolveDownloadLocale = (): 'en' | 'ru' => {
     return 'en';
 };
 
-export const withDownloadLocale = (url: string): string => {
-    const nextUrl = new URL(url, window.location.origin);
+export const withDownloadLocale = (url: string): string | null => {
+    const safeUrl = resolveSameOriginUrl(url);
+
+    if (!safeUrl) {
+        return null;
+    }
+
+    const nextUrl = new URL(safeUrl);
     nextUrl.searchParams.set('locale', resolveDownloadLocale());
 
     return nextUrl.toString();

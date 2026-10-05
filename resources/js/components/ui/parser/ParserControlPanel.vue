@@ -8,6 +8,7 @@ import {
 } from 'lucide-vue-next';
 import { Button } from '@/components/ui/button';
 import ControlPanelShell from '@/components/ui/control-panel/ControlPanelShell.vue';
+import { useI18n } from '@/composables/useI18n';
 
 defineProps<{
     title: string;
@@ -34,6 +35,8 @@ const emit = defineEmits<{
     download: [];
     downloadJson: [];
 }>();
+
+const { t } = useI18n();
 </script>
 
 <template>
@@ -48,51 +51,72 @@ const emit = defineEmits<{
         body-class="space-y-3"
         @update:collapsed="emit('update:settingsCollapsed', $event)"
     >
-            <slot name="fields" />
+        <slot name="fields" />
 
-            <div class="grid gap-2 sm:flex sm:flex-wrap sm:items-center">
+        <div
+            class="flex flex-col gap-3 border-t border-border/60 pt-3 lg:flex-row lg:items-center lg:justify-between"
+        >
+            <div
+                class="grid gap-2 sm:flex sm:flex-wrap sm:items-center"
+                role="group"
+                :aria-label="t('parser.actions.collection')"
+            >
                 <Button
                     type="button"
-                    :disabled="!canStart"
+                    class="motion-reduce:transition-none"
+                    :disabled="loading || !canStart"
                     @click="emit('start')"
                 >
-                    <LoaderCircle v-if="loading" class="h-4 w-4 animate-spin" />
-                    <Database v-else class="h-4 w-4" />
+                    <LoaderCircle
+                        v-if="loading"
+                        class="size-4 animate-spin motion-reduce:animate-none"
+                        aria-hidden="true"
+                    />
+                    <Database v-else class="size-4" aria-hidden="true" />
                     {{ loading ? collectingLabel : startLabel }}
                 </Button>
-
                 <Button
                     type="button"
                     variant="outline"
-                    class="border-destructive/35 text-destructive hover:bg-destructive/10 hover:text-destructive"
+                    class="border-destructive/25 text-destructive hover:bg-destructive/10 hover:text-destructive motion-reduce:transition-none"
                     :disabled="!loading"
                     @click="emit('stop')"
                 >
-                    <Square class="h-4 w-4" />
+                    <Square class="size-3.5" aria-hidden="true" />
                     {{ stopLabel }}
-                </Button>
-
-                <Button
-                    type="button"
-                    variant="outline"
-                    :disabled="!downloadUrl || loading"
-                    @click="emit('download')"
-                >
-                    <Download class="h-4 w-4" />
-                    {{ downloadLabel }}
-                </Button>
-
-                <Button
-                    type="button"
-                    variant="outline"
-                    :disabled="!downloadJsonUrl || loading"
-                    @click="emit('downloadJson')"
-                >
-                    <Download class="h-4 w-4" />
-                    {{ downloadJsonLabel }}
                 </Button>
             </div>
 
-            <slot name="afterActions" />
+            <div
+                class="grid gap-2 sm:flex sm:flex-wrap sm:items-center"
+                role="group"
+                :aria-label="t('parser.actions.exports')"
+            >
+                <Button
+                    type="button"
+                    variant="secondary"
+                    size="sm"
+                    class="motion-reduce:transition-none"
+                    :disabled="!downloadUrl || loading"
+                    @click="emit('download')"
+                >
+                    <Download class="size-3.5" aria-hidden="true" />
+                    {{ downloadLabel }}
+                </Button>
+                <Button
+                    type="button"
+                    variant="secondary"
+                    size="sm"
+                    class="motion-reduce:transition-none"
+                    :disabled="!downloadJsonUrl || loading"
+                    @click="emit('downloadJson')"
+                >
+                    <Download class="size-3.5" aria-hidden="true" />
+                    {{ downloadJsonLabel }}
+                </Button>
+            </div>
+        </div>
+
+        <slot name="afterActions" />
     </ControlPanelShell>
 </template>

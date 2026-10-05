@@ -11,6 +11,12 @@ class MessagesAction extends AbstractTelegramAction
         $client = $this->madeline();
 
         try {
+            $source = $this->publicSource($client, (string) ($filter['peer'] ?? ''));
+            if ($source === null || filled($filter['from_id'] ?? null) || filled($filter['saved_peer_id'] ?? null)) {
+                return null;
+            }
+            $filter['peer'] = $source['peer'];
+
             return $this->executeWithRetry(
                 callback: fn () => $client->messages->search($filter),
                 context: $filter

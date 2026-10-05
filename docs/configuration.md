@@ -49,10 +49,16 @@ Database cache, sessions и queue требуют соответствующих 
 | `BLUESKY_PDS_URL` | нет | Personal Data Server | `https://bsky.social` |
 | `MASTODON_API_BASE_URL` | для Mastodon | Target instance | `https://mastodon.social` |
 | `MASTODON_API_TOKEN` | зависит от instance/API | Bearer token | пусто |
-| `OSINT_NEWSAPI_KEY` | только NewsAPI provider | NewsAPI credential | пусто |
-| `OSINT_NEWSAPI_BASE_URL` | нет | NewsAPI endpoint | `/v2/everything` endpoint |
+| `OSINT_NEWS_MEDIA_SEARXNG_BASE_URL` | для новостей | Адрес своего SearXNG | `http://127.0.0.1:8088` |
+| `OSINT_NEWS_MEDIA_SEARXNG_LANGUAGE` | нет | Язык поиска новостей | `ru` |
+| `OSINT_NEWS_MEDIA_SEARXNG_ENGINES` | нет | News engines через запятую | все настроенные news engines |
+| `OSINT_NEWS_MEDIA_SEARXNG_MAX_PAGES` | нет | Максимум поисковых страниц | `3`, верхняя граница `10` |
+| `OSINT_NEWS_MEDIA_SEARXNG_TIMEOUT` | нет | Таймаут одной страницы | `10` секунд, максимум `20` |
+| `OSINT_NEWS_MEDIA_SEARXNG_REQUEST_BUDGET` | нет | Общий HTTP бюджет поиска | `20` секунд, максимум `25` |
 
 Timeout/retry variables поддерживаются в `config/services.php` (`*_TIMEOUT_SECONDS`, `*_RETRY_ATTEMPTS`, `*_RETRY_DELAY_MILLISECONDS`), но не все перечислены в `.env.example`.
+
+Локальный SearXNG запускается через `docker/searxng/Start.ps1`; конфигурация описана в [модуле новостей](modules/news-media-intel.md). JSON-выдача обязательна. `OSINT_NEWS_MEDIA_MAX_MENTIONS` ограничивает итоговую выборку. `OSINT_NEWS_MEDIA_SEARXNG_TIME_RANGE` принимает пустое значение, `day`, `month`, `year`; поддержка зависит от engine. `OSINT_NEWS_MEDIA_SEARXNG_SAFESEARCH` — `0`, `1`, `2`. Старые настройки NewsAPI/RSS больше не читаются.
 
 ## Module limits
 
@@ -61,7 +67,7 @@ Timeout/retry variables поддерживаются в `config/services.php` (`
 - Bluesky: `OSINT_BLUESKY_SEARCH_*`.
 - Mastodon: `OSINT_MASTODON_SEARCH_*`.
 - Site Intel: `OSINT_SITE_HEALTH_*`, `OSINT_SITE_INTEL_WHOIS_*`.
-- News: `OSINT_NEWS_MEDIA_*`, `OSINT_NEWSAPI_*`.
+- News: `OSINT_NEWS_MEDIA_*` (SearXNG и анализ найденных статей).
 - Frontend retries: `OSINT_FRONTEND_RETRY_*`; config передаётся через Inertia shared props.
 
 `OSINT_FIO_*` и `OSINT_USERNAME_*` из example сейчас не соответствуют активным backend modules/routes и считаются legacy/unwired settings.

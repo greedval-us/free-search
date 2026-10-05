@@ -2,6 +2,7 @@
 
 namespace App\Modules\YouTube\Parser;
 
+use App\Modules\Export\Excel\CollectionSummaryRows;
 use App\Modules\Export\Excel\SheetDefinition;
 use App\Modules\YouTube\Parser\Contracts\YouTubeParserExportBuilderInterface;
 use App\Modules\YouTube\Support\YouTubeModuleConfig;
@@ -39,6 +40,7 @@ class YouTubeParserExportBuilder implements YouTubeParserExportBuilderInterface
             title: (string) __('exports.youtube.sheets.summary'),
             headings: $this->translations('exports.youtube.summary.headings'),
             rows: [
+                ...CollectionSummaryRows::fromPayload($payload),
                 [(string) __('exports.youtube.summary.source'), 'YouTube'],
                 [(string) __('exports.youtube.summary.video_id'), $videoId],
                 [(string) __('exports.youtube.summary.video_url'), $this->videoUrl($videoId)],

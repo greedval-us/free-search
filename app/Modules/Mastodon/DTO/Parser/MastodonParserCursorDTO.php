@@ -2,12 +2,16 @@
 
 namespace App\Modules\Mastodon\DTO\Parser;
 
+use App\Modules\ParserSupport\PaginationCursorHistory;
 use App\Support\Contracts\ArrayPayloadable;
 
 final class MastodonParserCursorDTO implements ArrayPayloadable
 {
+    private PaginationCursorHistory $statusesHistory;
+
     /**
      * @param  array<int, string>  $commentStatusIds
+     * @param  array<int, string>  $statusesSeenMaxIds
      */
     public function __construct(
         private ?string $statusesMaxId = null,
@@ -16,7 +20,10 @@ final class MastodonParserCursorDTO implements ArrayPayloadable
         private array $commentStatusIds = [],
         private int $commentStatusIndex = 0,
         private int $nextAdvanceAt = 0,
-    ) {}
+        array $statusesSeenMaxIds = [],
+    ) {
+        $this->statusesHistory = PaginationCursorHistory::fromTokens($statusesSeenMaxIds);
+    }
 
     /**
      * @param  array<string, mixed>  $payload
@@ -33,6 +40,7 @@ final class MastodonParserCursorDTO implements ArrayPayloadable
             )),
             commentStatusIndex: max(0, (int) ($payload['commentStatusIndex'] ?? 0)),
             nextAdvanceAt: max(0, (int) ($payload['nextAdvanceAt'] ?? 0)),
+            statusesSeenMaxIds: is_array($payload['statusesSeenMaxIds'] ?? null) ? $payload['statusesSeenMaxIds'] : [],
         );
     }
 
@@ -44,6 +52,22 @@ final class MastodonParserCursorDTO implements ArrayPayloadable
     public function setStatusesMaxId(?string $value): void
     {
         $this->statusesMaxId = self::nullableString($value);
+    }
+
+    public function hasSeenStatusesMaxId(string $value): bool
+    {
+        return $this->statusesHistory->contains($value);
+    }
+
+    public function rememberStatusesMaxId(?string $value): void
+    {
+        $this->statusesHistory->remember($value);
+    }
+
+    public function rememberPage(?string $current, ?string $next): void
+    {
+        $this->statusesHistory->assertAdvances($current, $next, 'Mastodon statuses pagination did not advance.');
+        $this->statusesHistory->remember($current);
     }
 
     public function incrementStatusesPage(): int
@@ -129,6 +153,7 @@ final class MastodonParserCursorDTO implements ArrayPayloadable
             'commentStatusIds' => $this->commentStatusIds,
             'commentStatusIndex' => $this->commentStatusIndex,
             'nextAdvanceAt' => $this->nextAdvanceAt,
+            'statusesSeenMaxIds' => $this->statusesHistory->tokens(),
         ];
     }
 

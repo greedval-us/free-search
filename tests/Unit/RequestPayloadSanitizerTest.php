@@ -44,4 +44,20 @@ class RequestPayloadSanitizerTest extends TestCase
         $this->assertSame('***', $result['peer']);
         $this->assertSame(20, $result['limit']);
     }
+
+    public function test_it_masks_toolkit_and_camel_case_credentials_recursively(): void
+    {
+        $result = (new RequestPayloadSanitizer)->sanitize([
+            'apiKey' => 'test-api-key',
+            'hmac_key' => 'test-hmac',
+            'PASSWORD' => 'test-password',
+            'options' => ['xor_key' => 'test-xor', 'text' => 'private-input', 'key' => 'test-cipher'],
+            'algorithm' => 'sha256',
+        ], ['text', 'key']);
+
+        $this->assertSame([
+            'apiKey' => '***', 'hmac_key' => '***', 'PASSWORD' => '***',
+            'options' => ['xor_key' => '***', 'text' => '***', 'key' => '***'], 'algorithm' => 'sha256',
+        ], $result);
+    }
 }

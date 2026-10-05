@@ -31,6 +31,7 @@ abstract class AbstractParserApplicationService implements ParserRunApplicationS
             $this->moduleKey(),
             $userId,
             $context,
+            $this->collector->buildResultSnapshot(...),
         );
     }
 
@@ -44,6 +45,7 @@ abstract class AbstractParserApplicationService implements ParserRunApplicationS
             $userId,
             $runId,
             $this->collector->advance(...),
+            $this->collector->buildResultSnapshot(...),
         );
     }
 
@@ -60,21 +62,35 @@ abstract class AbstractParserApplicationService implements ParserRunApplicationS
         );
     }
 
-    final public function advanceRun(int $userId, string $runId): bool
+    final public function advanceRun(int $userId, string $runId, ?int $checkpointVersion = null): bool
     {
         $run = $this->executionCoordinator->advance(
             $this->runStore,
             $userId,
             $runId,
             $this->collector->advance(...),
+            $this->collector->buildResultSnapshot(...),
+            $checkpointVersion,
         );
 
         return $this->executionCoordinator->shouldContinue($run);
     }
 
-    final public function failRun(int $userId, string $runId, string $message): void
+    final public function failRun(int $userId, string $runId, string $message, ?int $checkpointVersion = null): void
     {
-        $this->executionCoordinator->fail($this->runStore, $userId, $runId, $message);
+        // Jobs created before checkpoint versions cannot prove which step failed.
+        if ($checkpointVersion === null) {
+            return;
+        }
+
+        $this->executionCoordinator->fail(
+            $this->runStore,
+            $userId,
+            $runId,
+            __('errors.api.service_unavailable'),
+            $this->collector->buildResultSnapshot(...),
+            $checkpointVersion,
+        );
     }
 
     /**

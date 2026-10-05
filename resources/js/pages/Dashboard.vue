@@ -13,8 +13,15 @@ import {
     Trash2,
 } from 'lucide-vue-next';
 import { computed, onBeforeUnmount, onMounted } from 'vue';
+import KeyValueList from '@/components/ui/KeyValueList.vue';
+import MetricCard from '@/components/ui/MetricCard.vue';
 import { useI18n } from '@/composables/useI18n';
 import { dashboard as dashboardRoute } from '@/routes';
+import { toggle as toggleModulePin } from '@/routes/dashboard/module-pins';
+import {
+    destroy as destroySavedQuery,
+    store as storeSavedQuery,
+} from '@/routes/dashboard/saved-queries';
 import DashboardModuleGrid from './dashboard/DashboardModuleGrid.vue';
 import DashboardPlanCard from './dashboard/DashboardPlanCard.vue';
 import TrackingCapacityCard from './dashboard/TrackingCapacityCard.vue';
@@ -253,7 +260,7 @@ const filterActions = computed(() => [
 ]);
 
 const applyFilters = (): void => {
-    router.get('/dashboard', filterForm.data(), {
+    router.get(dashboardRoute.url(), filterForm.data(), {
         preserveScroll: true,
         preserveState: true,
         replace: true,
@@ -271,14 +278,14 @@ const resetFilters = (): void => {
 
 const saveQuery = (requestLogId: number): void => {
     saveQueryForm.request_log_id = requestLogId;
-    saveQueryForm.post('/dashboard/saved-queries', {
+    saveQueryForm.post(storeSavedQuery.url(), {
         preserveScroll: true,
         preserveState: true,
     });
 };
 
 const deleteSavedQuery = (savedQueryId: number): void => {
-    router.delete(`/dashboard/saved-queries/${savedQueryId}`, {
+    router.delete(destroySavedQuery.url(savedQueryId), {
         preserveScroll: true,
         preserveState: true,
     });
@@ -286,7 +293,7 @@ const deleteSavedQuery = (savedQueryId: number): void => {
 
 const togglePin = (moduleKey: string): void => {
     router.post(
-        '/dashboard/module-pins/toggle',
+        toggleModulePin.url(),
         {
             module_key: moduleKey,
         },
@@ -365,23 +372,15 @@ onBeforeUnmount(() => {
             />
 
             <section class="grid grid-cols-2 gap-3 xl:grid-cols-4">
-                <article
+                <MetricCard
                     v-for="card in summaryCards"
                     :key="card.key"
-                    class="intel-panel"
-                >
-                    <div class="flex items-center gap-2 text-muted-foreground">
-                        <component :is="card.icon" class="h-4 w-4" />
-                        <span class="intel-kicker !tracking-wide">{{
-                            card.title
-                        }}</span>
-                    </div>
-                    <p
-                        class="mt-3 text-3xl font-semibold tracking-tight tabular-nums"
-                    >
-                        {{ card.value }}
-                    </p>
-                </article>
+                    :title="card.title"
+                    :value="card.value"
+                    :icon="card.icon"
+                    prominent
+                    class="workspace-card"
+                />
             </section>
 
             <section>
@@ -389,20 +388,7 @@ onBeforeUnmount(() => {
                     <h2 class="intel-section-heading">
                         {{ t('dashboard.sections.insights') }}
                     </h2>
-                    <div class="mt-3 space-y-2 text-sm">
-                        <p
-                            v-for="item in insightItems"
-                            :key="item.key"
-                            class="intel-data-row text-sm"
-                        >
-                            <span class="text-muted-foreground"
-                                >{{ item.label }}:</span
-                            >
-                            <span class="font-medium" :class="item.valueClass">
-                                {{ item.value }}
-                            </span>
-                        </p>
-                    </div>
+                    <KeyValueList class="mt-3" :items="insightItems" />
                 </article>
             </section>
 

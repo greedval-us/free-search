@@ -2,10 +2,15 @@
 
 namespace App\Modules\YouTube\DTO\Parser;
 
+use App\Modules\ParserSupport\PaginationCursorHistory;
 use App\Support\Contracts\ArrayPayloadable;
 
 final class YouTubeParserCursorDTO implements ArrayPayloadable
 {
+    private PaginationCursorHistory $commentsHistory;
+
+    private PaginationCursorHistory $repliesHistory;
+
     /**
      * @param  array<int, string>  $replyThreadIds
      */
@@ -17,7 +22,12 @@ final class YouTubeParserCursorDTO implements ArrayPayloadable
         private int $replyThreadIndex = 0,
         private ?string $replyPageToken = null,
         private int $nextAdvanceAt = 0,
-    ) {}
+        array $commentsPageTokens = [],
+        array $replyPageTokens = [],
+    ) {
+        $this->commentsHistory = PaginationCursorHistory::fromTokens($commentsPageTokens);
+        $this->repliesHistory = PaginationCursorHistory::fromTokens($replyPageTokens);
+    }
 
     /**
      * @param  array<string, mixed>  $payload
@@ -35,6 +45,8 @@ final class YouTubeParserCursorDTO implements ArrayPayloadable
             replyThreadIndex: max(0, (int) ($payload['replyThreadIndex'] ?? 0)),
             replyPageToken: self::nullableString($payload['replyPageToken'] ?? null),
             nextAdvanceAt: max(0, (int) ($payload['nextAdvanceAt'] ?? 0)),
+            commentsPageTokens: is_array($payload['commentsPageTokens'] ?? null) ? $payload['commentsPageTokens'] : [],
+            replyPageTokens: is_array($payload['replyPageTokens'] ?? null) ? $payload['replyPageTokens'] : [],
         );
     }
 
@@ -45,7 +57,11 @@ final class YouTubeParserCursorDTO implements ArrayPayloadable
 
     public function setCommentsPageToken(?string $token): void
     {
-        $this->commentsPageToken = self::nullableString($token);
+        $token = self::nullableString($token);
+        $this->commentsHistory->assertAdvances($this->commentsPageToken, $token, 'YouTube comments pagination cursor did not advance.');
+        $this->commentsHistory->remember($token);
+
+        $this->commentsPageToken = $token;
     }
 
     public function incrementCommentsPage(): int
@@ -127,7 +143,15 @@ final class YouTubeParserCursorDTO implements ArrayPayloadable
 
     public function setReplyPageToken(?string $token): void
     {
-        $this->replyPageToken = self::nullableString($token);
+        $token = self::nullableString($token);
+        if ($token === null) {
+            $this->repliesHistory = PaginationCursorHistory::fromTokens([]);
+        } else {
+            $this->repliesHistory->assertAdvances($this->replyPageToken, $token, 'YouTube replies pagination cursor did not advance.');
+            $this->repliesHistory->remember($token);
+        }
+
+        $this->replyPageToken = $token;
     }
 
     public function nextAdvanceAt(): int
@@ -153,6 +177,8 @@ final class YouTubeParserCursorDTO implements ArrayPayloadable
             'replyThreadIndex' => $this->replyThreadIndex,
             'replyPageToken' => $this->replyPageToken ?? '',
             'nextAdvanceAt' => $this->nextAdvanceAt,
+            'commentsPageTokens' => $this->commentsHistory->tokens(),
+            'replyPageTokens' => $this->repliesHistory->tokens(),
         ];
     }
 

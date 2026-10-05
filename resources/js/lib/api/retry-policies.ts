@@ -139,9 +139,19 @@ export const resolveEndpointRetryPolicy = (
     url: string,
     method: HttpMethod
 ): RetryPolicy | undefined => {
+    let pathname: string;
+
+    try {
+        pathname = new URL(url, 'http://localhost').pathname;
+    } catch {
+        return undefined;
+    }
+
     for (const rule of getAllEndpointRetryRules()) {
         const methodMatched = !rule.methods || rule.methods.includes(method);
-        const pathMatched = url.includes(rule.path);
+        const pathMatched = rule.path.endsWith('/')
+            ? pathname.startsWith(rule.path)
+            : pathname === rule.path;
 
         if (methodMatched && pathMatched) {
             return rule.policy;

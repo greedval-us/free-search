@@ -28,7 +28,7 @@ class TelegramCommentPresenter
         }
 
         return [
-            'ok' => true,
+            'ok' => (bool) ($commentsPage['ok'] ?? true),
             'items' => $items,
             'pagination' => [
                 'limit' => $limit,

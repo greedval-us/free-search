@@ -1,20 +1,26 @@
 <script setup lang="ts" generic="TItem extends ParserHistoryItem">
+import { Download, History, LoaderCircle } from 'lucide-vue-next';
+import { useId } from 'vue';
 import { Button } from '@/components/ui/button';
+import EmptyState from '@/components/ui/EmptyState.vue';
 import { useI18n } from '@/composables/useI18n';
 import type {
+    ParserHistoryConfig,
     ParserHistoryField,
     ParserHistoryItem,
-    ParserHistoryStat,
 } from './history';
+import ParserStatusBadge from './ParserStatusBadge.vue';
+import {
+    boundedProgress,
+    formatParserDateTime,
+    isPartialParserExport,
+} from './presentation';
 
 const props = defineProps<{
-    moduleKey: string;
+    config: ParserHistoryConfig<TItem>;
     items: TItem[];
     loading: boolean;
     retentionDays: number;
-    title: (item: TItem) => string | null;
-    detailFields: ParserHistoryField<TItem>[];
-    statFields: ParserHistoryStat<TItem>[];
 }>();
 
 const emit = defineEmits<{
@@ -23,177 +29,279 @@ const emit = defineEmits<{
 }>();
 
 const { t, locale } = useI18n();
+const headingId = useId();
 
-const formatDateTime = (value: string | null) => {
-    if (!value) {
-        return '-';
-    }
+const title = (item: TItem) => {
+    const value = item[props.config.title.key];
 
-    return new Intl.DateTimeFormat(locale.value, {
-        day: 'numeric',
-        month: 'short',
-        year: 'numeric',
-        hour: '2-digit',
-        minute: '2-digit',
-    }).format(new Date(value));
+    return value
+        ? `${props.config.title.prefix ?? ''}${value}`
+        : t('parser.history.unknown');
 };
 
-const historyKey = (suffix: string) => `${props.moduleKey}.history.${suffix}`;
+const fieldValue = (item: TItem, field: ParserHistoryField<TItem>) => {
+    const value = item[field.key];
 
-const historyStageLabel = (value: string | null) => {
     if (!value) {
-        return t(historyKey('unknown'));
+        return t('parser.history.unavailable');
     }
 
-    const key = `${props.moduleKey}.progress.stage.${value}`;
+    if (field.translationPrefix) {
+        const key = `${field.translationPrefix}.${value}`;
+        const translated = t(key);
+
+        return translated === key ? String(value) : translated;
+    }
+
+    return String(value);
+};
+
+const stageLabel = (stage: string) => {
+    const key = `${props.config.moduleKey}.progress.stage.${stage}`;
     const translated = t(key);
 
-    return translated === key ? value : translated;
+    return translated === key ? stage : translated;
 };
+
+const formatDate = (value: string | null) =>
+    formatParserDateTime(value, locale.value) ??
+    t('parser.history.unavailable');
 </script>
 
 <template>
     <section
-        class="flex min-h-0 min-w-0 flex-col rounded-xl border border-border/70 bg-card/70 p-3 sm:max-h-[72vh] sm:p-4"
+        class="intel-panel flex min-h-0 flex-col sm:max-h-[72vh]"
+        :aria-labelledby="headingId"
+        :aria-busy="loading"
     >
-        <div
-            class="flex flex-col gap-3 border-b border-border/70 pb-4 md:flex-row md:items-start md:justify-between"
+        <header
+            class="flex flex-wrap items-start justify-between gap-3 border-b border-border/60 pb-3"
         >
-            <div class="min-w-0 space-y-1">
-                <h3 class="text-base font-semibold">
-                    {{ t(historyKey('title')) }}
+            <div class="min-w-0 basis-full space-y-1 sm:flex-1 sm:basis-auto">
+                <h3
+                    :id="headingId"
+                    class="flex items-center gap-2 text-sm font-semibold"
+                >
+                    <History
+                        class="size-4 shrink-0 text-muted-foreground"
+                        aria-hidden="true"
+                    />
+                    {{ t('parser.history.title') }}
+                    <span
+                        class="rounded-md bg-muted/60 px-1.5 py-0.5 text-xs font-medium text-muted-foreground tabular-nums"
+                        :aria-label="
+                            t('parser.history.count', { count: items.length })
+                        "
+                        >{{ items.length }}</span
+                    >
                 </h3>
-                <p class="text-sm text-muted-foreground">
+                <p class="intel-caption">
                     {{
-                        t(historyKey('description'), {
-                            days: retentionDays,
-                        })
+                        t('parser.history.description', { days: retentionDays })
                     }}
                 </p>
             </div>
-
-            <div
-                class="self-start rounded-md bg-muted/45 px-2.5 py-1.5 text-xs text-muted-foreground md:text-right"
+            <span
+                class="intel-caption self-start rounded-md bg-muted/35 px-2 py-1"
             >
-                {{
-                    t(historyKey('retention'), {
-                        days: retentionDays,
-                    })
-                }}
-            </div>
-        </div>
-
-        <div v-if="loading" class="py-6 text-sm text-muted-foreground">
-            {{ t(historyKey('loading')) }}
-        </div>
+                {{ t('parser.history.retention', { days: retentionDays }) }}
+            </span>
+        </header>
 
         <div
-            v-else-if="items.length === 0"
-            class="py-6 text-sm text-muted-foreground"
+            v-if="loading"
+            class="flex items-center gap-2 py-3 text-xs text-muted-foreground"
+            role="status"
         >
-            {{ t(historyKey('empty')) }}
+            <LoaderCircle
+                class="size-3.5 animate-spin motion-reduce:animate-none"
+                aria-hidden="true"
+            />
+            {{ t('parser.history.loading') }}
         </div>
 
-        <div
-            v-else
-            class="intel-scroll mt-4 min-h-0 min-w-0 flex-1 space-y-3 overflow-y-visible overscroll-contain sm:overflow-y-auto sm:pr-1 sm:[scrollbar-gutter:stable]"
+        <EmptyState
+            v-if="!loading && items.length === 0"
+            class="mt-3"
+            :text="t('parser.history.empty')"
+        />
+
+        <TransitionGroup
+            v-if="items.length > 0"
+            tag="ol"
+            name="parser-history"
+            appear
+            class="intel-scroll mt-3 min-h-0 min-w-0 flex-1 space-y-2 overflow-y-visible overscroll-contain sm:overflow-y-auto sm:pr-1 sm:[scrollbar-gutter:stable]"
         >
-            <article
+            <li
                 v-for="item in items"
                 :key="item.runId"
-                class="min-w-0 rounded-lg border border-border/60 bg-background/65 p-3"
+                class="intel-surface min-w-0"
             >
-                <div
-                    class="flex flex-col gap-3 lg:flex-row lg:items-start lg:justify-between"
-                >
-                    <div class="min-w-0 flex-1 space-y-3">
-                        <div class="flex flex-wrap items-center gap-2">
-                            <span class="min-w-0 break-words text-sm font-semibold">
-                                {{ title(item) || t(historyKey('unknown')) }}
-                            </span>
-                            <span
-                                class="max-w-full break-words rounded-full border border-border/70 bg-background px-2 py-0.5 text-[11px] text-muted-foreground uppercase"
+                <article class="space-y-3">
+                    <div
+                        class="flex min-w-0 flex-wrap items-start justify-between gap-2"
+                    >
+                        <div class="min-w-0 basis-full sm:flex-1">
+                            <h4
+                                class="text-sm leading-5 font-semibold break-words"
                             >
-                                {{ historyStageLabel(item.stage) }}
-                            </span>
-                        </div>
-
-                        <div
-                            class="grid gap-2 text-xs text-muted-foreground md:grid-cols-2 xl:grid-cols-4"
-                        >
-                            <div>
-                                <span class="block">
-                                    {{ t(historyKey('created')) }}
-                                </span>
-                                <span class="break-words text-foreground">
-                                    {{ formatDateTime(item.createdAt) }}
-                                </span>
-                            </div>
-                            <div>
-                                <span class="block">
-                                    {{ t(historyKey('expires')) }}
-                                </span>
-                                <span class="break-words text-foreground">
-                                    {{ formatDateTime(item.expiresAt) }}
-                                </span>
-                            </div>
-                            <div
-                                v-for="field in detailFields"
-                                :key="field.label"
+                                {{ title(item) }}
+                            </h4>
+                            <p
+                                v-if="item.stage && item.stage !== item.status"
+                                class="intel-caption mt-1 flex flex-wrap items-center gap-x-2 gap-y-1"
                             >
-                                <span class="block">{{ field.label }}</span>
-                                <span class="break-words text-foreground">
-                                    {{ field.value(item) || '-' }}
-                                </span>
-                            </div>
+                                <span>{{ stageLabel(item.stage) }}</span>
+                                <span
+                                    v-if="item.status === 'running'"
+                                    class="tabular-nums"
+                                    >{{
+                                        Math.round(
+                                            boundedProgress(item.progress)
+                                        )
+                                    }}%</span
+                                >
+                            </p>
                         </div>
-
                         <div
-                            class="flex flex-wrap gap-2 text-xs text-muted-foreground"
+                            class="flex max-w-full flex-wrap items-center gap-2"
                         >
                             <span
-                                v-for="stat in statFields"
-                                :key="stat.label"
-                                class="max-w-full break-words rounded-md bg-muted/50 px-2 py-1"
+                                v-if="isPartialParserExport(item)"
+                                class="text-xs font-medium text-amber-800 dark:text-amber-300"
+                                >{{ t('parser.history.partial') }}</span
                             >
-                                {{
-                                    t(stat.label, {
-                                        count: stat.value(item),
-                                    })
-                                }}
-                            </span>
+                            <ParserStatusBadge :status="item.status" />
                         </div>
-
-                        <p
-                            v-if="item.error"
-                            class="break-words text-xs text-destructive"
-                        >
-                            {{ item.error }}
-                        </p>
                     </div>
 
-                    <div class="grid shrink-0 gap-2 sm:flex sm:flex-wrap">
+                    <dl
+                        class="grid min-w-0 gap-x-4 gap-y-2 text-xs sm:grid-cols-2 xl:grid-cols-4"
+                    >
+                        <div class="min-w-0">
+                            <dt class="text-muted-foreground">
+                                {{ t('parser.history.created') }}
+                            </dt>
+                            <dd class="mt-0.5 font-medium break-words">
+                                {{ formatDate(item.createdAt) }}
+                            </dd>
+                        </div>
+                        <div class="min-w-0">
+                            <dt class="text-muted-foreground">
+                                {{ t('parser.history.expires') }}
+                            </dt>
+                            <dd class="mt-0.5 font-medium break-words">
+                                {{ formatDate(item.expiresAt) }}
+                            </dd>
+                        </div>
+                        <div
+                            v-for="field in config.details"
+                            :key="field.key"
+                            class="min-w-0"
+                        >
+                            <dt class="text-muted-foreground">
+                                {{ t(field.label) }}
+                            </dt>
+                            <dd class="mt-0.5 font-medium break-words">
+                                {{ fieldValue(item, field) }}
+                            </dd>
+                        </div>
+                    </dl>
+
+                    <div
+                        class="flex flex-wrap gap-1.5 text-xs text-muted-foreground"
+                    >
+                        <span
+                            v-for="stat in config.stats"
+                            :key="stat.key"
+                            class="max-w-full rounded-md bg-muted/40 px-2 py-1 break-words tabular-nums"
+                            >{{
+                                t(stat.label, {
+                                    count: item[stat.key] as number | string,
+                                })
+                            }}</span
+                        >
+                    </div>
+
+                    <p
+                        v-if="item.error"
+                        class="rounded-md bg-destructive/5 px-2.5 py-2 text-xs leading-relaxed break-words text-destructive"
+                    >
+                        {{ item.error }}
+                    </p>
+
+                    <div
+                        class="grid gap-2 border-t border-border/50 pt-2.5 sm:flex sm:flex-wrap"
+                        role="group"
+                        :aria-label="t('parser.actions.exports')"
+                    >
                         <Button
                             type="button"
                             variant="outline"
                             size="sm"
-                            :disabled="!item.downloadable"
+                            class="motion-reduce:transition-none"
+                            :disabled="!item.downloadable || !item.downloadUrl"
+                            :aria-label="
+                                t('parser.actions.downloadExcel', {
+                                    title: title(item),
+                                })
+                            "
                             @click="emit('download', item)"
                         >
-                            {{ t(`${moduleKey}.download`) }}
+                            <Download class="size-3.5" aria-hidden="true" />
+                            Excel
                         </Button>
                         <Button
                             type="button"
                             variant="outline"
                             size="sm"
-                            :disabled="!item.downloadable"
+                            class="motion-reduce:transition-none"
+                            :disabled="
+                                !item.downloadable || !item.downloadJsonUrl
+                            "
+                            :aria-label="
+                                t('parser.actions.downloadJson', {
+                                    title: title(item),
+                                })
+                            "
                             @click="emit('downloadJson', item)"
                         >
-                            {{ t(`${moduleKey}.downloadJson`) }}
+                            <Download class="size-3.5" aria-hidden="true" />
+                            JSON
                         </Button>
                     </div>
-                </div>
-            </article>
-        </div>
+                </article>
+            </li>
+        </TransitionGroup>
     </section>
 </template>
+
+<style scoped>
+.parser-history-enter-active,
+.parser-history-leave-active,
+.parser-history-move {
+    transition:
+        opacity 180ms ease,
+        transform 180ms ease;
+}
+
+.parser-history-enter-from,
+.parser-history-leave-to {
+    opacity: 0;
+    transform: translateY(4px);
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .parser-history-enter-active,
+    .parser-history-leave-active,
+    .parser-history-move {
+        transition: none;
+    }
+
+    .parser-history-enter-from,
+    .parser-history-leave-to {
+        transform: none;
+    }
+}
+</style>

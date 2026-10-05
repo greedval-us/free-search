@@ -1,11 +1,6 @@
 <script setup lang="ts">
-import { computed } from 'vue';
-import type {
-    ParserHistoryField,
-    ParserHistoryStat,
-} from '@/components/ui/parser/history';
+import type { ParserHistoryConfig } from '@/components/ui/parser/history';
 import ParserHistoryPanel from '@/components/ui/parser/ParserHistoryPanel.vue';
-import { useI18n } from '@/composables/useI18n';
 import type { YouTubeParserHistoryItem } from '../../types';
 
 defineProps<{
@@ -19,40 +14,22 @@ const emit = defineEmits<{
     downloadJson: [item: YouTubeParserHistoryItem];
 }>();
 
-const { t } = useI18n();
-
-const detailFields = computed<ParserHistoryField<YouTubeParserHistoryItem>[]>(
-    () => [
-        {
-            label: t('youtube.parser.videoId'),
-            value: (item) => item.videoId,
-        },
-    ]
-);
-
-const statFields = computed<ParserHistoryStat<YouTubeParserHistoryItem>[]>(
-    () => [
-        {
-            label: 'youtube.parser.history.comments',
-            value: (item) => item.processedComments,
-        },
-        {
-            label: 'youtube.parser.history.replies',
-            value: (item) => item.processedReplies,
-        },
-    ]
-);
+const config = {
+    moduleKey: 'youtube.parser',
+    title: { key: 'videoId' },
+    stats: [
+        { label: 'youtube.parser.history.comments', key: 'processedComments' },
+        { label: 'youtube.parser.history.replies', key: 'processedReplies' },
+    ],
+} satisfies ParserHistoryConfig<YouTubeParserHistoryItem>;
 </script>
 
 <template>
     <ParserHistoryPanel
-        module-key="youtube.parser"
+        :config="config"
         :items="items"
         :loading="loading"
         :retention-days="retentionDays"
-        :title="(item) => item.videoId"
-        :detail-fields="detailFields"
-        :stat-fields="statFields"
         @download="emit('download', $event)"
         @download-json="emit('downloadJson', $event)"
     />

@@ -6,6 +6,7 @@ use App\Modules\Bluesky\Actions\AbstractBlueskyAction;
 use App\Modules\Bluesky\Core\Contracts\BlueskyGatewayInterface;
 use App\Modules\Bluesky\DTO\Result\BlueskyThreadResultDTO;
 use App\Modules\Bluesky\Presenters\BlueskyThreadPresenter;
+use RuntimeException;
 
 final class LoadPostThreadAction extends AbstractBlueskyAction
 {
@@ -19,6 +20,9 @@ final class LoadPostThreadAction extends AbstractBlueskyAction
     public function handle(string $uri, int $depth = 6, int $parentHeight = 6): BlueskyThreadResultDTO
     {
         $payload = $this->gateway->getPostThread($uri, $depth, $parentHeight);
+        if (! is_array($payload['thread'] ?? null) || ($payload['thread']['post']['uri'] ?? null) !== $uri) {
+            throw new RuntimeException('Bluesky reply thread is unavailable.');
+        }
 
         return $this->threadPresenter->present($payload, $uri, $depth, $parentHeight);
     }

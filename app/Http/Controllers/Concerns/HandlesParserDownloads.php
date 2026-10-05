@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Concerns;
 
+use App\Support\Http\DocumentResponseHeaders;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
@@ -25,7 +26,7 @@ trait HandlesParserDownloads
                 );
             },
             $filename,
-            ['Content-Type' => 'application/json; charset=UTF-8']
+            [...DocumentResponseHeaders::download(), 'Content-Type' => 'application/json; charset=UTF-8']
         );
     }
 

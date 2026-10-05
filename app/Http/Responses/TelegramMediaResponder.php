@@ -4,9 +4,12 @@ namespace App\Http\Responses;
 
 use App\Http\Responses\Contracts\TelegramMediaResponderInterface;
 use App\Modules\Telegram\Core\Contracts\TelegramGatewayInterface;
+use App\Support\Http\DocumentResponseHeaders;
+use finfo;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Str;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
+use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 use Throwable;
 
 final class TelegramMediaResponder implements TelegramMediaResponderInterface
@@ -15,7 +18,11 @@ final class TelegramMediaResponder implements TelegramMediaResponderInterface
 
     private const DEFAULT_MIME_TYPE = 'application/octet-stream';
 
-    private const PRIVATE_CACHE_SECONDS = 3600;
+    private const INLINE_MIME_TYPES = [
+        'image/jpeg', 'image/png', 'image/gif', 'image/webp', 'image/avif', 'image/bmp',
+        'video/mp4', 'video/webm', 'video/ogg', 'video/mpeg', 'video/quicktime',
+        'audio/mpeg', 'audio/mp4', 'audio/ogg', 'audio/wav', 'audio/x-wav', 'audio/flac', 'audio/x-flac',
+    ];
 
     private const MAX_DOWNLOAD_NAME_LENGTH = 180;
 
@@ -31,7 +38,6 @@ final class TelegramMediaResponder implements TelegramMediaResponderInterface
         $download = is_array($mediaPayload['download'] ?? null) ? $mediaPayload['download'] : [];
         $name = $this->normalizeDownloadName($download['name'] ?? null);
         $extension = $this->normalizeExtension($download['ext'] ?? null);
-        $mimeType = $this->normalizeMimeType($download['mime'] ?? null);
 
         if ($extension !== '' && ! str_ends_with(strtolower($name), strtolower($extension))) {
             $name .= $extension;
@@ -46,14 +52,16 @@ final class TelegramMediaResponder implements TelegramMediaResponderInterface
             throw $exception;
         }
 
+        $detectedMimeType = (new finfo(FILEINFO_MIME_TYPE))->file($downloadPath);
+        $inline = in_array($detectedMimeType, self::INLINE_MIME_TYPES, true);
+
         return response()->file($downloadPath, [
-            'Content-Type' => $mimeType !== '' ? $mimeType : self::DEFAULT_MIME_TYPE,
-            'Content-Disposition' => sprintf(
-                'inline; filename="%s"',
-                addslashes($name !== '' ? $name : basename($downloadPath)),
-            ),
-            'Cache-Control' => sprintf('private, max-age=%d', self::PRIVATE_CACHE_SECONDS),
-        ])->deleteFileAfterSend(true);
+            ...DocumentResponseHeaders::download(),
+            'Content-Type' => $inline ? $detectedMimeType : self::DEFAULT_MIME_TYPE,
+        ])->setContentDisposition(
+            $inline ? ResponseHeaderBag::DISPOSITION_INLINE : ResponseHeaderBag::DISPOSITION_ATTACHMENT,
+            $name,
+        )->deleteFileAfterSend(true);
     }
 
     private function createTemporaryFile(string $extension): string
@@ -93,14 +101,5 @@ final class TelegramMediaResponder implements TelegramMediaResponderInterface
         $normalized = strtolower(trim((string) $extension));
 
         return preg_match('/^\.[a-z0-9]{1,10}$/', $normalized) === 1 ? $normalized : '';
-    }
-
-    private function normalizeMimeType(mixed $mimeType): string
-    {
-        $normalized = strtolower(trim((string) $mimeType));
-
-        return preg_match('#^[a-z0-9][a-z0-9.+-]*/[a-z0-9][a-z0-9.+-]*$#', $normalized) === 1
-            ? $normalized
-            : self::DEFAULT_MIME_TYPE;
     }
 }

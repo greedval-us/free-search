@@ -18,53 +18,65 @@ final class NewsMentionDeduplicator
     {
         $linkMap = [];
         $contentMap = [];
+        $groups = [];
+        $nextIndex = 0;
 
         foreach ($mentions as $mention) {
             $linkKey = $this->fingerprints->linkKey($mention->link);
             $contentKey = $this->fingerprints->contentKey($mention->title, $mention->snippet);
+            if ($linkKey === '' && $contentKey === '') {
+                continue;
+            }
 
+            $matchingIndexes = [];
             if ($linkKey !== '' && isset($linkMap[$linkKey])) {
-                $existing = $linkMap[$linkKey];
-                if ($this->shouldReplace($existing, $mention)) {
-                    $linkMap[$linkKey] = $mention;
-
-                    if ($contentKey !== '') {
-                        $contentMap[$contentKey] = $mention;
-                    }
-                }
-
-                continue;
+                $matchingIndexes[] = $linkMap[$linkKey];
             }
-
             if ($contentKey !== '' && isset($contentMap[$contentKey])) {
-                $existing = $contentMap[$contentKey];
-                if ($this->shouldReplace($existing, $mention)) {
-                    $contentMap[$contentKey] = $mention;
+                $matchingIndexes[] = $contentMap[$contentKey];
+            }
+            $matchingIndexes = array_values(array_unique($matchingIndexes));
+            sort($matchingIndexes);
 
-                    if ($linkKey !== '') {
-                        $linkMap[$linkKey] = $mention;
+            $index = $matchingIndexes[0] ?? $nextIndex++;
+            $winner = $groups[$index] ?? $mention;
+            foreach (array_slice($matchingIndexes, 1) as $matchingIndex) {
+                if ($this->shouldReplace($winner, $groups[$matchingIndex])) {
+                    $winner = $groups[$matchingIndex];
+                }
+            }
+            if ($matchingIndexes !== [] && $this->shouldReplace($winner, $mention)) {
+                $winner = $mention;
+            }
+
+            // A URL/content bridge joins groups; all earlier aliases must follow the same winner.
+            if (count($matchingIndexes) > 1) {
+                $joinedIndexes = array_fill_keys($matchingIndexes, true);
+                foreach ($linkMap as $key => $mappedIndex) {
+                    if (isset($joinedIndexes[$mappedIndex])) {
+                        $linkMap[$key] = $index;
                     }
                 }
-
-                continue;
+                foreach ($contentMap as $key => $mappedIndex) {
+                    if (isset($joinedIndexes[$mappedIndex])) {
+                        $contentMap[$key] = $index;
+                    }
+                }
+                foreach (array_slice($matchingIndexes, 1) as $joinedIndex) {
+                    unset($groups[$joinedIndex]);
+                }
             }
 
+            $groups[$index] = $winner;
             if ($linkKey !== '') {
-                $linkMap[$linkKey] = $mention;
+                $linkMap[$linkKey] = $index;
             }
-
             if ($contentKey !== '') {
-                $contentMap[$contentKey] = $mention;
+                $contentMap[$contentKey] = $index;
             }
         }
 
-        $merged = [];
-        foreach (array_merge(array_values($linkMap), array_values($contentMap)) as $mention) {
-            $key = spl_object_hash($mention);
-            $merged[$key] = $mention;
-        }
-
-        return array_values($merged);
+        return array_values($groups);
     }
 
     private function shouldReplace(NewsMentionDTO $existing, NewsMentionDTO $candidate): bool
