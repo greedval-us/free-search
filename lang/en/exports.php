@@ -5,6 +5,13 @@ return [
         'yes' => 'yes',
         'no' => 'no',
         'reaction' => 'Reaction',
+        'collection_status' => 'Collection status',
+        'collection_complete' => 'Collection complete',
+        'collection_statuses' => [
+            'completed' => 'Completed',
+            'stopped' => 'Stopped',
+            'failed' => 'Failed',
+        ],
     ],
     'telegram' => [
         'sheets' => [

@@ -3,6 +3,7 @@
 namespace App\Modules\Telegram\Providers;
 
 use App\Modules\ParserSupport\Contracts\ParserRunBackgroundProcessorInterface;
+use App\Modules\ParserSupport\JsonRunStore;
 use App\Modules\Telegram\Analytics\Contracts\TelegramAnalyticsApplicationServiceInterface;
 use App\Modules\Telegram\Analytics\Contracts\TelegramAnalyticsRangeResolverInterface;
 use App\Modules\Telegram\Analytics\TelegramAnalyticsApplicationService;
@@ -12,6 +13,7 @@ use App\Modules\Telegram\Parser\Contracts\TelegramParserApplicationServiceInterf
 use App\Modules\Telegram\Parser\Contracts\TelegramParserExportBuilderInterface;
 use App\Modules\Telegram\Parser\TelegramParserApplicationService;
 use App\Modules\Telegram\Parser\TelegramParserExportBuilder;
+use App\Modules\Telegram\Parser\TelegramParserRunStore;
 use App\Modules\Telegram\Search\Contracts\TelegramSearchApplicationServiceInterface;
 use App\Modules\Telegram\Search\TelegramSearchApplicationService;
 use App\Modules\Telegram\Support\TelegramConfig;
@@ -41,6 +43,11 @@ final class TelegramServiceProvider extends BindingsServiceProvider
                 (array) config('osint.telegram', []),
                 (string) config('app.timezone', 'UTC')
             )
+        );
+
+        $this->app->tag(
+            [TelegramParserRunStore::class],
+            JsonRunStore::CONTAINER_TAG,
         );
 
         $this->app->tag(

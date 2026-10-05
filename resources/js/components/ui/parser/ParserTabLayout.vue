@@ -21,6 +21,7 @@ withDefaults(
         downloadJsonLabel: string;
         progressTitle: string;
         stageLabel: string;
+        stage?: string;
         progress: number;
         stats: Array<{ label: string; value: number | string }>;
         statsGridClass?: string;
@@ -74,6 +75,7 @@ const emit = defineEmits<{
         :class="loading ? 'order-first' : ''"
         :title="progressTitle"
         :stage-label="stageLabel"
+        :stage="stage"
         :progress="progress"
         :stats="stats"
         :stats-grid-class="statsGridClass"

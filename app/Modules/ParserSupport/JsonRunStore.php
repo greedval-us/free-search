@@ -2,16 +2,20 @@
 
 namespace App\Modules\ParserSupport;
 
+use App\Jobs\ProcessParserRun;
 use App\Modules\ParserSupport\Enums\ParserRunStatus;
 use Illuminate\Filesystem\FilesystemAdapter;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
+use InvalidArgumentException;
 use JsonException;
 use UnexpectedValueException;
 
 abstract class JsonRunStore
 {
+    public const CONTAINER_TAG = 'parser-run.stores';
+
     protected const DISK = 'private';
 
     private const INITIAL_PROGRESS = 1;
@@ -43,6 +47,10 @@ abstract class JsonRunStore
      */
     public function get(int $userId, string $runId): ?array
     {
+        if (! Str::isUuid($runId)) {
+            return null;
+        }
+
         $path = $this->runPath($userId, $runId);
         if (! $this->disk()->exists($path)) {
             return null;
@@ -75,6 +83,10 @@ abstract class JsonRunStore
      */
     public function mutate(int $userId, string $runId, callable $callback): ?array
     {
+        if (! Str::isUuid($runId)) {
+            return null;
+        }
+
         $relativePath = $this->runPath($userId, $runId);
         $path = $this->disk()->path($relativePath);
 
@@ -89,7 +101,14 @@ abstract class JsonRunStore
                 throw new UnexpectedValueException("Parser run [{$runId}] does not contain a JSON object.");
             }
 
+            $before = $run;
             $run = $callback($run);
+            if ($run === $before) {
+                // A previous file commit may have succeeded before metadata synchronization failed.
+                $this->syncMetadata($userId, $runId, $run, $relativePath);
+
+                return $run;
+            }
             $run['updatedAt'] = now()->toIso8601String();
 
             $this->files->replace($path, $this->encodeRun($run));
@@ -121,6 +140,11 @@ abstract class JsonRunStore
 
     abstract protected function moduleKey(): string;
 
+    final public function module(): string
+    {
+        return $this->moduleKey();
+    }
+
     /**
      * @param  array<string, mixed>  $context
      * @param  array<string, mixed>  $cursor
@@ -150,6 +174,8 @@ abstract class JsonRunStore
             'context' => $context,
             'cursor' => [
                 'nextAdvanceAt' => self::INITIAL_ADVANCE_TIMESTAMP,
+                'stepRetryUntil' => now()->timestamp + ProcessParserRun::RETRY_WINDOW_SECONDS,
+                'checkpointVersion' => 0,
                 ...$cursor,
             ],
             'stats' => $stats,
@@ -160,6 +186,10 @@ abstract class JsonRunStore
 
     final protected function runPath(int $userId, string $runId): string
     {
+        if (! Str::isUuid($runId)) {
+            throw new InvalidArgumentException('Parser run ID must be a UUID.');
+        }
+
         return sprintf('%s-parser-runs/%d/%s.json', $this->moduleKey(), $userId, $runId);
     }
 

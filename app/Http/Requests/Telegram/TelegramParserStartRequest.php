@@ -4,6 +4,7 @@ namespace App\Http\Requests\Telegram;
 
 use App\Http\Requests\Telegram\Concerns\ResolvesTelegramConfig;
 use App\Modules\Telegram\DTO\Request\TelegramParserStartDTO;
+use App\Rules\PublicTelegramUsername;
 use Carbon\Carbon;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Validator;
@@ -22,7 +23,7 @@ class TelegramParserStartRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'chatUsername' => ['required', 'string', 'max:255'],
+            'chatUsername' => ['bail', 'required', 'string', new PublicTelegramUsername],
             'keyword' => ['nullable', 'string', 'max:255'],
             'period' => ['required', 'string', 'in:'.implode(',', self::PERIODS)],
             'dateFrom' => ['nullable', 'date_format:Y-m-d'],

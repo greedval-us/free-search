@@ -1,6 +1,10 @@
 <?php
 
 return [
+    'news_media_intel' => [
+        'configuration' => 'News search is not configured. Contact the site administrator.',
+        'unavailable' => 'News search is temporarily unavailable. Please try again later.',
+    ],
     'validation' => [
         'date_from_before_or_equal_date_to' => 'Date "from" must be less than or equal to date "to".',
         'custom_period_max_days' => 'Custom period cannot be longer than :days days.',

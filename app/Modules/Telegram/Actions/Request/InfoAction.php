@@ -11,8 +11,13 @@ class InfoAction extends AbstractTelegramAction
         $client = $this->madeline();
 
         try {
+            $source = $this->publicSource($client, $id);
+            if ($source === null) {
+                return null;
+            }
+
             return $this->executeWithRetry(
-                callback: fn () => $client->getFullInfo(id: $id),
+                callback: fn () => $client->getFullInfo(id: $source['peer']),
                 context: ['id' => $id]
             );
         } catch (\Throwable $e) {

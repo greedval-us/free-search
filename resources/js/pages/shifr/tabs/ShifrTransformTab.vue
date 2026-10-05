@@ -1,12 +1,8 @@
 <script setup lang="ts">
 import { LoaderCircle } from 'lucide-vue-next';
-import { computed, onMounted, ref } from 'vue';
+import { computed, ref } from 'vue';
 import { useI18n } from '@/composables/useI18n';
-import {
-    getRepeatQueryParams,
-    isRepeatAutorunEnabled,
-    readRepeatQueryParam,
-} from '@/composables/useRepeatQuery';
+import { transform } from '@/routes/shifr';
 import ShifrFormCard from '../components/ShifrFormCard.vue';
 import ShifrResultCard from '../components/ShifrResultCard.vue';
 import { useShifrRequest } from '../composables/useShifrRequest';
@@ -50,7 +46,7 @@ const {
     canRun,
     run: runRequest,
 } = useShifrRequest(
-    '/shifr/transform',
+    transform.url(),
     () => t('shifr.errors.requestFailed'),
     computed(() => input.value.trim().length > 0)
 );
@@ -63,49 +59,6 @@ const run = async (): Promise<void> => {
     });
     await runRequest(params);
 };
-
-onMounted(() => {
-    const params = getRepeatQueryParams();
-
-    if (!params) {
-        return;
-    }
-
-    const tab = readRepeatQueryParam(params, ['tab']);
-
-    if (tab !== 'transform') {
-        return;
-    }
-
-    const text = readRepeatQueryParam(params, ['text']);
-    const op = readRepeatQueryParam(params, ['operation']);
-
-    if (text !== '') {
-        input.value = text;
-    }
-
-    if (
-        op !== '' &&
-        [
-            'base64_encode',
-            'base64_decode',
-            'base64url_encode',
-            'base64url_decode',
-            'hex_encode',
-            'hex_decode',
-            'url_encode',
-            'url_decode',
-            'html_encode',
-            'html_decode',
-        ].includes(op)
-    ) {
-        operation.value = op as typeof operation.value;
-    }
-
-    if (isRepeatAutorunEnabled(params) && canRun.value) {
-        void run();
-    }
-});
 </script>
 
 <template>

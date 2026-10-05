@@ -8,7 +8,7 @@ interface ParserRunBackgroundProcessorInterface
 
     public function moduleKey(): string;
 
-    public function advanceRun(int $userId, string $runId): bool;
+    public function advanceRun(int $userId, string $runId, ?int $checkpointVersion = null): bool;
 
-    public function failRun(int $userId, string $runId, string $message): void;
+    public function failRun(int $userId, string $runId, string $message, ?int $checkpointVersion = null): void;
 }

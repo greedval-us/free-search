@@ -2,8 +2,10 @@
 
 namespace App\Modules\Telegram\Actions\Request;
 
+use App\Modules\Telegram\Access\PublicTelegramSource;
 use App\Modules\Telegram\Actions\AbstractTelegramAction;
-use danog\MadelineProto\API;
+use Closure;
+use RuntimeException;
 
 class CommentsAction extends AbstractTelegramAction
 {
@@ -30,9 +32,23 @@ class CommentsAction extends AbstractTelegramAction
 
         foreach ($postIds as $postId) {
             try {
+                $source = $this->publicSource($client, $channelId);
+                if ($source === null) {
+                    throw new RuntimeException('Telegram source is unavailable.');
+                }
+                $discussion = PublicTelegramSource::resolveDiscussion(
+                    $source,
+                    fn (array $peer): array => $this->executeWithRetry(fn () => $client->getFullInfo($peer), ['channel' => $channelId]),
+                    fn (int $id): array => $client->getInfo($id),
+                    fn (string $username): array => $client->contacts->resolveUsername(['username' => $username]),
+                );
+                if ($discussion === null) {
+                    throw new RuntimeException('Telegram discussion is unavailable.');
+                }
+
                 $post = $this->executeWithRetry(
                     callback: fn () => $client->channels->getMessages([
-                        'channel' => $channelId,
+                        'channel' => $source['channel'],
                         'id' => [$postId],
                     ]),
                     context: ['channel' => $channelId, 'post_id' => $postId]
@@ -43,8 +59,8 @@ class CommentsAction extends AbstractTelegramAction
                 }
 
                 $commentsPage = $this->loadComments(
-                    client: $client,
-                    channelId: $channelId,
+                    request: fn (array $parameters): array => $client->messages->getReplies($parameters),
+                    peer: $source['peer'],
                     postId: $postId,
                     limit: $commentsPerRequest,
                     maxPages: $maxPages,
@@ -65,7 +81,7 @@ class CommentsAction extends AbstractTelegramAction
 
                 $results[] = [
                     'post_id' => $postId,
-                    'error' => $e->getMessage(),
+                    'error' => 'comments_unavailable',
                     'comments' => [],
                     'next_offset_id' => null,
                     'has_more' => false,
@@ -77,9 +93,9 @@ class CommentsAction extends AbstractTelegramAction
         return $results;
     }
 
-    private function loadComments(
-        API $client,
-        string $channelId,
+    protected function loadComments(
+        Closure $request,
+        array $peer,
         int $postId,
         int $limit,
         int $maxPages,
@@ -93,8 +109,8 @@ class CommentsAction extends AbstractTelegramAction
 
         for ($page = 1; $page <= $maxPages; $page++) {
             $response = $this->executeWithRetry(
-                callback: fn () => $client->messages->getReplies([
-                    'peer' => $channelId,
+                callback: fn () => $request([
+                    'peer' => $peer,
                     'msg_id' => $postId,
                     'offset_id' => $nextOffsetId,
                     'offset_date' => 0,
@@ -104,13 +120,23 @@ class CommentsAction extends AbstractTelegramAction
                     'min_id' => 0,
                     'hash' => 0,
                 ]),
-                context: ['channel' => $channelId, 'post_id' => $postId, 'page' => $page]
+                context: ['post_id' => $postId, 'page' => $page]
             );
 
-            $batch = $response['messages'] ?? [];
+            if (! in_array($response['_'] ?? '', ['messages.messages', 'messages.messagesSlice', 'messages.channelMessages'], true)
+                || ! is_array($response['messages'] ?? null) || ! array_is_list($response['messages'])) {
+                throw new RuntimeException('Telegram returned an invalid comments page.');
+            }
+            $batch = $response['messages'];
+            foreach ($batch as $message) {
+                if (! is_array($message) || (int) ($message['id'] ?? 0) <= 0) {
+                    throw new RuntimeException('Telegram returned an invalid comment.');
+                }
+            }
             $total = (int) ($response['count'] ?? $total);
 
             if (empty($batch)) {
+                $hasMore = false;
                 break;
             }
 
@@ -118,16 +144,19 @@ class CommentsAction extends AbstractTelegramAction
                 $messages[] = $message;
             }
 
-            $lastMessage = end($batch);
-            $nextOffsetId = (int) (
-                is_array($lastMessage)
-                    ? ($lastMessage['id'] ?? 0)
-                    : ($lastMessage->id ?? 0)
-            );
+            $ids = array_values(array_filter(array_map(
+                static fn ($message): int => (int) (is_array($message) ? ($message['id'] ?? 0) : ($message->id ?? 0)),
+                $batch,
+            ), static fn (int $id): bool => $id > 0));
+            $previousOffsetId = $nextOffsetId;
+            $nextOffsetId = $ids === [] ? 0 : min($ids);
+            if ($nextOffsetId <= 0 || ($previousOffsetId > 0 && $nextOffsetId >= $previousOffsetId)) {
+                throw new RuntimeException('Telegram comment pagination did not advance.');
+            }
 
-            $hasMore = count($batch) >= $limit && $nextOffsetId > 0;
+            $hasMore = true;
 
-            if (! $hasMore || $page >= $maxPages) {
+            if ($page >= $maxPages) {
                 break;
             }
 

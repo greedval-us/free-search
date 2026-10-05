@@ -1,7 +1,7 @@
 {
     "headTitle": "News & Media Intel",
     "title": "News & Media Intel",
-    "description": "Monitor public mentions, topics, sentiment, and timeline shifts in one place.",
+    "description": "Find news with SearXNG and explore mentions, topics, sentiment, and publication trends.",
     "empty": "No mentions yet. Enter a person, company, or topic to start monitoring.",
     "form": {
         "query": "Query",
@@ -24,12 +24,11 @@
     },
     "mentions": {
         "title": "Mentions",
+        "dateUnknown": "Publication date not provided",
         "none": "No public mentions found. Try a broader query or another spelling."
     },
     "sources": {
-        "googlenews": "Google News",
-        "bing": "Bing News",
-        "newsapi": "NewsAPI"
+        "searxng": "SearXNG"
     },
     "errors": {
         "queryRequired": "Enter at least 2 characters to search for mentions.",
@@ -37,9 +36,9 @@
     },
     "help": {
         "label": "About block",
-        "overview": "News and media monitoring collects mentions from public feeds, then builds topics, a timeline, and a sentiment snapshot.",
+        "overview": "SearXNG searches public news. Article titles and snippets are used to build topics, a publication timeline, and a sentiment snapshot.",
         "topics": "Topics are extracted from titles and snippets with stop-word filtering. They are heuristic indicators, not a linguistic model.",
-        "timeline": "Timeline groups mention counts by publication date to highlight spikes and event windows.",
+        "timeline": "Timeline groups mentions by publication date. Articles without a known date are excluded.",
         "mentions": "Mentions are deduplicated by URL. Long headlines and links are wrapped to stay inside the card."
     }
 }

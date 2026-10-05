@@ -17,6 +17,9 @@ import {
     isRepeatAutorunEnabled,
     readRepeatQueryParam,
 } from '@/composables/useRepeatQuery';
+import { newsMediaIntel } from '@/routes';
+import { lookup as newsLookup } from '@/routes/news-media-intel';
+import { resolveArticleUrl } from './news-media-intel/articleUrl';
 import type { NewsResult } from './news-media-intel/types';
 
 defineOptions({
@@ -25,7 +28,7 @@ defineOptions({
             {
                 title: 'News & Media Intel',
                 titleKey: 'newsMediaIntel.headTitle',
-                href: '/news-media-intel',
+                href: newsMediaIntel(),
             },
         ],
     },
@@ -34,78 +37,13 @@ defineOptions({
 const { t, locale } = useI18n();
 const pageTitle = computed(() => t('newsMediaIntel.headTitle'));
 const query = ref('');
-const sourceLabels: Record<string, string> = {
-    googlenews: 'newsMediaIntel.sources.googlenews',
-    bing: 'newsMediaIntel.sources.bing',
-    newsapi: 'newsMediaIntel.sources.newsapi',
-};
 
-const sourceLabel = (source: string): string => {
-    const key = sourceLabels[source.toLowerCase()];
-
-    return key ? t(key) : source;
-};
-
-const buildTimelineFromMentions = (
-    mentions: NewsResult['mentions']
-): Array<{ date: string; mentions: number }> => {
-    const bucket: Record<string, number> = {};
-
-    for (const mention of mentions) {
-        const raw = (mention.publishedAt ?? '').trim();
-
-        if (!raw) {
-            continue;
-        }
-
-        const date = new Date(raw);
-
-        if (Number.isNaN(date.getTime())) {
-            continue;
-        }
-
-        const yyyy = date.getUTCFullYear();
-        const mm = String(date.getUTCMonth() + 1).padStart(2, '0');
-        const dd = String(date.getUTCDate()).padStart(2, '0');
-        const key = `${yyyy}-${mm}-${dd}`;
-
-        bucket[key] = (bucket[key] ?? 0) + 1;
-    }
-
-    return Object.entries(bucket)
-        .sort(([a], [b]) => a.localeCompare(b))
-        .map(([date, mentions]) => ({ date, mentions }));
-};
-
-const timelineChart = computed(() => {
-    const backendTimeline = result.value?.timeline ?? [];
-    const base =
-        backendTimeline.length > 0
-            ? backendTimeline
-            : buildTimelineFromMentions(result.value?.mentions ?? []);
-    const sliced = base.slice(0, 30);
-
-    if (sliced.length === 0 && (result.value?.mentions?.length ?? 0) > 0) {
-        const today = new Date();
-        const yyyy = today.getUTCFullYear();
-        const mm = String(today.getUTCMonth() + 1).padStart(2, '0');
-        const dd = String(today.getUTCDate()).padStart(2, '0');
-        const date = `${yyyy}-${mm}-${dd}`;
-
-        return [
-            {
-                date,
-                mentions: result.value!.mentions.length,
-                shortDate: `${mm}-${dd}`,
-            },
-        ];
-    }
-
-    return sliced.map((point) => ({
+const timelineChart = computed(() =>
+    (result.value?.timeline ?? []).slice(0, 30).map((point) => ({
         ...point,
         shortDate: point.date.slice(5),
-    }));
-});
+    }))
+);
 
 const topTopicsChart = computed(() =>
     (result.value?.topics ?? []).slice(0, 10)
@@ -116,13 +54,35 @@ const topTopicsMax = computed(() =>
 
 const { loading, error, result, canSearch, lookup } =
     useIntelLookup<NewsResult>(query, {
-        endpoint: '/news-media-intel/lookup',
+        endpoint: newsLookup.url(),
         minLength: 2,
         queryKey: 'query',
         locale,
         requiredError: t('newsMediaIntel.errors.queryRequired'),
         fallbackError: t('newsMediaIntel.errors.lookupFailed'),
     });
+
+const mentionCards = computed(() =>
+    (result.value?.mentions ?? []).slice(0, 60).map((mention) => ({
+        ...mention,
+        href: resolveArticleUrl(mention.link),
+    }))
+);
+
+const publishedDateLabel = (value: string | null): string => {
+    const raw = (value ?? '').trim();
+    const date = raw ? new Date(raw) : null;
+
+    if (!date || Number.isNaN(date.getTime())) {
+        return t('newsMediaIntel.mentions.dateUnknown');
+    }
+
+    return new Intl.DateTimeFormat(locale.value, {
+        day: 'numeric',
+        month: 'short',
+        year: 'numeric',
+    }).format(date);
+};
 
 onMounted(() => {
     const params = getRepeatQueryParams();
@@ -274,10 +234,7 @@ onMounted(() => {
                     </div>
                     <div v-else class="space-y-2">
                         <article
-                            v-for="(item, index) in result.mentions.slice(
-                                0,
-                                60
-                            )"
+                            v-for="(item, index) in mentionCards"
                             :key="`${item.link}-${index}`"
                             class="intel-surface"
                         >
@@ -290,7 +247,7 @@ onMounted(() => {
                                     {{ item.title }}
                                 </p>
                                 <span class="shrink-0 text-xs text-primary">{{
-                                    sourceLabel(item.source)
+                                    t('newsMediaIntel.sources.searxng')
                                 }}</span>
                             </div>
                             <p
@@ -298,8 +255,12 @@ onMounted(() => {
                             >
                                 {{ item.snippet }}
                             </p>
+                            <p class="mb-1 text-xs text-muted-foreground">
+                                {{ publishedDateLabel(item.publishedAt) }}
+                            </p>
                             <a
-                                :href="item.link"
+                                v-if="item.href"
+                                :href="item.href"
                                 target="_blank"
                                 rel="noopener noreferrer"
                                 class="block text-xs break-all text-primary hover:underline"

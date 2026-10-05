@@ -5,6 +5,7 @@ import dashboard from './dashboard.json';
 import mastodon from './mastodon.json';
 import navigation from './navigation.json';
 import newsMediaIntel from './newsMediaIntel.json';
+import parser from './parser.json';
 import privacy from './privacy.json';
 import publicSite from './publicSite.json';
 import settings from './settings.json';
@@ -27,6 +28,7 @@ const en = {
     mastodon,
     navigation,
     newsMediaIntel,
+    parser,
     privacy,
     publicSite,
     settings,

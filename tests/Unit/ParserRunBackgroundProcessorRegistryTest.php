@@ -42,12 +42,12 @@ class ParserRunBackgroundProcessorRegistryTest extends TestCase
                 return $this->module;
             }
 
-            public function advanceRun(int $userId, string $runId): bool
+            public function advanceRun(int $userId, string $runId, ?int $checkpointVersion = null): bool
             {
                 return false;
             }
 
-            public function failRun(int $userId, string $runId, string $message): void {}
+            public function failRun(int $userId, string $runId, string $message, ?int $checkpointVersion = null): void {}
         };
     }
 }

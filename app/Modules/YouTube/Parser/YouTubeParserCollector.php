@@ -8,6 +8,7 @@ use App\Modules\YouTube\DTO\Parser\YouTubeParserStateDTO;
 use App\Modules\YouTube\Enums\YouTubeParserStage;
 use App\Modules\YouTube\Presenters\YouTubeCommentThreadPresenter;
 use Illuminate\Support\Arr;
+use RuntimeException;
 
 class YouTubeParserCollector implements ParserRunCollectorInterface
 {
@@ -72,7 +73,10 @@ class YouTubeParserCollector implements ParserRunCollectorInterface
         }
 
         $payload = $this->gateway->commentThreads($params);
-        $items = is_array($payload['items'] ?? null) ? $payload['items'] : [];
+        if (! is_array($payload['items'] ?? null)) {
+            throw new RuntimeException('YouTube returned an invalid comments page.');
+        }
+        $items = $payload['items'];
 
         foreach ($items as $item) {
             if (! is_array($item)) {
@@ -163,7 +167,10 @@ class YouTubeParserCollector implements ParserRunCollectorInterface
         }
 
         $payload = $this->gateway->comments($params);
-        $items = is_array($payload['items'] ?? null) ? $payload['items'] : [];
+        if (! is_array($payload['items'] ?? null)) {
+            throw new RuntimeException('YouTube returned an invalid replies page.');
+        }
+        $items = $payload['items'];
 
         foreach ($items as $item) {
             if (! is_array($item)) {

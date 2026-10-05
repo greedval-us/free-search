@@ -11,16 +11,21 @@ defineProps<{
 </script>
 
 <template>
-    <div class="intel-data-list">
+    <dl class="intel-data-list">
         <div
             v-for="item in items"
             :key="`${item.label}-${item.value}`"
-            class="intel-data-row"
+            class="grid min-w-0 gap-x-4 gap-y-0.5 text-sm leading-6 sm:grid-cols-[minmax(7rem,0.45fr)_minmax(0,1fr)]"
         >
-            <span class="intel-data-label">{{ item.label }}:</span>
-            <span class="intel-data-value" :class="item.valueClass">
+            <dt class="min-w-0 break-words text-muted-foreground">
+                {{ item.label }}
+            </dt>
+            <dd
+                class="min-w-0 font-medium break-words text-foreground"
+                :class="item.valueClass"
+            >
                 {{ item.value }}
-            </span>
+            </dd>
         </div>
-    </div>
+    </dl>
 </template>

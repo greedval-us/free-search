@@ -7,23 +7,23 @@ use Illuminate\Support\Facades\Route;
 Route::inertia('shifr', 'Shifr')->name('shifr');
 
 Route::prefix('shifr')->name('shifr.')->group(function (): void {
-    Route::get('hash', [ShifrController::class, 'hash'])
+    Route::post('hash', [ShifrController::class, 'hash'])
         ->middleware(RouteThrottle::TOOL_OPERATION)
         ->name('hash');
 
-    Route::get('transform', [ShifrController::class, 'transform'])
+    Route::post('transform', [ShifrController::class, 'transform'])
         ->middleware(RouteThrottle::TOOL_OPERATION)
         ->name('transform');
 
-    Route::get('ioc-extract', [ShifrController::class, 'extractIocs'])
+    Route::post('ioc-extract', [ShifrController::class, 'extractIocs'])
         ->middleware(RouteThrottle::TOOL_OPERATION)
         ->name('ioc-extract');
 
-    Route::get('jwt-inspect', [ShifrController::class, 'inspectJwt'])
+    Route::post('jwt-inspect', [ShifrController::class, 'inspectJwt'])
         ->middleware(RouteThrottle::TOOL_OPERATION)
         ->name('jwt-inspect');
 
-    Route::get('classic', [ShifrController::class, 'classic'])
+    Route::post('classic', [ShifrController::class, 'classic'])
         ->middleware(RouteThrottle::TOOL_OPERATION)
         ->name('classic');
 });

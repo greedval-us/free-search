@@ -44,7 +44,7 @@ flowchart LR
 - **Action/analysis component**: узкая операция, mapping или вычисление.
 - **Gateway/Provider interface**: порт для внешнего API/source. Site Intel и News используют Application contracts; social-модули имеют module-specific Gateway interfaces.
 - **DTO**: явная форма входа, результата, Parser state/snapshot. DTO уменьшают зависимость transport от raw external payloads.
-- **Infrastructure/Client**: HTTP, AT Protocol, Mastodon, YouTube, DNS, SSL, WHOIS, RSS, storage.
+- **Infrastructure/Client**: HTTP, AT Protocol, Mastodon, YouTube, SearXNG, DNS, SSL, WHOIS, storage.
 - **Presenter/Report builder/Export builder**: стабильная UI/file форма поверх результата.
 
 ## Module boundaries

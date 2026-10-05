@@ -1,0 +1,32 @@
+{
+    "status": {
+        "idle": "Готов к сбору",
+        "running": "Собирается",
+        "completed": "Завершено",
+        "failed": "Ошибка",
+        "stopped": "Остановлено",
+        "unknown": "Статус неизвестен"
+    },
+    "history": {
+        "title": "История сбора",
+        "description": "Сборы и доступные выгрузки за последние {days} дней.",
+        "retention": "Файлы хранятся {days} дней",
+        "count": "Сборов: {count}",
+        "loading": "Загружаем историю сбора…",
+        "empty": "Запустите сбор — здесь появятся его прогресс и доступные выгрузки.",
+        "created": "Начало",
+        "expires": "Удаление файлов",
+        "unknown": "Источник неизвестен",
+        "partial": "Неполные данные",
+        "unavailable": "—"
+    },
+    "actions": {
+        "collection": "Управление сбором",
+        "exports": "Выгрузка файлов",
+        "downloadExcel": "Скачать Excel: {title}",
+        "downloadJson": "Скачать JSON: {title}"
+    },
+    "progress": {
+        "value": "{progress}% · {stage}"
+    }
+}

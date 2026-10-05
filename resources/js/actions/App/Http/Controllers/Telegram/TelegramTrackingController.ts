@@ -1,7 +1,7 @@
 import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFormDefinition, applyUrlDefaults } from './../../../../../wayfinder'
 /**
 * @see \App\Http\Controllers\Telegram\TelegramTrackingController::index
- * @see app/Http/Controllers/Telegram/TelegramTrackingController.php:23
+ * @see app/Http/Controllers/Telegram/TelegramTrackingController.php:24
  * @route '/telegram/tracking'
  */
 export const index = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -16,7 +16,7 @@ index.definition = {
 
 /**
 * @see \App\Http\Controllers\Telegram\TelegramTrackingController::index
- * @see app/Http/Controllers/Telegram/TelegramTrackingController.php:23
+ * @see app/Http/Controllers/Telegram/TelegramTrackingController.php:24
  * @route '/telegram/tracking'
  */
 index.url = (options?: RouteQueryOptions) => {
@@ -25,7 +25,7 @@ index.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\Telegram\TelegramTrackingController::index
- * @see app/Http/Controllers/Telegram/TelegramTrackingController.php:23
+ * @see app/Http/Controllers/Telegram/TelegramTrackingController.php:24
  * @route '/telegram/tracking'
  */
 index.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -34,7 +34,7 @@ index.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
 })
 /**
 * @see \App\Http\Controllers\Telegram\TelegramTrackingController::index
- * @see app/Http/Controllers/Telegram/TelegramTrackingController.php:23
+ * @see app/Http/Controllers/Telegram/TelegramTrackingController.php:24
  * @route '/telegram/tracking'
  */
 index.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -44,7 +44,7 @@ index.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 
     /**
 * @see \App\Http\Controllers\Telegram\TelegramTrackingController::index
- * @see app/Http/Controllers/Telegram/TelegramTrackingController.php:23
+ * @see app/Http/Controllers/Telegram/TelegramTrackingController.php:24
  * @route '/telegram/tracking'
  */
     const indexForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -54,7 +54,7 @@ index.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 
             /**
 * @see \App\Http\Controllers\Telegram\TelegramTrackingController::index
- * @see app/Http/Controllers/Telegram/TelegramTrackingController.php:23
+ * @see app/Http/Controllers/Telegram/TelegramTrackingController.php:24
  * @route '/telegram/tracking'
  */
         indexForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -63,7 +63,7 @@ index.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
         })
             /**
 * @see \App\Http\Controllers\Telegram\TelegramTrackingController::index
- * @see app/Http/Controllers/Telegram/TelegramTrackingController.php:23
+ * @see app/Http/Controllers/Telegram/TelegramTrackingController.php:24
  * @route '/telegram/tracking'
  */
         indexForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -79,7 +79,7 @@ index.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     index.form = indexForm
 /**
 * @see \App\Http\Controllers\Telegram\TelegramTrackingController::validateGroups
- * @see app/Http/Controllers/Telegram/TelegramTrackingController.php:36
+ * @see app/Http/Controllers/Telegram/TelegramTrackingController.php:37
  * @route '/telegram/tracking/validate'
  */
 export const validateGroups = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -94,7 +94,7 @@ validateGroups.definition = {
 
 /**
 * @see \App\Http\Controllers\Telegram\TelegramTrackingController::validateGroups
- * @see app/Http/Controllers/Telegram/TelegramTrackingController.php:36
+ * @see app/Http/Controllers/Telegram/TelegramTrackingController.php:37
  * @route '/telegram/tracking/validate'
  */
 validateGroups.url = (options?: RouteQueryOptions) => {
@@ -103,7 +103,7 @@ validateGroups.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\Telegram\TelegramTrackingController::validateGroups
- * @see app/Http/Controllers/Telegram/TelegramTrackingController.php:36
+ * @see app/Http/Controllers/Telegram/TelegramTrackingController.php:37
  * @route '/telegram/tracking/validate'
  */
 validateGroups.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -113,7 +113,7 @@ validateGroups.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => 
 
     /**
 * @see \App\Http\Controllers\Telegram\TelegramTrackingController::validateGroups
- * @see app/Http/Controllers/Telegram/TelegramTrackingController.php:36
+ * @see app/Http/Controllers/Telegram/TelegramTrackingController.php:37
  * @route '/telegram/tracking/validate'
  */
     const validateGroupsForm = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -123,7 +123,7 @@ validateGroups.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => 
 
             /**
 * @see \App\Http\Controllers\Telegram\TelegramTrackingController::validateGroups
- * @see app/Http/Controllers/Telegram/TelegramTrackingController.php:36
+ * @see app/Http/Controllers/Telegram/TelegramTrackingController.php:37
  * @route '/telegram/tracking/validate'
  */
         validateGroupsForm.post = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -134,7 +134,7 @@ validateGroups.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => 
     validateGroups.form = validateGroupsForm
 /**
 * @see \App\Http\Controllers\Telegram\TelegramTrackingController::store
- * @see app/Http/Controllers/Telegram/TelegramTrackingController.php:45
+ * @see app/Http/Controllers/Telegram/TelegramTrackingController.php:46
  * @route '/telegram/tracking'
  */
 export const store = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -149,7 +149,7 @@ store.definition = {
 
 /**
 * @see \App\Http\Controllers\Telegram\TelegramTrackingController::store
- * @see app/Http/Controllers/Telegram/TelegramTrackingController.php:45
+ * @see app/Http/Controllers/Telegram/TelegramTrackingController.php:46
  * @route '/telegram/tracking'
  */
 store.url = (options?: RouteQueryOptions) => {
@@ -158,7 +158,7 @@ store.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\Telegram\TelegramTrackingController::store
- * @see app/Http/Controllers/Telegram/TelegramTrackingController.php:45
+ * @see app/Http/Controllers/Telegram/TelegramTrackingController.php:46
  * @route '/telegram/tracking'
  */
 store.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -168,7 +168,7 @@ store.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
 
     /**
 * @see \App\Http\Controllers\Telegram\TelegramTrackingController::store
- * @see app/Http/Controllers/Telegram/TelegramTrackingController.php:45
+ * @see app/Http/Controllers/Telegram/TelegramTrackingController.php:46
  * @route '/telegram/tracking'
  */
     const storeForm = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -178,7 +178,7 @@ store.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
 
             /**
 * @see \App\Http\Controllers\Telegram\TelegramTrackingController::store
- * @see app/Http/Controllers/Telegram/TelegramTrackingController.php:45
+ * @see app/Http/Controllers/Telegram/TelegramTrackingController.php:46
  * @route '/telegram/tracking'
  */
         storeForm.post = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -189,7 +189,7 @@ store.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
     store.form = storeForm
 /**
 * @see \App\Http\Controllers\Telegram\TelegramTrackingController::change
- * @see app/Http/Controllers/Telegram/TelegramTrackingController.php:52
+ * @see app/Http/Controllers/Telegram/TelegramTrackingController.php:53
  * @route '/telegram/tracking/{tracking}'
  */
 export const change = (args: { tracking: string | number } | [tracking: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'patch'> => ({
@@ -204,7 +204,7 @@ change.definition = {
 
 /**
 * @see \App\Http\Controllers\Telegram\TelegramTrackingController::change
- * @see app/Http/Controllers/Telegram/TelegramTrackingController.php:52
+ * @see app/Http/Controllers/Telegram/TelegramTrackingController.php:53
  * @route '/telegram/tracking/{tracking}'
  */
 change.url = (args: { tracking: string | number } | [tracking: string | number ] | string | number, options?: RouteQueryOptions) => {
@@ -232,7 +232,7 @@ change.url = (args: { tracking: string | number } | [tracking: string | number ]
 
 /**
 * @see \App\Http\Controllers\Telegram\TelegramTrackingController::change
- * @see app/Http/Controllers/Telegram/TelegramTrackingController.php:52
+ * @see app/Http/Controllers/Telegram/TelegramTrackingController.php:53
  * @route '/telegram/tracking/{tracking}'
  */
 change.patch = (args: { tracking: string | number } | [tracking: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'patch'> => ({
@@ -242,7 +242,7 @@ change.patch = (args: { tracking: string | number } | [tracking: string | number
 
     /**
 * @see \App\Http\Controllers\Telegram\TelegramTrackingController::change
- * @see app/Http/Controllers/Telegram/TelegramTrackingController.php:52
+ * @see app/Http/Controllers/Telegram/TelegramTrackingController.php:53
  * @route '/telegram/tracking/{tracking}'
  */
     const changeForm = (args: { tracking: string | number } | [tracking: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -257,7 +257,7 @@ change.patch = (args: { tracking: string | number } | [tracking: string | number
 
             /**
 * @see \App\Http\Controllers\Telegram\TelegramTrackingController::change
- * @see app/Http/Controllers/Telegram/TelegramTrackingController.php:52
+ * @see app/Http/Controllers/Telegram/TelegramTrackingController.php:53
  * @route '/telegram/tracking/{tracking}'
  */
         changeForm.patch = (args: { tracking: string | number } | [tracking: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -273,7 +273,7 @@ change.patch = (args: { tracking: string | number } | [tracking: string | number
     change.form = changeForm
 /**
 * @see \App\Http\Controllers\Telegram\TelegramTrackingController::messages
- * @see app/Http/Controllers/Telegram/TelegramTrackingController.php:59
+ * @see app/Http/Controllers/Telegram/TelegramTrackingController.php:60
  * @route '/telegram/tracking/{tracking}/messages'
  */
 export const messages = (args: { tracking: string | number } | [tracking: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -288,7 +288,7 @@ messages.definition = {
 
 /**
 * @see \App\Http\Controllers\Telegram\TelegramTrackingController::messages
- * @see app/Http/Controllers/Telegram/TelegramTrackingController.php:59
+ * @see app/Http/Controllers/Telegram/TelegramTrackingController.php:60
  * @route '/telegram/tracking/{tracking}/messages'
  */
 messages.url = (args: { tracking: string | number } | [tracking: string | number ] | string | number, options?: RouteQueryOptions) => {
@@ -316,7 +316,7 @@ messages.url = (args: { tracking: string | number } | [tracking: string | number
 
 /**
 * @see \App\Http\Controllers\Telegram\TelegramTrackingController::messages
- * @see app/Http/Controllers/Telegram/TelegramTrackingController.php:59
+ * @see app/Http/Controllers/Telegram/TelegramTrackingController.php:60
  * @route '/telegram/tracking/{tracking}/messages'
  */
 messages.get = (args: { tracking: string | number } | [tracking: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -325,7 +325,7 @@ messages.get = (args: { tracking: string | number } | [tracking: string | number
 })
 /**
 * @see \App\Http\Controllers\Telegram\TelegramTrackingController::messages
- * @see app/Http/Controllers/Telegram/TelegramTrackingController.php:59
+ * @see app/Http/Controllers/Telegram/TelegramTrackingController.php:60
  * @route '/telegram/tracking/{tracking}/messages'
  */
 messages.head = (args: { tracking: string | number } | [tracking: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -335,7 +335,7 @@ messages.head = (args: { tracking: string | number } | [tracking: string | numbe
 
     /**
 * @see \App\Http\Controllers\Telegram\TelegramTrackingController::messages
- * @see app/Http/Controllers/Telegram/TelegramTrackingController.php:59
+ * @see app/Http/Controllers/Telegram/TelegramTrackingController.php:60
  * @route '/telegram/tracking/{tracking}/messages'
  */
     const messagesForm = (args: { tracking: string | number } | [tracking: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -345,7 +345,7 @@ messages.head = (args: { tracking: string | number } | [tracking: string | numbe
 
             /**
 * @see \App\Http\Controllers\Telegram\TelegramTrackingController::messages
- * @see app/Http/Controllers/Telegram/TelegramTrackingController.php:59
+ * @see app/Http/Controllers/Telegram/TelegramTrackingController.php:60
  * @route '/telegram/tracking/{tracking}/messages'
  */
         messagesForm.get = (args: { tracking: string | number } | [tracking: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -354,7 +354,7 @@ messages.head = (args: { tracking: string | number } | [tracking: string | numbe
         })
             /**
 * @see \App\Http\Controllers\Telegram\TelegramTrackingController::messages
- * @see app/Http/Controllers/Telegram/TelegramTrackingController.php:59
+ * @see app/Http/Controllers/Telegram/TelegramTrackingController.php:60
  * @route '/telegram/tracking/{tracking}/messages'
  */
         messagesForm.head = (args: { tracking: string | number } | [tracking: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -370,7 +370,7 @@ messages.head = (args: { tracking: string | number } | [tracking: string | numbe
     messages.form = messagesForm
 /**
 * @see \App\Http\Controllers\Telegram\TelegramTrackingController::download
- * @see app/Http/Controllers/Telegram/TelegramTrackingController.php:67
+ * @see app/Http/Controllers/Telegram/TelegramTrackingController.php:68
  * @route '/telegram/tracking/{tracking}/export/{format}'
  */
 export const download = (args: { tracking: string | number, format: string | number } | [tracking: string | number, format: string | number ], options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -385,7 +385,7 @@ download.definition = {
 
 /**
 * @see \App\Http\Controllers\Telegram\TelegramTrackingController::download
- * @see app/Http/Controllers/Telegram/TelegramTrackingController.php:67
+ * @see app/Http/Controllers/Telegram/TelegramTrackingController.php:68
  * @route '/telegram/tracking/{tracking}/export/{format}'
  */
 download.url = (args: { tracking: string | number, format: string | number } | [tracking: string | number, format: string | number ], options?: RouteQueryOptions) => {
@@ -411,7 +411,7 @@ download.url = (args: { tracking: string | number, format: string | number } | [
 
 /**
 * @see \App\Http\Controllers\Telegram\TelegramTrackingController::download
- * @see app/Http/Controllers/Telegram/TelegramTrackingController.php:67
+ * @see app/Http/Controllers/Telegram/TelegramTrackingController.php:68
  * @route '/telegram/tracking/{tracking}/export/{format}'
  */
 download.get = (args: { tracking: string | number, format: string | number } | [tracking: string | number, format: string | number ], options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -420,7 +420,7 @@ download.get = (args: { tracking: string | number, format: string | number } | [
 })
 /**
 * @see \App\Http\Controllers\Telegram\TelegramTrackingController::download
- * @see app/Http/Controllers/Telegram/TelegramTrackingController.php:67
+ * @see app/Http/Controllers/Telegram/TelegramTrackingController.php:68
  * @route '/telegram/tracking/{tracking}/export/{format}'
  */
 download.head = (args: { tracking: string | number, format: string | number } | [tracking: string | number, format: string | number ], options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -430,7 +430,7 @@ download.head = (args: { tracking: string | number, format: string | number } | 
 
     /**
 * @see \App\Http\Controllers\Telegram\TelegramTrackingController::download
- * @see app/Http/Controllers/Telegram/TelegramTrackingController.php:67
+ * @see app/Http/Controllers/Telegram/TelegramTrackingController.php:68
  * @route '/telegram/tracking/{tracking}/export/{format}'
  */
     const downloadForm = (args: { tracking: string | number, format: string | number } | [tracking: string | number, format: string | number ], options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -440,7 +440,7 @@ download.head = (args: { tracking: string | number, format: string | number } | 
 
             /**
 * @see \App\Http\Controllers\Telegram\TelegramTrackingController::download
- * @see app/Http/Controllers/Telegram/TelegramTrackingController.php:67
+ * @see app/Http/Controllers/Telegram/TelegramTrackingController.php:68
  * @route '/telegram/tracking/{tracking}/export/{format}'
  */
         downloadForm.get = (args: { tracking: string | number, format: string | number } | [tracking: string | number, format: string | number ], options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -449,7 +449,7 @@ download.head = (args: { tracking: string | number, format: string | number } | 
         })
             /**
 * @see \App\Http\Controllers\Telegram\TelegramTrackingController::download
- * @see app/Http/Controllers/Telegram/TelegramTrackingController.php:67
+ * @see app/Http/Controllers/Telegram/TelegramTrackingController.php:68
  * @route '/telegram/tracking/{tracking}/export/{format}'
  */
         downloadForm.head = (args: { tracking: string | number, format: string | number } | [tracking: string | number, format: string | number ], options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({

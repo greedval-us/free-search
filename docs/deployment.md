@@ -110,4 +110,4 @@ fastcgi_busy_buffers_size 32k;
 - MoonShine guard, throttle, allowlist и audit resources проверены;
 - backup и restore database/private storage проверены практически.
 
-Production rollout должен учитывать quota и terms Telegram, YouTube, Bluesky, Mastodon, RSS providers и NewsAPI.
+Production rollout должен учитывать quota и terms Telegram, YouTube, Bluesky, Mastodon и поисковых engines, подключённых через SearXNG. Локальный compose для новостей доступен только через loopback; при переносе на отдельный host настройте закрытый доступ Laravel к SearXNG.

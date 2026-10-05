@@ -27,12 +27,6 @@ final class NewsTimelineBuilder
             $timeline[$date] = (int) ($timeline[$date] ?? 0) + 1;
         }
 
-        // Fallback: if sources returned mentions without parseable dates,
-        // keep timeline visible instead of an empty chart.
-        if ($timeline === [] && $mentions !== []) {
-            $timeline[date('Y-m-d')] = count($mentions);
-        }
-
         ksort($timeline);
 
         $points = [];

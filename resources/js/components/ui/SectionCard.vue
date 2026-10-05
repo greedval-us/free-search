@@ -8,7 +8,9 @@ defineProps<{
 
 <template>
     <section class="intel-section min-w-0" :class="bodyClass">
-        <h3 class="mb-2 break-words font-semibold">{{ title }}</h3>
+        <h3 class="mb-2 text-sm font-semibold break-words text-foreground">
+            {{ title }}
+        </h3>
         <p v-if="description" class="intel-caption mb-2 break-words">
             {{ description }}
         </p>

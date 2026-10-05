@@ -66,6 +66,7 @@ const progressStats = computed(() => [
         :download-json-label="t('mastodon.parser.downloadJson')"
         :progress-title="t('mastodon.parser.progress.title')"
         :stage-label="stageLabel"
+        :stage="stage"
         :progress="progress"
         :stats="progressStats"
         @update:settings-collapsed="settingsCollapsed = $event"

@@ -24,7 +24,6 @@ const tools = computed(() =>
 
             return {
                 ...item,
-                href: activity?.url ?? item.href,
                 pinned: activity?.is_pinned ?? false,
             };
         })
@@ -46,13 +45,13 @@ const tools = computed(() =>
             </p>
         </div>
         <div
-            class="grid grid-cols-[repeat(auto-fit,minmax(min(100%,18rem),1fr))] gap-3"
+            class="grid grid-cols-[repeat(auto-fit,minmax(min(100%,17rem),1fr))] gap-3"
         >
             <Link
                 v-for="tool in tools"
                 :key="tool.key"
                 :href="tool.href"
-                class="group flex min-w-0 items-start gap-4 rounded-2xl border border-border/80 bg-card p-4 transition-colors hover:border-primary/50 hover:bg-primary/5 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring sm:p-5"
+                class="workspace-card group flex min-w-0 items-start gap-3 rounded-2xl border border-border/80 bg-card p-4 hover:border-primary/50 hover:bg-primary/5 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring sm:gap-4 sm:p-5"
             >
                 <span
                     class="flex size-11 shrink-0 items-center justify-center rounded-xl border border-primary/15 bg-primary/8 text-primary"
@@ -74,7 +73,7 @@ const tools = computed(() =>
                     >
                 </span>
                 <ArrowUpRight
-                    class="mt-1 size-4 shrink-0 text-muted-foreground transition-colors group-hover:text-primary"
+                    class="mt-1 size-4 shrink-0 text-muted-foreground transition-[color,transform] duration-200 group-hover:text-primary motion-safe:group-hover:translate-x-0.5 motion-safe:group-hover:-translate-y-0.5"
                     aria-hidden="true"
                 />
             </Link>

@@ -17,7 +17,7 @@ final class ProcessParserRun implements ShouldBeUniqueUntilProcessing, ShouldQue
 
     private const MAX_EXCEPTIONS = 3;
 
-    private const RETRY_WINDOW_SECONDS = 3600;
+    public const RETRY_WINDOW_SECONDS = 3600;
 
     private const UNIQUE_FOR_SECONDS = 3600;
 
@@ -34,6 +34,10 @@ final class ProcessParserRun implements ShouldBeUniqueUntilProcessing, ShouldQue
 
     public int $maxExceptions = self::MAX_EXCEPTIONS;
 
+    public array $backoff = [5, 15, 60];
+
+    public ?int $checkpointVersion = null;
+
     public int $retryDeadline;
 
     public int $timeout = self::TIMEOUT_SECONDS;
@@ -46,8 +50,11 @@ final class ProcessParserRun implements ShouldBeUniqueUntilProcessing, ShouldQue
         public readonly string $module,
         public readonly int $userId,
         public readonly string $runId,
+        ?int $checkpointVersion = null,
+        ?int $retryDeadline = null,
     ) {
-        $this->retryDeadline = time() + self::RETRY_WINDOW_SECONDS;
+        $this->checkpointVersion = $checkpointVersion;
+        $this->retryDeadline = $retryDeadline ?? (time() + self::RETRY_WINDOW_SECONDS);
     }
 
     public function retryUntil(): int
@@ -62,7 +69,7 @@ final class ProcessParserRun implements ShouldBeUniqueUntilProcessing, ShouldQue
     ): void {
         $shouldContinue = $registry
             ->forModule($this->module)
-            ->advanceRun($this->userId, $this->runId);
+            ->advanceRun($this->userId, $this->runId, $this->checkpointVersion);
 
         if ($shouldContinue) {
             $jobDispatcher->dispatch(
@@ -82,12 +89,12 @@ final class ProcessParserRun implements ShouldBeUniqueUntilProcessing, ShouldQue
 
         app(ParserRunBackgroundProcessorRegistry::class)
             ->forModule($this->module)
-            ->failRun($this->userId, $this->runId, $exception->getMessage());
+            ->failRun($this->userId, $this->runId, $exception->getMessage(), $this->checkpointVersion);
     }
 
     public function uniqueId(): string
     {
-        return implode(':', [$this->module, $this->userId, $this->runId]);
+        return implode(':', [$this->module, $this->userId, $this->runId, $this->checkpointVersion ?? 'legacy']);
     }
 
     /**

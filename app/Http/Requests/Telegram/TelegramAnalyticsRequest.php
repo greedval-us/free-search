@@ -6,6 +6,7 @@ use App\Http\Requests\LocalizedFormRequest;
 use App\Http\Requests\Telegram\Concerns\ResolvesTelegramConfig;
 use App\Modules\Telegram\DTO\Request\TelegramAnalyticsParamsDTO;
 use App\Modules\Telegram\DTO\Request\TelegramAnalyticsRangeDTO;
+use App\Rules\PublicTelegramUsername;
 use Carbon\Carbon;
 use Illuminate\Validation\Validator;
 
@@ -28,7 +29,7 @@ class TelegramAnalyticsRequest extends LocalizedFormRequest
     public function rules(): array
     {
         return [
-            'chatUsername' => ['required', 'string', 'max:255'],
+            'chatUsername' => ['bail', 'required', 'string', new PublicTelegramUsername],
             'keyword' => ['nullable', 'string', 'max:255'],
             'locale' => $this->localeRule(),
             'periodDays' => ['nullable', 'integer', 'min:'.$this->periodMinDays(), 'max:'.$this->periodMaxDays()],

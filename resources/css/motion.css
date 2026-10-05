@@ -1,0 +1,56 @@
+@keyframes workspace-enter {
+    from {
+        opacity: 0;
+        transform: translateY(6px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@layer utilities {
+    .workspace-enter {
+        animation: workspace-enter 260ms ease-out both;
+    }
+
+    .workspace-card {
+        transition:
+            border-color 180ms ease,
+            background-color 180ms ease,
+            box-shadow 180ms ease,
+            transform 180ms ease;
+    }
+
+    @media (hover: hover) and (prefers-reduced-motion: no-preference) {
+        .workspace-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 24px -18px
+                color-mix(in oklab, var(--primary) 45%, transparent);
+        }
+    }
+}
+
+.workspace-panel-enter-active,
+.workspace-panel-leave-active {
+    transition:
+        opacity 140ms ease,
+        transform 140ms ease;
+}
+
+.workspace-panel-enter-from,
+.workspace-panel-leave-to {
+    opacity: 0;
+    transform: translateY(4px);
+}
+
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        scroll-behavior: auto !important;
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+}

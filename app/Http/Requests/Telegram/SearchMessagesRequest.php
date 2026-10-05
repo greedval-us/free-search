@@ -4,6 +4,7 @@ namespace App\Http\Requests\Telegram;
 
 use App\Http\Requests\Telegram\Concerns\ResolvesTelegramConfig;
 use App\Modules\Telegram\DTO\Request\SearchMessagesQueryDTO;
+use App\Rules\PublicTelegramUsername;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Carbon;
 use Illuminate\Validation\Validator;
@@ -20,9 +21,9 @@ class SearchMessagesRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'chatUsername' => ['required', 'string', 'max:255'],
+            'chatUsername' => ['bail', 'required', 'string', new PublicTelegramUsername],
             'q' => ['nullable', 'string', 'max:255'],
-            'fromUsername' => ['nullable', 'string', 'max:255'],
+            'fromUsername' => ['nullable', 'string', 'regex:/^(?:[1-9][0-9]{0,18}|@?[a-z][a-z0-9_]{3,31})$/iD'],
             'dateFrom' => ['nullable', 'date_format:Y-m-d'],
             'dateTo' => ['nullable', 'date_format:Y-m-d'],
             'limit' => ['nullable', 'integer', 'min:1', 'max:'.$this->messagesLimitMax()],
@@ -79,7 +80,7 @@ class SearchMessagesRequest extends FormRequest
                     $filter['authorId'] = $authorId;
                 }
             } elseif ($normalizedAuthor !== '') {
-                $filter['from_id'] = $normalizedAuthor;
+                $filter['authorUsername'] = $normalizedAuthor;
             }
         }
 

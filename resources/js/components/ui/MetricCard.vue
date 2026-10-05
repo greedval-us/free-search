@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import type { Component } from 'vue';
 import HelpTooltip from '@/components/ui/HelpTooltip.vue';
 
 withDefaults(
@@ -8,6 +9,8 @@ withDefaults(
         helpText?: string;
         tone?: 'default' | 'positive' | 'warning' | 'danger';
         caption?: string;
+        icon?: Component;
+        prominent?: boolean;
     }>(),
     {
         helpText: undefined,
@@ -26,18 +29,26 @@ withDefaults(
             'border-rose-500/35 bg-rose-500/8': tone === 'danger',
         }"
     >
-        <p class="intel-title inline-flex items-center gap-1">
+        <p class="intel-title flex min-w-0 items-center gap-2">
+            <component
+                :is="icon"
+                v-if="icon"
+                class="size-4 shrink-0 text-primary"
+                aria-hidden="true"
+            />
             <span>{{ title }}</span>
             <HelpTooltip
                 v-if="helpText"
-                label="?"
+                :label="title"
                 :text="helpText"
                 width-class="w-64"
                 align="right"
             />
         </p>
-        <p class="intel-value">{{ value }}</p>
-        <p v-if="caption" class="mt-1 text-[11px] text-muted-foreground">
+        <p class="intel-value" :class="{ 'text-3xl!': prominent }">
+            {{ value }}
+        </p>
+        <p v-if="caption" class="intel-caption mt-1">
             {{ caption }}
         </p>
     </div>

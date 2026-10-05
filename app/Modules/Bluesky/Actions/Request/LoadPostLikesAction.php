@@ -20,7 +20,7 @@ final class LoadPostLikesAction extends AbstractBlueskyAction
     {
         $payload = $this->gateway->getLikes($uri, $cid, $limit, $cursor);
 
-        $items = collect($payload['likes'] ?? [])
+        $items = collect($this->listPayload($payload, 'likes', 'actor.did'))
             ->map(fn (array $item): array => $this->interactionPresenter->presentLike($item))
             ->values()
             ->all();

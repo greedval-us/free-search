@@ -1,12 +1,8 @@
 <script setup lang="ts">
 import { LoaderCircle } from 'lucide-vue-next';
-import { computed, onMounted, ref } from 'vue';
+import { computed, ref } from 'vue';
 import { useI18n } from '@/composables/useI18n';
-import {
-    getRepeatQueryParams,
-    isRepeatAutorunEnabled,
-    readRepeatQueryParam,
-} from '@/composables/useRepeatQuery';
+import { iocExtract } from '@/routes/shifr';
 import ShifrFormCard from '../components/ShifrFormCard.vue';
 import ShifrResultCard from '../components/ShifrResultCard.vue';
 import { useShifrRequest } from '../composables/useShifrRequest';
@@ -20,7 +16,7 @@ const {
     canRun,
     run: runRequest,
 } = useShifrRequest(
-    '/shifr/ioc-extract',
+    iocExtract.url(),
     () => t('shifr.errors.requestFailed'),
     computed(() => input.value.trim().length > 0)
 );
@@ -32,30 +28,6 @@ const run = async (): Promise<void> => {
     });
     await runRequest(params);
 };
-
-onMounted(() => {
-    const params = getRepeatQueryParams();
-
-    if (!params) {
-        return;
-    }
-
-    const tab = readRepeatQueryParam(params, ['tab']);
-
-    if (tab !== 'ioc') {
-        return;
-    }
-
-    const text = readRepeatQueryParam(params, ['text']);
-
-    if (text !== '') {
-        input.value = text;
-    }
-
-    if (isRepeatAutorunEnabled(params) && canRun.value) {
-        void run();
-    }
-});
 </script>
 
 <template>

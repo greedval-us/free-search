@@ -20,7 +20,7 @@ final class LoadActorFollowsAction extends AbstractBlueskyAction
     {
         $payload = $this->gateway->getFollows($actor, $limit, $cursor);
 
-        $items = collect($payload['follows'] ?? [])
+        $items = collect($this->listPayload($payload, 'follows', 'did'))
             ->map(fn (array $item): array => $this->actorPresenter->present($item))
             ->values()
             ->all();

@@ -1,0 +1,51 @@
+# https://docs.searxng.org/admin/settings/settings.html#use-default-settings
+use_default_settings:
+  engines:
+    keep_only:
+      - google news
+      - bing news
+      - duckduckgo news
+      - brave.news
+
+general:
+  debug: false
+  instance_name: Free Search News
+
+search:
+  default_lang: ru
+  safe_search: 1
+  autocomplete: ''
+  max_page: 3
+  formats:
+    - html
+    - json
+
+server:
+  # The secret is supplied by SEARXNG_SECRET from the ignored local .env.
+  limiter: false
+  public_instance: false
+  image_proxy: false
+  method: POST
+
+ui:
+  default_locale: ru
+  query_in_title: false
+
+categories_as_tabs:
+  news:
+
+outgoing:
+  request_timeout: 6.0
+  max_request_timeout: 8.0
+
+engines:
+  - name: google news
+    disabled: false
+  - name: bing news
+    disabled: false
+  - name: duckduckgo news
+    disabled: false
+  - name: brave.news
+    disabled: false
+    # The default alias references the removed general-purpose "brave" engine.
+    network: {}

@@ -86,6 +86,7 @@ const progressStats = computed(() => [
         :download-json-label="t('bluesky.parser.downloadJson')"
         :progress-title="t('bluesky.parser.progress.title')"
         :stage-label="stageLabel"
+        :stage="stage"
         :progress="progress"
         :stats="progressStats"
         stats-grid-class="md:grid-cols-2 xl:grid-cols-3"

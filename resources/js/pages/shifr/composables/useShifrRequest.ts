@@ -36,12 +36,12 @@ export const useShifrRequest = (
         reset();
 
         try {
-            const query = Object.fromEntries(params.entries());
+            const body = Object.fromEntries(params.entries());
             const apiResult = await apiRequest<Record<string, unknown>>(
                 endpoint,
                 {
-                    method: 'GET',
-                    query,
+                    method: 'POST',
+                    body,
                 }
             );
 

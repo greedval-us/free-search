@@ -3,6 +3,7 @@
 namespace App\Modules\Telegram\Actions;
 
 use App\Facades\MadelineProto;
+use App\Modules\Telegram\Access\PublicTelegramSource;
 use App\Support\Activity\RequestPayloadSanitizer;
 use App\Support\MadelineProto\MadelineProtoManager;
 use danog\MadelineProto\API;
@@ -20,6 +21,14 @@ abstract class AbstractTelegramAction
         $manager = MadelineProto::getFacadeRoot();
 
         return $manager->client();
+    }
+
+    protected function publicSource(API $client, string $identifier): ?array
+    {
+        return PublicTelegramSource::resolve(
+            $identifier,
+            fn (string $username): array => $client->contacts->resolveUsername(['username' => $username]),
+        );
     }
 
     protected function logContext(): string

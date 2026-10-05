@@ -1,3 +1,4 @@
+import { requestHeaders } from './csrf';
 import { ApiError, normalizeErrorPayload, parseApiEnvelope } from './errors';
 import { buildQueryString } from './query';
 import { getBackoffDelay, sleep, toRetryPolicy } from './retry';
@@ -7,27 +8,22 @@ import {
 } from './retry-policies';
 import type { ApiResult, RequestOptions } from './types';
 
-const DEFAULT_HEADERS: HeadersInit = {
-    Accept: 'application/json',
-};
-
-const withJsonBody = (
-    headers: HeadersInit | undefined,
-    body: unknown
-): HeadersInit => {
-    if (body === undefined || body === null) {
-        return headers ?? DEFAULT_HEADERS;
-    }
-
-    return {
-        'Content-Type': 'application/json',
-        ...DEFAULT_HEADERS,
-        ...(headers ?? {}),
-    };
-};
-
 const isRetriableStatus = (status: number, retriableStatuses: number[]) =>
     retriableStatuses.includes(status);
+
+const isAbortError = (error: unknown) =>
+    error instanceof Error && error.name === 'AbortError';
+
+const requestFailure = (error: unknown, aborted = false) =>
+    normalizeErrorPayload({
+        message: aborted
+            ? 'Request cancelled.'
+            : error instanceof Error
+              ? error.message
+              : 'Network request failed.',
+        code: aborted ? 'aborted' : 'network_error',
+        cause: error,
+    });
 
 export const apiRequest = async <TData = unknown>(
     url: string,
@@ -37,10 +33,15 @@ export const apiRequest = async <TData = unknown>(
     const retryPolicy = toRetryPolicy(
         options.retry ??
             resolveEndpointRetryPolicy(url, method) ??
-            resolveDefaultRetryPolicy()
+            (method === 'GET'
+                ? resolveDefaultRetryPolicy()
+                : { attempts: 0, retryOnNetworkError: false })
     );
-    const requestUrl = `${url}${buildQueryString(options.query)}`;
-    const headers = withJsonBody(options.headers, options.body);
+    const hashIndex = url.indexOf('#');
+    const baseUrl = hashIndex === -1 ? url : url.slice(0, hashIndex);
+    const hash = hashIndex === -1 ? '' : url.slice(hashIndex);
+    const query = buildQueryString(options.query);
+    const requestUrl = `${baseUrl}${query ? `${baseUrl.includes('?') ? '&' : '?'}${query.slice(1)}` : ''}${hash}`;
     const body =
         options.body !== undefined && options.body !== null
             ? JSON.stringify(options.body)
@@ -50,15 +51,35 @@ export const apiRequest = async <TData = unknown>(
 
     for (let attempt = 0; attempt <= retryPolicy.attempts; attempt += 1) {
         try {
+            if (options.signal?.aborted) {
+                return requestFailure(options.signal.reason, true);
+            }
+
             const response = await fetch(requestUrl, {
                 method,
-                headers,
+                headers: requestHeaders(
+                    requestUrl,
+                    method,
+                    options.headers,
+                    body !== undefined
+                ),
                 body,
                 signal: options.signal,
                 credentials: options.credentials ?? 'same-origin',
             });
 
-            const rawPayload = await response.json().catch(() => null);
+            const rawPayload = await response.json().catch((error) => {
+                if (isAbortError(error) || options.signal?.aborted) {
+                    throw error;
+                }
+
+                return null;
+            });
+
+            if (options.signal?.aborted) {
+                return requestFailure(options.signal.reason, true);
+            }
+
             const envelope = parseApiEnvelope<TData>(rawPayload);
 
             if (response.ok && envelope?.ok) {
@@ -83,44 +104,41 @@ export const apiRequest = async <TData = unknown>(
             });
 
             if (
-                attempt < retryPolicy.attempts &&
-                isRetriableStatus(response.status, retryPolicy.retryOnStatuses)
+                attempt >= retryPolicy.attempts ||
+                !isRetriableStatus(response.status, retryPolicy.retryOnStatuses)
             ) {
-                const delay = getBackoffDelay(
-                    attempt,
-                    retryPolicy.baseDelayMs,
-                    retryPolicy.maxDelayMs
-                );
-                await sleep(delay);
-                continue;
+                return errorPayload;
+            }
+        } catch (error) {
+            if (isAbortError(error) || options.signal?.aborted) {
+                return requestFailure(error, true);
             }
 
-            return errorPayload;
-        } catch (error) {
             lastError = error;
 
             if (
-                attempt < retryPolicy.attempts &&
-                retryPolicy.retryOnNetworkError
+                attempt >= retryPolicy.attempts ||
+                !retryPolicy.retryOnNetworkError
             ) {
-                const delay = getBackoffDelay(
+                return requestFailure(error);
+            }
+        }
+
+        try {
+            await sleep(
+                getBackoffDelay(
                     attempt,
                     retryPolicy.baseDelayMs,
                     retryPolicy.maxDelayMs
-                );
-                await sleep(delay);
-                continue;
-            }
+                ),
+                options.signal
+            );
+        } catch (error) {
+            return requestFailure(error, true);
         }
     }
 
-    return normalizeErrorPayload({
-        message:
-            lastError instanceof Error
-                ? lastError.message
-                : 'Network request failed.',
-        cause: lastError,
-    });
+    return requestFailure(lastError);
 };
 
 export const apiRequestOrThrow = async <TData = unknown>(

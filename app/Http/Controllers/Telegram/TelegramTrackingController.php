@@ -10,6 +10,7 @@ use App\Modules\Telegram\Tracking\TrackingConfig;
 use App\Modules\Telegram\Tracking\TrackingPresenter;
 use App\Modules\Telegram\Tracking\TrackingReports;
 use App\Modules\Telegram\Tracking\TrackingService;
+use App\Support\Http\DocumentResponseHeaders;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Maatwebsite\Excel\Facades\Excel;
@@ -75,16 +76,13 @@ final class TelegramTrackingController extends Controller
         $filename = 'telegram-tracking-'.$task->id.'.'.$format;
 
         if ($format === 'xlsx') {
-            $response = Excel::download($this->reports->workbook($task), $filename);
-            $response->headers->set('Cache-Control', 'private, no-store');
-
-            return $response;
+            return Excel::download($this->reports->workbook($task), $filename, headers: DocumentResponseHeaders::download());
         }
 
         return response()->streamDownload(function () use ($task): void {
             foreach ($this->reports->json($task) as $chunk) {
                 echo $chunk;
             }
-        }, $filename, ['Content-Type' => 'application/json; charset=UTF-8', 'Cache-Control' => 'private, no-store']);
+        }, $filename, [...DocumentResponseHeaders::download(), 'Content-Type' => 'application/json; charset=UTF-8']);
     }
 }

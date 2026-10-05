@@ -8,6 +8,7 @@ use App\Modules\Telegram\Core\Contracts\TelegramGatewayInterface;
 use App\Modules\Telegram\Enums\TelegramParserStage;
 use App\Modules\Telegram\Presenters\TelegramCommentPresenter;
 use App\Modules\Telegram\Presenters\TelegramMessagePresenter;
+use RuntimeException;
 
 class TelegramParserCollector implements ParserRunCollectorInterface
 {
@@ -50,6 +51,7 @@ class TelegramParserCollector implements ParserRunCollectorInterface
     {
         $context = is_array($run['context'] ?? null) ? $run['context'] : [];
         $stats = is_array($run['stats'] ?? null) ? $run['stats'] : [];
+
         $data = is_array($run['data'] ?? null) ? $run['data'] : [];
         $messages = is_array($data['messages'] ?? null) ? $data['messages'] : [];
         $commentsIndex = is_array($data['commentsIndex'] ?? null) ? $data['commentsIndex'] : [];
@@ -83,6 +85,15 @@ class TelegramParserCollector implements ParserRunCollectorInterface
         $data = is_array($run['data'] ?? null) ? $run['data'] : [];
         $stats = is_array($run['stats'] ?? null) ? $run['stats'] : [];
 
+        if (! ($data['sourceInfoLoaded'] ?? false)) {
+            $info = $this->telegramService->getInfo((string) ($context['chatUsername'] ?? ''));
+            if ($info?->chat === null) {
+                throw new RuntimeException(__('errors.api.telegram.parser_messages_failed'));
+            }
+            $data['isChannel'] = (bool) $info->chat->broadcast;
+            $data['sourceInfoLoaded'] = true;
+        }
+
         $filter = [
             'peer' => (string) ($context['chatUsername'] ?? ''),
             'q' => (string) ($context['keyword'] ?? ''),
@@ -90,18 +101,17 @@ class TelegramParserCollector implements ParserRunCollectorInterface
             'offset_id' => (int) ($cursor['messagesOffsetId'] ?? 0),
         ];
 
-        $keyword = trim((string) ($context['keyword'] ?? ''));
         $range = is_array($context['range'] ?? null) ? $context['range'] : [];
-        if ($keyword === '' && ! empty($range['minTimestamp'])) {
+        if (! empty($range['minTimestamp'])) {
             $filter['min_date'] = (int) $range['minTimestamp'];
         }
-        if ($keyword === '' && ! empty($range['maxTimestamp'])) {
+        if (! empty($range['maxTimestamp'])) {
             $filter['max_date'] = (int) $range['maxTimestamp'];
         }
 
         $dto = $this->telegramService->getMessages($filter);
         if ($dto === null) {
-            return $this->fail($run, __('errors.api.telegram.parser_messages_failed'));
+            throw new RuntimeException(__('errors.api.telegram.parser_messages_failed'));
         }
 
         $cursor['messagesPage'] = (int) ($cursor['messagesPage'] ?? 0) + 1;
@@ -121,6 +131,12 @@ class TelegramParserCollector implements ParserRunCollectorInterface
                 continue;
             }
 
+            $timestamp = (int) ($message['date'] ?? 0);
+            if ((! empty($range['minTimestamp']) && $timestamp < (int) $range['minTimestamp'])
+                || (! empty($range['maxTimestamp']) && $timestamp > (int) $range['maxTimestamp'])) {
+                continue;
+            }
+
             $messageIds[$messageId] = true;
             $messages[] = $message;
             foreach (($message['reactions'] ?? []) as $reaction) {
@@ -137,12 +153,18 @@ class TelegramParserCollector implements ParserRunCollectorInterface
         }
 
         $stats['processedMessages'] = count($messages);
-        $nextOffsetId = $this->messagePresenter->resolveNextOffsetId($dto->messages ?? []);
-        $hasMore = $nextOffsetId !== null && count($dto->messages ?? []) >= self::MESSAGE_LIMIT;
+        $pageIds = array_values(array_filter(array_map(static fn ($message): int => (int) $message->id, $dto->messages), static fn (int $id): bool => $id > 0));
+        $nextOffsetId = $pageIds === [] ? null : min($pageIds);
+        $previousOffsetId = (int) ($cursor['messagesOffsetId'] ?? 0);
+        if ($nextOffsetId !== null && $previousOffsetId > 0 && $nextOffsetId >= $previousOffsetId) {
+            throw new RuntimeException('Telegram message pagination did not advance.');
+        }
+        // A short page can still have a continuation; only an empty page ends collection.
+        $hasMore = $nextOffsetId !== null;
+        $cursor['messagesHasMore'] = $hasMore;
 
         if ($nextOffsetId === null || ! $hasMore) {
-            $info = $this->telegramService->getInfo((string) ($context['chatUsername'] ?? ''));
-            $isChannel = (bool) ($info?->chat?->broadcast ?? false);
+            $isChannel = (bool) ($data['isChannel'] ?? false);
             $commentPostIds = [];
 
             if ($isChannel) {
@@ -211,6 +233,9 @@ class TelegramParserCollector implements ParserRunCollectorInterface
             self::COMMENT_LIMIT,
             $offsetId
         );
+        if (($page['ok'] ?? true) !== true) {
+            throw new RuntimeException('Unable to load Telegram comments.');
+        }
         $presented = $this->commentPresenter->present($page, self::COMMENT_LIMIT, $offsetId);
 
         $commentIds = is_array($data['commentIds'] ?? null) ? $data['commentIds'] : [];
@@ -254,6 +279,10 @@ class TelegramParserCollector implements ParserRunCollectorInterface
         $hasMore = (bool) ($presented['pagination']['hasMore'] ?? false);
         $nextOffsetId = (int) ($presented['pagination']['nextOffsetId'] ?? 0);
 
+        if ($hasMore && ($nextOffsetId <= 0 || ($offsetId > 0 && $nextOffsetId >= $offsetId))) {
+            throw new RuntimeException('Telegram comment pagination did not advance.');
+        }
+
         if ($hasMore && $nextOffsetId > 0) {
             $cursor['commentOffsetId'] = $nextOffsetId;
         } else {
@@ -291,20 +320,6 @@ class TelegramParserCollector implements ParserRunCollectorInterface
         $run['stage'] = TelegramParserStage::Completed->value;
         $run['progress'] = 100;
         $run['error'] = null;
-
-        return $run;
-    }
-
-    /**
-     * @param  array<string, mixed>  $run
-     * @return array<string, mixed>
-     */
-    private function fail(array $run, string $message): array
-    {
-        $run['status'] = ParserRunStatus::Failed->value;
-        $run['stage'] = TelegramParserStage::Failed->value;
-        $run['progress'] = 100;
-        $run['error'] = $message;
 
         return $run;
     }

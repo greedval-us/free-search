@@ -2,8 +2,6 @@
 
 namespace App\Modules\NewsMediaIntel\Application\Support;
 
-use App\Modules\NewsMediaIntel\Enums\NewsFeedSource;
-
 final class NewsMediaIntelConfig
 {
     /**
@@ -13,32 +11,14 @@ final class NewsMediaIntelConfig
     {
         return new self(
             maxMentions: max(1, self::intValue($config, ['service', 'max_mentions'], 120)),
-            perProviderLimit: max(1, self::intValue($config, ['fetcher', 'per_provider_limit'], 40)),
-            providerOrder: self::resolveProviderOrder($config),
-            rssTimeoutSeconds: max(1, self::intValue($config, ['rss', 'timeout_seconds'], 15)),
-            rssAcceptHeader: self::stringValue(
-                $config,
-                ['rss', 'accept'],
-                'application/rss+xml, application/xml, text/xml;q=0.9, */*;q=0.8'
-            ),
-            bingRssUrlTemplate: self::stringValue(
-                $config,
-                ['rss', 'bing', 'url_template'],
-                'https://www.bing.com/search?format=rss&q={query}'
-            ),
-            googleRssUrlTemplate: self::stringValue(
-                $config,
-                ['rss', 'google', 'url_template'],
-                'https://news.google.com/rss/search?q={query}&hl={hl}&gl={gl}&ceid={ceid}'
-            ),
-            googleRssHl: self::stringValue($config, ['rss', 'google', 'hl'], 'ru'),
-            googleRssGl: self::stringValue($config, ['rss', 'google', 'gl'], 'RU'),
-            googleRssCeid: self::stringValue($config, ['rss', 'google', 'ceid'], 'RU:ru'),
-            newsApiKey: trim(self::stringValue($config, ['newsapi', 'api_key'], '')),
-            newsApiBaseUrl: self::stringValue($config, ['newsapi', 'base_url'], 'https://newsapi.org/v2/everything'),
-            newsApiLanguage: self::stringValue($config, ['newsapi', 'language'], 'ru'),
-            newsApiPageSize: max(1, self::intValue($config, ['newsapi', 'page_size'], 30)),
-            newsApiTimeoutSeconds: max(1, self::intValue($config, ['newsapi', 'timeout_seconds'], 15)),
+            searxngBaseUrl: trim(self::stringValue($config, ['searxng', 'base_url'], 'http://127.0.0.1:8088')),
+            searxngLanguage: self::stringValue($config, ['searxng', 'language'], 'ru'),
+            searxngEngines: self::stringListValue($config, ['searxng', 'engines']),
+            searxngMaxPages: min(10, max(1, self::intValue($config, ['searxng', 'max_pages'], 3))),
+            searxngTimeoutSeconds: min(20, max(1, self::intValue($config, ['searxng', 'timeout_seconds'], 10))),
+            searxngRequestBudgetSeconds: min(25, max(1, self::intValue($config, ['searxng', 'request_budget_seconds'], 20))),
+            searxngSafeSearch: min(2, max(0, self::intValue($config, ['searxng', 'safe_search'], 1))),
+            searxngTimeRange: self::stringValue($config, ['searxng', 'time_range'], ''),
             sentimentPositiveWords: self::stringListValue($config, ['analysis', 'sentiment', 'positive_words']),
             sentimentNegativeWords: self::stringListValue($config, ['analysis', 'sentiment', 'negative_words']),
             topicStopWords: self::stringListValue($config, ['analysis', 'topics', 'stop_words']),
@@ -52,21 +32,15 @@ final class NewsMediaIntelConfig
 
     public function __construct(
         private readonly int $maxMentions,
-        private readonly int $perProviderLimit,
+        private readonly string $searxngBaseUrl,
+        private readonly string $searxngLanguage,
         /** @var array<int, string> */
-        private readonly array $providerOrder,
-        private readonly int $rssTimeoutSeconds,
-        private readonly string $rssAcceptHeader,
-        private readonly string $bingRssUrlTemplate,
-        private readonly string $googleRssUrlTemplate,
-        private readonly string $googleRssHl,
-        private readonly string $googleRssGl,
-        private readonly string $googleRssCeid,
-        private readonly string $newsApiKey,
-        private readonly string $newsApiBaseUrl,
-        private readonly string $newsApiLanguage,
-        private readonly int $newsApiPageSize,
-        private readonly int $newsApiTimeoutSeconds,
+        private readonly array $searxngEngines,
+        private readonly int $searxngMaxPages,
+        private readonly int $searxngTimeoutSeconds,
+        private readonly int $searxngRequestBudgetSeconds,
+        private readonly int $searxngSafeSearch,
+        private readonly string $searxngTimeRange,
         /** @var array<int, string> */
         private readonly array $sentimentPositiveWords,
         /** @var array<int, string> */
@@ -86,82 +60,48 @@ final class NewsMediaIntelConfig
         return $this->maxMentions;
     }
 
-    public function perProviderLimit(): int
+    public function searxngBaseUrl(): string
     {
-        return $this->perProviderLimit;
+        return $this->searxngBaseUrl;
     }
 
-    /**
-     * @return array<int, string>
-     */
-    public function providerOrder(): array
+    public function searxngLanguage(): string
     {
-        return $this->providerOrder;
+        return $this->searxngLanguage;
     }
 
-    public function rssTimeoutSeconds(): int
+    /** @return array<int, string> */
+    public function searxngEngines(): array
     {
-        return $this->rssTimeoutSeconds;
+        return $this->searxngEngines;
     }
 
-    public function rssAcceptHeader(): string
+    public function searxngMaxPages(): int
     {
-        return $this->rssAcceptHeader;
+        return $this->searxngMaxPages;
     }
 
-    public function bingRssUrlTemplate(): string
+    public function searxngTimeoutSeconds(): int
     {
-        return $this->bingRssUrlTemplate;
+        return $this->searxngTimeoutSeconds;
     }
 
-    public function googleRssUrlTemplate(): string
+    public function searxngRequestBudgetSeconds(): int
     {
-        return $this->googleRssUrlTemplate;
+        return $this->searxngRequestBudgetSeconds;
     }
 
-    public function googleRssHl(): string
+    public function searxngSafeSearch(): int
     {
-        return $this->googleRssHl;
+        return $this->searxngSafeSearch;
     }
 
-    public function googleRssGl(): string
+    public function searxngTimeRange(): string
     {
-        return $this->googleRssGl;
+        return in_array($this->searxngTimeRange, ['day', 'month', 'year'], true) ? $this->searxngTimeRange : '';
     }
 
-    public function googleRssCeid(): string
-    {
-        return $this->googleRssCeid;
-    }
-
-    public function newsApiKey(): string
-    {
-        return $this->newsApiKey;
-    }
-
-    public function newsApiBaseUrl(): string
-    {
-        return $this->newsApiBaseUrl;
-    }
-
-    public function newsApiLanguage(): string
-    {
-        return $this->newsApiLanguage;
-    }
-
-    public function newsApiPageSize(): int
-    {
-        return $this->newsApiPageSize;
-    }
-
-    public function newsApiTimeoutSeconds(): int
-    {
-        return $this->newsApiTimeoutSeconds;
-    }
-
-    /**
-     * @return array<int, string>
-     */
+    /** @return array<int, string> */
     public function sentimentPositiveWords(): array
     {
         return $this->sentimentPositiveWords;
@@ -290,49 +230,5 @@ final class NewsMediaIntelConfig
         }
 
         return $cursor;
-    }
-
-    /**
-     * @param  array<string, mixed>  $config
-     * @return array<int, string>
-     */
-    private static function resolveProviderOrder(array $config): array
-    {
-        $default = self::allowedProviderKeys();
-        $raw = self::valueByPath($config, ['fetcher', 'provider_order']);
-        if (! is_array($raw)) {
-            return $default;
-        }
-
-        $allowed = array_fill_keys(self::allowedProviderKeys(), true);
-        $items = [];
-        foreach ($raw as $item) {
-            if (! is_string($item)) {
-                continue;
-            }
-
-            $key = strtolower(trim($item));
-            if ($key === '') {
-                continue;
-            }
-
-            if (! array_key_exists($key, $allowed)) {
-                continue;
-            }
-
-            $items[] = $key;
-        }
-
-        $items = array_values(array_unique($items));
-
-        return $items !== [] ? $items : $default;
-    }
-
-    /**
-     * @return array<int, string>
-     */
-    private static function allowedProviderKeys(): array
-    {
-        return NewsFeedSource::values();
     }
 }

@@ -3,6 +3,7 @@
 namespace App\Http\Requests\Telegram;
 
 use App\Modules\Telegram\DTO\Request\SearchMediaQueryDTO;
+use App\Rules\PublicTelegramUsername;
 use Illuminate\Foundation\Http\FormRequest;
 
 class StreamTelegramMediaRequest extends FormRequest
@@ -14,7 +15,18 @@ class StreamTelegramMediaRequest extends FormRequest
 
     public function rules(): array
     {
-        return [];
+        return [
+            'chatUsername' => ['bail', 'required', 'string', new PublicTelegramUsername],
+            'messageId' => ['required', 'integer', 'min:1'],
+        ];
+    }
+
+    protected function prepareForValidation(): void
+    {
+        $this->merge([
+            'chatUsername' => $this->route('chatUsername'),
+            'messageId' => $this->route('messageId'),
+        ]);
     }
 
     public function chatUsername(): string

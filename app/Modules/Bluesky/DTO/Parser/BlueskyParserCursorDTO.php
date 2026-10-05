@@ -3,10 +3,15 @@
 namespace App\Modules\Bluesky\DTO\Parser;
 
 use App\Modules\Bluesky\Enums\BlueskyParserInteractionKind;
+use App\Modules\ParserSupport\PaginationCursorHistory;
 use App\Support\Contracts\ArrayPayloadable;
+use RuntimeException;
 
 final class BlueskyParserCursorDTO implements ArrayPayloadable
 {
+    /** @var array<string, PaginationCursorHistory> */
+    private array $cursorHistories = [];
+
     public function __construct(
         private ?string $feedCursor = null,
         private int $feedPage = 0,
@@ -18,7 +23,14 @@ final class BlueskyParserCursorDTO implements ArrayPayloadable
         private BlueskyParserInteractionKind $interactionKind = BlueskyParserInteractionKind::Likes,
         private ?string $interactionCursor = null,
         private int $nextAdvanceAt = 0,
-    ) {}
+        array $seenCursors = [],
+        private array $replyFrontier = [],
+        private array $replyVisited = [],
+    ) {
+        foreach ($seenCursors as $scope => $seen) {
+            $this->cursorHistories[$scope] = PaginationCursorHistory::fromHashes($seen);
+        }
+    }
 
     /**
      * @param  array<string, mixed>  $payload
@@ -37,6 +49,9 @@ final class BlueskyParserCursorDTO implements ArrayPayloadable
                 ?? BlueskyParserInteractionKind::Likes,
             interactionCursor: self::nullableString($payload['interactionCursor'] ?? null),
             nextAdvanceAt: max(0, (int) ($payload['nextAdvanceAt'] ?? 0)),
+            seenCursors: is_array($payload['seenCursors'] ?? null) ? $payload['seenCursors'] : [],
+            replyFrontier: self::stringList($payload['replyFrontier'] ?? []),
+            replyVisited: self::stringList($payload['replyVisited'] ?? []),
         );
     }
 
@@ -130,6 +145,45 @@ final class BlueskyParserCursorDTO implements ArrayPayloadable
         $this->interactionPostIndex = max(0, $postIndex);
         $this->interactionKind = BlueskyParserInteractionKind::Likes;
         $this->interactionCursor = null;
+        $this->replyFrontier = [];
+        $this->replyVisited = [];
+        unset($this->cursorHistories['interaction:likes'], $this->cursorHistories['interaction:reposts']);
+    }
+
+    public function rememberPage(string $scope, ?string $current, ?string $next): void
+    {
+        $history = $this->cursorHistories[$scope] ?? PaginationCursorHistory::fromHashes([]);
+        $history->assertAdvances($current, $next, 'Bluesky pagination cursor did not advance.');
+        $history->remember($current);
+        $this->cursorHistories[$scope] = $history;
+    }
+
+    public function replyTarget(string $rootUri): string
+    {
+        if ($this->replyFrontier === [] && $this->replyVisited === []) {
+            $this->replyFrontier = [$rootUri];
+        }
+
+        return $this->replyFrontier[0] ?? throw new RuntimeException('Bluesky reply frontier is empty.');
+    }
+
+    public function advanceReplyFrontier(string $target, array $next): bool
+    {
+        if (($this->replyFrontier[0] ?? null) !== $target || in_array($target, $this->replyVisited, true)) {
+            throw new RuntimeException('Bluesky reply frontier did not advance.');
+        }
+        array_shift($this->replyFrontier);
+        $this->replyVisited[] = $target;
+        foreach ($next as $uri) {
+            if (in_array($uri, $this->replyVisited, true)) {
+                throw new RuntimeException('Bluesky reply thread is incomplete.');
+            }
+            if (! in_array($uri, $this->replyFrontier, true)) {
+                $this->replyFrontier[] = $uri;
+            }
+        }
+
+        return $this->replyFrontier === [];
     }
 
     /**
@@ -148,6 +202,9 @@ final class BlueskyParserCursorDTO implements ArrayPayloadable
             'interactionKind' => $this->interactionKind->value,
             'interactionCursor' => $this->interactionCursor ?? '',
             'nextAdvanceAt' => $this->nextAdvanceAt,
+            'seenCursors' => array_map(static fn (PaginationCursorHistory $history): array => $history->hashes(), $this->cursorHistories),
+            'replyFrontier' => $this->replyFrontier,
+            'replyVisited' => $this->replyVisited,
         ];
     }
 
@@ -156,5 +213,10 @@ final class BlueskyParserCursorDTO implements ArrayPayloadable
         $normalized = trim((string) $value);
 
         return $normalized !== '' ? $normalized : null;
+    }
+
+    private static function stringList(mixed $value): array
+    {
+        return is_array($value) ? array_values(array_unique(array_filter($value, static fn (mixed $uri): bool => is_string($uri) && $uri !== ''))) : [];
     }
 }

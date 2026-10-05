@@ -68,6 +68,7 @@ const progressStats = computed(() => [
         :download-json-label="t('telegram.parser.downloadJson')"
         :progress-title="t('telegram.parser.progress.title')"
         :stage-label="stageLabel"
+        :stage="stage"
         :progress="progress"
         :stats="progressStats"
         @update:settings-collapsed="settingsCollapsed = $event"

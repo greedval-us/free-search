@@ -20,8 +20,8 @@ enum ParserRunStatus: string
     public function isDownloadable(): bool
     {
         return match ($this) {
-            self::Completed, self::Stopped => true,
-            self::Running, self::Failed => false,
+            self::Completed, self::Stopped, self::Failed => true,
+            self::Running => false,
         };
     }
 }

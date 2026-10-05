@@ -20,7 +20,7 @@ final class LoadPostRepostsAction extends AbstractBlueskyAction
     {
         $payload = $this->gateway->getRepostedBy($uri, $limit, $cursor);
 
-        $items = collect($payload['repostedBy'] ?? [])
+        $items = collect($this->listPayload($payload, 'repostedBy', 'did'))
             ->map(fn (array $item): array => $this->interactionPresenter->presentRepostActor($item))
             ->values()
             ->all();

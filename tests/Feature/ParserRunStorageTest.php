@@ -13,13 +13,48 @@ use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
+use InvalidArgumentException;
 use JsonException;
 use Mockery;
+use PHPUnit\Framework\Attributes\DataProvider;
 use Tests\TestCase;
 
 class ParserRunStorageTest extends TestCase
 {
     use RefreshDatabase;
+
+    #[DataProvider('unsafePathSeparators')]
+    public function test_untrusted_run_ids_cannot_cross_user_storage_boundaries(string $separator): void
+    {
+        Storage::fake('private');
+        $owner = User::factory()->create();
+        $attacker = User::factory()->create();
+        $store = app(TelegramParserRunStore::class);
+        $run = $store->create($owner->id, ['query' => 'private-owner-context']);
+        $unsafeId = '..'.$separator.$owner->id.$separator.$run['runId'];
+
+        $this->assertNull($store->get($attacker->id, $unsafeId));
+        $this->assertNull($store->mutate($attacker->id, $unsafeId,
+            fn (): array => $this->fail('A path outside the user directory must never be mutated.'),
+        ));
+        try {
+            $store->write($attacker->id, $unsafeId, [...$run, 'status' => 'stopped']);
+            $this->fail('A path outside the user directory must never be written.');
+        } catch (InvalidArgumentException $exception) {
+            $this->assertSame('Parser run ID must be a UUID.', $exception->getMessage());
+        }
+
+        $this->assertNull($store->get($attacker->id, $run['runId']));
+        $this->assertSame($run, $store->get($owner->id, $run['runId']));
+        $this->assertDatabaseHas('parser_runs', ['run_id' => $run['runId'], 'user_id' => $owner->id, 'status' => 'running']);
+        $this->assertDatabaseCount('parser_runs', 1);
+        $this->assertSame([], Storage::disk('private')->allFiles("telegram-parser-runs/{$attacker->id}"));
+    }
+
+    public static function unsafePathSeparators(): array
+    {
+        return ['forward slash' => ['/'], 'Windows backslash' => ['\\']];
+    }
 
     public function test_metadata_is_updated_before_the_stable_writer_lock_is_released(): void
     {

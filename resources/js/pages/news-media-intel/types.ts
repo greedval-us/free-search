@@ -1,7 +1,7 @@
 export type NewsResult = {
     query: string;
     mentions: Array<{
-        source: string;
+        source: 'searxng';
         title: string;
         snippet: string;
         link: string;

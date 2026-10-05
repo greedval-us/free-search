@@ -41,4 +41,25 @@ class ParserRunGuardTest extends TestCase
             'result' => null,
         ]);
     }
+
+    public function test_failed_run_can_export_an_existing_partial_result(): void
+    {
+        $payload = ['messages' => [['id' => 10]]];
+
+        $this->assertSame([...$payload, 'collection' => ['status' => 'failed', 'complete' => false]], (new ParserRunGuard)->requireDownloadablePayload([
+            'status' => 'failed',
+            'result' => $payload,
+        ]));
+    }
+
+    public function test_export_metadata_marks_completed_and_stopped_results_accurately(): void
+    {
+        $guard = new ParserRunGuard;
+
+        foreach (['completed' => true, 'stopped' => false] as $status => $complete) {
+            $payload = $guard->requireDownloadablePayload(['status' => $status, 'result' => []]);
+
+            $this->assertSame(['status' => $status, 'complete' => $complete], $payload['collection']);
+        }
+    }
 }

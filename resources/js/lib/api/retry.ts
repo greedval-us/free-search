@@ -10,16 +10,50 @@ export const defaultRetryPolicy: Required<RetryPolicy> = {
     retryOnNetworkError: true,
 };
 
+const nonNegativeNumber = (value: number | undefined, fallback: number) =>
+    value !== undefined && Number.isFinite(value) && value >= 0
+        ? value
+        : fallback;
+
 export const toRetryPolicy = (policy?: RetryPolicy): Required<RetryPolicy> => ({
-    ...defaultRetryPolicy,
-    ...policy,
+    attempts: Math.floor(
+        nonNegativeNumber(policy?.attempts, defaultRetryPolicy.attempts)
+    ),
+    baseDelayMs: nonNegativeNumber(
+        policy?.baseDelayMs,
+        defaultRetryPolicy.baseDelayMs
+    ),
+    maxDelayMs: nonNegativeNumber(
+        policy?.maxDelayMs,
+        defaultRetryPolicy.maxDelayMs
+    ),
     retryOnStatuses:
         policy?.retryOnStatuses ?? defaultRetryPolicy.retryOnStatuses,
+    retryOnNetworkError:
+        policy?.retryOnNetworkError ?? defaultRetryPolicy.retryOnNetworkError,
 });
 
-export const sleep = async (delayMs: number) =>
-    new Promise<void>((resolve) => {
-        window.setTimeout(resolve, delayMs);
+export const sleep = async (delayMs: number, signal?: AbortSignal) =>
+    new Promise<void>((resolve, reject) => {
+        const abortError = () =>
+            signal?.reason ??
+            new DOMException('The request was aborted.', 'AbortError');
+
+        if (signal?.aborted) {
+            reject(abortError());
+
+            return;
+        }
+
+        const onAbort = () => {
+            clearTimeout(timer);
+            reject(abortError());
+        };
+        const timer = setTimeout(() => {
+            signal?.removeEventListener('abort', onAbort);
+            resolve();
+        }, delayMs);
+        signal?.addEventListener('abort', onAbort, { once: true });
     });
 
 export const getBackoffDelay = (

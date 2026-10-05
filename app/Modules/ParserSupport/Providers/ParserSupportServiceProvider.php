@@ -4,10 +4,12 @@ namespace App\Modules\ParserSupport\Providers;
 
 use App\Modules\ParserSupport\Contracts\ParserRunBackgroundProcessorInterface;
 use App\Modules\ParserSupport\Contracts\ParserRunJobDispatcherInterface;
+use App\Modules\ParserSupport\JsonRunStore;
 use App\Modules\ParserSupport\ParserRunBackgroundProcessorRegistry;
 use App\Modules\ParserSupport\ParserRunConfig;
 use App\Modules\ParserSupport\ParserRunJobDispatcher;
 use App\Modules\ParserSupport\ParserRunQueueConfigurationGuard;
+use App\Modules\ParserSupport\ParserRunStoreRegistry;
 use Illuminate\Support\ServiceProvider;
 
 final class ParserSupportServiceProvider extends ServiceProvider
@@ -24,6 +26,13 @@ final class ParserSupportServiceProvider extends ServiceProvider
         $this->app->singleton(
             ParserRunJobDispatcherInterface::class,
             ParserRunJobDispatcher::class,
+        );
+
+        $this->app->singleton(
+            ParserRunStoreRegistry::class,
+            fn (): ParserRunStoreRegistry => new ParserRunStoreRegistry(
+                $this->app->tagged(JsonRunStore::CONTAINER_TAG),
+            ),
         );
 
         $this->app->singleton(

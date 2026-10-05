@@ -8,28 +8,7 @@ class ParticipantsAction extends AbstractTelegramAction
 {
     public function execute(array $filter): ?array
     {
-        $client = $this->madeline();
-
-        try {
-            return $this->executeWithRetry(
-                callback: fn () => $client->channels->getParticipants($filter),
-                context: $filter
-            );
-        } catch (\Throwable $e) {
-            $message = strtoupper($e->getMessage());
-
-            if (str_contains($message, 'CHAT_ADMIN_REQUIRED')) {
-                $this->logWarning(
-                    message: 'Participants list is not accessible without admin rights for this chat/channel',
-                    data: $filter
-                );
-
-                return null;
-            }
-
-            $this->logError($e, $filter);
-
-            return null;
-        }
+        // Shared session membership and administrator privileges are not a public OSINT source.
+        return null;
     }
 }

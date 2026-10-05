@@ -1,12 +1,8 @@
-﻿<script setup lang="ts">
+<script setup lang="ts">
 import { LoaderCircle } from 'lucide-vue-next';
 import { computed, onBeforeUnmount, onMounted, ref } from 'vue';
 import { useI18n } from '@/composables/useI18n';
-import {
-    getRepeatQueryParams,
-    isRepeatAutorunEnabled,
-    readRepeatQueryParam,
-} from '@/composables/useRepeatQuery';
+import { hash } from '@/routes/shifr';
 import ShifrFormCard from '../components/ShifrFormCard.vue';
 import ShifrResultCard from '../components/ShifrResultCard.vue';
 import { useShifrRequest } from '../composables/useShifrRequest';
@@ -63,7 +59,7 @@ const {
     canRun,
     run: runRequest,
 } = useShifrRequest(
-    '/shifr/hash',
+    hash.url(),
     () => t('shifr.errors.requestFailed'),
     computed(() => input.value.trim().length > 0)
 );
@@ -104,40 +100,6 @@ const selectAlgorithm = (
 
 onMounted(() => document.addEventListener('click', onOutsideClick));
 onBeforeUnmount(() => document.removeEventListener('click', onOutsideClick));
-
-onMounted(() => {
-    const params = getRepeatQueryParams();
-
-    if (!params) {
-        return;
-    }
-
-    const tab = readRepeatQueryParam(params, ['tab']);
-
-    if (tab !== 'hash') {
-        return;
-    }
-
-    const text = readRepeatQueryParam(params, ['text']);
-    const algo = readRepeatQueryParam(params, ['algorithm']);
-    const hmac = readRepeatQueryParam(params, ['hmac_key']);
-
-    if (text !== '') {
-        input.value = text;
-    }
-
-    if (algo !== '' && algorithmOptions.some((item) => item.value === algo)) {
-        algorithm.value = algo as HashAlgorithm;
-    }
-
-    if (hmac !== '') {
-        hmacKey.value = hmac;
-    }
-
-    if (isRepeatAutorunEnabled(params) && canRun.value) {
-        void run();
-    }
-});
 </script>
 
 <template>

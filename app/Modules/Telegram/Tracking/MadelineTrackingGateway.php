@@ -3,6 +3,7 @@
 namespace App\Modules\Telegram\Tracking;
 
 use App\Models\TelegramTrackingSource;
+use App\Modules\Telegram\Access\PublicTelegramSource;
 use App\Modules\Telegram\Tracking\Contracts\TrackingGateway;
 use App\Support\MadelineProto\MadelineProtoConfig;
 use App\Support\MadelineProto\MadelineProtoManager;
@@ -20,42 +21,57 @@ final readonly class MadelineTrackingGateway implements TrackingGateway
     public function resolve(array $groups, ?string $keyword = null): array
     {
         $session = $this->manager->availableSessionNames()[0] ?? throw new TrackingException('session_unavailable');
-        $key = 'telegram-tracking:validation:search-v1:'.hash('sha256', json_encode([$session, $groups, $keyword]));
 
-        return Cache::remember($key, $this->config->integer('validation_cache_seconds'), fn () => $this->request($session, function (API $client) use ($groups, $session, $keyword): array {
+        return $this->request($session, function (API $client) use ($groups, $session, $keyword): array {
             $resolved = [];
             foreach ($groups as $group) {
                 if ($resolved !== []) {
                     sleep($this->config->integer('request_gap_seconds'));
                 }
-                $info = $client->getInfo($group);
-                if (! in_array($info['type'] ?? '', ['chat', 'channel', 'supergroup'], true)) {
+                $source = $this->publicSource($client, $group);
+                if ($source === null) {
                     throw new TrackingException('group_unavailable');
                 }
-                $peer = (string) $info['bot_api_id'];
+                $peer = (string) (-1000000000000 - $source['id']);
                 // Probe the operation used by this task; never join to obtain access.
                 sleep($this->config->integer('request_gap_seconds'));
-                $this->reader->checkAccess((int) $peer, $keyword, $this->messagesRequest($client));
-                $chat = $info['Chat'] ?? [];
+                $this->reader->checkAccess((int) $peer, $keyword, $this->messagesRequest($client, $source['peer']));
+                $chat = $source['chat'];
                 $resolved[$peer] = ['session_name' => $session, 'peer_id' => $peer,
-                    'username' => $chat['username'] ?? null, 'title' => mb_substr((string) ($chat['title'] ?? $group), 0, 255)];
+                    'username' => $source['username'], 'title' => mb_substr((string) ($chat['title'] ?? $group), 0, 255)];
             }
             if (count($resolved) !== count($groups)) {
                 throw new TrackingException('duplicate_group');
             }
 
             return array_values($resolved);
-        }));
+        });
     }
 
     public function fetch(TelegramTrackingSource $source): array
     {
-        return $this->request($source->session_name, fn (API $client) => $this->reader->fetch($source, $this->messagesRequest($client)));
+        return $this->request($source->session_name, function (API $client) use ($source): array {
+            $public = $this->publicSource($client, (string) $source->username);
+            if ($public === null || (string) (-1000000000000 - $public['id']) !== (string) $source->peer_id) {
+                throw new TrackingException('group_unavailable');
+            }
+
+            return $this->reader->fetch($source, $this->messagesRequest($client, $public['peer']));
+        });
     }
 
-    private function messagesRequest(API $client): Closure
+    private function publicSource(API $client, string $identifier): ?array
     {
-        return static fn (string $method, array $parameters): array => $client->messages->{$method}(...$parameters);
+        return PublicTelegramSource::resolve($identifier, fn (string $username): array => $client->contacts->resolveUsername(username: $username));
+    }
+
+    private function messagesRequest(API $client, array $peer): Closure
+    {
+        return static function (string $method, array $parameters) use ($client, $peer): array {
+            $parameters['peer'] = $peer;
+
+            return $client->messages->{$method}(...$parameters);
+        };
     }
 
     private function request(string $session, Closure $callback): array
