@@ -124,6 +124,11 @@ final class BlueskyApiClient implements BlueskyGatewayInterface
             $response = $this->http()
                 ->withToken($this->accessJwt())
                 ->get($endpoint, $query);
+            if ($response->status() === 401 && in_array($response->json('error'), ['ExpiredToken', 'InvalidToken'], true)) {
+                // Long-lived workers/resolvers can retain an expired access token. Renew only once.
+                $this->session = null;
+                $response = $this->http()->withToken($this->accessJwt())->get($endpoint, $query);
+            }
         } catch (ConnectionException $exception) {
             $this->externalServiceLogger->logConnectionFailure('bluesky', $endpoint, $exception, [
                 'query' => $query,
@@ -147,6 +152,7 @@ final class BlueskyApiClient implements BlueskyGatewayInterface
                 $status === 429 ? 'errors.api.bluesky.rate_limited' : 'errors.api.bluesky.request_failed',
                 $status,
                 $status === 429 ? 'bluesky_rate_limited' : 'bluesky_request_failed',
+                retryAfter: $this->retryAfter($response->header('Retry-After')),
             );
         }
 
@@ -218,6 +224,8 @@ final class BlueskyApiClient implements BlueskyGatewayInterface
     {
         return Http::baseUrl($this->config->pdsUrl())
             ->acceptJson()
+            ->withoutRedirecting()
+            ->connectTimeout(3)
             ->asJson()
             ->timeout($this->config->timeoutSeconds())
             ->retry(
@@ -245,6 +253,15 @@ final class BlueskyApiClient implements BlueskyGatewayInterface
             ]);
             throw new IntegrationMisconfiguredException('errors.api.bluesky.invalid_base_url', 'bluesky_invalid_base_url');
         }
+    }
+
+    private function retryAfter(?string $value): ?int
+    {
+        if ($value === null || $value === '') {
+            return null;
+        }
+
+        return ctype_digit($value) ? max(1, (int) $value) : max(1, (int) strtotime($value) - time());
     }
 
     private function isValidBaseUrl(string $baseUrl): bool

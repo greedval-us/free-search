@@ -3,6 +3,7 @@ import bluesky from './bluesky.json';
 import common from './common.json';
 import dashboard from './dashboard.json';
 import mastodon from './mastodon.json';
+import monitoring from './monitoring.json';
 import navigation from './navigation.json';
 import newsMediaIntel from './newsMediaIntel.json';
 import parser from './parser.json';
@@ -26,6 +27,7 @@ const ru = {
     common,
     dashboard,
     mastodon,
+    monitoring,
     navigation,
     newsMediaIntel,
     parser,

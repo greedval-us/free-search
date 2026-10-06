@@ -3,6 +3,7 @@
 return [
     'menu' => [
         'tracking' => 'Tracking reports',
+        'monitoring' => 'Monitoring projects and reports',
         'exports' => 'My exports', 'settings' => 'Link account / Settings',
         'help' => 'Help', 'webapp' => 'Open Uraboros', 'back' => 'Main menu', 'previous' => 'Previous', 'next' => 'Next',
     ],
@@ -21,5 +22,6 @@ return [
         'link_expired' => 'Link request expired or has not been confirmed in Telegram. Start again.',
         'file_unavailable' => 'This file is unavailable or expired. Open the website to generate a new result.',
         'file_too_large' => 'This file exceeds the Telegram delivery limit. Download it from your account on the website.',
+        'file_preparing' => 'Report files are being prepared. Check the report on the website and try again when the files are ready.',
     ],
 ];

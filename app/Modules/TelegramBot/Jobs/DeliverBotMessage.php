@@ -5,6 +5,7 @@ namespace App\Modules\TelegramBot\Jobs;
 use App\Modules\TelegramBot\Application\ArtifactRegistry;
 use App\Modules\TelegramBot\Application\BotAccess;
 use App\Modules\TelegramBot\Domain\Contracts\BotTransport;
+use App\Modules\TelegramBot\Domain\Contracts\DigestProvider;
 use App\Modules\TelegramBot\Domain\DTO\BotButton;
 use App\Modules\TelegramBot\Domain\DTO\BotScreen;
 use App\Modules\TelegramBot\Domain\Exceptions\ArtifactUnavailable;
@@ -25,7 +26,7 @@ final class DeliverBotMessage extends BotJob
     }
 
     public function handle(BotConfig $config, BotAccess $access, BotTransport $transport,
-        ArtifactRegistry $artifacts, TemporaryDocuments $files, NotificationText $notifications): void
+        ArtifactRegistry $artifacts, TemporaryDocuments $files, NotificationText $notifications, DigestProvider $digests): void
     {
         if (! $config->active()) {
             return;
@@ -35,21 +36,30 @@ final class DeliverBotMessage extends BotJob
             return;
         }
         $link = $delivery->link;
-        if (! $access->allowsDelivery($link, $delivery->kind, $delivery->automatic)) {
+        $monitoring = in_array($delivery->kind, ['monitoring_digest', 'monitoring_document'], true);
+        if (! $access->allowsDelivery($link, $delivery->kind, $delivery->automatic)
+            || ($monitoring && ! $digests->allows($delivery, $link))) {
             $delivery->update(['status' => BotDelivery::SKIPPED]);
+            if ($monitoring) {
+                $digests->record($delivery, BotDelivery::SKIPPED);
+            }
 
             return;
         }
 
         try {
-            if (in_array($delivery->kind, ['parser', 'tracking'], true)) {
+            if (in_array($delivery->kind, ['parser', 'tracking', 'monitoring_document'], true)) {
                 $document = $artifacts->get($delivery->kind)->document($link->user_id, (int) $delivery->reference,
                     (string) ($delivery->payload['format'] ?? ''), $link->locale);
                 try {
                     // Rendering can be slow. Recheck consent and ownership immediately before upload.
                     $current = BotLink::query()->with(['user', 'chat'])->find($link->id);
-                    if (! $access->allowsDelivery($current, $delivery->kind, $delivery->automatic)) {
+                    if (! $access->allowsDelivery($current, $delivery->kind, $delivery->automatic)
+                        || ($monitoring && ! $digests->allows($delivery, $current))) {
                         $delivery->update(['status' => BotDelivery::SKIPPED]);
+                        if ($monitoring) {
+                            $digests->record($delivery, BotDelivery::SKIPPED);
+                        }
 
                         return;
                     }
@@ -57,6 +67,16 @@ final class DeliverBotMessage extends BotJob
                 } finally {
                     $files->remove($document);
                 }
+            } elseif ($delivery->kind === 'monitoring_digest') {
+                $screen = $digests->screen($delivery, $link);
+                $current = BotLink::query()->with(['user', 'chat'])->find($link->id);
+                if (! $access->allowsDelivery($current, $delivery->kind, $delivery->automatic) || ! $digests->allows($delivery, $current)) {
+                    $delivery->update(['status' => BotDelivery::SKIPPED]);
+                    $digests->record($delivery, BotDelivery::SKIPPED);
+
+                    return;
+                }
+                $transport->message($current->telegraph_chat_id, $screen);
             } else {
                 if ($delivery->kind === 'notification') {
                     $notification = $link->user->notifications()->find($delivery->reference);
@@ -74,16 +94,22 @@ final class DeliverBotMessage extends BotJob
                 ]));
             }
             $delivery->update(['status' => BotDelivery::SENT, 'sent_at' => now(), 'error_code' => null]);
+            if ($monitoring) {
+                $digests->record($delivery, BotDelivery::SENT);
+            }
         } catch (ArtifactUnavailable $exception) {
-            $this->unavailable($delivery, $exception->reason, $transport, $config, $access);
+            $this->unavailable($delivery, $exception->reason, $transport, $config, $access, $digests);
         } catch (HttpExceptionInterface $exception) {
             if (! in_array($exception->getStatusCode(), [404, 410], true)) {
                 throw $exception;
             }
-            $this->unavailable($delivery, 'file_unavailable', $transport, $config, $access);
+            $this->unavailable($delivery, 'file_unavailable', $transport, $config, $access, $digests);
         } catch (TelegramTransportException $exception) {
             if (in_array($exception->apiCode, [400, 403], true)) {
                 $delivery->update(['status' => BotDelivery::FAILED, 'error_code' => 'telegram_'.$exception->apiCode]);
+                if ($monitoring) {
+                    $digests->record($delivery, BotDelivery::FAILED);
+                }
             } else {
                 throw $exception;
             }
@@ -92,18 +118,28 @@ final class DeliverBotMessage extends BotJob
 
     public function failed(?Throwable $exception): void
     {
-        BotDelivery::query()->whereKey($this->deliveryId)->where('status', BotDelivery::PENDING)
-            ->update(['status' => BotDelivery::FAILED, 'error_code' => 'delivery_failed']);
+        $delivery = BotDelivery::query()->whereKey($this->deliveryId)->where('status', BotDelivery::PENDING)->first();
+        if ($delivery !== null) {
+            $delivery->update(['status' => BotDelivery::FAILED, 'error_code' => 'delivery_failed']);
+            if ($delivery->kind === 'monitoring_digest') {
+                app(DigestProvider::class)->record($delivery, BotDelivery::FAILED);
+            }
+        }
     }
 
-    private function unavailable(BotDelivery $delivery, string $reason, BotTransport $transport, BotConfig $config, BotAccess $access): void
+    private function unavailable(BotDelivery $delivery, string $reason, BotTransport $transport, BotConfig $config, BotAccess $access, DigestProvider $digests): void
     {
         $link = BotLink::query()->with(['user', 'chat'])->find($delivery->link_id);
-        if ($access->allowsDelivery($link, $delivery->kind, $delivery->automatic)) {
+        $monitoring = in_array($delivery->kind, ['monitoring_digest', 'monitoring_document'], true);
+        if ($access->allowsDelivery($link, $delivery->kind, $delivery->automatic)
+            && (! $monitoring || $digests->allows($delivery, $link))) {
             $transport->message($link->telegraph_chat_id, new BotScreen(__('telegram_bot.errors.'.$reason, [], $link->locale), [
                 new BotButton(__('telegram_bot.menu.webapp', [], $link->locale), 'url', $config->siteUrl()),
             ]));
         }
         $delivery->update(['status' => BotDelivery::SKIPPED, 'error_code' => $reason]);
+        if ($monitoring) {
+            $digests->record($delivery, BotDelivery::SKIPPED);
+        }
     }
 }

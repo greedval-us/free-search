@@ -1,5 +1,7 @@
 <?php
 
+use App\Integrations\TelegramBot\MonitoringAction;
+use App\Integrations\TelegramBot\MonitoringArtifactProvider;
 use App\Integrations\TelegramBot\TrackingArtifactProvider;
 use App\Modules\Bluesky\Parser\Contracts\BlueskyParserApplicationServiceInterface;
 use App\Modules\Bluesky\Parser\Contracts\BlueskyParserExportBuilderInterface;
@@ -44,12 +46,13 @@ return [
     'temporary_retention_hours' => 2,
     'cleanup_time' => '04:30',
     'http_limits' => ['status' => 30, 'link' => 6, 'preferences' => 10],
-    'actions' => [MenuAction::class, FilesAction::class, SendFileAction::class],
-    'artifact_providers' => [ParserArtifactProvider::class, TrackingArtifactProvider::class],
+    'actions' => [MenuAction::class, FilesAction::class, SendFileAction::class, MonitoringAction::class],
+    'artifact_providers' => [ParserArtifactProvider::class, TrackingArtifactProvider::class, MonitoringArtifactProvider::class],
     'menus' => [
         'main' => [
             ['label' => 'menu.exports', 'action' => 'files', 'parameters' => ['k' => 'parser'], 'linked' => true],
             ['label' => 'menu.tracking', 'action' => 'files', 'parameters' => ['k' => 'tracking'], 'linked' => true],
+            ['label' => 'menu.monitoring', 'action' => 'monitor', 'linked' => true],
             ['label' => 'menu.settings', 'path' => '/settings/telegram'],
             ['label' => 'menu.help', 'action' => 'menu', 'parameters' => ['p' => 'help']],
             ['label' => 'menu.webapp', 'path' => '/dashboard', 'webapp' => true],

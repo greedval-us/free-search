@@ -13,6 +13,7 @@ import NewsMediaIntel from './NewsMediaIntel'
 import Shifr from './Shifr'
 import YouTube from './YouTube'
 import Wiki from './Wiki'
+import Monitoring from './Monitoring'
 import Settings from './Settings'
 const Controllers = {
     TelegramBot: Object.assign(TelegramBot, TelegramBot),
@@ -30,6 +31,7 @@ NewsMediaIntel: Object.assign(NewsMediaIntel, NewsMediaIntel),
 Shifr: Object.assign(Shifr, Shifr),
 YouTube: Object.assign(YouTube, YouTube),
 Wiki: Object.assign(Wiki, Wiki),
+Monitoring: Object.assign(Monitoring, Monitoring),
 Settings: Object.assign(Settings, Settings),
 }
 

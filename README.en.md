@@ -9,8 +9,9 @@ Free Search is a modular OSINT platform built with Laravel, Inertia.js, and Vue 
 ## Current capabilities
 
 - Telegram, YouTube, Bluesky, and Mastodon: Search, Analytics, background Parser Runs, history, stop, JSON and Excel exports.
+- Monitoring for Telegram, YouTube, Bluesky, Mastodon and news: background projects, day/three-day/week/month calendar reports, persisted history, private JSON/XLSX and digests delivered to a linked Telegram bot. [Workflow, operations and limits](docs/modules/monitoring.en.md).
 - Site Intel: HTTP/DNS/SSL checks, WHOIS-based Domain Lite, analytics, SEO Audit, and HTML reports.
-- News / Media Intel: NewsAPI, Google News RSS, and Bing RSS aggregation with deduplication and lightweight heuristic analysis.
+- News / Media Intel: configured SearXNG news results with deduplication and lightweight heuristic analysis.
 - Shifr: hashing, text transforms, IOC extraction, JWT inspection, and classic ciphers.
 - Dashboard with activity history, summaries, pinned modules, and saved queries.
 - Fortify authentication, email verification, 2FA, subscriptions, daily Feature Access quotas, and a separate MoonShine admin panel.
@@ -21,7 +22,7 @@ All areas are Beta. Telegram requires a MadelineProto session; YouTube depends o
 
 - PHP `^8.3`, Laravel `^13.0`, Fortify, MoonShine 4
 - Vue 3, TypeScript, Inertia.js 3, Vite 8, Tailwind CSS 4
-- MadelineProto, YouTube Data API v3, Bluesky AT Protocol, Mastodon API, RSS/NewsAPI
+- MadelineProto, YouTube Data API v3, Bluesky AT Protocol, Mastodon API, SearXNG
 - PHPUnit 12, Vitest 4, Pint, ESLint, Prettier, vue-tsc
 
 ## Architecture
@@ -61,8 +62,9 @@ For SQLite, ensure `database/database.sqlite` exists before migration. `composer
 - Telegram: `TELEGRAM_API_ID`, `TELEGRAM_API_HASH`, and a local MadelineProto session.
 - YouTube: `YOUTUBE_DATA_API_KEY`.
 - Bluesky: `BLUESKY_IDENTIFIER`, `BLUESKY_APP_PASSWORD`, `BLUESKY_PDS_URL`.
-- Mastodon: `MASTODON_API_BASE_URL`, optionally `MASTODON_API_TOKEN`.
-- NewsAPI: `OSINT_NEWSAPI_KEY`; RSS providers can operate without it.
+- Mastodon: `MASTODON_API_BASE_URL`, `MASTODON_API_TOKEN` (required by the current client).
+- News: `OSINT_NEWS_MEDIA_SEARXNG_*`; requires SearXNG JSON output and working news engines.
+- Monitoring: `MONITORING_*`, separate `ACCESS_*_MONITORING_REPORT_DAILY_LIMIT`, a durable `monitoring` queue worker and the scheduler every minute. [Complete configuration](docs/modules/monitoring.en.md).
 - Parser Runs: `PARSER_RUN_*`; a worker is required when queue execution is enabled.
 - MoonShine: production domain/prefix, allowlist, and throttling use `MOONSHINE_*`.
 
@@ -80,6 +82,8 @@ php artisan schedule:run
 ```
 
 Read [Development](docs/development.md), [Testing](docs/testing.md), [Deployment](docs/deployment.md), and [Security](docs/security.md). Do not commit `.env`, API credentials, MadelineProto sessions, or Parser Run data.
+
+Monitoring registers an every-minute scheduling/recovery tick and daily expired-report/private-file pruning at 04:30. Its worker runs independently of the browser and existing Parser/Tracking workers. See the [monitoring user and operations guide](docs/modules/monitoring.en.md) for deployment, consent, retention and unverified live-integration checks.
 
 ## License
 

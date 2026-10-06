@@ -39,8 +39,8 @@ class CommentsAction extends AbstractTelegramAction
                 $discussion = PublicTelegramSource::resolveDiscussion(
                     $source,
                     fn (array $peer): array => $this->executeWithRetry(fn () => $client->getFullInfo($peer), ['channel' => $channelId]),
-                    fn (int $id): array => $client->getInfo($id),
-                    fn (string $username): array => $client->contacts->resolveUsername(['username' => $username]),
+                    fn (int $id): array => $this->sessionOperation(fn () => $client->getInfo($id)),
+                    fn (string $username): array => $this->sessionOperation(fn () => $client->contacts->resolveUsername(['username' => $username])),
                 );
                 if ($discussion === null) {
                     throw new RuntimeException('Telegram discussion is unavailable.');

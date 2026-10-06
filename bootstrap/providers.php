@@ -14,6 +14,7 @@ use App\Providers\DashboardServiceProvider;
 use App\Providers\FortifyServiceProvider;
 use App\Providers\HttpServiceProvider;
 use App\Providers\MadelineProtoServiceProvider;
+use App\Providers\MonitoringServiceProvider;
 use App\Providers\MoonShineServiceProvider;
 use App\Providers\SecurityServiceProvider;
 use App\Providers\SupportServiceProvider;
@@ -25,6 +26,7 @@ return [
     SecurityServiceProvider::class,
     SupportServiceProvider::class,
     DashboardServiceProvider::class,
+    MonitoringServiceProvider::class,
     ParserSupportServiceProvider::class,
     ExportServiceProvider::class,
     BlueskyServiceProvider::class,

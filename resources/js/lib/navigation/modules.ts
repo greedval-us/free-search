@@ -19,6 +19,7 @@ import {
     telegram,
     youtube,
 } from '@/routes';
+import { index as monitoring } from '@/routes/monitoring';
 import type { NavItem } from '@/types';
 
 type Translate = (key: string) => string;
@@ -44,6 +45,13 @@ export const moduleNavDefinitions: readonly ModuleNavDefinition[] = [
         labelKey: 'navigation.bluesky',
         href: bluesky(),
         icon: Cloud,
+        showInHeader: true,
+    },
+    {
+        key: 'monitoring',
+        labelKey: 'navigation.monitoring',
+        href: monitoring(),
+        icon: Radar,
         showInHeader: true,
     },
     {

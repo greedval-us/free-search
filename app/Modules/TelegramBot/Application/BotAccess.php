@@ -34,6 +34,8 @@ final readonly class BotAccess
             'broadcast' => $link->broadcasts_enabled,
             'parser' => ! $automatic || $link->exports_enabled,
             'tracking' => ! $automatic,
+            'monitoring_digest' => $automatic && $link->notifications_enabled,
+            'monitoring_document' => ! $automatic || $link->exports_enabled,
             default => false,
         };
     }

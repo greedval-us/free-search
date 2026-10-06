@@ -37,4 +37,15 @@ final class MadelineProtoManager
     {
         return $this->sessionPool->availableSessionNames();
     }
+
+    public function sessionNameFor(API $client): ?string
+    {
+        foreach ($this->clients as $session => $candidate) {
+            if ($candidate === $client) {
+                return $session;
+            }
+        }
+
+        return null;
+    }
 }

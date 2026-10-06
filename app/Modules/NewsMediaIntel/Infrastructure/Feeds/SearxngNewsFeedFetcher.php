@@ -2,22 +2,82 @@
 
 namespace App\Modules\NewsMediaIntel\Infrastructure\Feeds;
 
+use App\Exceptions\Public\ExternalServiceRequestException;
 use App\Exceptions\Public\ExternalServiceUnavailableException;
 use App\Modules\NewsMediaIntel\Application\Contracts\NewsFeedFetcherInterface;
 use App\Modules\NewsMediaIntel\Application\Services\NewsMediaIntel\NewsMentionDeduplicator;
 use App\Modules\NewsMediaIntel\Application\Support\NewsMediaIntelConfig;
 use App\Modules\NewsMediaIntel\Domain\DTO\NewsMentionDTO;
+use App\Modules\NewsMediaIntel\Monitoring\NewsFeedPage;
+use App\Modules\NewsMediaIntel\Monitoring\NewsPageFetcher;
 use App\Support\Observability\ExternalServiceLogger;
 use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Support\Facades\Http;
 
-final class SearxngNewsFeedFetcher implements NewsFeedFetcherInterface
+final class SearxngNewsFeedFetcher implements NewsFeedFetcherInterface, NewsPageFetcher
 {
     public function __construct(
         private readonly NewsMediaIntelConfig $config,
         private readonly ExternalServiceLogger $externalServiceLogger,
         private readonly NewsMentionDeduplicator $deduplicator,
     ) {}
+
+    /** One bounded step for durable monitoring; preserve completeness metadata. */
+    public function fetchPage(string $query, int $page, ?string $language = null): NewsFeedPage
+    {
+        if (trim($query) === '' || $page < 1 || $page > $this->config->searxngMaxPages()) {
+            throw new ExternalServiceUnavailableException('errors.news_media_intel.configuration', 'news_search_configuration');
+        }
+        $parameters = $this->parameters($query, $page);
+        if ($language !== null && preg_match('/^[a-z]{2}(?:-[A-Z]{2})?$/D', $language) === 1) {
+            $parameters['language'] = $language;
+        }
+        try {
+            $response = Http::asForm()->acceptJson()->withoutRedirecting()->connectTimeout(3)
+                ->timeout(min($this->config->searxngTimeoutSeconds(), $this->config->searxngRequestBudgetSeconds()))
+                ->post($this->endpoint(), $parameters);
+        } catch (ConnectionException $exception) {
+            $this->externalServiceLogger->logConnectionFailure('searxng', 'monitoring_news_search', $exception, ['page' => $page]);
+            throw $this->unavailable();
+        }
+        if (! $response->successful()) {
+            $retry = (string) $response->header('Retry-After', '');
+            throw new ExternalServiceRequestException('errors.news_media_intel.unavailable', $response->status(),
+                $response->status() === 429 ? 'news_search_rate_limited' : 'news_search_unavailable',
+                retryAfter: $retry === '' ? null : (ctype_digit($retry) ? max(1, (int) $retry) : max(1, (int) strtotime($retry) - time())));
+        }
+        if (strlen($response->body()) > 2 * 1024 * 1024) {
+            throw new ExternalServiceUnavailableException('errors.news_media_intel.unavailable', 'news_response_too_large');
+        }
+        $payload = $response->json();
+        if (! is_array($payload) || ! is_array($payload['results'] ?? null) || isset($payload['error'])) {
+            throw $this->unavailable();
+        }
+        $warnings = ['search_index_coverage_limited'];
+        foreach (array_slice((array) ($payload['unresponsive_engines'] ?? []), 0, 20) as $engine) {
+            $name = is_array($engine) ? ($engine[0] ?? '') : $engine;
+            if (is_string($name)) {
+                $warnings[] = 'engine_unavailable:'.mb_substr($name, 0, 100);
+            }
+        }
+        $items = [];
+        foreach (array_slice($payload['results'], 0, $this->config->maxMentions()) as $result) {
+            $mention = $this->mention($result);
+            if ($mention !== null) {
+                $items[] = $mention;
+            }
+        }
+        $complete = $payload['results'] === [];
+        if (count($payload['results']) > $this->config->maxMentions()) {
+            $warnings[] = 'news_material_limit';
+        }
+        if (! $complete && $page >= $this->config->searxngMaxPages()) {
+            $complete = true;
+            $warnings[] = 'news_pagination_limit';
+        }
+
+        return new NewsFeedPage($items, $complete, $warnings);
+    }
 
     /** @return array<int, NewsMentionDTO> */
     public function fetchAll(string $query): array

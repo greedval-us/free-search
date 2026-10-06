@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use App\Integrations\TelegramBot\MonitoringDigestProvider;
 use App\Models\ParserRun;
 use App\Modules\TelegramBot\Application\ArtifactRegistry;
 use App\Modules\TelegramBot\Application\BotRouter;
@@ -11,6 +12,7 @@ use App\Modules\TelegramBot\Console\MaintainBotDeliveries;
 use App\Modules\TelegramBot\Domain\Contracts\ArtifactProvider;
 use App\Modules\TelegramBot\Domain\Contracts\BotAction;
 use App\Modules\TelegramBot\Domain\Contracts\BotTransport;
+use App\Modules\TelegramBot\Domain\Contracts\DigestProvider;
 use App\Modules\TelegramBot\Infrastructure\BotEventSubscriber;
 use App\Modules\TelegramBot\Infrastructure\TelegraphTransport;
 use App\Modules\TelegramBot\Jobs\BotJob;
@@ -29,6 +31,7 @@ final class TelegramBotServiceProvider extends ServiceProvider
     {
         $this->app->singleton(BotConfig::class);
         $this->app->bind(BotTransport::class, TelegraphTransport::class);
+        $this->app->bind(DigestProvider::class, MonitoringDigestProvider::class);
         $this->app->tag(config('telegram_bot.actions', []), BotAction::class);
         $this->app->tag(config('telegram_bot.artifact_providers', []), ArtifactProvider::class);
         $this->app->bind(BotRouter::class, fn ($app) => new BotRouter($app->tagged(BotAction::class)));

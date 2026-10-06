@@ -22,6 +22,11 @@ interface YouTubeGatewayInterface
      */
     public function channels(array $params): array;
 
+    /** @param array<string, mixed> $params
+     * @return array<string, mixed>
+     */
+    public function playlistItems(array $params): array;
+
     /**
      * @param  array<string, mixed>  $params
      * @return array<string, mixed>

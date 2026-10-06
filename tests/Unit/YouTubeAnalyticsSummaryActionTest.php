@@ -67,6 +67,11 @@ class FakeYouTubeAnalyticsGateway implements YouTubeGatewayInterface
         return ['items' => []];
     }
 
+    public function playlistItems(array $params): array
+    {
+        return ['items' => []];
+    }
+
     public function channels(array $params): array
     {
         if (isset($params['forHandle'])) {

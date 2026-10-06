@@ -6,6 +6,7 @@ use App\Facades\MadelineProto;
 use App\Modules\Telegram\Access\PublicTelegramSource;
 use App\Support\Activity\RequestPayloadSanitizer;
 use App\Support\MadelineProto\MadelineProtoManager;
+use App\Support\MadelineProto\MadelineProtoOperationGuard;
 use danog\MadelineProto\API;
 use Illuminate\Support\Facades\Log;
 
@@ -15,19 +16,24 @@ abstract class AbstractTelegramAction
 
     private const BASE_RETRY_DELAY_MS = 500;
 
+    private ?string $operationSession = null;
+
     protected function madeline(): API
     {
         /** @var MadelineProtoManager $manager */
         $manager = MadelineProto::getFacadeRoot();
 
-        return $manager->client();
+        $client = $manager->client();
+        $this->operationSession = $manager->sessionNameFor($client);
+
+        return $client;
     }
 
     protected function publicSource(API $client, string $identifier): ?array
     {
         return PublicTelegramSource::resolve(
             $identifier,
-            fn (string $username): array => $client->contacts->resolveUsername(['username' => $username]),
+            fn (string $username): array => $this->sessionOperation(fn () => $client->contacts->resolveUsername(['username' => $username])),
         );
     }
 
@@ -75,7 +81,7 @@ abstract class AbstractTelegramAction
 
         while (true) {
             try {
-                return $callback();
+                return $this->sessionOperation(\Closure::fromCallable($callback));
             } catch (\Throwable $e) {
                 $attempt++;
                 $floodWaitSeconds = $this->extractFloodWaitSeconds($e);
@@ -111,6 +117,12 @@ abstract class AbstractTelegramAction
                 throw $e;
             }
         }
+    }
+
+    protected function sessionOperation(\Closure $callback): mixed
+    {
+        return $this->operationSession === null ? $callback()
+            : (new MadelineProtoOperationGuard)->run($this->operationSession, $callback);
     }
 
     protected function extractFloodWaitSeconds(\Throwable $e): ?int

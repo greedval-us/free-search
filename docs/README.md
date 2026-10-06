@@ -27,6 +27,7 @@
 
 - [Telegram](modules/telegram.md)
 - [Telegram Bot / Telegraph](modules/telegram-bot.md)
+- [Мониторинг и регулярные отчёты](modules/monitoring.md) · [English](modules/monitoring.en.md)
 - [YouTube](modules/youtube.md)
 - [Bluesky](modules/bluesky.md)
 - [Mastodon](modules/mastodon.md)

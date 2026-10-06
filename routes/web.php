@@ -29,6 +29,7 @@ Route::middleware(['auth', 'verified'])->group(function (): void {
     require __DIR__.'/web/shifr.php';
     require __DIR__.'/web/youtube.php';
     require __DIR__.'/web/wiki.php';
+    require __DIR__.'/web/monitoring.php';
 });
 
 require __DIR__.'/settings.php';

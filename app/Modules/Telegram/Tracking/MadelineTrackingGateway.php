@@ -7,16 +7,17 @@ use App\Modules\Telegram\Access\PublicTelegramSource;
 use App\Modules\Telegram\Tracking\Contracts\TrackingGateway;
 use App\Support\MadelineProto\MadelineProtoConfig;
 use App\Support\MadelineProto\MadelineProtoManager;
+use App\Support\MadelineProto\MadelineProtoOperationGuard;
+use App\Support\MadelineProto\SessionOperationException;
 use Closure;
 use danog\MadelineProto\API;
 use danog\MadelineProto\RPCError\RateLimitError;
-use Illuminate\Support\Facades\Cache;
 use Throwable;
 
 final readonly class MadelineTrackingGateway implements TrackingGateway
 {
     public function __construct(private MadelineProtoManager $manager, private MadelineProtoConfig $sessions,
-        private TrackingConfig $config, private TrackingMessageReader $reader) {}
+        private TrackingConfig $config, private TrackingMessageReader $reader, private MadelineProtoOperationGuard $operations) {}
 
     public function resolve(array $groups, ?string $keyword = null): array
     {
@@ -80,37 +81,25 @@ final readonly class MadelineTrackingGateway implements TrackingGateway
             || ! file_exists($this->sessions->sessionFilePathFor($session))) {
             throw new TrackingException('session_unavailable');
         }
-        $key = 'telegram-tracking:session:'.$session;
-        $lock = Cache::lock($key.':lock', $this->config->integer('lease_seconds'));
-        if (! $lock->get()) {
-            throw new TrackingException('busy', $this->config->integer('request_gap_seconds'));
-        }
         try {
-            $wait = (int) Cache::get($key.':until', 0) - now()->timestamp;
-            if ($wait > 0) {
-                throw new TrackingException('cooldown', $wait);
-            }
-            $client = $this->manager->client($session);
-            if ($client->getAuthorization() !== API::LOGGED_IN) {
-                throw new TrackingException('session_unavailable');
-            }
+            return $this->operations->run($session, function () use ($session, $callback): array {
+                $client = $this->manager->client($session);
+                if ($client->getAuthorization() !== API::LOGGED_IN) {
+                    throw new TrackingException('session_unavailable');
+                }
 
-            return $callback($client);
+                return $callback($client);
+            }, $this->config->integer('request_gap_seconds'));
+        } catch (SessionOperationException $exception) {
+            throw new TrackingException($exception->reason, $exception->retryAfter);
         } catch (RateLimitError $exception) {
             $wait = max(1, $exception->getWaitTimeLeft());
-            Cache::put($key.':until', now()->timestamp + $wait, $wait);
             throw new TrackingException('flood_wait', $wait);
         } catch (TrackingException $exception) {
             throw $exception;
         } catch (Throwable $exception) {
             $unavailable = preg_match('/CHANNEL_PRIVATE|CHANNEL_INVALID|CHAT_ID_INVALID|CHAT_ADMIN_REQUIRED|PEER_ID_INVALID|PEER_ID_NOT_SUPPORTED|USERNAME_NOT_OCCUPIED|USERNAME_INVALID/', $exception->getMessage());
             throw new TrackingException($unavailable ? 'group_unavailable' : 'collection_failed');
-        } finally {
-            $gap = $this->config->integer('request_gap_seconds');
-            if ((int) Cache::get($key.':until', 0) < now()->timestamp + $gap) {
-                Cache::put($key.':until', now()->timestamp + $gap, $gap);
-            }
-            $lock->release();
         }
     }
 }

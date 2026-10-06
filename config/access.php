@@ -44,6 +44,7 @@ $resourceQuotas = static function (string $plan) use ($planLimits, $resourceLimi
         'telegram.parser' => $resourceLimit($plan, 'telegram.parser', $limits['parser']),
         'youtube.analytics' => $resourceLimit($plan, 'youtube.analytics', $limits['analytics']),
         'youtube.parser' => $resourceLimit($plan, 'youtube.parser', $limits['parser']),
+        'monitoring.report' => $resourceLimit($plan, 'monitoring.report', ['free' => 2, 'plus' => 10, 'pro' => 30][$plan]),
     ];
 };
 
@@ -57,6 +58,7 @@ return [
     ],
 
     'resources' => [
+        'monitoring.report' => ['module' => 'monitoring', 'capability' => 'report', 'quota_key' => 'monitoring.report'],
         'bluesky.analytics' => [
             'module' => 'bluesky',
             'capability' => 'analytics',

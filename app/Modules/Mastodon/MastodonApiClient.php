@@ -134,6 +134,7 @@ final class MastodonApiClient implements MastodonGatewayInterface
                 $status === 429 ? 'errors.api.mastodon.rate_limited' : 'errors.api.mastodon.request_failed',
                 $status,
                 $status === 429 ? 'mastodon_rate_limited' : 'mastodon_request_failed',
+                retryAfter: $this->retryAfter($response->header('Retry-After')),
             );
         }
 
@@ -174,6 +175,8 @@ final class MastodonApiClient implements MastodonGatewayInterface
     {
         return Http::baseUrl($this->config->baseUrl())
             ->acceptJson()
+            ->withoutRedirecting()
+            ->connectTimeout(3)
             ->withToken($this->config->apiToken())
             ->timeout($this->config->timeoutSeconds())
             ->retry(
@@ -199,5 +202,14 @@ final class MastodonApiClient implements MastodonGatewayInterface
         $host = (string) ($parts['host'] ?? '');
 
         return in_array($scheme, ['http', 'https'], true) && $host !== '';
+    }
+
+    private function retryAfter(?string $value): ?int
+    {
+        if ($value === null || $value === '') {
+            return null;
+        }
+
+        return ctype_digit($value) ? max(1, (int) $value) : max(1, (int) strtotime($value) - time());
     }
 }

@@ -9,8 +9,9 @@ Free Search — модульная OSINT-платформа на Laravel, Inerti
 ## Возможности
 
 - Telegram, YouTube, Bluesky и Mastodon: Search, Analytics и фоновые Parser Runs с историей, остановкой и экспортом JSON/Excel.
+- Мониторинг Telegram, YouTube, Bluesky, Mastodon и новостей: фоновые проекты, календарные отчёты за день/три дня/неделю/месяц, сохранённая история, JSON/XLSX и доставка краткой сводки в привязанный Telegram-бот. [Сценарий, настройка и ограничения](docs/modules/monitoring.md).
 - Site Intel: HTTP/DNS/SSL-проверки, WHOIS-based Domain Lite, агрегированная аналитика и SEO Audit с HTML-отчётами.
-- News / Media Intel: агрегирование NewsAPI, Google News RSS и Bing RSS, дедупликация, timeline, темы и словарная sentiment-оценка.
+- News / Media Intel: новостная выдача настроенного SearXNG, дедупликация, timeline, темы и словарная sentiment-оценка.
 - Shifr: хеширование, преобразования текста, извлечение IOC, просмотр JWT и классические шифры.
 - Dashboard: журнал действий, сводки, закреплённые модули и сохранённые запросы.
 - Fortify authentication, email verification, 2FA, подписки и дневные Feature Access quotas.
@@ -25,7 +26,8 @@ Free Search — модульная OSINT-платформа на Laravel, Inerti
 | Bluesky | Search, actor/post relations, Analytics, Parser, JSON/Excel | Beta; требует Bluesky credentials |
 | Mastodon | Search, account/status/tag data, Analytics, Parser, JSON/Excel | Beta; конфигурация требует проверки, см. [ограничения](docs/project/status.md) |
 | Site Intel | Site Health, Domain Lite, Analytics, SEO Audit, HTML reports | Beta; активные сетевые проверки требуют production hardening |
-| News / Media Intel | RSS/NewsAPI aggregation and lightweight analysis | Beta; эвристический анализ, без Parser/Export lifecycle |
+| News / Media Intel | SearXNG news search and lightweight analysis | Beta; ограниченное покрытие индекса, эвристический анализ |
+| Мониторинг | Пять источников, календарные отчёты, private JSON/XLSX, Telegram digest | Beta; внешний доступ и production coverage требуют живой проверки, см. [руководство](docs/modules/monitoring.md) |
 | Shifr | Local toolkit and classic ciphers | Beta; не предназначен для хранения секретов |
 
 Dashboard, Wiki, Export и Access/Subscriptions являются общими подсистемами, а не независимыми внешними источниками.
@@ -35,7 +37,7 @@ Dashboard, Wiki, Export и Access/Subscriptions являются общими п
 - PHP `^8.3`, Laravel `^13.0`, Fortify, MoonShine 4
 - Vue 3, TypeScript, Inertia.js 3, Vite 8, Tailwind CSS 4
 - database-backed cache/session/queue по умолчанию; SQLite в `.env.example`
-- MadelineProto, YouTube Data API v3, Bluesky AT Protocol, Mastodon API, RSS/NewsAPI
+- MadelineProto, YouTube Data API v3, Bluesky AT Protocol, Mastodon API, SearXNG
 - PHPUnit 12, Vitest 4, Pint, ESLint, Prettier, vue-tsc
 
 ## Архитектура
@@ -96,8 +98,9 @@ composer run dev
 - Telegram: `TELEGRAM_API_ID`, `TELEGRAM_API_HASH`, локальная MadelineProto session.
 - YouTube: `YOUTUBE_DATA_API_KEY`.
 - Bluesky: `BLUESKY_IDENTIFIER`, `BLUESKY_APP_PASSWORD`, `BLUESKY_PDS_URL`.
-- Mastodon: `MASTODON_API_BASE_URL`, при необходимости `MASTODON_API_TOKEN`.
-- NewsAPI: `OSINT_NEWSAPI_KEY`; RSS providers работают независимо от него.
+- Mastodon: `MASTODON_API_BASE_URL`, `MASTODON_API_TOKEN` (требуется текущему клиенту).
+- Новости: `OSINT_NEWS_MEDIA_SEARXNG_*`; нужен SearXNG с JSON output и рабочими news engines.
+- Мониторинг: `MONITORING_*`, отдельная квота `ACCESS_*_MONITORING_REPORT_DAILY_LIMIT`; durable worker очереди `monitoring` и ежеминутный scheduler. [Полная настройка](docs/modules/monitoring.md).
 - Parser Runs: `PARSER_RUN_*`; queue worker обязателен при `PARSER_RUN_QUEUE_ENABLED=true`.
 - MoonShine: production route/domain, IP allowlist и login throttling задаются `MOONSHINE_*`.
 
@@ -123,7 +126,7 @@ php artisan app:cleanup-parser-runs --dry-run
 php artisan app:create-telegram-session default
 ```
 
-Scheduler ежедневно отправляет уведомления об окончании подписки (`09:00`) и очищает истёкшие Parser Runs (по умолчанию `03:30`). В production `schedule:run` должен вызываться инфраструктурным scheduler каждую минуту, а queue worker — работать постоянно.
+Scheduler ежедневно отправляет уведомления об окончании подписки (`09:00`) и очищает истёкшие Parser Runs (по умолчанию `03:30`). Мониторинг планируется/восстанавливается каждую минуту, его просроченные отчёты и private files очищаются в `04:30`. В production `schedule:run` должен вызываться инфраструктурным scheduler каждую минуту, а workers настроенных очередей — работать постоянно.
 
 См. [Queues and scheduler](docs/operations/queues-and-scheduler.md), [Deployment](docs/deployment.md) и [Telegram sessions](docs/operations/telegram-session.md).
 
@@ -139,6 +142,7 @@ Scheduler ежедневно отправляет уведомления об о
 - [Архитектура](docs/architecture/overview.md)
 - [Модули](docs/architecture/modules.md)
 - [Parser Runs](docs/architecture/parser-runs.md)
+- [Мониторинг: сценарий, источники и эксплуатация](docs/modules/monitoring.md)
 - [Ошибки](docs/errors.md)
 - [Статус и известные ограничения](docs/project/status.md)
 - [Contributing](docs/project/contributing.md)

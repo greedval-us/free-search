@@ -10,6 +10,7 @@ final class ExternalServiceRequestException extends PublicException
         string $translationKey,
         int $status,
         string $errorCode,
+        public readonly ?int $retryAfter = null,
     ) {
         parent::__construct($translationKey, $status, $errorCode);
     }

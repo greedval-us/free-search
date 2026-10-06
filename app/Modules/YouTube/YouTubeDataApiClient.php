@@ -52,6 +52,11 @@ class YouTubeDataApiClient implements YouTubeGatewayInterface
         ]);
     }
 
+    public function playlistItems(array $params): array
+    {
+        return $this->get('playlistItems', [...$params, 'part' => $params['part'] ?? 'snippet,contentDetails']);
+    }
+
     public function comments(array $params): array
     {
         return $this->get('comments', [
@@ -99,6 +104,7 @@ class YouTubeDataApiClient implements YouTubeGatewayInterface
                 $status === 429 ? 'errors.api.youtube.rate_limited' : 'errors.api.youtube.request_failed',
                 $status,
                 $status === 429 ? 'youtube_rate_limited' : 'youtube_request_failed',
+                retryAfter: $this->retryAfter($response->header('Retry-After')),
             );
         }
 
@@ -109,11 +115,22 @@ class YouTubeDataApiClient implements YouTubeGatewayInterface
     {
         return Http::baseUrl($this->config->baseUrl())
             ->acceptJson()
+            ->withoutRedirecting()
+            ->connectTimeout(3)
             ->timeout($this->config->timeoutSeconds())
             ->retry(
                 $this->config->retryAttempts(),
                 $this->config->retryDelayMilliseconds(),
                 throw: false
             );
+    }
+
+    private function retryAfter(?string $value): ?int
+    {
+        if ($value === null || $value === '') {
+            return null;
+        }
+
+        return ctype_digit($value) ? max(1, (int) $value) : max(1, (int) strtotime($value) - time());
     }
 }

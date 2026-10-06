@@ -11,6 +11,9 @@ final class TrackingMatcher
         if (($message['_'] ?? '') !== 'message') {
             return false;
         }
+        if ($tracking->mode === 'all') {
+            return true;
+        }
         if ($tracking->mode === 'user') {
             return ($message['from_id']['_'] ?? '') === 'peerUser'
                 && (string) ($message['from_id']['user_id'] ?? '') === $tracking->query;
