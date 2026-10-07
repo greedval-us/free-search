@@ -3,9 +3,23 @@
 namespace App\Modules\Telegram\Access;
 
 use Closure;
+use danog\DialogId\DialogId;
+use danog\MadelineProto\API;
 
 final class PublicTelegramSource
 {
+    public static function resolveWithClient(API $client, string $identifier): ?array
+    {
+        return self::resolve($identifier, fn (string $username): array => self::refreshedInfo($client, $username));
+    }
+
+    public static function refreshedInfo(API $client, string $username): array
+    {
+        $client->refreshPeerCache($username);
+
+        return $client->getInfo($username);
+    }
+
     public static function username(mixed $identifier): ?string
     {
         if (! is_string($identifier) || preg_match('/^@?[a-z][a-z0-9_]{3,31}$/iD', trim($identifier)) !== 1) {
@@ -31,6 +45,19 @@ final class PublicTelegramSource
         }
 
         $resolved = $resolveUsername($username);
+        if (array_key_exists('Chat', $resolved)) {
+            $chat = $resolved['Chat'];
+            $id = is_array($chat) ? self::channelId($chat['id'] ?? null) : null;
+            if (! in_array($resolved['type'] ?? '', ['channel', 'supergroup'], true)
+                || ! is_array($chat) || ($chat['_'] ?? '') !== 'channel' || $id === null
+                || self::channelId($resolved['channel_id'] ?? null) !== $id
+                || (isset($resolved['bot_api_id']) && self::channelId($resolved['bot_api_id']) !== $id)) {
+                return null;
+            }
+
+            $chat['id'] = $id;
+            $resolved = ['peer' => ['_' => 'peerChannel', 'channel_id' => $id], 'chats' => [$chat]];
+        }
         $peer = $resolved['peer'] ?? [];
         if (($peer['_'] ?? '') !== 'peerChannel' || (int) ($peer['channel_id'] ?? 0) <= 0) {
             return null;
@@ -73,8 +100,8 @@ final class PublicTelegramSource
     public static function resolveDiscussion(array $source, Closure $fullInfo, Closure $linkedInfo, Closure $resolveUsername): ?array
     {
         $info = $fullInfo($source['peer']);
-        $linkedId = (int) ($info['full']['linked_chat_id'] ?? 0);
-        if ($linkedId <= 0) {
+        $linkedId = self::channelId($info['full']['linked_chat_id'] ?? null);
+        if ($linkedId === null) {
             return null;
         }
 
@@ -100,6 +127,34 @@ final class PublicTelegramSource
         return $discussion !== null && $discussion['id'] === $linkedId && ($discussion['chat']['megagroup'] ?? false)
             ? $discussion
             : null;
+    }
+
+    public static function matchesPeer(mixed $peer, int $channelId): bool
+    {
+        if (is_array($peer)) {
+            return ($peer['_'] ?? '') === 'peerChannel' && (int) ($peer['channel_id'] ?? 0) === $channelId;
+        }
+
+        return (is_int($peer) || (is_string($peer) && preg_match('/^-\d+$/D', $peer) === 1))
+            && (int) $peer === DialogId::fromSupergroupOrChannelId($channelId);
+    }
+
+    private static function channelId(mixed $id): ?int
+    {
+        if (! is_int($id) && (! is_string($id) || preg_match('/^-?\d+$/D', $id) !== 1)) {
+            return null;
+        }
+
+        $id = (int) $id;
+        if ($id > 0) {
+            return $id;
+        }
+
+        try {
+            return $id < 0 && DialogId::isSupergroupOrChannel($id) ? DialogId::toSupergroupOrChannelId($id) : null;
+        } catch (\AssertionError) {
+            return null;
+        }
     }
 
     private static function hasUsername(array $chat, string $username): bool

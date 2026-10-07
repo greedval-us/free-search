@@ -25,10 +25,7 @@ abstract class AbstractTelegramAction
 
     protected function publicSource(API $client, string $identifier): ?array
     {
-        return PublicTelegramSource::resolve(
-            $identifier,
-            fn (string $username): array => $client->contacts->resolveUsername(['username' => $username]),
-        );
+        return PublicTelegramSource::resolveWithClient($client, $identifier);
     }
 
     protected function logContext(): string

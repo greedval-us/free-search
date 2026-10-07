@@ -5,6 +5,7 @@ namespace App\Modules\Telegram\Actions\Request;
 use App\Modules\Telegram\Access\PublicTelegramSource;
 use App\Modules\Telegram\Actions\AbstractTelegramAction;
 use Closure;
+use danog\DialogId\DialogId;
 use RuntimeException;
 
 class CommentsAction extends AbstractTelegramAction
@@ -38,9 +39,9 @@ class CommentsAction extends AbstractTelegramAction
                 }
                 $discussion = PublicTelegramSource::resolveDiscussion(
                     $source,
-                    fn (array $peer): array => $this->executeWithRetry(fn () => $client->getFullInfo($peer), ['channel' => $channelId]),
+                    fn (array $peer): array => $this->executeWithRetry(fn () => $client->getFullInfo(DialogId::fromSupergroupOrChannelId((int) $peer['channel_id'])), ['channel' => $channelId]),
                     fn (int $id): array => $client->getInfo($id),
-                    fn (string $username): array => $client->contacts->resolveUsername(['username' => $username]),
+                    fn (string $username): array => PublicTelegramSource::refreshedInfo($client, $username),
                 );
                 if ($discussion === null) {
                     throw new RuntimeException('Telegram discussion is unavailable.');

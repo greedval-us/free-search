@@ -3,6 +3,7 @@
 namespace App\Modules\Telegram\Actions\Request;
 
 use App\Modules\Telegram\Actions\AbstractTelegramAction;
+use danog\DialogId\DialogId;
 
 class InfoAction extends AbstractTelegramAction
 {
@@ -17,7 +18,7 @@ class InfoAction extends AbstractTelegramAction
             }
 
             return $this->executeWithRetry(
-                callback: fn () => $client->getFullInfo(id: $source['peer']),
+                callback: fn () => $client->getFullInfo(id: DialogId::fromSupergroupOrChannelId($source['id'])),
                 context: ['id' => $id]
             );
         } catch (\Throwable $e) {

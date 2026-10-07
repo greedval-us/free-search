@@ -75,6 +75,113 @@ class PublicTelegramSourceTest extends TestCase
         $this->assertNull(PublicTelegramSource::resolve('alias', fn () => $response));
     }
 
+    public static function nativePublicChannelTypes(): array
+    {
+        return ['broadcast channel' => ['channel'], 'public supergroup' => ['supergroup']];
+    }
+
+    #[DataProvider('nativePublicChannelTypes')]
+    public function test_native_madeline_metadata_pins_the_public_channel_to_its_mtproto_id(string $type): void
+    {
+        $response = $this->nativeChannel($type);
+
+        $result = PublicTelegramSource::resolve('@CHANNEL', static fn (): array => $response);
+
+        $this->assertNotNull($result);
+        $this->assertSame('channel', $result['username']);
+        $this->assertSame(55, $result['id']);
+        $this->assertSame(['_' => 'inputPeerChannel', 'channel_id' => 55, 'access_hash' => 123], $result['peer']);
+        $this->assertSame(['_' => 'inputChannel', 'channel_id' => 55, 'access_hash' => 123], $result['channel']);
+    }
+
+    #[DataProvider('nativePublicChannelTypes')]
+    public function test_native_madeline_metadata_accepts_an_active_public_alias(string $type): void
+    {
+        $response = $this->nativeChannel($type);
+        $response['Chat']['usernames'] = [['username' => 'alias', 'active' => true]];
+
+        $result = PublicTelegramSource::resolve('@ALIAS', static fn (): array => $response);
+
+        $this->assertNotNull($result);
+        $this->assertSame('alias', $result['username']);
+        $this->assertSame(55, $result['id']);
+    }
+
+    #[DataProvider('nativePublicChannelTypes')]
+    public function test_native_madeline_metadata_rejects_a_revoked_public_alias(string $type): void
+    {
+        $response = $this->nativeChannel($type);
+        $response['Chat']['usernames'] = [['username' => 'alias', 'active' => false]];
+
+        $result = PublicTelegramSource::resolve('alias', static fn (): array => $response);
+
+        $this->assertNull($result);
+    }
+
+    public static function unsafeNativeChannelMetadata(): array
+    {
+        return [
+            'user profile' => [['type' => 'user']],
+            'basic group' => [['type' => 'chat']],
+            'unknown peer type' => [['type' => 'unknown']],
+            'forbidden channel' => [['Chat' => ['_' => 'channelForbidden']]],
+            'mismatched channel id' => [['channel_id' => -1000000000099]],
+            'mismatched bot api id' => [['bot_api_id' => -1000000000099]],
+            'mismatched chat id' => [['Chat' => ['id' => -1000000000099]]],
+            'basic group dialog id' => [['channel_id' => -55, 'bot_api_id' => -55, 'Chat' => ['id' => -55]]],
+            'private channel' => [['Chat' => ['username' => null]]],
+            'removed public username' => [['Chat' => ['username' => 'renamed']]],
+            'missing access hash' => [['Chat' => ['access_hash' => null]]],
+            'untrusted partial peer' => [['Chat' => ['min' => true]]],
+            'restricted content' => [['Chat' => ['restricted' => true]]],
+            'protected content' => [['Chat' => ['noforwards' => true]]],
+            'neither broadcast nor megagroup' => [['Chat' => ['broadcast' => false, 'megagroup' => false]]],
+        ];
+    }
+
+    #[DataProvider('unsafeNativeChannelMetadata')]
+    public function test_native_madeline_metadata_does_not_authorize_an_unsafe_source(array $override): void
+    {
+        $response = array_replace_recursive($this->nativeChannel(), $override);
+
+        $result = PublicTelegramSource::resolve('@channel', static fn (): array => $response);
+
+        $this->assertNull($result);
+    }
+
+    public static function messagePeerFormats(): array
+    {
+        return [
+            'native channel dialog id' => [-1000000000055, true],
+            'native string channel dialog id' => ['-1000000000055', true],
+            'raw channel peer' => [['_' => 'peerChannel', 'channel_id' => 55], true],
+            'positive user id' => [55, false],
+            'raw user peer' => [['_' => 'peerUser', 'user_id' => 55], false],
+            'another channel dialog id' => [-1000000000077, false],
+            'another raw channel peer' => [['_' => 'peerChannel', 'channel_id' => 77], false],
+            'malformed peer array' => [['channel_id' => 55], false],
+            'non numeric peer' => ['channel', false],
+            'missing peer' => [null, false],
+        ];
+    }
+
+    #[DataProvider('messagePeerFormats')]
+    public function test_message_peer_formats_are_pinned_to_the_authorized_channel(mixed $peer, bool $matches): void
+    {
+        $this->assertSame($matches, PublicTelegramSource::matchesPeer($peer, 55));
+    }
+
+    private function nativeChannel(string $type = 'channel'): array
+    {
+        return [
+            'type' => $type,
+            'channel_id' => -1000000000055,
+            'bot_api_id' => -1000000000055,
+            'Chat' => ['_' => 'channel', 'id' => -1000000000055, 'access_hash' => 123,
+                'username' => 'channel', 'broadcast' => $type === 'channel', 'megagroup' => $type === 'supergroup'],
+        ];
+    }
+
     private function channel(): array
     {
         return ['peer' => ['_' => 'peerChannel', 'channel_id' => 55],

@@ -62,7 +62,7 @@ final readonly class MadelineTrackingGateway implements TrackingGateway
 
     private function publicSource(API $client, string $identifier): ?array
     {
-        return PublicTelegramSource::resolve($identifier, fn (string $username): array => $client->contacts->resolveUsername(username: $username));
+        return PublicTelegramSource::resolveWithClient($client, $identifier);
     }
 
     private function messagesRequest(API $client, array $peer): Closure

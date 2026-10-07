@@ -80,6 +80,101 @@ class PublicTelegramDiscussionTest extends TestCase
         $this->assertSame(77, $result['id']);
     }
 
+    public function test_native_madeline_linked_discussion_uses_the_existing_dialog_id(): void
+    {
+        $lookupIds = [];
+        $usernames = [];
+
+        $result = PublicTelegramSource::resolveDiscussion(
+            ['peer' => ['_' => 'inputPeerChannel', 'channel_id' => 55]],
+            static fn (): array => ['full' => ['linked_chat_id' => -1000000000077]],
+            function (int $id) use (&$lookupIds): array {
+                $lookupIds[] = $id;
+
+                return $this->nativeDiscussion();
+            },
+            function (string $username) use (&$usernames): array {
+                $usernames[] = $username;
+
+                return $this->nativeDiscussion();
+            },
+        );
+
+        $this->assertNotNull($result);
+        $this->assertSame([-1000000000077], $lookupIds);
+        $this->assertSame(['discussion'], $usernames);
+        $this->assertSame(77, $result['id']);
+        $this->assertSame(['_' => 'inputPeerChannel', 'channel_id' => 77, 'access_hash' => 123], $result['peer']);
+    }
+
+    public function test_native_madeline_linked_discussion_accepts_an_active_public_alias(): void
+    {
+        $response = $this->nativeDiscussion();
+        $response['Chat']['username'] = null;
+        $response['Chat']['usernames'] = [['username' => 'discussion', 'active' => true]];
+
+        $result = PublicTelegramSource::resolveDiscussion(
+            ['peer' => []],
+            static fn (): array => ['full' => ['linked_chat_id' => -1000000000077]],
+            static fn (): array => $response,
+            static fn (): array => $response,
+        );
+
+        $this->assertNotNull($result);
+        $this->assertSame(77, $result['id']);
+    }
+
+    public function test_native_madeline_private_discussion_is_rejected_before_username_resolution(): void
+    {
+        $lookupIds = [];
+        $response = $this->nativeDiscussion();
+        $response['Chat']['username'] = null;
+
+        $result = PublicTelegramSource::resolveDiscussion(
+            ['peer' => []],
+            static fn (): array => ['full' => ['linked_chat_id' => -1000000000077]],
+            static function (int $id) use (&$lookupIds, $response): array {
+                $lookupIds[] = $id;
+
+                return $response;
+            },
+            fn (): array => $this->fail('A private discussion must not reach username resolution.'),
+        );
+
+        $this->assertNull($result);
+        $this->assertSame([-1000000000077], $lookupIds);
+    }
+
+    public function test_native_madeline_reassigned_discussion_username_is_not_authorized(): void
+    {
+        $usernames = [];
+        $reassigned = $this->nativeDiscussion();
+        $reassigned['channel_id'] = -1000000000088;
+        $reassigned['bot_api_id'] = -1000000000088;
+        $reassigned['Chat']['id'] = -1000000000088;
+
+        $result = PublicTelegramSource::resolveDiscussion(
+            ['peer' => []],
+            static fn (): array => ['full' => ['linked_chat_id' => -1000000000077]],
+            fn (): array => $this->nativeDiscussion(),
+            static function (string $username) use (&$usernames, $reassigned): array {
+                $usernames[] = $username;
+
+                return $reassigned;
+            },
+        );
+
+        $this->assertNull($result);
+        $this->assertSame(['discussion'], $usernames);
+    }
+
+    private function nativeDiscussion(): array
+    {
+        return ['type' => 'supergroup', 'channel_id' => -1000000000077, 'bot_api_id' => -1000000000077,
+            'Chat' => ['_' => 'channel', 'id' => -1000000000077, 'access_hash' => 123,
+                'username' => 'discussion', 'megagroup' => true]];
+    }
+
     private function discussion(): array
     {
         return ['peer' => ['_' => 'peerChannel', 'channel_id' => 77], 'chats' => [

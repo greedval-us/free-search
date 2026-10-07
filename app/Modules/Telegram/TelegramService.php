@@ -142,10 +142,7 @@ class TelegramService implements TelegramGatewayInterface
 
         try {
             $client = $this->madeline();
-            $source = PublicTelegramSource::resolve(
-                $channel,
-                fn (string $username): array => $client->contacts->resolveUsername(['username' => $username]),
-            );
+            $source = PublicTelegramSource::resolveWithClient($client, $channel);
             if ($source === null) {
                 return null;
             }
@@ -158,7 +155,7 @@ class TelegramService implements TelegramGatewayInterface
             $message = $messages[0] ?? null;
 
             if (! is_array($message) || (int) ($message['id'] ?? 0) !== $messageId
-                || (int) ($message['peer_id']['channel_id'] ?? 0) !== $source['id']
+                || ! PublicTelegramSource::matchesPeer($message['peer_id'] ?? null, $source['id'])
                 || ($message['noforwards'] ?? false)) {
                 return null;
             }
