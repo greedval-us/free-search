@@ -80,8 +80,9 @@ const focusTab = (event: KeyboardEvent): void => {
 
 <template>
     <IntelModuleLayout>
+        <slot name="heading" />
         <div
-            class="intel-tabbar intel-scroll flex shrink-0 items-center justify-start gap-1.5 overflow-x-auto overscroll-x-contain"
+            class="intel-tabbar intel-scroll flex shrink-0 items-center justify-start gap-1 overflow-x-auto overscroll-x-contain"
             role="tablist"
             :aria-label="t('navigation.moduleTabs')"
             @keydown="focusTab"
@@ -103,7 +104,7 @@ const focusTab = (event: KeyboardEvent): void => {
                         : 'intel-tab-inactive',
                 ]"
             >
-                <component :is="tab.icon" class="mr-1.5 h-3.5 w-3.5 shrink-0" />
+                <component :is="tab.icon" class="mr-2 size-4 shrink-0" />
                 <span>{{ t(tab.labelKey) }}</span>
             </button>
         </div>

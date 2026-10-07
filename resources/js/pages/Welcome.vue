@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { Link } from '@inertiajs/vue3';
+import { ArrowRight, Globe2, MessagesSquare, Radar } from 'lucide-vue-next';
 import PublicAction from '@/components/public/PublicAction.vue';
 import PublicFeatureCards from '@/components/public/PublicFeatureCards.vue';
 import PublicWorkflow from '@/components/public/PublicWorkflow.vue';
@@ -11,9 +12,9 @@ import type { PublicSiteProps } from '@/types/publicSite';
 defineProps<PublicSiteProps>();
 const { t } = useI18n();
 const scenarios = [
-    { key: 'monitor', feature: 'telegram-tracking' },
-    { key: 'research', feature: 'youtube' },
-    { key: 'check', feature: 'site-intel' },
+    { key: 'monitor', feature: 'telegram-tracking', icon: Radar },
+    { key: 'research', feature: 'youtube', icon: MessagesSquare },
+    { key: 'check', feature: 'site-intel', icon: Globe2 },
 ];
 </script>
 
@@ -25,7 +26,7 @@ const scenarios = [
     />
     <PublicLayout :can-register="canRegister">
         <section class="public-hero">
-            <div>
+            <div class="public-hero-copy">
                 <p class="public-eyebrow">
                     <span class="public-status-dot" aria-hidden="true"></span
                     >{{ t('publicSite.beta') }}
@@ -56,13 +57,10 @@ const scenarios = [
                 </h2>
             </div>
             <div class="public-scenarios">
-                <article
-                    v-for="(scenario, index) in scenarios"
-                    :key="scenario.key"
-                >
-                    <span class="public-number" aria-hidden="true"
-                        >0{{ index + 1 }}</span
-                    >
+                <article v-for="scenario in scenarios" :key="scenario.key">
+                    <span class="public-scenario-icon" aria-hidden="true">
+                        <component :is="scenario.icon" :size="24" />
+                    </span>
                     <h3>
                         {{ t(`publicSite.scenarios.${scenario.key}.title`) }}
                     </h3>
@@ -74,8 +72,9 @@ const scenarios = [
                             )?.url ?? '/features'
                         "
                         class="public-text-link"
-                        >{{ t('publicSite.details') }} &rarr;</Link
-                    >
+                        >{{ t('publicSite.details') }}
+                        <ArrowRight :size="16" aria-hidden="true"
+                    /></Link>
                 </article>
             </div>
         </section>

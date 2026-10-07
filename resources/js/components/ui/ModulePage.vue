@@ -29,9 +29,12 @@ const pageTitle = computed(() => t(props.titleKey));
 
 <template>
     <Head :title="pageTitle" />
-    <h1 class="sr-only">{{ pageTitle }}</h1>
-
     <ModuleTabsLayout v-model:active-tab="activeTab" :tabs="tabs">
+        <template #heading>
+            <header class="intel-module-heading">
+                <h1 class="intel-module-title">{{ pageTitle }}</h1>
+            </header>
+        </template>
         <component :is="activeTabDefinition.component" />
     </ModuleTabsLayout>
 </template>

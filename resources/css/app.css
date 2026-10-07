@@ -50,20 +50,7 @@
 
     body {
         @apply bg-background font-sans text-foreground antialiased;
-        background-image: radial-gradient(
-            circle at 50% 0%,
-            rgba(8, 145, 178, 0.08),
-            transparent 32rem
-        );
         min-width: 0;
-    }
-
-    .dark body {
-        background-image: radial-gradient(
-            circle at 50% 0%,
-            rgba(34, 211, 238, 0.1),
-            transparent 30rem
-        );
     }
 
     body.dashboard-scroll-lock {

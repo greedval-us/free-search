@@ -22,12 +22,19 @@ const { setOpenMobile } = useSidebar();
 </script>
 
 <template>
-    <SidebarGroup class="px-2 py-0">
-        <SidebarGroupLabel>{{ t('navigation.platform') }}</SidebarGroupLabel>
-        <SidebarMenu class="gap-1.5">
-            <SidebarMenuItem v-for="item in items" :key="item.title">
+    <SidebarGroup class="px-2 py-0 group-data-[collapsible=icon]:px-0">
+        <SidebarGroupLabel
+            class="mb-1 px-3 text-xs font-medium text-muted-foreground"
+            >{{ t('navigation.platform') }}</SidebarGroupLabel
+        >
+        <SidebarMenu class="gap-1 group-data-[collapsible=icon]:items-center">
+            <SidebarMenuItem
+                v-for="item in items"
+                :key="item.title"
+                class="group-data-[collapsible=icon]:w-11"
+            >
                 <SidebarMenuButton
-                    class="h-11 rounded-xl px-3 text-sm data-[active=true]:bg-primary/10 data-[active=true]:text-primary data-[active=true]:ring-1 data-[active=true]:ring-primary/20"
+                    class="h-11 gap-3 rounded-lg px-3 text-sm font-medium text-muted-foreground transition-colors group-data-[collapsible=icon]:size-11! group-data-[collapsible=icon]:p-3! hover:bg-card/80 hover:text-foreground data-[active=true]:bg-primary/10 data-[active=true]:font-semibold data-[active=true]:text-primary data-[active=true]:ring-1 data-[active=true]:ring-primary/15"
                     as-child
                     :is-active="isCurrentUrl(item.href)"
                     :tooltip="item.title"

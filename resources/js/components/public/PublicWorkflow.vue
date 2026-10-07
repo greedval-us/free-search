@@ -15,11 +15,15 @@ const steps = [
             {{ t('publicSite.previewLabel') }}
         </figcaption>
         <ol>
-            <li v-for="step in steps" :key="step.key">
+            <li
+                v-for="step in steps"
+                :key="step.key"
+                :class="`public-workflow-step public-workflow-step-${step.key}`"
+            >
                 <span class="public-workflow-dot" aria-hidden="true"
                     ><component :is="step.icon" :size="20"
                 /></span>
-                <div>
+                <div class="public-workflow-content">
                     <strong>{{
                         t(`publicSite.preview.${step.key}.title`)
                     }}</strong>

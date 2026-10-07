@@ -336,30 +336,32 @@ onBeforeUnmount(() => {
         class="mx-auto flex h-full min-h-0 w-full max-w-[1500px] flex-1 flex-col overflow-hidden p-3 sm:p-5 lg:p-6"
     >
         <div
-            class="intel-scroll min-h-0 flex-1 space-y-5 overflow-y-auto pb-[env(safe-area-inset-bottom)] [overflow-wrap:anywhere]"
+            class="intel-scroll min-h-0 flex-1 space-y-6 overflow-y-auto pb-[env(safe-area-inset-bottom)] text-sm leading-6 [overflow-wrap:anywhere]"
         >
             <section class="py-2">
                 <div
-                    class="flex flex-col items-start justify-between gap-3 lg:flex-row"
+                    class="flex flex-col items-start justify-between gap-4 lg:flex-row lg:items-center"
                 >
-                    <div class="w-full min-w-0 flex-1 space-y-1">
+                    <div class="w-full min-w-0 flex-1 space-y-2">
                         <p class="intel-kicker">
                             {{ t('dashboard.header.kicker') }}
                         </p>
                         <h1
-                            class="text-2xl font-semibold tracking-tight sm:text-3xl"
+                            class="text-3xl leading-tight font-semibold tracking-tight sm:text-4xl"
                         >
                             {{ t('dashboard.header.title') }}
                         </h1>
-                        <p class="text-sm text-muted-foreground">
+                        <p
+                            class="max-w-3xl text-base leading-relaxed text-muted-foreground"
+                        >
                             {{ t('dashboard.header.subtitle') }}
                         </p>
                     </div>
                     <div
-                        class="inline-flex max-w-full rounded-md border border-emerald-500/30 bg-emerald-500/10 px-2.5 py-1.5 text-xs font-medium text-emerald-700 dark:text-emerald-300"
+                        class="inline-flex max-w-full shrink-0 rounded-full border border-primary/15 bg-primary/5 px-3 py-1.5 text-sm font-medium text-primary"
                     >
                         <span class="inline-flex items-center gap-1.5">
-                            <Sparkles class="h-3.5 w-3.5" />
+                            <Sparkles class="size-4 shrink-0" />
                             {{ t('dashboard.header.badge') }}
                         </span>
                     </div>
@@ -371,7 +373,9 @@ onBeforeUnmount(() => {
                 :available-modules="dashboard.available_modules"
             />
 
-            <section class="grid grid-cols-2 gap-3 xl:grid-cols-4">
+            <section
+                class="grid grid-cols-2 overflow-hidden rounded-xl border border-border/75 bg-card sm:grid-cols-4"
+            >
                 <MetricCard
                     v-for="card in summaryCards"
                     :key="card.key"
@@ -379,20 +383,23 @@ onBeforeUnmount(() => {
                     :value="card.value"
                     :icon="card.icon"
                     prominent
-                    class="workspace-card"
+                    class="rounded-none! border-0! bg-transparent! p-4! shadow-none! [&_.intel-title]:text-sm"
                 />
             </section>
 
-            <section>
-                <article class="intel-panel">
+            <section class="border-y border-border/75 py-4">
+                <article class="grid gap-3 lg:grid-cols-[10rem_minmax(0,1fr)]">
                     <h2 class="intel-section-heading">
                         {{ t('dashboard.sections.insights') }}
                     </h2>
-                    <KeyValueList class="mt-3" :items="insightItems" />
+                    <KeyValueList
+                        class="grid space-y-0! gap-x-6 gap-y-3 md:grid-cols-3 [&_dd]:mt-1 [&>div]:block"
+                        :items="insightItems"
+                    />
                 </article>
             </section>
 
-            <section class="grid min-h-0 gap-3 lg:grid-cols-2 2xl:grid-cols-3">
+            <section class="grid min-h-0 gap-4 lg:grid-cols-2 2xl:grid-cols-3">
                 <article class="intel-panel min-h-0">
                     <div class="flex items-center justify-between">
                         <h2 class="intel-section-heading">
@@ -401,7 +408,7 @@ onBeforeUnmount(() => {
                     </div>
                     <div
                         v-if="dashboard.favorite_module"
-                        class="intel-list-item mt-3"
+                        class="mt-4 border-l-2 border-primary/35 pl-3"
                     >
                         <p class="text-base font-semibold">
                             {{ moduleLabel(dashboard.favorite_module.key) }}
@@ -420,23 +427,23 @@ onBeforeUnmount(() => {
                         {{ t('dashboard.sections.topModules') }}
                     </h3>
                     <ul
-                        class="intel-scroll mt-2 space-y-2 md:max-h-72 md:overflow-y-auto md:pr-1"
+                        class="intel-scroll mt-2 divide-y divide-border/70 md:max-h-72 md:overflow-y-auto md:pr-1"
                     >
                         <li
                             v-for="module in dashboard.modules"
                             :key="`${module.key}-${module.count}`"
-                            class="intel-list-item"
+                            class="py-3"
                         >
                             <div
                                 class="flex items-center justify-between gap-2"
                             >
-                                <p class="font-medium">
+                                <p class="font-semibold">
                                     {{ moduleLabel(module.key) }}
                                 </p>
                                 <div class="flex items-center gap-2">
                                     <button
                                         type="button"
-                                        class="inline-flex size-11 shrink-0 items-center justify-center rounded-lg text-muted-foreground hover:bg-background/70 hover:text-foreground"
+                                        class="inline-flex size-11 shrink-0 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-muted/60 hover:text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
                                         :aria-label="
                                             module.is_pinned
                                                 ? t(
@@ -455,18 +462,18 @@ onBeforeUnmount(() => {
                                             "
                                         />
                                     </button>
-                                    <span class="intel-badge-count text-xs">
+                                    <span class="intel-badge-count text-sm">
                                         {{ module.count }}
                                     </span>
                                 </div>
                             </div>
-                            <p class="mt-1 text-xs text-muted-foreground">
+                            <p class="mt-1 text-sm text-muted-foreground">
                                 {{ t('dashboard.modules.lastUsed') }}:
                                 {{ formatDateTime(module.last_at) }}
                             </p>
                             <Link
                                 :href="module.url"
-                                class="mt-2 inline-block text-xs text-primary hover:underline"
+                                class="mt-2 inline-flex min-h-11 items-center rounded-lg px-3 text-sm font-medium text-primary transition-colors hover:bg-primary/5 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
                             >
                                 {{ t('dashboard.modules.open') }}
                             </Link>
@@ -485,26 +492,26 @@ onBeforeUnmount(() => {
                         {{ t('dashboard.sections.weekly') }}
                     </h2>
                     <div class="intel-scroll mt-4 overflow-x-auto pb-1">
-                        <div class="grid grid-cols-7 gap-1 sm:gap-2">
+                        <div class="grid grid-cols-7 gap-2 sm:gap-3">
                             <div
                                 v-for="point in dashboard.chart"
                                 :key="point.date"
                                 class="flex flex-col items-center gap-2"
                             >
                                 <div
-                                    class="flex h-24 w-full items-end rounded-md bg-background/40 p-1"
+                                    class="flex h-28 w-full items-end rounded-md bg-muted/45 p-1"
                                 >
                                     <div
-                                        class="w-full rounded bg-cyan-400/80 transition-all"
+                                        class="w-full rounded bg-primary/80 motion-safe:transition-[height]"
                                         :style="{
                                             height: `${Math.max((point.count / chartMax) * 100, point.count > 0 ? 8 : 2)}%`,
                                         }"
                                     />
                                 </div>
-                                <p class="text-[11px] text-muted-foreground">
+                                <p class="text-sm text-muted-foreground">
                                     {{ weekDay(point.date) }}
                                 </p>
-                                <p class="text-xs font-medium">
+                                <p class="text-sm font-medium tabular-nums">
                                     {{ point.count }}
                                 </p>
                             </div>
@@ -518,25 +525,27 @@ onBeforeUnmount(() => {
                     </p>
                 </article>
 
-                <article class="intel-panel min-h-0">
+                <article
+                    class="intel-panel min-h-0 lg:col-span-2 2xl:col-span-1"
+                >
                     <h2 class="intel-section-heading">
                         {{ t('dashboard.sections.savedQueries') }}
                     </h2>
                     <ul
-                        class="intel-scroll mt-3 space-y-2 md:max-h-[26rem] md:overflow-y-auto md:pr-1"
+                        class="intel-scroll mt-3 divide-y divide-border/70 md:max-h-[26rem] md:overflow-y-auto md:pr-1"
                     >
                         <li
                             v-for="saved in dashboard.saved_queries"
                             :key="`saved-${saved.id}`"
-                            class="intel-list-item"
+                            class="py-4"
                         >
-                            <p class="font-medium">
+                            <p class="font-semibold">
                                 {{ moduleLabel(saved.module_key) }}
                             </p>
                             <p class="mt-1 text-sm break-words">
                                 {{ saved.query_preview }}
                             </p>
-                            <p class="mt-1 text-xs text-muted-foreground/90">
+                            <p class="mt-1 text-sm text-muted-foreground">
                                 {{
                                     formatDateTime(
                                         saved.last_used_at ?? saved.created_at
@@ -547,13 +556,13 @@ onBeforeUnmount(() => {
                                 <Link
                                     v-if="saved.run_url"
                                     :href="saved.run_url"
-                                    class="inline-flex min-h-11 items-center text-sm text-primary hover:underline"
+                                    class="inline-flex min-h-11 items-center rounded-lg px-3 text-sm font-medium text-primary transition-colors hover:bg-primary/5 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
                                 >
                                     {{ t('dashboard.saved.run') }}
                                 </Link>
                                 <button
                                     type="button"
-                                    class="inline-flex min-h-11 items-center gap-1.5 px-2 text-sm text-destructive hover:opacity-80"
+                                    class="inline-flex min-h-11 items-center gap-1.5 rounded-lg px-3 text-sm text-destructive transition-colors hover:bg-destructive/5 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
                                     @click="deleteSavedQuery(saved.id)"
                                 >
                                     <Trash2 class="h-3.5 w-3.5" />
@@ -642,12 +651,12 @@ onBeforeUnmount(() => {
                     /></label>
                 </div>
 
-                <div class="mt-2 flex flex-wrap gap-2">
+                <div class="mt-3 flex flex-wrap gap-2">
                     <button
                         v-for="button in filterActions"
                         :key="button.key"
                         type="button"
-                        class="intel-button-ghost min-h-11 justify-center rounded-xl"
+                        class="intel-button-ghost min-h-11 justify-center rounded-lg text-sm"
                         @click="button.action"
                     >
                         <component :is="button.icon" class="h-3.5 w-3.5" />
@@ -656,33 +665,33 @@ onBeforeUnmount(() => {
                 </div>
 
                 <ul
-                    class="intel-scroll mt-3 space-y-2 md:max-h-[26rem] md:overflow-y-auto md:pr-1"
+                    class="intel-scroll mt-4 divide-y divide-border/70 md:max-h-[26rem] md:overflow-y-auto md:pr-1"
                 >
                     <li
                         v-for="row in dashboard.activity_feed"
                         :key="`${row.request_log_id}-${row.module_key}-${row.at}`"
-                        class="intel-list-item"
+                        class="py-4"
                     >
-                        <p class="font-medium">
+                        <p class="font-semibold">
                             {{ moduleLabel(row.module_key) }}
                         </p>
                         <p class="mt-1 text-sm break-words">
                             {{ row.query_preview }}
                         </p>
-                        <p class="mt-1 text-xs text-muted-foreground/90">
+                        <p class="mt-1 text-sm text-muted-foreground">
                             {{ formatDateTime(row.at) }}
                         </p>
                         <div class="mt-2 flex flex-wrap items-center gap-2">
                             <Link
                                 v-if="row.run_url"
                                 :href="row.run_url"
-                                class="inline-flex min-h-11 items-center text-sm text-primary hover:underline"
+                                class="inline-flex min-h-11 items-center rounded-lg px-3 text-sm font-medium text-primary transition-colors hover:bg-primary/5 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
                             >
                                 {{ t('dashboard.recent.runAgain') }}
                             </Link>
                             <button
                                 type="button"
-                                class="inline-flex min-h-11 items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground"
+                                class="inline-flex min-h-11 items-center gap-1.5 rounded-lg px-3 text-sm text-muted-foreground transition-colors hover:bg-muted/60 hover:text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
                                 @click="saveQuery(row.request_log_id)"
                             >
                                 <BookmarkPlus class="h-3.5 w-3.5" />

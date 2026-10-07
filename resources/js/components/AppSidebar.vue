@@ -32,10 +32,16 @@ const footerNavItems = computed<NavItem[]>(() => buildFooterNavItems(t));
 
 <template>
     <Sidebar collapsible="icon" variant="inset">
-        <SidebarHeader>
+        <SidebarHeader
+            class="px-3 pt-3 pb-4 group-data-[collapsible=icon]:px-0"
+        >
             <SidebarMenu>
                 <SidebarMenuItem>
-                    <SidebarMenuButton size="lg" as-child>
+                    <SidebarMenuButton
+                        size="lg"
+                        as-child
+                        class="h-14 rounded-xl px-3 group-data-[collapsible=icon]:mx-auto group-data-[collapsible=icon]:size-11! group-data-[collapsible=icon]:p-1.5!"
+                    >
                         <Link :href="dashboard()" @click="setOpenMobile(false)">
                             <AppLogo />
                         </Link>
@@ -44,11 +50,13 @@ const footerNavItems = computed<NavItem[]>(() => buildFooterNavItems(t));
             </SidebarMenu>
         </SidebarHeader>
 
-        <SidebarContent>
+        <SidebarContent class="gap-5">
             <NavMain :items="mainNavItems" />
         </SidebarContent>
 
-        <SidebarFooter>
+        <SidebarFooter
+            class="workspace-sidebar-footer gap-3 border-t border-sidebar-border/70 px-3 py-3"
+        >
             <NavFooter :items="footerNavItems" />
             <NavUser />
         </SidebarFooter>
