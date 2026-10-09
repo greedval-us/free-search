@@ -24,7 +24,7 @@ final class PublicSiteTarget
         $scheme = strtolower((string) ($parts['scheme'] ?? ''));
         $host = strtolower((string) ($parts['host'] ?? ''));
         if (! in_array($scheme, ['https', 'http'], true) || str_ends_with($host, '.')
-            || DomainNormalizer::normalizeDomain($host) === null
+            || DomainNormalizer::normalizeDomain($host) !== $host
             || preg_match('/\.(?:local|localhost|internal|intranet|lan|home|test|invalid|example)$/D', $host)
             || isset($parts['port'])) {
             return null;

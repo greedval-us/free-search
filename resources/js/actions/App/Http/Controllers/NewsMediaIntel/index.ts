@@ -1,6 +1,14 @@
-import NewsMediaIntelController from './NewsMediaIntelController'
+import NewsMarketingAnalyticsController from './NewsMarketingAnalyticsController';
+import NewsMediaIntelController from './NewsMediaIntelController';
 const NewsMediaIntel = {
-    NewsMediaIntelController: Object.assign(NewsMediaIntelController, NewsMediaIntelController),
-}
+    NewsMarketingAnalyticsController: Object.assign(
+        NewsMarketingAnalyticsController,
+        NewsMarketingAnalyticsController
+    ),
+    NewsMediaIntelController: Object.assign(
+        NewsMediaIntelController,
+        NewsMediaIntelController
+    ),
+};
 
-export default NewsMediaIntel
+export default NewsMediaIntel;

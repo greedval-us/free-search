@@ -67,6 +67,8 @@ class SiteIntelScheduledReportSourcesTest extends TestCase
             'port' => ['https://example.org:8443/', null],
             'explicit default port' => ['https://example.org:443/', null],
             'trailing hostname dot' => ['https://example.org./', null],
+            'leading hostname dot' => ['.example.org', null],
+            'multiple leading hostname dots' => ['https://..example.org/', null],
             'wrong scheme' => ['ftp://example.org/', null],
             'javascript' => ['javascript:alert(1)', null],
             'scheme relative' => ['//example.org/', null],

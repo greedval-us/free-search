@@ -98,7 +98,7 @@ final class NewsMediaIntelConfig
 
     public function searxngTimeRange(): string
     {
-        return in_array($this->searxngTimeRange, ['day', 'month', 'year'], true) ? $this->searxngTimeRange : '';
+        return in_array($this->searxngTimeRange, ['day', 'week', 'month', 'year'], true) ? $this->searxngTimeRange : '';
     }
 
     /** @return array<int, string> */

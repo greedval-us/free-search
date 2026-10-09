@@ -16,6 +16,11 @@ return [
         'request_budget_seconds' => (int) env('OSINT_NEWS_MEDIA_SEARXNG_REQUEST_BUDGET', 20),
         'safe_search' => (int) env('OSINT_NEWS_MEDIA_SEARXNG_SAFESEARCH', 1),
         'time_range' => env('OSINT_NEWS_MEDIA_SEARXNG_TIME_RANGE', ''),
+        'languages' => ['all', 'ru', 'en', 'de', 'fr', 'es', 'pt', 'it', 'uk', 'zh', 'ja'],
+        'available_engines' => [
+            'news' => ['google news', 'bing news', 'duckduckgo news', 'brave.news'],
+            'general' => ['google', 'bing', 'duckduckgo', 'brave'],
+        ],
     ],
     'analysis' => [
         'sentiment' => [
@@ -31,7 +36,12 @@ return [
         'topics' => [
             'stop_words' => [
                 'the', 'and', 'with', 'from', 'that', 'this', 'for', 'about', 'into', 'over', 'after', 'before',
+                'news', 'said', 'says', 'more', 'have', 'been', 'will', 'were', 'than', 'also', 'their', 'there',
+                'these', 'those', 'what', 'when', 'where', 'which', 'would', 'could', 'should',
                 'или', 'как', 'что', 'это', 'при', 'после', 'если', 'когда', 'чтобы', 'под', 'над',
+                'сегодня', 'вчера', 'завтра', 'новости', 'сообщил', 'сообщает', 'заявил', 'также', 'этот', 'этого',
+                'этом', 'этой', 'этим', 'того', 'только', 'могут', 'может', 'будет', 'были', 'было', 'быть',
+                'пока', 'среди', 'через', 'своих', 'свой', 'своего', 'которые', 'который', 'которых', 'которого',
             ],
             'min_word_length' => (int) env('OSINT_NEWS_MEDIA_TOPICS_MIN_WORD_LENGTH', 4),
             'top_limit' => (int) env('OSINT_NEWS_MEDIA_TOPICS_TOP_LIMIT', 20),

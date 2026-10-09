@@ -17,6 +17,7 @@ final class NewsMediaIntelResultDTO implements ArrayPayloadable
         public readonly array $topics,
         public readonly array $timeline,
         public readonly SentimentSummaryDTO $sentiment,
+        public readonly ?NewsSearchResultDTO $search = null,
     ) {}
 
     /**
@@ -25,6 +26,7 @@ final class NewsMediaIntelResultDTO implements ArrayPayloadable
     public function toArray(): array
     {
         return [
+            ...($this->search?->toArray() ?? []),
             'query' => $this->query,
             'mentions' => array_map(static fn (NewsMentionDTO $item): array => $item->toArray(), $this->mentions),
             'topics' => array_map(static fn (NewsTopicDTO $item): array => $item->toArray(), $this->topics),

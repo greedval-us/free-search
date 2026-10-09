@@ -10,10 +10,17 @@ final class NewsMentionDTO
         public readonly string $snippet,
         public readonly string $link,
         public readonly string $publishedAt,
+        /** @var list<string> */
+        public readonly array $engines = [],
+        public readonly string $category = 'news',
+        public readonly ?int $position = null,
+        public readonly string $publisher = '',
+        /** @var list<string> */
+        public readonly array $categories = [],
     ) {}
 
     /**
-     * @return array<string, string>
+     * @return array<string, mixed>
      */
     public function toArray(): array
     {
@@ -23,6 +30,11 @@ final class NewsMentionDTO
             'snippet' => $this->snippet,
             'link' => $this->link,
             'publishedAt' => $this->publishedAt,
+            'engines' => $this->engines,
+            'category' => $this->category,
+            'position' => $this->position,
+            'publisher' => $this->publisher,
+            'categories' => $this->categories !== [] ? $this->categories : [$this->category],
         ];
     }
 }

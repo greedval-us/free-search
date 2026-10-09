@@ -4,9 +4,11 @@ namespace App\Modules\NewsMediaIntel\Providers;
 
 use App\Modules\NewsMediaIntel\Application\Contracts\NewsFeedFetcherInterface;
 use App\Modules\NewsMediaIntel\Application\Contracts\NewsMediaIntelServiceInterface;
+use App\Modules\NewsMediaIntel\Application\Contracts\SearxngSearchClientInterface;
 use App\Modules\NewsMediaIntel\Application\Services\NewsMediaIntelService;
 use App\Modules\NewsMediaIntel\Application\Support\NewsMediaIntelConfig;
 use App\Modules\NewsMediaIntel\Infrastructure\Feeds\SearxngNewsFeedFetcher;
+use App\Modules\NewsMediaIntel\Infrastructure\Feeds\SearxngSearchClient;
 use App\Support\Providers\BindingsServiceProvider;
 
 final class NewsMediaIntelServiceProvider extends BindingsServiceProvider
@@ -28,6 +30,7 @@ final class NewsMediaIntelServiceProvider extends BindingsServiceProvider
         return [
             NewsFeedFetcherInterface::class => SearxngNewsFeedFetcher::class,
             NewsMediaIntelServiceInterface::class => NewsMediaIntelService::class,
+            SearxngSearchClientInterface::class => SearxngSearchClient::class,
         ];
     }
 }
