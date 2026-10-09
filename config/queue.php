@@ -44,6 +44,24 @@ return [
             'after_commit' => false,
         ],
 
+        'news-media-reports-database' => [
+            'driver' => 'database',
+            'connection' => env('DB_QUEUE_CONNECTION'),
+            'table' => env('DB_QUEUE_TABLE', 'jobs'),
+            'queue' => env('NEWS_MEDIA_REPORTS_QUEUE', 'news-media-reports'),
+            'retry_after' => (int) env('NEWS_MEDIA_REPORTS_RETRY_AFTER', 180),
+            'after_commit' => false,
+        ],
+
+        'news-media-reports-redis' => [
+            'driver' => 'redis',
+            'connection' => env('REDIS_QUEUE_CONNECTION', 'default'),
+            'queue' => env('NEWS_MEDIA_REPORTS_QUEUE', 'news-media-reports'),
+            'retry_after' => (int) env('NEWS_MEDIA_REPORTS_RETRY_AFTER', 180),
+            'block_for' => null,
+            'after_commit' => false,
+        ],
+
         'site-intel-reports-database' => [
             'driver' => 'database',
             'connection' => env('DB_QUEUE_CONNECTION'),

@@ -5,6 +5,7 @@ import {
     type RouteFormDefinition,
     applyUrlDefaults,
 } from './../../wayfinder';
+import reports from './reports';
 /**
  * @see \App\Http\Controllers\NewsMediaIntel\NewsMarketingAnalyticsController::options
  * @see app/Http/Controllers/NewsMediaIntel/NewsMarketingAnalyticsController.php:22
@@ -384,6 +385,7 @@ lookupForm.head = (
 
 lookup.form = lookupForm;
 const newsMediaIntel = {
+    reports: Object.assign(reports, reports),
     options: Object.assign(options, options),
     analytics: Object.assign(analytics, analytics),
     report: Object.assign(report, report),

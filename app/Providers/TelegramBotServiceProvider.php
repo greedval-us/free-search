@@ -5,11 +5,13 @@ namespace App\Providers;
 use App\Integrations\TelegramBot\AnalyticsReportBotListener;
 use App\Integrations\TelegramBot\BlueskyAnalyticsReportBotListener;
 use App\Integrations\TelegramBot\MastodonAnalyticsReportBotListener;
+use App\Integrations\TelegramBot\NewsMediaReportBotListener;
 use App\Integrations\TelegramBot\SiteIntelReportBotListener;
 use App\Integrations\TelegramBot\YouTubeAnalyticsReportBotListener;
 use App\Models\ParserRun;
 use App\Modules\Bluesky\Analytics\Reports\Events\AnalyticsReportCompleted as BlueskyAnalyticsReportCompleted;
 use App\Modules\Mastodon\Analytics\Reports\Events\AnalyticsReportCompleted as MastodonAnalyticsReportCompleted;
+use App\Modules\NewsMediaIntel\Application\Reports\Events\NewsMediaReportCompleted;
 use App\Modules\SiteIntel\Application\Reports\Events\SiteIntelReportCompleted;
 use App\Modules\Telegram\Analytics\Reports\Events\AnalyticsReportCompleted;
 use App\Modules\TelegramBot\Application\ArtifactRegistry;
@@ -56,6 +58,7 @@ final class TelegramBotServiceProvider extends ServiceProvider
         Event::listen(BlueskyAnalyticsReportCompleted::class, BlueskyAnalyticsReportBotListener::class);
         Event::listen(MastodonAnalyticsReportCompleted::class, MastodonAnalyticsReportBotListener::class);
         Event::listen(SiteIntelReportCompleted::class, SiteIntelReportBotListener::class);
+        Event::listen(NewsMediaReportCompleted::class, NewsMediaReportBotListener::class);
         ParserRun::saved(fn (ParserRun $run) => $this->app->make(BotEventSubscriber::class)->parserSaved($run));
 
         RateLimiter::for('telegram-bot', fn (BotJob $job) => [

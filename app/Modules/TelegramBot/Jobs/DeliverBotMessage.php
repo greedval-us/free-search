@@ -4,6 +4,7 @@ namespace App\Modules\TelegramBot\Jobs;
 
 use App\Models\BlueskyAnalyticsReport;
 use App\Models\MastodonAnalyticsReport;
+use App\Models\NewsMediaScheduledReport;
 use App\Models\SiteIntelScheduledReport;
 use App\Models\TelegramAnalyticsReport;
 use App\Models\YouTubeAnalyticsReport;
@@ -48,7 +49,7 @@ final class DeliverBotMessage extends BotJob
         }
 
         try {
-            if (in_array($delivery->kind, ['parser', 'tracking', 'analytics_report', 'youtube_analytics_report', 'bluesky_analytics_report', 'mastodon_analytics_report', 'site_intel_report'], true)) {
+            if (in_array($delivery->kind, ['parser', 'tracking', 'analytics_report', 'youtube_analytics_report', 'bluesky_analytics_report', 'mastodon_analytics_report', 'site_intel_report', 'news_media_report'], true)) {
                 $document = $artifacts->get($delivery->kind)->document($link->user_id, (int) $delivery->reference,
                     (string) ($delivery->payload['format'] ?? ''), $link->locale);
                 try {
@@ -124,6 +125,7 @@ final class DeliverBotMessage extends BotJob
             'bluesky_analytics_report' => BlueskyAnalyticsReport::class,
             'mastodon_analytics_report' => MastodonAnalyticsReport::class,
             'site_intel_report' => SiteIntelScheduledReport::class,
+            'news_media_report' => NewsMediaScheduledReport::class,
             default => null,
         };
         if ($model === null) {
@@ -132,6 +134,7 @@ final class DeliverBotMessage extends BotJob
 
         return $model::query()->whereKey((int) $delivery->reference)
             ->where('user_id', $link->user_id)->where('status', $model::COMPLETED)
+            ->when($delivery->kind === 'news_media_report', fn ($query) => $query->whereNotNull('data'))
             ->when($delivery->kind === 'site_intel_report', fn ($query) => $query
                 ->whereIn('report_type', app(SiteIntelReportAccess::class)->availableTypes($link->user)))
             ->when($delivery->automatic, fn ($query) => $query

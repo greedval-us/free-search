@@ -19,6 +19,11 @@ return [
         'sentiment' => 'Sentiment: + / neutral / −', 'topics' => 'Content topics', 'questions' => 'Audience questions',
         'suggestions' => 'Search suggestions', 'corrections' => 'Spelling alternatives', 'answers' => 'Search answers',
         'infoboxes' => 'Search infoboxes',
+        'schedule' => [
+            'title' => 'Scheduled report', 'scheduled_for' => 'Scheduled check', 'timezone' => 'Time zone',
+            'frequency' => 'Delivery frequency', 'basis' => 'This is the saved search sample at the actual check time. Delivery frequency does not define the publication period; the search time filter controls it.',
+            'intervals' => ['1' => 'Every day', '3' => 'Every 3 days', '7' => 'Every 7 days', 'month' => 'Every month'],
+        ],
         'periods' => ['all' => 'All time', 'day' => 'Last day', 'week' => 'Last week', 'month' => 'Last month', 'year' => 'Last year'],
         'visibility' => 'Domain presence in web results', 'domain' => 'Domain', 'domain_matches' => 'Matching domain pages',
         'best_position' => 'First ordinal in collected results', 'visibility_method' => 'The ordinal is the order of merged SearXNG results, not a ranking in an individual engine. Matching covers the domain and its subdomains; a missing result does not mean a page is not indexed.',

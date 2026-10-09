@@ -7,6 +7,7 @@ import mastodon from './mastodon.json';
 import mastodonReports from './mastodonReports.json';
 import navigation from './navigation.json';
 import newsMediaIntel from './newsMediaIntel.json';
+import newsMediaReports from './newsMediaReports.json';
 import parser from './parser.json';
 import privacy from './privacy.json';
 import publicSite from './publicSite.json';
@@ -36,6 +37,7 @@ const ru = {
     mastodonReports,
     navigation,
     newsMediaIntel,
+    newsMediaReports,
     parser,
     privacy,
     publicSite,

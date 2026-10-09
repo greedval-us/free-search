@@ -45,6 +45,7 @@ final readonly class BotAccess
                 && $this->featureAccess->inspect($link->user, 'mastodon.analytics', false)->allowed,
             'site_intel_report' => (! $automatic || $link->exports_enabled)
                 && app(SiteIntelReportAccess::class)->availableTypes($link->user) !== [],
+            'news_media_report' => ! $automatic || $link->exports_enabled,
             'tracking' => ! $automatic,
             default => false,
         };

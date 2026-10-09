@@ -35,6 +35,14 @@
         <p>{{ $label('checked_at') }}: {{ $report['checkedAt'] ?? '-' }}</p>
         <p>{{ $label('language') }}: {{ $report['options']['language'] ?? '-' }} · {{ $label('period') }}: {{ $label('periods.'.($report['options']['timeRange'] ?: 'all')) }}</p>
     </header>
+    @if(!empty($report['reportSchedule']))
+        <section>
+            <h2>{{ $label('schedule.title') }}</h2>
+            <p>{{ $label('schedule.scheduled_for') }}: {{ $report['reportSchedule']['scheduledFor'] ?? '-' }}</p>
+            <p>{{ $label('schedule.timezone') }}: {{ $report['reportSchedule']['timezone'] ?? '-' }} · {{ $label('schedule.frequency') }}: {{ $label('schedule.intervals.'.($report['reportSchedule']['frequency'] ?? '7')) }}</p>
+            <p class="muted">{{ $label('schedule.basis') }}</p>
+        </section>
+    @endif
     <section>
         <p class="muted">{{ $label('methodology') }}</p>
         @if($report['coverage']['partial'] ?? false)<p class="warning">{{ $label('partial') }}</p>@endif

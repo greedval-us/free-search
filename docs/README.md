@@ -36,6 +36,7 @@
 - [Site Intel](modules/site-intel.md)
 - [Аналитика сайтов и SEO-аудит по расписанию](modules/site-intel-reports.md)
 - [News / Media Intel](modules/news-media-intel.md)
+- [Отчёты новостей и медиа по расписанию](modules/news-media-reports.md)
 - [Shifr](modules/shifr.md)
 - [Dashboard, Wiki и Export](modules/platform-services.md)
 - [Access и subscriptions](modules/access-subscriptions.md)
