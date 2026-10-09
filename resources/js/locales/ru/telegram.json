@@ -91,7 +91,8 @@
     "tabs": {
         "search": "Поиск",
         "analytics": "Аналитика",
-        "parser": "Сбор данных"
+        "parser": "Сбор данных",
+        "reports": "Отчёты"
     },
     "parser": {
         "title": "Сбор данных Telegram",

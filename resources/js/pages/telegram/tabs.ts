@@ -41,7 +41,7 @@ export const TELEGRAM_TABS: readonly TelegramTabDefinition[] = createModuleTabs(
         },
         {
             key: 'reports',
-            labelKey: 'telegramReports.title',
+            labelKey: 'telegram.tabs.reports',
             component: TelegramReportsTab,
             accessKey: 'telegram.analytics',
         },
