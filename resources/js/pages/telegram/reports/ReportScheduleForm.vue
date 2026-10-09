@@ -1,7 +1,13 @@
 <script setup lang="ts">
 import { Link } from '@inertiajs/vue3';
+import { computed, onMounted, shallowRef } from 'vue';
 import { useI18n } from '@/composables/useI18n';
 import { settings } from '@/routes/telegram-bot';
+import {
+    getDeviceTimezone,
+    REPORT_TIMEZONES,
+    timezoneLabel,
+} from './timezones';
 import type { ReportInterval, ReportScheduleForm } from './types';
 
 defineProps<{
@@ -15,8 +21,43 @@ defineProps<{
 }>();
 defineEmits<{ create: [] }>();
 const form = defineModel<ReportScheduleForm>({ required: true });
-const { t } = useI18n();
+const { t, locale } = useI18n();
 const intervals: readonly ReportInterval[] = ['1', '3', '7', 'month'];
+const deviceTimezone = shallowRef<string | null>(null);
+const timezoneDate = new Date();
+const timezoneGroups = computed(() =>
+    (['russia', 'world'] as const).map((group) => ({
+        group,
+        options: REPORT_TIMEZONES.filter((item) => item.group === group).map(
+            (item) => ({
+                value: item.value,
+                label: timezoneLabel(item.value, locale.value, t, timezoneDate),
+            })
+        ),
+    }))
+);
+const additionalTimezone = computed(() =>
+    form.value.timezone &&
+    !REPORT_TIMEZONES.some((item) => item.value === form.value.timezone)
+        ? {
+              value: form.value.timezone,
+              label: timezoneLabel(
+                  form.value.timezone,
+                  locale.value,
+                  t,
+                  timezoneDate
+              ),
+          }
+        : null
+);
+onMounted(() => {
+    deviceTimezone.value = getDeviceTimezone();
+});
+const useDeviceTimezone = () => {
+    if (deviceTimezone.value) {
+        form.value.timezone = deviceTimezone.value;
+    }
+};
 </script>
 
 <template>
@@ -109,14 +150,45 @@ const intervals: readonly ReportInterval[] = ['1', '3', '7', 'month'];
             <label for="report-timezone" class="intel-label">{{
                 t('telegramReports.timezone')
             }}</label>
-            <input
+            <select
                 id="report-timezone"
                 v-model="form.timezone"
-                class="intel-input"
-                maxlength="100"
-                :placeholder="t('telegramReports.timezonePlaceholder')"
+                class="intel-select"
+                aria-describedby="report-timezone-help"
                 required
-            />
+            >
+                <option
+                    v-if="additionalTimezone"
+                    :value="additionalTimezone.value"
+                >
+                    {{ additionalTimezone.label }}
+                </option>
+                <optgroup
+                    v-for="group in timezoneGroups"
+                    :key="group.group"
+                    :label="t(`telegramReports.timezoneGroups.${group.group}`)"
+                >
+                    <option
+                        v-for="option in group.options"
+                        :key="option.value"
+                        :value="option.value"
+                    >
+                        {{ option.label }}
+                    </option>
+                </optgroup>
+            </select>
+            <p id="report-timezone-help" class="text-xs text-muted-foreground">
+                {{ t('telegramReports.timezoneHelp') }}
+            </p>
+            <button
+                v-if="deviceTimezone"
+                type="button"
+                class="intel-button-secondary self-start"
+                :disabled="busy"
+                @click="useDeviceTimezone"
+            >
+                {{ t('telegramReports.useDeviceTimezone') }}
+            </button>
         </div>
         <div class="space-y-2 rounded-lg border border-border/70 p-3">
             <label class="flex min-h-9 items-center gap-2 text-sm">

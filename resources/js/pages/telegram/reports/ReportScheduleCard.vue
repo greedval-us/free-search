@@ -1,7 +1,8 @@
 <script setup lang="ts">
 import { Pause, Play, Send, Trash2 } from 'lucide-vue-next';
-import { ref } from 'vue';
+import { computed, ref } from 'vue';
 import { useI18n } from '@/composables/useI18n';
+import { timezoneLabel } from './timezones';
 import type { ReportSchedule } from './types';
 
 const props = defineProps<{ schedule: ReportSchedule; busy: boolean }>();
@@ -12,6 +13,16 @@ defineEmits<{
 }>();
 const { t, locale } = useI18n();
 const confirmDelete = ref(false);
+const timezone = computed(() =>
+    timezoneLabel(
+        props.schedule.timezone,
+        locale.value,
+        t,
+        props.schedule.nextRunAt
+            ? new Date(props.schedule.nextRunAt)
+            : new Date()
+    )
+);
 const date = (value: string) =>
     new Date(value).toLocaleString(locale.value, {
         timeZone: props.schedule.timezone,
@@ -45,7 +56,7 @@ const date = (value: string) =>
         </p>
         <p class="text-xs text-muted-foreground">
             {{ t(`telegramReports.intervals.${schedule.interval}`) }} ·
-            {{ schedule.sendTime }} · {{ schedule.timezone }}
+            {{ schedule.sendTime }} · {{ timezone }}
         </p>
         <p v-if="schedule.enabled && schedule.nextRunAt" class="text-xs">
             {{ t('telegramReports.nextRun') }}:
