@@ -143,6 +143,7 @@ return [
         'youtube' => [
             'tabs' => [
                 'analytics' => 'youtube.analytics',
+                'reports' => 'youtube.analytics',
                 'parser' => 'youtube.parser',
             ],
         ],
@@ -180,6 +181,13 @@ return [
         'telegram.analytics.reports.download' => ['resource' => 'telegram.analytics', 'counts' => false],
         'youtube.analytics.summary' => ['resource' => 'youtube.analytics', 'counts' => true],
         'youtube.analytics.report' => ['resource' => 'youtube.analytics', 'counts' => false],
+        'youtube.analytics.reports.index' => ['resource' => 'youtube.analytics', 'counts' => false],
+        'youtube.analytics.reports.store' => ['resource' => 'youtube.analytics', 'counts' => false],
+        'youtube.analytics.reports.change' => ['resource' => 'youtube.analytics', 'counts' => false],
+        'youtube.analytics.reports.run' => ['resource' => 'youtube.analytics', 'counts' => false],
+        'youtube.analytics.reports.destroy' => ['resource' => 'youtube.analytics', 'counts' => false],
+        'youtube.analytics.reports.view' => ['resource' => 'youtube.analytics', 'counts' => false],
+        'youtube.analytics.reports.download' => ['resource' => 'youtube.analytics', 'counts' => false],
 
         'telegram.parser.start' => ['resource' => 'telegram.parser', 'counts' => true, 'consume_in_service' => true],
         'telegram.parser.status' => ['resource' => 'telegram.parser', 'counts' => false],

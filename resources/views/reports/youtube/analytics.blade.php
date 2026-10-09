@@ -159,6 +159,7 @@
     $target = $mode === 'video'
         ? (string) ($report['video']['id'] ?? '-')
         : (string) ($report['channel']['id'] ?? '-');
+    $target = (string) ($report['range']['channelInput'] ?? $target);
 
     $duration = $report['distribution']['duration'] ?? [];
     $insightLabels = [
@@ -177,8 +178,22 @@
             <div class="meta">
                 <span class="chip">{{ $tr['mode'] }}: {{ $mode }}</span>
                 <span class="chip">{{ $tr['target'] }}: {{ $target !== '' ? $target : '-' }}</span>
+                @if(isset($report['range']))
+                    <span class="chip">{{ $report['channel']['title'] ?? $report['range']['channelInput'] ?? '-' }}</span>
+                    <span class="chip">{{ __('youtube_analytics_reports.report.period', [], $reportLocale) }}:
+                        {{ substr($report['range']['dateFrom'] ?? '', 0, 10) }} — {{ substr($report['range']['dateTo'] ?? '', 0, 10) }}</span>
+                    <span class="chip">{{ __('youtube_analytics_reports.report.timezone', [], $reportLocale) }}: {{ $report['range']['timezone'] ?? '-' }}</span>
+                @endif
             </div>
         </header>
+        @if(isset($report['range']))
+            <div class="body">
+                {{ __('youtube_analytics_reports.report.methodology', [], $reportLocale) }}
+                @if(($report['methodology']['statisticsComplete'] ?? true) === false)
+                    <p class="muted">{{ __('youtube_analytics_reports.report.missing_metrics', [], $reportLocale) }}</p>
+                @endif
+            </div>
+        @endif
     </section>
 
     <section class="card">
@@ -195,11 +210,11 @@
                 </article>
                 <article class="metric">
                     <div class="label">{{ $tr['likes'] }}</div>
-                    <div class="value">{{ $report['totals']['likes'] ?? 0 }}</div>
+                    <div class="value">{{ $report['totals']['likes'] ?? $tr['none'] }}</div>
                 </article>
                 <article class="metric">
                     <div class="label">{{ $tr['comments'] }}</div>
-                    <div class="value">{{ $report['totals']['comments'] ?? 0 }}</div>
+                    <div class="value">{{ $report['totals']['comments'] ?? $tr['none'] }}</div>
                 </article>
                 <article class="metric">
                     <div class="label">{{ $tr['avgViews'] }}</div>
@@ -207,7 +222,7 @@
                 </article>
                 <article class="metric">
                     <div class="label">{{ $tr['engagementRate'] }}</div>
-                    <div class="value">{{ $report['totals']['engagementRate'] ?? 0 }}%</div>
+                    <div class="value">{{ isset($report['totals']['engagementRate']) ? $report['totals']['engagementRate'].'%' : $tr['none'] }}</div>
                 </article>
             </div>
         </div>
@@ -258,8 +273,8 @@
                         <td>{{ $row['key'] ?? '-' }}</td>
                         <td>{{ $row['videos'] ?? 0 }}</td>
                         <td>{{ $row['views'] ?? 0 }}</td>
-                        <td>{{ $row['likes'] ?? 0 }}</td>
-                        <td>{{ $row['comments'] ?? 0 }}</td>
+                        <td>{{ $row['likes'] ?? $tr['none'] }}</td>
+                        <td>{{ $row['comments'] ?? $tr['none'] }}</td>
                     </tr>
                 @empty
                     <tr>
@@ -301,8 +316,8 @@
                     <tr>
                         <td>{{ $video['title'] ?? '-' }}</td>
                         <td>{{ $video['views'] ?? 0 }}</td>
-                        <td>{{ $video['likes'] ?? 0 }}</td>
-                        <td>{{ $video['comments'] ?? 0 }}</td>
+                        <td>{{ $video['likes'] ?? $tr['none'] }}</td>
+                        <td>{{ $video['comments'] ?? $tr['none'] }}</td>
                     </tr>
                 @empty
                     <tr>
@@ -330,9 +345,9 @@
                 @forelse(($report['leaders']['byLikes'] ?? []) as $video)
                     <tr>
                         <td>{{ $video['title'] ?? '-' }}</td>
-                        <td>{{ $video['likes'] ?? 0 }}</td>
+                        <td>{{ $video['likes'] ?? $tr['none'] }}</td>
                         <td>{{ $video['views'] ?? 0 }}</td>
-                        <td>{{ $video['comments'] ?? 0 }}</td>
+                        <td>{{ $video['comments'] ?? $tr['none'] }}</td>
                     </tr>
                 @empty
                     <tr>
@@ -361,10 +376,10 @@
                 @forelse(($report['leaders']['byEngagement'] ?? []) as $video)
                     <tr>
                         <td>{{ $video['title'] ?? '-' }}</td>
-                        <td>{{ number_format((float) ($video['engagementRate'] ?? 0), 2, '.', ' ') }}%</td>
+                        <td>{{ isset($video['engagementRate']) ? number_format((float) $video['engagementRate'], 2, '.', ' ').'%' : $tr['none'] }}</td>
                         <td>{{ $video['views'] ?? 0 }}</td>
-                        <td>{{ $video['likes'] ?? 0 }}</td>
-                        <td>{{ $video['comments'] ?? 0 }}</td>
+                        <td>{{ $video['likes'] ?? $tr['none'] }}</td>
+                        <td>{{ $video['comments'] ?? $tr['none'] }}</td>
                     </tr>
                 @empty
                     <tr>
@@ -392,9 +407,9 @@
                 @forelse(($report['leaders']['byComments'] ?? []) as $video)
                     <tr>
                         <td>{{ $video['title'] ?? '-' }}</td>
-                        <td>{{ $video['comments'] ?? 0 }}</td>
+                        <td>{{ $video['comments'] ?? $tr['none'] }}</td>
                         <td>{{ $video['views'] ?? 0 }}</td>
-                        <td>{{ $video['likes'] ?? 0 }}</td>
+                        <td>{{ $video['likes'] ?? $tr['none'] }}</td>
                     </tr>
                 @empty
                     <tr>

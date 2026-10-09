@@ -4,6 +4,8 @@
 
 Module использует YouTube Data API v3: video Search, comments preview/direct comments, channel/video Analytics, background Parser comments/replies, history, stop и JSON/Excel exports.
 
+Во вкладке **YouTube → Отчёты** доступны [отчёты по расписанию](youtube-analytics-reports.md): каждый день, каждые 3/7 дней или месяц, история HTML/JSON и доставка в Telegram-бота.
+
 ## Architecture
 
 Controllers вызывают `YouTubeSearchApplicationService`, `YouTubeAnalyticsApplicationService` и `YouTubeParserApplicationService`. Actions работают через `YouTubeGatewayInterface`; implementation использует `YouTubeDataApiClient`. Parser collector проходит comments и replies, snapshot builder фиксирует результат, export builder создаёт summary/comments/replies sheets.
@@ -14,6 +16,7 @@ Frontend: `resources/js/pages/YouTube.vue`, tabs и composables в `pages/youtub
 
 - `/youtube/search/videos`, `/search/comments-preview`;
 - `/youtube/analytics/summary|report`;
+- `/youtube/analytics/reports` — история, расписания, ручной запуск, просмотр и скачивание;
 - `/youtube/parser/comments|start|status|history|stop|download-*`.
 
 Search video route throttled; comments/Analytics/Parser paid capabilities защищены Feature Access согласно `config/access.php`.

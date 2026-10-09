@@ -4,6 +4,7 @@ return [
     'menu' => [
         'tracking' => 'Tracking reports',
         'analytics_reports' => 'Telegram analytics reports',
+        'youtube_analytics_reports' => 'YouTube analytics reports',
         'exports' => 'My exports', 'settings' => 'Link account / Settings',
         'help' => 'Help', 'webapp' => 'Open Uraboros', 'back' => 'Main menu', 'previous' => 'Previous', 'next' => 'Next',
     ],

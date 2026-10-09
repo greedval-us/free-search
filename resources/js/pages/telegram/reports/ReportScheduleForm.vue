@@ -2,12 +2,12 @@
 import { Link } from '@inertiajs/vue3';
 import { computed, onMounted, shallowRef } from 'vue';
 import { useI18n } from '@/composables/useI18n';
-import { settings } from '@/routes/telegram-bot';
 import {
     getDeviceTimezone,
     REPORT_TIMEZONES,
     timezoneLabel,
-} from './timezones';
+} from '@/lib/report-timezones';
+import { settings } from '@/routes/telegram-bot';
 import type { ReportInterval, ReportScheduleForm } from './types';
 
 defineProps<{
@@ -166,7 +166,7 @@ const useDeviceTimezone = () => {
                 <optgroup
                     v-for="group in timezoneGroups"
                     :key="group.group"
-                    :label="t(`telegramReports.timezoneGroups.${group.group}`)"
+                    :label="t(`reportTimezones.groups.${group.group}`)"
                 >
                     <option
                         v-for="option in group.options"
@@ -178,7 +178,7 @@ const useDeviceTimezone = () => {
                 </optgroup>
             </select>
             <p id="report-timezone-help" class="text-xs text-muted-foreground">
-                {{ t('telegramReports.timezoneHelp') }}
+                {{ t('reportTimezones.help') }}
             </p>
             <button
                 v-if="deviceTimezone"
@@ -187,7 +187,7 @@ const useDeviceTimezone = () => {
                 :disabled="busy"
                 @click="useDeviceTimezone"
             >
-                {{ t('telegramReports.useDeviceTimezone') }}
+                {{ t('reportTimezones.useDevice') }}
             </button>
         </div>
         <div class="space-y-2 rounded-lg border border-border/70 p-3">

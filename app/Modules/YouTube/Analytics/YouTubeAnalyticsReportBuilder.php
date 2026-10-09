@@ -3,6 +3,7 @@
 namespace App\Modules\YouTube\Analytics;
 
 use App\Modules\YouTube\Enums\YouTubeDurationBucket;
+use Carbon\CarbonImmutable;
 
 class YouTubeAnalyticsReportBuilder
 {
@@ -43,7 +44,7 @@ class YouTubeAnalyticsReportBuilder
      * @param  array<int, array<string, mixed>>  $videos
      * @return array<string, mixed>
      */
-    public function distribution(array $videos): array
+    public function distribution(array $videos, ?string $timezone = null): array
     {
         $timeline = [];
         $duration = YouTubeDurationBucket::emptyDistribution();
@@ -51,7 +52,7 @@ class YouTubeAnalyticsReportBuilder
         $captions = ['with' => 0, 'without' => 0];
 
         foreach ($videos as $video) {
-            $this->appendTimelineRow($timeline, $video);
+            $this->appendTimelineRow($timeline, $video, $timezone);
 
             $seconds = (int) ($video['durationSeconds'] ?? 0);
             $bucket = YouTubeDurationBucket::fromSeconds($seconds);
@@ -188,9 +189,12 @@ class YouTubeAnalyticsReportBuilder
     /**
      * @param  array<string, array<string, int|string>>  $timeline
      */
-    private function appendTimelineRow(array &$timeline, array $video): void
+    private function appendTimelineRow(array &$timeline, array $video, ?string $timezone = null): void
     {
-        $day = substr((string) ($video['publishedAt'] ?? ''), 0, 10);
+        $publishedAt = (string) ($video['publishedAt'] ?? '');
+        $day = $timezone !== null && $publishedAt !== ''
+            ? CarbonImmutable::parse($publishedAt)->setTimezone($timezone)->toDateString()
+            : substr($publishedAt, 0, 10);
 
         if ($day === '') {
             return;

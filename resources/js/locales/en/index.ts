@@ -8,6 +8,7 @@ import newsMediaIntel from './newsMediaIntel.json';
 import parser from './parser.json';
 import privacy from './privacy.json';
 import publicSite from './publicSite.json';
+import reportTimezones from './reportTimezones.json';
 import settings from './settings.json';
 import shifr from './shifr.json';
 import siteIntel from './siteIntel.json';
@@ -20,6 +21,7 @@ import terms from './terms.json';
 import userMenu from './userMenu.json';
 import welcome from './welcome.json';
 import youtube from './youtube.json';
+import youtubeReports from './youtubeReports.json';
 
 const en = {
     auth,
@@ -32,6 +34,7 @@ const en = {
     parser,
     privacy,
     publicSite,
+    reportTimezones,
     settings,
     shifr,
     siteIntel,
@@ -44,6 +47,7 @@ const en = {
     userMenu,
     welcome,
     youtube,
+    youtubeReports,
 };
 
 export default en;

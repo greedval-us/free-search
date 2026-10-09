@@ -2,7 +2,7 @@
 import { Pause, Play, Send, Trash2 } from 'lucide-vue-next';
 import { computed, ref } from 'vue';
 import { useI18n } from '@/composables/useI18n';
-import { timezoneLabel } from './timezones';
+import { timezoneLabel } from '@/lib/report-timezones';
 import type { ReportSchedule } from './types';
 
 const props = defineProps<{ schedule: ReportSchedule; busy: boolean }>();

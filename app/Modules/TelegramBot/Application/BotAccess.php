@@ -36,6 +36,8 @@ final readonly class BotAccess
             'parser' => ! $automatic || $link->exports_enabled,
             'analytics_report' => (! $automatic || $link->exports_enabled)
                 && $this->featureAccess->inspect($link->user, 'telegram.analytics', false)->allowed,
+            'youtube_analytics_report' => (! $automatic || $link->exports_enabled)
+                && $this->featureAccess->inspect($link->user, 'youtube.analytics', false)->allowed,
             'tracking' => ! $automatic,
             default => false,
         };

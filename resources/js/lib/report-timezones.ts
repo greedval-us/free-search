@@ -50,7 +50,7 @@ export const timezoneLabel = (
 ): string => {
     const preset = REPORT_TIMEZONES.find((item) => item.value === timezone);
     let name = preset
-        ? translate(`telegramReports.timezoneCities.${preset.city}`)
+        ? translate(`reportTimezones.cities.${preset.city}`)
         : timezone.split('/').at(-1)?.replaceAll('_', ' ') || timezone;
 
     try {

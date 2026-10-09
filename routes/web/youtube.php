@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\YouTube\YouTubeAnalyticsController;
+use App\Http\Controllers\YouTube\YouTubeAnalyticsReportsController;
 use App\Http\Controllers\YouTube\YouTubeParserController;
 use App\Http\Controllers\YouTube\YouTubeSearchController;
 use App\Support\Http\RouteThrottle;
@@ -21,6 +22,15 @@ Route::prefix('youtube')->name('youtube.')->group(function (): void {
     });
 
     Route::prefix('analytics')->name('analytics.')->group(function (): void {
+        Route::prefix('reports')->name('reports.')->middleware('feature.access')->group(function (): void {
+            Route::get('/', [YouTubeAnalyticsReportsController::class, 'index'])->middleware(RouteThrottle::PARSER_STATUS)->name('index');
+            Route::post('schedules', [YouTubeAnalyticsReportsController::class, 'store'])->middleware(RouteThrottle::PARSER_CONTROL)->name('store');
+            Route::patch('schedules/{schedule}', [YouTubeAnalyticsReportsController::class, 'change'])->whereNumber('schedule')->middleware(RouteThrottle::PARSER_CONTROL)->name('change');
+            Route::post('schedules/{schedule}/run', [YouTubeAnalyticsReportsController::class, 'runNow'])->whereNumber('schedule')->middleware(RouteThrottle::PARSER_START)->name('run');
+            Route::delete('schedules/{schedule}', [YouTubeAnalyticsReportsController::class, 'destroy'])->whereNumber('schedule')->middleware(RouteThrottle::PARSER_CONTROL)->name('destroy');
+            Route::get('{report}/view', [YouTubeAnalyticsReportsController::class, 'view'])->whereNumber('report')->middleware(RouteThrottle::ANALYTICS_REPORT)->name('view');
+            Route::get('{report}/download/{format}', [YouTubeAnalyticsReportsController::class, 'download'])->whereNumber('report')->whereIn('format', ['html', 'json'])->middleware(RouteThrottle::PARSER_DOWNLOAD)->name('download');
+        });
         Route::get('summary', [YouTubeAnalyticsController::class, 'summary'])
             ->middleware(['feature.access', RouteThrottle::ANALYTICS_SUMMARY])
             ->name('summary');

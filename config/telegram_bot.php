@@ -2,6 +2,7 @@
 
 use App\Integrations\TelegramBot\AnalyticsReportArtifactProvider;
 use App\Integrations\TelegramBot\TrackingArtifactProvider;
+use App\Integrations\TelegramBot\YouTubeAnalyticsReportArtifactProvider;
 use App\Modules\Bluesky\Parser\Contracts\BlueskyParserApplicationServiceInterface;
 use App\Modules\Bluesky\Parser\Contracts\BlueskyParserExportBuilderInterface;
 use App\Modules\Mastodon\Parser\Contracts\MastodonParserApplicationServiceInterface;
@@ -46,12 +47,13 @@ return [
     'cleanup_time' => '04:30',
     'http_limits' => ['status' => 30, 'link' => 6, 'preferences' => 10],
     'actions' => [MenuAction::class, FilesAction::class, SendFileAction::class],
-    'artifact_providers' => [ParserArtifactProvider::class, TrackingArtifactProvider::class, AnalyticsReportArtifactProvider::class],
+    'artifact_providers' => [ParserArtifactProvider::class, TrackingArtifactProvider::class, AnalyticsReportArtifactProvider::class, YouTubeAnalyticsReportArtifactProvider::class],
     'menus' => [
         'main' => [
             ['label' => 'menu.exports', 'action' => 'files', 'parameters' => ['k' => 'parser'], 'linked' => true],
             ['label' => 'menu.tracking', 'action' => 'files', 'parameters' => ['k' => 'tracking'], 'linked' => true],
             ['label' => 'menu.analytics_reports', 'action' => 'files', 'parameters' => ['k' => 'analytics_report'], 'linked' => true],
+            ['label' => 'menu.youtube_analytics_reports', 'action' => 'files', 'parameters' => ['k' => 'youtube_analytics_report'], 'linked' => true],
             ['label' => 'menu.settings', 'path' => '/settings/telegram'],
             ['label' => 'menu.help', 'action' => 'menu', 'parameters' => ['p' => 'help']],
             ['label' => 'menu.webapp', 'path' => '/dashboard', 'webapp' => true],

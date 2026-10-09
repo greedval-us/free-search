@@ -3,6 +3,7 @@
 namespace App\Modules\TelegramBot\Jobs;
 
 use App\Models\TelegramAnalyticsReport;
+use App\Models\YouTubeAnalyticsReport;
 use App\Modules\TelegramBot\Application\ArtifactRegistry;
 use App\Modules\TelegramBot\Application\BotAccess;
 use App\Modules\TelegramBot\Domain\Contracts\BotTransport;
@@ -43,7 +44,7 @@ final class DeliverBotMessage extends BotJob
         }
 
         try {
-            if (in_array($delivery->kind, ['parser', 'tracking', 'analytics_report'], true)) {
+            if (in_array($delivery->kind, ['parser', 'tracking', 'analytics_report', 'youtube_analytics_report'], true)) {
                 $document = $artifacts->get($delivery->kind)->document($link->user_id, (int) $delivery->reference,
                     (string) ($delivery->payload['format'] ?? ''), $link->locale);
                 try {
@@ -113,12 +114,17 @@ final class DeliverBotMessage extends BotJob
         if (! $access->allowsDelivery($link, $delivery->kind, $delivery->automatic)) {
             return false;
         }
-        if ($delivery->kind !== 'analytics_report') {
+        $model = match ($delivery->kind) {
+            'analytics_report' => TelegramAnalyticsReport::class,
+            'youtube_analytics_report' => YouTubeAnalyticsReport::class,
+            default => null,
+        };
+        if ($model === null) {
             return true;
         }
 
-        return TelegramAnalyticsReport::query()->whereKey((int) $delivery->reference)
-            ->where('user_id', $link->user_id)->where('status', TelegramAnalyticsReport::COMPLETED)
+        return $model::query()->whereKey((int) $delivery->reference)
+            ->where('user_id', $link->user_id)->where('status', $model::COMPLETED)
             ->when($delivery->automatic, fn ($query) => $query
                 ->whereHas('schedule', fn ($schedule) => $schedule->where('user_id', $link->user_id)->where('send_to_bot', true)->whereNull('deleted_at'))
                 ->where(fn ($report) => $report->where('is_manual', true)->orWhereHas('schedule', fn ($schedule) => $schedule->where('enabled', true))))

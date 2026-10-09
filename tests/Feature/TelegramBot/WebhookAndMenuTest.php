@@ -95,13 +95,15 @@ final class WebhookAndMenuTest extends TelegramBotTestCase
             $screen = app(BotRouter::class)->dispatch('menu', $context);
             $files = collect($screen->buttons)->where('type', 'action')->where('value', 'files')->values();
 
-            $this->assertCount(3, $files);
+            $this->assertCount(4, $files);
             $this->assertSame(['k' => 'parser'], $files[0]->parameters);
             $this->assertSame(__('telegram_bot.menu.exports', [], $locale), $files[0]->label);
             $this->assertSame(['k' => 'tracking'], $files[1]->parameters);
             $this->assertSame(__('telegram_bot.menu.tracking', [], $locale), $files[1]->label);
             $this->assertSame(['k' => 'analytics_report'], $files[2]->parameters);
             $this->assertSame(__('telegram_bot.menu.analytics_reports', [], $locale), $files[2]->label);
+            $this->assertSame(['k' => 'youtube_analytics_report'], $files[3]->parameters);
+            $this->assertSame(__('telegram_bot.menu.youtube_analytics_reports', [], $locale), $files[3]->label);
         }
     }
 

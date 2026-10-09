@@ -4,6 +4,7 @@ return [
     'menu' => [
         'tracking' => 'Отчёты отслеживания',
         'analytics_reports' => 'Аналитические отчёты Telegram',
+        'youtube_analytics_reports' => 'Аналитические отчёты YouTube',
         'exports' => 'Мои выгрузки', 'settings' => 'Привязка аккаунта / Настройки',
         'help' => 'Помощь', 'webapp' => 'Открыть Uraboros', 'back' => 'Главное меню', 'previous' => 'Назад', 'next' => 'Далее',
     ],

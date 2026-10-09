@@ -1,5 +1,7 @@
 # Free Search
 
+Telegram and YouTube support scheduled analytics reports every 1, 3 or 7 days, or monthly, with saved HTML/JSON history and delivery through the Telegram bot.
+
 Free Search is a modular OSINT platform built with Laravel, Inertia.js, and Vue for searching, collecting, normalizing, and analysing open-source data.
 
 > **Project Status: Beta.** The project is under active development. Internal APIs and interfaces may change, modules have different maturity levels, and integrations depend on third-party availability and policies. Production deployment requires an independent configuration, security, and source-limit review.

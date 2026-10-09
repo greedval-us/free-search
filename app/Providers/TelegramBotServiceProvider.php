@@ -3,6 +3,7 @@
 namespace App\Providers;
 
 use App\Integrations\TelegramBot\AnalyticsReportBotListener;
+use App\Integrations\TelegramBot\YouTubeAnalyticsReportBotListener;
 use App\Models\ParserRun;
 use App\Modules\Telegram\Analytics\Reports\Events\AnalyticsReportCompleted;
 use App\Modules\TelegramBot\Application\ArtifactRegistry;
@@ -17,6 +18,7 @@ use App\Modules\TelegramBot\Infrastructure\BotEventSubscriber;
 use App\Modules\TelegramBot\Infrastructure\TelegraphTransport;
 use App\Modules\TelegramBot\Jobs\BotJob;
 use App\Modules\TelegramBot\Support\BotConfig;
+use App\Modules\YouTube\Analytics\Reports\Events\AnalyticsReportCompleted as YouTubeAnalyticsReportCompleted;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Http\Request;
 use Illuminate\Notifications\Events\NotificationSent;
@@ -44,6 +46,7 @@ final class TelegramBotServiceProvider extends ServiceProvider
 
         Event::listen(NotificationSent::class, [BotEventSubscriber::class, 'notificationSent']);
         Event::listen(AnalyticsReportCompleted::class, AnalyticsReportBotListener::class);
+        Event::listen(YouTubeAnalyticsReportCompleted::class, YouTubeAnalyticsReportBotListener::class);
         ParserRun::saved(fn (ParserRun $run) => $this->app->make(BotEventSubscriber::class)->parserSaved($run));
 
         RateLimiter::for('telegram-bot', fn (BotJob $job) => [
