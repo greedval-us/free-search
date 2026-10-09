@@ -21,6 +21,7 @@
 - [Frontend](architecture/frontend.md)
 - [Границы модулей](architecture/modules.md)
 - [Parser Runs](architecture/parser-runs.md)
+- [Отчёты по расписанию](architecture/scheduled-reports.md)
 - [Data flow](architecture/data-flow.md)
 
 ## Модули и подсистемы

@@ -6,6 +6,7 @@ use App\Exceptions\Public\ExternalServiceUnavailableException;
 use App\Modules\NewsMediaIntel\Application\Contracts\SearxngSearchClientInterface;
 use App\Modules\NewsMediaIntel\Application\Services\NewsMediaIntel\NewsMentionDeduplicator;
 use App\Modules\NewsMediaIntel\Application\Support\NewsMediaIntelConfig;
+use App\Modules\NewsMediaIntel\Application\Support\NewsSearchInputPolicy;
 use App\Modules\NewsMediaIntel\Domain\DTO\NewsMentionDTO;
 use App\Modules\NewsMediaIntel\Domain\DTO\NewsSearchOptionsDTO;
 use App\Modules\NewsMediaIntel\Domain\DTO\NewsSearchResultDTO;
@@ -24,7 +25,7 @@ final class SearxngSearchClient implements SearxngSearchClientInterface
 
     public function search(string $query, ?NewsSearchOptionsDTO $options = null, ?float $deadline = null): NewsSearchResultDTO
     {
-        if (preg_match('/(?:^|\s)[!:][^\s]+|[\p{Cc}]/u', $query) !== 0) {
+        if (NewsSearchInputPolicy::hasForbiddenQuerySyntax($query)) {
             throw ValidationException::withMessages(['query' => __('news_media_intel.errors.query_routing')]);
         }
         $query = trim($query);
@@ -146,9 +147,9 @@ final class SearxngSearchClient implements SearxngSearchClientInterface
     private function options(?NewsSearchOptionsDTO $options): NewsSearchOptionsDTO
     {
         $options ??= new NewsSearchOptionsDTO;
-        $categories = $this->selectedValues($options->categories, ['news', 'general', 'all'], 'categories');
+        $categories = $this->selectedValues($options->categories, [...NewsSearchInputPolicy::CATEGORIES, 'all'], 'categories');
         if (in_array('all', $categories, true)) {
-            $categories = ['news', 'general'];
+            $categories = NewsSearchInputPolicy::CATEGORIES;
         }
         $categories = $categories !== [] ? $categories : ['news'];
         $language = $options->language !== '' ? $options->language : $this->config->searxngLanguage();
@@ -156,11 +157,11 @@ final class SearxngSearchClient implements SearxngSearchClientInterface
             throw ValidationException::withMessages(['language' => __('news_media_intel.errors.invalid_options')]);
         }
         $timeRange = $options->timeRange ?? $this->config->searxngTimeRange();
-        if (! in_array($timeRange, ['', 'day', 'week', 'month', 'year'], true)) {
+        if (! in_array($timeRange, NewsSearchInputPolicy::TIME_RANGES, true)) {
             throw ValidationException::withMessages(['timeRange' => __('news_media_intel.errors.invalid_options')]);
         }
         $safeSearch = $options->safeSearch === -1 ? $this->config->searxngSafeSearch() : $options->safeSearch;
-        if ($safeSearch < 0 || $safeSearch > 2) {
+        if (! in_array($safeSearch, NewsSearchInputPolicy::SAFE_SEARCH_LEVELS, true)) {
             throw ValidationException::withMessages(['safeSearch' => __('news_media_intel.errors.invalid_options')]);
         }
         $available = (array) config('osint.news_media_intel.searxng.available_engines', [
@@ -176,7 +177,7 @@ final class SearxngSearchClient implements SearxngSearchClientInterface
 
         return new NewsSearchOptionsDTO(categories: $categories, language: $language, timeRange: $timeRange,
             safeSearch: $safeSearch, engines: $engines,
-            maxPages: $options->maxPages > 0 ? min(10, $options->maxPages) : $this->config->searxngMaxPages());
+            maxPages: $options->maxPages > 0 ? min(NewsSearchInputPolicy::MAX_PAGES, $options->maxPages) : $this->config->searxngMaxPages());
     }
 
     /** @param array<mixed> $values @param array<mixed> $allowed @return list<string> */

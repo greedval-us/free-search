@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\Telegram;
 
+use App\Models\TelegramAnalyticsSchedule;
 use App\Rules\PublicTelegramUsername;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
@@ -37,7 +38,7 @@ final class TelegramAnalyticsReportScheduleRequest extends FormRequest
             'name' => ['required', 'string', 'max:100'],
             'groups' => ['required', 'array', 'list', 'min:1', 'max:'.max(1, (int) config('telegram_analytics_reports.max_groups', 3))],
             'groups.*' => ['bail', 'required', 'string', 'not_regex:/\s/u', 'distinct', new PublicTelegramUsername],
-            'interval' => ['required', 'string', Rule::in(['1', '3', '7', 'month'])],
+            'interval' => ['required', 'string', Rule::in(TelegramAnalyticsSchedule::INTERVALS)],
             'sendTime' => ['required', 'date_format:H:i'],
             'timezone' => ['required', 'timezone'],
             'sendToBot' => ['sometimes', 'boolean'],

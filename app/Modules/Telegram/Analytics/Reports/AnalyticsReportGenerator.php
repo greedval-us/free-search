@@ -154,7 +154,8 @@ final readonly class AnalyticsReportGenerator
         if ($user === null || $user->isBlocked() || ! $user->hasVerifiedEmail()) {
             return 'account_unavailable';
         }
-        if ($schedule === null || $schedule->trashed() || (! $schedule->enabled && ! $report->is_manual)) {
+        if ($schedule === null || $schedule->user_id !== $report->user_id
+            || $schedule->trashed() || (! $schedule->enabled && ! $report->is_manual)) {
             return 'disabled';
         }
 

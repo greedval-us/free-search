@@ -4,12 +4,10 @@ namespace App\Modules\TelegramBot\Application;
 
 use App\Modules\TelegramBot\Models\BotLink;
 use App\Modules\TelegramBot\Support\BotConfig;
-use App\Services\Access\Contracts\FeatureAccessServiceInterface;
-use App\Services\Access\SiteIntelReportAccess;
 
 final readonly class BotAccess
 {
-    public function __construct(private BotConfig $config, private FeatureAccessServiceInterface $featureAccess) {}
+    public function __construct(private BotConfig $config, private ScheduledReportRegistry $reports) {}
 
     public function allows(?BotLink $link): bool
     {
@@ -25,27 +23,26 @@ final readonly class BotAccess
             && (int) $chat->telegraph_bot_id === $this->config->botId();
     }
 
-    public function allowsDelivery(?BotLink $link, string $kind, bool $automatic): bool
+    public function allowsDelivery(?BotLink $link, string $kind, bool $automatic, ?int $reportId = null): bool
     {
         if (! $this->allows($link)) {
             return false;
+        }
+
+        $provider = $this->reports->find($kind);
+        if ($provider !== null) {
+            if ($automatic && ! $link->exports_enabled) {
+                return false;
+            }
+
+            return $reportId === null ? $provider->allows($link->user)
+                : $provider->allowsDelivery($link->user, $reportId, $automatic);
         }
 
         return match ($kind) {
             'notification' => $link->notifications_enabled,
             'broadcast' => $link->broadcasts_enabled,
             'parser' => ! $automatic || $link->exports_enabled,
-            'analytics_report' => (! $automatic || $link->exports_enabled)
-                && $this->featureAccess->inspect($link->user, 'telegram.analytics', false)->allowed,
-            'youtube_analytics_report' => (! $automatic || $link->exports_enabled)
-                && $this->featureAccess->inspect($link->user, 'youtube.analytics', false)->allowed,
-            'bluesky_analytics_report' => (! $automatic || $link->exports_enabled)
-                && $this->featureAccess->inspect($link->user, 'bluesky.analytics', false)->allowed,
-            'mastodon_analytics_report' => (! $automatic || $link->exports_enabled)
-                && $this->featureAccess->inspect($link->user, 'mastodon.analytics', false)->allowed,
-            'site_intel_report' => (! $automatic || $link->exports_enabled)
-                && app(SiteIntelReportAccess::class)->availableTypes($link->user) !== [],
-            'news_media_report' => ! $automatic || $link->exports_enabled,
             'tracking' => ! $automatic,
             default => false,
         };

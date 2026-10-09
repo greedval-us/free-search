@@ -2,8 +2,12 @@
 
 namespace App\Modules\SiteIntel\Application\Reports;
 
+use App\Support\Reports\ReportQueueSafety;
+
 final class ReportConfig
 {
+    public function __construct(private readonly ReportQueueSafety $queues) {}
+
     public function maxTargets(): int
     {
         return $this->integer('max_targets');
@@ -16,13 +20,8 @@ final class ReportConfig
 
     public function ensureQueue(): void
     {
-        $connection = config('site_intel_reports.queue.connection');
-        $driver = config('queue.connections.'.$connection.'.driver');
-        $retryAfter = config('queue.connections.'.$connection.'.retry_after');
-        if (! in_array($driver, ['database', 'redis'], true)
-            || ! is_numeric($retryAfter) || $retryAfter <= $this->integer('queue.timeout')
-            || $this->integer('lease_seconds') <= $this->integer('queue.timeout')
-            || (app()->isProduction() && config('cache.stores.'.config('cache.default').'.driver') === 'array')) {
+        if (! $this->queues->supports((string) config('site_intel_reports.queue.connection'),
+            $this->integer('queue.timeout'), $this->integer('lease_seconds'))) {
             throw new ReportException('queue_unavailable');
         }
     }

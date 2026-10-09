@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\YouTube;
 
+use App\Models\YouTubeAnalyticsSchedule;
 use App\Modules\YouTube\Analytics\Reports\PublicYouTubeChannel;
 use Closure;
 use Illuminate\Foundation\Http\FormRequest;
@@ -41,7 +42,7 @@ final class YouTubeAnalyticsReportScheduleRequest extends FormRequest
                     $fail(__('youtube_analytics_reports.errors.invalid_channels'));
                 }
             }],
-            'interval' => ['required', 'string', Rule::in(['1', '3', '7', 'month'])],
+            'interval' => ['required', 'string', Rule::in(YouTubeAnalyticsSchedule::INTERVALS)],
             'sendTime' => ['required', 'date_format:H:i'],
             'timezone' => ['required', 'timezone'],
             'sendToBot' => ['sometimes', 'boolean'],

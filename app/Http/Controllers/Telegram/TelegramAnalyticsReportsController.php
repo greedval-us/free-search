@@ -3,11 +3,10 @@
 namespace App\Http\Controllers\Telegram;
 
 use App\Http\Requests\Telegram\TelegramAnalyticsReportScheduleRequest;
+use App\Integrations\TelegramBot\ReportDeliveryStatus;
 use App\Models\TelegramAnalyticsReport;
 use App\Models\TelegramAnalyticsSchedule;
 use App\Modules\Telegram\Analytics\Reports\AnalyticsReportScheduleService;
-use App\Modules\TelegramBot\Application\BotAccess;
-use App\Modules\TelegramBot\Models\BotLink;
 use App\Support\Http\DocumentResponseHeaders;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -16,7 +15,7 @@ use Illuminate\View\View;
 
 final class TelegramAnalyticsReportsController extends BaseTelegramController
 {
-    public function __construct(private readonly AnalyticsReportScheduleService $schedules) {}
+    public function __construct(private readonly AnalyticsReportScheduleService $schedules, private readonly ReportDeliveryStatus $deliveryStatus) {}
 
     public function index(Request $request): JsonResponse
     {
@@ -25,7 +24,6 @@ final class TelegramAnalyticsReportsController extends BaseTelegramController
         $reports = TelegramAnalyticsReport::query()->forUser($userId)->with('schedule')
             ->select(['id', 'schedule_id', 'user_id', 'chat_username', 'scheduled_for', 'date_from', 'date_to', 'status', 'error_code', 'completed_at'])
             ->latest('id')->paginate(max(1, (int) config('telegram_analytics_reports.list_page_size', 20)));
-        $link = BotLink::query()->where('user_id', $userId)->first();
 
         return $this->jsonData([
             'schedules' => $schedules->map($this->schedulePayload(...)),
@@ -34,8 +32,7 @@ final class TelegramAnalyticsReportsController extends BaseTelegramController
                 'currentPage' => $reports->currentPage(), 'lastPage' => $reports->lastPage(),
                 'total' => $reports->total(), 'perPage' => $reports->perPage(),
             ],
-            'botLinked' => app(BotAccess::class)->allows($link),
-            'botExportsEnabled' => $link?->exports_enabled ?? false,
+            ...$this->deliveryStatus->forUser($userId),
             'timezone' => (string) config('telegram_analytics_reports.timezone', 'Europe/Moscow'),
             'maxGroups' => max(1, (int) config('telegram_analytics_reports.max_groups', 3)),
             'maxSchedules' => max(1, (int) config('telegram_analytics_reports.max_schedules', 5)),

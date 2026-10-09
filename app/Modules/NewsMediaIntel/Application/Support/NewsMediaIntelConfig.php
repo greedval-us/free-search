@@ -14,10 +14,11 @@ final class NewsMediaIntelConfig
             searxngBaseUrl: trim(self::stringValue($config, ['searxng', 'base_url'], 'http://127.0.0.1:8088')),
             searxngLanguage: self::stringValue($config, ['searxng', 'language'], 'ru'),
             searxngEngines: self::stringListValue($config, ['searxng', 'engines']),
-            searxngMaxPages: min(10, max(1, self::intValue($config, ['searxng', 'max_pages'], 3))),
+            searxngMaxPages: min(NewsSearchInputPolicy::MAX_PAGES, max(1, self::intValue($config, ['searxng', 'max_pages'], 3))),
             searxngTimeoutSeconds: min(20, max(1, self::intValue($config, ['searxng', 'timeout_seconds'], 10))),
             searxngRequestBudgetSeconds: min(25, max(1, self::intValue($config, ['searxng', 'request_budget_seconds'], 20))),
-            searxngSafeSearch: min(2, max(0, self::intValue($config, ['searxng', 'safe_search'], 1))),
+            searxngSafeSearch: min(NewsSearchInputPolicy::SAFE_SEARCH_STRICT, max(NewsSearchInputPolicy::SAFE_SEARCH_OFF,
+                self::intValue($config, ['searxng', 'safe_search'], NewsSearchInputPolicy::SAFE_SEARCH_MODERATE))),
             searxngTimeRange: self::stringValue($config, ['searxng', 'time_range'], ''),
             sentimentPositiveWords: self::stringListValue($config, ['analysis', 'sentiment', 'positive_words']),
             sentimentNegativeWords: self::stringListValue($config, ['analysis', 'sentiment', 'negative_words']),
@@ -98,7 +99,7 @@ final class NewsMediaIntelConfig
 
     public function searxngTimeRange(): string
     {
-        return in_array($this->searxngTimeRange, ['day', 'week', 'month', 'year'], true) ? $this->searxngTimeRange : '';
+        return in_array($this->searxngTimeRange, NewsSearchInputPolicy::TIME_RANGES, true) ? $this->searxngTimeRange : '';
     }
 
     /** @return array<int, string> */

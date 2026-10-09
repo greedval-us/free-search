@@ -3,6 +3,7 @@
 namespace App\Modules\NewsMediaIntel\Application\Reports;
 
 use App\Modules\NewsMediaIntel\Application\Support\NewsMediaIntelConfig;
+use App\Modules\NewsMediaIntel\Application\Support\NewsSearchInputPolicy;
 use App\Modules\NewsMediaIntel\Domain\DTO\NewsSearchOptionsDTO;
 use App\Support\Domains\PublicSiteTarget;
 
@@ -12,26 +13,26 @@ final readonly class ReportParameters
 
     public function normalize(array $data): array
     {
-        $queries = $this->strings($data['queries'] ?? null, $this->reports->maxQueries(), 180, 'invalid_queries');
+        $queries = $this->strings($data['queries'] ?? null, $this->reports->maxQueries(), NewsSearchInputPolicy::MAX_QUERY_LENGTH, 'invalid_queries');
         if ($queries === []) {
             throw new ReportException('invalid_queries');
         }
         foreach ($queries as $query) {
-            if (preg_match('/(?:^|\s)[!:][^\s]+|[\p{Cc}]/u', $query) !== 0) {
+            if (NewsSearchInputPolicy::hasForbiddenQuerySyntax($query)) {
                 throw new ReportException('invalid_queries');
             }
         }
         $brand = $data['brand'] ?? '';
-        if (! is_string($brand) || (trim($brand) !== '' && ! $this->validText(trim($brand), 80))) {
+        if (! is_string($brand) || (trim($brand) !== '' && ! $this->validText(trim($brand), NewsSearchInputPolicy::MAX_ENTITY_LENGTH))) {
             throw new ReportException('invalid_options');
         }
         $brand = trim($brand);
-        $competitors = $this->strings($data['competitors'] ?? [], 3, 80, 'invalid_options');
+        $competitors = $this->strings($data['competitors'] ?? [], NewsSearchInputPolicy::MAX_COMPETITORS, NewsSearchInputPolicy::MAX_ENTITY_LENGTH, 'invalid_options');
         if ($brand !== '' && in_array(mb_strtolower($brand), array_map(mb_strtolower(...), $competitors), true)) {
             throw new ReportException('invalid_options');
         }
         $domain = $data['domain'] ?? '';
-        if (! is_string($domain) || mb_strlen($domain) > 253) {
+        if (! is_string($domain) || mb_strlen($domain) > NewsSearchInputPolicy::MAX_DOMAIN_LENGTH) {
             throw new ReportException('invalid_options');
         }
         $domain = trim($domain);
@@ -59,10 +60,10 @@ final readonly class ReportParameters
         $engines = $data['engines'] ?? [];
         $available = array_merge(...array_values((array) config('osint.news_media_intel.searxng.available_engines', [])));
         if (! is_string($language) || ! in_array($language, config('osint.news_media_intel.searxng.languages', ['all', 'ru', 'en']), true)
-            || ! in_array($timeRange, ['', 'day', 'week', 'month', 'year'], true)
-            || ! in_array($safeSearch, [0, 1, 2], true)
+            || ! in_array($timeRange, NewsSearchInputPolicy::TIME_RANGES, true)
+            || ! in_array($safeSearch, NewsSearchInputPolicy::SAFE_SEARCH_LEVELS, true)
             || $maxPages === false || $maxPages < 1 || $maxPages > $this->search->searxngMaxPages()
-            || ! is_array($engines) || ! array_is_list($engines) || count($engines) > 8) {
+            || ! is_array($engines) || ! array_is_list($engines) || count($engines) > NewsSearchInputPolicy::MAX_ENGINES) {
             throw new ReportException('invalid_options');
         }
         foreach ($engines as $engine) {
@@ -102,6 +103,6 @@ final readonly class ReportParameters
 
     private function validText(string $value, int $length): bool
     {
-        return mb_strlen($value) >= 2 && mb_strlen($value) <= $length && preg_match('/[\p{Cc}]/u', $value) === 0;
+        return mb_strlen($value) >= NewsSearchInputPolicy::MIN_TEXT_LENGTH && mb_strlen($value) <= $length && preg_match('/[\p{Cc}]/u', $value) === 0;
     }
 }

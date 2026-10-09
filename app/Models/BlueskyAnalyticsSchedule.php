@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Support\Reports\Scheduling\ReportInterval;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -14,7 +15,7 @@ class BlueskyAnalyticsSchedule extends Model
 
     protected $table = 'bluesky_analytics_schedules';
 
-    public const INTERVALS = ['1', '3', '7', 'month'];
+    public const INTERVALS = ReportInterval::VALUES;
 
     protected $guarded = ['id'];
 

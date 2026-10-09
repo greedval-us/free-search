@@ -16,12 +16,14 @@ use App\Modules\SiteIntel\Application\Reports\Events\SiteIntelReportCompleted;
 use App\Modules\Telegram\Analytics\Reports\Events\AnalyticsReportCompleted;
 use App\Modules\TelegramBot\Application\ArtifactRegistry;
 use App\Modules\TelegramBot\Application\BotRouter;
+use App\Modules\TelegramBot\Application\ScheduledReportRegistry;
 use App\Modules\TelegramBot\Console\BroadcastBotMessage;
 use App\Modules\TelegramBot\Console\ConfigureBotWebhook;
 use App\Modules\TelegramBot\Console\MaintainBotDeliveries;
 use App\Modules\TelegramBot\Domain\Contracts\ArtifactProvider;
 use App\Modules\TelegramBot\Domain\Contracts\BotAction;
 use App\Modules\TelegramBot\Domain\Contracts\BotTransport;
+use App\Modules\TelegramBot\Domain\Contracts\ScheduledReportArtifactProvider;
 use App\Modules\TelegramBot\Infrastructure\BotEventSubscriber;
 use App\Modules\TelegramBot\Infrastructure\TelegraphTransport;
 use App\Modules\TelegramBot\Jobs\BotJob;
@@ -43,8 +45,11 @@ final class TelegramBotServiceProvider extends ServiceProvider
         $this->app->bind(BotTransport::class, TelegraphTransport::class);
         $this->app->tag(config('telegram_bot.actions', []), BotAction::class);
         $this->app->tag(config('telegram_bot.artifact_providers', []), ArtifactProvider::class);
+        $this->app->tag(array_filter(config('telegram_bot.artifact_providers', []),
+            fn (string $provider): bool => is_subclass_of($provider, ScheduledReportArtifactProvider::class)), ScheduledReportArtifactProvider::class);
         $this->app->bind(BotRouter::class, fn ($app) => new BotRouter($app->tagged(BotAction::class)));
         $this->app->bind(ArtifactRegistry::class, fn ($app) => new ArtifactRegistry($app->tagged(ArtifactProvider::class)));
+        $this->app->bind(ScheduledReportRegistry::class, fn ($app) => new ScheduledReportRegistry($app->tagged(ScheduledReportArtifactProvider::class)));
     }
 
     public function boot(): void

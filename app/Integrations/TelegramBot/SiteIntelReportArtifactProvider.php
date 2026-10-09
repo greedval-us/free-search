@@ -4,74 +4,65 @@ namespace App\Integrations\TelegramBot;
 
 use App\Models\SiteIntelScheduledReport;
 use App\Models\User;
-use App\Modules\TelegramBot\Domain\Contracts\ArtifactProvider;
-use App\Modules\TelegramBot\Domain\DTO\BotDocument;
-use App\Modules\TelegramBot\Domain\Exceptions\ArtifactUnavailable;
 use App\Modules\TelegramBot\Infrastructure\Artifacts\TemporaryDocuments;
 use App\Modules\TelegramBot\Support\BotConfig;
 use App\Services\Access\SiteIntelReportAccess;
-use Illuminate\Contracts\Pagination\Paginator;
+use App\Support\Reports\SavedReportRenderer;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Traits\Localizable;
+use Illuminate\Database\Eloquent\Model;
 
-final readonly class SiteIntelReportArtifactProvider implements ArtifactProvider
+final readonly class SiteIntelReportArtifactProvider extends SavedReportArtifactProvider
 {
-    use Localizable;
-
-    private const FORMATS = ['html', 'json'];
-
-    public function __construct(private BotConfig $config, private TemporaryDocuments $files, private SiteIntelReportAccess $access) {}
+    public function __construct(BotConfig $config, TemporaryDocuments $files, SavedReportRenderer $renderer, private SiteIntelReportAccess $access)
+    {
+        parent::__construct($config, $files, $renderer);
+    }
 
     public function key(): string
     {
         return 'site_intel_report';
     }
 
-    public function listing(int $userId, int $page): Paginator
+    protected function model(): string
     {
-        return $this->query($userId)->latest('id')
-            ->simplePaginate($this->config->integer('page_size'), ['id', 'schedule_id', 'target_url', 'report_type', 'completed_at'], 'page', $page)
-            ->through(fn (SiteIntelScheduledReport $report): array => [
-                'id' => $report->id,
-                'label' => $report->target_url.' / '.__('site_intel_reports.report.'.$report->report_type).' / '
-                    .$report->completed_at?->setTimezone($report->schedule?->timezone ?? config('app.timezone'))->format('d.m.Y H:i'),
-                'formats' => self::FORMATS,
-            ]);
+        return SiteIntelScheduledReport::class;
     }
 
-    public function document(int $userId, int $id, string $format, string $locale): BotDocument
+    protected function filenamePrefix(): string
     {
-        $report = $this->query($userId)->find($id);
-        if ($report === null || ! in_array($format, self::FORMATS, true)) {
-            throw new ArtifactUnavailable;
-        }
-
-        return $this->withLocale($locale, fn () => $this->files->create('site-intel-report-'.$id.'.'.$format, function (string $path) use ($report, $format, $locale): void {
-            $data = $report->data;
-            if ($format === 'json') {
-                $content = json_encode($data, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_THROW_ON_ERROR);
-            } else {
-                $content = view($report->report_type === 'seo-audit' ? 'reports.site-intel.seo-audit' : 'reports.site-intel.analytics', [
-                    'report' => $data, 'locale' => $locale,
-                    'generatedAt' => $report->completed_at?->setTimezone($data['reportSchedule']['timezone'] ?? $report->schedule?->timezone ?? config('app.timezone'))->format('d.m.Y H:i'),
-                ])->render();
-            }
-            Storage::disk('local')->put($path, $content);
-        }));
+        return 'site-intel-report';
     }
 
-    private function query(int $userId): Builder
+    protected function view(Model $report): string
     {
-        $query = SiteIntelScheduledReport::query()->with('schedule:id,timezone')->where('user_id', $userId)
-            ->where('status', SiteIntelScheduledReport::COMPLETED)->whereNotNull('data');
-        $user = User::query()->find($userId);
-        if ($user === null || $user->isBlocked() || ! $user->hasVerifiedEmail()) {
-            $query->whereRaw('1 = 0');
-        } else {
-            $query->whereIn('report_type', $this->access->availableTypes($user));
-        }
+        return $report->report_type === 'seo-audit' ? 'reports.site-intel.seo-audit' : 'reports.site-intel.analytics';
+    }
 
-        return $query;
+    protected function moduleAllows(User $user): bool
+    {
+        return $this->access->availableTypes($user) !== [];
+    }
+
+    protected function constrainAccess(Builder $query, User $user): void
+    {
+        $query->whereIn('report_type', $this->access->availableTypes($user));
+    }
+
+    protected function listingColumns(): array
+    {
+        return ['id', 'schedule_id', 'target_url', 'report_type', 'completed_at'];
+    }
+
+    protected function label(Model $report): string
+    {
+        return $report->target_url.' / '.__('site_intel_reports.report.'.$report->report_type).' / '
+            .$report->completed_at?->setTimezone($this->timezone($report))->format('d.m.Y H:i');
+    }
+
+    protected function viewData(Model $report): array
+    {
+        return ['report' => $report->data, 'generatedAt' => $report->completed_at?->setTimezone(
+            $report->data['reportSchedule']['timezone'] ?? $this->timezone($report)
+        )->format('d.m.Y H:i')];
     }
 }

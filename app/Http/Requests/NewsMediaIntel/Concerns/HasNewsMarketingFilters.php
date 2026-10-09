@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\NewsMediaIntel\Concerns;
 
+use App\Modules\NewsMediaIntel\Application\Support\NewsSearchInputPolicy;
 use App\Support\Domains\PublicSiteTarget;
 use Closure;
 use Illuminate\Validation\Validator;
@@ -23,10 +24,10 @@ trait HasNewsMarketingFilters
     protected function marketingFilterRules(): array
     {
         return [
-            'brand' => ['nullable', 'string', 'min:2', 'max:80', 'not_regex:/[\p{Cc}]/u'],
-            'competitors' => ['sometimes', 'array', 'list', 'max:3'],
-            'competitors.*' => ['required', 'string', 'min:2', 'max:80', 'distinct:ignore_case', 'not_regex:/[\p{Cc}]/u'],
-            'domain' => ['nullable', 'string', 'max:253', function (string $attribute, mixed $value, Closure $fail): void {
+            'brand' => ['nullable', 'string', 'min:'.NewsSearchInputPolicy::MIN_TEXT_LENGTH, 'max:'.NewsSearchInputPolicy::MAX_ENTITY_LENGTH, 'not_regex:/[\p{Cc}]/u'],
+            'competitors' => ['sometimes', 'array', 'list', 'max:'.NewsSearchInputPolicy::MAX_COMPETITORS],
+            'competitors.*' => ['required', 'string', 'min:'.NewsSearchInputPolicy::MIN_TEXT_LENGTH, 'max:'.NewsSearchInputPolicy::MAX_ENTITY_LENGTH, 'distinct:ignore_case', 'not_regex:/[\p{Cc}]/u'],
+            'domain' => ['nullable', 'string', 'max:'.NewsSearchInputPolicy::MAX_DOMAIN_LENGTH, function (string $attribute, mixed $value, Closure $fail): void {
                 if ($value !== null && $value !== '' && PublicSiteTarget::normalize($value) === null) {
                     $fail(__('news_media_intel.errors.domain'));
                 }

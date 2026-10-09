@@ -1,11 +1,8 @@
+import { reportInputLines } from '@/features/scheduled-reports/constants';
 import { marketingFormError } from '../form';
 import type { ReportScheduleForm } from './types';
 
-export const reportQueries = (value: string): string[] =>
-    value
-        .split(/\r\n?|\n/u)
-        .map((query) => query.trim())
-        .filter(Boolean);
+export const reportQueries = reportInputLines;
 
 export const reportFormError = (
     form: ReportScheduleForm,

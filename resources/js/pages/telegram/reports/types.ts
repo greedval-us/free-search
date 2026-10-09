@@ -1,50 +1,20 @@
-export type ReportInterval = '1' | '3' | '7' | 'month';
+import type {
+    ScheduleFields,
+    PersistedSchedule,
+    SavedReport as BaseSavedReport,
+    ReportHistory as BaseReportHistory,
+    ReportsList as BaseReportsList,
+} from '@/features/scheduled-reports/types';
+export type { ReportInterval } from '@/features/scheduled-reports/types';
 
-export type ReportScheduleForm = {
-    name: string;
-    groups: string;
-    interval: ReportInterval;
-    sendTime: string;
-    timezone: string;
-    sendToBot: boolean;
-};
-
-export type ReportSchedule = Omit<ReportScheduleForm, 'groups'> & {
-    id: number;
-    groups: string[];
-    enabled: boolean;
-    nextRunAt: string | null;
-    createdAt: string;
-};
-
-export type AnalyticsReport = {
-    id: number;
-    scheduleId: number | null;
-    scheduleName: string | null;
+export type ReportScheduleForm = ScheduleFields & { groups: string };
+export type ReportSchedule = PersistedSchedule & { groups: string[] };
+export type AnalyticsReport = BaseSavedReport & {
     chatUsername: string;
-    scheduledFor: string;
     dateFrom: string;
     dateTo: string;
-    status: 'pending' | 'processing' | 'completed' | 'failed';
-    errorCode: string | null;
-    errorMessage?: string | null;
-    completedAt: string | null;
 };
-
-export type ReportHistory = {
-    data: AnalyticsReport[];
-    currentPage: number;
-    lastPage: number;
-    total: number;
-    perPage: number;
-};
-
-export type ReportsList = {
-    schedules: ReportSchedule[];
-    reports: ReportHistory;
-    botLinked: boolean;
-    botExportsEnabled: boolean;
+export type ReportHistory = BaseReportHistory<AnalyticsReport>;
+export type ReportsList = BaseReportsList<ReportSchedule, AnalyticsReport> & {
     maxGroups: number;
-    maxSchedules: number;
-    timezone: string;
 };

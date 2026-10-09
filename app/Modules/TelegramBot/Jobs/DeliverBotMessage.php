@@ -2,12 +2,6 @@
 
 namespace App\Modules\TelegramBot\Jobs;
 
-use App\Models\BlueskyAnalyticsReport;
-use App\Models\MastodonAnalyticsReport;
-use App\Models\NewsMediaScheduledReport;
-use App\Models\SiteIntelScheduledReport;
-use App\Models\TelegramAnalyticsReport;
-use App\Models\YouTubeAnalyticsReport;
 use App\Modules\TelegramBot\Application\ArtifactRegistry;
 use App\Modules\TelegramBot\Application\BotAccess;
 use App\Modules\TelegramBot\Domain\Contracts\BotTransport;
@@ -20,7 +14,6 @@ use App\Modules\TelegramBot\Infrastructure\NotificationText;
 use App\Modules\TelegramBot\Models\BotDelivery;
 use App\Modules\TelegramBot\Models\BotLink;
 use App\Modules\TelegramBot\Support\BotConfig;
-use App\Services\Access\SiteIntelReportAccess;
 use Symfony\Component\HttpKernel\Exception\HttpExceptionInterface;
 use Throwable;
 
@@ -49,7 +42,7 @@ final class DeliverBotMessage extends BotJob
         }
 
         try {
-            if (in_array($delivery->kind, ['parser', 'tracking', 'analytics_report', 'youtube_analytics_report', 'bluesky_analytics_report', 'mastodon_analytics_report', 'site_intel_report', 'news_media_report'], true)) {
+            if ($artifacts->has($delivery->kind)) {
                 $document = $artifacts->get($delivery->kind)->document($link->user_id, (int) $delivery->reference,
                     (string) ($delivery->payload['format'] ?? ''), $link->locale);
                 try {
@@ -116,30 +109,6 @@ final class DeliverBotMessage extends BotJob
 
     private function allowsDelivery(BotAccess $access, ?BotLink $link, BotDelivery $delivery): bool
     {
-        if (! $access->allowsDelivery($link, $delivery->kind, $delivery->automatic)) {
-            return false;
-        }
-        $model = match ($delivery->kind) {
-            'analytics_report' => TelegramAnalyticsReport::class,
-            'youtube_analytics_report' => YouTubeAnalyticsReport::class,
-            'bluesky_analytics_report' => BlueskyAnalyticsReport::class,
-            'mastodon_analytics_report' => MastodonAnalyticsReport::class,
-            'site_intel_report' => SiteIntelScheduledReport::class,
-            'news_media_report' => NewsMediaScheduledReport::class,
-            default => null,
-        };
-        if ($model === null) {
-            return true;
-        }
-
-        return $model::query()->whereKey((int) $delivery->reference)
-            ->where('user_id', $link->user_id)->where('status', $model::COMPLETED)
-            ->when($delivery->kind === 'news_media_report', fn ($query) => $query->whereNotNull('data'))
-            ->when($delivery->kind === 'site_intel_report', fn ($query) => $query
-                ->whereIn('report_type', app(SiteIntelReportAccess::class)->availableTypes($link->user)))
-            ->when($delivery->automatic, fn ($query) => $query
-                ->whereHas('schedule', fn ($schedule) => $schedule->where('user_id', $link->user_id)->where('send_to_bot', true)->whereNull('deleted_at'))
-                ->where(fn ($report) => $report->where('is_manual', true)->orWhereHas('schedule', fn ($schedule) => $schedule->where('enabled', true))))
-            ->exists();
+        return $access->allowsDelivery($link, $delivery->kind, $delivery->automatic, (int) $delivery->reference);
     }
 }

@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\SiteIntel;
 
+use App\Models\SiteIntelReportSchedule;
 use App\Modules\SiteIntel\Application\Reports\PublicSiteTarget;
 use Closure;
 use Illuminate\Foundation\Http\FormRequest;
@@ -41,7 +42,7 @@ final class SiteIntelReportScheduleRequest extends FormRequest
             'reportType' => ['required', 'string', Rule::in(['analytics', 'seo-audit'])],
             'crawlLimit' => ['sometimes', 'integer', 'min:3', 'max:20'],
             'platformType' => ['sometimes', 'string', Rule::in(['auto', 'generic', 'media-platform', 'content-site', 'storefront'])],
-            'interval' => ['required', 'string', Rule::in(['1', '3', '7', 'month'])],
+            'interval' => ['required', 'string', Rule::in(SiteIntelReportSchedule::INTERVALS)],
             'sendTime' => ['required', 'date_format:H:i'],
             'timezone' => ['required', 'timezone'],
             'sendToBot' => ['sometimes', 'boolean'],

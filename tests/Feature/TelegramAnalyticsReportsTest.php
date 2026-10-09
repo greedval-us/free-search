@@ -356,6 +356,43 @@ class TelegramAnalyticsReportsTest extends TestCase
         Bus::assertNotDispatched(GenerateAnalyticsReport::class);
     }
 
+    public static function ownershipChanges(): array
+    {
+        return ['before search' => [false], 'during search' => [true]];
+    }
+
+    #[DataProvider('ownershipChanges')]
+    public function test_report_cannot_be_generated_when_its_schedule_belongs_to_another_owner(bool $duringSearch): void
+    {
+        $user = User::factory()->create();
+        $other = User::factory()->create();
+        $schedule = $this->createSchedule($user);
+        Bus::fake([GenerateAnalyticsReport::class]);
+        Event::fake([AnalyticsReportCompleted::class]);
+        $this->travelTo(CarbonImmutable::parse('2026-10-10 08:00:00', 'UTC'));
+        app(AnalyticsReportScheduler::class)->maintain();
+        $report = TelegramAnalyticsReport::query()->sole();
+        $analytics = $this->mock(TelegramAnalyticsApplicationServiceInterface::class);
+        if ($duringSearch) {
+            $analytics->shouldReceive('buildSummary')->once()->andReturnUsing(function () use ($schedule, $other): AnalyticsSummaryResultDTO {
+                $schedule->update(['user_id' => $other->id]);
+
+                return new AnalyticsSummaryResultDTO(['marker' => 'must not be saved']);
+            });
+        } else {
+            $schedule->update(['user_id' => $other->id]);
+            $analytics->shouldNotReceive('buildSummary');
+        }
+
+        app(AnalyticsReportGenerator::class)->generate($report->id, $report->lease_token);
+
+        $this->assertSame(TelegramAnalyticsReport::FAILED, $report->fresh()->status);
+        $this->assertSame('disabled', $report->fresh()->error_code);
+        $this->assertNull($report->fresh()->data);
+        $this->assertSame(0, FeatureUsageDaily::query()->where('user_id', $user->id)->sum('used'));
+        Event::assertNotDispatched(AnalyticsReportCompleted::class);
+    }
+
     private function createSchedule(User $user, array $overrides = []): TelegramAnalyticsSchedule
     {
         return app(AnalyticsReportScheduleService::class)->create($user, [...[

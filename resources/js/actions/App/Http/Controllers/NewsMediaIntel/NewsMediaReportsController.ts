@@ -87,7 +87,7 @@ indexForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
 index.form = indexForm;
 /**
  * @see \App\Http\Controllers\NewsMediaIntel\NewsMediaReportsController::store
- * @see app/Http/Controllers/NewsMediaIntel/NewsMediaReportsController.php:43
+ * @see app/Http/Controllers/NewsMediaIntel/NewsMediaReportsController.php:42
  * @route '/news-media-intel/reports/schedules'
  */
 export const store = (
@@ -104,7 +104,7 @@ store.definition = {
 
 /**
  * @see \App\Http\Controllers\NewsMediaIntel\NewsMediaReportsController::store
- * @see app/Http/Controllers/NewsMediaIntel/NewsMediaReportsController.php:43
+ * @see app/Http/Controllers/NewsMediaIntel/NewsMediaReportsController.php:42
  * @route '/news-media-intel/reports/schedules'
  */
 store.url = (options?: RouteQueryOptions) => {
@@ -113,7 +113,7 @@ store.url = (options?: RouteQueryOptions) => {
 
 /**
  * @see \App\Http\Controllers\NewsMediaIntel\NewsMediaReportsController::store
- * @see app/Http/Controllers/NewsMediaIntel/NewsMediaReportsController.php:43
+ * @see app/Http/Controllers/NewsMediaIntel/NewsMediaReportsController.php:42
  * @route '/news-media-intel/reports/schedules'
  */
 store.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -123,7 +123,7 @@ store.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
 
 /**
  * @see \App\Http\Controllers\NewsMediaIntel\NewsMediaReportsController::store
- * @see app/Http/Controllers/NewsMediaIntel/NewsMediaReportsController.php:43
+ * @see app/Http/Controllers/NewsMediaIntel/NewsMediaReportsController.php:42
  * @route '/news-media-intel/reports/schedules'
  */
 const storeForm = (
@@ -135,7 +135,7 @@ const storeForm = (
 
 /**
  * @see \App\Http\Controllers\NewsMediaIntel\NewsMediaReportsController::store
- * @see app/Http/Controllers/NewsMediaIntel/NewsMediaReportsController.php:43
+ * @see app/Http/Controllers/NewsMediaIntel/NewsMediaReportsController.php:42
  * @route '/news-media-intel/reports/schedules'
  */
 storeForm.post = (
@@ -148,7 +148,7 @@ storeForm.post = (
 store.form = storeForm;
 /**
  * @see \App\Http\Controllers\NewsMediaIntel\NewsMediaReportsController::change
- * @see app/Http/Controllers/NewsMediaIntel/NewsMediaReportsController.php:48
+ * @see app/Http/Controllers/NewsMediaIntel/NewsMediaReportsController.php:47
  * @route '/news-media-intel/reports/schedules/{schedule}'
  */
 export const change = (
@@ -170,7 +170,7 @@ change.definition = {
 
 /**
  * @see \App\Http\Controllers\NewsMediaIntel\NewsMediaReportsController::change
- * @see app/Http/Controllers/NewsMediaIntel/NewsMediaReportsController.php:48
+ * @see app/Http/Controllers/NewsMediaIntel/NewsMediaReportsController.php:47
  * @route '/news-media-intel/reports/schedules/{schedule}'
  */
 change.url = (
@@ -206,7 +206,7 @@ change.url = (
 
 /**
  * @see \App\Http\Controllers\NewsMediaIntel\NewsMediaReportsController::change
- * @see app/Http/Controllers/NewsMediaIntel/NewsMediaReportsController.php:48
+ * @see app/Http/Controllers/NewsMediaIntel/NewsMediaReportsController.php:47
  * @route '/news-media-intel/reports/schedules/{schedule}'
  */
 change.patch = (
@@ -223,7 +223,7 @@ change.patch = (
 
 /**
  * @see \App\Http\Controllers\NewsMediaIntel\NewsMediaReportsController::change
- * @see app/Http/Controllers/NewsMediaIntel/NewsMediaReportsController.php:48
+ * @see app/Http/Controllers/NewsMediaIntel/NewsMediaReportsController.php:47
  * @route '/news-media-intel/reports/schedules/{schedule}'
  */
 const changeForm = (
@@ -245,7 +245,7 @@ const changeForm = (
 
 /**
  * @see \App\Http\Controllers\NewsMediaIntel\NewsMediaReportsController::change
- * @see app/Http/Controllers/NewsMediaIntel/NewsMediaReportsController.php:48
+ * @see app/Http/Controllers/NewsMediaIntel/NewsMediaReportsController.php:47
  * @route '/news-media-intel/reports/schedules/{schedule}'
  */
 changeForm.patch = (
@@ -268,7 +268,7 @@ changeForm.patch = (
 change.form = changeForm;
 /**
  * @see \App\Http\Controllers\NewsMediaIntel\NewsMediaReportsController::runNow
- * @see app/Http/Controllers/NewsMediaIntel/NewsMediaReportsController.php:55
+ * @see app/Http/Controllers/NewsMediaIntel/NewsMediaReportsController.php:54
  * @route '/news-media-intel/reports/schedules/{schedule}/run'
  */
 export const runNow = (
@@ -290,7 +290,7 @@ runNow.definition = {
 
 /**
  * @see \App\Http\Controllers\NewsMediaIntel\NewsMediaReportsController::runNow
- * @see app/Http/Controllers/NewsMediaIntel/NewsMediaReportsController.php:55
+ * @see app/Http/Controllers/NewsMediaIntel/NewsMediaReportsController.php:54
  * @route '/news-media-intel/reports/schedules/{schedule}/run'
  */
 runNow.url = (
@@ -326,7 +326,7 @@ runNow.url = (
 
 /**
  * @see \App\Http\Controllers\NewsMediaIntel\NewsMediaReportsController::runNow
- * @see app/Http/Controllers/NewsMediaIntel/NewsMediaReportsController.php:55
+ * @see app/Http/Controllers/NewsMediaIntel/NewsMediaReportsController.php:54
  * @route '/news-media-intel/reports/schedules/{schedule}/run'
  */
 runNow.post = (
@@ -343,7 +343,7 @@ runNow.post = (
 
 /**
  * @see \App\Http\Controllers\NewsMediaIntel\NewsMediaReportsController::runNow
- * @see app/Http/Controllers/NewsMediaIntel/NewsMediaReportsController.php:55
+ * @see app/Http/Controllers/NewsMediaIntel/NewsMediaReportsController.php:54
  * @route '/news-media-intel/reports/schedules/{schedule}/run'
  */
 const runNowForm = (
@@ -360,7 +360,7 @@ const runNowForm = (
 
 /**
  * @see \App\Http\Controllers\NewsMediaIntel\NewsMediaReportsController::runNow
- * @see app/Http/Controllers/NewsMediaIntel/NewsMediaReportsController.php:55
+ * @see app/Http/Controllers/NewsMediaIntel/NewsMediaReportsController.php:54
  * @route '/news-media-intel/reports/schedules/{schedule}/run'
  */
 runNowForm.post = (
@@ -378,7 +378,7 @@ runNowForm.post = (
 runNow.form = runNowForm;
 /**
  * @see \App\Http\Controllers\NewsMediaIntel\NewsMediaReportsController::destroy
- * @see app/Http/Controllers/NewsMediaIntel/NewsMediaReportsController.php:62
+ * @see app/Http/Controllers/NewsMediaIntel/NewsMediaReportsController.php:61
  * @route '/news-media-intel/reports/schedules/{schedule}'
  */
 export const destroy = (
@@ -400,7 +400,7 @@ destroy.definition = {
 
 /**
  * @see \App\Http\Controllers\NewsMediaIntel\NewsMediaReportsController::destroy
- * @see app/Http/Controllers/NewsMediaIntel/NewsMediaReportsController.php:62
+ * @see app/Http/Controllers/NewsMediaIntel/NewsMediaReportsController.php:61
  * @route '/news-media-intel/reports/schedules/{schedule}'
  */
 destroy.url = (
@@ -436,7 +436,7 @@ destroy.url = (
 
 /**
  * @see \App\Http\Controllers\NewsMediaIntel\NewsMediaReportsController::destroy
- * @see app/Http/Controllers/NewsMediaIntel/NewsMediaReportsController.php:62
+ * @see app/Http/Controllers/NewsMediaIntel/NewsMediaReportsController.php:61
  * @route '/news-media-intel/reports/schedules/{schedule}'
  */
 destroy.delete = (
@@ -453,7 +453,7 @@ destroy.delete = (
 
 /**
  * @see \App\Http\Controllers\NewsMediaIntel\NewsMediaReportsController::destroy
- * @see app/Http/Controllers/NewsMediaIntel/NewsMediaReportsController.php:62
+ * @see app/Http/Controllers/NewsMediaIntel/NewsMediaReportsController.php:61
  * @route '/news-media-intel/reports/schedules/{schedule}'
  */
 const destroyForm = (
@@ -475,7 +475,7 @@ const destroyForm = (
 
 /**
  * @see \App\Http\Controllers\NewsMediaIntel\NewsMediaReportsController::destroy
- * @see app/Http/Controllers/NewsMediaIntel/NewsMediaReportsController.php:62
+ * @see app/Http/Controllers/NewsMediaIntel/NewsMediaReportsController.php:61
  * @route '/news-media-intel/reports/schedules/{schedule}'
  */
 destroyForm.delete = (
@@ -498,7 +498,7 @@ destroyForm.delete = (
 destroy.form = destroyForm;
 /**
  * @see \App\Http\Controllers\NewsMediaIntel\NewsMediaReportsController::view
- * @see app/Http/Controllers/NewsMediaIntel/NewsMediaReportsController.php:69
+ * @see app/Http/Controllers/NewsMediaIntel/NewsMediaReportsController.php:68
  * @route '/news-media-intel/reports/{report}/view'
  */
 export const view = (
@@ -520,7 +520,7 @@ view.definition = {
 
 /**
  * @see \App\Http\Controllers\NewsMediaIntel\NewsMediaReportsController::view
- * @see app/Http/Controllers/NewsMediaIntel/NewsMediaReportsController.php:69
+ * @see app/Http/Controllers/NewsMediaIntel/NewsMediaReportsController.php:68
  * @route '/news-media-intel/reports/{report}/view'
  */
 view.url = (
@@ -556,7 +556,7 @@ view.url = (
 
 /**
  * @see \App\Http\Controllers\NewsMediaIntel\NewsMediaReportsController::view
- * @see app/Http/Controllers/NewsMediaIntel/NewsMediaReportsController.php:69
+ * @see app/Http/Controllers/NewsMediaIntel/NewsMediaReportsController.php:68
  * @route '/news-media-intel/reports/{report}/view'
  */
 view.get = (
@@ -572,7 +572,7 @@ view.get = (
 });
 /**
  * @see \App\Http\Controllers\NewsMediaIntel\NewsMediaReportsController::view
- * @see app/Http/Controllers/NewsMediaIntel/NewsMediaReportsController.php:69
+ * @see app/Http/Controllers/NewsMediaIntel/NewsMediaReportsController.php:68
  * @route '/news-media-intel/reports/{report}/view'
  */
 view.head = (
@@ -589,7 +589,7 @@ view.head = (
 
 /**
  * @see \App\Http\Controllers\NewsMediaIntel\NewsMediaReportsController::view
- * @see app/Http/Controllers/NewsMediaIntel/NewsMediaReportsController.php:69
+ * @see app/Http/Controllers/NewsMediaIntel/NewsMediaReportsController.php:68
  * @route '/news-media-intel/reports/{report}/view'
  */
 const viewForm = (
@@ -606,7 +606,7 @@ const viewForm = (
 
 /**
  * @see \App\Http\Controllers\NewsMediaIntel\NewsMediaReportsController::view
- * @see app/Http/Controllers/NewsMediaIntel/NewsMediaReportsController.php:69
+ * @see app/Http/Controllers/NewsMediaIntel/NewsMediaReportsController.php:68
  * @route '/news-media-intel/reports/{report}/view'
  */
 viewForm.get = (
@@ -622,7 +622,7 @@ viewForm.get = (
 });
 /**
  * @see \App\Http\Controllers\NewsMediaIntel\NewsMediaReportsController::view
- * @see app/Http/Controllers/NewsMediaIntel/NewsMediaReportsController.php:69
+ * @see app/Http/Controllers/NewsMediaIntel/NewsMediaReportsController.php:68
  * @route '/news-media-intel/reports/{report}/view'
  */
 viewForm.head = (
@@ -645,7 +645,7 @@ viewForm.head = (
 view.form = viewForm;
 /**
  * @see \App\Http\Controllers\NewsMediaIntel\NewsMediaReportsController::download
- * @see app/Http/Controllers/NewsMediaIntel/NewsMediaReportsController.php:74
+ * @see app/Http/Controllers/NewsMediaIntel/NewsMediaReportsController.php:73
  * @route '/news-media-intel/reports/{report}/download/{format}'
  */
 export const download = (
@@ -665,7 +665,7 @@ download.definition = {
 
 /**
  * @see \App\Http\Controllers\NewsMediaIntel\NewsMediaReportsController::download
- * @see app/Http/Controllers/NewsMediaIntel/NewsMediaReportsController.php:74
+ * @see app/Http/Controllers/NewsMediaIntel/NewsMediaReportsController.php:73
  * @route '/news-media-intel/reports/{report}/download/{format}'
  */
 download.url = (
@@ -698,7 +698,7 @@ download.url = (
 
 /**
  * @see \App\Http\Controllers\NewsMediaIntel\NewsMediaReportsController::download
- * @see app/Http/Controllers/NewsMediaIntel/NewsMediaReportsController.php:74
+ * @see app/Http/Controllers/NewsMediaIntel/NewsMediaReportsController.php:73
  * @route '/news-media-intel/reports/{report}/download/{format}'
  */
 download.get = (
@@ -712,7 +712,7 @@ download.get = (
 });
 /**
  * @see \App\Http\Controllers\NewsMediaIntel\NewsMediaReportsController::download
- * @see app/Http/Controllers/NewsMediaIntel/NewsMediaReportsController.php:74
+ * @see app/Http/Controllers/NewsMediaIntel/NewsMediaReportsController.php:73
  * @route '/news-media-intel/reports/{report}/download/{format}'
  */
 download.head = (
@@ -727,7 +727,7 @@ download.head = (
 
 /**
  * @see \App\Http\Controllers\NewsMediaIntel\NewsMediaReportsController::download
- * @see app/Http/Controllers/NewsMediaIntel/NewsMediaReportsController.php:74
+ * @see app/Http/Controllers/NewsMediaIntel/NewsMediaReportsController.php:73
  * @route '/news-media-intel/reports/{report}/download/{format}'
  */
 const downloadForm = (
@@ -742,7 +742,7 @@ const downloadForm = (
 
 /**
  * @see \App\Http\Controllers\NewsMediaIntel\NewsMediaReportsController::download
- * @see app/Http/Controllers/NewsMediaIntel/NewsMediaReportsController.php:74
+ * @see app/Http/Controllers/NewsMediaIntel/NewsMediaReportsController.php:73
  * @route '/news-media-intel/reports/{report}/download/{format}'
  */
 downloadForm.get = (
@@ -756,7 +756,7 @@ downloadForm.get = (
 });
 /**
  * @see \App\Http\Controllers\NewsMediaIntel\NewsMediaReportsController::download
- * @see app/Http/Controllers/NewsMediaIntel/NewsMediaReportsController.php:74
+ * @see app/Http/Controllers/NewsMediaIntel/NewsMediaReportsController.php:73
  * @route '/news-media-intel/reports/{report}/download/{format}'
  */
 downloadForm.head = (

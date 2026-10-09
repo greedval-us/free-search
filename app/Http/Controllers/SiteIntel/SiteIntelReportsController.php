@@ -4,11 +4,10 @@ namespace App\Http\Controllers\SiteIntel;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\SiteIntel\SiteIntelReportScheduleRequest;
+use App\Integrations\TelegramBot\ReportDeliveryStatus;
 use App\Models\SiteIntelReportSchedule;
 use App\Models\SiteIntelScheduledReport;
 use App\Modules\SiteIntel\Application\Reports\ReportScheduleService;
-use App\Modules\TelegramBot\Application\BotAccess;
-use App\Modules\TelegramBot\Models\BotLink;
 use App\Services\Access\SiteIntelReportAccess;
 use App\Support\Http\DocumentResponseHeaders;
 use Illuminate\Http\JsonResponse;
@@ -18,7 +17,7 @@ use Illuminate\View\View;
 
 final class SiteIntelReportsController extends Controller
 {
-    public function __construct(private readonly ReportScheduleService $schedules, private readonly SiteIntelReportAccess $access) {}
+    public function __construct(private readonly ReportScheduleService $schedules, private readonly SiteIntelReportAccess $access, private readonly ReportDeliveryStatus $deliveryStatus) {}
 
     public function index(Request $request): JsonResponse
     {
@@ -29,14 +28,13 @@ final class SiteIntelReportsController extends Controller
         $reports = SiteIntelScheduledReport::query()->forUser($userId)->whereIn('report_type', $types)->with('schedule')
             ->select(['id', 'schedule_id', 'user_id', 'target_url', 'report_type', 'scheduled_for', 'status', 'error_code', 'completed_at'])
             ->latest('id')->paginate(max(1, (int) config('site_intel_reports.list_page_size', 20)));
-        $link = BotLink::query()->where('user_id', $userId)->first();
 
         return $this->jsonData([
             'schedules' => $schedules->map($this->schedulePayload(...)),
             'reports' => ['data' => collect($reports->items())->map($this->reportPayload(...)),
                 'currentPage' => $reports->currentPage(), 'lastPage' => $reports->lastPage(), 'total' => $reports->total(), 'perPage' => $reports->perPage()],
             'availableReportTypes' => $types,
-            'botLinked' => app(BotAccess::class)->allows($link), 'botExportsEnabled' => $link?->exports_enabled ?? false,
+            ...$this->deliveryStatus->forUser($userId),
             'timezone' => (string) config('site_intel_reports.timezone', 'Europe/Moscow'),
             'maxTargets' => max(1, (int) config('site_intel_reports.max_targets', 3)),
             'maxSchedules' => max(1, (int) config('site_intel_reports.max_schedules', 5)),

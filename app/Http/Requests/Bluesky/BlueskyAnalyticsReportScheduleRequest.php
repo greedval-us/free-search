@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\Bluesky;
 
+use App\Models\BlueskyAnalyticsSchedule;
 use App\Support\PublicBlueskyAccount;
 use Closure;
 use Illuminate\Foundation\Http\FormRequest;
@@ -41,7 +42,7 @@ final class BlueskyAnalyticsReportScheduleRequest extends FormRequest
                     $fail(__('bluesky_analytics_reports.errors.invalid_accounts'));
                 }
             }],
-            'interval' => ['required', 'string', Rule::in(['1', '3', '7', 'month'])],
+            'interval' => ['required', 'string', Rule::in(BlueskyAnalyticsSchedule::INTERVALS)],
             'sendTime' => ['required', 'date_format:H:i'],
             'timezone' => ['required', 'timezone'],
             'sendToBot' => ['sometimes', 'boolean'],

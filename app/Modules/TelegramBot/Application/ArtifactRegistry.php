@@ -25,4 +25,9 @@ final class ArtifactRegistry
     {
         return $this->providers[$key] ?? throw new ArtifactUnavailable;
     }
+
+    public function has(string $key): bool
+    {
+        return isset($this->providers[$key]);
+    }
 }

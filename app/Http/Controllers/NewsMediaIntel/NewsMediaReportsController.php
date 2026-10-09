@@ -4,12 +4,11 @@ namespace App\Http\Controllers\NewsMediaIntel;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\NewsMediaIntel\NewsMediaReportScheduleRequest;
+use App\Integrations\TelegramBot\ReportDeliveryStatus;
 use App\Models\NewsMediaReportSchedule;
 use App\Models\NewsMediaScheduledReport;
 use App\Modules\NewsMediaIntel\Application\Reports\ReportConfig;
 use App\Modules\NewsMediaIntel\Application\Reports\ReportScheduleService;
-use App\Modules\TelegramBot\Application\BotAccess;
-use App\Modules\TelegramBot\Models\BotLink;
 use App\Support\Http\DocumentResponseHeaders;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -18,7 +17,7 @@ use Illuminate\View\View;
 
 final class NewsMediaReportsController extends Controller
 {
-    public function __construct(private readonly ReportScheduleService $schedules) {}
+    public function __construct(private readonly ReportScheduleService $schedules, private readonly ReportDeliveryStatus $deliveryStatus) {}
 
     public function index(Request $request, ReportConfig $config): JsonResponse
     {
@@ -27,14 +26,13 @@ final class NewsMediaReportsController extends Controller
         $reports = NewsMediaScheduledReport::query()->forUser($userId)->with('schedule')
             ->select(['id', 'schedule_id', 'user_id', 'query', 'scheduled_for', 'status', 'error_code', 'completed_at'])
             ->latest('id')->paginate(max(1, (int) config('news_media_reports.list_page_size', 20)));
-        $link = BotLink::query()->where('user_id', $userId)->first();
 
         return $this->jsonData([
             'schedules' => $schedules->map($this->schedulePayload(...)),
             'reports' => ['data' => collect($reports->items())->map($this->reportPayload(...)),
                 'currentPage' => $reports->currentPage(), 'lastPage' => $reports->lastPage(),
                 'total' => $reports->total(), 'perPage' => $reports->perPage()],
-            'botLinked' => app(BotAccess::class)->allows($link), 'botExportsEnabled' => $link?->exports_enabled ?? false,
+            ...$this->deliveryStatus->forUser($userId),
             'timezone' => (string) config('news_media_reports.timezone', 'Europe/Moscow'),
             'maxQueries' => $config->maxQueries(),
             'maxSchedules' => max(1, (int) config('news_media_reports.max_schedules', 5)),

@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Support\Reports\Scheduling\ReportInterval;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -12,7 +13,7 @@ class TelegramAnalyticsSchedule extends Model
 {
     use SoftDeletes;
 
-    public const INTERVALS = ['1', '3', '7', 'month'];
+    public const INTERVALS = ReportInterval::VALUES;
 
     protected $guarded = ['id'];
 

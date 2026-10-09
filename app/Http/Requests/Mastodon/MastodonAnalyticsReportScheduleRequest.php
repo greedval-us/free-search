@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\Mastodon;
 
+use App\Models\MastodonAnalyticsSchedule;
 use App\Support\PublicMastodonAccount;
 use Closure;
 use Illuminate\Foundation\Http\FormRequest;
@@ -41,7 +42,7 @@ final class MastodonAnalyticsReportScheduleRequest extends FormRequest
                     $fail(__('mastodon_analytics_reports.errors.invalid_accounts'));
                 }
             }],
-            'interval' => ['required', 'string', Rule::in(['1', '3', '7', 'month'])],
+            'interval' => ['required', 'string', Rule::in(MastodonAnalyticsSchedule::INTERVALS)],
             'sendTime' => ['required', 'date_format:H:i'],
             'timezone' => ['required', 'timezone'],
             'sendToBot' => ['sometimes', 'boolean'],

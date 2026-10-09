@@ -1,16 +1,15 @@
 <script setup lang="ts">
 import { Link } from '@inertiajs/vue3';
-import { computed, onMounted, shallowRef } from 'vue';
 import { useI18n } from '@/composables/useI18n';
 import {
-    getDeviceTimezone,
-    REPORT_TIMEZONES,
-    timezoneLabel,
-} from '@/lib/report-timezones';
+    REPORT_INTERVALS,
+    REPORT_NAME_MAX_LENGTH,
+} from '@/features/scheduled-reports/constants';
+import ReportTimezoneField from '@/features/scheduled-reports/ReportTimezoneField.vue';
 import { settings } from '@/routes/telegram-bot';
 import NewsFilters from '../components/NewsFilters.vue';
 import type { NewsOptions } from '../types';
-import type { ReportInterval, ReportScheduleForm } from './types';
+import type { ReportScheduleForm } from './types';
 
 defineProps<{
     busy: boolean;
@@ -25,43 +24,7 @@ defineProps<{
 }>();
 defineEmits<{ create: [] }>();
 const form = defineModel<ReportScheduleForm>({ required: true });
-const { t, locale } = useI18n();
-const intervals: readonly ReportInterval[] = ['1', '3', '7', 'month'];
-const deviceTimezone = shallowRef<string | null>(null);
-const timezoneDate = new Date();
-const timezoneGroups = computed(() =>
-    (['russia', 'world'] as const).map((group) => ({
-        group,
-        options: REPORT_TIMEZONES.filter((item) => item.group === group).map(
-            (item) => ({
-                value: item.value,
-                label: timezoneLabel(item.value, locale.value, t, timezoneDate),
-            })
-        ),
-    }))
-);
-const additionalTimezone = computed(() =>
-    form.value.timezone &&
-    !REPORT_TIMEZONES.some((item) => item.value === form.value.timezone)
-        ? {
-              value: form.value.timezone,
-              label: timezoneLabel(
-                  form.value.timezone,
-                  locale.value,
-                  t,
-                  timezoneDate
-              ),
-          }
-        : null
-);
-onMounted(() => {
-    deviceTimezone.value = getDeviceTimezone();
-});
-const useDeviceTimezone = () => {
-    if (deviceTimezone.value) {
-        form.value.timezone = deviceTimezone.value;
-    }
-};
+const { t } = useI18n();
 </script>
 
 <template>
@@ -81,7 +44,7 @@ const useDeviceTimezone = () => {
                 id="news-report-schedule-name"
                 v-model="form.name"
                 class="intel-input"
-                maxlength="100"
+                :maxlength="REPORT_NAME_MAX_LENGTH"
                 required
             />
         </div>
@@ -174,7 +137,7 @@ const useDeviceTimezone = () => {
                     class="intel-select"
                 >
                     <option
-                        v-for="interval in intervals"
+                        v-for="interval in REPORT_INTERVALS"
                         :key="interval"
                         :value="interval"
                     >
@@ -201,53 +164,12 @@ const useDeviceTimezone = () => {
         <p class="text-xs text-muted-foreground">
             {{ t('newsMediaReports.dataHelp') }}
         </p>
-        <div class="intel-field">
-            <label for="news-report-timezone" class="intel-label">{{
-                t('newsMediaReports.timezone')
-            }}</label>
-            <select
-                id="news-report-timezone"
-                v-model="form.timezone"
-                class="intel-select"
-                aria-describedby="news-report-timezone-help"
-                required
-            >
-                <option
-                    v-if="additionalTimezone"
-                    :value="additionalTimezone.value"
-                >
-                    {{ additionalTimezone.label }}
-                </option>
-                <optgroup
-                    v-for="group in timezoneGroups"
-                    :key="group.group"
-                    :label="t(`reportTimezones.groups.${group.group}`)"
-                >
-                    <option
-                        v-for="option in group.options"
-                        :key="option.value"
-                        :value="option.value"
-                    >
-                        {{ option.label }}
-                    </option>
-                </optgroup>
-            </select>
-            <p
-                id="news-report-timezone-help"
-                class="text-xs text-muted-foreground"
-            >
-                {{ t('reportTimezones.help') }}
-            </p>
-            <button
-                v-if="deviceTimezone"
-                type="button"
-                class="intel-button-secondary self-start"
-                :disabled="busy"
-                @click="useDeviceTimezone"
-            >
-                {{ t('reportTimezones.useDevice') }}
-            </button>
-        </div>
+        <ReportTimezoneField
+            v-model="form.timezone"
+            id="news-report-timezone"
+            label-key="newsMediaReports.timezone"
+            :disabled="busy"
+        />
         <div class="space-y-2 rounded-lg border border-border/70 p-3">
             <label class="flex min-h-9 items-center gap-2 text-sm">
                 <input

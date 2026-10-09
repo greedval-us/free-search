@@ -4,10 +4,9 @@ namespace App\Http\Controllers\YouTube;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\YouTube\YouTubeAnalyticsReportScheduleRequest;
+use App\Integrations\TelegramBot\ReportDeliveryStatus;
 use App\Models\YouTubeAnalyticsReport;
 use App\Models\YouTubeAnalyticsSchedule;
-use App\Modules\TelegramBot\Application\BotAccess;
-use App\Modules\TelegramBot\Models\BotLink;
 use App\Modules\YouTube\Analytics\Reports\AnalyticsReportScheduleService;
 use App\Support\Http\DocumentResponseHeaders;
 use Illuminate\Http\JsonResponse;
@@ -17,7 +16,7 @@ use Illuminate\View\View;
 
 final class YouTubeAnalyticsReportsController extends Controller
 {
-    public function __construct(private readonly AnalyticsReportScheduleService $schedules) {}
+    public function __construct(private readonly AnalyticsReportScheduleService $schedules, private readonly ReportDeliveryStatus $deliveryStatus) {}
 
     public function index(Request $request): JsonResponse
     {
@@ -26,7 +25,6 @@ final class YouTubeAnalyticsReportsController extends Controller
         $reports = YouTubeAnalyticsReport::query()->forUser($userId)->with('schedule')
             ->select(['id', 'schedule_id', 'user_id', 'channel_input', 'scheduled_for', 'date_from', 'date_to', 'status', 'error_code', 'completed_at'])
             ->latest('id')->paginate(max(1, (int) config('youtube_analytics_reports.list_page_size', 20)));
-        $link = BotLink::query()->where('user_id', $userId)->first();
 
         return $this->jsonData([
             'schedules' => $schedules->map($this->schedulePayload(...)),
@@ -35,8 +33,7 @@ final class YouTubeAnalyticsReportsController extends Controller
                 'currentPage' => $reports->currentPage(), 'lastPage' => $reports->lastPage(),
                 'total' => $reports->total(), 'perPage' => $reports->perPage(),
             ],
-            'botLinked' => app(BotAccess::class)->allows($link),
-            'botExportsEnabled' => $link?->exports_enabled ?? false,
+            ...$this->deliveryStatus->forUser($userId),
             'timezone' => (string) config('youtube_analytics_reports.timezone', 'Europe/Moscow'),
             'maxChannels' => max(1, (int) config('youtube_analytics_reports.max_channels', 3)),
             'maxSchedules' => max(1, (int) config('youtube_analytics_reports.max_schedules', 5)),
