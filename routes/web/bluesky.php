@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Bluesky\BlueskyAnalyticsController;
+use App\Http\Controllers\Bluesky\BlueskyAnalyticsReportsController;
 use App\Http\Controllers\Bluesky\BlueskyParserController;
 use App\Http\Controllers\Bluesky\BlueskySearchController;
 use App\Support\Http\RouteThrottle;
@@ -12,6 +13,15 @@ Route::inertia('bluesky', 'Bluesky')
 
 Route::prefix('bluesky')->name('bluesky.')->group(function (): void {
     Route::prefix('analytics')->name('analytics.')->group(function (): void {
+        Route::prefix('reports')->name('reports.')->middleware('feature.access')->group(function (): void {
+            Route::get('/', [BlueskyAnalyticsReportsController::class, 'index'])->middleware(RouteThrottle::PARSER_STATUS)->name('index');
+            Route::post('schedules', [BlueskyAnalyticsReportsController::class, 'store'])->middleware(RouteThrottle::PARSER_CONTROL)->name('store');
+            Route::patch('schedules/{schedule}', [BlueskyAnalyticsReportsController::class, 'change'])->whereNumber('schedule')->middleware(RouteThrottle::PARSER_CONTROL)->name('change');
+            Route::post('schedules/{schedule}/run', [BlueskyAnalyticsReportsController::class, 'runNow'])->whereNumber('schedule')->middleware(RouteThrottle::PARSER_START)->name('run');
+            Route::delete('schedules/{schedule}', [BlueskyAnalyticsReportsController::class, 'destroy'])->whereNumber('schedule')->middleware(RouteThrottle::PARSER_CONTROL)->name('destroy');
+            Route::get('{report}/view', [BlueskyAnalyticsReportsController::class, 'view'])->whereNumber('report')->middleware(RouteThrottle::ANALYTICS_REPORT)->name('view');
+            Route::get('{report}/download/{format}', [BlueskyAnalyticsReportsController::class, 'download'])->whereNumber('report')->whereIn('format', ['html', 'json'])->middleware(RouteThrottle::PARSER_DOWNLOAD)->name('download');
+        });
         Route::get('summary', [BlueskyAnalyticsController::class, 'summary'])
             ->middleware(['feature.access', RouteThrottle::FEDIVERSE_ANALYTICS_SUMMARY])
             ->name('summary');

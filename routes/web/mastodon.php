@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Mastodon\MastodonAnalyticsController;
+use App\Http\Controllers\Mastodon\MastodonAnalyticsReportsController;
 use App\Http\Controllers\Mastodon\MastodonParserController;
 use App\Http\Controllers\Mastodon\MastodonSearchController;
 use App\Support\Http\RouteThrottle;
@@ -12,6 +13,15 @@ Route::inertia('mastodon', 'Mastodon')
 
 Route::prefix('mastodon')->name('mastodon.')->group(function (): void {
     Route::prefix('analytics')->name('analytics.')->group(function (): void {
+        Route::prefix('reports')->name('reports.')->middleware('feature.access')->group(function (): void {
+            Route::get('/', [MastodonAnalyticsReportsController::class, 'index'])->middleware(RouteThrottle::PARSER_STATUS)->name('index');
+            Route::post('schedules', [MastodonAnalyticsReportsController::class, 'store'])->middleware(RouteThrottle::PARSER_CONTROL)->name('store');
+            Route::patch('schedules/{schedule}', [MastodonAnalyticsReportsController::class, 'change'])->whereNumber('schedule')->middleware(RouteThrottle::PARSER_CONTROL)->name('change');
+            Route::post('schedules/{schedule}/run', [MastodonAnalyticsReportsController::class, 'runNow'])->whereNumber('schedule')->middleware(RouteThrottle::PARSER_START)->name('run');
+            Route::delete('schedules/{schedule}', [MastodonAnalyticsReportsController::class, 'destroy'])->whereNumber('schedule')->middleware(RouteThrottle::PARSER_CONTROL)->name('destroy');
+            Route::get('{report}/view', [MastodonAnalyticsReportsController::class, 'view'])->whereNumber('report')->middleware(RouteThrottle::ANALYTICS_REPORT)->name('view');
+            Route::get('{report}/download/{format}', [MastodonAnalyticsReportsController::class, 'download'])->whereNumber('report')->whereIn('format', ['html', 'json'])->middleware(RouteThrottle::PARSER_DOWNLOAD)->name('download');
+        });
         Route::get('summary', [MastodonAnalyticsController::class, 'summary'])
             ->middleware(['feature.access', RouteThrottle::FEDIVERSE_ANALYTICS_SUMMARY])
             ->name('summary');

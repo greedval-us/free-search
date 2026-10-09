@@ -38,6 +38,10 @@ final readonly class BotAccess
                 && $this->featureAccess->inspect($link->user, 'telegram.analytics', false)->allowed,
             'youtube_analytics_report' => (! $automatic || $link->exports_enabled)
                 && $this->featureAccess->inspect($link->user, 'youtube.analytics', false)->allowed,
+            'bluesky_analytics_report' => (! $automatic || $link->exports_enabled)
+                && $this->featureAccess->inspect($link->user, 'bluesky.analytics', false)->allowed,
+            'mastodon_analytics_report' => (! $automatic || $link->exports_enabled)
+                && $this->featureAccess->inspect($link->user, 'mastodon.analytics', false)->allowed,
             'tracking' => ! $automatic,
             default => false,
         };

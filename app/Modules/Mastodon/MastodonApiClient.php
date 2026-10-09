@@ -81,9 +81,13 @@ final class MastodonApiClient implements MastodonGatewayInterface
     private function getPaginatedCollection(string $endpoint, array $query): array
     {
         $response = $this->request($endpoint, $query);
+        $items = $response->json();
+        if (! is_array($items) || ! array_is_list($items) || ! str_starts_with(ltrim($response->body()), '[')) {
+            throw new ExternalServiceRequestException('errors.api.mastodon.request_failed', 502, 'mastodon_invalid_response');
+        }
 
         return [
-            'items' => $response->json() ?? [],
+            'items' => $items,
             'pagination' => [
                 'nextMaxId' => $this->extractNextMaxId((string) $response->header('Link', '')),
             ],
@@ -147,24 +151,27 @@ final class MastodonApiClient implements MastodonGatewayInterface
         }
 
         foreach (explode(',', $linkHeader) as $part) {
-            if (! str_contains($part, 'rel="next"')) {
+            if (preg_match('/\brel\s*=\s*(?:"next"|next)(?:\s|;|$)/i', trim($part)) !== 1) {
                 continue;
             }
 
             if (! preg_match('/<([^>]+)>/', $part, $matches)) {
-                continue;
+                throw new ExternalServiceRequestException('errors.api.mastodon.request_failed', 502, 'mastodon_invalid_response');
             }
 
             $url = $matches[1] ?? '';
 
             if ($url === '') {
-                continue;
+                throw new ExternalServiceRequestException('errors.api.mastodon.request_failed', 502, 'mastodon_invalid_response');
             }
 
             parse_str((string) parse_url($url, PHP_URL_QUERY), $query);
-            $maxId = trim((string) ($query['max_id'] ?? ''));
+            $maxId = $query['max_id'] ?? null;
+            if (! is_string($maxId) || preg_match('/^[0-9]+$/D', $maxId) !== 1) {
+                throw new ExternalServiceRequestException('errors.api.mastodon.request_failed', 502, 'mastodon_invalid_response');
+            }
 
-            return $maxId !== '' ? $maxId : null;
+            return $maxId;
         }
 
         return null;
@@ -173,6 +180,7 @@ final class MastodonApiClient implements MastodonGatewayInterface
     private function http(): PendingRequest
     {
         return Http::baseUrl($this->config->baseUrl())
+            ->withoutRedirecting()
             ->acceptJson()
             ->withToken($this->config->apiToken())
             ->timeout($this->config->timeoutSeconds())

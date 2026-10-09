@@ -6,7 +6,8 @@
     "tabs": {
         "search": "Поиск",
         "analytics": "Аналитика",
-        "parser": "Сбор данных"
+        "parser": "Сбор данных",
+        "reports": "Отчёты"
     },
     "search": {
         "title": "Поиск Bluesky",

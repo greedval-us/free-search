@@ -9,7 +9,7 @@ Free Search — модульная OSINT-платформа на Laravel, Inerti
 ## Возможности
 
 - Telegram, YouTube, Bluesky и Mastodon: Search, Analytics и фоновые Parser Runs с историей, остановкой и экспортом JSON/Excel.
-- Telegram и YouTube: отчёты аналитики по расписанию каждые 1/3/7 дней или месяц, сохранённые HTML/JSON и доставка в Telegram-бота.
+- Telegram, YouTube, Bluesky и Mastodon: отчёты аналитики по расписанию каждые 1/3/7 дней или месяц, сохранённые HTML/JSON и доставка в Telegram-бота.
 - Site Intel: HTTP/DNS/SSL-проверки, WHOIS-based Domain Lite, агрегированная аналитика и SEO Audit с HTML-отчётами.
 - News / Media Intel: агрегирование NewsAPI, Google News RSS и Bing RSS, дедупликация, timeline, темы и словарная sentiment-оценка.
 - Shifr: хеширование, преобразования текста, извлечение IOC, просмотр JWT и классические шифры.

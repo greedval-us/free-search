@@ -118,12 +118,14 @@ return [
         'bluesky' => [
             'tabs' => [
                 'analytics' => 'bluesky.analytics',
+                'reports' => 'bluesky.analytics',
                 'parser' => 'bluesky.parser',
             ],
         ],
         'mastodon' => [
             'tabs' => [
                 'analytics' => 'mastodon.analytics',
+                'reports' => 'mastodon.analytics',
                 'parser' => 'mastodon.parser',
             ],
         ],
@@ -154,6 +156,13 @@ return [
     'protected_routes' => [
         'bluesky.analytics.summary' => ['resource' => 'bluesky.analytics', 'counts' => true],
         'bluesky.analytics.report' => ['resource' => 'bluesky.analytics', 'counts' => false],
+        'bluesky.analytics.reports.index' => ['resource' => 'bluesky.analytics', 'counts' => false],
+        'bluesky.analytics.reports.store' => ['resource' => 'bluesky.analytics', 'counts' => false],
+        'bluesky.analytics.reports.change' => ['resource' => 'bluesky.analytics', 'counts' => false],
+        'bluesky.analytics.reports.run' => ['resource' => 'bluesky.analytics', 'counts' => false],
+        'bluesky.analytics.reports.destroy' => ['resource' => 'bluesky.analytics', 'counts' => false],
+        'bluesky.analytics.reports.view' => ['resource' => 'bluesky.analytics', 'counts' => false],
+        'bluesky.analytics.reports.download' => ['resource' => 'bluesky.analytics', 'counts' => false],
         'bluesky.parser.start' => ['resource' => 'bluesky.parser', 'counts' => true, 'consume_in_service' => true],
         'bluesky.parser.status' => ['resource' => 'bluesky.parser', 'counts' => false],
         'bluesky.parser.stop' => ['resource' => 'bluesky.parser', 'counts' => false],
@@ -161,6 +170,13 @@ return [
         'bluesky.parser.download-json' => ['resource' => 'bluesky.parser', 'counts' => false],
         'mastodon.analytics.summary' => ['resource' => 'mastodon.analytics', 'counts' => true],
         'mastodon.analytics.report' => ['resource' => 'mastodon.analytics', 'counts' => false],
+        'mastodon.analytics.reports.index' => ['resource' => 'mastodon.analytics', 'counts' => false],
+        'mastodon.analytics.reports.store' => ['resource' => 'mastodon.analytics', 'counts' => false],
+        'mastodon.analytics.reports.change' => ['resource' => 'mastodon.analytics', 'counts' => false],
+        'mastodon.analytics.reports.run' => ['resource' => 'mastodon.analytics', 'counts' => false],
+        'mastodon.analytics.reports.destroy' => ['resource' => 'mastodon.analytics', 'counts' => false],
+        'mastodon.analytics.reports.view' => ['resource' => 'mastodon.analytics', 'counts' => false],
+        'mastodon.analytics.reports.download' => ['resource' => 'mastodon.analytics', 'counts' => false],
         'mastodon.parser.start' => ['resource' => 'mastodon.parser', 'counts' => true, 'consume_in_service' => true],
         'mastodon.parser.status' => ['resource' => 'mastodon.parser', 'counts' => false],
         'mastodon.parser.stop' => ['resource' => 'mastodon.parser', 'counts' => false],

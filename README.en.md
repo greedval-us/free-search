@@ -1,6 +1,6 @@
 # Free Search
 
-Telegram and YouTube support scheduled analytics reports every 1, 3 or 7 days, or monthly, with saved HTML/JSON history and delivery through the Telegram bot.
+Telegram, YouTube, Bluesky and Mastodon support scheduled analytics reports every 1, 3 or 7 days, or monthly, with saved HTML/JSON history and delivery through the Telegram bot.
 
 Free Search is a modular OSINT platform built with Laravel, Inertia.js, and Vue for searching, collecting, normalizing, and analysing open-source data.
 

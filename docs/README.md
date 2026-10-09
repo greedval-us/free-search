@@ -32,6 +32,7 @@
 - [Отчёты аналитики YouTube по расписанию](modules/youtube-analytics-reports.md)
 - [Bluesky](modules/bluesky.md)
 - [Mastodon](modules/mastodon.md)
+- [Отчёты Bluesky и Mastodon по расписанию](modules/social-analytics-reports.md)
 - [Site Intel](modules/site-intel.md)
 - [News / Media Intel](modules/news-media-intel.md)
 - [Shifr](modules/shifr.md)

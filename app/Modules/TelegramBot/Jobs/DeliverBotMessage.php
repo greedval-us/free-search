@@ -2,6 +2,8 @@
 
 namespace App\Modules\TelegramBot\Jobs;
 
+use App\Models\BlueskyAnalyticsReport;
+use App\Models\MastodonAnalyticsReport;
 use App\Models\TelegramAnalyticsReport;
 use App\Models\YouTubeAnalyticsReport;
 use App\Modules\TelegramBot\Application\ArtifactRegistry;
@@ -44,7 +46,7 @@ final class DeliverBotMessage extends BotJob
         }
 
         try {
-            if (in_array($delivery->kind, ['parser', 'tracking', 'analytics_report', 'youtube_analytics_report'], true)) {
+            if (in_array($delivery->kind, ['parser', 'tracking', 'analytics_report', 'youtube_analytics_report', 'bluesky_analytics_report', 'mastodon_analytics_report'], true)) {
                 $document = $artifacts->get($delivery->kind)->document($link->user_id, (int) $delivery->reference,
                     (string) ($delivery->payload['format'] ?? ''), $link->locale);
                 try {
@@ -117,6 +119,8 @@ final class DeliverBotMessage extends BotJob
         $model = match ($delivery->kind) {
             'analytics_report' => TelegramAnalyticsReport::class,
             'youtube_analytics_report' => YouTubeAnalyticsReport::class,
+            'bluesky_analytics_report' => BlueskyAnalyticsReport::class,
+            'mastodon_analytics_report' => MastodonAnalyticsReport::class,
             default => null,
         };
         if ($model === null) {

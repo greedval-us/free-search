@@ -4,6 +4,7 @@ namespace App\Modules\Mastodon\Providers;
 
 use App\Modules\Mastodon\Analytics\Contracts\MastodonAnalyticsApplicationServiceInterface;
 use App\Modules\Mastodon\Analytics\MastodonAnalyticsApplicationService;
+use App\Modules\Mastodon\Analytics\Reports\Console\MaintainAnalyticsReports;
 use App\Modules\Mastodon\Core\Contracts\MastodonGatewayInterface;
 use App\Modules\Mastodon\MastodonApiClient;
 use App\Modules\Mastodon\Parser\Contracts\MastodonParserApplicationServiceInterface;
@@ -18,9 +19,16 @@ use App\Modules\Mastodon\Support\MastodonModuleConfig;
 use App\Modules\ParserSupport\Contracts\ParserRunBackgroundProcessorInterface;
 use App\Modules\ParserSupport\JsonRunStore;
 use App\Support\Providers\BindingsServiceProvider;
+use Illuminate\Support\Facades\Schedule;
 
 final class MastodonServiceProvider extends BindingsServiceProvider
 {
+    public function boot(): void
+    {
+        $this->commands([MaintainAnalyticsReports::class]);
+        Schedule::command('mastodon:analytics-reports-maintain')->everyMinute()->withoutOverlapping();
+    }
+
     public function register(): void
     {
         parent::register();

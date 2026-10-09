@@ -1,4 +1,4 @@
-export type BlueskyTabValue = 'search' | 'analytics';
+export type BlueskyTabValue = 'search' | 'analytics' | 'parser' | 'reports';
 
 export type BlueskyParserStage =
     | 'idle'

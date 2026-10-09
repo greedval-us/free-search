@@ -10,6 +10,8 @@ Search/Analytics/Parser Application Services используют Actions и `Bl
 
 Frontend: page, tabs, cards и composables в `resources/js/pages/bluesky`.
 
+Вкладка **Отчёты** добавляет расписания каждые 1/3/7 дней или месяц, сохранённую историю HTML/JSON и доставку в Telegram-бота. Используются существующий построитель аналитики и HTML-шаблон; фоновый сбор читает публичный AppView без credentials. [Настройка расписаний и очередей](social-analytics-reports.md).
+
 ## Routes и access
 
 Основные groups: `/bluesky/search`, `/posts/{likes,reposts,thread}`, `/actors/{feed,followers,follows}`, `/analytics/*`, `/parser/*`. Page, Analytics и Parser защищены Feature Access; relation/search endpoints имеют throttle и работают внутри authenticated+verified group.

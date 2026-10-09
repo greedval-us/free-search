@@ -11,7 +11,21 @@ if (file_exists($maintenance = __DIR__.'/../storage/framework/maintenance.php'))
 }
 
 // Register the Composer autoloader...
-require __DIR__.'/../vendor/autoload.php';
+if (PHP_OS_FAMILY === 'Windows') {
+    // MadelineProto's Composer polyfill prints a platform warning before HTTP headers.
+    // Keep dependency bootstrap output in the server log instead of corrupting JSON responses.
+    ob_start();
+    try {
+        require __DIR__.'/../vendor/autoload.php';
+    } finally {
+        $autoloadOutput = ob_get_clean();
+        if ($autoloadOutput !== false && $autoloadOutput !== '') {
+            error_log(trim($autoloadOutput));
+        }
+    }
+} else {
+    require __DIR__.'/../vendor/autoload.php';
+}
 
 // Bootstrap Laravel and handle the request...
 /** @var Application $app */

@@ -1,8 +1,10 @@
 import auth from './auth.json';
 import bluesky from './bluesky.json';
+import blueskyReports from './blueskyReports.json';
 import common from './common.json';
 import dashboard from './dashboard.json';
 import mastodon from './mastodon.json';
+import mastodonReports from './mastodonReports.json';
 import navigation from './navigation.json';
 import newsMediaIntel from './newsMediaIntel.json';
 import parser from './parser.json';
@@ -26,9 +28,11 @@ import youtubeReports from './youtubeReports.json';
 const en = {
     auth,
     bluesky,
+    blueskyReports,
     common,
     dashboard,
     mastodon,
+    mastodonReports,
     navigation,
     newsMediaIntel,
     parser,

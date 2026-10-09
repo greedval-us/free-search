@@ -3,6 +3,7 @@
 namespace App\Modules\Mastodon\Analytics;
 
 use App\Modules\Mastodon\DTO\Result\MastodonAnalyticsResultDTO;
+use Carbon\CarbonImmutable;
 use Illuminate\Support\Collection;
 
 final class MastodonAnalyticsReportBuilder
@@ -22,6 +23,7 @@ final class MastodonAnalyticsReportBuilder
         array $statuses,
         int $pagesRequested,
         int $pagesLoaded,
+        string $timezone = 'UTC',
     ): MastodonAnalyticsResultDTO {
         $statusCollection = collect($statuses);
         $topPosts = $statusCollection
@@ -68,7 +70,7 @@ final class MastodonAnalyticsReportBuilder
                 'totalReblogs' => $statusCollection->sum('reblogsCount'),
                 'totalFavourites' => $statusCollection->sum('favouritesCount'),
             ],
-            timeline: $this->buildTimeline($statusCollection),
+            timeline: $this->buildTimeline($statusCollection, $timezone),
             topDomains: $this->countScalarValues($statusCollection->pluck('domains')->flatten(1), 'domain'),
             topTags: $this->countScalarValues($statusCollection->pluck('tags')->flatten(1), 'tag'),
             topAccounts: $this->buildTopAccounts($statusCollection),
@@ -82,14 +84,14 @@ final class MastodonAnalyticsReportBuilder
      * @param  Collection<int, array<string, mixed>>  $statuses
      * @return array<int, array<string, mixed>>
      */
-    private function buildTimeline(Collection $statuses): array
+    private function buildTimeline(Collection $statuses, string $timezone): array
     {
         return $statuses
-            ->groupBy(function (array $status): string {
+            ->groupBy(function (array $status) use ($timezone): string {
                 $createdAt = (string) ($status['createdAt'] ?? '');
                 $timestamp = strtotime($createdAt);
 
-                return $timestamp === false ? 'unknown' : gmdate('Y-m-d', $timestamp);
+                return $timestamp === false ? 'unknown' : CarbonImmutable::parse($createdAt)->setTimezone($timezone)->toDateString();
             })
             ->map(function (Collection $items, string $day): array {
                 return [
