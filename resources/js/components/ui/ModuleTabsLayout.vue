@@ -2,6 +2,7 @@
 import { router, usePage } from '@inertiajs/vue3';
 import type { Component } from 'vue';
 import { useI18n } from '@/composables/useI18n';
+import { blockedTabFeature } from '@/lib/navigation/module-tab-access';
 import { edit as billing } from '@/routes/billing';
 import IntelModuleLayout from './IntelModuleLayout.vue';
 
@@ -11,6 +12,7 @@ export type ModuleTabDefinition = {
     icon: Component;
     component?: Component;
     accessKey?: string;
+    accessKeys?: readonly string[];
 };
 
 const props = defineProps<{
@@ -27,12 +29,14 @@ const page = usePage();
 
 const selectTab = (tab: string): void => {
     const definition = props.tabs.find((item) => item.key === tab);
-    const accessKey = definition?.accessKey ?? tab;
-    const access = page.props.auth?.access?.features?.[accessKey];
+    const blockedFeature = blockedTabFeature(
+        definition ?? { key: tab },
+        page.props.auth?.access?.features
+    );
 
-    if (access && access.limit <= 0) {
+    if (blockedFeature !== null) {
         router.visit(
-            billing({ query: { feature: accessKey, reason: 'plan' } })
+            billing({ query: { feature: blockedFeature, reason: 'plan' } })
         );
 
         return;

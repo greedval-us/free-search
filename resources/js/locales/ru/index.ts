@@ -14,6 +14,7 @@ import reportTimezones from './reportTimezones.json';
 import settings from './settings.json';
 import shifr from './shifr.json';
 import siteIntel from './siteIntel.json';
+import siteIntelReports from './siteIntelReports.json';
 import systemNotifications from './systemNotifications.json';
 import telegram from './telegram.json';
 import telegramBot from './telegramBot.json';
@@ -42,6 +43,7 @@ const ru = {
     settings,
     shifr,
     siteIntel,
+    siteIntelReports,
     systemNotifications,
     telegram,
     telegramBot,

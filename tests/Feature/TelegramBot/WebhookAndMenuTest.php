@@ -95,7 +95,7 @@ final class WebhookAndMenuTest extends TelegramBotTestCase
             $screen = app(BotRouter::class)->dispatch('menu', $context);
             $files = collect($screen->buttons)->where('type', 'action')->where('value', 'files')->values();
 
-            $this->assertCount(6, $files);
+            $this->assertCount(7, $files);
             $this->assertSame(['k' => 'parser'], $files[0]->parameters);
             $this->assertSame(__('telegram_bot.menu.exports', [], $locale), $files[0]->label);
             $this->assertSame(['k' => 'tracking'], $files[1]->parameters);
@@ -108,6 +108,8 @@ final class WebhookAndMenuTest extends TelegramBotTestCase
             $this->assertSame(__('telegram_bot.menu.bluesky_analytics_reports', [], $locale), $files[4]->label);
             $this->assertSame(['k' => 'mastodon_analytics_report'], $files[5]->parameters);
             $this->assertSame(__('telegram_bot.menu.mastodon_analytics_reports', [], $locale), $files[5]->label);
+            $this->assertSame(['k' => 'site_intel_report'], $files[6]->parameters);
+            $this->assertSame(__('telegram_bot.menu.site_intel_reports', [], $locale), $files[6]->label);
         }
     }
 

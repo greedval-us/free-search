@@ -260,6 +260,7 @@
 @endphp
 
 <main class="container">
+    @include('reports.site-intel.partials.schedule')
     <section class="card">
         <header class="header">
             <h1>{{ $tr['title'] }}</h1>

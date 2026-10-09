@@ -8,6 +8,7 @@ type ModuleTabInput = {
     labelKey: string;
     component: Component;
     accessKey?: string;
+    accessKeys?: readonly string[];
 };
 
 export type StandardModuleTabDefinition = {
@@ -16,6 +17,7 @@ export type StandardModuleTabDefinition = {
     icon: Component;
     component: Component;
     accessKey?: string;
+    accessKeys?: readonly string[];
 };
 
 export const createModuleTabs = (

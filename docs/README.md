@@ -34,6 +34,7 @@
 - [Mastodon](modules/mastodon.md)
 - [Отчёты Bluesky и Mastodon по расписанию](modules/social-analytics-reports.md)
 - [Site Intel](modules/site-intel.md)
+- [Аналитика сайтов и SEO-аудит по расписанию](modules/site-intel-reports.md)
 - [News / Media Intel](modules/news-media-intel.md)
 - [Shifr](modules/shifr.md)
 - [Dashboard, Wiki и Export](modules/platform-services.md)

@@ -44,6 +44,24 @@ return [
             'after_commit' => false,
         ],
 
+        'site-intel-reports-database' => [
+            'driver' => 'database',
+            'connection' => env('DB_QUEUE_CONNECTION'),
+            'table' => env('DB_QUEUE_TABLE', 'jobs'),
+            'queue' => env('SITE_INTEL_REPORTS_QUEUE', 'site-intel-reports'),
+            'retry_after' => (int) env('SITE_INTEL_REPORTS_RETRY_AFTER', 960),
+            'after_commit' => false,
+        ],
+
+        'site-intel-reports-redis' => [
+            'driver' => 'redis',
+            'connection' => env('REDIS_QUEUE_CONNECTION', 'default'),
+            'queue' => env('SITE_INTEL_REPORTS_QUEUE', 'site-intel-reports'),
+            'retry_after' => (int) env('SITE_INTEL_REPORTS_RETRY_AFTER', 960),
+            'block_for' => null,
+            'after_commit' => false,
+        ],
+
         'beanstalkd' => [
             'driver' => 'beanstalkd',
             'host' => env('BEANSTALKD_QUEUE_HOST', 'localhost'),

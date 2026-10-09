@@ -4,7 +4,8 @@
         "siteHealth": "Site Health",
         "domainLite": "Domain Lite",
         "analytics": "Analytics",
-        "seoAudit": "SEO Audit"
+        "seoAudit": "SEO Audit",
+        "reports": "Reports"
     },
     "common": {
         "checkedAt": "Checked at",

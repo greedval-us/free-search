@@ -5,6 +5,7 @@ namespace App\Modules\TelegramBot\Application;
 use App\Modules\TelegramBot\Models\BotLink;
 use App\Modules\TelegramBot\Support\BotConfig;
 use App\Services\Access\Contracts\FeatureAccessServiceInterface;
+use App\Services\Access\SiteIntelReportAccess;
 
 final readonly class BotAccess
 {
@@ -42,6 +43,8 @@ final readonly class BotAccess
                 && $this->featureAccess->inspect($link->user, 'bluesky.analytics', false)->allowed,
             'mastodon_analytics_report' => (! $automatic || $link->exports_enabled)
                 && $this->featureAccess->inspect($link->user, 'mastodon.analytics', false)->allowed,
+            'site_intel_report' => (! $automatic || $link->exports_enabled)
+                && app(SiteIntelReportAccess::class)->availableTypes($link->user) !== [],
             'tracking' => ! $automatic,
             default => false,
         };

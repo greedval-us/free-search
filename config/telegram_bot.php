@@ -3,6 +3,7 @@
 use App\Integrations\TelegramBot\AnalyticsReportArtifactProvider;
 use App\Integrations\TelegramBot\BlueskyAnalyticsReportArtifactProvider;
 use App\Integrations\TelegramBot\MastodonAnalyticsReportArtifactProvider;
+use App\Integrations\TelegramBot\SiteIntelReportArtifactProvider;
 use App\Integrations\TelegramBot\TrackingArtifactProvider;
 use App\Integrations\TelegramBot\YouTubeAnalyticsReportArtifactProvider;
 use App\Modules\Bluesky\Parser\Contracts\BlueskyParserApplicationServiceInterface;
@@ -49,7 +50,7 @@ return [
     'cleanup_time' => '04:30',
     'http_limits' => ['status' => 30, 'link' => 6, 'preferences' => 10],
     'actions' => [MenuAction::class, FilesAction::class, SendFileAction::class],
-    'artifact_providers' => [ParserArtifactProvider::class, TrackingArtifactProvider::class, AnalyticsReportArtifactProvider::class, YouTubeAnalyticsReportArtifactProvider::class, BlueskyAnalyticsReportArtifactProvider::class, MastodonAnalyticsReportArtifactProvider::class],
+    'artifact_providers' => [ParserArtifactProvider::class, TrackingArtifactProvider::class, AnalyticsReportArtifactProvider::class, YouTubeAnalyticsReportArtifactProvider::class, BlueskyAnalyticsReportArtifactProvider::class, MastodonAnalyticsReportArtifactProvider::class, SiteIntelReportArtifactProvider::class],
     'menus' => [
         'main' => [
             ['label' => 'menu.exports', 'action' => 'files', 'parameters' => ['k' => 'parser'], 'linked' => true],
@@ -58,6 +59,7 @@ return [
             ['label' => 'menu.youtube_analytics_reports', 'action' => 'files', 'parameters' => ['k' => 'youtube_analytics_report'], 'linked' => true],
             ['label' => 'menu.bluesky_analytics_reports', 'action' => 'files', 'parameters' => ['k' => 'bluesky_analytics_report'], 'linked' => true],
             ['label' => 'menu.mastodon_analytics_reports', 'action' => 'files', 'parameters' => ['k' => 'mastodon_analytics_report'], 'linked' => true],
+            ['label' => 'menu.site_intel_reports', 'action' => 'files', 'parameters' => ['k' => 'site_intel_report'], 'linked' => true],
             ['label' => 'menu.settings', 'path' => '/settings/telegram'],
             ['label' => 'menu.help', 'action' => 'menu', 'parameters' => ['p' => 'help']],
             ['label' => 'menu.webapp', 'path' => '/dashboard', 'webapp' => true],

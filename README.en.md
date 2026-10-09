@@ -11,7 +11,7 @@ Free Search is a modular OSINT platform built with Laravel, Inertia.js, and Vue 
 ## Current capabilities
 
 - Telegram, YouTube, Bluesky, and Mastodon: Search, Analytics, background Parser Runs, history, stop, JSON and Excel exports.
-- Site Intel: HTTP/DNS/SSL checks, WHOIS-based Domain Lite, analytics, SEO Audit, and HTML reports.
+- Site Intel: HTTP/DNS/SSL checks, WHOIS-based Domain Lite, analytics, and SEO Audit. [Scheduled reports](docs/modules/site-intel-reports.md) for both types run every 1, 3 or 7 days, or monthly, with saved HTML/JSON snapshots and Telegram bot delivery. Each snapshot describes the site at check time, rather than traffic statistics for the preceding days.
 - News / Media Intel: NewsAPI, Google News RSS, and Bing RSS aggregation with deduplication and lightweight heuristic analysis.
 - Shifr: hashing, text transforms, IOC extraction, JWT inspection, and classic ciphers.
 - Dashboard with activity history, summaries, pinned modules, and saved queries.
