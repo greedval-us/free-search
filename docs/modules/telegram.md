@@ -10,6 +10,8 @@ Telegram module работает через MadelineProto user session. Search �
 
 Frontend: `resources/js/pages/Telegram.vue`, `pages/telegram/tabs/*`, composables `useTelegramSearch`, `useTelegramAnalytics`, `useTelegramParser`.
 
+Вкладка **Отчёты** сохраняет расписания аналитики по нескольким группам: каждый день, каждые 3/7 дней или ежемесячно. История HTML/JSON доступна на сайте; готовые отчёты могут автоматически отправляться привязанному боту. Настройка очереди, периоды и права описаны в [отчётах по расписанию](telegram-analytics-reports.md).
+
 ## Route groups
 
 - `/telegram/search/messages`, `/search/comments`, `/media/{chatUsername}/{messageId}`;

@@ -2,7 +2,9 @@
 
 namespace App\Providers;
 
+use App\Integrations\TelegramBot\AnalyticsReportBotListener;
 use App\Models\ParserRun;
+use App\Modules\Telegram\Analytics\Reports\Events\AnalyticsReportCompleted;
 use App\Modules\TelegramBot\Application\ArtifactRegistry;
 use App\Modules\TelegramBot\Application\BotRouter;
 use App\Modules\TelegramBot\Console\BroadcastBotMessage;
@@ -41,6 +43,7 @@ final class TelegramBotServiceProvider extends ServiceProvider
         $this->commands([ConfigureBotWebhook::class, BroadcastBotMessage::class, MaintainBotDeliveries::class]);
 
         Event::listen(NotificationSent::class, [BotEventSubscriber::class, 'notificationSent']);
+        Event::listen(AnalyticsReportCompleted::class, AnalyticsReportBotListener::class);
         ParserRun::saved(fn (ParserRun $run) => $this->app->make(BotEventSubscriber::class)->parserSaved($run));
 
         RateLimiter::for('telegram-bot', fn (BotJob $job) => [

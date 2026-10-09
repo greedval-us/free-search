@@ -1,5 +1,6 @@
 <?php
 
+use App\Integrations\TelegramBot\AnalyticsReportArtifactProvider;
 use App\Integrations\TelegramBot\TrackingArtifactProvider;
 use App\Modules\Bluesky\Parser\Contracts\BlueskyParserApplicationServiceInterface;
 use App\Modules\Bluesky\Parser\Contracts\BlueskyParserExportBuilderInterface;
@@ -45,11 +46,12 @@ return [
     'cleanup_time' => '04:30',
     'http_limits' => ['status' => 30, 'link' => 6, 'preferences' => 10],
     'actions' => [MenuAction::class, FilesAction::class, SendFileAction::class],
-    'artifact_providers' => [ParserArtifactProvider::class, TrackingArtifactProvider::class],
+    'artifact_providers' => [ParserArtifactProvider::class, TrackingArtifactProvider::class, AnalyticsReportArtifactProvider::class],
     'menus' => [
         'main' => [
             ['label' => 'menu.exports', 'action' => 'files', 'parameters' => ['k' => 'parser'], 'linked' => true],
             ['label' => 'menu.tracking', 'action' => 'files', 'parameters' => ['k' => 'tracking'], 'linked' => true],
+            ['label' => 'menu.analytics_reports', 'action' => 'files', 'parameters' => ['k' => 'analytics_report'], 'linked' => true],
             ['label' => 'menu.settings', 'path' => '/settings/telegram'],
             ['label' => 'menu.help', 'action' => 'menu', 'parameters' => ['p' => 'help']],
             ['label' => 'menu.webapp', 'path' => '/dashboard', 'webapp' => true],

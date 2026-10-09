@@ -6,6 +6,7 @@ use App\Modules\ParserSupport\Contracts\ParserRunBackgroundProcessorInterface;
 use App\Modules\ParserSupport\JsonRunStore;
 use App\Modules\Telegram\Analytics\Contracts\TelegramAnalyticsApplicationServiceInterface;
 use App\Modules\Telegram\Analytics\Contracts\TelegramAnalyticsRangeResolverInterface;
+use App\Modules\Telegram\Analytics\Reports\Console\MaintainAnalyticsReports;
 use App\Modules\Telegram\Analytics\TelegramAnalyticsApplicationService;
 use App\Modules\Telegram\Analytics\TelegramAnalyticsRangeResolver;
 use App\Modules\Telegram\Core\Contracts\TelegramGatewayInterface;
@@ -29,8 +30,9 @@ final class TelegramServiceProvider extends BindingsServiceProvider
 {
     public function boot(): void
     {
-        $this->commands([MaintainTracking::class]);
+        $this->commands([MaintainTracking::class, MaintainAnalyticsReports::class]);
         Schedule::command('telegram:tracking-maintain')->everyMinute()->withoutOverlapping();
+        Schedule::command('telegram:analytics-reports-maintain')->everyMinute()->withoutOverlapping();
     }
 
     public function register(): void

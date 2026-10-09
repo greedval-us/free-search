@@ -41,7 +41,8 @@ class TelegramAnalyticsOpinionLeadersBuilder
         int $replies,
         int $reactions,
         int $gifts,
-        array $weights
+        array $weights,
+        ?string $timezone = null
     ): void {
         $authorKey = $context['authorKey'] ?? null;
         if (! is_string($authorKey) || $authorKey === '') {
@@ -74,7 +75,7 @@ class TelegramAnalyticsOpinionLeadersBuilder
         $authorStats[$authorKey]['interactions'] += $interactions;
         $authorStats[$authorKey]['score'] += $leaderScore;
 
-        $day = Carbon::createFromTimestamp($timestamp, $this->config->timezone());
+        $day = Carbon::createFromTimestamp($timestamp, $timezone ?? $this->config->timezone());
         $dayKey = $day->format('Y-m-d');
 
         if (! isset($authorDailyStats[$authorKey][$dayKey])) {

@@ -4,10 +4,11 @@ namespace App\Modules\TelegramBot\Application;
 
 use App\Modules\TelegramBot\Models\BotLink;
 use App\Modules\TelegramBot\Support\BotConfig;
+use App\Services\Access\Contracts\FeatureAccessServiceInterface;
 
 final readonly class BotAccess
 {
-    public function __construct(private BotConfig $config) {}
+    public function __construct(private BotConfig $config, private FeatureAccessServiceInterface $featureAccess) {}
 
     public function allows(?BotLink $link): bool
     {
@@ -33,6 +34,8 @@ final readonly class BotAccess
             'notification' => $link->notifications_enabled,
             'broadcast' => $link->broadcasts_enabled,
             'parser' => ! $automatic || $link->exports_enabled,
+            'analytics_report' => (! $automatic || $link->exports_enabled)
+                && $this->featureAccess->inspect($link->user, 'telegram.analytics', false)->allowed,
             'tracking' => ! $automatic,
             default => false,
         };

@@ -39,7 +39,7 @@ class TelegramAnalyticsService
         usort($items, static fn (array $left, array $right): int => ($left['date'] ?? 0) <=> ($right['date'] ?? 0));
 
         $timeline = $this->buildTimeline($dateFrom, $dateTo, $groupBy);
-        $summary = $this->summaryBuilder->build($items, $timeline, $chatUsername, $weights, $groupBy);
+        $summary = $this->summaryBuilder->build($items, $timeline, $chatUsername, $weights, $groupBy, $dateFrom->getTimezone()->getName());
         $groupInfo = $this->buildGroupInfo($chatUsername);
 
         return [
@@ -48,7 +48,7 @@ class TelegramAnalyticsService
                 'dateFrom' => $dateFrom->toIso8601String(),
                 'dateTo' => $dateTo->toIso8601String(),
                 'label' => $dateFrom->format('d.m.Y').' - '.$dateTo->format('d.m.Y'),
-                'periodDays' => max(1, min($this->periodMaxDays(), $dateFrom->diffInDays($dateTo) + 1)),
+                'periodDays' => max(1, (int) $dateFrom->copy()->startOfDay()->diffInDays($dateTo->copy()->startOfDay()) + 1),
                 'groupBy' => $groupBy,
                 'keyword' => $keyword,
             ],
@@ -168,11 +168,6 @@ class TelegramAnalyticsService
     private function groupByHourThresholdHours(): int
     {
         return $this->config->analyticsGroupByHourThresholdHours();
-    }
-
-    private function periodMaxDays(): int
-    {
-        return $this->config->analyticsPeriodMaxDays();
     }
 
     /**

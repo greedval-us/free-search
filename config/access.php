@@ -136,6 +136,7 @@ return [
         'telegram' => [
             'tabs' => [
                 'analytics' => 'telegram.analytics',
+                'reports' => 'telegram.analytics',
                 'parser' => 'telegram.parser',
             ],
         ],
@@ -170,6 +171,13 @@ return [
         'site-intel.seo-report' => ['resource' => 'site-intel.seo-audit', 'counts' => false],
         'telegram.analytics.summary' => ['resource' => 'telegram.analytics', 'counts' => true],
         'telegram.analytics.report' => ['resource' => 'telegram.analytics', 'counts' => false],
+        'telegram.analytics.reports.index' => ['resource' => 'telegram.analytics', 'counts' => false],
+        'telegram.analytics.reports.store' => ['resource' => 'telegram.analytics', 'counts' => false],
+        'telegram.analytics.reports.change' => ['resource' => 'telegram.analytics', 'counts' => false],
+        'telegram.analytics.reports.run' => ['resource' => 'telegram.analytics', 'counts' => false],
+        'telegram.analytics.reports.destroy' => ['resource' => 'telegram.analytics', 'counts' => false],
+        'telegram.analytics.reports.view' => ['resource' => 'telegram.analytics', 'counts' => false],
+        'telegram.analytics.reports.download' => ['resource' => 'telegram.analytics', 'counts' => false],
         'youtube.analytics.summary' => ['resource' => 'youtube.analytics', 'counts' => true],
         'youtube.analytics.report' => ['resource' => 'youtube.analytics', 'counts' => false],
 

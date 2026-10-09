@@ -2,6 +2,7 @@ import type { Component } from 'vue';
 import { createModuleTabs } from '@/lib/navigation/create-module-tabs';
 import TelegramAnalyticsTab from './tabs/TelegramAnalyticsTab.vue';
 import TelegramParserTab from './tabs/TelegramParserTab.vue';
+import TelegramReportsTab from './tabs/TelegramReportsTab.vue';
 import TelegramSearchTab from './tabs/TelegramSearchTab.vue';
 import TelegramTrackingTab from './tabs/TelegramTrackingTab.vue';
 import type { TelegramTabValue } from './types';
@@ -37,6 +38,12 @@ export const TELEGRAM_TABS: readonly TelegramTabDefinition[] = createModuleTabs(
             key: 'tracking',
             labelKey: 'telegramTracking.title',
             component: TelegramTrackingTab,
+        },
+        {
+            key: 'reports',
+            labelKey: 'telegramReports.title',
+            component: TelegramReportsTab,
+            accessKey: 'telegram.analytics',
         },
     ]
 ) as readonly TelegramTabDefinition[];

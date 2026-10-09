@@ -27,6 +27,7 @@
 
 - [Telegram](modules/telegram.md)
 - [Telegram Bot / Telegraph](modules/telegram-bot.md)
+- [Отчёты аналитики Telegram по расписанию](modules/telegram-analytics-reports.md)
 - [YouTube](modules/youtube.md)
 - [Bluesky](modules/bluesky.md)
 - [Mastodon](modules/mastodon.md)

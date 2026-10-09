@@ -15,7 +15,7 @@ final class DeliveryAccessTest extends TelegramBotTestCase
     {
         $access = app(BotAccess::class);
 
-        foreach (['notification', 'broadcast', 'parser'] as $kind) {
+        foreach (['notification', 'broadcast', 'parser', 'analytics_report'] as $kind) {
             foreach ([true, false] as $automatic) {
                 $this->assertFalse($access->allowsDelivery(null, $kind, $automatic));
             }
@@ -57,6 +57,9 @@ final class DeliveryAccessTest extends TelegramBotTestCase
             'automatic export opted out' => ['parser', true, [], false],
             'manual export remains available' => ['parser', false, [], true],
             'manual tracking remains available' => ['tracking', false, [], true],
+            'automatic analytics report opted in' => ['analytics_report', true, ['exports_enabled' => true], true],
+            'automatic analytics report opted out' => ['analytics_report', true, [], false],
+            'manual analytics report remains available' => ['analytics_report', false, [], true],
             'unsolicited tracking files rejected' => ['tracking', true, ['exports_enabled' => true], false],
             'notification consent does not allow exports' => ['parser', true, ['notifications_enabled' => true], false],
             'legacy automatic report rejected' => ['report', true, ['exports_enabled' => true], false],
@@ -84,7 +87,7 @@ final class DeliveryAccessTest extends TelegramBotTestCase
         };
         $link->refresh();
 
-        foreach (['notification', 'broadcast', 'parser', 'tracking'] as $kind) {
+        foreach (['notification', 'broadcast', 'parser', 'tracking', 'analytics_report'] as $kind) {
             foreach ([true, false] as $automatic) {
                 $this->assertFalse(app(DeliveryOutbox::class)->enqueue($link, $kind, 'test', automatic: $automatic));
             }

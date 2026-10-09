@@ -2,6 +2,7 @@
 
 namespace App\Modules\TelegramBot\Jobs;
 
+use App\Models\TelegramAnalyticsReport;
 use App\Modules\TelegramBot\Application\ArtifactRegistry;
 use App\Modules\TelegramBot\Application\BotAccess;
 use App\Modules\TelegramBot\Domain\Contracts\BotTransport;
@@ -35,20 +36,20 @@ final class DeliverBotMessage extends BotJob
             return;
         }
         $link = $delivery->link;
-        if (! $access->allowsDelivery($link, $delivery->kind, $delivery->automatic)) {
+        if (! $this->allowsDelivery($access, $link, $delivery)) {
             $delivery->update(['status' => BotDelivery::SKIPPED]);
 
             return;
         }
 
         try {
-            if (in_array($delivery->kind, ['parser', 'tracking'], true)) {
+            if (in_array($delivery->kind, ['parser', 'tracking', 'analytics_report'], true)) {
                 $document = $artifacts->get($delivery->kind)->document($link->user_id, (int) $delivery->reference,
                     (string) ($delivery->payload['format'] ?? ''), $link->locale);
                 try {
                     // Rendering can be slow. Recheck consent and ownership immediately before upload.
                     $current = BotLink::query()->with(['user', 'chat'])->find($link->id);
-                    if (! $access->allowsDelivery($current, $delivery->kind, $delivery->automatic)) {
+                    if (! $this->allowsDelivery($access, $current, $delivery)) {
                         $delivery->update(['status' => BotDelivery::SKIPPED]);
 
                         return;
@@ -99,11 +100,28 @@ final class DeliverBotMessage extends BotJob
     private function unavailable(BotDelivery $delivery, string $reason, BotTransport $transport, BotConfig $config, BotAccess $access): void
     {
         $link = BotLink::query()->with(['user', 'chat'])->find($delivery->link_id);
-        if ($access->allowsDelivery($link, $delivery->kind, $delivery->automatic)) {
+        if ($this->allowsDelivery($access, $link, $delivery)) {
             $transport->message($link->telegraph_chat_id, new BotScreen(__('telegram_bot.errors.'.$reason, [], $link->locale), [
                 new BotButton(__('telegram_bot.menu.webapp', [], $link->locale), 'url', $config->siteUrl()),
             ]));
         }
         $delivery->update(['status' => BotDelivery::SKIPPED, 'error_code' => $reason]);
+    }
+
+    private function allowsDelivery(BotAccess $access, ?BotLink $link, BotDelivery $delivery): bool
+    {
+        if (! $access->allowsDelivery($link, $delivery->kind, $delivery->automatic)) {
+            return false;
+        }
+        if ($delivery->kind !== 'analytics_report') {
+            return true;
+        }
+
+        return TelegramAnalyticsReport::query()->whereKey((int) $delivery->reference)
+            ->where('user_id', $link->user_id)->where('status', TelegramAnalyticsReport::COMPLETED)
+            ->when($delivery->automatic, fn ($query) => $query
+                ->whereHas('schedule', fn ($schedule) => $schedule->where('user_id', $link->user_id)->where('send_to_bot', true)->whereNull('deleted_at'))
+                ->where(fn ($report) => $report->where('is_manual', true)->orWhereHas('schedule', fn ($schedule) => $schedule->where('enabled', true))))
+            ->exists();
     }
 }

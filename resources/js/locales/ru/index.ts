@@ -14,6 +14,7 @@ import siteIntel from './siteIntel.json';
 import systemNotifications from './systemNotifications.json';
 import telegram from './telegram.json';
 import telegramBot from './telegramBot.json';
+import telegramReports from './telegramReports.json';
 import telegramTracking from './telegramTracking.json';
 import terms from './terms.json';
 import userMenu from './userMenu.json';
@@ -37,6 +38,7 @@ const ru = {
     systemNotifications,
     telegram,
     telegramBot,
+    telegramReports,
     telegramTracking,
     terms,
     userMenu,
