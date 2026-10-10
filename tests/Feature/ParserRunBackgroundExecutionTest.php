@@ -15,6 +15,7 @@ use App\Modules\Telegram\Parser\TelegramParserRunStore;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Queue\WorkerOptions;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Queue;
 use Illuminate\Support\Facades\Storage;
 use Tests\TestCase;
@@ -34,6 +35,7 @@ class ParserRunBackgroundExecutionTest extends TestCase
         $queue = Queue::connection('database');
         $queue->push($command, '', 'test-parser-lock');
         $worker = app('queue.worker');
+        Log::spy();
         try {
             for ($attempt = 0; $attempt < 5; $attempt++) {
                 $job = $queue->pop('test-parser-lock');
@@ -43,6 +45,11 @@ class ParserRunBackgroundExecutionTest extends TestCase
                 $this->travel(3)->seconds();
             }
             $this->assertSame('running', ParserRun::query()->where('run_id', $run['runId'])->value('status'));
+            Log::shouldHaveReceived('info')->once()->with('Parser run queue wait measured.', \Mockery::on(
+                fn (array $context): bool => $context['run_id'] === $run['runId']
+                    && $context['module'] === 'telegram' && $context['reason'] === 'module_busy'
+                    && $context['release_seconds'] === 3 && $context['wait_seconds'] >= 0,
+            ));
             $lock->release();
             $processor = $this->createMock(ParserRunBackgroundProcessorInterface::class);
             $processor->method('moduleKey')->willReturn('telegram');

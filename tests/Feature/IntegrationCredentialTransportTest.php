@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\Modules\ParserSupport\ParserRunSourceRequestBudget;
 use App\Modules\YouTube\Support\YouTubeApiConfig;
 use App\Modules\YouTube\YouTubeDataApiClient;
 use App\Support\Observability\ExternalServiceLogger;
@@ -15,7 +16,7 @@ class IntegrationCredentialTransportTest extends TestCase
     {
         Http::preventStrayRequests();
         Http::fake(['https://www.googleapis.com/youtube/v3/search*' => Http::response(['items' => []])]);
-        $client = new YouTubeDataApiClient(YouTubeApiConfig::fromArray(['key' => 'test-youtube-key']), app(ExternalServiceLogger::class));
+        $client = new YouTubeDataApiClient(YouTubeApiConfig::fromArray(['key' => 'test-youtube-key']), app(ExternalServiceLogger::class), app(ParserRunSourceRequestBudget::class));
 
         $this->assertSame(['items' => []], $client->search(['q' => 'pilot']));
 

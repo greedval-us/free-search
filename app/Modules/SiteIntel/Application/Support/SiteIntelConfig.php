@@ -23,6 +23,7 @@ final class SiteIntelConfig
             whoisReadTimeoutSeconds: max(1, self::intValue($config, ['whois', 'read_timeout_seconds'], 8)),
             whoisReadChunkSize: max(128, self::intValue($config, ['whois', 'read_chunk_size'], 2048)),
             whoisMaxResponseBytes: max(1024, self::intValue($config, ['whois', 'max_response_bytes'], 120000)),
+            httpMaxResponseBytes: max(1, self::intValue($config, ['http', 'max_response_bytes'], 2097152)),
         );
     }
 
@@ -38,6 +39,7 @@ final class SiteIntelConfig
         private readonly int $whoisReadTimeoutSeconds,
         private readonly int $whoisReadChunkSize,
         private readonly int $whoisMaxResponseBytes,
+        private readonly int $httpMaxResponseBytes = 2097152,
     ) {}
 
     public function siteHealthUserAgent(): string
@@ -68,6 +70,11 @@ final class SiteIntelConfig
     public function httpVerifySsl(): bool
     {
         return $this->httpVerifySsl;
+    }
+
+    public function httpMaxResponseBytes(): int
+    {
+        return $this->httpMaxResponseBytes;
     }
 
     public function whoisIanaServer(): string

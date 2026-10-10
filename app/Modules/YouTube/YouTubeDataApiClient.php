@@ -5,6 +5,8 @@ namespace App\Modules\YouTube;
 use App\Exceptions\Public\ExternalServiceRequestException;
 use App\Exceptions\Public\ExternalServiceUnavailableException;
 use App\Exceptions\Public\IntegrationMisconfiguredException;
+use App\Modules\ParserSupport\ParserRunSourceRequestBudget;
+use App\Modules\ParserSupport\ParserRunSourceRequestBudgetExceeded;
 use App\Modules\YouTube\Core\Contracts\YouTubeGatewayInterface;
 use App\Modules\YouTube\Core\Contracts\YouTubeUploadsGatewayInterface;
 use App\Modules\YouTube\Support\YouTubeApiConfig;
@@ -18,6 +20,7 @@ class YouTubeDataApiClient implements YouTubeGatewayInterface, YouTubeUploadsGat
     public function __construct(
         private readonly YouTubeApiConfig $config,
         private readonly ExternalServiceLogger $externalServiceLogger,
+        private readonly ParserRunSourceRequestBudget $sourceBudget,
     ) {}
 
     public function search(array $params): array
@@ -119,9 +122,11 @@ class YouTubeDataApiClient implements YouTubeGatewayInterface, YouTubeUploadsGat
         return Http::baseUrl($this->config->baseUrl())
             ->acceptJson()
             ->timeout($this->config->timeoutSeconds())
+            ->beforeSending(fn () => $this->sourceBudget->charge())
             ->retry(
                 $this->config->retryAttempts(),
                 $this->config->retryDelayMilliseconds(),
+                when: static fn (?\Throwable $exception): bool => ! $exception instanceof ParserRunSourceRequestBudgetExceeded,
                 throw: false
             );
     }

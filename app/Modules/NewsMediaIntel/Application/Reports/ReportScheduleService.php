@@ -4,8 +4,9 @@ namespace App\Modules\NewsMediaIntel\Application\Reports;
 
 use App\Models\NewsMediaReportSchedule;
 use App\Models\User;
+use App\Support\Reports\Scheduling\ReportScheduleLifecycle;
+use App\Support\Reports\Scheduling\ReportScheduleRules;
 use Carbon\CarbonImmutable;
-use DateTimeZone;
 use Illuminate\Support\Facades\DB;
 
 final readonly class ReportScheduleService
@@ -15,6 +16,7 @@ final readonly class ReportScheduleService
         private ReportPeriod $period,
         private ReportScheduler $scheduler,
         private ReportParameters $parameters,
+        private ReportScheduleLifecycle $lifecycle,
     ) {}
 
     public function create(User $user, array $data): NewsMediaReportSchedule
@@ -28,14 +30,8 @@ final readonly class ReportScheduleService
         $interval = $data['interval'] ?? null;
         $time = $data['send_time'] ?? null;
         $timezone = $data['timezone'] ?? config('news_media_reports.timezone');
-        if (! in_array($interval, NewsMediaReportSchedule::INTERVALS, true)) {
-            throw new ReportException('invalid_interval');
-        }
-        if (! is_string($time) || preg_match('/^(?:[01]\d|2[0-3]):[0-5]\d$/D', $time) !== 1) {
-            throw new ReportException('invalid_time');
-        }
-        if (! in_array($timezone, DateTimeZone::listIdentifiers(DateTimeZone::ALL_WITH_BC), true)) {
-            throw new ReportException('invalid_timezone');
+        if (($reason = ReportScheduleRules::invalidReason($interval, $time, $timezone)) !== null) {
+            throw new ReportException($reason);
         }
 
         return DB::transaction(function () use ($user, $data, $parameters, $name, $interval, $time, $timezone): NewsMediaReportSchedule {
@@ -56,24 +52,15 @@ final readonly class ReportScheduleService
 
     public function change(User $user, int $id, string $action): void
     {
-        DB::transaction(function () use ($user, $id, $action): void {
-            $locked = User::query()->lockForUpdate()->findOrFail($user->id);
-            $schedule = NewsMediaReportSchedule::query()->forUser($locked->id)->lockForUpdate()->findOrFail($id);
-            if ($action === 'pause') {
-                $schedule->update(['enabled' => false]);
-
-                return;
-            }
-            if ($action !== 'resume') {
-                throw new ReportException('invalid_action');
-            }
-            $this->config->ensureQueue();
-            $this->ensureAccount($locked);
-            if (! $schedule->enabled) {
-                $schedule->update(['enabled' => true,
-                    'next_run_at' => $this->period->firstRun($schedule->interval, $schedule->send_time, $schedule->timezone)]);
-            }
-        });
+        $this->lifecycle->change($user, NewsMediaReportSchedule::class, $id, $action,
+            function (User $locked, NewsMediaReportSchedule $schedule): void {
+                $this->config->ensureQueue();
+                $this->ensureAccount($locked);
+                if (! $schedule->enabled) {
+                    $schedule->update(['enabled' => true,
+                        'next_run_at' => $this->period->firstRun($schedule->interval, $schedule->send_time, $schedule->timezone)]);
+                }
+            }, new ReportException('invalid_action'));
     }
 
     public function runNow(User $user, int $id): void
@@ -90,12 +77,7 @@ final readonly class ReportScheduleService
 
     public function destroy(User $user, int $id): void
     {
-        DB::transaction(function () use ($user, $id): void {
-            User::query()->lockForUpdate()->findOrFail($user->id);
-            $schedule = NewsMediaReportSchedule::query()->forUser($user->id)->lockForUpdate()->findOrFail($id);
-            $schedule->update(['enabled' => false]);
-            $schedule->delete();
-        });
+        $this->lifecycle->destroy($user, NewsMediaReportSchedule::class, $id);
     }
 
     private function ensureAccount(User $user): void

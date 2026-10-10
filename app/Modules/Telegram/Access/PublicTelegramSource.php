@@ -2,6 +2,7 @@
 
 namespace App\Modules\Telegram\Access;
 
+use App\Modules\ParserSupport\ParserRunSourceRequestBudget;
 use Closure;
 use danog\DialogId\DialogId;
 use danog\MadelineProto\API;
@@ -15,7 +16,10 @@ final class PublicTelegramSource
 
     public static function refreshedInfo(API $client, string $username): array
     {
+        app(ParserRunSourceRequestBudget::class)->charge();
         $client->refreshPeerCache($username);
+
+        app(ParserRunSourceRequestBudget::class)->charge();
 
         return $client->getInfo($username);
     }

@@ -8,8 +8,6 @@ use App\Models\User;
 use App\Modules\ParserSupport\Contracts\ParserRunJobDispatcherInterface;
 use App\Modules\ParserSupport\Enums\ParserRunStatus;
 use App\Services\Access\Contracts\FeatureAccessServiceInterface;
-use Carbon\CarbonImmutable;
-use Illuminate\Bus\UniqueLock;
 use Illuminate\Support\Facades\Cache;
 use Throwable;
 
@@ -19,10 +17,14 @@ final readonly class ParserRunExecutionCoordinator
 
     private const START_LOCK_WAIT_SECONDS = 5;
 
-    private const EXECUTION_LOCK_SECONDS = ProcessParserRun::TIMEOUT_SECONDS + 30;
+    private const EXECUTION_LOCK_SECONDS = ProcessParserRun::EXECUTION_LOCK_SECONDS;
 
     public function __construct(
         private ParserRunConfig $config,
+        private ParserRunRecovery $recovery,
+        private ParserRunResourceBudget $resourceBudget,
+        private ParserRunSourceRequestBudget $sourceBudget,
+        private ParserRunTelemetry $telemetry,
         private ParserRunJobDispatcherInterface $jobDispatcher,
         private ParserRunStateMachine $stateMachine,
         private ParserRunLifecycleManager $lifecycleManager,
@@ -43,7 +45,9 @@ final readonly class ParserRunExecutionCoordinator
                 if ($activeRun !== null) {
                     $storedRun = $runStore->get($userId, $activeRun->run_id);
                     if ($this->shouldContinue($storedRun)) {
-                        return $this->recoverStaleRun($runStore, $userId, $storedRun, $snapshotBuilder);
+                        $this->recovery->recover($runStore, $userId, (string) $storedRun['runId'], $snapshotBuilder);
+
+                        return $runStore->get($userId, (string) $storedRun['runId']) ?? $storedRun;
                     }
                 }
 
@@ -65,7 +69,7 @@ final readonly class ParserRunExecutionCoordinator
                             $this->fail($runStore, $userId, (string) $run['runId'], __('errors.api.service_unavailable'));
                         }
                     } finally {
-                        $this->featureAccess->refundResource($user, $resource);
+                        $this->featureAccess->refund($user, $decision->receipt?->id);
                     }
 
                     throw $exception;
@@ -88,7 +92,8 @@ final readonly class ParserRunExecutionCoordinator
         if ($this->config->queueEnabled()) {
             $run = $runStore->get($userId, $runId);
             if ($run !== null) {
-                $run = $this->recoverStaleRun($runStore, $userId, $run, $snapshotBuilder);
+                $this->recovery->recover($runStore, $userId, $runId, $snapshotBuilder);
+                $run = $runStore->get($userId, $runId);
             }
 
             return $run;
@@ -129,16 +134,69 @@ final readonly class ParserRunExecutionCoordinator
                 return null;
             }
 
-            // External calls must not hold the writer lock needed by stop().
-            $after = $this->stateMachine->advance(
-                $before,
-                $advance,
-                now()->timestamp,
-                $this->config->stepDelaySeconds(),
-                $this->config->queueEnabled(),
-                $snapshotBuilder,
-                __('errors.api.service_unavailable'),
+            $reason = $this->resourceBudget->exhaustionReason($before);
+            if ($reason !== null) {
+                $this->telemetry->record('Parser run resource budget exhausted.', $runStore->module(), $runId, $checkpointVersion, $reason,
+                    ['step_attempts' => (int) ($before['resources']['stepAttempts'] ?? 0)],
+                );
+
+                return $runStore->mutate($userId, $runId,
+                    fn (array $current): array => $current === $before ? $this->resourceBudget->fail($current, $reason, $snapshotBuilder) : $current,
+                );
+            }
+            if ((int) ($before['cursor']['nextAdvanceAt'] ?? 0) > now()->timestamp) {
+                return $runStore->get($userId, $runId);
+            }
+            if ((int) ($before['cursor']['stepRetryUntil'] ?? PHP_INT_MAX) <= now()->timestamp) {
+                return $runStore->mutate($userId, $runId, fn (array $current): array => $current === $before
+                    ? $this->stateMachine->advance($current, static fn (array $state): array => $state, now()->timestamp, $this->config->stepDelaySeconds(), $this->config->queueEnabled(), $snapshotBuilder, __('errors.api.service_unavailable'))
+                    : $current,
+                );
+            }
+
+            // Charge before I/O so worker crashes and retries cannot reset the total attempt budget.
+            $charged = false;
+            $reserved = $runStore->mutate($userId, $runId,
+                function (array $current) use ($before, &$charged): array {
+                    if ($current !== $before) {
+                        return $current;
+                    }
+                    $charged = true;
+
+                    return $this->resourceBudget->chargeAttempt($current);
+                },
             );
+            if (! $charged || ! $this->shouldContinue($reserved)) {
+                return $reserved;
+            }
+            $before = $reserved;
+
+            // External calls must not hold the writer lock needed by stop().
+            $startedAt = hrtime(true);
+            $outcome = 'step_error';
+            try {
+                try {
+                    $after = $this->sourceBudget->duringRun($runStore->module(), $userId, $runId,
+                        fn (): array => $this->stateMachine->advance(
+                            $before,
+                            $advance,
+                            now()->timestamp,
+                            $this->config->stepDelaySeconds(),
+                            $this->config->queueEnabled(),
+                            $snapshotBuilder,
+                            __('errors.api.service_unavailable'),
+                        ),
+                    );
+                    $after = $this->resourceBudget->constrainCheckpoint($before, $after, $snapshotBuilder);
+                } catch (ParserRunSourceRequestBudgetExceeded) {
+                    $after = $this->resourceBudget->fail($before, 'source_requests', $snapshotBuilder);
+                }
+                $outcome = (string) ($after['resources']['exhausted'] ?? $after['status'] ?? 'unknown');
+            } finally {
+                $this->telemetry->record('Parser run step measured.', $runStore->module(), $runId, $checkpointVersion, $outcome,
+                    ['duration_ms' => (int) ((hrtime(true) - $startedAt) / 1000000)],
+                );
+            }
             if ($before === $after) {
                 return $runStore->get($userId, $runId);
             }
@@ -210,61 +268,5 @@ final readonly class ParserRunExecutionCoordinator
     private function executionLockKey(JsonRunStore $runStore, int $userId, string $runId): string
     {
         return "parser-run:advance:{$runStore->module()}:{$userId}:{$runId}";
-    }
-
-    /** @param array<string, mixed> $run */
-    private function recoverStaleRun(JsonRunStore $runStore, int $userId, array $run, ?callable $snapshotBuilder = null): array
-    {
-        if (! $this->config->queueEnabled() || ! $this->shouldContinue($run)) {
-            return $run;
-        }
-
-        $staleAfter = max(self::EXECUTION_LOCK_SECONDS, $this->config->stepDelaySeconds() + 30);
-        $updatedAt = CarbonImmutable::parse($run['updatedAt'] ?? $run['createdAt'] ?? now());
-        if ($updatedAt->addSeconds($staleAfter)->isFuture()) {
-            return $run;
-        }
-
-        $runId = (string) ($run['runId'] ?? '');
-        $lock = Cache::lock($this->executionLockKey($runStore, $userId, $runId), self::EXECUTION_LOCK_SECONDS);
-        if (! $lock->get()) {
-            return $run;
-        }
-
-        try {
-            $run = $runStore->get($userId, $runId) ?? $run;
-            $updatedAt = CarbonImmutable::parse($run['updatedAt'] ?? $run['createdAt'] ?? now());
-            if (! $this->shouldContinue($run) || $updatedAt->addSeconds($staleAfter)->isFuture()) {
-                return $run;
-            }
-            // Recovery must not reset the durable retry budget for this checkpoint.
-            if ((int) ($run['cursor']['stepRetryUntil'] ?? PHP_INT_MAX) <= now()->timestamp) {
-                $this->fail($runStore, $userId, $runId, __('errors.api.service_unavailable'), $snapshotBuilder);
-
-                return $runStore->get($userId, $runId) ?? $run;
-            }
-
-            $recoveryKey = 'parser-run:recovery:'.$runStore->module().':'.$userId.':'.$runId;
-            if (! Cache::add($recoveryKey, true, $staleAfter)) {
-                return $run;
-            }
-
-            try {
-                // The queued job may have been lost with its uniqueness lock still alive.
-                (new UniqueLock(Cache::store()))->release(new ProcessParserRun(
-                    $runStore->module(), $userId, $runId,
-                    (int) ($run['cursor']['checkpointVersion'] ?? 0),
-                    (int) ($run['cursor']['stepRetryUntil'] ?? (time() + ProcessParserRun::RETRY_WINDOW_SECONDS)),
-                ));
-                $this->jobDispatcher->dispatch($runStore->module(), $userId, $runId);
-            } catch (Throwable $exception) {
-                Cache::forget($recoveryKey);
-                throw $exception;
-            }
-
-            return $run;
-        } finally {
-            $lock->release();
-        }
     }
 }

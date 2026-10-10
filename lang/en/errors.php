@@ -50,6 +50,12 @@ return [
             'media_temp_file_failed' => 'Failed to prepare a temporary media file.',
         ],
         'parser_run' => [
+            'limit_records' => 'The parser run reached its collected record limit. Saved results are incomplete.',
+            'export_limit_exceeded' => 'The export exceeds the supported size. The collected result is still available.',
+            'limit_duration' => 'The parser run reached its maximum duration. Saved results are incomplete.',
+            'limit_step_attempts' => 'The parser run reached its collection attempt limit. Saved results are incomplete.',
+            'limit_source_requests' => 'The parser run reached its source request limit. Saved results are incomplete.',
+            'limit_checkpoint_bytes' => 'The parser run reached its storage limit. Saved results are incomplete.',
             'not_found' => 'The parser run was not found or has expired.',
             'not_downloadable' => 'The parser result is not ready for download yet.',
             'result_not_found' => 'The parser result file was not found or has expired.',
@@ -57,6 +63,7 @@ return [
         'site_intel' => [
             'invalid_target' => 'Invalid target URL or domain.',
             'invalid_domain' => 'Invalid domain.',
+            'response_too_large' => 'The site response exceeds the supported size. The analysis could not be completed.',
         ],
         'shifr' => [
             'unsupported_cipher_configuration' => 'Unsupported cipher/direction pair or missing required settings.',

@@ -5,6 +5,7 @@ return [
         'user_agent' => env('OSINT_SITE_HEALTH_HTTP_USER_AGENT', 'FreeSearch-SiteHealth/1.0'),
         'accept' => env('OSINT_SITE_HEALTH_HTTP_ACCEPT', '*/*'),
         'timeout_seconds' => (int) env('OSINT_SITE_HEALTH_HTTP_TIMEOUT', 10),
+        'max_response_bytes' => (int) env('OSINT_SITE_HEALTH_HTTP_MAX_RESPONSE_BYTES', 2097152),
         'max_redirects' => (int) env('OSINT_SITE_HEALTH_HTTP_MAX_REDIRECTS', 5),
         'verify_ssl' => (bool) env('OSINT_SITE_HEALTH_HTTP_VERIFY_SSL', false),
     ],

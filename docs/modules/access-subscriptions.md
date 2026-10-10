@@ -16,7 +16,7 @@ HTML-отчёты читают только `ReportSnapshotStore`: ключ вк
 
 `User.currentPlan()` выбирает активную subscription по time window; без неё используется Free. Billing page показывает account summary и принимает one-time activation token. Token нормализуется, действует 30 дней по model behavior, одноразово связывается с user/subscription.
 
-`BILLING_CHECKOUT_ENABLED=false` скрывает прямой checkout/upgrade UI. Сам факт флага не подтверждает реализованный payment-provider checkout; token activation — доказанный текущий путь.
+В этой версии платёжный checkout не реализован. `BILLING_CHECKOUT_ENABLED` сохраняется для совместимости конфигурации, но не включает покупку: Billing и placeholder возвращают `checkoutEnabled=false`. Ссылки оплаты/upgrade на placeholder удалены; интерфейс объясняет недоступность онлайн-оплаты и сохраняет активацию кодом. Ответ Billing сохраняет `access`, `plans` и остальные props. Полная платёжная интеграция, её авторизация, валюта и коммерческие правила — отдельная продуктовая задача.
 
 Scheduler ежедневно отправляет notifications о приближении конца subscription. MoonShine управляет subscriptions и activation tokens.
 

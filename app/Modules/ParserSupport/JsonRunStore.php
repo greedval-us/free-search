@@ -3,6 +3,7 @@
 namespace App\Modules\ParserSupport;
 
 use App\Jobs\ProcessParserRun;
+use App\Models\ParserRun;
 use App\Modules\ParserSupport\Enums\ParserRunStatus;
 use Illuminate\Filesystem\FilesystemAdapter;
 use Illuminate\Support\Facades\Log;
@@ -94,6 +95,10 @@ abstract class JsonRunStore
             if (! is_file($path)) {
                 return null;
             }
+            // A late worker must not renew an expired run before cleanup can remove it.
+            if (ParserRun::query()->where('run_id', $runId)->expired()->exists()) {
+                return null;
+            }
 
             $contents = $this->disk()->get($relativePath);
             $run = json_decode($contents ?? '', true, flags: JSON_THROW_ON_ERROR);
@@ -117,6 +122,19 @@ abstract class JsonRunStore
 
             return $run;
         });
+    }
+
+    /**
+     * @template T
+     *
+     * @param  callable(array<string, mixed>|null): T  $callback
+     * @return T
+     */
+    public function inspectLocked(int $userId, string $runId, callable $callback): mixed
+    {
+        return $this->files->withExclusiveLock($this->disk()->path($this->runPath($userId, $runId)),
+            fn () => $callback($this->get($userId, $runId)),
+        );
     }
 
     /**

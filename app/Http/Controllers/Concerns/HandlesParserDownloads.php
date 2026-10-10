@@ -2,9 +2,11 @@
 
 namespace App\Http\Controllers\Concerns;
 
+use App\Modules\Export\JsonExportEncoder;
 use App\Support\Http\DocumentResponseHeaders;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\StreamedResponse;
+use Throwable;
 
 trait HandlesParserDownloads
 {
@@ -18,16 +20,25 @@ trait HandlesParserDownloads
      */
     protected function streamJsonDownload(array $payload, string $filename): StreamedResponse
     {
-        return response()->streamDownload(
-            static function () use ($payload): void {
-                echo json_encode(
-                    $payload,
-                    JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES
-                );
-            },
-            $filename,
-            [...DocumentResponseHeaders::download(), 'Content-Type' => 'application/json; charset=UTF-8']
-        );
+        $stream = app(JsonExportEncoder::class)->prepare($payload);
+
+        try {
+            return response()->streamDownload(
+                static function () use ($stream): void {
+                    try {
+                        fpassthru($stream);
+                    } finally {
+                        fclose($stream);
+                    }
+                },
+                $filename,
+                [...DocumentResponseHeaders::download(), 'Content-Type' => 'application/json; charset=UTF-8']
+            );
+        } catch (Throwable $exception) {
+            fclose($stream);
+
+            throw $exception;
+        }
     }
 
     protected function applyDownloadLocale(Request $request): void

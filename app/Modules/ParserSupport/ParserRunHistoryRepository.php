@@ -18,6 +18,7 @@ final class ParserRunHistoryRepository
             ->where('user_id', $userId)
             ->where('module', $moduleKey)
             ->where('status', ParserRunStatus::Running->value)
+            ->where(fn ($query) => $query->whereNull('expires_at')->orWhere('expires_at', '>', now()))
             ->latest('started_at')
             ->latest('id')
             ->first();

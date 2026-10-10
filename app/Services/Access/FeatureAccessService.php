@@ -36,26 +36,13 @@ final class FeatureAccessService implements FeatureAccessServiceInterface
         return $this->decide($user, $this->policyResolver->resourcePolicy($resource), true);
     }
 
-    public function refundResource(User $user, string $resource): void
+    public function refund(User $user, ?string $receiptId): void
     {
-        $this->release($user, $this->policyResolver->resourcePolicy($resource));
-    }
-
-    public function refund(User $user, string $routeName): void
-    {
-        $policy = $this->policyResolver->routePolicy($routeName)
-            ?? $this->policyResolver->resourcePolicy('analytics');
-
-        $this->release($user, $policy);
-    }
-
-    private function release(User $user, AccessResourcePolicy $policy): void
-    {
-        if (! $policy->counts || $this->policyResolver->canBypass($user)) {
+        if ($receiptId === null || $this->policyResolver->canBypass($user)) {
             return;
         }
 
-        $this->usageCounter->release($user, $policy->quotaKey);
+        $this->usageCounter->release($user, $receiptId);
     }
 
     private function decide(User $user, AccessResourcePolicy $policy, bool $consume): FeatureAccessDecision
@@ -120,9 +107,9 @@ final class FeatureAccessService implements FeatureAccessServiceInterface
             );
         }
 
-        $used = $this->usageCounter->consume($user, $policy->quotaKey, $limit);
+        $receipt = $this->usageCounter->consume($user, $policy->quotaKey, $limit);
 
-        if ($used === null) {
+        if ($receipt === null) {
             return $this->deny(
                 feature: $policy->resource,
                 plan: $plan,
@@ -138,8 +125,9 @@ final class FeatureAccessService implements FeatureAccessServiceInterface
             feature: $policy->resource,
             plan: $plan->value,
             limit: $limit,
-            used: $used,
+            used: $receipt->used,
             counts: $policy->counts,
+            receipt: $receipt,
         );
     }
 

@@ -16,6 +16,8 @@ class ParserRun extends Model
 
     public const PROGRESS_MAX = 100;
 
+    protected $hidden = ['source_request_count'];
+
     protected $fillable = [
         'run_id',
         'user_id',
@@ -40,6 +42,7 @@ class ParserRun extends Model
     {
         return [
             'progress' => 'integer',
+            'source_request_count' => 'integer',
             'file_size_bytes' => 'integer',
             'started_at' => 'datetime',
             'last_activity_at' => 'datetime',

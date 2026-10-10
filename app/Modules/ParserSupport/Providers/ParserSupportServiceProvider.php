@@ -9,6 +9,7 @@ use App\Modules\ParserSupport\ParserRunBackgroundProcessorRegistry;
 use App\Modules\ParserSupport\ParserRunConfig;
 use App\Modules\ParserSupport\ParserRunJobDispatcher;
 use App\Modules\ParserSupport\ParserRunQueueConfigurationGuard;
+use App\Modules\ParserSupport\ParserRunSourceRequestBudget;
 use App\Modules\ParserSupport\ParserRunStoreRegistry;
 use Illuminate\Support\ServiceProvider;
 
@@ -16,6 +17,8 @@ final class ParserSupportServiceProvider extends ServiceProvider
 {
     public function register(): void
     {
+        $this->app->singleton(ParserRunSourceRequestBudget::class);
+
         $this->app->singleton(
             ParserRunConfig::class,
             static fn (): ParserRunConfig => ParserRunConfig::fromArray(

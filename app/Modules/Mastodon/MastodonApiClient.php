@@ -7,6 +7,8 @@ use App\Exceptions\Public\ExternalServiceUnavailableException;
 use App\Exceptions\Public\IntegrationMisconfiguredException;
 use App\Modules\Mastodon\Core\Contracts\MastodonGatewayInterface;
 use App\Modules\Mastodon\Support\MastodonApiConfig;
+use App\Modules\ParserSupport\ParserRunSourceRequestBudget;
+use App\Modules\ParserSupport\ParserRunSourceRequestBudgetExceeded;
 use App\Support\Observability\ExternalServiceLogger;
 use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Http\Client\PendingRequest;
@@ -18,6 +20,7 @@ final class MastodonApiClient implements MastodonGatewayInterface
     public function __construct(
         private readonly MastodonApiConfig $config,
         private readonly ExternalServiceLogger $externalServiceLogger,
+        private readonly ParserRunSourceRequestBudget $sourceBudget,
     ) {}
 
     public function search(array $params): array
@@ -184,9 +187,11 @@ final class MastodonApiClient implements MastodonGatewayInterface
             ->acceptJson()
             ->withToken($this->config->apiToken())
             ->timeout($this->config->timeoutSeconds())
+            ->beforeSending(fn () => $this->sourceBudget->charge())
             ->retry(
                 $this->config->retryAttempts(),
                 $this->config->retryDelayMilliseconds(),
+                when: static fn (?\Throwable $exception): bool => ! $exception instanceof ParserRunSourceRequestBudgetExceeded,
                 throw: false
             );
     }

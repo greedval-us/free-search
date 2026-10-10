@@ -35,6 +35,19 @@ Database cache, sessions и queue требуют соответствующих 
 | `PARSER_RUN_QUEUE_ENABLED`            | нет      | Background job execution       | `true`               |
 | `PARSER_RUN_QUEUE_NAME`               | нет      | Target queue                   | `default`            |
 | `PARSER_RUN_QUEUE_STEP_DELAY_SECONDS` | нет      | Delay between collection steps | `2`                  |
+| `PARSER_RUN_RECOVERY_BATCH_SIZE` | нет | Metadata candidates per ID batch | `100` |
+| `PARSER_RUN_RECOVERY_STALE_AFTER_SECONDS` | нет | Stale threshold; at least execution TTL and step delay + 30 seconds | `150` |
+| `PARSER_RUN_MAX_STEP_ATTEMPTS` | нет | Durable total collection-step attempts, including crashed/retried steps | `10000` |
+| `PARSER_RUN_MAX_SOURCE_REQUESTS` | нет | Durable explicit source requests, including application retries; hidden MadelineProto transport retries are not observable | `100000` |
+| `PARSER_RUN_MAX_RECORDS` | нет | Cumulative normalized processed records across existing source counters | `100000` |
+| `PARSER_RUN_MAX_DURATION_SECONDS` | нет | Total run lifetime from original createdAt | `86400` |
+| `PARSER_RUN_MAX_CHECKPOINT_BYTES` | нет | Checkpoint plus prospective partial snapshot byte budget | `33554432` |
+| `PARSER_RUN_MAX_EXPORT_BYTES` | нет | Prepared JSON/XLSX artifact bytes; checked before response headers | `67108864` |
+| `PARSER_RUN_MAX_EXPORT_CELLS` | нет | XLSX cells checked before workbook construction | `1000000` |
+
+Recovery требует асинхронную очередь и общий cache backend для execution/uniqueness locks. Технические бюджеты не меняют тарифы. При исчерпании сохраняется последний допустимый partial snapshot; данные не объявляются полными. Подробные границы и совместимость старых файлов: [Parser Runs](architecture/parser-runs.md).
+
+`OSINT_SITE_HEALTH_HTTP_MAX_RESPONSE_BYTES=2097152` ограничивает фактическое декодированное HTTP-тело одного ответа Site Intel (включая redirect responses, robots, sitemap и crawl). `Content-Length` не заменяет этот предел. Превышение возвращает HTTP 503 `site_intel_response_too_large`; уже существующие timeout, redirects, TLS и SSRF guard продолжают действовать.
 
 ## External integrations
 
@@ -85,7 +98,7 @@ HTML/JSON обычной вкладки аналитики привязаны к
 
 | Variable                   | Required | Purpose                        | Default |
 | -------------------------- | -------- | ------------------------------ | ------- |
-| `BILLING_CHECKOUT_ENABLED` | нет      | Показывать checkout/upgrade UI | `false` |
+| `BILLING_CHECKOUT_ENABLED` | нет      | Совместимость конфигурации; в этой версии checkout отсутствует, флаг не включает оплату | `false` |
 
 Планы, quotas, route-to-resource mappings и staff bypass находятся в `config/access.php`, а не в `.env`. Изменение quotas — code/config deployment change.
 

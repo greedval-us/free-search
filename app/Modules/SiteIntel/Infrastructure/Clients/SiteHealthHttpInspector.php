@@ -7,14 +7,13 @@ use App\Modules\SiteIntel\Application\Support\SiteIntelConfig;
 use App\Modules\SiteIntel\Support\SiteIntelTargetGuard;
 use App\Support\Observability\ExternalServiceLogger;
 use Illuminate\Http\Client\ConnectionException;
-use Illuminate\Support\Facades\Http;
 
 final class SiteHealthHttpInspector implements SiteHealthHttpInspectorInterface
 {
     public function __construct(
         private readonly SiteIntelConfig $config,
         private readonly SiteIntelTargetGuard $targetGuard,
-        private readonly SiteIntelHttpRequestOptions $requestOptions,
+        private readonly SiteIntelHttpClient $httpClient,
         private readonly SiteIntelRedirectUrlResolver $redirectUrlResolver,
         private readonly ExternalServiceLogger $externalServiceLogger,
     ) {}
@@ -34,13 +33,10 @@ final class SiteHealthHttpInspector implements SiteHealthHttpInspectorInterface
             $startedAt = microtime(true);
 
             try {
-                $response = Http::withHeaders([
+                $response = $this->httpClient->get($target, [
                     'User-Agent' => $this->userAgent(),
                     'Accept' => $this->acceptHeader(),
-                ])
-                    ->withOptions($this->requestOptions->build($target, $this->verifySsl()))
-                    ->timeout($this->timeoutSeconds())
-                    ->get($target->url);
+                ], $this->verifySsl());
             } catch (ConnectionException $exception) {
                 $this->externalServiceLogger->logConnectionFailure('site-intel', 'site-health-http', $exception, [
                     'url' => $currentUrl,
@@ -120,11 +116,6 @@ final class SiteHealthHttpInspector implements SiteHealthHttpInspectorInterface
     private function acceptHeader(): string
     {
         return $this->config->httpAcceptHeader();
-    }
-
-    private function timeoutSeconds(): int
-    {
-        return $this->config->httpTimeoutSeconds();
     }
 
     private function maxRedirects(): int

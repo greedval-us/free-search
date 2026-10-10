@@ -24,7 +24,8 @@ final class BillingController extends Controller
         return Inertia::render('settings/Billing', [
             'access' => $this->summaryService->forUser($request->user()),
             'plans' => config('access.plans', []),
-            'checkoutEnabled' => (bool) config('access.checkout_enabled', false),
+            // Keep the response contract; a feature flag cannot enable a missing payment integration.
+            'checkoutEnabled' => false,
             'reason' => $request->query('reason'),
             'feature' => $request->query('feature'),
             'tokenStatus' => $request->session()->get('billing_token_status'),
