@@ -5,15 +5,17 @@ namespace App\Jobs;
 use App\Modules\ParserSupport\Contracts\ParserRunJobDispatcherInterface;
 use App\Modules\ParserSupport\ParserRunBackgroundProcessorRegistry;
 use App\Modules\ParserSupport\ParserRunConfig;
+use App\Modules\ParserSupport\ParserRunOverlapMiddleware;
 use Illuminate\Contracts\Queue\ShouldBeUniqueUntilProcessing;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Queue\Queueable;
-use Illuminate\Queue\Middleware\WithoutOverlapping;
 use Throwable;
 
 final class ProcessParserRun implements ShouldBeUniqueUntilProcessing, ShouldQueue
 {
     public const TIMEOUT_SECONDS = 120;
+
+    public const EXECUTION_LOCK_SECONDS = self::TIMEOUT_SECONDS + 30;
 
     private const MAX_EXCEPTIONS = 3;
 
@@ -38,6 +40,8 @@ final class ProcessParserRun implements ShouldBeUniqueUntilProcessing, ShouldQue
 
     public ?int $checkpointVersion = null;
 
+    public ?int $queuedAt = null;
+
     public int $retryDeadline;
 
     public int $timeout = self::TIMEOUT_SECONDS;
@@ -54,6 +58,7 @@ final class ProcessParserRun implements ShouldBeUniqueUntilProcessing, ShouldQue
         ?int $retryDeadline = null,
     ) {
         $this->checkpointVersion = $checkpointVersion;
+        $this->queuedAt = now()->timestamp;
         $this->retryDeadline = $retryDeadline ?? (time() + self::RETRY_WINDOW_SECONDS);
     }
 
@@ -107,7 +112,7 @@ final class ProcessParserRun implements ShouldBeUniqueUntilProcessing, ShouldQue
         }
 
         return [
-            (new WithoutOverlapping("parser-run:module:{$this->module}"))
+            (new ParserRunOverlapMiddleware("parser-run:module:{$this->module}"))
                 ->releaseAfter(self::OVERLAP_RELEASE_SECONDS)
                 ->expireAfter($this->timeout + self::OVERLAP_EXPIRY_GRACE_SECONDS),
         ];

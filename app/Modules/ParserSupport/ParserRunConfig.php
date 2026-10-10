@@ -2,6 +2,8 @@
 
 namespace App\Modules\ParserSupport;
 
+use App\Jobs\ProcessParserRun;
+
 final readonly class ParserRunConfig
 {
     private const DEFAULT_QUEUE = 'default';
@@ -29,6 +31,16 @@ final readonly class ParserRunConfig
             historyLimit: max(1, (int) ($config['history_limit'] ?? self::DEFAULT_HISTORY_LIMIT)),
             cleanupBatchSize: max(1, (int) ($config['cleanup_batch_size'] ?? self::DEFAULT_CLEANUP_BATCH_SIZE)),
             cleanupSchedule: self::schedule($config['cleanup_schedule'] ?? null),
+            recoveryBatchSize: max(1, (int) data_get($config, 'recovery.batch_size', 100)),
+            recoveryStaleAfterSeconds: max(ProcessParserRun::EXECUTION_LOCK_SECONDS, (int) data_get($config, 'recovery.stale_after_seconds', 150)),
+            maxStepAttempts: max(1, (int) data_get($config, 'limits.max_step_attempts', 10000)),
+            maxRecords: max(1, (int) data_get($config, 'limits.max_records', 100000)),
+            maxDurationSeconds: max(1, (int) data_get($config, 'limits.max_duration_seconds', 86400)),
+            maxCheckpointBytes: max(4096, (int) data_get($config, 'limits.max_checkpoint_bytes', 33554432)),
+            maxExportBytes: max(1, (int) data_get($config, 'limits.max_export_bytes', 67108864)),
+            maxExportCells: max(1, (int) data_get($config, 'limits.max_export_cells', 1000000)),
+            maxSourceRequests: max(1, (int) data_get($config, 'limits.max_source_requests', 100000)),
+            recoveryMaxPassSeconds: max(1, min(3600, (int) data_get($config, 'recovery.max_pass_seconds', 30))),
         );
     }
 
@@ -40,6 +52,16 @@ final readonly class ParserRunConfig
         private int $historyLimit = self::DEFAULT_HISTORY_LIMIT,
         private int $cleanupBatchSize = self::DEFAULT_CLEANUP_BATCH_SIZE,
         private string $cleanupSchedule = self::DEFAULT_CLEANUP_SCHEDULE,
+        private int $recoveryBatchSize = 100,
+        private int $recoveryStaleAfterSeconds = 150,
+        private int $maxStepAttempts = 10000,
+        private int $maxRecords = 100000,
+        private int $maxDurationSeconds = 86400,
+        private int $maxCheckpointBytes = 33554432,
+        private int $maxExportBytes = 67108864,
+        private int $maxExportCells = 1000000,
+        private int $maxSourceRequests = 100000,
+        private int $recoveryMaxPassSeconds = 30,
     ) {}
 
     public function queueEnabled(): bool
@@ -75,6 +97,63 @@ final readonly class ParserRunConfig
     public function cleanupSchedule(): string
     {
         return $this->cleanupSchedule;
+    }
+
+    public function recoveryBatchSize(): int
+    {
+        return $this->recoveryBatchSize;
+    }
+
+    public function recoveryStaleAfterSeconds(): int
+    {
+        return max(ProcessParserRun::EXECUTION_LOCK_SECONDS, $this->recoveryStaleAfterSeconds, $this->stepDelaySeconds + 30);
+    }
+
+    public function recoveryMaxPassSeconds(): int
+    {
+        return max(1, min(3600, $this->recoveryMaxPassSeconds));
+    }
+
+    public function recoveryMutexMinutes(): int
+    {
+        // Admission time plus grace based on the execution lease and a two-minute margin.
+        // The lease is not an I/O timeout for an already-admitted candidate.
+        return (int) ceil(($this->recoveryMaxPassSeconds() + ProcessParserRun::EXECUTION_LOCK_SECONDS + 60) / 60) + 1;
+    }
+
+    public function maxStepAttempts(): int
+    {
+        return $this->maxStepAttempts;
+    }
+
+    public function maxRecords(): int
+    {
+        return $this->maxRecords;
+    }
+
+    public function maxDurationSeconds(): int
+    {
+        return $this->maxDurationSeconds;
+    }
+
+    public function maxCheckpointBytes(): int
+    {
+        return $this->maxCheckpointBytes;
+    }
+
+    public function maxExportBytes(): int
+    {
+        return $this->maxExportBytes;
+    }
+
+    public function maxExportCells(): int
+    {
+        return $this->maxExportCells;
+    }
+
+    public function maxSourceRequests(): int
+    {
+        return $this->maxSourceRequests;
     }
 
     private static function nonEmptyString(mixed $value, string $default): string

@@ -6,6 +6,8 @@ use App\Models\ParserRun;
 
 final class ParserRunHistoryItemBuilder
 {
+    public function __construct(private readonly ParserRunGuard $runGuard) {}
+
     /**
      * @param  array<string, mixed>|null  $run
      * @param  null|callable(array<string, mixed>|null, ParserRun): array<string, mixed>  $extra
@@ -21,7 +23,7 @@ final class ParserRunHistoryItemBuilder
         $status = ParserRun::normalizeStatus($metadata->status);
         $downloadable = ParserRun::isDownloadableStatus($status)
             && is_array($run)
-            && is_array($run['result'] ?? null);
+            && (is_array($run['result'] ?? null) || $this->runGuard->hasDeferredResult($run));
 
         return array_merge([
             'runId' => $metadata->run_id,

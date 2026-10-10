@@ -1,6 +1,7 @@
 <?php
 
 use App\Console\Commands\CleanupParserRunFiles;
+use App\Console\Commands\RecoverParserRuns;
 use App\Console\Commands\SendSubscriptionExpiryNotifications;
 use App\Models\RequestLog;
 use App\Modules\ParserSupport\ParserRunConfig;
@@ -13,6 +14,9 @@ Artisan::command('inspire', function () {
 })->purpose('Display an inspiring quote');
 
 Schedule::command(SendSubscriptionExpiryNotifications::class)->dailyAt('09:00');
+Schedule::command(RecoverParserRuns::class)->everyMinute()->withoutOverlapping(
+    app(ParserRunConfig::class)->recoveryMutexMinutes(),
+);
 Schedule::command(CleanupParserRunFiles::class)->dailyAt(
     app(ParserRunConfig::class)->cleanupSchedule()
 );

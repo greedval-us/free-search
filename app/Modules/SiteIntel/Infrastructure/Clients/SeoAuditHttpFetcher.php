@@ -7,14 +7,13 @@ use App\Modules\SiteIntel\Application\Support\SiteIntelConfig;
 use App\Modules\SiteIntel\Support\SiteIntelTargetGuard;
 use App\Support\Observability\ExternalServiceLogger;
 use Illuminate\Http\Client\ConnectionException;
-use Illuminate\Support\Facades\Http;
 
 final class SeoAuditHttpFetcher implements SeoAuditHttpFetcherInterface
 {
     public function __construct(
         private readonly SiteIntelConfig $config,
         private readonly SiteIntelTargetGuard $targetGuard,
-        private readonly SiteIntelHttpRequestOptions $requestOptions,
+        private readonly SiteIntelHttpClient $httpClient,
         private readonly SiteIntelRedirectUrlResolver $redirectUrlResolver,
         private readonly ExternalServiceLogger $externalServiceLogger,
     ) {}
@@ -33,13 +32,10 @@ final class SeoAuditHttpFetcher implements SeoAuditHttpFetcherInterface
             $startedAt = microtime(true);
 
             try {
-                $response = Http::withHeaders([
+                $response = $this->httpClient->get($target, [
                     'User-Agent' => $this->config->seoAuditUserAgent(),
                     'Accept' => 'text/html,application/xhtml+xml,*/*;q=0.8',
-                ])
-                    ->withOptions($this->requestOptions->build($target, $this->config->httpVerifySsl()))
-                    ->timeout($this->config->httpTimeoutSeconds())
-                    ->get($target->url);
+                ], $this->config->httpVerifySsl());
             } catch (ConnectionException $exception) {
                 $this->externalServiceLogger->logConnectionFailure('site-intel', 'seo-audit-fetch', $exception, [
                     'url' => $currentUrl,

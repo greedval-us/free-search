@@ -47,7 +47,7 @@ class ParserRunBackgroundProcessorRegistryTest extends TestCase
                 return false;
             }
 
-            public function failRun(int $userId, string $runId, string $message, ?int $checkpointVersion = null): void {}
+            public function failRun(int $userId, string $runId, string $message, ?int $checkpointVersion = null, bool $waitForLock = true): void {}
         };
     }
 }

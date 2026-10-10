@@ -7,6 +7,7 @@ use App\Http\Controllers\Concerns\ResolvesAuthenticatedUserId;
 use App\Http\Controllers\Controller;
 use App\Modules\Export\Excel\Contracts\ExcelWorkbookServiceInterface;
 use App\Modules\Export\Excel\Contracts\ParserExportBuilderInterface;
+use App\Modules\Export\ParserExportBudget;
 use App\Modules\ParserSupport\Contracts\ParserRunApplicationServiceInterface;
 use App\Modules\ParserSupport\ParserRunConfig;
 use App\Support\Reports\Contracts\ReportFilenamePolicyInterface;
@@ -59,6 +60,7 @@ abstract class AbstractParserController extends Controller
         $this->applyDownloadLocale($request);
 
         $payload = $this->downloadPayload($request, $runId);
+        app(ParserExportBudget::class)->assertPayloadFits($payload);
         $filename = $this->exportFilename($payload, 'xlsx');
 
         return $this->excelWorkbookService->download($filename, $this->exportBuilder->buildSheets($payload));

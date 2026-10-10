@@ -22,6 +22,19 @@ class ProcessParserRunTest extends TestCase
         $this->assertSame(3, $restored->maxExceptions);
     }
 
+    public function test_payloads_created_before_queue_wait_measurements_keep_their_retry_deadline(): void
+    {
+        $job = new ProcessParserRun('telegram', 10, 'legacy-run', 7, 1900000000);
+        unset($job->queuedAt);
+
+        $restored = unserialize(serialize($job));
+
+        $this->assertNull($restored->queuedAt);
+        $this->assertSame(1900000000, $restored->retryUntil());
+        $this->assertSame(7, $restored->checkpointVersion);
+        $this->assertCount(1, $restored->middleware());
+    }
+
     public function test_it_schedules_next_step_while_run_is_active(): void
     {
         $processor = $this->createMock(ParserRunBackgroundProcessorInterface::class);

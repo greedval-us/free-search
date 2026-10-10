@@ -12,7 +12,7 @@ composer run test
 npm run test:unit
 ```
 
-`composer run test` включает Pint check и PHPUnit. `npm run quality:check` включает Prettier, ESLint, vue-tsc и нестрогую i18n-проверку. Vitest запускается отдельно и не входит в текущий GitHub Actions workflow.
+`composer run test` включает Pint check и PHPUnit. `npm run quality:check` включает Prettier, ESLint, vue-tsc и нестрогую i18n-проверку. Vitest запускается отдельно и входит в job `quality` текущего GitHub Actions workflow.
 
 ## Добавление сценария
 

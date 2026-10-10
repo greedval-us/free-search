@@ -131,6 +131,7 @@ final readonly class ReportGenerator
                 }
                 $report->quota_charged = true;
                 $report->quota_charged_at = now();
+                $report->quota_receipt_id = $decision->receipt?->id;
             }
             $report->status = SiteIntelScheduledReport::PROCESSING;
             $report->attempt_count++;
@@ -182,7 +183,7 @@ final readonly class ReportGenerator
     {
         if ($report->quota_charged && $report->user !== null && $report->quota_charged_at !== null
             && $report->quota_charged_at->setTimezone(config('app.timezone'))->toDateString() === now(config('app.timezone'))->toDateString()) {
-            $this->access->refundResource($report->user, $report->resourceKey());
+            $this->access->refund($report->user, $report->quota_receipt_id);
         }
         $report->update(['status' => SiteIntelScheduledReport::FAILED, 'error_code' => $reason,
             'quota_charged' => false, 'lease_token' => null, 'lease_until' => null]);

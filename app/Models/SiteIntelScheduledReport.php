@@ -25,7 +25,7 @@ class SiteIntelScheduledReport extends Model
 
     protected $guarded = ['id'];
 
-    protected $hidden = ['data', 'lease_token', 'lease_until', 'quota_charged', 'quota_charged_at', 'completion_notified_at'];
+    protected $hidden = ['data', 'lease_token', 'lease_until', 'quota_charged', 'quota_charged_at', 'quota_receipt_id', 'completion_notified_at'];
 
     public function scopeForUser(Builder $query, int $userId): void
     {

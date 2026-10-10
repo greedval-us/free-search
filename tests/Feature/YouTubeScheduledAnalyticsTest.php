@@ -5,6 +5,7 @@ namespace Tests\Feature;
 use App\Exceptions\Public\ExternalServiceRequestException;
 use App\Exceptions\Public\ExternalServiceUnavailableException;
 use App\Exceptions\Public\PublicResourceNotFoundException;
+use App\Modules\ParserSupport\ParserRunSourceRequestBudget;
 use App\Modules\YouTube\Analytics\Reports\ScheduledYouTubeAnalytics;
 use App\Modules\YouTube\Analytics\YouTubeAnalyticsReportBuilder;
 use App\Modules\YouTube\Presenters\YouTubeChannelPresenter;
@@ -386,6 +387,7 @@ class YouTubeScheduledAnalyticsTest extends TestCase
         $client = new YouTubeDataApiClient(
             YouTubeApiConfig::fromArray(['key' => 'test-key', 'retry_attempts' => 0]),
             app(ExternalServiceLogger::class),
+            app(ParserRunSourceRequestBudget::class),
         );
 
         return new ScheduledYouTubeAnalytics(

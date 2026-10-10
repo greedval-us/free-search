@@ -5,8 +5,10 @@ namespace App\Services\Access;
 use App\Models\FeatureUsageDaily;
 use App\Models\User;
 use App\Services\Access\Contracts\FeatureUsageCounterInterface;
+use App\Services\Access\DTO\FeatureUsageReceipt;
 use Carbon\CarbonImmutable;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 
 final class FeatureUsageCounter implements FeatureUsageCounterInterface
 {
@@ -19,20 +21,22 @@ final class FeatureUsageCounter implements FeatureUsageCounterInterface
             ->value('used');
     }
 
-    public function consume(User $user, string $quotaKey, int $limit): ?int
+    public function consume(User $user, string $quotaKey, int $limit): ?FeatureUsageReceipt
     {
-        return DB::transaction(function () use ($user, $quotaKey, $limit): ?int {
+        return DB::transaction(function () use ($user, $quotaKey, $limit): ?FeatureUsageReceipt {
             $usageDate = $this->usageDate();
             $now = now();
 
-            FeatureUsageDaily::query()->insertOrIgnore([
+            // A duplicate upsert takes an exclusive row lock on InnoDB. INSERT
+            // IGNORE would retain shared duplicate-key locks until FOR UPDATE.
+            FeatureUsageDaily::query()->upsert([[
                 'user_id' => $user->id,
                 'feature' => $quotaKey,
                 'usage_date' => $usageDate,
                 'used' => 0,
                 'created_at' => $now,
                 'updated_at' => $now,
-            ]);
+            ]], ['user_id', 'feature', 'usage_date'], ['updated_at']);
 
             $usage = FeatureUsageDaily::query()
                 ->where('user_id', $user->id)
@@ -47,26 +51,42 @@ final class FeatureUsageCounter implements FeatureUsageCounterInterface
 
             $used = $usage->used + 1;
             $usage->forceFill(['used' => $used])->save();
+            $receiptId = (string) Str::uuid();
+            DB::table('feature_usage_receipts')->insert([
+                'id' => $receiptId,
+                'feature_usage_daily_id' => $usage->id,
+                'created_at' => $now,
+            ]);
 
-            return $used;
+            return new FeatureUsageReceipt($receiptId, $usageDate->toDateString(), $used);
         }, 3);
     }
 
-    public function release(User $user, string $quotaKey): void
+    public function release(User $user, string $receiptId): void
     {
-        DB::transaction(function () use ($user, $quotaKey): void {
-            $usage = FeatureUsageDaily::query()
-                ->where('user_id', $user->id)
-                ->where('feature', $quotaKey)
-                ->where('usage_date', $this->usageDate())
-                ->lockForUpdate()
-                ->first();
-
-            if ($usage === null || $usage->used <= 0) {
+        DB::transaction(function () use ($user, $receiptId): void {
+            $receipt = DB::table('feature_usage_receipts')->where('id', $receiptId)->first();
+            if ($receipt === null) {
                 return;
             }
 
-            $usage->forceFill(['used' => $usage->used - 1])->save();
+            // Every debit/refund locks the daily counter before its receipt.
+            $usage = FeatureUsageDaily::query()
+                ->where('user_id', $user->id)
+                ->lockForUpdate()
+                ->find($receipt->feature_usage_daily_id);
+
+            if ($usage === null) {
+                return;
+            }
+
+            $receipt = DB::table('feature_usage_receipts')->where('id', $receiptId)->lockForUpdate()->first();
+            if ($receipt === null || $receipt->released_at !== null) {
+                return;
+            }
+
+            DB::table('feature_usage_receipts')->where('id', $receiptId)->update(['released_at' => now()]);
+            $usage->forceFill(['used' => max(0, $usage->used - 1)])->save();
         }, 3);
     }
 

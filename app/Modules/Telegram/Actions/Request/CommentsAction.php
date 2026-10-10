@@ -2,6 +2,7 @@
 
 namespace App\Modules\Telegram\Actions\Request;
 
+use App\Modules\ParserSupport\ParserRunSourceRequestBudget;
 use App\Modules\Telegram\Access\PublicTelegramSource;
 use App\Modules\Telegram\Actions\AbstractTelegramAction;
 use Closure;
@@ -40,7 +41,11 @@ class CommentsAction extends AbstractTelegramAction
                 $discussion = PublicTelegramSource::resolveDiscussion(
                     $source,
                     fn (array $peer): array => $this->executeWithRetry(fn () => $client->getFullInfo(DialogId::fromSupergroupOrChannelId((int) $peer['channel_id'])), ['channel' => $channelId]),
-                    fn (int $id): array => $client->getInfo($id),
+                    function (int $id) use ($client): array {
+                        app(ParserRunSourceRequestBudget::class)->charge();
+
+                        return $client->getInfo($id);
+                    },
                     fn (string $username): array => PublicTelegramSource::refreshedInfo($client, $username),
                 );
                 if ($discussion === null) {

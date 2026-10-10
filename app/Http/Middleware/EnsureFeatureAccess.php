@@ -49,13 +49,13 @@ final class EnsureFeatureAccess
         try {
             $response = $next($request);
         } catch (Throwable $exception) {
-            $this->featureAccessService->refund($user, $routeName);
+            $this->featureAccessService->refund($user, $decision->receipt?->id);
 
             throw $exception;
         }
 
         if (! $response->isSuccessful()) {
-            $this->featureAccessService->refund($user, $routeName);
+            $this->featureAccessService->refund($user, $decision->receipt?->id);
         }
 
         return $response;

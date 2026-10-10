@@ -97,6 +97,10 @@ fastcgi_busy_buffers_size 32k;
 
 ## Verification checklist
 
+При обновлении с версии без quota receipts сначала приостановите dispatch scheduler, дождитесь завершения HTTP-запросов и остановите queue workers. После выкладки кода выполните `php artisan migrate --force`: аддитивные миграции `2026_10_10_022106_create_feature_usage_receipts_table.php` и `2026_10_10_023842_add_source_request_count_to_parser_runs_table.php` добавляют receipts и устойчивый счётчик обращений parser run. Затем пересоберите config cache и перезапустите workers/scheduler. Существующие queued report IDs и checkpoint versions сохраняются; старый PHP-код не должен выполняться одновременно с новым refund contract. Подробности backfill и ограничений исторических данных: [quota upgrade](refactoring-quota.md).
+
+Проверьте регистрацию `app:recover-parser-runs` в ежеминутном scheduler и выполните `php artisan app:recover-parser-runs --dry-run` перед включением фонового восстановления. Web, workers, recovery и cleanup должны видеть одни и те же private files и общий cache lock backend; независимые локальные диски не поддерживаются. Новые технические пределы перечислены в [.env.example](../.env.example) и [configuration](configuration.md).
+
 - `/up` отвечает успешно, главная и compiled assets доступны;
 - `inertia:check-ssr` подтверждает работу SSR, а исходный HTML главной содержит title, description и canonical;
 - migrations применены; cache/session/queue tables доступны;

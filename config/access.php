@@ -48,6 +48,7 @@ $resourceQuotas = static function (string $plan) use ($planLimits, $resourceLimi
 };
 
 return [
+    // Reserved for a future payment integration; current Billing UI only supports activation codes.
     'checkout_enabled' => (bool) env('BILLING_CHECKOUT_ENABLED', false),
 
     'plans' => [

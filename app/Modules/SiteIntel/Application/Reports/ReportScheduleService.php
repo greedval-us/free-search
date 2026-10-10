@@ -5,8 +5,9 @@ namespace App\Modules\SiteIntel\Application\Reports;
 use App\Models\SiteIntelReportSchedule;
 use App\Models\User;
 use App\Services\Access\Contracts\FeatureAccessServiceInterface;
+use App\Support\Reports\Scheduling\ReportScheduleLifecycle;
+use App\Support\Reports\Scheduling\ReportScheduleRules;
 use Carbon\CarbonImmutable;
-use DateTimeZone;
 use Illuminate\Support\Facades\DB;
 
 final readonly class ReportScheduleService
@@ -16,6 +17,7 @@ final readonly class ReportScheduleService
         private ReportPeriod $period,
         private ReportScheduler $scheduler,
         private FeatureAccessServiceInterface $access,
+        private ReportScheduleLifecycle $lifecycle,
     ) {}
 
     public function create(User $user, array $data): SiteIntelReportSchedule
@@ -35,14 +37,8 @@ final readonly class ReportScheduleService
         $interval = (string) ($data['interval'] ?? '');
         $time = (string) ($data['send_time'] ?? '');
         $timezone = (string) ($data['timezone'] ?? config('site_intel_reports.timezone'));
-        if (! in_array($interval, SiteIntelReportSchedule::INTERVALS, true)) {
-            throw new ReportException('invalid_interval');
-        }
-        if (preg_match('/^(?:[01]\d|2[0-3]):[0-5]\d$/D', $time) !== 1) {
-            throw new ReportException('invalid_time');
-        }
-        if (! in_array($timezone, DateTimeZone::listIdentifiers(DateTimeZone::ALL_WITH_BC), true)) {
-            throw new ReportException('invalid_timezone');
+        if (($reason = ReportScheduleRules::invalidReason($interval, $time, $timezone)) !== null) {
+            throw new ReportException($reason);
         }
 
         return DB::transaction(function () use ($user, $data, $targets, $type, $crawlLimit, $platformType, $interval, $time, $timezone): SiteIntelReportSchedule {
@@ -64,24 +60,15 @@ final readonly class ReportScheduleService
 
     public function change(User $user, int $id, string $action): void
     {
-        DB::transaction(function () use ($user, $id, $action): void {
-            $locked = User::query()->lockForUpdate()->findOrFail($user->id);
-            $schedule = SiteIntelReportSchedule::query()->forUser($locked->id)->lockForUpdate()->findOrFail($id);
-            if ($action === 'pause') {
-                $schedule->update(['enabled' => false]);
-
-                return;
-            }
-            if ($action !== 'resume') {
-                throw new ReportException('invalid_action');
-            }
-            $this->config->ensureQueue();
-            $this->ensureAccess($locked, $schedule->report_type);
-            if (! $schedule->enabled) {
-                $schedule->update(['enabled' => true,
-                    'next_run_at' => $this->period->firstRun($schedule->interval, $schedule->send_time, $schedule->timezone)]);
-            }
-        });
+        $this->lifecycle->change($user, SiteIntelReportSchedule::class, $id, $action,
+            function (User $locked, SiteIntelReportSchedule $schedule): void {
+                $this->config->ensureQueue();
+                $this->ensureAccess($locked, $schedule->report_type);
+                if (! $schedule->enabled) {
+                    $schedule->update(['enabled' => true,
+                        'next_run_at' => $this->period->firstRun($schedule->interval, $schedule->send_time, $schedule->timezone)]);
+                }
+            }, new ReportException('invalid_action'));
     }
 
     public function runNow(User $user, int $id): void
@@ -98,12 +85,7 @@ final readonly class ReportScheduleService
 
     public function destroy(User $user, int $id): void
     {
-        DB::transaction(function () use ($user, $id): void {
-            User::query()->lockForUpdate()->findOrFail($user->id);
-            $schedule = SiteIntelReportSchedule::query()->forUser($user->id)->lockForUpdate()->findOrFail($id);
-            $schedule->update(['enabled' => false]);
-            $schedule->delete();
-        });
+        $this->lifecycle->destroy($user, SiteIntelReportSchedule::class, $id);
     }
 
     private function ensureAccess(User $user, string $type): void

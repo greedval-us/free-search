@@ -76,7 +76,10 @@ class ParserCheckpointReliabilityTest extends TestCase
             $this->assertSame('temporary failure', $exception->getMessage());
         }
 
-        $this->assertSame($run, $store->get($user->id, $run['runId']));
+        $saved = $store->get($user->id, $run['runId']);
+        $this->assertSame(1, $saved['resources']['stepAttempts']);
+        unset($saved['resources'], $saved['updatedAt'], $run['updatedAt']);
+        $this->assertSame($run, $saved);
         $this->assertDatabaseHas('parser_runs', ['run_id' => $run['runId'], 'status' => 'running', 'progress' => 1]);
         $continued = app(ParserRunExecutionCoordinator::class)->advance($store, $user->id, $run['runId'],
             static fn (array $state): array => [...$state, 'progress' => 25],
@@ -344,6 +347,9 @@ class ParserCheckpointReliabilityTest extends TestCase
     private function configureQueue(bool $enabled): void
     {
         config()->set('osint.parser_runs.queue.enabled', $enabled);
+        if ($enabled) {
+            config()->set('queue.default', 'database');
+        }
         app()->forgetInstance(ParserRunConfig::class);
         app()->forgetInstance(ParserRunJobDispatcherInterface::class);
     }

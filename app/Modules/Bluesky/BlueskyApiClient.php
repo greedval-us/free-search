@@ -7,6 +7,8 @@ use App\Exceptions\Public\ExternalServiceUnavailableException;
 use App\Exceptions\Public\IntegrationMisconfiguredException;
 use App\Modules\Bluesky\Core\Contracts\BlueskyGatewayInterface;
 use App\Modules\Bluesky\Support\BlueskyApiConfig;
+use App\Modules\ParserSupport\ParserRunSourceRequestBudget;
+use App\Modules\ParserSupport\ParserRunSourceRequestBudgetExceeded;
 use App\Support\Observability\ExternalServiceLogger;
 use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Http\Client\PendingRequest;
@@ -23,6 +25,7 @@ final class BlueskyApiClient implements BlueskyGatewayInterface
     public function __construct(
         private readonly BlueskyApiConfig $config,
         private readonly ExternalServiceLogger $externalServiceLogger,
+        private readonly ParserRunSourceRequestBudget $sourceBudget,
     ) {}
 
     public function searchPosts(array $params): array
@@ -220,9 +223,11 @@ final class BlueskyApiClient implements BlueskyGatewayInterface
             ->acceptJson()
             ->asJson()
             ->timeout($this->config->timeoutSeconds())
+            ->beforeSending(fn () => $this->sourceBudget->charge())
             ->retry(
                 $this->config->retryAttempts(),
                 $this->config->retryDelayMilliseconds(),
+                when: static fn (?\Throwable $exception): bool => ! $exception instanceof ParserRunSourceRequestBudgetExceeded,
                 throw: false,
             );
     }

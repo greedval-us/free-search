@@ -76,7 +76,7 @@ abstract class AbstractParserApplicationService implements ParserRunApplicationS
         return $this->executionCoordinator->shouldContinue($run);
     }
 
-    final public function failRun(int $userId, string $runId, string $message, ?int $checkpointVersion = null): void
+    final public function failRun(int $userId, string $runId, string $message, ?int $checkpointVersion = null, bool $waitForLock = true): void
     {
         // Jobs created before checkpoint versions cannot prove which step failed.
         if ($checkpointVersion === null) {
@@ -90,6 +90,7 @@ abstract class AbstractParserApplicationService implements ParserRunApplicationS
             __('errors.api.service_unavailable'),
             $this->collector->buildResultSnapshot(...),
             $checkpointVersion,
+            $waitForLock,
         );
     }
 
@@ -115,6 +116,10 @@ abstract class AbstractParserApplicationService implements ParserRunApplicationS
     final public function getDownloadPayload(int $userId, string $runId): array
     {
         $run = $this->runGuard->requireExistingRun($this->runStore->get($userId, $runId));
+        if ($this->runGuard->hasDeferredResult($run)) {
+            // Rebuild from the saved checkpoint only; never collect or persist a duplicate here.
+            $run['result'] = $this->collector->buildResultSnapshot($run);
+        }
 
         return $this->runGuard->requireDownloadablePayload($run);
     }

@@ -12,6 +12,7 @@ final readonly class FeatureAccessDecision
         public int $used,
         public bool $counts,
         public ?string $message = null,
+        public ?FeatureUsageReceipt $receipt = null,
     ) {}
 
     /**

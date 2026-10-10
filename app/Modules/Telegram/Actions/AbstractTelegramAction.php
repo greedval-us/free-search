@@ -3,11 +3,13 @@
 namespace App\Modules\Telegram\Actions;
 
 use App\Facades\MadelineProto;
+use App\Modules\ParserSupport\ParserRunSourceRequestBudget;
 use App\Modules\Telegram\Access\PublicTelegramSource;
 use App\Support\Activity\RequestPayloadSanitizer;
 use App\Support\MadelineProto\MadelineProtoManager;
 use danog\MadelineProto\API;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Sleep;
 
 abstract class AbstractTelegramAction
 {
@@ -72,6 +74,8 @@ abstract class AbstractTelegramAction
 
         while (true) {
             try {
+                app(ParserRunSourceRequestBudget::class)->charge();
+
                 return $callback();
             } catch (\Throwable $e) {
                 $attempt++;
@@ -86,7 +90,7 @@ abstract class AbstractTelegramAction
                             'retry_in_ms' => $delayMs,
                         ])
                     );
-                    usleep($delayMs * 1000);
+                    Sleep::for($delayMs)->milliseconds();
 
                     continue;
                 }
@@ -100,7 +104,7 @@ abstract class AbstractTelegramAction
                             'retry_in_ms' => $delayMs,
                         ])
                     );
-                    usleep($delayMs * 1000);
+                    Sleep::for($delayMs)->milliseconds();
 
                     continue;
                 }

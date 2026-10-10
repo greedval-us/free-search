@@ -3,10 +3,26 @@
 namespace Tests\Unit;
 
 use App\Modules\ParserSupport\ParserRunConfig;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
 class ParserRunConfigTest extends TestCase
 {
+    #[DataProvider('recoveryPassLimits')]
+    public function test_recovery_pass_budget_and_scheduler_lease_stay_bounded(int $configured, int $seconds, int $minutes): void
+    {
+        $config = ParserRunConfig::fromArray(['recovery' => ['max_pass_seconds' => $configured]]);
+
+        $this->assertSame($seconds, $config->recoveryMaxPassSeconds());
+        $this->assertSame($minutes, $config->recoveryMutexMinutes());
+        $this->assertGreaterThan($seconds + 150, $minutes * 60);
+    }
+
+    public static function recoveryPassLimits(): array
+    {
+        return [[0, 1, 5], [30, 30, 5], [3600, 3600, 65], [1000000, 3600, 65]];
+    }
+
     public function test_it_normalizes_all_parser_run_settings(): void
     {
         $config = ParserRunConfig::fromArray([

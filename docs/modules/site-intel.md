@@ -22,7 +22,11 @@ Frontend: пять tabs/composables в `resources/js/pages/site-intel`; link gra
 
 ## Configuration
 
-`OSINT_SITE_HEALTH_HTTP_*` задают User-Agent, Accept, timeout, redirects и TLS verification. `OSINT_SITE_INTEL_WHOIS_*` задают IANA server, socket timeouts и response bounds. Production должен сохранять TLS verification включённым.
+`OSINT_SITE_HEALTH_HTTP_*` задают User-Agent, Accept, timeout, redirects и TLS verification. `OSINT_SITE_HEALTH_HTTP_MAX_RESPONSE_BYTES` (по умолчанию 2097152 байта, 2 MiB) ограничивает каждое HTTP-тело после распаковки, включая redirect responses, HTML, robots.txt, sitemap и страницы crawl. Лимит проверяется при записи transport в ограниченный memory stream, независимо от `Content-Length`; чтение прекращается до полной загрузки слишком большого ответа. Пустое/нулевое/отрицательное числовое значение не отключает защиту: минимум один байт.
+
+Превышение возвращает стандартную публичную ошибку HTTP 503 с кодом `site_intel_response_too_large` и переводом EN/RU. Анализ прерывается без выдачи усечённых данных или сохранения нового успешного отчёта. Этот предел относится к одному ответу; существующие ограничения redirect и crawl задают число запросов, отдельного общего байтового бюджета сценария пока нет. Connect timeout (10 секунд), общий timeout, проверки каждого redirect, закрепление проверенного IP и выбранный режим TLS сохранены.
+
+`OSINT_SITE_INTEL_WHOIS_*` задают IANA server, socket timeouts и отдельные response bounds. Production должен сохранять TLS verification включённым. Детали регрессий и изменения поведения описаны в [рефакторинге Site Intel](../refactoring-site-intel.md).
 
 `SITE_INTEL_REPORTS_*` задают отдельное соединение очереди, её имя, часовой пояс и предел времени формирования. Штатные `site-intel-reports-database` / `site-intel-reports-redis` используют `retry_after=960` при timeout 900 и lease 1200 секунд; нужен соответствующий worker и ежеминутный Laravel scheduler.
 
