@@ -1,5 +1,7 @@
 # Итог поэтапного рефакторинга
 
+Дополнительные исправления после `99b6069` описаны в [отдельном отчёте](refactoring-followup.md): partial exports у checkpoint cap, ограниченный recovery с 5-минутной scheduler lease, реальный MySQL migration upgrade и подготовленный CI job. Финальный локальный PHP suite этого прохода: 1704 passed, 3 opt-in skips, 8174 assertions; GitHub CI не запускался по решению пользователя оставить изменения локально.
+
 Работа выполнена в текущем workspace `D:\Program\OSPanel\home\free-search`, ветка `fix-2`, исходный HEAD `415d288ed13f7b8dee9b96dc98c798e3cee16116`. Начальное рабочее дерево было чистым. Коммиты, PR, push, merge и deployment не выполнялись. Production DB, реальные API, пользовательские токены и Telegram sessions не использовались.
 
 Анализ начат через `codebase-memory-mcp`: проверены проект `free-search`, его корень, индекс, архитектура и символы. После этого MCP стал возвращать `Transport closed`; ссылки и цепочки дополнительно проверены по локальным исходникам. Установленные зависимости сохранены: Laravel 13, Inertia 3, Vue 3.5, PHP 8.3.30, PHPUnit 12. Массового обновления зависимостей и форматирования репозитория нет.

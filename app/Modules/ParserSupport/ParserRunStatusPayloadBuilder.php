@@ -8,6 +8,8 @@ class ParserRunStatusPayloadBuilder
 {
     private const DEFAULT_STAGE = 'idle';
 
+    public function __construct(private readonly ParserRunGuard $runGuard) {}
+
     /**
      * @param  array<string, mixed>  $run
      * @param  array<string, string>  $statsMap  outputKey => runStatsKey
@@ -18,7 +20,7 @@ class ParserRunStatusPayloadBuilder
         $stats = is_array($run['stats'] ?? null) ? $run['stats'] : [];
         $status = ParserRun::normalizeStatus($run['status'] ?? null);
         $runId = (string) ($run['runId'] ?? '');
-        $hasResult = is_array($run['result'] ?? null);
+        $hasResult = is_array($run['result'] ?? null) || $this->runGuard->hasDeferredResult($run);
         $isDownloadable = ParserRun::isDownloadableStatus($status) && $hasResult && $runId !== '';
 
         $payload = [

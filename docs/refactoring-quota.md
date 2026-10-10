@@ -33,3 +33,24 @@ php artisan test --filter=FeatureUsageConcurrencyTest
 The test applies ordinary migrations to that database, creates only synthetic records, and deletes its own user afterward. Without this explicit configuration it reports a skip. On 2026-10-10 both tests ran against an isolated MySQL 8.4.8 instance on loopback port 33387, with a newly created empty data directory and dedicated test database/user: **2 passed, 50 assertions, 2.05 s**. Application `.env` and production data were not used. The instance was shut down afterward.
 
 The first real run exposed MySQL deadlock 1213 in concurrent daily-row initialization: duplicate `INSERT IGNORE` operations held shared unique-key locks before all workers requested `FOR UPDATE`. The corrected upsert takes an exclusive duplicate-row lock immediately, avoiding that lock upgrade without adding owner locks, changing tariff rules or increasing blanket retry counts. The same six-process test then passed; schedule-cap contention passed in both runs. This validates the tested local InnoDB races, not production-load capacity, MariaDB differences or multi-host operation.
+
+## Upgrade from the original schema
+
+`MigrationUpgradeTest` is a separate opt-in integration scenario. It requires an empty dedicated database named exactly `free_search_refactor_upgrade_test`, with explicitly supplied credentials. It refuses a nonempty database or cached application configuration and never uses `migrate:fresh`, rollback, application `.env`, production credentials or an existing application database. Its bootstrap supplies a synthetic application key and isolated database/cache/queue configuration; no `.env` generation or key setup is needed.
+
+The committed [baseline fixture](../tests/Fixtures/refactor-upgrade-baseline.README.md) comes from commit `415d288ed13f7b8dee9b96dc98c798e3cee16116`. The test first verifies SHA-256 hashes and applies that commit's **33 original migrations** with ordinary `migrate --path`. It then seeds seven cases in each of the five report tables: charged pending and processing reports, an uncharged pending report, charged staff and completed reports, and charged reports with missing/zero counters. It also stores legacy database queue payloads, parser metadata, and the original JSON checkpoint with saved UTF-8 data.
+
+An ordinary full `migrate` then applies only the two additive upgrade migrations. Assertions verify unchanged legacy fields, counters, schedules, queue payload bytes and checkpoint bytes, exactly ten backfilled receipts, and the legacy source counter starting at zero. Each old report job is deserialized and its real `handle()` method invoked against mocked source services: transient retry and duplicate delivery preserve the debit, while repeated terminal failures refund each original operation once. The old parser job deserializes with `queuedAt = null`; its partial checkpoint continues, stale versions are refused, and source reservations persist from zero to one to two across a new service instance. A second full migration is a no-op for migration history and receipts.
+
+```powershell
+$env:MIGRATION_UPGRADE_DB_DATABASE = 'free_search_refactor_upgrade_test'
+$env:MIGRATION_UPGRADE_DB_HOST = '127.0.0.1'
+$env:MIGRATION_UPGRADE_DB_PORT = '3306'
+$env:MIGRATION_UPGRADE_DB_USERNAME = '<restricted test user>'
+$env:MIGRATION_UPGRADE_DB_PASSWORD = '<synthetic test password>'
+php vendor/bin/phpunit --filter=MigrationUpgradeTest
+```
+
+Use direct PHPUnit to avoid the preliminary Laravel bootstrap performed by `artisan test`. Without explicit database configuration the test skips before booting Laravel. The fixture generator is for deliberate fixture regeneration only; CI reads the committed file without Git history.
+
+On 2026-10-10 this transition ran on a newly created isolated MySQL 8.4.8/InnoDB database at loopback port 33387: **1 passed, 183 assertions, 3.332 s**, PHP 8.3.30/PHPUnit 12.5.33, with no risky-test warnings. The first integration attempt stopped because the synthetic Site Intel `.test` domain was correctly rejected by existing target validation; the fixture was changed to `example.org` with a mocked DNS resolver, the dedicated database was recreated, and the complete scenario passed. All source services were mocked and no outbound request occurred. This checks the tested schema/data/job transition; it does not launch a real queue worker or prove compatibility with unrecorded historical configuration/role changes.

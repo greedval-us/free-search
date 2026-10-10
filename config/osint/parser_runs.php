@@ -8,6 +8,7 @@ return [
     'recovery' => [
         'batch_size' => max(1, (int) env('PARSER_RUN_RECOVERY_BATCH_SIZE', 100)),
         'stale_after_seconds' => max(150, (int) env('PARSER_RUN_RECOVERY_STALE_AFTER_SECONDS', 150)),
+        'max_pass_seconds' => max(1, min(3600, (int) env('PARSER_RUN_RECOVERY_MAX_PASS_SECONDS', 30))),
     ],
     'limits' => [
         'max_step_attempts' => max(1, (int) env('PARSER_RUN_MAX_STEP_ATTEMPTS', 10000)),

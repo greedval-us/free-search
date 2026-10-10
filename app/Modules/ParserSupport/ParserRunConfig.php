@@ -40,6 +40,7 @@ final readonly class ParserRunConfig
             maxExportBytes: max(1, (int) data_get($config, 'limits.max_export_bytes', 67108864)),
             maxExportCells: max(1, (int) data_get($config, 'limits.max_export_cells', 1000000)),
             maxSourceRequests: max(1, (int) data_get($config, 'limits.max_source_requests', 100000)),
+            recoveryMaxPassSeconds: max(1, min(3600, (int) data_get($config, 'recovery.max_pass_seconds', 30))),
         );
     }
 
@@ -60,6 +61,7 @@ final readonly class ParserRunConfig
         private int $maxExportBytes = 67108864,
         private int $maxExportCells = 1000000,
         private int $maxSourceRequests = 100000,
+        private int $recoveryMaxPassSeconds = 30,
     ) {}
 
     public function queueEnabled(): bool
@@ -105,6 +107,18 @@ final readonly class ParserRunConfig
     public function recoveryStaleAfterSeconds(): int
     {
         return max(ProcessParserRun::EXECUTION_LOCK_SECONDS, $this->recoveryStaleAfterSeconds, $this->stepDelaySeconds + 30);
+    }
+
+    public function recoveryMaxPassSeconds(): int
+    {
+        return max(1, min(3600, $this->recoveryMaxPassSeconds));
+    }
+
+    public function recoveryMutexMinutes(): int
+    {
+        // Admission time plus grace based on the execution lease and a two-minute margin.
+        // The lease is not an I/O timeout for an already-admitted candidate.
+        return (int) ceil(($this->recoveryMaxPassSeconds() + ProcessParserRun::EXECUTION_LOCK_SECONDS + 60) / 60) + 1;
     }
 
     public function maxStepAttempts(): int

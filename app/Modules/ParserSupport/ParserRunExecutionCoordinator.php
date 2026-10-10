@@ -234,7 +234,7 @@ final readonly class ParserRunExecutionCoordinator
         return ($run['status'] ?? null) === ParserRunStatus::Running->value;
     }
 
-    public function fail(JsonRunStore $runStore, int $userId, string $runId, string $message, ?callable $snapshotBuilder = null, ?int $checkpointVersion = null): void
+    public function fail(JsonRunStore $runStore, int $userId, string $runId, string $message, ?callable $snapshotBuilder = null, ?int $checkpointVersion = null, bool $waitForLock = true): void
     {
         $runStore->mutate(
             $userId,
@@ -252,6 +252,7 @@ final readonly class ParserRunExecutionCoordinator
 
                 return $this->lifecycleManager->markFailed($state, $message);
             },
+            $waitForLock,
         );
     }
 

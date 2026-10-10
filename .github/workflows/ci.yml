@@ -130,3 +130,47 @@ jobs:
 
       - name: Build assets
         run: npm run build
+
+  migration-upgrade:
+    name: migration-upgrade
+    runs-on: ubuntu-latest
+
+    services:
+      mysql:
+        image: mysql:8.4
+        env:
+          MYSQL_DATABASE: free_search_refactor_upgrade_test
+          MYSQL_USER: migration_upgrade_test
+          MYSQL_PASSWORD: synthetic-upgrade-test-only
+          MYSQL_ROOT_PASSWORD: synthetic-root-test-only
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd="mysqladmin ping --silent"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=10
+
+    env:
+      MIGRATION_UPGRADE_DB_DATABASE: free_search_refactor_upgrade_test
+      MIGRATION_UPGRADE_DB_HOST: 127.0.0.1
+      MIGRATION_UPGRADE_DB_PORT: 3306
+      MIGRATION_UPGRADE_DB_USERNAME: migration_upgrade_test
+      MIGRATION_UPGRADE_DB_PASSWORD: synthetic-upgrade-test-only
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.3'
+          extensions: pdo_mysql
+          tools: composer:v2
+
+      - name: Install PHP dependencies
+        run: composer install --no-interaction --prefer-dist --optimize-autoloader
+
+      - name: Upgrade baseline schema and queued data on MySQL
+        run: php vendor/bin/phpunit --filter=MigrationUpgradeTest

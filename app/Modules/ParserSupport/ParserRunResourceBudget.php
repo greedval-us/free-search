@@ -78,6 +78,7 @@ final readonly class ParserRunResourceBudget
         if ($this->size($run) > $this->config->maxCheckpointBytes()) {
             // The cap admits collector data. Finalization metadata may add a small overhead;
             // preserve saved data, including legacy oversized files, without a duplicate snapshot.
+            // Downloads rebuild the pure snapshot from this failed budget checkpoint on demand.
             $run['result'] = null;
         }
 

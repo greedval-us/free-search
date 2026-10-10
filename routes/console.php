@@ -14,7 +14,9 @@ Artisan::command('inspire', function () {
 })->purpose('Display an inspiring quote');
 
 Schedule::command(SendSubscriptionExpiryNotifications::class)->dailyAt('09:00');
-Schedule::command(RecoverParserRuns::class)->everyMinute()->withoutOverlapping();
+Schedule::command(RecoverParserRuns::class)->everyMinute()->withoutOverlapping(
+    app(ParserRunConfig::class)->recoveryMutexMinutes(),
+);
 Schedule::command(CleanupParserRunFiles::class)->dailyAt(
     app(ParserRunConfig::class)->cleanupSchedule()
 );

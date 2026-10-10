@@ -10,6 +10,21 @@ use App\Modules\ParserSupport\Enums\ParserRunStatus;
 class ParserRunGuard
 {
     /**
+     * Resource finalization may omit the duplicate snapshot while keeping all collected data.
+     *
+     * @param  array<string, mixed>  $run
+     */
+    public function hasDeferredResult(array $run): bool
+    {
+        return ($run['status'] ?? null) === ParserRunStatus::Failed->value
+            && ($run['result'] ?? null) === null
+            && is_array($run['data'] ?? null)
+            && in_array($run['resources']['exhausted'] ?? null, [
+                'duration', 'step_attempts', 'checkpoint_bytes', 'records', 'source_requests',
+            ], true);
+    }
+
+    /**
      * @param  array<string, mixed>|null  $run
      * @return array<string, mixed>
      */

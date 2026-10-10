@@ -13,7 +13,7 @@ final class ParserRunFileStorage
      * @param  Closure(): T  $callback
      * @return T
      */
-    public function withExclusiveLock(string $path, Closure $callback): mixed
+    public function withExclusiveLock(string $path, Closure $callback, bool $waitForLock = true): mixed
     {
         $directory = dirname($path);
         if (! is_dir($directory) && ! mkdir($directory, 0700, true) && ! is_dir($directory)) {
@@ -27,7 +27,11 @@ final class ParserRunFileStorage
         }
 
         try {
-            if (! flock($handle, LOCK_EX)) {
+            $wouldBlock = 0;
+            if (! flock($handle, $waitForLock ? LOCK_EX : LOCK_EX | LOCK_NB, $wouldBlock)) {
+                if (! $waitForLock && $wouldBlock) {
+                    throw new ParserRunWriterLockBusyException;
+                }
                 throw new RuntimeException('Unable to lock parser storage.');
             }
 

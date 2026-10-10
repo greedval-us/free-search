@@ -84,12 +84,12 @@ final readonly class ParserRunRecovery
                 }
 
                 return 'requeued';
-            });
+            }, waitForLock: false);
 
             if ($outcome === 'retry_exhausted') {
                 // Module processors build partial snapshots without collecting another page.
                 if ($snapshotBuilder === null) {
-                    $this->processors->forModule($store->module())->failRun($userId, $runId, __('errors.api.service_unavailable'), $version);
+                    $this->processors->forModule($store->module())->failRun($userId, $runId, __('errors.api.service_unavailable'), $version, waitForLock: false);
                 } else {
                     $store->mutate($userId, $runId, function (array $state) use ($version, $snapshotBuilder): array {
                         if (($state['status'] ?? null) !== ParserRunStatus::Running->value
@@ -99,7 +99,7 @@ final readonly class ParserRunRecovery
                         $state['result'] = $snapshotBuilder($state);
 
                         return $this->lifecycle->markFailed($state, __('errors.api.service_unavailable'));
-                    });
+                    }, waitForLock: false);
                 }
                 $outcome = 'failed_retry_exhausted';
             }
@@ -107,6 +107,10 @@ final readonly class ParserRunRecovery
             $this->log($store, $runId, $version, $outcome);
 
             return $outcome;
+        } catch (ParserRunWriterLockBusyException) {
+            $this->log($store, $runId, $version, 'writer_busy');
+
+            return 'writer_busy';
         } catch (Throwable $exception) {
             $this->log($store, $runId, $version, 'recovery_error', $exception::class);
             throw $exception;

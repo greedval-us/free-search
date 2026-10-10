@@ -82,7 +82,7 @@ abstract class JsonRunStore
      * @param  callable(array<string, mixed>): array<string, mixed>  $callback
      * @return array<string, mixed>|null
      */
-    public function mutate(int $userId, string $runId, callable $callback): ?array
+    public function mutate(int $userId, string $runId, callable $callback, bool $waitForLock = true): ?array
     {
         if (! Str::isUuid($runId)) {
             return null;
@@ -121,7 +121,7 @@ abstract class JsonRunStore
             $this->syncMetadata($userId, $runId, $run, $relativePath);
 
             return $run;
-        });
+        }, $waitForLock);
     }
 
     /**
@@ -130,10 +130,11 @@ abstract class JsonRunStore
      * @param  callable(array<string, mixed>|null): T  $callback
      * @return T
      */
-    public function inspectLocked(int $userId, string $runId, callable $callback): mixed
+    public function inspectLocked(int $userId, string $runId, callable $callback, bool $waitForLock = true): mixed
     {
         return $this->files->withExclusiveLock($this->disk()->path($this->runPath($userId, $runId)),
             fn () => $callback($this->get($userId, $runId)),
+            $waitForLock,
         );
     }
 

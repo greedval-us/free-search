@@ -37,6 +37,7 @@ Database cache, sessions и queue требуют соответствующих 
 | `PARSER_RUN_QUEUE_STEP_DELAY_SECONDS` | нет      | Delay between collection steps | `2`                  |
 | `PARSER_RUN_RECOVERY_BATCH_SIZE` | нет | Metadata candidates per ID batch | `100` |
 | `PARSER_RUN_RECOVERY_STALE_AFTER_SECONDS` | нет | Stale threshold; at least execution TTL and step delay + 30 seconds | `150` |
+| `PARSER_RUN_RECOVERY_MAX_PASS_SECONDS` | нет | Recovery admission budget per pass, clamped to 1–3600 seconds; scheduler mutex TTL is derived from this value | `30` |
 | `PARSER_RUN_MAX_STEP_ATTEMPTS` | нет | Durable total collection-step attempts, including crashed/retried steps | `10000` |
 | `PARSER_RUN_MAX_SOURCE_REQUESTS` | нет | Durable explicit source requests, including application retries; hidden MadelineProto transport retries are not observable | `100000` |
 | `PARSER_RUN_MAX_RECORDS` | нет | Cumulative normalized processed records across existing source counters | `100000` |

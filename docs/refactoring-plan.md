@@ -39,7 +39,19 @@
 - Backend тесты с `Storage::fake` запускать последовательно: fake-диски общие между процессами. PHP runtime и временная папка требуют разрешённого запуска вне sandbox.
 - Каждый этап заканчивается кодом, тестами и документацией; неизвестные продуктовые решения выносить отдельно, не останавливая независимые изменения.
 
-## Финальная проверка и оставшиеся задачи
+## Дополнительная проверка после `99b6069`
+
+Проверены замечания следующего прохода: у checkpoint byte cap финализация убирает дублирующий snapshot, после чего guard ошибочно запрещает экспорт сохранённых данных; scheduler recovery использует стандартную overlap lease 1440 минут, а проход не ограничен временем. Исправления ведутся от чистой `fix-2` / `99b6069e421ab46873873ef2a116c4efbdd41092` без изменения старых миграций.
+
+- [x] Восстановить partial JSON/XLSX из сохранённых failed budget checkpoints и проверить публичные downloads/status/history четырёх модулей; 97 tests / 537 assertions.
+- [x] Ограничить admission recovery, возобновлять сканирование по ID, связать scheduler lease с длительностью прохода и проверить orphan mutex/занятый writer; 50 tests / 268 assertions.
+- [x] Проверить обычный upgrade со схемы `415d288` на отдельной MySQL, включая старые queued payloads и checkpoint; добавить проверку в CI; 1 test / 183 assertions.
+- [x] Локальные проверки: PHP 1704 passed / 3 opt-in skips / 8174 assertions; Pint, frontend quality, 313 frontend tests, client/SSR build, YAML parse и diff check успешны.
+- [ ] GitHub CI на исправленном commit не запускался: пользователь отказался от commit/push/draft PR и выбрал оставить изменения локально. Новый migration-upgrade job подготовлен в рабочем дереве.
+
+Состояние и доказательства этого прохода: [дополнительный отчёт](refactoring-followup.md).
+
+## Финальная проверка предыдущего прохода
 
 - [x] Квоты и миграционная совместимость; MySQL contention RED → upsert fix → 2 passed / 50 assertions.
 - [x] Автономное recovery, Telegram/storage/resource audit и общие durable бюджеты.
