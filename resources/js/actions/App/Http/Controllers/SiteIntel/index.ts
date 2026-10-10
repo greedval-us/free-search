@@ -1,6 +1,8 @@
+import SiteIntelReportsController from './SiteIntelReportsController'
 import SiteIntelController from './SiteIntelController'
 const SiteIntel = {
-    SiteIntelController: Object.assign(SiteIntelController, SiteIntelController),
+    SiteIntelReportsController: Object.assign(SiteIntelReportsController, SiteIntelReportsController),
+SiteIntelController: Object.assign(SiteIntelController, SiteIntelController),
 }
 
 export default SiteIntel

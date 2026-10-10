@@ -2,9 +2,10 @@ import type { Component } from 'vue';
 import { createModuleTabs } from '@/lib/navigation/create-module-tabs';
 import BlueskyAnalyticsTab from './tabs/BlueskyAnalyticsTab.vue';
 import BlueskyParserTab from './tabs/BlueskyParserTab.vue';
+import BlueskyReportsTab from './tabs/BlueskyReportsTab.vue';
 import BlueskySearchTab from './tabs/BlueskySearchTab.vue';
 
-export type BlueskyTabValue = 'search' | 'analytics' | 'parser';
+export type BlueskyTabValue = 'search' | 'analytics' | 'parser' | 'reports';
 
 export type BlueskyTabDefinition = {
     key: BlueskyTabValue;
@@ -31,5 +32,11 @@ export const BLUESKY_TABS: readonly BlueskyTabDefinition[] = createModuleTabs([
         labelKey: 'bluesky.tabs.parser',
         component: BlueskyParserTab,
         accessKey: 'bluesky.parser',
+    },
+    {
+        key: 'reports',
+        labelKey: 'bluesky.tabs.reports',
+        component: BlueskyReportsTab,
+        accessKey: 'bluesky.analytics',
     },
 ]) as readonly BlueskyTabDefinition[];

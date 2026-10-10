@@ -21,17 +21,23 @@
 - [Frontend](architecture/frontend.md)
 - [Границы модулей](architecture/modules.md)
 - [Parser Runs](architecture/parser-runs.md)
+- [Отчёты по расписанию](architecture/scheduled-reports.md)
 - [Data flow](architecture/data-flow.md)
 
 ## Модули и подсистемы
 
 - [Telegram](modules/telegram.md)
 - [Telegram Bot / Telegraph](modules/telegram-bot.md)
+- [Отчёты аналитики Telegram по расписанию](modules/telegram-analytics-reports.md)
 - [YouTube](modules/youtube.md)
+- [Отчёты аналитики YouTube по расписанию](modules/youtube-analytics-reports.md)
 - [Bluesky](modules/bluesky.md)
 - [Mastodon](modules/mastodon.md)
+- [Отчёты Bluesky и Mastodon по расписанию](modules/social-analytics-reports.md)
 - [Site Intel](modules/site-intel.md)
+- [Аналитика сайтов и SEO-аудит по расписанию](modules/site-intel-reports.md)
 - [News / Media Intel](modules/news-media-intel.md)
+- [Отчёты новостей и медиа по расписанию](modules/news-media-reports.md)
 - [Shifr](modules/shifr.md)
 - [Dashboard, Wiki и Export](modules/platform-services.md)
 - [Access и subscriptions](modules/access-subscriptions.md)

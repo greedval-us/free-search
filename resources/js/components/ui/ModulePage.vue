@@ -11,6 +11,7 @@ type ModuleTabDefinition = {
     icon: object;
     component: object;
     accessKey?: string;
+    accessKeys?: readonly string[];
 };
 
 const props = defineProps<{

@@ -1,4 +1,5 @@
 import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFormDefinition } from './../../wayfinder'
+import reports from './reports'
 /**
 * @see \App\Http\Controllers\SiteIntel\SiteIntelController::siteHealth
  * @see app/Http/Controllers/SiteIntel/SiteIntelController.php:29
@@ -468,7 +469,8 @@ report.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     
     report.form = reportForm
 const siteIntel = {
-    siteHealth: Object.assign(siteHealth, siteHealth),
+    reports: Object.assign(reports, reports),
+siteHealth: Object.assign(siteHealth, siteHealth),
 domainLite: Object.assign(domainLite, domainLite),
 analytics: Object.assign(analytics, analytics),
 seoAudit: Object.assign(seoAudit, seoAudit),

@@ -1,6 +1,7 @@
 import { createModuleTabs } from '@/lib/navigation/create-module-tabs';
 import YouTubeAnalyticsTab from './tabs/YouTubeAnalyticsTab.vue';
 import YouTubeParserTab from './tabs/YouTubeParserTab.vue';
+import YouTubeReportsTab from './tabs/YouTubeReportsTab.vue';
 import YouTubeSearchTab from './tabs/YouTubeSearchTab.vue';
 
 export const YOUTUBE_TABS = createModuleTabs([
@@ -20,5 +21,11 @@ export const YOUTUBE_TABS = createModuleTabs([
         labelKey: 'youtube.tabs.parser',
         component: YouTubeParserTab,
         accessKey: 'youtube.parser',
+    },
+    {
+        key: 'reports',
+        labelKey: 'youtube.tabs.reports',
+        component: YouTubeReportsTab,
+        accessKey: 'youtube.analytics',
     },
 ]);

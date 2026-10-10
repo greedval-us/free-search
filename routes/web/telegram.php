@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Telegram\TelegramAnalyticsController;
+use App\Http\Controllers\Telegram\TelegramAnalyticsReportsController;
 use App\Http\Controllers\Telegram\TelegramParserController;
 use App\Http\Controllers\Telegram\TelegramSearchController;
 use App\Http\Controllers\Telegram\TelegramTrackingController;
@@ -35,6 +36,15 @@ Route::prefix('telegram')->name('telegram.')->group(function (): void {
         ->name('media');
 
     Route::prefix('analytics')->name('analytics.')->group(function (): void {
+        Route::prefix('reports')->name('reports.')->middleware('feature.access')->group(function (): void {
+            Route::get('/', [TelegramAnalyticsReportsController::class, 'index'])->middleware(RouteThrottle::PARSER_STATUS)->name('index');
+            Route::post('schedules', [TelegramAnalyticsReportsController::class, 'store'])->middleware(RouteThrottle::PARSER_CONTROL)->name('store');
+            Route::patch('schedules/{schedule}', [TelegramAnalyticsReportsController::class, 'change'])->whereNumber('schedule')->middleware(RouteThrottle::PARSER_CONTROL)->name('change');
+            Route::post('schedules/{schedule}/run', [TelegramAnalyticsReportsController::class, 'runNow'])->whereNumber('schedule')->middleware(RouteThrottle::PARSER_START)->name('run');
+            Route::delete('schedules/{schedule}', [TelegramAnalyticsReportsController::class, 'destroy'])->whereNumber('schedule')->middleware(RouteThrottle::PARSER_CONTROL)->name('destroy');
+            Route::get('{report}/view', [TelegramAnalyticsReportsController::class, 'view'])->whereNumber('report')->middleware(RouteThrottle::ANALYTICS_REPORT)->name('view');
+            Route::get('{report}/download/{format}', [TelegramAnalyticsReportsController::class, 'download'])->whereNumber('report')->whereIn('format', ['html', 'json'])->middleware(RouteThrottle::PARSER_DOWNLOAD)->name('download');
+        });
         Route::get('summary', [TelegramAnalyticsController::class, 'summary'])
             ->middleware(['feature.access', RouteThrottle::ANALYTICS_SUMMARY])
             ->name('summary');

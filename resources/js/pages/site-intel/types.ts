@@ -2,7 +2,8 @@ export type SiteIntelTabValue =
     | 'siteHealth'
     | 'domainLite'
     | 'analytics'
-    | 'seoAudit';
+    | 'seoAudit'
+    | 'reports';
 
 export type SiteHealthResult = {
     target: {

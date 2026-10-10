@@ -1,4 +1,4 @@
-export type MastodonTabValue = 'search' | 'analytics' | 'parser';
+export type MastodonTabValue = 'search' | 'analytics' | 'parser' | 'reports';
 
 export type MastodonParserStage =
     | 'idle'

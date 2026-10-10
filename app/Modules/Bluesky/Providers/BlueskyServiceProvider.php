@@ -4,6 +4,9 @@ namespace App\Modules\Bluesky\Providers;
 
 use App\Modules\Bluesky\Analytics\BlueskyAnalyticsApplicationService;
 use App\Modules\Bluesky\Analytics\Contracts\BlueskyAnalyticsApplicationServiceInterface;
+use App\Modules\Bluesky\Analytics\Reports\Console\MaintainAnalyticsReports;
+use App\Modules\Bluesky\Analytics\Reports\Contracts\ScheduledBlueskyGatewayInterface;
+use App\Modules\Bluesky\Analytics\Reports\PublicBlueskyReportClient;
 use App\Modules\Bluesky\BlueskyApiClient;
 use App\Modules\Bluesky\Core\Contracts\BlueskyGatewayInterface;
 use App\Modules\Bluesky\Parser\BlueskyParserApplicationService;
@@ -19,9 +22,16 @@ use App\Modules\Bluesky\Support\BlueskyModuleConfig;
 use App\Modules\ParserSupport\Contracts\ParserRunBackgroundProcessorInterface;
 use App\Modules\ParserSupport\JsonRunStore;
 use App\Support\Providers\BindingsServiceProvider;
+use Illuminate\Support\Facades\Schedule;
 
 final class BlueskyServiceProvider extends BindingsServiceProvider
 {
+    public function boot(): void
+    {
+        $this->commands([MaintainAnalyticsReports::class]);
+        Schedule::command('bluesky:analytics-reports-maintain')->everyMinute()->withoutOverlapping();
+    }
+
     public function register(): void
     {
         parent::register();
@@ -57,6 +67,7 @@ final class BlueskyServiceProvider extends BindingsServiceProvider
     protected function bindings(): array
     {
         return [
+            ScheduledBlueskyGatewayInterface::class => PublicBlueskyReportClient::class,
             BlueskyGatewayInterface::class => BlueskyApiClient::class,
             BlueskyAnalyticsApplicationServiceInterface::class => BlueskyAnalyticsApplicationService::class,
             BlueskyParserApplicationServiceInterface::class => BlueskyParserApplicationService::class,

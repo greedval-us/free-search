@@ -179,8 +179,16 @@
                 <span class="chip">{{ $tr['mode'] }}: {{ $meta['mode'] ?? '-' }}</span>
                 <span class="chip">{{ $tr['target'] }}: {{ $meta['target'] ?? '-' }}</span>
                 <span class="chip">{{ $tr['resolvedTarget'] }}: {{ $meta['resolvedTarget'] ?? '-' }}</span>
+                @if(isset($report['range']))
+                    <span class="chip">{{ __('mastodon_analytics_reports.report.period', [], $reportLocale) }}:
+                        {{ \Carbon\CarbonImmutable::parse($report['range']['dateFrom'])->setTimezone($report['range']['timezone'])->toDateString() }} — {{ \Carbon\CarbonImmutable::parse($report['range']['dateTo'])->setTimezone($report['range']['timezone'])->toDateString() }}</span>
+                    <span class="chip">{{ __('mastodon_analytics_reports.report.timezone', [], $reportLocale) }}: {{ $report['range']['timezone'] }}</span>
+                @endif
             </div>
         </header>
+        @if(isset($report['range']))
+            <div class="body">{{ __('mastodon_analytics_reports.report.methodology', [], $reportLocale) }}</div>
+        @endif
     </section>
 
     @if(is_array($profile))

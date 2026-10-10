@@ -1,5 +1,7 @@
 # Free Search
 
+Telegram, YouTube, Bluesky and Mastodon support scheduled analytics reports every 1, 3 or 7 days, or monthly, with saved HTML/JSON history and delivery through the Telegram bot.
+
 Free Search is a modular OSINT platform built with Laravel, Inertia.js, and Vue for searching, collecting, normalizing, and analysing open-source data.
 
 > **Project Status: Beta.** The project is under active development. Internal APIs and interfaces may change, modules have different maturity levels, and integrations depend on third-party availability and policies. Production deployment requires an independent configuration, security, and source-limit review.
@@ -9,8 +11,8 @@ Free Search is a modular OSINT platform built with Laravel, Inertia.js, and Vue 
 ## Current capabilities
 
 - Telegram, YouTube, Bluesky, and Mastodon: Search, Analytics, background Parser Runs, history, stop, JSON and Excel exports.
-- Site Intel: HTTP/DNS/SSL checks, WHOIS-based Domain Lite, analytics, SEO Audit, and HTML reports.
-- News / Media Intel: NewsAPI, Google News RSS, and Bing RSS aggregation with deduplication and lightweight heuristic analysis.
+- Site Intel: HTTP/DNS/SSL checks, WHOIS-based Domain Lite, analytics, and SEO Audit. [Scheduled reports](docs/modules/site-intel-reports.md) for both types run every 1, 3 or 7 days, or monthly, with saved HTML/JSON snapshots and Telegram bot delivery. Each snapshot describes the site at check time, rather than traffic statistics for the preceding days.
+- News / Media Intel: SearXNG news and web search, brand and competitor analysis, content ideas, and domain presence in the collected sample. [Scheduled reports](docs/modules/news-media-reports.md) run every 1/3/7 days or month, keep HTML/JSON history, and deliver to Telegram.
 - Shifr: hashing, text transforms, IOC extraction, JWT inspection, and classic ciphers.
 - Dashboard with activity history, summaries, pinned modules, and saved queries.
 - Fortify authentication, email verification, 2FA, subscriptions, daily Feature Access quotas, and a separate MoonShine admin panel.
@@ -21,7 +23,7 @@ All areas are Beta. Telegram requires a MadelineProto session; YouTube depends o
 
 - PHP `^8.3`, Laravel `^13.0`, Fortify, MoonShine 4
 - Vue 3, TypeScript, Inertia.js 3, Vite 8, Tailwind CSS 4
-- MadelineProto, YouTube Data API v3, Bluesky AT Protocol, Mastodon API, RSS/NewsAPI
+- MadelineProto, YouTube Data API v3, Bluesky AT Protocol, Mastodon API, SearXNG
 - PHPUnit 12, Vitest 4, Pint, ESLint, Prettier, vue-tsc
 
 ## Architecture
@@ -62,7 +64,7 @@ For SQLite, ensure `database/database.sqlite` exists before migration. `composer
 - YouTube: `YOUTUBE_DATA_API_KEY`.
 - Bluesky: `BLUESKY_IDENTIFIER`, `BLUESKY_APP_PASSWORD`, `BLUESKY_PDS_URL`.
 - Mastodon: `MASTODON_API_BASE_URL`, optionally `MASTODON_API_TOKEN`.
-- NewsAPI: `OSINT_NEWSAPI_KEY`; RSS providers can operate without it.
+- News and media: `OSINT_NEWS_MEDIA_SEARXNG_BASE_URL` points to your existing SearXNG service; scheduled reports use the separate `news-media-reports` queue.
 - Parser Runs: `PARSER_RUN_*`; a worker is required when queue execution is enabled.
 - MoonShine: production domain/prefix, allowlist, and throttling use `MOONSHINE_*`.
 

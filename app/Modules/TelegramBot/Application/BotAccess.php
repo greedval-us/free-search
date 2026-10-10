@@ -7,7 +7,7 @@ use App\Modules\TelegramBot\Support\BotConfig;
 
 final readonly class BotAccess
 {
-    public function __construct(private BotConfig $config) {}
+    public function __construct(private BotConfig $config, private ScheduledReportRegistry $reports) {}
 
     public function allows(?BotLink $link): bool
     {
@@ -23,10 +23,20 @@ final readonly class BotAccess
             && (int) $chat->telegraph_bot_id === $this->config->botId();
     }
 
-    public function allowsDelivery(?BotLink $link, string $kind, bool $automatic): bool
+    public function allowsDelivery(?BotLink $link, string $kind, bool $automatic, ?int $reportId = null): bool
     {
         if (! $this->allows($link)) {
             return false;
+        }
+
+        $provider = $this->reports->find($kind);
+        if ($provider !== null) {
+            if ($automatic && ! $link->exports_enabled) {
+                return false;
+            }
+
+            return $reportId === null ? $provider->allows($link->user)
+                : $provider->allowsDelivery($link->user, $reportId, $automatic);
         }
 
         return match ($kind) {

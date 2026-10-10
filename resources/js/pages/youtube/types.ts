@@ -1,4 +1,4 @@
-﻿export type YouTubeTabValue = 'search' | 'analytics' | 'parser';
+export type YouTubeTabValue = 'search' | 'analytics' | 'parser' | 'reports';
 
 export type YouTubeParserStage =
     | 'idle'

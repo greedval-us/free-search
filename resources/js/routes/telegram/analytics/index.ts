@@ -1,4 +1,5 @@
 import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFormDefinition } from './../../../wayfinder'
+import reports from './reports'
 /**
 * @see \App\Http\Controllers\Telegram\TelegramAnalyticsController::summary
  * @see app/Http/Controllers/Telegram/TelegramAnalyticsController.php:19
@@ -156,7 +157,8 @@ report.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     
     report.form = reportForm
 const analytics = {
-    summary: Object.assign(summary, summary),
+    reports: Object.assign(reports, reports),
+summary: Object.assign(summary, summary),
 report: Object.assign(report, report),
 }
 

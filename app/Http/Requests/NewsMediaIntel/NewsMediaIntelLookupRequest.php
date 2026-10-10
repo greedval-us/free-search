@@ -3,16 +3,21 @@
 namespace App\Http\Requests\NewsMediaIntel;
 
 use App\Http\Requests\AbstractLocalizedRequest;
+use App\Http\Requests\NewsMediaIntel\Concerns\HasNewsSearchFilters;
 use App\Modules\NewsMediaIntel\Domain\DTO\NewsMediaIntelLookupDTO;
 
 class NewsMediaIntelLookupRequest extends AbstractLocalizedRequest
 {
+    use HasNewsSearchFilters;
+
+    protected function prepareForValidation(): void
+    {
+        $this->prepareSearchFilters();
+    }
+
     public function rules(): array
     {
-        return [
-            'query' => ['required', 'string', 'min:2', 'max:180'],
-            'locale' => $this->localeRule(),
-        ];
+        return $this->searchFilterRules();
     }
 
     public function searchQuery(): string
@@ -22,6 +27,6 @@ class NewsMediaIntelLookupRequest extends AbstractLocalizedRequest
 
     public function toLookupDTO(): NewsMediaIntelLookupDTO
     {
-        return new NewsMediaIntelLookupDTO($this->searchQuery());
+        return new NewsMediaIntelLookupDTO($this->searchQuery(), $this->searchOptions());
     }
 }

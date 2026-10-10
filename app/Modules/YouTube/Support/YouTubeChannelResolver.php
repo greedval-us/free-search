@@ -2,6 +2,7 @@
 
 namespace App\Modules\YouTube\Support;
 
+use App\Exceptions\Public\ExternalServiceUnavailableException;
 use App\Exceptions\Public\PublicResourceNotFoundException;
 use App\Modules\YouTube\Core\Contracts\YouTubeGatewayInterface;
 use Illuminate\Support\Arr;
@@ -59,8 +60,20 @@ class YouTubeChannelResolver
             'maxResults' => 1,
         ]);
 
+        $items = $payload['items'] ?? null;
+        if (isset($payload['error']) || ! is_array($items) || ! array_is_list($items)) {
+            throw new ExternalServiceUnavailableException('errors.api.youtube.request_failed', 'youtube_analytics_invalid_response');
+        }
+        if ($items === []) {
+            return null;
+        }
+
         $id = Arr::get($payload, 'items.0.id');
 
-        return is_string($id) && $id !== '' ? $id : null;
+        if (! is_string($id) || ! $this->inputNormalizer->looksLikeChannelId($id)) {
+            throw new ExternalServiceUnavailableException('errors.api.youtube.request_failed', 'youtube_analytics_invalid_response');
+        }
+
+        return $id;
     }
 }

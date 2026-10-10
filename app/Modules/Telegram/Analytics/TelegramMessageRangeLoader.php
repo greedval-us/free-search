@@ -2,6 +2,8 @@
 
 namespace App\Modules\Telegram\Analytics;
 
+use App\Exceptions\Public\ExternalServiceRequestException;
+use App\Exceptions\Public\ExternalServiceUnavailableException;
 use App\Modules\Telegram\Core\Contracts\TelegramGatewayInterface;
 use App\Modules\Telegram\Presenters\TelegramMessagePresenter;
 use App\Modules\Telegram\Support\TelegramConfig;
@@ -36,12 +38,16 @@ class TelegramMessageRangeLoader
                 'q' => $keyword,
                 'limit' => $pageLimit,
                 'offset_id' => $offsetId,
-                'min_date' => $minDate,
-                'max_date' => $maxDate,
+                // Telegram search bounds are exclusive; the report includes both edge seconds.
+                'min_date' => max(0, $minDate - 1),
+                'max_date' => $maxDate + 1,
             ]);
 
-            if ($dto === null || empty($dto->messages)) {
-                break;
+            if ($dto === null || ($dto->inexact && empty($dto->messages))) {
+                throw new ExternalServiceUnavailableException('errors.api.telegram.load_messages_failed', 'telegram_analytics_load_messages_failed');
+            }
+            if (empty($dto->messages)) {
+                return $messages;
             }
 
             $oldestReached = false;
@@ -72,23 +78,21 @@ class TelegramMessageRangeLoader
             }
 
             if ($oldestReached) {
-                break;
+                return $messages;
             }
 
             $nextOffsetId = $this->messagePresenter->resolveNextOffsetId($dto->messages);
 
-            if ($nextOffsetId === null || count($dto->messages) < $pageLimit) {
-                break;
-            }
-
-            if (isset($seenOffsets[$nextOffsetId])) {
-                break;
+            // Search may return short non-final pages. Only a confirmed end completes the range.
+            if ($nextOffsetId === null || $nextOffsetId <= 0 || isset($seenOffsets[$nextOffsetId])
+                || ($offsetId > 0 && $nextOffsetId >= $offsetId)) {
+                throw new ExternalServiceRequestException('errors.api.telegram.load_messages_failed', 422, 'telegram_analytics_pagination_stalled');
             }
 
             $seenOffsets[$nextOffsetId] = true;
             $offsetId = $nextOffsetId;
         }
 
-        return $messages;
+        throw new ExternalServiceRequestException('errors.api.telegram.load_messages_failed', 422, 'telegram_analytics_collection_limit');
     }
 }

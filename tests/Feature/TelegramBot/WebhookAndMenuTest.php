@@ -86,7 +86,7 @@ final class WebhookAndMenuTest extends TelegramBotTestCase
         $this->assertSame('menu', $screen->buttons[0]->value);
     }
 
-    public function test_linked_menus_offer_parser_and_tracking_exports_without_legacy_reports_in_both_locales(): void
+    public function test_linked_menus_offer_exports_and_analytics_without_legacy_reports_in_both_locales(): void
     {
         $link = $this->linkedUser();
 
@@ -95,11 +95,23 @@ final class WebhookAndMenuTest extends TelegramBotTestCase
             $screen = app(BotRouter::class)->dispatch('menu', $context);
             $files = collect($screen->buttons)->where('type', 'action')->where('value', 'files')->values();
 
-            $this->assertCount(2, $files);
+            $this->assertCount(8, $files);
             $this->assertSame(['k' => 'parser'], $files[0]->parameters);
             $this->assertSame(__('telegram_bot.menu.exports', [], $locale), $files[0]->label);
             $this->assertSame(['k' => 'tracking'], $files[1]->parameters);
             $this->assertSame(__('telegram_bot.menu.tracking', [], $locale), $files[1]->label);
+            $this->assertSame(['k' => 'analytics_report'], $files[2]->parameters);
+            $this->assertSame(__('telegram_bot.menu.analytics_reports', [], $locale), $files[2]->label);
+            $this->assertSame(['k' => 'youtube_analytics_report'], $files[3]->parameters);
+            $this->assertSame(__('telegram_bot.menu.youtube_analytics_reports', [], $locale), $files[3]->label);
+            $this->assertSame(['k' => 'bluesky_analytics_report'], $files[4]->parameters);
+            $this->assertSame(__('telegram_bot.menu.bluesky_analytics_reports', [], $locale), $files[4]->label);
+            $this->assertSame(['k' => 'mastodon_analytics_report'], $files[5]->parameters);
+            $this->assertSame(__('telegram_bot.menu.mastodon_analytics_reports', [], $locale), $files[5]->label);
+            $this->assertSame(['k' => 'site_intel_report'], $files[6]->parameters);
+            $this->assertSame(__('telegram_bot.menu.site_intel_reports', [], $locale), $files[6]->label);
+            $this->assertSame(['k' => 'news_media_report'], $files[7]->parameters);
+            $this->assertSame(__('telegram_bot.menu.news_media_reports', [], $locale), $files[7]->label);
         }
     }
 

@@ -4,7 +4,8 @@
         "siteHealth": "Здоровье сайта",
         "domainLite": "Домен Lite",
         "analytics": "Аналитика",
-        "seoAudit": "SEO аудит"
+        "seoAudit": "SEO аудит",
+        "reports": "Отчёты"
     },
     "common": {
         "checkedAt": "Проверено",

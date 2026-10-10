@@ -94,7 +94,8 @@
     "tabs": {
         "search": "Search",
         "analytics": "Analytics",
-        "parser": "Data collection"
+        "parser": "Data collection",
+        "reports": "Reports"
     },
     "parser": {
         "title": "Telegram data collection",

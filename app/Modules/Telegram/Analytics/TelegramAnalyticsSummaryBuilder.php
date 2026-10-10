@@ -27,8 +27,10 @@ class TelegramAnalyticsSummaryBuilder
         array $timeline,
         string $chatUsername,
         array $weights,
-        string $groupBy
+        string $groupBy,
+        ?string $timezone = null
     ): array {
+        $timezone ??= $this->config->timezone();
         $totals = $this->initialTotals();
         $authorIds = [];
         $mediaCounts = [];
@@ -44,7 +46,7 @@ class TelegramAnalyticsSummaryBuilder
             $messageMetrics = $this->postMetricsBuilder->extractMessageMetrics($item);
             $timestamp = $messageMetrics['date'];
 
-            $this->audienceCalculator->accumulateHourActivity($hourlyActivity, $timestamp);
+            $this->audienceCalculator->accumulateHourActivity($hourlyActivity, $timestamp, $timezone);
             $this->accumulateTimeline(
                 $timeline,
                 $groupBy,
@@ -54,7 +56,8 @@ class TelegramAnalyticsSummaryBuilder
                 $messageMetrics['replies'],
                 $messageMetrics['reactions'],
                 $messageMetrics['gifts'],
-                $messageMetrics['mediaType']
+                $messageMetrics['mediaType'],
+                $timezone
             );
 
             $this->accumulateTotals($totals, $messageMetrics);
@@ -90,7 +93,8 @@ class TelegramAnalyticsSummaryBuilder
                 $messageMetrics['replies'],
                 $messageMetrics['reactions'],
                 $messageMetrics['gifts'],
-                $weights
+                $weights,
+                $timezone
             );
 
             $topPosts[] = $this->postMetricsBuilder->buildTopPostRow($item, $messageMetrics, $score);
@@ -251,9 +255,10 @@ class TelegramAnalyticsSummaryBuilder
         int $replies,
         int $reactions,
         int $gifts,
-        string $mediaType
+        string $mediaType,
+        string $timezone
     ): void {
-        $bucketKey = $this->bucketKey($timestamp, $groupBy);
+        $bucketKey = $this->bucketKey($timestamp, $groupBy, $timezone);
         if ($bucketKey === null || ! isset($timeline[$bucketKey])) {
             return;
         }
@@ -290,15 +295,15 @@ class TelegramAnalyticsSummaryBuilder
         return $distribution;
     }
 
-    private function bucketKey(int $timestamp, string $groupBy): ?string
+    private function bucketKey(int $timestamp, string $groupBy, string $timezone): ?string
     {
         if ($groupBy !== 'hour' && $groupBy !== 'day') {
             return null;
         }
 
         return $groupBy === 'hour'
-            ? Carbon::createFromTimestamp($timestamp, $this->config->timezone())->format('Y-m-d H:00')
-            : Carbon::createFromTimestamp($timestamp, $this->config->timezone())->format('Y-m-d');
+            ? Carbon::createFromTimestamp($timestamp, $timezone)->format('Y-m-d H:00')
+            : Carbon::createFromTimestamp($timestamp, $timezone)->format('Y-m-d');
     }
 
     private function topPostsLimit(): int

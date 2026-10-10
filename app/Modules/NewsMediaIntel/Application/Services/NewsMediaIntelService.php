@@ -4,6 +4,7 @@ namespace App\Modules\NewsMediaIntel\Application\Services;
 
 use App\Modules\NewsMediaIntel\Application\Contracts\NewsFeedFetcherInterface;
 use App\Modules\NewsMediaIntel\Application\Contracts\NewsMediaIntelServiceInterface;
+use App\Modules\NewsMediaIntel\Application\Contracts\SearxngSearchClientInterface;
 use App\Modules\NewsMediaIntel\Application\Services\NewsMediaIntel\NewsMentionDeduplicator;
 use App\Modules\NewsMediaIntel\Application\Services\NewsMediaIntel\NewsSentimentAnalyzer;
 use App\Modules\NewsMediaIntel\Application\Services\NewsMediaIntel\NewsTimelineBuilder;
@@ -22,6 +23,7 @@ final class NewsMediaIntelService implements NewsMediaIntelServiceInterface
         private readonly NewsTimelineBuilder $timelineBuilder,
         private readonly NewsSentimentAnalyzer $sentimentAnalyzer,
         private readonly NewsMediaIntelConfig $config,
+        private readonly SearxngSearchClientInterface $searchClient,
     ) {}
 
     public function monitor(NewsMediaIntelLookupDTO $lookup): NewsMediaIntelResultDTO
@@ -38,9 +40,10 @@ final class NewsMediaIntelService implements NewsMediaIntelServiceInterface
             );
         }
 
-        $mentions = $this->newsFeedFetcher->fetchAll($q);
+        $search = $lookup->options === null ? null : $this->searchClient->search($q, $lookup->options);
+        $mentions = $search?->mentions ?? $this->newsFeedFetcher->fetchAll($q);
 
-        $mentions = $this->deduplicator->deduplicate($mentions);
+        $mentions = $this->deduplicator->deduplicate($mentions, byContent: ! in_array('general', $lookup->options?->categories ?? [], true));
         $mentions = array_slice($mentions, 0, $this->config->maxMentions());
 
         return new NewsMediaIntelResultDTO(
@@ -49,6 +52,7 @@ final class NewsMediaIntelService implements NewsMediaIntelServiceInterface
             topics: $this->topicExtractor->extract($mentions),
             timeline: $this->timelineBuilder->build($mentions),
             sentiment: $this->sentimentAnalyzer->summarize($mentions),
+            search: $search,
         );
     }
 }

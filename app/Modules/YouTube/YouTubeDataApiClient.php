@@ -6,13 +6,14 @@ use App\Exceptions\Public\ExternalServiceRequestException;
 use App\Exceptions\Public\ExternalServiceUnavailableException;
 use App\Exceptions\Public\IntegrationMisconfiguredException;
 use App\Modules\YouTube\Core\Contracts\YouTubeGatewayInterface;
+use App\Modules\YouTube\Core\Contracts\YouTubeUploadsGatewayInterface;
 use App\Modules\YouTube\Support\YouTubeApiConfig;
 use App\Support\Observability\ExternalServiceLogger;
 use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Http\Client\PendingRequest;
 use Illuminate\Support\Facades\Http;
 
-class YouTubeDataApiClient implements YouTubeGatewayInterface
+class YouTubeDataApiClient implements YouTubeGatewayInterface, YouTubeUploadsGatewayInterface
 {
     public function __construct(
         private readonly YouTubeApiConfig $config,
@@ -40,6 +41,14 @@ class YouTubeDataApiClient implements YouTubeGatewayInterface
         return $this->get('channels', [
             ...$params,
             'part' => $params['part'] ?? 'snippet,statistics,contentDetails,topicDetails,status,brandingSettings',
+        ]);
+    }
+
+    public function playlistItems(array $params): array
+    {
+        return $this->get('playlistItems', [
+            ...$params,
+            'part' => $params['part'] ?? 'snippet,contentDetails,status',
         ]);
     }
 

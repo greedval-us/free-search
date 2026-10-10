@@ -39,6 +39,9 @@
     $topDomains = (array) ($report['topDomains'] ?? []);
     $topTags = (array) ($report['topTags'] ?? []);
     $topAuthors = (array) ($report['topAuthors'] ?? []);
+    $range = (array) ($report['range'] ?? []);
+    $methodology = (array) ($report['methodology'] ?? []);
+    $noData = __('bluesky_analytics_reports.report.no_data');
 @endphp
 <div class="container">
     <section class="card">
@@ -49,9 +52,21 @@
                 <span class="chip">Target: {{ $meta['resolvedTarget'] ?? ($meta['target'] ?? '-') }}</span>
                 <span class="chip">Sampled posts: {{ $meta['sampledPosts'] ?? 0 }}</span>
                 <span class="chip">Pages: {{ $meta['pagesLoaded'] ?? 0 }}/{{ $meta['pagesRequested'] ?? 0 }}</span>
-                <span class="chip">Generated: {{ now()->format('Y-m-d H:i:s') }}</span>
+                <span class="chip">{{ __('bluesky_analytics_reports.report.generated_at') }}: {{ $report['generatedAt'] ?? now()->format('Y-m-d H:i:s') }}</span>
+                @if($range !== [])
+                    <span class="chip">{{ __('bluesky_analytics_reports.report.period') }}: {{ $range['dateFrom'] ?? '-' }} — {{ $range['dateTo'] ?? '-' }}</span>
+                    <span class="chip">{{ __('bluesky_analytics_reports.report.timezone') }}: {{ $range['timezone'] ?? 'UTC' }}</span>
+                @endif
             </div>
         </header>
+        @if($methodology !== [])
+            <div class="body">
+                <p>{{ __('bluesky_analytics_reports.report.methodology') }}</p>
+                @if(! ($methodology['statisticsComplete'] ?? true))
+                    <p class="muted">{{ __('bluesky_analytics_reports.report.missing_metrics') }}</p>
+                @endif
+            </div>
+        @endif
     </section>
 
     <section class="card">
@@ -63,10 +78,10 @@
                 <div class="metric"><div class="label">Languages</div><div class="value">{{ number_format((int) ($summary['uniqueLanguagesCount'] ?? 0)) }}</div></div>
                 <div class="metric"><div class="label">Posts with media</div><div class="value">{{ number_format((int) ($summary['postsWithMediaCount'] ?? 0)) }}</div></div>
                 <div class="metric"><div class="label">Posts with links</div><div class="value">{{ number_format((int) ($summary['postsWithLinksCount'] ?? 0)) }}</div></div>
-                <div class="metric"><div class="label">Replies</div><div class="value">{{ number_format((int) ($summary['totalReplies'] ?? 0)) }}</div></div>
-                <div class="metric"><div class="label">Reposts</div><div class="value">{{ number_format((int) ($summary['totalReposts'] ?? 0)) }}</div></div>
-                <div class="metric"><div class="label">Likes</div><div class="value">{{ number_format((int) ($summary['totalLikes'] ?? 0)) }}</div></div>
-                <div class="metric"><div class="label">Quotes</div><div class="value">{{ number_format((int) ($summary['totalQuotes'] ?? 0)) }}</div></div>
+                <div class="metric"><div class="label">Replies</div><div class="value">{{ array_key_exists('totalReplies', $summary) && $summary['totalReplies'] === null ? $noData : number_format((int) ($summary['totalReplies'] ?? 0)) }}</div></div>
+                <div class="metric"><div class="label">Reposts</div><div class="value">{{ array_key_exists('totalReposts', $summary) && $summary['totalReposts'] === null ? $noData : number_format((int) ($summary['totalReposts'] ?? 0)) }}</div></div>
+                <div class="metric"><div class="label">Likes</div><div class="value">{{ array_key_exists('totalLikes', $summary) && $summary['totalLikes'] === null ? $noData : number_format((int) ($summary['totalLikes'] ?? 0)) }}</div></div>
+                <div class="metric"><div class="label">Quotes</div><div class="value">{{ array_key_exists('totalQuotes', $summary) && $summary['totalQuotes'] === null ? $noData : number_format((int) ($summary['totalQuotes'] ?? 0)) }}</div></div>
                 <div class="metric"><div class="label">Reply posts</div><div class="value">{{ number_format((int) ($summary['replyPostsCount'] ?? 0)) }}</div></div>
             </div>
         </div>
@@ -88,10 +103,10 @@
                         <td>{{ $point['posts'] ?? 0 }}</td>
                         <td>{{ $point['postsWithMedia'] ?? 0 }}</td>
                         <td>{{ $point['postsWithLinks'] ?? 0 }}</td>
-                        <td>{{ $point['replies'] ?? 0 }}</td>
-                        <td>{{ $point['reposts'] ?? 0 }}</td>
-                        <td>{{ $point['likes'] ?? 0 }}</td>
-                        <td>{{ $point['quotes'] ?? 0 }}</td>
+                        <td>{{ array_key_exists('replies', $point) && $point['replies'] === null ? $noData : ($point['replies'] ?? 0) }}</td>
+                        <td>{{ array_key_exists('reposts', $point) && $point['reposts'] === null ? $noData : ($point['reposts'] ?? 0) }}</td>
+                        <td>{{ array_key_exists('likes', $point) && $point['likes'] === null ? $noData : ($point['likes'] ?? 0) }}</td>
+                        <td>{{ array_key_exists('quotes', $point) && $point['quotes'] === null ? $noData : ($point['quotes'] ?? 0) }}</td>
                     </tr>
                 @empty
                     <tr><td colspan="8" class="muted">No timeline data.</td></tr>
@@ -115,10 +130,10 @@
                     <tr>
                         <td>{{ data_get($post, 'author.displayName') ?: data_get($post, 'author.handle', '-') }}</td>
                         <td>{{ $post['createdAt'] ?? '-' }}</td>
-                        <td>{{ $post['likeCount'] ?? 0 }}</td>
-                        <td>{{ $post['repostCount'] ?? 0 }}</td>
-                        <td>{{ $post['replyCount'] ?? 0 }}</td>
-                        <td>{{ $post['quoteCount'] ?? 0 }}</td>
+                        <td>{{ array_key_exists('likeCount', $post) && $post['likeCount'] === null ? $noData : ($post['likeCount'] ?? 0) }}</td>
+                        <td>{{ array_key_exists('repostCount', $post) && $post['repostCount'] === null ? $noData : ($post['repostCount'] ?? 0) }}</td>
+                        <td>{{ array_key_exists('replyCount', $post) && $post['replyCount'] === null ? $noData : ($post['replyCount'] ?? 0) }}</td>
+                        <td>{{ array_key_exists('quoteCount', $post) && $post['quoteCount'] === null ? $noData : ($post['quoteCount'] ?? 0) }}</td>
                         <td>{{ $post['text'] ?? '' }}</td>
                     </tr>
                 @empty

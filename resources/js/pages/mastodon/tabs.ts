@@ -2,6 +2,7 @@ import type { Component } from 'vue';
 import { createModuleTabs } from '@/lib/navigation/create-module-tabs';
 import MastodonAnalyticsTab from './tabs/MastodonAnalyticsTab.vue';
 import MastodonParserTab from './tabs/MastodonParserTab.vue';
+import MastodonReportsTab from './tabs/MastodonReportsTab.vue';
 import MastodonSearchTab from './tabs/MastodonSearchTab.vue';
 import type { MastodonTabValue } from './types';
 
@@ -31,6 +32,12 @@ export const MASTODON_TABS: readonly MastodonTabDefinition[] = createModuleTabs(
             labelKey: 'mastodon.tabs.parser',
             component: MastodonParserTab,
             accessKey: 'mastodon.parser',
+        },
+        {
+            key: 'reports',
+            labelKey: 'mastodon.tabs.reports',
+            component: MastodonReportsTab,
+            accessKey: 'mastodon.analytics',
         },
     ]
 ) as readonly MastodonTabDefinition[];

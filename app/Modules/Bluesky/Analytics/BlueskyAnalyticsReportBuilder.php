@@ -3,6 +3,7 @@
 namespace App\Modules\Bluesky\Analytics;
 
 use App\Modules\Bluesky\DTO\Result\BlueskyAnalyticsResultDTO;
+use Carbon\CarbonImmutable;
 use Illuminate\Support\Collection;
 
 final class BlueskyAnalyticsReportBuilder
@@ -23,6 +24,7 @@ final class BlueskyAnalyticsReportBuilder
         int $pagesRequested,
         int $pagesLoaded,
         ?array $topMentions = null,
+        string $timezone = 'UTC',
     ): BlueskyAnalyticsResultDTO {
         $postCollection = collect($posts);
 
@@ -48,7 +50,7 @@ final class BlueskyAnalyticsReportBuilder
                 'totalLikes' => $postCollection->sum('likeCount'),
                 'totalQuotes' => $postCollection->sum('quoteCount'),
             ],
-            timeline: $this->buildTimeline($postCollection),
+            timeline: $this->buildTimeline($postCollection, $timezone),
             topDomains: $this->countScalarValues($postCollection->pluck('domains')->flatten(1), 'domain'),
             topTags: $this->countScalarValues($postCollection->pluck('hashtags')->flatten(1), 'tag'),
             topAuthors: $this->buildTopAuthors($postCollection),
@@ -69,13 +71,13 @@ final class BlueskyAnalyticsReportBuilder
      * @param  Collection<int, array<string, mixed>>  $posts
      * @return array<int, array<string, mixed>>
      */
-    private function buildTimeline(Collection $posts): array
+    private function buildTimeline(Collection $posts, string $timezone): array
     {
         return $posts
-            ->groupBy(function (array $post): string {
+            ->groupBy(function (array $post) use ($timezone): string {
                 $timestamp = strtotime((string) ($post['createdAt'] ?? ''));
 
-                return $timestamp === false ? 'unknown' : gmdate('Y-m-d', $timestamp);
+                return $timestamp === false ? 'unknown' : CarbonImmutable::createFromTimestampUTC($timestamp)->setTimezone($timezone)->toDateString();
             })
             ->map(function (Collection $items, string $day): array {
                 return [

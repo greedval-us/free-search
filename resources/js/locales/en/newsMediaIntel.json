@@ -1,44 +1,176 @@
 {
     "headTitle": "News & Media Intel",
     "title": "News & Media Intel",
-    "description": "Find news with SearXNG and explore mentions, topics, sentiment, and publication trends.",
-    "empty": "No mentions yet. Enter a person, company, or topic to start monitoring.",
+    "description": "Find publications with SearXNG: choose sources, language and time range, explore topics and original articles.",
+    "empty": "Enter a person, company or topic. Publications and their sources will appear here.",
+    "tabs": { "search": "Search", "analytics": "Analytics" },
     "form": {
         "query": "Query",
-        "placeholder": "person, company, or topic",
-        "search": "Monitor mentions",
-        "searching": "Monitoring mentions..."
+        "placeholder": "person, company or topic",
+        "search": "Find publications",
+        "searching": "Searching publications…",
+        "cancel": "Cancel",
+        "retry": "Retry"
+    },
+    "filters": {
+        "title": "Search settings",
+        "category": "Search in",
+        "news": "News",
+        "general": "Web search",
+        "both": "News and web search",
+        "language": "Language",
+        "timeRange": "Time range",
+        "allTime": "Any time",
+        "day": "Past day",
+        "week": "Past week",
+        "month": "Past month",
+        "year": "Past year",
+        "safeSearch": "Safe search",
+        "safeOff": "Off",
+        "safeModerate": "Moderate",
+        "safeStrict": "Strict",
+        "pages": "Pages per category",
+        "engines": "Search sources",
+        "automatic": "Automatic",
+        "enginesHelp": "Sources enabled on the server are used by default. Selecting sources limits searches to those that support the selected category.",
+        "filterHelp": "Language, time range and safe search support varies by source. The page limit controls sample size.",
+        "loading": "Loading available sources…",
+        "languages": {
+            "ru": "Russian",
+            "en": "English",
+            "all": "All languages",
+            "auto": "Automatic"
+        }
+    },
+    "coverage": {
+        "loaded": "Sample loaded",
+        "partial": "Partial sample",
+        "unavailable": "Category unavailable",
+        "pages": "Pages loaded: {loaded} of {requested}",
+        "engines": "Sources in results",
+        "unresponsive": "Unresponsive sources",
+        "sampleHelp": "Results describe the retrieved sample. They do not measure total publications or visits.",
+        "reasons": {
+            "max_pages": "The selected page limit was reached.",
+            "page_limit": "The selected page limit was reached.",
+            "empty_results": "The next page has no results.",
+            "empty_page": "The next page has no results.",
+            "no_results": "No results were found.",
+            "no_new_results": "The next page repeats previously retrieved results.",
+            "duplicate_page": "The next page repeats previously retrieved results.",
+            "engine_failure": "Some sources did not respond.",
+            "request_failed": "Not all pages could be loaded.",
+            "unavailable": "Category results could not be retrieved.",
+            "other": "Search stopped before all selected pages were retrieved.",
+            "exhausted": "The sources returned no further results.",
+            "deadline": "The search time limit was reached.",
+            "connection_error": "The connection failed before all pages were loaded.",
+            "http_error": "The search server could not load all pages.",
+            "invalid_response": "Part of the search server response could not be read.",
+            "engines_unavailable": "Search sources did not respond.",
+            "repeated_page": "The next page repeats previously retrieved results.",
+            "result_limit": "The publication sample limit was reached.",
+            "invalid_results": "Some results did not contain valid links.",
+            "empty_query": "Enter a search query.",
+            "no_selected_engines": "The selected sources do not support this category.",
+            "service_unavailable": "The search server is currently unavailable."
+        }
     },
     "summary": {
-        "mentions": "Mentions",
+        "mentions": "Publications in sample",
         "positive": "Positive",
         "neutral": "Neutral",
         "negative": "Negative"
     },
-    "topics": {
-        "title": "Top topics"
-    },
+    "topics": { "title": "Publication topics" },
     "timeline": {
-        "title": "Timeline",
-        "none": "No publication activity found for this query."
+        "title": "Publications by date",
+        "none": "No publications with a known date were found.",
+        "undated": "Unknown publication date: {count}. These items are excluded from the timeline."
     },
     "mentions": {
-        "title": "Mentions",
+        "title": "Original sources",
         "dateUnknown": "Publication date not provided",
-        "none": "No public mentions found. Try a broader query or another spelling."
+        "none": "No public publications were found. Try a broader query, different time range or sources."
     },
-    "sources": {
-        "searxng": "SearXNG"
+    "sources": { "searxng": "SearXNG" },
+    "discovery": {
+        "title": "Answers and related queries",
+        "suggestions": "Related queries",
+        "corrections": "Spelling alternatives",
+        "answers": "Answers from search sources"
+    },
+    "analytics": {
+        "title": "SEO and marketing analytics",
+        "description": "Compare brand mentions, discover content topics and check your website's presence in search results.",
+        "empty": "Enter a topic or search query. Add a brand and competitors to compare mentions, and a domain to check website presence.",
+        "queryPlaceholder": "product, niche or search query",
+        "brand": "Brand · optional",
+        "brandPlaceholder": "Your brand name",
+        "competitors": "Competitors · optional",
+        "competitorsPlaceholder": "Competitor 1\nCompetitor 2\nCompetitor 3",
+        "competitorsHelp": "Up to three names, one per line. Use names that appear in publications.",
+        "domain": "Website domain · optional",
+        "domainHelp": "A domain or website URL, such as example.com. Subdomains are included.",
+        "run": "Build analytics",
+        "running": "Collecting and analyzing…",
+        "sampleHelp": "Analytics uses news and web results for one query with the same filters. Brands are compared within this sample.",
+        "checkedAt": "Checked: {date}",
+        "partialHelp": "Some sources or pages are unavailable. Metrics use retrieved results and comparisons may be incomplete.",
+        "viewReport": "View report",
+        "html": "HTML",
+        "json": "JSON",
+        "brandEntity": "brand",
+        "reportExpiry": "Snapshot available until {date}. Downloads use the completed report without repeating searches.",
+        "publishers": "Publishers and websites",
+        "freshness": "Published within 7 days",
+        "undated": "Unknown date",
+        "freshnessHelp": "Known dates: {known}; within the past 7 days: {fresh}. The percentage uses known dates. Future dates ({future}) are excluded from freshness calculations.",
+        "brandsTitle": "Brand and competitors",
+        "brandsHelp": "Mentions match a name in titles and snippets. Shares use matches of all selected brands. Sentiment is estimated from words and requires reviewing the original source.",
+        "noBrands": "Add a brand or competitors to compare their mentions.",
+        "competitor": "competitor",
+        "entityMentions": "{count} mentions · {share}%",
+        "coMentions": "Name matches: {matches}. Publications mentioning multiple brands: {count}; one publication can count toward several brands.",
+        "visibilityTitle": "Domain presence in search results",
+        "visibilityHelp": "Positions refer to the combined web results retrieved from SearXNG. They describe this sample rather than rankings in an individual search engine. An absent website may still be indexed.",
+        "noDomain": "Enter a domain to see its pages found in the sample.",
+        "visibilityUnavailable": "Web search is unavailable. Domain presence has not been checked; try running the analysis again later.",
+        "domainMatches": "Domain pages",
+        "domainShare": "Share of web sample",
+        "bestPosition": "Best sample position",
+        "generalSample": "Web search sample: {count} results.",
+        "domainNotFound": "No domain pages were found in the retrieved sample.",
+        "contentTitle": "Topics and content ideas",
+        "contentHelp": "Phrases and questions come from titles, snippets and search suggestions. Frequency counts sample matches and does not measure search demand.",
+        "noTopics": "There is not enough text to extract topics.",
+        "questionsTitle": "Audience questions",
+        "noQuestions": "No questions were found in the retrieved text and suggestions.",
+        "documents": "Publications: {count}",
+        "publishersTitle": "Who publishes about this topic",
+        "publishersHelp": "Distribution of retrieved publications by domain. Use it to find relevant publishers and explore coverage; website traffic and authority are not measured.",
+        "noPublishers": "There are no publishers or websites in this sample.",
+        "evidence": "Examples",
+        "opportunities": {
+            "topic_coverage": "Explore “{topic}”: it appears in {documents} sample publications.",
+            "answer_question": "Prepare an answer to “{question}”. Matches found: {documents}.",
+            "brand_presence": "“{brand}” is not mentioned in this sample of {sampleSize} publications. Check the name spelling and topic coverage.",
+            "publisher_outreach": "Explore {host}: {documents} publications about the topic were found. Check its relevance before seeking placement."
+        }
     },
     "errors": {
-        "queryRequired": "Enter at least 2 characters to search for mentions.",
-        "lookupFailed": "Could not load news and media mentions. Check the query and try again."
+        "queryRequired": "Enter a query of 2 to 180 characters.",
+        "lookupFailed": "Could not load news and analytics. Check the query and try again.",
+        "optionsFailed": "Could not load the available search sources.",
+        "competitorLimit": "Enter up to three competitors. Brand and competitor names must contain 2 to 80 characters.",
+        "duplicateCompetitors": "Brand and competitor names must be different.",
+        "invalidDomain": "Enter a domain or website URL without credentials or port, such as example.com."
     },
     "help": {
-        "label": "About block",
-        "overview": "SearXNG searches public news. Article titles and snippets are used to build topics, a publication timeline, and a sentiment snapshot.",
-        "topics": "Topics are extracted from titles and snippets with stop-word filtering. They are heuristic indicators, not a linguistic model.",
-        "timeline": "Timeline groups mentions by publication date. Articles without a known date are excluded.",
-        "mentions": "Mentions are deduplicated by URL. Long headlines and links are wrapped to stay inside the card."
+        "label": "About this module",
+        "overview": "SearXNG combines public results from different sources. Choose categories, language, time range and search depth. Snippets are used to extract topics and estimate sentiment.",
+        "topics": "Topics are extracted from titles and snippets. Counts describe the retrieved sample and do not measure a topic's popularity on the internet.",
+        "timeline": "The timeline groups publications by known date. Undated items are excluded, and gaps do not imply that no publications exist.",
+        "mentions": "Publications are merged by URL. Each card shows the publisher, known date and search sources that returned the result."
     }
 }

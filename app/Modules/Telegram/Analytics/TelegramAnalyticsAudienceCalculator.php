@@ -81,13 +81,13 @@ class TelegramAnalyticsAudienceCalculator
     /**
      * @param  array<int, int>  $hourlyActivity
      */
-    public function accumulateHourActivity(array &$hourlyActivity, int $timestamp): void
+    public function accumulateHourActivity(array &$hourlyActivity, int $timestamp, ?string $timezone = null): void
     {
         if ($timestamp <= 0) {
             return;
         }
 
-        $hour = (int) Carbon::createFromTimestamp($timestamp, $this->config->timezone())->format('G');
+        $hour = (int) Carbon::createFromTimestamp($timestamp, $timezone ?? $this->config->timezone())->format('G');
         if ($hour < $this->hourMin() || $hour > $this->hourMax()) {
             return;
         }

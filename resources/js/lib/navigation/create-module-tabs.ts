@@ -1,13 +1,14 @@
 import type { Component } from 'vue';
 import { MODULE_TAB_ICONS } from './tab-icons';
 
-type ModuleTabKey = 'search' | 'analytics' | 'parser' | 'tracking';
+type ModuleTabKey = 'search' | 'analytics' | 'parser' | 'tracking' | 'reports';
 
 type ModuleTabInput = {
     key: ModuleTabKey;
     labelKey: string;
     component: Component;
     accessKey?: string;
+    accessKeys?: readonly string[];
 };
 
 export type StandardModuleTabDefinition = {
@@ -16,6 +17,7 @@ export type StandardModuleTabDefinition = {
     icon: Component;
     component: Component;
     accessKey?: string;
+    accessKeys?: readonly string[];
 };
 
 export const createModuleTabs = (

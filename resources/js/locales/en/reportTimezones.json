@@ -1,0 +1,37 @@
+{
+    "help": "Choose a city that matches your local time. Report times and day boundaries use the selected time zone. Daylight saving time is handled automatically.",
+    "useDevice": "Use device time zone",
+    "groups": {
+        "russia": "Russia",
+        "world": "Other countries and UTC"
+    },
+    "cities": {
+        "kaliningrad": "Kaliningrad",
+        "moscow": "Moscow, Saint Petersburg",
+        "samara": "Samara",
+        "yekaterinburg": "Yekaterinburg",
+        "omsk": "Omsk",
+        "krasnoyarsk": "Krasnoyarsk, Novosibirsk",
+        "irkutsk": "Irkutsk",
+        "yakutsk": "Yakutsk",
+        "vladivostok": "Vladivostok",
+        "magadan": "Magadan",
+        "kamchatka": "Petropavlovsk-Kamchatsky",
+        "utc": "Coordinated Universal Time",
+        "london": "London",
+        "berlin": "Berlin, Paris",
+        "kyiv": "Kyiv",
+        "minsk": "Minsk",
+        "istanbul": "Istanbul",
+        "tbilisi": "Tbilisi",
+        "dubai": "Dubai",
+        "almaty": "Almaty, Astana",
+        "tashkent": "Tashkent",
+        "kolkata": "Kolkata, New Delhi",
+        "bangkok": "Bangkok",
+        "shanghai": "Shanghai, Beijing",
+        "tokyo": "Tokyo",
+        "newYork": "New York",
+        "losAngeles": "Los Angeles"
+    }
+}

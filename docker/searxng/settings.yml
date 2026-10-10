@@ -6,10 +6,14 @@ use_default_settings:
       - bing news
       - duckduckgo news
       - brave.news
+      - google
+      - bing
+      - duckduckgo
+      - brave
 
 general:
   debug: false
-  instance_name: Free Search News
+  instance_name: Free Search Research
 
 search:
   default_lang: ru
@@ -33,6 +37,7 @@ ui:
 
 categories_as_tabs:
   news:
+  general:
 
 outgoing:
   request_timeout: 6.0
@@ -49,3 +54,11 @@ engines:
     disabled: false
     # The default alias references the removed general-purpose "brave" engine.
     network: {}
+  - name: google
+    disabled: false
+  - name: bing
+    disabled: false
+  - name: duckduckgo
+    disabled: false
+  - name: brave
+    disabled: false

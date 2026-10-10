@@ -1,9 +1,16 @@
-import { Activity, BarChart3, Globe, SearchCheck } from 'lucide-vue-next';
+import {
+    Activity,
+    BarChart3,
+    FileClock,
+    Globe,
+    SearchCheck,
+} from 'lucide-vue-next';
 import type { Component } from 'vue';
 import DomainLiteTab from './tabs/DomainLiteTab.vue';
 import SeoAuditTab from './tabs/SeoAuditTab.vue';
 import SiteHealthTab from './tabs/SiteHealthTab.vue';
 import SiteIntelAnalyticsTab from './tabs/SiteIntelAnalyticsTab.vue';
+import SiteIntelReportsTab from './tabs/SiteIntelReportsTab.vue';
 import type { SiteIntelTabValue } from './types';
 
 export type SiteIntelTabDefinition = {
@@ -12,6 +19,7 @@ export type SiteIntelTabDefinition = {
     icon: Component;
     component: Component;
     accessKey?: string;
+    accessKeys?: readonly string[];
 };
 
 export const SITE_INTEL_TABS: readonly SiteIntelTabDefinition[] = [
@@ -40,5 +48,12 @@ export const SITE_INTEL_TABS: readonly SiteIntelTabDefinition[] = [
         icon: SearchCheck,
         component: SeoAuditTab,
         accessKey: 'site-intel.seo-audit',
+    },
+    {
+        key: 'reports',
+        labelKey: 'siteIntel.tabs.reports',
+        icon: FileClock,
+        component: SiteIntelReportsTab,
+        accessKeys: ['site-intel.analytics', 'site-intel.seo-audit'],
     },
 ] as const;

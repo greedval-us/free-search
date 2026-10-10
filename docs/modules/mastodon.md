@@ -4,6 +4,8 @@
 
 Mastodon module выполняет resource Search, status context, account statuses/followers, hashtag timeline, account/hashtag Analytics и Parser statuses/comments с history и JSON/Excel exports.
 
+Вкладка **Отчёты** добавляет расписания каждые 1/3/7 дней или месяц, сохранённую историю HTML/JSON и доставку в Telegram-бота. Снимки используют существующие построитель аналитики и HTML-шаблон, данные ограничены доступной настроенному серверу историей. [Настройка расписаний и очередей](social-analytics-reports.md).
+
 ## Architecture
 
 Search/Analytics/Parser Application Services используют Actions, Presenters и `MastodonGatewayInterface`; `MastodonApiClient` обращается к configured instance. Parser разрешает account, собирает statuses и comments/context, затем формирует snapshot. Frontend находится в `resources/js/pages/mastodon`.

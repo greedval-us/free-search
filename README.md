@@ -9,8 +9,9 @@ Free Search — модульная OSINT-платформа на Laravel, Inerti
 ## Возможности
 
 - Telegram, YouTube, Bluesky и Mastodon: Search, Analytics и фоновые Parser Runs с историей, остановкой и экспортом JSON/Excel.
-- Site Intel: HTTP/DNS/SSL-проверки, WHOIS-based Domain Lite, агрегированная аналитика и SEO Audit с HTML-отчётами.
-- News / Media Intel: агрегирование NewsAPI, Google News RSS и Bing RSS, дедупликация, timeline, темы и словарная sentiment-оценка.
+- Telegram, YouTube, Bluesky и Mastodon: отчёты аналитики по расписанию каждые 1/3/7 дней или месяц, сохранённые HTML/JSON и доставка в Telegram-бота.
+- Site Intel: HTTP/DNS/SSL-проверки, WHOIS-based Domain Lite, агрегированная аналитика и SEO Audit. [Оба вида отчётов по расписанию](docs/modules/site-intel-reports.md) каждые 1/3/7 дней или месяц сохраняют текущие снимки HTML/JSON с доставкой в Telegram-бота.
+- News / Media Intel: поиск новостей и веб-страниц через SearXNG, аналитика бренда и конкурентов, темы для контента и присутствие домена в выборке. [Отчёты по расписанию](docs/modules/news-media-reports.md) каждые 1/3/7 дней или месяц с историей HTML/JSON и доставкой в Telegram.
 - Shifr: хеширование, преобразования текста, извлечение IOC, просмотр JWT и классические шифры.
 - Dashboard: журнал действий, сводки, закреплённые модули и сохранённые запросы.
 - Fortify authentication, email verification, 2FA, подписки и дневные Feature Access quotas.
@@ -18,15 +19,15 @@ Free Search — модульная OSINT-платформа на Laravel, Inerti
 
 ## Модули и зрелость
 
-| Область | Реализовано | Текущий статус |
-| --- | --- | --- |
-| Telegram | Search, media, Analytics, Parser, JSON/Excel | Beta; требует MadelineProto-сессию |
-| YouTube | Video Search, comments, Analytics, Parser, JSON/Excel | Beta; зависит от YouTube Data API quota |
-| Bluesky | Search, actor/post relations, Analytics, Parser, JSON/Excel | Beta; требует Bluesky credentials |
-| Mastodon | Search, account/status/tag data, Analytics, Parser, JSON/Excel | Beta; конфигурация требует проверки, см. [ограничения](docs/project/status.md) |
-| Site Intel | Site Health, Domain Lite, Analytics, SEO Audit, HTML reports | Beta; активные сетевые проверки требуют production hardening |
-| News / Media Intel | RSS/NewsAPI aggregation and lightweight analysis | Beta; эвристический анализ, без Parser/Export lifecycle |
-| Shifr | Local toolkit and classic ciphers | Beta; не предназначен для хранения секретов |
+| Область            | Реализовано                                                    | Текущий статус                                                                 |
+| ------------------ | -------------------------------------------------------------- | ------------------------------------------------------------------------------ |
+| Telegram           | Search, media, Analytics, Parser, JSON/Excel                   | Beta; требует MadelineProto-сессию                                             |
+| YouTube            | Video Search, comments, Analytics, Parser, JSON/Excel          | Beta; зависит от YouTube Data API quota                                        |
+| Bluesky            | Search, actor/post relations, Analytics, Parser, JSON/Excel    | Beta; требует Bluesky credentials                                              |
+| Mastodon           | Search, account/status/tag data, Analytics, Parser, JSON/Excel | Beta; конфигурация требует проверки, см. [ограничения](docs/project/status.md) |
+| Site Intel         | Site Health, Domain Lite, Analytics, SEO Audit, HTML reports   | Beta; активные сетевые проверки требуют production hardening                   |
+| News / Media Intel | SearXNG search, SEO/marketing analytics, scheduled HTML/JSON   | Beta; метрики относятся к собранной поисковой выборке                          |
+| Shifr              | Local toolkit and classic ciphers                              | Beta; не предназначен для хранения секретов                                    |
 
 Dashboard, Wiki, Export и Access/Subscriptions являются общими подсистемами, а не независимыми внешними источниками.
 
@@ -35,7 +36,7 @@ Dashboard, Wiki, Export и Access/Subscriptions являются общими п
 - PHP `^8.3`, Laravel `^13.0`, Fortify, MoonShine 4
 - Vue 3, TypeScript, Inertia.js 3, Vite 8, Tailwind CSS 4
 - database-backed cache/session/queue по умолчанию; SQLite в `.env.example`
-- MadelineProto, YouTube Data API v3, Bluesky AT Protocol, Mastodon API, RSS/NewsAPI
+- MadelineProto, YouTube Data API v3, Bluesky AT Protocol, Mastodon API, SearXNG
 - PHPUnit 12, Vitest 4, Pint, ESLint, Prettier, vue-tsc
 
 ## Архитектура
@@ -97,7 +98,7 @@ composer run dev
 - YouTube: `YOUTUBE_DATA_API_KEY`.
 - Bluesky: `BLUESKY_IDENTIFIER`, `BLUESKY_APP_PASSWORD`, `BLUESKY_PDS_URL`.
 - Mastodon: `MASTODON_API_BASE_URL`, при необходимости `MASTODON_API_TOKEN`.
-- NewsAPI: `OSINT_NEWSAPI_KEY`; RSS providers работают независимо от него.
+- Новости и медиа: `OSINT_NEWS_MEDIA_SEARXNG_BASE_URL` указывает на существующий SearXNG; для расписаний нужна отдельная очередь `news-media-reports`.
 - Parser Runs: `PARSER_RUN_*`; queue worker обязателен при `PARSER_RUN_QUEUE_ENABLED=true`.
 - MoonShine: production route/domain, IP allowlist и login throttling задаются `MOONSHINE_*`.
 

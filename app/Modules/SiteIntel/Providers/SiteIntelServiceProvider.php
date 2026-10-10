@@ -13,6 +13,7 @@ use App\Modules\SiteIntel\Application\Contracts\SiteHealthServiceInterface;
 use App\Modules\SiteIntel\Application\Contracts\SiteHealthSslInspectorInterface;
 use App\Modules\SiteIntel\Application\Contracts\SiteIntelAnalyticsServiceInterface;
 use App\Modules\SiteIntel\Application\Contracts\SiteIntelHostResolverInterface;
+use App\Modules\SiteIntel\Application\Reports\Console\MaintainSiteIntelReports;
 use App\Modules\SiteIntel\Application\Services\DomainLiteService;
 use App\Modules\SiteIntel\Application\Services\SeoAuditService;
 use App\Modules\SiteIntel\Application\Services\SiteHealthService;
@@ -26,9 +27,16 @@ use App\Modules\SiteIntel\Infrastructure\Clients\SiteHealthHttpInspector;
 use App\Modules\SiteIntel\Infrastructure\Clients\SiteHealthSslInspector;
 use App\Modules\SiteIntel\Infrastructure\Clients\SystemSiteIntelHostResolver;
 use App\Support\Providers\BindingsServiceProvider;
+use Illuminate\Support\Facades\Schedule;
 
 final class SiteIntelServiceProvider extends BindingsServiceProvider
 {
+    public function boot(): void
+    {
+        $this->commands([MaintainSiteIntelReports::class]);
+        Schedule::command('site-intel:reports-maintain')->everyMinute()->withoutOverlapping();
+    }
+
     public function register(): void
     {
         parent::register();
