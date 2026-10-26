@@ -1,6 +1,12 @@
 # Free Search
 
+[![CI](https://github.com/greedval-us/free-search/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/greedval-us/free-search/actions/workflows/ci.yml)
+[![Repository hygiene](https://github.com/greedval-us/free-search/actions/workflows/repository-hygiene.yml/badge.svg?branch=main)](https://github.com/greedval-us/free-search/actions/workflows/repository-hygiene.yml)
+[![Сайт: uraboros.online](https://img.shields.io/badge/сайт-uraboros.online-2563eb)](https://uraboros.online)
+
 Free Search — модульная OSINT-платформа на Laravel, Inertia.js и Vue для поиска, сбора, нормализации и анализа данных из открытых источников.
+
+**Работающий проект:** [uraboros.online](https://uraboros.online) — открыть сайт.
 
 > **Project Status: Beta.** Проект активно развивается. Внутренние API и интерфейсы могут меняться, зрелость модулей различается, а внешние интеграции зависят от доступности и правил сторонних сервисов. Production-развёртывание требует отдельной проверки конфигурации, безопасности и лимитов источников.
 
@@ -113,7 +119,7 @@ npm run quality:check      # Prettier, ESLint, vue-tsc, i18n
 npm run build              # production frontend build
 ```
 
-CI отдельно выполняет frontend quality, PHPUnit и production build. См. [Development](docs/development.md) и [Testing](docs/testing.md).
+GitHub Actions выполняет frontend quality, Vitest, Pint, PHPUnit, production build и проверку обновления миграций на MySQL. Отдельная проверка чистоты репозитория запрещает отслеживание файлов из `.gitignore`. Бейджи вверху показывают фактическое состояние проверок ветки `main`. См. [Development](docs/development.md) и [Testing](docs/testing.md).
 
 ## Queue, Scheduler и эксплуатация
 

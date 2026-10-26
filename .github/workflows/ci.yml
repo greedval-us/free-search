@@ -2,17 +2,8 @@ name: CI
 
 on:
   push:
-    branches:
-      - develop
-      - main
-      - master
-      - workos
+    branches: [main, develop, master, workos, 'codex/**']
   pull_request:
-    branches:
-      - develop
-      - main
-      - master
-      - workos
   workflow_dispatch:
 
 permissions:
@@ -26,6 +17,7 @@ jobs:
   quality:
     name: quality
     runs-on: ubuntu-latest
+    timeout-minutes: 20
 
     steps:
       - name: Checkout code
@@ -35,6 +27,8 @@ jobs:
         uses: shivammathur/setup-php@v2
         with:
           php-version: '8.3'
+          coverage: none
+          extensions: mbstring, xml, curl, zip, gd, intl, pdo_sqlite, pdo_mysql
           tools: composer:v2
 
       - name: Setup Node
@@ -49,6 +43,15 @@ jobs:
       - name: Install Node dependencies
         run: npm ci
 
+      - name: Prepare environment and generate typed routes
+        run: |
+          cp .env.example .env
+          php artisan key:generate
+          php artisan wayfinder:generate --with-form
+
+      - name: Validate Composer manifest and lock file
+        run: composer validate --strict
+
       - name: Run frontend quality checks
         run: npm run quality:check
 
@@ -61,6 +64,7 @@ jobs:
   tests:
     name: tests
     runs-on: ubuntu-latest
+    timeout-minutes: 20
 
     steps:
       - name: Checkout code
@@ -70,6 +74,8 @@ jobs:
         uses: shivammathur/setup-php@v2
         with:
           php-version: '8.3'
+          coverage: none
+          extensions: mbstring, xml, curl, zip, gd, intl, pdo_sqlite, pdo_mysql
           tools: composer:v2
 
       - name: Setup Node
@@ -100,6 +106,7 @@ jobs:
   build:
     name: build
     runs-on: ubuntu-latest
+    timeout-minutes: 20
 
     steps:
       - name: Checkout code
@@ -109,6 +116,8 @@ jobs:
         uses: shivammathur/setup-php@v2
         with:
           php-version: '8.3'
+          coverage: none
+          extensions: mbstring, xml, curl, zip, gd, intl, pdo_sqlite, pdo_mysql
           tools: composer:v2
 
       - name: Setup Node
@@ -134,6 +143,7 @@ jobs:
   migration-upgrade:
     name: migration-upgrade
     runs-on: ubuntu-latest
+    timeout-minutes: 20
 
     services:
       mysql:
@@ -166,7 +176,8 @@ jobs:
         uses: shivammathur/setup-php@v2
         with:
           php-version: '8.3'
-          extensions: pdo_mysql
+          coverage: none
+          extensions: mbstring, xml, curl, zip, gd, intl, pdo_sqlite, pdo_mysql
           tools: composer:v2
 
       - name: Install PHP dependencies

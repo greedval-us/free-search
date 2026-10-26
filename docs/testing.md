@@ -31,9 +31,13 @@ CI отдельно запускает Vitest и полную проверку P
 
 | Job | Фактические проверки |
 | --- | --- |
-| `quality` | установка зависимостей, `npm run quality:check`, `npm run test:unit`, `composer run lint:check` |
+| `quality` | проверка Composer manifest/lock, генерация Wayfinder routes, `npm run quality:check`, `npm run test:unit`, `composer run lint:check` |
 | `tests` | env + SQLite, asset build, `php artisan test` |
 | `build` | env preparation и `npm run build` |
+| `migration-upgrade` | обновление baseline-схемы и queued data на MySQL 8.4 через `MigrationUpgradeTest` |
+| `repository-hygiene` (отдельный workflow) | отсутствие отслеживаемых файлов из `.gitignore`, наличие `.env.example`, `composer.lock`, `package-lock.json` |
+
+Бейджи в обоих README ссылаются на реальные GitHub Actions workflow и показывают результат ветки `main`. Проверки pull request отображаются в блоке Checks самого PR. Для защиты `main` в GitHub Settings → Rules → Rulesets можно сделать обязательными `quality`, `tests`, `build`, `migration-upgrade`, `repository-hygiene`; настройки ruleset хранятся в GitHub, а не в YAML workflow.
 
 CI запускает PHP-тесты через `php artisan test`, а полную проверку Pint выполняет отдельно в job `quality`. Локальная команда `composer run test` объединяет очистку config cache, Pint и PHP-тесты.
 

@@ -1,5 +1,11 @@
 # Free Search
 
+[![CI](https://github.com/greedval-us/free-search/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/greedval-us/free-search/actions/workflows/ci.yml)
+[![Repository hygiene](https://github.com/greedval-us/free-search/actions/workflows/repository-hygiene.yml/badge.svg?branch=main)](https://github.com/greedval-us/free-search/actions/workflows/repository-hygiene.yml)
+[![Website: uraboros.online](https://img.shields.io/badge/website-uraboros.online-2563eb)](https://uraboros.online)
+
+**Live deployment:** [uraboros.online](https://uraboros.online) — open the website.
+
 Telegram, YouTube, Bluesky and Mastodon support scheduled analytics reports every 1, 3 or 7 days, or monthly, with saved HTML/JSON history and delivery through the Telegram bot.
 
 Free Search is a modular OSINT platform built with Laravel, Inertia.js, and Vue for searching, collecting, normalizing, and analysing open-source data.

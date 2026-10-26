@@ -44,4 +44,16 @@ Parser jobs при включённом queue mode не продвигаются
 
 ## CI
 
-`.github/workflows/ci.yml` использует PHP 8.3, Node 22 и три job: `quality`, `tests`, `build`. Подробнее: [Testing](testing.md).
+`.github/workflows/ci.yml` использует PHP 8.3, Node 22 и четыре job: `quality`, `tests`, `build`, `migration-upgrade`. Перед проверкой типов CI генерирует актуальные Wayfinder routes. Отдельный workflow `repository-hygiene.yml` проверяет чистоту репозитория. Оба workflow запускаются при push в основные ветки и `codex/**`, для всех pull request и вручную. Подробнее: [Testing](testing.md).
+
+## Локальные файлы и Git
+
+`.osp/`, `.agents/`, настройки IDE/AI, `.env` и его локальные варианты, зависимости, базы SQLite, логи, сборки и результаты тестов исключены через `.gitignore`. Эти файлы остаются на компьютере. В Git сохраняются `.env.example`, lock-файлы зависимостей и вложенные `.gitignore`, поддерживающие структуру каталогов Laravel.
+
+Перед коммитом проверьте, что Git не отслеживает игнорируемые файлы:
+
+```bash
+git ls-files --cached --ignored --exclude-standard
+```
+
+Ожидаемый результат — пустой вывод. Если файл уже отслеживается, добавления правила в `.gitignore` недостаточно: снимите его с отслеживания командой `git rm --cached <file>` (для каталога — `git rm -r --cached <directory>`). Локальная копия при этом сохраняется.
