@@ -17,7 +17,10 @@ use App\Modules\TelegramBot\Jobs\Middleware\TelegramCooldown;
 use App\Modules\TelegramBot\Models\BotDelivery;
 use App\Notifications\SystemDatabaseNotification;
 use DefStudio\Telegraph\Facades\Telegraph;
+use Illuminate\Queue\TimeoutExceededException;
+use Illuminate\Queue\WorkerOptions;
 use Illuminate\Support\Facades\Bus;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Queue;
 use Illuminate\Support\Facades\Storage;
@@ -139,6 +142,59 @@ final class DeliveryTest extends TelegramBotTestCase
         app()->call([new DeliverBotMessage($delivery->id, $link->telegram_id), 'handle']);
         $this->assertSame(BotDelivery::FAILED, $delivery->fresh()->status);
         $this->assertSame('telegram_403', $delivery->fresh()->error_code);
+    }
+
+    public function test_repeated_transport_exceptions_still_exhaust_the_worker_retry_budget(): void
+    {
+        $this->freezeTime();
+        Queue::swap(Queue::getFacadeRoot()->queue);
+        config()->set('telegram_bot.queue.name', 'test-bot-transport-failures');
+        $link = $this->linkedUser(preferences: ['broadcasts_enabled' => true]);
+        DB::transaction(fn () => app(DeliveryOutbox::class)->enqueue($link, 'broadcast', 'campaign', ['message' => 'Update']));
+        $delivery = BotDelivery::query()->sole();
+        $queue = Queue::connection('database');
+        $worker = app('queue.worker')->setCache(Cache::store());
+        $this->mock(BotTransport::class)->shouldReceive('message')->times(3)->andThrow(new TelegramTransportException(500));
+
+        foreach ([0, 5, 30] as $attempt => $delay) {
+            $this->travel($delay)->seconds();
+            $job = $queue->pop('test-bot-transport-failures');
+            $this->assertNotNull($job);
+            try {
+                $worker->process('database', $job, new WorkerOptions);
+                $this->fail('The transport must fail on each attempt.');
+            } catch (TelegramTransportException $exception) {
+                $this->assertSame(500, $exception->apiCode);
+            }
+            $this->assertSame($attempt === 2 ? BotDelivery::FAILED : BotDelivery::PENDING, $delivery->fresh()->status);
+        }
+
+        $this->assertSame('delivery_failed', $delivery->fresh()->error_code);
+        $this->travel(31)->minutes();
+        DB::transaction(fn () => $this->artisan('telegram-bot:maintain')->assertSuccessful());
+        $this->assertSame(0, $queue->size('test-bot-transport-failures'));
+    }
+
+    public function test_worker_timeout_after_the_retry_deadline_still_fails_the_delivery(): void
+    {
+        $this->freezeTime();
+        Queue::swap(Queue::getFacadeRoot()->queue);
+        config()->set('telegram_bot.queue.name', 'test-bot-timeout');
+        // Failed-job storage must not roll back the surrounding test transaction.
+        config()->set('queue.failed.driver', 'null');
+        $link = $this->linkedUser(preferences: ['broadcasts_enabled' => true]);
+        DB::transaction(fn () => app(DeliveryOutbox::class)->enqueue($link, 'broadcast', 'campaign', ['message' => 'Update']));
+        $delivery = BotDelivery::query()->sole();
+        $job = Queue::connection('database')->pop('test-bot-timeout');
+        $this->assertNotNull($job);
+        $this->travel(31)->minutes();
+
+        // Exercise the worker's terminal timeout callback without requiring POSIX signals.
+        $job->fail(TimeoutExceededException::forJob($job));
+
+        $this->assertSame(BotDelivery::FAILED, $delivery->fresh()->status);
+        $this->assertSame('delivery_failed', $delivery->fresh()->error_code);
+        Telegraph::assertNothingSent();
     }
 
     #[DataProvider('accessRevokedDuringRendering')]

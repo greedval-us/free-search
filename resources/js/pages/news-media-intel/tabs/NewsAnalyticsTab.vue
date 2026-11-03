@@ -32,7 +32,7 @@ const selectQuery = (value: string) => {
 };
 </script>
 <template>
-    <IntelModuleLayout>
+    <IntelModuleLayout class="news-module-shell">
         <IntelSearchPanel>
             <PageHeader
                 :icon="BarChart3"

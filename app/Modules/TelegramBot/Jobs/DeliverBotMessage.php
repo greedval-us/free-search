@@ -14,6 +14,8 @@ use App\Modules\TelegramBot\Infrastructure\NotificationText;
 use App\Modules\TelegramBot\Models\BotDelivery;
 use App\Modules\TelegramBot\Models\BotLink;
 use App\Modules\TelegramBot\Support\BotConfig;
+use Illuminate\Queue\MaxAttemptsExceededException;
+use Illuminate\Queue\TimeoutExceededException;
 use Symfony\Component\HttpKernel\Exception\HttpExceptionInterface;
 use Throwable;
 
@@ -92,6 +94,14 @@ final class DeliverBotMessage extends BotJob
 
     public function failed(?Throwable $exception): void
     {
+        if ($exception instanceof MaxAttemptsExceededException
+            && ! ($exception instanceof TimeoutExceededException)
+            && $this->deadline < now()->timestamp) {
+            // Only this queue copy expired. Keep the outbox pending for recovery,
+            // without changing dispatched_at, which may belong to a newer copy.
+            return;
+        }
+
         BotDelivery::query()->whereKey($this->deliveryId)->where('status', BotDelivery::PENDING)
             ->update(['status' => BotDelivery::FAILED, 'error_code' => 'delivery_failed']);
     }

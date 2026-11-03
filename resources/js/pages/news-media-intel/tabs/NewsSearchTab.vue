@@ -31,7 +31,7 @@ const selectQuery = (value: string) => {
 };
 </script>
 <template>
-    <IntelModuleLayout>
+    <IntelModuleLayout class="news-module-shell">
         <IntelSearchPanel>
             <PageHeader
                 :icon="Newspaper"
@@ -84,6 +84,7 @@ const selectQuery = (value: string) => {
                 </button>
             </div>
             <NewsFilters
+                class="mt-3"
                 v-model="filters"
                 :options="options"
                 :disabled="loading || optionsLoading"

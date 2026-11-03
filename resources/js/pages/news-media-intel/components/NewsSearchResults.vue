@@ -1,7 +1,5 @@
 <script setup lang="ts">
 import { computed } from 'vue';
-import InfoCard from '@/components/ui/InfoCard.vue';
-import MetricCard from '@/components/ui/MetricCard.vue';
 import { useI18n } from '@/composables/useI18n';
 import type { NewsResult } from '../types';
 import CoverageSummary from './CoverageSummary.vue';
@@ -25,53 +23,93 @@ const undated = computed(
     <div class="space-y-3">
         <p class="text-sm font-medium break-words">{{ result.query }}</p>
         <CoverageSummary v-if="result.coverage" :coverage="result.coverage" />
-        <div class="grid gap-2 sm:grid-cols-2 xl:grid-cols-4">
-            <MetricCard
-                :title="t('newsMediaIntel.summary.mentions')"
-                :value="result.mentions.length"
-            />
-            <MetricCard
-                :title="t('newsMediaIntel.summary.positive')"
-                :value="result.sentiment.positive"
-                tone="positive"
-            />
-            <MetricCard
-                :title="t('newsMediaIntel.summary.neutral')"
-                :value="result.sentiment.neutral"
-            />
-            <MetricCard
-                :title="t('newsMediaIntel.summary.negative')"
-                :value="result.sentiment.negative"
-                tone="danger"
-            />
-        </div>
-        <NewsDiscovery
-            :suggestions="result.suggestions"
-            :corrections="result.corrections"
-            :answers="result.answers"
-            :infoboxes="result.infoboxes"
-            @query="emit('query', $event)"
-        />
-        <InfoCard :title="t('newsMediaIntel.topics.title')">
-            <p class="mb-2 text-xs leading-5 text-muted-foreground">
-                {{ t('newsMediaIntel.help.topics') }}
-            </p>
-            <p v-if="!topics.length" class="intel-empty">
-                {{ t('newsMediaIntel.analytics.noTopics') }}
-            </p>
-            <div v-else class="flex flex-wrap gap-2">
-                <button
-                    v-for="topic in topics"
-                    :key="topic.topic"
-                    type="button"
-                    class="rounded-lg border border-border px-2 py-1 text-xs text-primary hover:bg-muted"
-                    @click="emit('query', topic.topic)"
-                >
-                    {{ topic.topic }} · {{ topic.count }}
-                </button>
+        <dl class="flex flex-wrap gap-x-5 gap-y-2 text-sm">
+            <div class="flex items-baseline gap-2">
+                <dt class="text-muted-foreground">
+                    {{ t('newsMediaIntel.summary.mentions') }}
+                </dt>
+                <dd class="font-semibold tabular-nums">
+                    {{ result.mentions.length }}
+                </dd>
             </div>
-        </InfoCard>
-        <NewsTimeline :timeline="result.timeline" :undated="undated" />
-        <NewsMentions :mentions="result.mentions" />
+            <div class="flex items-baseline gap-2">
+                <dt class="text-muted-foreground">
+                    {{ t('newsMediaIntel.summary.positive') }}
+                </dt>
+                <dd
+                    class="font-semibold text-emerald-700 tabular-nums dark:text-emerald-400"
+                >
+                    {{ result.sentiment.positive }}
+                </dd>
+            </div>
+            <div class="flex items-baseline gap-2">
+                <dt class="text-muted-foreground">
+                    {{ t('newsMediaIntel.summary.neutral') }}
+                </dt>
+                <dd class="font-semibold tabular-nums">
+                    {{ result.sentiment.neutral }}
+                </dd>
+            </div>
+            <div class="flex items-baseline gap-2">
+                <dt class="text-muted-foreground">
+                    {{ t('newsMediaIntel.summary.negative') }}
+                </dt>
+                <dd
+                    class="font-semibold text-rose-700 tabular-nums dark:text-rose-400"
+                >
+                    {{ result.sentiment.negative }}
+                </dd>
+            </div>
+        </dl>
+        <div
+            class="grid items-start gap-3 xl:grid-cols-[minmax(0,2fr)_minmax(16rem,1fr)]"
+        >
+            <NewsMentions :mentions="result.mentions" />
+            <div class="min-w-0 space-y-3">
+                <details class="intel-section">
+                    <summary
+                        class="cursor-pointer rounded-sm text-sm font-semibold focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
+                    >
+                        {{ t('newsMediaIntel.topics.title') }}
+                        <span
+                            class="ml-1 font-normal text-muted-foreground tabular-nums"
+                            >{{ topics.length }}</span
+                        >
+                    </summary>
+                    <p class="mt-2 text-xs leading-5 text-muted-foreground">
+                        {{ t('newsMediaIntel.help.topics') }}
+                    </p>
+                    <p
+                        v-if="!topics.length"
+                        class="mt-2 text-sm text-muted-foreground"
+                    >
+                        {{ t('newsMediaIntel.analytics.noTopics') }}
+                    </p>
+                    <div v-else class="mt-2 flex flex-wrap gap-1.5">
+                        <button
+                            v-for="topic in topics"
+                            :key="topic.topic"
+                            type="button"
+                            class="max-w-full min-w-0 rounded-md border border-border px-2 py-1 text-sm break-words text-primary hover:bg-muted focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
+                            @click="emit('query', topic.topic)"
+                        >
+                            {{ topic.topic }}
+                            <span
+                                class="ml-1 text-xs text-muted-foreground tabular-nums"
+                                >{{ topic.count }}</span
+                            >
+                        </button>
+                    </div>
+                </details>
+                <NewsTimeline :timeline="result.timeline" :undated="undated" />
+                <NewsDiscovery
+                    :suggestions="result.suggestions"
+                    :corrections="result.corrections"
+                    :answers="result.answers"
+                    :infoboxes="result.infoboxes"
+                    @query="emit('query', $event)"
+                />
+            </div>
+        </div>
     </div>
 </template>

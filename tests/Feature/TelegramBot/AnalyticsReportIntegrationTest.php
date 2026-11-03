@@ -21,6 +21,8 @@ use App\Modules\TelegramBot\Models\BotDelivery;
 use App\Modules\TelegramBot\Models\BotLink;
 use App\Services\Access\Contracts\FeatureAccessServiceInterface;
 use DefStudio\Telegraph\Facades\Telegraph;
+use Illuminate\Queue\MaxAttemptsExceededException;
+use Illuminate\Queue\WorkerOptions;
 use Illuminate\Support\Facades\Bus;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Queue;
@@ -57,6 +59,66 @@ final class AnalyticsReportIntegrationTest extends TelegramBotTestCase
 
         $this->assertSame(BotDelivery::SENT, $delivery->fresh()->status);
         $this->assertSame([], Storage::disk('local')->allFiles(config('telegram_bot.temporary_directory')));
+    }
+
+    #[DataProvider('schedulerRecoveryTiming')]
+    public function test_report_delivery_recovers_after_worker_outage_longer_than_retry_window(bool $recoverBeforeExpiredJob): void
+    {
+        $this->freezeTime();
+        // Use the real database queue so Laravel checks the serialized retry deadline.
+        Queue::swap(Queue::getFacadeRoot()->queue);
+        config()->set('telegram_bot.queue.name', 'test-bot-report-recovery');
+        $queue = Queue::connection('database');
+        $worker = app('queue.worker');
+        $link = $this->linkedUser(preferences: ['exports_enabled' => true]);
+        $report = $this->report($link);
+        $snapshot = $report->data;
+        DB::transaction(fn () => event(new AnalyticsReportCompleted($report->id)));
+        $delivery = BotDelivery::query()->sole();
+        $this->travel(31)->minutes();
+
+        if ($recoverBeforeExpiredJob) {
+            DB::transaction(fn () => $this->artisan('telegram-bot:maintain')->assertSuccessful());
+        }
+        $dispatchedAt = $delivery->fresh()->dispatched_at;
+        $expired = $queue->pop('test-bot-report-recovery');
+        $this->assertNotNull($expired);
+        try {
+            $worker->process('database', $expired, new WorkerOptions);
+            $this->fail('The original serialized job must have expired before handling.');
+        } catch (MaxAttemptsExceededException) {
+            $this->assertTrue($expired->hasFailed());
+        }
+
+        $this->assertSame(BotDelivery::PENDING, $delivery->fresh()->status);
+        $this->assertNull($delivery->fresh()->error_code);
+        $this->assertEquals($dispatchedAt, $delivery->fresh()->dispatched_at);
+        Telegraph::assertNothingSent();
+        if (! $recoverBeforeExpiredJob) {
+            DB::transaction(fn () => $this->artisan('telegram-bot:maintain')->assertSuccessful());
+        }
+        $this->mock(BotTransport::class)->shouldReceive('document')->once()->with(
+            $link->telegraph_chat_id,
+            \Mockery::on(fn (BotDocument $document): bool => $document->filename === 'telegram-analytics-'.$report->id.'.html'
+                && str_contains(file_get_contents($document->path), 'publicgroup')),
+        );
+        $replacement = $queue->pop('test-bot-report-recovery');
+        $this->assertNotNull($replacement);
+        $worker->process('database', $replacement, new WorkerOptions);
+        DB::transaction(fn () => event(new AnalyticsReportCompleted($report->id)));
+
+        $this->assertSame(BotDelivery::SENT, $delivery->fresh()->status);
+        $this->assertNotNull($delivery->fresh()->sent_at);
+        $this->assertSame(TelegramAnalyticsReport::COMPLETED, $report->fresh()->status);
+        $this->assertSame($snapshot, $report->fresh()->data);
+        $this->assertDatabaseCount('telegram_bot_deliveries', 1);
+        $this->assertSame(0, $queue->size('test-bot-report-recovery'));
+        $this->assertSame([], Storage::disk('local')->allFiles(config('telegram_bot.temporary_directory')));
+    }
+
+    public static function schedulerRecoveryTiming(): array
+    {
+        return ['replacement already queued' => [true], 'scheduler resumes after expired job' => [false]];
     }
 
     #[DataProvider('automaticDeliveryPreferences')]

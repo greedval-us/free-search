@@ -11,18 +11,22 @@ const percent = (value: number) =>
     );
 </script>
 <template>
-    <InfoCard :title="t('newsMediaIntel.analytics.brandsTitle')">
-        <p class="mb-3 text-xs leading-5 text-muted-foreground">
-            {{ t('newsMediaIntel.analytics.brandsHelp') }}
-        </p>
-        <p v-if="!comparison.entities.length" class="intel-empty">
+    <InfoCard
+        :title="t('newsMediaIntel.analytics.brandsTitle')"
+        :help-label="t('newsMediaIntel.analytics.brandsTitle')"
+        :help-text="t('newsMediaIntel.analytics.brandsHelp')"
+    >
+        <p
+            v-if="!comparison.entities.length"
+            class="text-sm leading-6 text-muted-foreground"
+        >
             {{ t('newsMediaIntel.analytics.noBrands') }}
         </p>
-        <div v-else class="space-y-3">
+        <div v-else class="divide-y divide-border/60">
             <article
                 v-for="entity in comparison.entities"
                 :key="`${entity.kind}-${entity.name}`"
-                class="intel-surface"
+                class="min-w-0 py-3 first:pt-0"
             >
                 <div class="flex flex-wrap items-center justify-between gap-2">
                     <p class="text-sm font-medium break-words">
@@ -47,7 +51,7 @@ const percent = (value: number) =>
                         }}
                     </p>
                 </div>
-                <div class="my-2 h-2 rounded-full bg-muted">
+                <div class="my-2 h-1.5 rounded-full bg-muted">
                     <div
                         class="h-full rounded-full bg-primary/70"
                         :style="{ width: `${entity.share}%` }"
@@ -67,7 +71,7 @@ const percent = (value: number) =>
                 </p>
                 <EvidenceLinks :urls="entity.evidenceUrls" />
             </article>
-            <p class="text-xs leading-5 text-muted-foreground">
+            <p class="pt-2 text-xs leading-5 text-muted-foreground">
                 {{
                     t('newsMediaIntel.analytics.coMentions', {
                         count: comparison.coMentionDocuments,

@@ -6,11 +6,17 @@ import { resolveArticleUrl } from '../articleUrl';
 import type { NewsMention } from '../types';
 const props = defineProps<{ mentions: NewsMention[] }>();
 const { t, locale } = useI18n();
-const cards = computed(() =>
-    props.mentions.slice(0, 100).map((mention) => ({
-        ...mention,
-        href: resolveArticleUrl(mention.link),
-    }))
+const publications = computed(() =>
+    props.mentions.slice(0, 100).map((mention) => {
+        const href = resolveArticleUrl(mention.link);
+
+        return {
+            ...mention,
+            href,
+            publisherLabel:
+                mention.publisher || (href ? new URL(href).hostname : ''),
+        };
+    })
 );
 const dateLabel = (raw: string | null) => {
     const date = raw ? new Date(raw) : null;
@@ -25,29 +31,44 @@ const dateLabel = (raw: string | null) => {
 };
 </script>
 <template>
-    <InfoCard :title="t('newsMediaIntel.mentions.title')">
-        <p class="mb-3 text-xs leading-5 text-muted-foreground">
-            {{ t('newsMediaIntel.help.mentions') }}
-        </p>
-        <p v-if="!cards.length" class="intel-empty">
+    <InfoCard
+        :title="t('newsMediaIntel.mentions.title')"
+        :help-label="t('newsMediaIntel.mentions.title')"
+        :help-text="t('newsMediaIntel.help.mentions')"
+    >
+        <p v-if="!publications.length" class="intel-empty">
             {{ t('newsMediaIntel.mentions.none') }}
         </p>
-        <div v-else class="space-y-2">
+        <div v-else class="divide-y divide-border/60">
             <article
-                v-for="(item, index) in cards"
+                v-for="(item, index) in publications"
                 :key="`${item.link}-${index}`"
-                class="intel-surface"
+                class="min-w-0 py-3 first:pt-0 last:pb-0"
             >
-                <p class="text-sm font-medium break-words">{{ item.title }}</p>
+                <h4 class="text-sm leading-5 font-semibold break-words">
+                    <a
+                        v-if="item.href"
+                        :href="item.href"
+                        :title="item.link"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        class="rounded-sm text-primary underline-offset-4 hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
+                        >{{ item.title || item.publisherLabel }}</a
+                    >
+                    <template v-else>{{ item.title }}</template>
+                </h4>
                 <p
-                    class="mt-1 text-xs leading-5 break-words text-muted-foreground"
+                    v-if="item.snippet"
+                    class="mt-1 max-w-prose text-sm leading-6 break-words text-muted-foreground"
                 >
                     {{ item.snippet }}
                 </p>
                 <p
-                    class="mt-2 flex flex-wrap gap-x-3 gap-y-1 text-xs text-muted-foreground"
+                    class="mt-1.5 flex flex-wrap gap-x-3 gap-y-1 text-xs leading-5 text-muted-foreground"
                 >
-                    <span v-if="item.publisher">{{ item.publisher }}</span
+                    <span v-if="item.publisherLabel" class="break-all">{{
+                        item.publisherLabel
+                    }}</span
                     ><span>{{ dateLabel(item.publishedAt) }}</span>
                     <span
                         v-for="category in item.categories ??
@@ -55,21 +76,13 @@ const dateLabel = (raw: string | null) => {
                         :key="category"
                         >{{ t(`newsMediaIntel.filters.${category}`) }}</span
                     >
+                    <span>
+                        {{ t('newsMediaIntel.sources.searxng')
+                        }}<template v-if="item.engines?.length"
+                            >: {{ item.engines.join(', ') }}</template
+                        >
+                    </span>
                 </p>
-                <p class="mt-1 text-xs text-muted-foreground">
-                    {{ t('newsMediaIntel.sources.searxng')
-                    }}<template v-if="item.engines?.length">
-                        · {{ item.engines.join(', ') }}</template
-                    >
-                </p>
-                <a
-                    v-if="item.href"
-                    :href="item.href"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    class="mt-1 block text-xs break-all text-primary hover:underline"
-                    >{{ item.link }}</a
-                >
             </article>
         </div>
     </InfoCard>

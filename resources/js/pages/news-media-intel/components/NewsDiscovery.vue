@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { computed } from 'vue';
-import InfoCard from '@/components/ui/InfoCard.vue';
 import { useI18n } from '@/composables/useI18n';
 import { resolveArticleUrl } from '../articleUrl';
 import type { NewsInfobox } from '../types';
@@ -35,16 +34,21 @@ const boxes = computed(() =>
 );
 </script>
 <template>
-    <InfoCard
+    <details
         v-if="
             suggestions?.length ||
             corrections?.length ||
             answers?.length ||
             boxes.length
         "
-        :title="t('newsMediaIntel.discovery.title')"
+        class="intel-section min-w-0"
     >
-        <div v-if="corrections?.length" class="mb-3">
+        <summary
+            class="cursor-pointer rounded-sm text-sm font-semibold focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
+        >
+            {{ t('newsMediaIntel.discovery.title') }}
+        </summary>
+        <div v-if="corrections?.length" class="mt-3">
             <p class="mb-1 text-xs text-muted-foreground">
                 {{ t('newsMediaIntel.discovery.corrections') }}
             </p>
@@ -52,13 +56,13 @@ const boxes = computed(() =>
                 v-for="correction in corrections"
                 :key="correction"
                 type="button"
-                class="mr-2 mb-1 rounded-lg border border-border px-2 py-1 text-xs text-primary hover:bg-muted"
+                class="mr-1.5 mb-1.5 max-w-full rounded-md border border-border px-2 py-1 text-sm break-words text-primary hover:bg-muted focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
                 @click="emit('query', correction)"
             >
                 {{ correction }}
             </button>
         </div>
-        <div v-if="suggestions?.length" class="mb-3">
+        <div v-if="suggestions?.length" class="mt-3">
             <p class="mb-1 text-xs text-muted-foreground">
                 {{ t('newsMediaIntel.discovery.suggestions') }}
             </p>
@@ -66,13 +70,13 @@ const boxes = computed(() =>
                 v-for="suggestion in suggestions"
                 :key="suggestion"
                 type="button"
-                class="mr-2 mb-1 rounded-lg border border-border px-2 py-1 text-xs text-primary hover:bg-muted"
+                class="mr-1.5 mb-1.5 max-w-full rounded-md border border-border px-2 py-1 text-sm break-words text-primary hover:bg-muted focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
                 @click="emit('query', suggestion)"
             >
                 {{ suggestion }}
             </button>
         </div>
-        <div v-if="answers?.length" class="mb-3 space-y-2">
+        <div v-if="answers?.length" class="mt-3 space-y-2">
             <p class="text-xs text-muted-foreground">
                 {{ t('newsMediaIntel.discovery.answers') }}
             </p>
@@ -87,10 +91,10 @@ const boxes = computed(() =>
         <article
             v-for="(box, index) in boxes"
             :key="`${box.title}-${index}`"
-            class="mt-2 rounded-xl border border-border/70 p-3"
+            class="mt-3 border-t border-border/60 pt-3"
         >
-            <p class="text-sm font-medium">{{ box.title }}</p>
-            <p class="mt-1 text-xs leading-5 break-words text-muted-foreground">
+            <p class="text-sm font-medium break-words">{{ box.title }}</p>
+            <p class="mt-1 text-sm leading-6 break-words text-muted-foreground">
                 {{ box.content }}
             </p>
             <div class="mt-2 flex flex-wrap gap-3 text-xs">
@@ -100,10 +104,11 @@ const boxes = computed(() =>
                     :href="link.href"
                     target="_blank"
                     rel="noopener noreferrer"
-                    class="break-all text-primary hover:underline"
+                    :title="link.href"
+                    class="rounded-sm break-all text-primary hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
                     >{{ link.title }}</a
                 >
             </div>
         </article>
-    </InfoCard>
+    </details>
 </template>

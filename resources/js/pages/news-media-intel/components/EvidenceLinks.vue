@@ -24,9 +24,10 @@ const links = computed(() =>
             v-for="(link, index) in links"
             :key="link.href"
             :href="link.href"
+            :title="link.href"
             target="_blank"
             rel="noopener noreferrer"
-            class="break-all text-primary hover:underline"
+            class="rounded-sm break-all text-primary hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
             >{{ link.host }} <span class="sr-only">{{ index + 1 }}</span></a
         >
     </div>

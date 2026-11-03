@@ -93,12 +93,14 @@ const createSchedule = async () => {
                             }}
                         </button>
                     </DialogTrigger>
-                    <DialogContent class="intel-scroll sm:max-w-2xl">
+                    <DialogContent
+                        class="intel-scroll gap-3 sm:max-w-2xl sm:p-5"
+                    >
                         <DialogHeader class="pr-10 text-left">
                             <DialogTitle>{{
                                 t('newsMediaReports.new')
                             }}</DialogTitle>
-                            <DialogDescription>{{
+                            <DialogDescription class="sr-only">{{
                                 t('newsMediaReports.periodHelp')
                             }}</DialogDescription>
                         </DialogHeader>
@@ -154,7 +156,7 @@ const createSchedule = async () => {
             class="intel-scroll min-h-0 flex-1 overflow-y-auto overscroll-contain p-1"
         >
             <div
-                class="grid min-w-0 gap-5 lg:grid-cols-[minmax(18rem,0.85fr)_minmax(0,1.5fr)]"
+                class="grid min-w-0 gap-3 lg:grid-cols-[minmax(18rem,0.85fr)_minmax(0,1.5fr)]"
             >
                 <section
                     class="min-w-0 space-y-3"

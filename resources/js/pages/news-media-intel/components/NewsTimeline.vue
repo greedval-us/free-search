@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { computed } from 'vue';
-import InfoCard from '@/components/ui/InfoCard.vue';
 import { useI18n } from '@/composables/useI18n';
 const props = defineProps<{
     timeline: Array<{ date: string; mentions: number }>;
@@ -13,14 +12,19 @@ const maximum = computed(() =>
 );
 </script>
 <template>
-    <InfoCard :title="t('newsMediaIntel.timeline.title')">
-        <p class="mb-3 text-xs leading-5 text-muted-foreground">
+    <details class="intel-section min-w-0">
+        <summary
+            class="cursor-pointer rounded-sm text-sm font-semibold focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
+        >
+            {{ t('newsMediaIntel.timeline.title') }}
+        </summary>
+        <p class="mt-2 mb-2 text-xs leading-5 text-muted-foreground">
             {{ t('newsMediaIntel.help.timeline') }}
         </p>
-        <p v-if="undated" class="mb-3 text-xs text-muted-foreground">
+        <p v-if="undated" class="mb-2 text-xs text-muted-foreground">
             {{ t('newsMediaIntel.timeline.undated', { count: undated }) }}
         </p>
-        <p v-if="!points.length" class="intel-empty">
+        <p v-if="!points.length" class="text-sm text-muted-foreground">
             {{ t('newsMediaIntel.timeline.none') }}
         </p>
         <div v-else class="space-y-2">
@@ -43,5 +47,5 @@ const maximum = computed(() =>
                 }}</span>
             </div>
         </div>
-    </InfoCard>
+    </details>
 </template>

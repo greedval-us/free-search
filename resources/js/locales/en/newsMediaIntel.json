@@ -14,6 +14,8 @@
     },
     "filters": {
         "title": "Search settings",
+        "pageSummary": "Pages: {count}",
+        "engineSummary": "Selected sources: {count}",
         "category": "Search in",
         "news": "News",
         "general": "Web search",
@@ -101,6 +103,9 @@
         "answers": "Answers from search sources"
     },
     "analytics": {
+        "contextTitle": "Brand, competitors and website",
+        "contextEmpty": "Optional — for comparison and visibility checks",
+        "competitorSummary": "Competitors: {count}",
         "title": "SEO and marketing analytics",
         "description": "Compare brand mentions, discover content topics and check your website's presence in search results.",
         "empty": "Enter a topic or search query. Add a brand and competitors to compare mentions, and a domain to check website presence.",
@@ -171,6 +176,6 @@
         "overview": "SearXNG combines public results from different sources. Choose categories, language, time range and search depth. Snippets are used to extract topics and estimate sentiment.",
         "topics": "Topics are extracted from titles and snippets. Counts describe the retrieved sample and do not measure a topic's popularity on the internet.",
         "timeline": "The timeline groups publications by known date. Undated items are excluded, and gaps do not imply that no publications exist.",
-        "mentions": "Publications are merged by URL. Each card shows the publisher, known date and search sources that returned the result."
+        "mentions": "Publications are merged by URL. Each publication shows the publisher, known date and search sources that returned the result."
     }
 }

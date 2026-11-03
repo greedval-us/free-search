@@ -1,6 +1,22 @@
 @layer utilities {
     .intel-module-shell {
-        @apply flex h-full min-h-0 max-w-full min-w-0 flex-1 flex-col gap-4 overflow-y-auto p-3 text-sm leading-6 sm:p-5 md:overflow-y-hidden lg:p-6;
+        @apply flex h-full min-h-0 max-w-full min-w-0 flex-1 flex-col gap-3 overflow-y-auto p-3 text-sm leading-6 sm:p-4 md:overflow-y-hidden;
+    }
+
+    .intel-module-shell .intel-module-shell {
+        @apply p-0;
+    }
+
+    .news-module-shell {
+        @apply md:overflow-y-auto;
+    }
+
+    .news-module-shell > .intel-panel {
+        @apply min-h-64 md:flex-none;
+    }
+
+    .news-module-shell > .intel-panel-strong {
+        @apply static;
     }
 
     .intel-module-heading {
@@ -40,7 +56,7 @@
 
     .intel-panel,
     .intel-panel-strong {
-        @apply min-w-0 rounded-2xl border border-border/70 bg-card p-4 shadow-xs sm:p-5;
+        @apply min-w-0 rounded-xl border border-border/70 bg-card p-3 shadow-xs sm:p-4;
     }
 
     .intel-panel-strong {
@@ -48,11 +64,11 @@
     }
 
     .intel-surface {
-        @apply rounded-xl bg-muted/65 p-3.5;
+        @apply rounded-lg bg-muted/65 p-3;
     }
 
     .intel-section {
-        @apply rounded-lg bg-muted/55 p-3.5 text-sm leading-relaxed;
+        @apply rounded-lg bg-muted/55 p-3 text-sm leading-relaxed;
     }
 
     .intel-title {
@@ -76,13 +92,29 @@
     }
 
     .intel-label {
-        @apply mb-1.5 block min-w-0 text-sm leading-5 font-medium break-words text-foreground;
+        @apply mb-1 block min-w-0 text-sm leading-5 font-medium break-words text-foreground;
     }
 
     .intel-input,
     .intel-select,
     .intel-filter-control {
-        @apply h-11 w-full min-w-0 rounded-lg border border-input bg-card px-3 text-base transition-[color,background-color,border-color,box-shadow] duration-200 outline-none placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/20 sm:text-sm;
+        @apply h-11 w-full min-w-0 rounded-lg border border-input bg-card px-3 text-base transition-[color,background-color,border-color,box-shadow] duration-200 outline-none placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/20 sm:h-10 sm:text-sm;
+    }
+
+    textarea.intel-input {
+        @apply h-auto min-h-20 py-2;
+    }
+
+    .intel-settings-disclosure {
+        @apply min-w-0 rounded-lg border border-border/70 bg-card;
+    }
+
+    .intel-settings-summary {
+        @apply flex min-h-11 cursor-pointer list-none items-center gap-2 px-3 py-2 transition-colors hover:bg-muted/40 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring sm:min-h-10;
+    }
+
+    .intel-settings-summary::-webkit-details-marker {
+        display: none;
     }
 
     .intel-input:disabled,
@@ -138,7 +170,7 @@
     }
 
     .intel-tab {
-        @apply inline-flex min-h-11 shrink-0 items-center rounded-lg px-4 py-2 text-sm font-medium whitespace-nowrap transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring;
+        @apply inline-flex min-h-11 shrink-0 items-center rounded-lg px-3 py-2 text-sm font-medium whitespace-nowrap transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring sm:min-h-10;
     }
 
     .intel-tab-active {
@@ -159,6 +191,12 @@
 
     .intel-button-ghost {
         @apply inline-flex min-h-11 items-center justify-center gap-1.5 rounded-lg bg-muted/55 px-3 py-2 text-sm font-medium text-foreground transition-colors hover:bg-accent focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring;
+    }
+
+    .intel-button-primary,
+    .intel-button-secondary,
+    .intel-button-ghost {
+        @apply sm:min-h-10;
     }
 
     .intel-hero-panel {

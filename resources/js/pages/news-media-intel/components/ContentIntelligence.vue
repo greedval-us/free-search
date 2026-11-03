@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import InfoCard from '@/components/ui/InfoCard.vue';
 import { useI18n } from '@/composables/useI18n';
 import type { NewsAnalytics } from '../types';
 import EvidenceLinks from './EvidenceLinks.vue';
@@ -10,15 +9,20 @@ const opportunityCopy = (item: NewsAnalytics['contentOpportunities'][number]) =>
     t(`newsMediaIntel.analytics.opportunities.${item.code}`, item.params);
 </script>
 <template>
-    <InfoCard :title="t('newsMediaIntel.analytics.contentTitle')">
-        <p class="mb-3 text-xs leading-5 text-muted-foreground">
+    <details class="intel-section min-w-0">
+        <summary
+            class="cursor-pointer rounded-sm text-sm font-semibold focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
+        >
+            {{ t('newsMediaIntel.analytics.contentTitle') }}
+        </summary>
+        <p class="mt-2 mb-3 text-xs leading-5 text-muted-foreground">
             {{ t('newsMediaIntel.analytics.contentHelp') }}
         </p>
         <div v-if="result.contentOpportunities.length" class="mb-4 space-y-2">
             <article
                 v-for="(item, index) in result.contentOpportunities"
                 :key="`${item.code}-${index}`"
-                class="rounded-xl border border-primary/20 bg-primary/5 p-3"
+                class="border-l-2 border-primary/40 pl-3"
             >
                 <p class="text-sm leading-6 break-words">
                     {{ opportunityCopy(item) }}
@@ -41,7 +45,7 @@ const opportunityCopy = (item: NewsAnalytics['contentOpportunities'][number]) =>
                 <div class="flex items-start justify-between gap-2">
                     <button
                         type="button"
-                        class="text-left text-sm break-words text-primary hover:underline"
+                        class="min-w-0 rounded-sm text-left text-sm break-words text-primary hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
                         @click="emit('query', topic.topic)"
                     >
                         {{ topic.topic }}</button
@@ -70,11 +74,11 @@ const opportunityCopy = (item: NewsAnalytics['contentOpportunities'][number]) =>
             <article
                 v-for="question in result.questions.slice(0, 10)"
                 :key="question.question"
-                class="rounded-lg bg-muted/30 p-2"
+                class="border-b border-border/50 pb-2 last:border-0"
             >
                 <button
                     type="button"
-                    class="text-left text-sm break-words text-primary hover:underline"
+                    class="rounded-sm text-left text-sm break-words text-primary hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
                     @click="emit('query', question.question)"
                 >
                     {{ question.question }}
@@ -89,5 +93,5 @@ const opportunityCopy = (item: NewsAnalytics['contentOpportunities'][number]) =>
                 <EvidenceLinks :urls="question.evidenceUrls" />
             </article>
         </div>
-    </InfoCard>
+    </details>
 </template>

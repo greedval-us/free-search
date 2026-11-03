@@ -1,5 +1,7 @@
 <script setup lang="ts">
 import { Link } from '@inertiajs/vue3';
+import { computed, shallowRef, watch } from 'vue';
+import SettingsDisclosure from '@/components/ui/SettingsDisclosure.vue';
 import { useI18n } from '@/composables/useI18n';
 import {
     REPORT_INTERVALS,
@@ -8,10 +10,12 @@ import {
 import ReportTimezoneField from '@/features/scheduled-reports/ReportTimezoneField.vue';
 import { settings } from '@/routes/telegram-bot';
 import NewsFilters from '../components/NewsFilters.vue';
+import { competitorNames } from '../form';
 import type { NewsOptions } from '../types';
+import { reportFormError } from './form';
 import type { ReportScheduleForm } from './types';
 
-defineProps<{
+const props = defineProps<{
     busy: boolean;
     botLinked: boolean;
     botExportsEnabled: boolean;
@@ -25,10 +29,45 @@ defineProps<{
 defineEmits<{ create: [] }>();
 const form = defineModel<ReportScheduleForm>({ required: true });
 const { t } = useI18n();
+const contextOpen = shallowRef(false);
+const contextHasError = computed(() =>
+    [
+        'invalidNames',
+        'competitorLimit',
+        'duplicateCompetitors',
+        'invalidDomain',
+    ].includes(reportFormError(form.value, props.maxQueries) ?? '')
+);
+watch(
+    () => Boolean(props.validationError) && contextHasError.value,
+    (invalid) => {
+        if (invalid) {
+            contextOpen.value = true;
+        }
+    },
+    { immediate: true }
+);
+const contextSummary = computed(() => {
+    const competitors = competitorNames(form.value.competitors);
+
+    return (
+        [
+            form.value.brand.trim(),
+            form.value.domain.trim(),
+            competitors.length
+                ? t('newsMediaIntel.analytics.competitorSummary', {
+                      count: competitors.length,
+                  })
+                : '',
+        ]
+            .filter(Boolean)
+            .join(', ') || t('newsMediaIntel.analytics.contextEmpty')
+    );
+});
 </script>
 
 <template>
-    <form class="min-w-0 space-y-4" @submit.prevent="$emit('create')">
+    <form class="min-w-0 space-y-3" @submit.prevent="$emit('create')">
         <p
             v-if="limitReached"
             role="status"
@@ -55,10 +94,10 @@ const { t } = useI18n();
             <textarea
                 id="news-report-schedule-queries"
                 v-model="form.queries"
-                class="intel-scroll intel-input min-h-24 resize-y"
-                rows="4"
+                class="intel-scroll intel-input resize-y"
+                rows="3"
                 :placeholder="t('newsMediaReports.queriesPlaceholder')"
-                :aria-invalid="Boolean(validationError)"
+                :aria-invalid="Boolean(validationError) && !contextHasError"
                 aria-describedby="news-report-queries-help news-report-queries-error"
                 required
             />
@@ -68,65 +107,14 @@ const { t } = useI18n();
                 >{{ t('newsMediaReports.queriesHelp') }}</span
             >
             <span
-                v-if="validationError"
+                v-if="validationError && !contextHasError"
                 id="news-report-queries-error"
                 role="alert"
                 class="text-xs text-destructive"
                 >{{ validationError }}</span
             >
         </div>
-        <div class="grid min-w-0 gap-4 sm:grid-cols-2">
-            <label class="intel-field">
-                <span class="intel-label">{{
-                    t('newsMediaIntel.analytics.brand')
-                }}</span>
-                <input
-                    v-model="form.brand"
-                    maxlength="80"
-                    class="intel-input"
-                    :placeholder="
-                        t('newsMediaIntel.analytics.brandPlaceholder')
-                    "
-                />
-            </label>
-            <label class="intel-field">
-                <span class="intel-label">{{
-                    t('newsMediaIntel.analytics.domain')
-                }}</span>
-                <input
-                    v-model="form.domain"
-                    maxlength="253"
-                    class="intel-input"
-                    placeholder="example.com"
-                />
-            </label>
-        </div>
-        <label class="intel-field">
-            <span class="intel-label">{{
-                t('newsMediaIntel.analytics.competitors')
-            }}</span>
-            <textarea
-                v-model="form.competitors"
-                rows="3"
-                class="intel-input resize-y"
-                :placeholder="
-                    t('newsMediaIntel.analytics.competitorsPlaceholder')
-                "
-            />
-            <span class="text-xs text-muted-foreground">{{
-                t('newsMediaIntel.analytics.competitorsHelp')
-            }}</span>
-        </label>
-        <NewsFilters
-            v-model="form.filters"
-            :options="options"
-            analytics
-            :disabled="busy || !options"
-        />
-        <p v-if="optionsError" role="alert" class="text-sm text-destructive">
-            {{ optionsError }}
-        </p>
-        <div class="grid min-w-0 gap-4 sm:grid-cols-2">
+        <div class="grid min-w-0 gap-3 sm:grid-cols-2">
             <div class="intel-field min-w-0">
                 <label for="news-report-interval" class="intel-label">{{
                     t('newsMediaReports.interval')
@@ -161,16 +149,80 @@ const { t } = useI18n();
         <p class="text-xs text-muted-foreground">
             {{ t('newsMediaReports.periodHelp') }}
         </p>
-        <p class="text-xs text-muted-foreground">
-            {{ t('newsMediaReports.dataHelp') }}
-        </p>
         <ReportTimezoneField
             v-model="form.timezone"
             id="news-report-timezone"
             label-key="newsMediaReports.timezone"
             :disabled="busy"
         />
-        <div class="space-y-2 rounded-lg border border-border/70 p-3">
+        <SettingsDisclosure
+            v-model:open="contextOpen"
+            :title="t('newsMediaIntel.analytics.contextTitle')"
+            :summary="contextSummary"
+        >
+            <div class="grid min-w-0 gap-3 sm:grid-cols-2">
+                <label class="intel-field">
+                    <span class="intel-label">{{
+                        t('newsMediaIntel.analytics.brand')
+                    }}</span>
+                    <input
+                        v-model="form.brand"
+                        maxlength="80"
+                        class="intel-input"
+                        :placeholder="
+                            t('newsMediaIntel.analytics.brandPlaceholder')
+                        "
+                    />
+                </label>
+                <label class="intel-field">
+                    <span class="intel-label">{{
+                        t('newsMediaIntel.analytics.domain')
+                    }}</span>
+                    <input
+                        v-model="form.domain"
+                        maxlength="253"
+                        class="intel-input"
+                        placeholder="example.com"
+                    />
+                </label>
+            </div>
+            <label class="intel-field mt-3">
+                <span class="intel-label">{{
+                    t('newsMediaIntel.analytics.competitors')
+                }}</span>
+                <textarea
+                    v-model="form.competitors"
+                    rows="3"
+                    class="intel-input resize-y"
+                    :placeholder="
+                        t('newsMediaIntel.analytics.competitorsPlaceholder')
+                    "
+                />
+                <span class="text-xs text-muted-foreground">{{
+                    t('newsMediaIntel.analytics.competitorsHelp')
+                }}</span>
+            </label>
+        </SettingsDisclosure>
+        <p
+            v-if="validationError && contextHasError"
+            role="alert"
+            class="text-xs text-destructive"
+        >
+            {{ validationError }}
+        </p>
+        <NewsFilters
+            v-model="form.filters"
+            :options="options"
+            analytics
+            :disabled="busy || !options"
+        />
+        <p class="text-xs text-muted-foreground">
+            {{ t('newsMediaReports.dataHelp') }}
+        </p>
+        <p v-if="optionsError" role="alert" class="text-sm text-destructive">
+            {{ optionsError }}
+        </p>
+        <div class="space-y-1 rounded-lg border border-border/70 px-3 py-2">
             <label class="flex min-h-9 items-center gap-2 text-sm">
                 <input
                     v-model="form.sendToBot"
@@ -199,7 +251,7 @@ const { t } = useI18n();
                 >
             </div>
         </div>
-        <div class="flex justify-end border-t border-border/60 pt-4">
+        <div class="flex justify-end border-t border-border/60 pt-3">
             <button class="intel-button-primary" :disabled="busy || !canCreate">
                 {{ t('newsMediaReports.create') }}
             </button>
