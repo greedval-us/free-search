@@ -43,9 +43,11 @@ class TelegramMessageRangeLoader
                 'max_date' => $maxDate + 1,
             ]);
 
-            if ($dto === null || ($dto->inexact && empty($dto->messages))) {
+            if ($dto === null) {
                 throw new ExternalServiceUnavailableException('errors.api.telegram.load_messages_failed', 'telegram_analytics_load_messages_failed');
             }
+            // `inexact` describes search approximation, not a failed request. A successful
+            // empty page ends this search even when Telegram retains an approximate count.
             if (empty($dto->messages)) {
                 return $messages;
             }

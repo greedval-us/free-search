@@ -26,4 +26,6 @@ Frontend: `resources/js/pages/Telegram.vue`, `pages/telegram/tabs/*`, composable
 
 ## Beta limitations
 
+Аналитика обходит выдачу `messages.search` по ID сообщений до пустой успешной страницы или нижней границы периода. Флаг `inexact` и приблизительный `count` могут сохраняться на последней пустой странице; сами по себе они не означают ошибку запроса. Аналитика описывает полученную поисковую выборку, которая может отличаться от истории канала. Реальный сбой загрузки, зацикливание курсора и достижение лимита страниц по-прежнему прерывают расчёт. Такое завершение поиска соответствует [официальному Telegram Desktop](https://github.com/telegramdesktop/tdesktop/blob/dev/Telegram/SourceFiles/api/api_messages_search.cpp#L183-L210).
+
 Работа зависит от Telegram account authorization, доступности channel/post, flood limits и changes MadelineProto/Telegram. Parser jobs Telegram serialized process-wide данным application lock; это ограничивает concurrency. Session files и collected data чувствительны и должны оставаться в private storage.

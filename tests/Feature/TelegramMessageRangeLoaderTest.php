@@ -44,18 +44,41 @@ final class TelegramMessageRangeLoaderTest extends TestCase
     }
 
     #[DataProvider('failedPagePositions')]
-    public function test_empty_inexact_page_does_not_certify_a_complete_range(bool $afterMessages): void
+    public function test_successful_empty_inexact_search_page_ends_the_range(bool $afterMessages): void
     {
-        $incomplete = new ChannelMessagesDTO(['messages' => [], 'inexact' => true]);
-        $loader = $this->loader($afterMessages ? [$this->page([20]), $incomplete] : [$incomplete]);
+        // Telegram may retain an approximate count after exhausting a date-filtered search.
+        $end = new ChannelMessagesDTO(['_' => 'messages.channelMessages', 'messages' => [], 'inexact' => true, 'count' => 24080]);
+        $loader = $this->loader($afterMessages ? [$this->page([20]), $end] : [$end]);
 
-        try {
-            $this->load($loader);
-            $this->fail('An inexact empty page cannot certify that all messages were loaded.');
-        } catch (ExternalServiceUnavailableException $exception) {
-            $this->assertSame(503, $exception->status());
-            $this->assertSame('telegram_analytics_load_messages_failed', $exception->errorCode());
-        }
+        $this->assertSame($afterMessages ? [20] : [], array_column($this->load($loader), 'id'));
+    }
+
+    public function test_full_then_short_inexact_search_pages_finish_on_successful_empty_page(): void
+    {
+        $offsets = [];
+        $ids = range(300, 193);
+        $gateway = $this->mock(TelegramGatewayInterface::class);
+        $gateway->shouldReceive('getMessages')->times(3)->andReturnUsing(function (array $filter) use (&$offsets, $ids): ChannelMessagesDTO {
+            $offsets[] = $filter['offset_id'];
+            $this->assertSame(100, $filter['limit']);
+            $pageIds = match ($filter['offset_id']) {
+                0 => array_slice($ids, 0, 100),
+                201 => array_slice($ids, 100),
+                193 => [],
+            };
+
+            return new ChannelMessagesDTO([
+                ...$this->page($pageIds)->raw,
+                '_' => 'messages.channelMessages',
+                'inexact' => true,
+                'count' => 24080,
+            ]);
+        });
+
+        $messages = $this->load($this->makeLoader($gateway, 4, 100));
+
+        $this->assertSame($ids, array_column($messages, 'id'));
+        $this->assertSame([0, 201, 193], $offsets);
     }
 
     public function test_gateway_bounds_include_both_edge_seconds_and_local_filter_remains_exact(): void
