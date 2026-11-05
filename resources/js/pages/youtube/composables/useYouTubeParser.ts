@@ -1,4 +1,5 @@
 import { computed, onMounted, reactive, ref } from 'vue';
+import ParserRoutes from '@/actions/App/Http/Controllers/YouTube/YouTubeParserController';
 import { useParserRun } from '@/composables/useParserRun';
 import {
     getRepeatQueryParams,
@@ -7,7 +8,6 @@ import {
 } from '@/composables/useRepeatQuery';
 import type {
     YouTubeParserHistoryItem as ParserHistoryItem,
-    YouTubeParserStage as ParserStage,
     YouTubeParserStatusResponse as ParserStatusResponse,
 } from '../types';
 
@@ -18,29 +18,10 @@ export const useYouTubeParser = (t: TranslateFn) => {
         videoId: '',
     });
     const settingsCollapsed = ref(false);
-    const processedComments = ref(0);
-    const processedReplies = ref(0);
-
-    const parser = useParserRun<
-        ParserStage,
-        ParserStatusResponse,
-        ParserHistoryItem
-    >({
-        endpointBase: '/youtube/parser',
-        idleStage: 'idle',
+    const parser = useParserRun<ParserStatusResponse, ParserHistoryItem>({
+        routes: ParserRoutes,
         initialStage: 'comments',
-        stoppedStage: 'stopped',
-        failedStage: 'failed',
         requestErrorMessage: () => t('youtube.parser.errors.failed'),
-        historyErrorMessage: () => t('youtube.parser.history.errors.load'),
-        applyModulePayload: (payload) => {
-            processedComments.value = payload.processedComments;
-            processedReplies.value = payload.processedReplies;
-        },
-        resetModuleState: () => {
-            processedComments.value = 0;
-            processedReplies.value = 0;
-        },
     });
 
     const canStart = computed(
@@ -84,8 +65,12 @@ export const useYouTubeParser = (t: TranslateFn) => {
         error: parser.error,
         progress: parser.progress,
         stage: parser.stage,
-        processedComments,
-        processedReplies,
+        processedComments: computed(
+            () => parser.payload.value?.processedComments ?? 0
+        ),
+        processedReplies: computed(
+            () => parser.payload.value?.processedReplies ?? 0
+        ),
         downloadUrl: parser.downloadUrl,
         downloadJsonUrl: parser.downloadJsonUrl,
         historyItems: parser.historyItems,

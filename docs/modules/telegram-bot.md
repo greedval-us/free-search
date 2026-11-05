@@ -68,7 +68,7 @@ BotTransport реализован через TelegraphBot, TelegraphChat, Keyboa
 
 ## Подключение на VPS
 
-Эти команды выполняются после деплоя. Локально настоящий бот не создавался, webhook не регистрировался.
+Выполните команды на сервере приложения.
 
 ~~~bash
 composer install --no-dev --optimize-autoloader
@@ -83,7 +83,7 @@ php artisan telegraph:new-bot
 Настройте .env, не добавляя секреты в Git:
 
 ~~~dotenv
-APP_URL=https://uraboros.online
+APP_URL=https://app.example.org
 TELEGRAM_BOT_ENABLED=true
 TELEGRAM_BOT_ID=1
 TELEGRAM_BOT_USERNAME=your_bot_username
@@ -92,7 +92,7 @@ TELEGRAM_BOT_QUEUE_CONNECTION=database
 TELEGRAM_BOT_QUEUE=telegram-bot
 ~~~
 
-Замените ID и username реальными значениями. Секрет заголовка должен быть случайным, длиной 32-256 символов, из букв, цифр, дефиса и подчёркивания. Генерация на сервере:
+Укажите публичный HTTPS-адрес своего приложения в `APP_URL`, а также ID и имя созданного бота. Секрет заголовка должен быть случайным, длиной 32-256 символов, из букв, цифр, дефиса и подчёркивания. Генерация на сервере:
 
 ~~~bash
 php -r 'echo bin2hex(random_bytes(32)), PHP_EOL;'
@@ -163,7 +163,7 @@ npm run test:unit
 npm run quality:check
 ~~~
 
-Тесты используют SQLite in-memory, Storage::fake, Queue::fake и Telegraph::fake, без внешних Telegram-запросов. Проверяются привязка, чужие и просроченные файлы, настоящая генерация JSON/XLSX, opt-in, очередь, дедупликация, webhook, безопасная обработка ошибок и отключение устаревшей доставки отчётов без изменения отчётов сайта.
+Тесты используют выделенную тестовую базу MySQL, Storage::fake, Queue::fake и Telegraph::fake, без внешних Telegram-запросов. Проверяются привязка, чужие и просроченные файлы, настоящая генерация JSON/XLSX, opt-in, очередь, дедупликация, webhook, безопасная обработка ошибок и отключение устаревшей доставки отчётов без изменения отчётов сайта.
 
 Документация пакета: https://docs.defstudio.it/telegraph/v1/installation
 Telegram Web Apps: https://core.telegram.org/bots/webapps

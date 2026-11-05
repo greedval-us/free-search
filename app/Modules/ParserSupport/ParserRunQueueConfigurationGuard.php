@@ -2,7 +2,6 @@
 
 namespace App\Modules\ParserSupport;
 
-use App\Jobs\ProcessParserRun;
 use LogicException;
 
 final class ParserRunQueueConfigurationGuard
@@ -26,7 +25,7 @@ final class ParserRunQueueConfigurationGuard
 
         $retryAfter = (int) config("queue.connections.{$connection}.retry_after", 0);
 
-        if ($retryAfter > ProcessParserRun::TIMEOUT_SECONDS) {
+        if ($retryAfter > ParserRunConfig::JOB_TIMEOUT_SECONDS) {
             return;
         }
 
@@ -34,7 +33,7 @@ final class ParserRunQueueConfigurationGuard
             'Queue connection %s retry_after (%d) must be greater than parser job timeout (%d).',
             $connection,
             $retryAfter,
-            ProcessParserRun::TIMEOUT_SECONDS,
+            ParserRunConfig::JOB_TIMEOUT_SECONDS,
         ));
     }
 }

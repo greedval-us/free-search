@@ -1,11 +1,14 @@
+import { usePage } from '@inertiajs/vue3';
 import { computed, ref } from 'vue';
 import { useI18n } from '@/composables/useI18n';
+import type { TelegramPageProps } from '../types';
 import { useTelegramAnalytics } from './useTelegramAnalytics';
 
 type TrendSeriesKey = 'messages' | 'views' | 'interactions';
 
 export const useTelegramAnalyticsTab = () => {
     const { t, locale } = useI18n();
+    const page = usePage<TelegramPageProps>();
 
     const {
         PERIODS,
@@ -26,7 +29,7 @@ export const useTelegramAnalyticsTab = () => {
         loadAnalytics,
         openReport,
         downloadReport,
-    } = useTelegramAnalytics(t);
+    } = useTelegramAnalytics(t, () => page.props.customRangeMaxDays.analytics);
 
     const priorityLabel = (priority: string) =>
         t(`telegram.analytics.priority.${priority}`);

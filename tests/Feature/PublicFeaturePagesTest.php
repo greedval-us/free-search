@@ -46,6 +46,16 @@ class PublicFeaturePagesTest extends TestCase
         $this->get('/features/telegram/private')->assertNotFound();
     }
 
+    public function test_privacy_page_receives_only_the_configured_public_contact(): void
+    {
+        foreach ([null, 'privacy@example.org'] as $email) {
+            config(['app.privacy_contact_email' => $email]);
+
+            $this->get(route('privacy'))->assertOk()->assertInertia(fn (Assert $page) => $page
+                ->component('Privacy')->where('contactEmail', $email));
+        }
+    }
+
     public function test_public_copy_receives_current_policy_not_fixed_marketing_limits(): void
     {
         config([

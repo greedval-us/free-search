@@ -45,7 +45,7 @@ final class SavedReportArtifactProviderTest extends TelegramBotTestCase
         $json = $provider->document($link->user_id, $report->id, 'json', 'ru');
 
         $this->assertStringContainsString('к прошлому периоду: +100.0%', file_get_contents($html->path));
-        $this->assertSame($report->data, json_decode(file_get_contents($json->path), true, flags: JSON_THROW_ON_ERROR));
+        $this->assertJsonStringEqualsJsonString(json_encode($report->data, JSON_THROW_ON_ERROR), file_get_contents($json->path));
         $this->assertSame(['summary' => ['totals' => ['messages' => 2]]], $report->fresh()->data['previousReport']);
         $this->assertSame('en', app()->getLocale());
         app(TemporaryDocuments::class)->remove($html);

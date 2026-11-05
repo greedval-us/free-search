@@ -1,56 +1,25 @@
+import type {
+    ParserHistoryItem,
+    ParserRunPayload,
+    ParserStage,
+} from '@/types/parser';
+
 export type MastodonTabValue = 'search' | 'analytics' | 'parser' | 'reports';
 
-export type MastodonParserStage =
-    | 'idle'
-    | 'statuses'
-    | 'comments'
-    | 'finishing'
-    | 'completed'
-    | 'failed'
-    | 'stopped';
+export type MastodonParserStage = ParserStage<'statuses' | 'comments'>;
 
-export type MastodonParserStatus =
-    | 'running'
-    | 'completed'
-    | 'failed'
-    | 'stopped';
-
-export type MastodonParserStatusResponse = {
-    ok: boolean;
-    runId: string;
-    status: MastodonParserStatus;
-    stage: MastodonParserStage;
-    progress: number;
-    processedStatuses: number;
-    processedComments: number;
-    error: string | null;
-    downloadUrl: string | null;
-    downloadJsonUrl: string | null;
-};
-
-export type MastodonParserHistoryItem = {
-    runId: string;
-    status: MastodonParserStatus | 'unknown';
-    stage: MastodonParserStage | 'unknown' | string | null;
-    progress: number;
-    error: string | null;
-    createdAt: string | null;
-    updatedAt: string | null;
-    finishedAt: string | null;
-    expiresAt: string | null;
-    downloadable: boolean;
-    downloadUrl: string | null;
-    downloadJsonUrl: string | null;
-    account: string | null;
+type MastodonParserCounts = {
     processedStatuses: number;
     processedComments: number;
 };
 
-export type MastodonParserHistoryResponse = {
-    ok: boolean;
-    items: MastodonParserHistoryItem[];
-    retentionDays: number;
-};
+export type MastodonParserStatusResponse =
+    ParserRunPayload<MastodonParserStage> & MastodonParserCounts;
+
+export type MastodonParserHistoryItem = ParserHistoryItem &
+    MastodonParserCounts & {
+        account: string | null;
+    };
 
 export type MastodonStatus = {
     id: string;

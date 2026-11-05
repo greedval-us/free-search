@@ -98,8 +98,7 @@ final class NewsMediaReportIntegrationTest extends TelegramBotTestCase
         $context = new BotContext($link->telegraph_chat_id, $link->telegram_id, 'en', 'manual-report', $link->id, $link->user_id);
         $screen = app(BotRouter::class)->dispatch('files', $context, ['k' => 'news_media_report']);
         $jsonButton = collect($screen->buttons)->first(fn ($button) => ($button->parameters['f'] ?? null) === 'json');
-        $this->mock(BotTransport::class)->shouldReceive('document')->once()->with($link->telegraph_chat_id,
-            \Mockery::on(fn (BotDocument $document): bool => json_decode(file_get_contents($document->path), true, flags: JSON_THROW_ON_ERROR) === $report->data));
+        $this->expectJsonDocument($link->telegraph_chat_id, $report->data);
 
         app(BotRouter::class)->dispatch('send', $context, $jsonButton->parameters);
         $delivery = BotDelivery::query()->sole();
@@ -220,7 +219,7 @@ final class NewsMediaReportIntegrationTest extends TelegramBotTestCase
         app(NewsMediaReportBotListener::class)->handle(new NewsMediaReportCompleted($report->id));
 
         $this->assertSame(NewsMediaScheduledReport::COMPLETED, $report->fresh()->status);
-        $this->assertSame($report->data, $report->fresh()->data);
+        $this->assertJsonStringEqualsJsonString(json_encode($report->data, JSON_THROW_ON_ERROR), json_encode($report->fresh()->data, JSON_THROW_ON_ERROR));
         $delivery = BotDelivery::query()->sole();
         $this->assertSame(BotDelivery::PENDING, $delivery->status);
         $this->assertNull($delivery->dispatched_at);

@@ -25,9 +25,28 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Queue;
 use Illuminate\Support\Facades\Storage;
 use PHPUnit\Framework\Attributes\DataProvider;
+use RuntimeException;
 
 final class DeliveryTest extends TelegramBotTestCase
 {
+    public function test_rollback_refuses_to_truncate_an_existing_delivery_kind(): void
+    {
+        $delivery = BotDelivery::query()->create([
+            'link_id' => $this->linkedUser()->id,
+            'kind' => 'mastodon_analytics_report',
+            'deduplication_key' => hash('sha256', 'delivery-kind-rollback'),
+        ]);
+        $migration = require database_path('migrations/2026_11_05_000001_widen_telegram_bot_delivery_kind.php');
+
+        try {
+            $migration->down();
+            $this->fail('A rollback must preserve the full delivery kind.');
+        } catch (RuntimeException $exception) {
+            $this->assertStringContainsString('Cannot narrow delivery kinds', $exception->getMessage());
+            $this->assertSame('mastodon_analytics_report', $delivery->fresh()->kind);
+        }
+    }
+
     public function test_database_notification_is_delivered_once_through_telegraph(): void
     {
         $link = $this->linkedUser();
@@ -273,7 +292,7 @@ final class DeliveryTest extends TelegramBotTestCase
     public function test_queue_failure_preserves_outbox_and_does_not_fail_website_notification(): void
     {
         $link = $this->linkedUser();
-        Bus::shouldReceive('dispatch')->andThrow(new \RuntimeException('Queue temporarily unavailable'));
+        Bus::shouldReceive('dispatch')->andThrow(new RuntimeException('Queue temporarily unavailable'));
         DB::transaction(fn () => $link->user->notify(new SystemDatabaseNotification(['title' => 'Hello', 'body' => 'Saved'])));
         $this->assertDatabaseCount('notifications', 1);
         $delivery = BotDelivery::query()->sole();

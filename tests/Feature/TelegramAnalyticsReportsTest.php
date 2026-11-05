@@ -3,7 +3,6 @@
 namespace Tests\Feature;
 
 use App\Exceptions\Public\ExternalServiceRequestException;
-use App\Models\FeatureUsageDaily;
 use App\Models\TelegramAnalyticsReport;
 use App\Models\TelegramAnalyticsSchedule;
 use App\Models\User;
@@ -17,7 +16,6 @@ use App\Modules\Telegram\Analytics\Reports\Events\AnalyticsReportCompleted;
 use App\Modules\Telegram\Analytics\Reports\Jobs\GenerateAnalyticsReport;
 use App\Modules\Telegram\DTO\Result\AnalyticsSummaryResultDTO;
 use Carbon\CarbonImmutable;
-use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Bus;
 use Illuminate\Support\Facades\Event;
@@ -25,10 +23,12 @@ use Illuminate\Support\Facades\Http;
 use Mockery;
 use PHPUnit\Framework\Attributes\DataProvider;
 use RuntimeException;
+use Tests\Feature\Concerns\AssertsUsedCredits;
 use Tests\TestCase;
 
 class TelegramAnalyticsReportsTest extends TestCase
 {
+    use AssertsUsedCredits;
     use RefreshDatabase;
 
     protected function setUp(): void
@@ -146,8 +146,11 @@ class TelegramAnalyticsReportsTest extends TestCase
 
         $completed = $report->fresh();
         $this->assertSame(TelegramAnalyticsReport::COMPLETED, $completed->status);
-        $this->assertSame($data, $completed->data);
-        $this->assertSame(1, FeatureUsageDaily::query()->where('user_id', $user->id)->sum('used'));
+        $this->assertJsonStringEqualsJsonString(
+            json_encode($data, JSON_THROW_ON_ERROR),
+            json_encode($completed->data, JSON_THROW_ON_ERROR),
+        );
+        $this->assertUsedCredits(1, $user);
         $this->assertArrayNotHasKey('data', $completed->toArray());
         $this->assertNull($completed->lease_token);
         Event::assertDispatchedTimes(AnalyticsReportCompleted::class, 1);
@@ -201,7 +204,7 @@ class TelegramAnalyticsReportsTest extends TestCase
         app(AnalyticsReportGenerator::class)->generate($report->id, $report->lease_token);
 
         $this->assertSame(TelegramAnalyticsReport::FAILED, $report->fresh()->status);
-        $this->assertSame(0, FeatureUsageDaily::query()->where('user_id', $user->id)->sum('used'));
+        $this->assertUsedCredits(0, $user);
     }
 
     public function test_manual_run_can_generate_paused_schedule_and_deleting_schedule_preserves_history(): void
@@ -315,7 +318,7 @@ class TelegramAnalyticsReportsTest extends TestCase
         $this->assertSame(TelegramAnalyticsReport::FAILED, $report->fresh()->status);
         $this->assertSame($reason, $report->fresh()->error_code);
         $this->assertNull($report->fresh()->data);
-        $this->assertSame(0, FeatureUsageDaily::query()->where('user_id', $user->id)->sum('used'));
+        $this->assertUsedCredits(0, $user);
         Event::assertNotDispatched(AnalyticsReportCompleted::class);
     }
 
@@ -333,26 +336,6 @@ class TelegramAnalyticsReportsTest extends TestCase
         }
 
         $this->assertDatabaseCount('telegram_analytics_schedules', 0);
-        Bus::assertNotDispatched(GenerateAnalyticsReport::class);
-    }
-
-    public function test_another_owner_cannot_run_or_change_schedule(): void
-    {
-        $owner = User::factory()->create();
-        $other = User::factory()->create();
-        $schedule = $this->createSchedule($owner);
-        Bus::fake([GenerateAnalyticsReport::class]);
-
-        foreach (['runNow', 'change'] as $method) {
-            try {
-                app(AnalyticsReportScheduleService::class)->{$method}($other, $schedule->id, 'pause');
-                $this->fail('An owner boundary must be enforced.');
-            } catch (ModelNotFoundException) {
-                $this->assertTrue($schedule->fresh()->enabled);
-            }
-        }
-
-        $this->assertDatabaseCount('telegram_analytics_reports', 0);
         Bus::assertNotDispatched(GenerateAnalyticsReport::class);
     }
 
@@ -389,7 +372,7 @@ class TelegramAnalyticsReportsTest extends TestCase
         $this->assertSame(TelegramAnalyticsReport::FAILED, $report->fresh()->status);
         $this->assertSame('disabled', $report->fresh()->error_code);
         $this->assertNull($report->fresh()->data);
-        $this->assertSame(0, FeatureUsageDaily::query()->where('user_id', $user->id)->sum('used'));
+        $this->assertUsedCredits(0, $user);
         Event::assertNotDispatched(AnalyticsReportCompleted::class);
     }
 

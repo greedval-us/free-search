@@ -12,6 +12,7 @@ use App\Modules\SiteIntel\Application\Contracts\SiteIntelHostResolverInterface;
 use App\Modules\SiteIntel\Application\Reports\Jobs\GenerateSiteIntelReport;
 use App\Modules\SiteIntel\Application\Reports\ReportGenerator;
 use App\Modules\YouTube\Parser\YouTubeParserRunStore;
+use App\Services\Access\Contracts\FeatureAccessServiceInterface;
 use Carbon\CarbonImmutable;
 use Illuminate\Contracts\Console\Kernel;
 use Illuminate\Foundation\Bootstrap\LoadConfiguration;
@@ -19,11 +20,13 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\Storage;
+use PHPUnit\Framework\Attributes\Group;
 use RuntimeException;
 use Tests\Feature\Concerns\CreatesSubscribedUser;
 use Tests\Support\MigrationUpgradeDatabase;
 use Tests\TestCase;
 
+#[Group('migration-upgrade')]
 class MigrationUpgradeTest extends TestCase
 {
     use CreatesSubscribedUser;
@@ -116,6 +119,15 @@ class MigrationUpgradeTest extends TestCase
         $staff = User::factory()->create(['id' => 12, 'account_type' => User::ACCOUNT_TYPE_ADMIN]);
         $missing = User::factory()->create(['id' => 13]);
         $zero = User::factory()->create(['id' => 14]);
+        $botId = DB::table('telegraph_bots')->insertGetId(['token' => 'upgrade-test-bot']);
+        $chatId = DB::table('telegraph_chats')->insertGetId(['telegraph_bot_id' => $botId, 'chat_id' => '10001']);
+        $linkId = DB::table('telegram_bot_links')->insertGetId([
+            'user_id' => $user->id, 'telegraph_chat_id' => $chatId, 'telegram_id' => '10001',
+        ]);
+        DB::table('telegram_bot_deliveries')->insert([
+            'link_id' => $linkId, 'kind' => 'bluesky_analytics_report', 'reference' => '1',
+            'deduplication_key' => hash('sha256', 'legacy-delivery'),
+        ]);
         $before = [];
         foreach (self::modules() as $module => $definition) {
             $table = $this->reportTable($module);
@@ -147,12 +159,16 @@ class MigrationUpgradeTest extends TestCase
                 'attempts' => 0, 'reserved_at' => null, 'available_at' => now()->timestamp, 'created_at' => now()->timestamp,
             ]);
         }
-        foreach (['feature_usage_daily', 'parser_runs', 'jobs', 'users', 'user_subscriptions'] as $table) {
+        foreach (['feature_usage_daily', 'parser_runs', 'jobs', 'users', 'user_subscriptions', 'telegram_bot_deliveries'] as $table) {
             $before[$table] = $this->rows($table);
         }
 
         $this->artisan('migrate', ['--database' => 'refactor_upgrade', '--force' => true])->assertSuccessful();
-        $this->assertSame(count($fixture['migrations']) + 2, DB::table('migrations')->count());
+        $migrator = app('migrator');
+        $this->assertEqualsCanonicalizing(
+            array_keys($migrator->getMigrationFiles([...$migrator->paths(), database_path('migrations')])),
+            DB::table('migrations')->pluck('migration')->all(),
+        );
         $this->assertSame($fixture['parser_checkpoint'], Storage::disk('private')->get($path));
         foreach ($before as $table => $rows) {
             $after = $this->rows($table);
@@ -174,7 +190,7 @@ class MigrationUpgradeTest extends TestCase
                     $this->assertNull($receipt);
                 }
             }
-            $this->exerciseLegacyReport($module, $definition);
+            $this->exerciseLegacyReport($module, $definition, $user);
         }
         $this->exerciseLegacyParser($checkpoint);
         $migrations = $this->rows('migrations');
@@ -185,7 +201,7 @@ class MigrationUpgradeTest extends TestCase
         Http::assertNothingSent();
     }
 
-    private function exerciseLegacyReport(string $module, array $definition): void
+    private function exerciseLegacyReport(string $module, array $definition, User $user): void
     {
         $table = $this->reportTable($module);
         $receiptId = DB::table($table)->where('id', 1)->value('quota_receipt_id');
@@ -209,9 +225,18 @@ class MigrationUpgradeTest extends TestCase
         $this->assertSame(2, $this->usage($module));
         $this->assertDatabaseHas($table, ['id' => 2, 'status' => 'failed', 'quota_charged' => false]);
         DB::table($table)->where('id', 1)->update(['lease_token' => self::TOKEN]);
-        $generator->fail(1, self::TOKEN, 'synthetic_terminal_failure');
-        $generator->fail(1, self::TOKEN, 'synthetic_terminal_failure');
-        $this->assertSame(1, $this->usage($module));
+        CarbonImmutable::withTestNow(CarbonImmutable::parse('2026-10-11 00:00:01 UTC'), function () use ($module, $generator, $user, $receiptId): void {
+            $access = app(FeatureAccessServiceInterface::class);
+            $debit = $access->consumeResource($user, $this->resource($module));
+            $this->assertNotNull($debit->receipt);
+            $generator->fail(1, self::TOKEN, 'synthetic_terminal_failure');
+            $this->assertSame(2, $this->usage($module), 'A terminal retry only refunds automatically on the charge date.');
+
+            $access->refund($user, $receiptId);
+            $access->refund($user, $receiptId);
+            $this->assertSame(1, $this->usage($module));
+            $this->assertSame(1, $this->usage($module, '2026-10-11'));
+        });
         $this->assertNotNull(DB::table('feature_usage_receipts')->where('id', $receiptId)->value('released_at'));
     }
 
@@ -264,9 +289,9 @@ class MigrationUpgradeTest extends TestCase
         return DB::table($table)->orderBy($order)->get()->map(static fn ($row): array => (array) $row)->all();
     }
 
-    private function usage(string $module): int
+    private function usage(string $module, string $date = '2026-10-10'): int
     {
-        return (int) DB::table('feature_usage_daily')->where('user_id', 11)->where('feature', $this->resource($module))->where('usage_date', '2026-10-10')->value('used');
+        return (int) DB::table('feature_usage_daily')->where('user_id', 11)->where('feature', $this->resource($module))->where('usage_date', $date)->value('used');
     }
 
     private function resource(string $module): string

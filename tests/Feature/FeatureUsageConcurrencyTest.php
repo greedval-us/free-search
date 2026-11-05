@@ -62,7 +62,7 @@ class FeatureUsageConcurrencyTest extends TestCase
     {
         $configuration = QuotaConcurrencyDatabase::configuration();
         if ($configuration === null) {
-            $this->markTestSkipped('Requires explicitly configured dedicated MySQL/MariaDB quota concurrency test database; SQLite cannot prove row locking.');
+            $this->markTestSkipped('Requires an explicitly configured MySQL database for concurrent transactions.');
         }
         config()->set('database.connections.quota_concurrency', $configuration);
         config()->set('database.default', 'quota_concurrency');

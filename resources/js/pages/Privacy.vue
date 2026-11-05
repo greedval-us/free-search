@@ -2,61 +2,36 @@
 import { Link } from '@inertiajs/vue3';
 import { computed } from 'vue';
 import SeoHead from '@/components/SeoHead.vue';
-import { useLocale } from '@/composables/useLocale';
+import { useI18n } from '@/composables/useI18n';
 import { useSeoPage } from '@/composables/useSeoPage';
 import en from '@/locales/en/privacy.json';
 import ru from '@/locales/ru/privacy.json';
 import { home } from '@/routes';
 
-type PrivacyContent = {
-    metaTitle: string;
-    eyebrow: string;
-    title: string;
-    subtitle: string;
-    lastUpdated: string;
-    noticeTitle: string;
-    noticeText: string;
-    backHome: string;
-    sectionLabels: Record<string, string>;
-    general: string[];
-    operator: string[];
-    data: string[];
-    purposes: string[];
-    legalBasis: string[];
-    cookies: string[];
-    sharing: string[];
-    rights: string[];
-    security: string[];
-    retention: string[];
-    contacts: string[];
-    changes: string[];
-};
-
-const { locale, setLocale } = useLocale();
+const props = defineProps<{ contactEmail: string | null }>();
+const { locale, setLocale, t } = useI18n();
 const {
     path: seoPath,
     title: seoTitle,
     description: seoDescription,
 } = useSeoPage('privacy', locale);
 
-const content = computed<PrivacyContent>(
-    () => (locale.value === 'ru' ? ru : en) as PrivacyContent
+const content = computed(() => (locale.value === 'ru' ? ru : en));
+const sectionKeys = Object.keys(en.sectionLabels) as Array<
+    keyof typeof en.sectionLabels
+>;
+const sections = computed(() =>
+    sectionKeys.map((key) => ({
+        key,
+        items:
+            key === 'contacts' && props.contactEmail
+                ? [
+                      t('privacy.contactEmail', { email: props.contactEmail }),
+                      ...content.value.contacts,
+                  ]
+                : content.value[key],
+    }))
 );
-
-const sections = computed(() => [
-    { key: 'general', items: content.value.general },
-    //{ key: 'operator', items: content.value.operator },
-    { key: 'data', items: content.value.data },
-    { key: 'purposes', items: content.value.purposes },
-    { key: 'legalBasis', items: content.value.legalBasis },
-    { key: 'cookies', items: content.value.cookies },
-    { key: 'sharing', items: content.value.sharing },
-    { key: 'rights', items: content.value.rights },
-    { key: 'security', items: content.value.security },
-    { key: 'retention', items: content.value.retention },
-    { key: 'contacts', items: content.value.contacts },
-    { key: 'changes', items: content.value.changes },
-]);
 </script>
 
 <template>
@@ -87,11 +62,14 @@ const sections = computed(() => [
                 </section>
 
                 <section
-                    v-for="section in sections"
+                    v-for="(section, index) in sections"
                     :key="section.key"
                     class="privacy-section"
                 >
-                    <h2>{{ content.sectionLabels[section.key] }}</h2>
+                    <h2>
+                        {{ index + 1 }}.
+                        {{ content.sectionLabels[section.key] }}
+                    </h2>
                     <ul class="privacy-list">
                         <li
                             v-for="item in section.items"

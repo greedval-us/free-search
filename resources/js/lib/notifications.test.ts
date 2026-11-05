@@ -33,11 +33,11 @@ describe('notification text resolvers', () => {
     it('uses localized title and interpolates params when titleKey exists', () => {
         const notification = makeNotification({
             titleKey: 'notifications.welcome.title',
-            titleParams: { name: 'Greedval' },
+            titleParams: { name: 'Test User' },
         });
 
         expect(resolveNotificationTitle(notification, t)).toBe(
-            'Welcome, Greedval!'
+            'Welcome, Test User!'
         );
     });
 

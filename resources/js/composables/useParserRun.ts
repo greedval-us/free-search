@@ -1,4 +1,4 @@
-import { onBeforeUnmount, onMounted, ref } from 'vue';
+import { computed, onBeforeUnmount, onMounted, ref, shallowRef } from 'vue';
 import type { Ref } from 'vue';
 import {
     apiRequest,
@@ -8,66 +8,49 @@ import {
 import type { ApiResult, RequestOptions } from '@/lib/api';
 import { withDownloadLocale } from '@/lib/downloadLocale';
 import { resolveSameOriginUrl } from '@/lib/sameOriginUrl';
+import type {
+    ParserHistoryItem,
+    ParserHistoryResponse,
+    ParserRunPayload,
+    ParserRunStatus,
+    ParserStage,
+} from '@/types/parser';
 
-export type ParserRunStatus = 'running' | 'completed' | 'failed' | 'stopped';
-
-export type ParserRunStatusPayload<Stage extends string> = {
-    runId: string;
-    status: ParserRunStatus;
-    stage: Stage;
-    progress: number;
-    error: string | null;
-    downloadUrl: string | null;
-    downloadJsonUrl: string | null;
-};
-
-export type ParserRunHistoryItem = {
-    runId: string;
-    status: ParserRunStatus | 'unknown';
-    downloadUrl: string | null;
-    downloadJsonUrl: string | null;
-};
-
-type ParserRunHistoryResponse<Item extends ParserRunHistoryItem> = {
-    items: Item[];
-    retentionDays: number;
-};
-
-type ParserRunOptions<
-    Stage extends string,
-    StatusPayload extends ParserRunStatusPayload<Stage>,
-> = {
-    endpointBase: string;
-    idleStage: Stage;
+type ParserRunOptions<Stage extends string> = {
+    routes: {
+        start: { url: () => string };
+        status: { url: (runId: string) => string };
+        stop: { url: (runId: string) => string };
+        history: { url: () => string };
+    };
     initialStage: Stage;
-    stoppedStage: Stage;
-    failedStage: Stage;
     requestErrorMessage: () => string;
-    historyErrorMessage: () => string;
-    applyModulePayload: (payload: StatusPayload) => void;
-    resetModuleState: () => void;
     pollIntervalMs?: number;
 };
 
 const TERMINAL_STATUSES: ParserRunStatus[] = ['completed', 'failed', 'stopped'];
+const DEFAULT_POLL_INTERVAL_MS = 3_000;
+const DEFAULT_HISTORY_RETENTION_DAYS = 7;
 
 export const useParserRun = <
-    Stage extends string,
-    StatusPayload extends ParserRunStatusPayload<Stage>,
-    HistoryItem extends ParserRunHistoryItem,
+    StatusPayload extends ParserRunPayload<string>,
+    HistoryItem extends ParserHistoryItem,
 >(
-    options: ParserRunOptions<Stage, StatusPayload>
+    options: ParserRunOptions<StatusPayload['stage']>
 ) => {
     const loading = ref(false);
     const error = ref<string | null>(null);
     const runId = ref<string | null>(null);
     const progress = ref(0);
-    const stage = ref(options.idleStage) as Ref<Stage>;
-    const downloadUrl = ref<string | null>(null);
-    const downloadJsonUrl = ref<string | null>(null);
+    const stage = shallowRef<ParserStage<StatusPayload['stage']>>('idle');
+    const payload = shallowRef<StatusPayload | null>(null);
+    const downloadUrl = computed(() => payload.value?.downloadUrl ?? null);
+    const downloadJsonUrl = computed(
+        () => payload.value?.downloadJsonUrl ?? null
+    );
     const historyItems = ref<HistoryItem[]>([]) as Ref<HistoryItem[]>;
     const historyLoading = ref(false);
-    const historyRetentionDays = ref(7);
+    const historyRetentionDays = ref(DEFAULT_HISTORY_RETENTION_DAYS);
     const pollTimer = ref<number | null>(null);
     const pollRequestInFlight = ref(false);
     let disposed = false;
@@ -75,9 +58,7 @@ export const useParserRun = <
     const requests = new Set<AbortController>();
     const isCurrent = (version: number) =>
         !disposed && version === pollingVersion;
-    const pollIntervalMs = options.pollIntervalMs ?? 3000;
-    const endpoint = (suffix: string) =>
-        `${options.endpointBase.replace(/\/$/, '')}/${suffix}`;
+    const pollIntervalMs = options.pollIntervalMs ?? DEFAULT_POLL_INTERVAL_MS;
 
     const request = async <T>(
         url: string,
@@ -115,26 +96,22 @@ export const useParserRun = <
         historyLoading.value = false;
     };
 
-    const applyPayload = (payload: StatusPayload) => {
-        stage.value = payload.stage;
-        progress.value = payload.progress;
-        error.value = payload.error;
-        downloadUrl.value = resolveSameOriginUrl(payload.downloadUrl);
-        downloadJsonUrl.value = resolveSameOriginUrl(payload.downloadJsonUrl);
-        options.applyModulePayload({
-            ...payload,
-            downloadUrl: downloadUrl.value,
-            downloadJsonUrl: downloadJsonUrl.value,
-        });
+    const applyPayload = (result: StatusPayload) => {
+        stage.value = result.stage;
+        progress.value = result.progress;
+        error.value = result.error;
+        payload.value = {
+            ...result,
+            downloadUrl: resolveSameOriginUrl(result.downloadUrl),
+            downloadJsonUrl: resolveSameOriginUrl(result.downloadJsonUrl),
+        };
     };
 
     const resetState = () => {
         runId.value = null;
         progress.value = 0;
-        stage.value = options.idleStage;
-        downloadUrl.value = null;
-        downloadJsonUrl.value = null;
-        options.resetModuleState();
+        stage.value = 'idle';
+        payload.value = null;
     };
 
     const refreshHistory = async () => {
@@ -146,21 +123,19 @@ export const useParserRun = <
         historyLoading.value = true;
 
         try {
-            const response = await request<
-                ParserRunHistoryResponse<HistoryItem>
-            >(endpoint('history'), { method: 'GET' });
+            const response = await request<ParserHistoryResponse<HistoryItem>>(
+                options.routes.history.url(),
+                { method: 'GET' }
+            );
 
             if (!isCurrent(version)) {
                 return;
             }
 
             if (!response.ok) {
-                throw new Error(
-                    resolveApiErrorMessage(
-                        response.message,
-                        options.historyErrorMessage()
-                    )
-                );
+                historyItems.value = [];
+
+                return;
             }
 
             historyItems.value = response.data.items.map((item) => ({
@@ -194,7 +169,7 @@ export const useParserRun = <
         activeRunId: string
     ): Promise<StatusPayload | null> => {
         const response = await request<StatusPayload>(
-            endpoint(`stop/${encodeURIComponent(activeRunId)}`),
+            options.routes.stop.url(encodeURIComponent(activeRunId)),
             {
                 method: 'POST',
             }
@@ -229,7 +204,7 @@ export const useParserRun = <
 
         try {
             const response = await request<StatusPayload>(
-                endpoint(`status/${encodeURIComponent(activeRunId)}`),
+                options.routes.status.url(encodeURIComponent(activeRunId)),
                 { method: 'GET' }
             );
 
@@ -291,10 +266,13 @@ export const useParserRun = <
         progress.value = 1;
 
         try {
-            const response = await request<StatusPayload>(endpoint('start'), {
-                method: 'POST',
-                body,
-            });
+            const response = await request<StatusPayload>(
+                options.routes.start.url(),
+                {
+                    method: 'POST',
+                    body,
+                }
+            );
 
             if (!isCurrent(version)) {
                 return false;
@@ -326,7 +304,7 @@ export const useParserRun = <
                 return false;
             }
 
-            stage.value = options.failedStage;
+            stage.value = 'failed';
             error.value = resolveClientErrorMessage(
                 startError,
                 options.requestErrorMessage()
@@ -347,7 +325,7 @@ export const useParserRun = <
         loading.value = false;
 
         if (stage.value !== 'completed' && stage.value !== 'failed') {
-            stage.value = options.stoppedStage;
+            stage.value = 'stopped';
         }
 
         const activeRunId = runId.value;
@@ -402,6 +380,7 @@ export const useParserRun = <
         runId,
         progress,
         stage,
+        payload,
         downloadUrl,
         downloadJsonUrl,
         historyItems,

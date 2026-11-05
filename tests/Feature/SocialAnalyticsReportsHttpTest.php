@@ -100,6 +100,34 @@ final class SocialAnalyticsReportsHttpTest extends TestCase
     }
 
     #[DataProvider('modules')]
+    public function test_history_pages_keep_target_period_and_public_failure_message(string $module, string $scheduleClass, string $reportClass, array $accounts, array $normalized): void
+    {
+        config([$module.'_analytics_reports.list_page_size' => 1]);
+        $this->actingAs(User::factory()->create())
+            ->postJson("/$module/analytics/reports/schedules", $this->input($accounts, ['timezone' => 'Asia/Tokyo']))
+            ->assertCreated();
+        $schedule = $scheduleClass::query()->sole();
+        $older = $this->report($schedule, $normalized[0]);
+        $newer = $this->report($schedule, $normalized[1]);
+        $newer->update(['status' => $reportClass::FAILED, 'error_code' => 'legacy_error', 'data' => null]);
+
+        $this->getJson("/$module/analytics/reports")->assertOk()
+            ->assertJsonPath('data.reports.currentPage', 1)
+            ->assertJsonPath('data.reports.lastPage', 2)
+            ->assertJsonPath('data.reports.total', 2)
+            ->assertJsonPath('data.reports.perPage', 1)
+            ->assertJsonCount(1, 'data.reports.data')
+            ->assertJsonPath('data.reports.data.0.id', $newer->id)
+            ->assertJsonPath('data.reports.data.0.accountInput', $normalized[1])
+            ->assertJsonPath('data.reports.data.0.dateFrom', $newer->date_from->setTimezone('Asia/Tokyo')->toIso8601String())
+            ->assertJsonPath('data.reports.data.0.errorCode', 'legacy_error')
+            ->assertJsonPath('data.reports.data.0.errorMessage', __($module.'_analytics_reports.errors.generation_failed'));
+        $this->getJson("/$module/analytics/reports?page=2")->assertOk()
+            ->assertJsonPath('data.reports.data.0.id', $older->id)
+            ->assertJsonPath('data.reports.data.0.errorMessage', null);
+    }
+
+    #[DataProvider('modules')]
     public function test_pause_resume_and_manual_run_preserve_next_automatic_run(string $module, string $scheduleClass, string $reportClass, array $accounts, array $normalized): void
     {
         Bus::fake();

@@ -4,11 +4,8 @@ import { useId } from 'vue';
 import { Button } from '@/components/ui/button';
 import EmptyState from '@/components/ui/EmptyState.vue';
 import { useI18n } from '@/composables/useI18n';
-import type {
-    ParserHistoryConfig,
-    ParserHistoryField,
-    ParserHistoryItem,
-} from './history';
+import type { ParserHistoryItem } from '@/types/parser';
+import type { ParserHistoryConfig, ParserHistoryField } from './history';
 import ParserStatusBadge from './ParserStatusBadge.vue';
 import {
     boundedProgress,

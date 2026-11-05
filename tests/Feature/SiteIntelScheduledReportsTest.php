@@ -20,7 +20,6 @@ use App\Modules\SiteIntel\DTO\Result\SeoAuditResultDTO;
 use App\Modules\SiteIntel\DTO\Result\SiteIntelAnalyticsResultDTO;
 use App\Services\Access\Contracts\FeatureAccessServiceInterface;
 use Carbon\CarbonImmutable;
-use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Bus;
 use Illuminate\Support\Facades\Event;
@@ -448,23 +447,6 @@ class SiteIntelScheduledReportsTest extends TestCase
         config()->set($key, $value);
         $this->expectExceptionObject(new ReportException('queue_unavailable'));
         $this->schedule(User::factory()->create());
-    }
-
-    public function test_foreign_owner_cannot_run_pause_or_delete_schedule(): void
-    {
-        $schedule = $this->schedule(User::factory()->create());
-        $other = User::factory()->create();
-        Bus::fake([GenerateSiteIntelReport::class]);
-        foreach (['runNow', 'change', 'destroy'] as $action) {
-            try {
-                app(ReportScheduleService::class)->{$action}($other, $schedule->id, 'pause');
-                $this->fail('Owner boundary must be enforced.');
-            } catch (ModelNotFoundException) {
-                $this->assertTrue($schedule->fresh()->enabled);
-            }
-        }
-        $this->assertDatabaseCount('site_intel_scheduled_reports', 0);
-        Bus::assertNotDispatched(GenerateSiteIntelReport::class);
     }
 
     public function test_owner_can_pause_or_delete_after_losing_type_access_but_cannot_resume(): void

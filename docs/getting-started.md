@@ -12,7 +12,7 @@
 
 ```bash
 composer install
-npm install
+npm ci
 cp .env.example .env
 php artisan key:generate
 ```
@@ -20,6 +20,7 @@ php artisan key:generate
 Для SQLite создайте пустой `database/database.sqlite`, если его ещё нет, затем выполните:
 
 ```bash
+php -r "file_exists('database/database.sqlite') || touch('database/database.sqlite');"
 php artisan migrate
 ```
 
@@ -40,6 +41,8 @@ Composer запускает три процесса через `concurrently`: `
 Приложение запускается без всех внешних credentials, но соответствующие сценарии будут недоступны или вернут configuration error. Настройте только нужные интеграции по [configuration reference](configuration.md). Для Telegram дополнительно создайте session: [Telegram sessions](operations/telegram-session.md).
 
 ## Минимальная проверка
+
+Перед запуском PHP-тестов подготовьте отдельную базу MySQL по [инструкции для PHPUnit](testing.md).
 
 ```bash
 php artisan test

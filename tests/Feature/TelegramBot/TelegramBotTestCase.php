@@ -4,6 +4,8 @@ namespace Tests\Feature\TelegramBot;
 
 use App\Models\User;
 use App\Modules\Telegram\Parser\TelegramParserRunStore;
+use App\Modules\TelegramBot\Domain\Contracts\BotTransport;
+use App\Modules\TelegramBot\Domain\DTO\BotDocument;
 use App\Modules\TelegramBot\Models\BotLink;
 use DefStudio\Telegraph\Facades\Telegraph;
 use DefStudio\Telegraph\Models\TelegraphBot;
@@ -69,5 +71,17 @@ abstract class TelegramBotTestCase extends TestCase
         });
 
         return $run['runId'];
+    }
+
+    protected function expectJsonDocument(int $chatId, array $expected): void
+    {
+        $this->mock(BotTransport::class)->shouldReceive('document')->once()
+            ->with($chatId, \Mockery::type(BotDocument::class))
+            ->andReturnUsing(function (int $chatId, BotDocument $document) use ($expected): void {
+                $this->assertJsonStringEqualsJsonString(
+                    json_encode($expected, JSON_THROW_ON_ERROR),
+                    file_get_contents($document->path),
+                );
+            });
     }
 }

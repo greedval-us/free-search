@@ -13,19 +13,17 @@ use Throwable;
 
 final class ProcessParserRun implements ShouldBeUniqueUntilProcessing, ShouldQueue
 {
-    public const TIMEOUT_SECONDS = 120;
+    public const TIMEOUT_SECONDS = ParserRunConfig::JOB_TIMEOUT_SECONDS;
 
-    public const EXECUTION_LOCK_SECONDS = self::TIMEOUT_SECONDS + 30;
+    public const EXECUTION_LOCK_SECONDS = ParserRunConfig::EXECUTION_LOCK_SECONDS;
 
     private const MAX_EXCEPTIONS = 3;
 
-    public const RETRY_WINDOW_SECONDS = 3600;
+    public const RETRY_WINDOW_SECONDS = ParserRunConfig::STEP_RETRY_WINDOW_SECONDS;
 
     private const UNIQUE_FOR_SECONDS = 3600;
 
     private const OVERLAP_RELEASE_SECONDS = 3;
-
-    private const OVERLAP_EXPIRY_GRACE_SECONDS = 30;
 
     private const SERIALIZED_MODULES = ['telegram'];
 
@@ -65,6 +63,17 @@ final class ProcessParserRun implements ShouldBeUniqueUntilProcessing, ShouldQue
     public function retryUntil(): int
     {
         return $this->retryDeadline;
+    }
+
+    /** @param array<string, mixed> $checkpoint */
+    public static function fromCheckpoint(string $module, int $userId, string $runId, array $checkpoint): self
+    {
+        $cursor = $checkpoint['cursor'] ?? [];
+
+        return new self(
+            $module, $userId, $runId, (int) ($cursor['checkpointVersion'] ?? 0),
+            isset($cursor['stepRetryUntil']) ? (int) $cursor['stepRetryUntil'] : null,
+        );
     }
 
     public function handle(
@@ -114,7 +123,7 @@ final class ProcessParserRun implements ShouldBeUniqueUntilProcessing, ShouldQue
         return [
             (new ParserRunOverlapMiddleware("parser-run:module:{$this->module}"))
                 ->releaseAfter(self::OVERLAP_RELEASE_SECONDS)
-                ->expireAfter($this->timeout + self::OVERLAP_EXPIRY_GRACE_SECONDS),
+                ->expireAfter($this->timeout + ParserRunConfig::LOCK_GRACE_SECONDS),
         ];
     }
 }

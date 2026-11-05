@@ -7,6 +7,7 @@ use App\Models\User;
 use Carbon\CarbonImmutable;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Bus;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Queue;
 use PHPUnit\Framework\Attributes\DataProvider;
@@ -90,6 +91,7 @@ class ReportScheduleContractTest extends TestCase
         $other = User::factory()->create();
         $service = app('App\\Modules\\'.$serviceName);
         $schedule = $service->create($owner, $targets + ['name' => 'Private', 'interval' => '1', 'send_time' => '09:00', 'timezone' => 'UTC']);
+        Bus::fake();
 
         foreach (['pause', 'resume', 'destroy', 'runNow'] as $action) {
             try {
@@ -102,6 +104,9 @@ class ReportScheduleContractTest extends TestCase
                 $this->assertNull($schedule->fresh()->deleted_at);
             }
         }
+
+        $this->assertDatabaseCount($schedule->reports()->getRelated()->getTable(), 0);
+        Bus::assertNothingDispatched();
     }
 
     #[DataProvider('modules')]

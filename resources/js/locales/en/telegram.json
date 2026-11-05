@@ -1,5 +1,7 @@
 {
     "headTitle": "Telegram",
+    "customRangeTooLong": "The maximum number of days in a custom period is {days}.",
+    "customRangeInvalid": "Custom period is invalid.",
     "help": {
         "label": "What is this data?"
     },
@@ -158,14 +160,12 @@
         },
         "errors": {
             "customBothDates": "Please specify both custom period dates.",
-            "customInvalid": "Custom period is invalid.",
-            "customTooLong": "Custom period cannot exceed one month.",
             "failed": "Could not complete data collection. Check the settings and try again."
         }
     },
     "analytics": {
         "title": "Telegram Analytics",
-        "subtitle": "Analyze channel activity for the last 1 to 7 days.",
+        "subtitle": "Analyze channel activity for a preset or custom date range.",
         "collapsed": "Settings panel is collapsed.",
         "loading": "Loading analytics...",
         "refresh": "Refresh",
@@ -259,8 +259,7 @@
         },
         "errors": {
             "channelRequired": "Please enter a channel username.",
-            "loadFailed": "Could not load Telegram analytics. Please try again in a moment.",
-            "rangeTooLong": "The custom date range cannot exceed 7 days."
+            "loadFailed": "Could not load Telegram analytics. Please try again in a moment."
         },
         "stats": {
             "messages": "Messages",

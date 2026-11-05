@@ -1,17 +1,4 @@
-export type ParserHistoryItem = {
-    runId: string;
-    status: string;
-    stage: string | null;
-    progress: number;
-    error: string | null;
-    createdAt: string | null;
-    updatedAt: string | null;
-    finishedAt: string | null;
-    expiresAt: string | null;
-    downloadable: boolean;
-    downloadUrl: string | null;
-    downloadJsonUrl: string | null;
-};
+import type { ParserHistoryItem } from '@/types/parser';
 
 type ValueKey<TItem, TValue> = {
     [TKey in keyof TItem]-?: TItem[TKey] extends TValue ? TKey : never;

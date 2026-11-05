@@ -26,7 +26,7 @@ class TwoFactorChallengeTest extends TestCase
         $response->assertRedirect(route('login'));
     }
 
-    public function test_two_factor_challenge_can_be_rendered(): void
+    public function test_login_requires_the_two_factor_challenge_before_authenticating(): void
     {
         Features::twoFactorAuthentication([
             'confirm' => true,
@@ -44,7 +44,9 @@ class TwoFactorChallengeTest extends TestCase
         $this->post(route('login'), [
             'email' => $user->email,
             'password' => 'password',
-        ]);
+        ])->assertRedirect(route('two-factor.login'))
+            ->assertSessionHas('login.id', $user->id);
+        $this->assertGuest();
 
         $this->get(route('two-factor.login'))
             ->assertOk()

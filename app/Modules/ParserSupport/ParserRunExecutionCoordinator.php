@@ -3,21 +3,15 @@
 namespace App\Modules\ParserSupport;
 
 use App\Exceptions\FeatureAccessDeniedException;
-use App\Jobs\ProcessParserRun;
 use App\Models\User;
 use App\Modules\ParserSupport\Contracts\ParserRunJobDispatcherInterface;
 use App\Modules\ParserSupport\Enums\ParserRunStatus;
 use App\Services\Access\Contracts\FeatureAccessServiceInterface;
-use Illuminate\Support\Facades\Cache;
 use Throwable;
 
 final readonly class ParserRunExecutionCoordinator
 {
-    private const START_LOCK_SECONDS = 10;
-
     private const START_LOCK_WAIT_SECONDS = 5;
-
-    private const EXECUTION_LOCK_SECONDS = ProcessParserRun::EXECUTION_LOCK_SECONDS;
 
     public function __construct(
         private ParserRunConfig $config,
@@ -38,7 +32,7 @@ final readonly class ParserRunExecutionCoordinator
      */
     public function start(JsonRunStore $runStore, string $module, int $userId, array $context, ?callable $snapshotBuilder = null): array
     {
-        return Cache::lock($this->startLockKey($module, $userId), self::START_LOCK_SECONDS)->block(
+        return ParserRunLocks::start($module, $userId)->block(
             self::START_LOCK_WAIT_SECONDS,
             function () use ($runStore, $module, $userId, $context, $snapshotBuilder): array {
                 $activeRun = $this->historyRepository->activeForUser($userId, $module);
@@ -114,7 +108,7 @@ final readonly class ParserRunExecutionCoordinator
         ?callable $snapshotBuilder = null,
         ?int $checkpointVersion = null,
     ): ?array {
-        $lock = Cache::lock($this->executionLockKey($runStore, $userId, $runId), self::EXECUTION_LOCK_SECONDS);
+        $lock = ParserRunLocks::advance($runStore->module(), $userId, $runId);
         if (! $lock->get()) {
             $current = $runStore->get($userId, $runId);
             if ($checkpointVersion !== null && $this->shouldContinue($current)
@@ -259,15 +253,5 @@ final readonly class ParserRunExecutionCoordinator
     public function nextStepDelaySeconds(): int
     {
         return $this->config->stepDelaySeconds();
-    }
-
-    private function startLockKey(string $module, int $userId): string
-    {
-        return "parser-run:start:{$module}:{$userId}";
-    }
-
-    private function executionLockKey(JsonRunStore $runStore, int $userId, string $runId): string
-    {
-        return "parser-run:advance:{$runStore->module()}:{$userId}:{$runId}";
     }
 }

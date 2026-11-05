@@ -1,8 +1,9 @@
 import { computed, reactive, ref } from 'vue';
+import type { Translate } from '@/composables/useI18n';
 import { apiRequest, resolveClientErrorMessage } from '@/lib/api';
+import { customRangeError, shiftDate } from '../date-range';
 import type { TelegramAnalyticsSummary } from '../types';
 
-type TranslateFn = (key: string) => string;
 export type AnalyticsPeriod = 1 | 3 | 7;
 export type ScorePriority = 'balanced' | 'reach' | 'discussion' | 'virality';
 
@@ -22,29 +23,6 @@ const PRIORITIES: readonly ScorePriority[] = [
     'discussion',
     'virality',
 ];
-const DAY_IN_MS = 24 * 60 * 60 * 1000;
-
-const parseDate = (value: string): Date | null => {
-    const match = /^(\d{4})-(\d{2})-(\d{2})$/.exec(value);
-
-    if (!match) {
-        return null;
-    }
-
-    const year = Number(match[1]);
-    const month = Number(match[2]);
-    const day = Number(match[3]);
-
-    return new Date(Date.UTC(year, month - 1, day));
-};
-
-const formatDate = (value: Date): string => {
-    const year = value.getUTCFullYear();
-    const month = String(value.getUTCMonth() + 1).padStart(2, '0');
-    const day = String(value.getUTCDate()).padStart(2, '0');
-
-    return `${year}-${month}-${day}`;
-};
 
 const extractYmdFromIso = (value: string | null | undefined): string | null => {
     if (!value) {
@@ -56,28 +34,10 @@ const extractYmdFromIso = (value: string | null | undefined): string | null => {
     return match ? match[1] : null;
 };
 
-const shiftDate = (value: string, days: number): string | null => {
-    const parsed = parseDate(value);
-
-    if (!parsed) {
-        return null;
-    }
-
-    return formatDate(new Date(parsed.getTime() + days * DAY_IN_MS));
-};
-
-const diffDays = (from: string, to: string): number | null => {
-    const fromDate = parseDate(from);
-    const toDate = parseDate(to);
-
-    if (!fromDate || !toDate) {
-        return null;
-    }
-
-    return Math.floor((toDate.getTime() - fromDate.getTime()) / DAY_IN_MS);
-};
-
-export const useTelegramAnalytics = (t: TranslateFn) => {
+export const useTelegramAnalytics = (
+    t: Translate,
+    customRangeMaxDays: () => number
+) => {
     const form = reactive<TelegramAnalyticsForm>({
         chatUsername: '',
         keyword: '',
@@ -104,12 +64,16 @@ export const useTelegramAnalytics = (t: TranslateFn) => {
     const normalizedChatUsername = () =>
         form.chatUsername.trim().replace(/^@+/, '');
     const normalizedKeyword = () => form.keyword.trim();
-    const dateLimits = computed(() => ({
-        fromMin: form.dateTo ? shiftDate(form.dateTo, -6) : null,
-        fromMax: form.dateTo || null,
-        toMin: form.dateFrom || null,
-        toMax: form.dateFrom ? shiftDate(form.dateFrom, 6) : null,
-    }));
+    const dateLimits = computed(() => {
+        const maxOffset = customRangeMaxDays() - 1;
+
+        return {
+            fromMin: form.dateTo ? shiftDate(form.dateTo, -maxOffset) : null,
+            fromMax: form.dateTo || null,
+            toMin: form.dateFrom || null,
+            toMax: form.dateFrom ? shiftDate(form.dateFrom, maxOffset) : null,
+        };
+    });
 
     const buildQuery = () => {
         const locale =
@@ -204,11 +168,14 @@ export const useTelegramAnalytics = (t: TranslateFn) => {
         }
 
         if (form.dateFrom && form.dateTo) {
-            const days = diffDays(form.dateFrom, form.dateTo);
+            error.value = customRangeError(
+                form.dateFrom,
+                form.dateTo,
+                customRangeMaxDays(),
+                t
+            );
 
-            if (days !== null && days > 6) {
-                error.value = t('telegram.analytics.errors.rangeTooLong');
-
+            if (error.value !== null) {
                 return;
             }
         }

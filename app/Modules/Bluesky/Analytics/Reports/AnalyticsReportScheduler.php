@@ -64,8 +64,7 @@ final readonly class AnalyticsReportScheduler
     {
         $this->config->ensureQueue();
         $reports = BlueskyAnalyticsReport::query()->whereIn('status', [BlueskyAnalyticsReport::PENDING, BlueskyAnalyticsReport::PROCESSING])
-            ->where(fn ($query) => $query->whereNull('available_at')->orWhere('available_at', '<=', now()))
-            ->leaseAvailable()->orderBy('id')->limit($this->config->integer('dispatch_batch'))->get();
+            ->availableForDispatch()->orderBy('id')->limit($this->config->integer('dispatch_batch'))->get();
         $count = 0;
         foreach ($reports as $report) {
             // Keep queued jobs valid across long backlogs. Only a crashed processing worker is fenced.
@@ -73,8 +72,7 @@ final readonly class AnalyticsReportScheduler
                 ? $report->lease_token : (string) Str::uuid();
             $claimed = BlueskyAnalyticsReport::query()->whereKey($report->id)
                 ->where('status', $report->status)->where('lease_token', $report->lease_token)
-                ->where(fn ($query) => $query->whereNull('available_at')->orWhere('available_at', '<=', now()))
-                ->leaseAvailable()
+                ->availableForDispatch()
                 ->update(['status' => BlueskyAnalyticsReport::PENDING, 'lease_token' => $token,
                     'lease_until' => now()->addSeconds($this->config->integer('lease_seconds'))]);
             if (! $claimed) {

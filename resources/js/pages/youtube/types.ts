@@ -1,56 +1,25 @@
+import type {
+    ParserHistoryItem,
+    ParserRunPayload,
+    ParserStage,
+} from '@/types/parser';
+
 export type YouTubeTabValue = 'search' | 'analytics' | 'parser' | 'reports';
 
-export type YouTubeParserStage =
-    | 'idle'
-    | 'comments'
-    | 'replies'
-    | 'finishing'
-    | 'completed'
-    | 'failed'
-    | 'stopped';
+export type YouTubeParserStage = ParserStage<'comments' | 'replies'>;
 
-export type YouTubeParserStatus =
-    | 'running'
-    | 'completed'
-    | 'failed'
-    | 'stopped';
-
-export type YouTubeParserStatusResponse = {
-    ok: boolean;
-    runId: string;
-    status: YouTubeParserStatus;
-    stage: YouTubeParserStage;
-    progress: number;
-    processedComments: number;
-    processedReplies: number;
-    error: string | null;
-    downloadUrl: string | null;
-    downloadJsonUrl: string | null;
-};
-
-export type YouTubeParserHistoryItem = {
-    runId: string;
-    status: YouTubeParserStatus | 'unknown';
-    stage: YouTubeParserStage | 'unknown' | string | null;
-    progress: number;
-    error: string | null;
-    createdAt: string | null;
-    updatedAt: string | null;
-    finishedAt: string | null;
-    expiresAt: string | null;
-    downloadable: boolean;
-    downloadUrl: string | null;
-    downloadJsonUrl: string | null;
-    videoId: string | null;
+type YouTubeParserCounts = {
     processedComments: number;
     processedReplies: number;
 };
 
-export type YouTubeParserHistoryResponse = {
-    ok: boolean;
-    items: YouTubeParserHistoryItem[];
-    retentionDays: number;
-};
+export type YouTubeParserStatusResponse = ParserRunPayload<YouTubeParserStage> &
+    YouTubeParserCounts;
+
+export type YouTubeParserHistoryItem = ParserHistoryItem &
+    YouTubeParserCounts & {
+        videoId: string | null;
+    };
 
 export type YouTubeVideo = {
     id: string;

@@ -1,8 +1,8 @@
 import { computed, reactive, ref } from 'vue';
+import ParserRoutes from '@/actions/App/Http/Controllers/Mastodon/MastodonParserController';
 import { useParserRun } from '@/composables/useParserRun';
 import type {
     MastodonParserHistoryItem as ParserHistoryItem,
-    MastodonParserStage as ParserStage,
     MastodonParserStatusResponse as ParserStatusResponse,
 } from '../types';
 
@@ -13,29 +13,10 @@ export const useMastodonParser = (t: TranslateFn) => {
         account: '',
     });
     const settingsCollapsed = ref(false);
-    const processedStatuses = ref(0);
-    const processedComments = ref(0);
-
-    const parser = useParserRun<
-        ParserStage,
-        ParserStatusResponse,
-        ParserHistoryItem
-    >({
-        endpointBase: '/mastodon/parser',
-        idleStage: 'idle',
+    const parser = useParserRun<ParserStatusResponse, ParserHistoryItem>({
+        routes: ParserRoutes,
         initialStage: 'statuses',
-        stoppedStage: 'stopped',
-        failedStage: 'failed',
         requestErrorMessage: () => t('mastodon.parser.errors.failed'),
-        historyErrorMessage: () => t('mastodon.parser.history.errors.load'),
-        applyModulePayload: (payload) => {
-            processedStatuses.value = payload.processedStatuses;
-            processedComments.value = payload.processedComments;
-        },
-        resetModuleState: () => {
-            processedStatuses.value = 0;
-            processedComments.value = 0;
-        },
     });
 
     const canStart = computed(
@@ -61,8 +42,12 @@ export const useMastodonParser = (t: TranslateFn) => {
         error: parser.error,
         progress: parser.progress,
         stage: parser.stage,
-        processedStatuses,
-        processedComments,
+        processedStatuses: computed(
+            () => parser.payload.value?.processedStatuses ?? 0
+        ),
+        processedComments: computed(
+            () => parser.payload.value?.processedComments ?? 0
+        ),
         downloadUrl: parser.downloadUrl,
         downloadJsonUrl: parser.downloadJsonUrl,
         historyItems: parser.historyItems,

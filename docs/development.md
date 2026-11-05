@@ -28,6 +28,8 @@ npm run test:unit
 
 ## Миграции, Queue и Vite
 
+Для генерации маршрутов Wayfinder сборщик запускает `php artisan wayfinder:generate`. Если PHP отсутствует в `PATH`, задайте путь к исполняемому файлу в переменной окружения `WAYFINDER_PHP` перед запуском Vite.
+
 ```bash
 php artisan migrate
 php artisan queue:work
@@ -44,16 +46,17 @@ Parser jobs при включённом queue mode не продвигаются
 
 ## CI
 
-`.github/workflows/ci.yml` использует PHP 8.3, Node 22 и четыре job: `quality`, `tests`, `build`, `migration-upgrade`. Перед проверкой типов CI генерирует актуальные Wayfinder routes. Отдельный workflow `repository-hygiene.yml` проверяет чистоту репозитория. Оба workflow запускаются при push в основные ветки и `codex/**`, для всех pull request и вручную. Подробнее: [Testing](testing.md).
+`.github/workflows/ci.yml` использует PHP 8.3, Node 22 и четыре job: `quality`, `tests`, `build`, `migration-upgrade`. Перед проверкой типов CI генерирует актуальные Wayfinder routes. Отдельный workflow `repository-hygiene.yml` проверяет чистоту репозитория. Условия запуска указаны в конфигурациях [CI](../.github/workflows/ci.yml) и [проверки репозитория](../.github/workflows/repository-hygiene.yml). Подробнее: [Testing](testing.md).
 
 ## Локальные файлы и Git
 
 `.osp/`, `.agents/`, настройки IDE/AI, `.env` и его локальные варианты, зависимости, базы SQLite, логи, сборки и результаты тестов исключены через `.gitignore`. Эти файлы остаются на компьютере. В Git сохраняются `.env.example`, lock-файлы зависимостей и вложенные `.gitignore`, поддерживающие структуру каталогов Laravel.
 
-Перед коммитом проверьте, что Git не отслеживает игнорируемые файлы:
+Сохраняйте рабочие заметки и локальные отчёты в игнорируемой папке `docs/internal/`. Перед коммитом просмотрите подготовленные изменения и запустите проверку индекса Git.
 
 ```bash
-git ls-files --cached --ignored --exclude-standard
+git diff --cached
+npm run repo:check
 ```
 
-Ожидаемый результат — пустой вывод. Если файл уже отслеживается, добавления правила в `.gitignore` недостаточно: снимите его с отслеживания командой `git rm --cached <file>` (для каталога — `git rm -r --cached <directory>`). Локальная копия при этом сохраняется.
+Проверка указывает имена файлов с возможными ключами и токенами. Чтобы оставить уже отслеживаемый файл только локально, добавьте его в `.gitignore` и выполните `git rm --cached <file>`.

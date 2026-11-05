@@ -4,6 +4,8 @@ Telegram integration использует MadelineProto user sessions. API ID/ha
 
 ## Создание
 
+Администратор может [подключить сессию в панели MoonShine](../telegram-sessions-admin.md). Для подключения из командной строки выполните:
+
 ```bash
 php artisan app:create-telegram-session default
 php artisan app:create-telegram-session worker-a

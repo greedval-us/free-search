@@ -13,6 +13,7 @@
         "lint": "eslint . --fix",
         "lint:check": "eslint .",
         "test:unit": "vitest run --config vitest.config.ts",
+        "repo:check": "node scripts/check-repository.mjs",
         "types:check": "vue-tsc --noEmit",
         "i18n:check": "node scripts/i18n/pipeline.mjs",
         "i18n:check:strict": "node scripts/i18n/pipeline.mjs --strict",

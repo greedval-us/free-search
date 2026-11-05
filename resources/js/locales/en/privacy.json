@@ -4,31 +4,23 @@
     "title": "Personal Data Processing Policy",
     "subtitle": "This document explains what data the site processes, why it is used, and how users can manage their data.",
     "lastUpdated": "Last updated: June 11, 2026",
-    "noticeTitle": "Operator details are required",
-    "noticeText": "Add the personal data operator's full legal name and mailing address before the public launch.",
     "backHome": "Back to home",
     "sectionLabels": {
-        "general": "1. General Provisions",
-        "operator": "2. Operator Information",
-        "data": "3. What Data We Process",
-        "purposes": "4. Purposes of Processing",
-        "legalBasis": "5. Legal Basis for Processing",
-        "cookies": "6. Cookies and Technical Data",
-        "sharing": "7. Data Sharing",
-        "rights": "8. Data Subject Rights",
-        "security": "9. Security Measures",
-        "retention": "10. Data Retention",
-        "contacts": "11. Personal Data Requests",
-        "changes": "12. Policy Changes"
+        "general": "General Provisions",
+        "data": "What Data We Process",
+        "purposes": "Purposes of Processing",
+        "legalBasis": "Legal Basis for Processing",
+        "cookies": "Cookies and Technical Data",
+        "sharing": "Data Sharing",
+        "rights": "Data Subject Rights",
+        "security": "Security Measures",
+        "retention": "Data Retention",
+        "contacts": "Personal Data Requests",
+        "changes": "Policy Changes"
     },
     "general": [
         "This policy describes how Uraboros and its related web interfaces process and protect users' personal data.",
         "The policy applies to all information the operator may receive when a user accesses the site, registers an account, signs in, or uses the service functionality."
-    ],
-    "operator": [
-        "Personal data operator: [INSERT FULL LEGAL ENTITY NAME OR INDIVIDUAL ENTREPRENEUR NAME].",
-        "Operator address: [INSERT LEGAL OR MAILING ADDRESS].",
-        "Email for personal data requests: osint@uraboros.online."
     ],
     "data": [
         "Account data: login, email, password hash, registration date, and email verification status.",
@@ -61,7 +53,7 @@
     "rights": [
         "Users may request information about the processing of their personal data and may request correction, blocking, or deletion if the data is incomplete, outdated, inaccurate, unlawfully obtained, or no longer necessary for the declared purpose.",
         "Users may withdraw consent where processing is based on consent and may request deletion of their account and related data.",
-        "To exercise these rights, users may contact the operator using the details provided in this policy."
+        "To exercise these rights, users may contact the site operator."
     ],
     "security": [
         "The operator applies reasonable organizational and technical measures to protect personal data against unauthorized access, modification, disclosure, blocking, destruction, or other unlawful actions.",
@@ -73,11 +65,11 @@
         "Technical logs, cookies, and related support data are retained for the period necessary for service operation, security, and internal retention procedures."
     ],
     "contacts": [
-        "Requests regarding personal data processing should be sent to: osint@uraboros.online.",
         "The request should preferably include information sufficient to identify the user, a description of the request, and a reply contact."
     ],
     "changes": [
         "The operator may amend this policy from time to time.",
         "The current version of the policy is published on this page and becomes effective upon publication unless stated otherwise."
-    ]
+    ],
+    "contactEmail": "Requests regarding personal data processing should be sent to: {email}."
 }

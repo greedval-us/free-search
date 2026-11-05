@@ -2,12 +2,10 @@
 
 namespace App\Modules\ParserSupport;
 
-use App\Jobs\ProcessParserRun;
 use App\Models\ParserRun;
 use App\Modules\ParserSupport\Contracts\ParserRunJobDispatcherInterface;
 use App\Modules\ParserSupport\Enums\ParserRunStatus;
 use Carbon\CarbonImmutable;
-use Illuminate\Bus\UniqueLock;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
 use LogicException;
@@ -40,7 +38,7 @@ final readonly class ParserRunRecovery
         }
 
         $version = (int) ($run['cursor']['checkpointVersion'] ?? 0);
-        $lock = Cache::lock("parser-run:advance:{$store->module()}:{$userId}:{$runId}", ProcessParserRun::EXECUTION_LOCK_SECONDS);
+        $lock = ParserRunLocks::advance($store->module(), $userId, $runId);
         if (! $lock->get()) {
             $this->log($store, $runId, $version, 'execution_busy');
 
@@ -72,12 +70,7 @@ final readonly class ParserRunRecovery
                 }
 
                 try {
-                    // A lost queue message can leave the same checkpoint's uniqueness lock behind.
-                    (new UniqueLock(Cache::store()))->release(new ProcessParserRun(
-                        $store->module(), $userId, $runId, $version,
-                        (int) ($current['cursor']['stepRetryUntil'] ?? (time() + ProcessParserRun::RETRY_WINDOW_SECONDS)),
-                    ));
-                    $this->dispatcher->dispatch($store->module(), $userId, $runId);
+                    $this->dispatcher->redispatchCheckpoint($store->module(), $userId, $runId, $current);
                 } catch (Throwable $exception) {
                     Cache::forget($key);
                     throw $exception;

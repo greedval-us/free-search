@@ -48,6 +48,6 @@ php artisan queue:restart
 
 MoonShine отвечает за страницы, маршруты, формы и роли. `SessionConnectionService` управляет состоянием и аудитом, `SessionFiles` изоляцией и блокировками, `SessionAuthenticator` отделяет сценарий от SDK. `MadelineSessionAuthenticator` использует штатные `phoneLogin`, `completePhoneLogin`, `complete2faLogin`, `getAuthorization`. Консольный вход остаётся доступен.
 
-Feature-тесты используют SQLite и подмену `SessionAuthenticator`, не отправляют коды в Telegram. Проверяются роли, шаги с/без 2FA, восстановление состояния, запрет доступа к чужой попытке, CSRF/HTTPS/throttling, expiry/FLOOD_WAIT, блокировки, отсутствие секретов в HTML/JSON/БД/flash и публикация в пул. Отдельный тест запускает локальный дочерний PHP и проверяет наследование защитных настроек.
+Feature-тесты используют тестовую MySQL и подмену `SessionAuthenticator`, не отправляют коды в Telegram. Проверяются роли, шаги с/без 2FA, восстановление состояния, запрет доступа к чужой попытке, CSRF/HTTPS/throttling, expiry/FLOOD_WAIT, блокировки, отсутствие секретов в HTML/JSON/БД/flash и публикация в пул. Отдельный тест запускает локальный дочерний PHP и проверяет наследование защитных настроек.
 
 Реальный вход и поведение IPC на конкретном VPS нужно проверить вручную с разрешённым сервисным аккаунтом после деплоя. Источники API: [MadelineProto Login](https://docs.madelineproto.xyz/docs/LOGIN.html), [PHP INI scan directories](https://www.php.net/manual/en/configuration.file.php#configuration.file.scan).

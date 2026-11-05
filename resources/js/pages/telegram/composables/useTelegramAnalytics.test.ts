@@ -20,7 +20,10 @@ describe('useTelegramAnalytics', () => {
                 previousReport: previous,
             },
         });
-        const analytics = useTelegramAnalytics((key) => key);
+        const analytics = useTelegramAnalytics(
+            (key) => key,
+            () => 7
+        );
         analytics.form.chatUsername = '@example';
 
         await analytics.loadAnalytics();
@@ -36,7 +39,10 @@ describe('useTelegramAnalytics', () => {
             ok: true,
             data: { range: { chatUsername: 'example' }, previousReport: null },
         });
-        const analytics = useTelegramAnalytics((key) => key);
+        const analytics = useTelegramAnalytics(
+            (key) => key,
+            () => 7
+        );
         analytics.form.chatUsername = 'example';
 
         await analytics.loadAnalytics();
@@ -44,6 +50,54 @@ describe('useTelegramAnalytics', () => {
         expect(analytics.payload.value?.range.chatUsername).toBe('example');
         expect(analytics.previousPayload.value).toBeNull();
         expect(analytics.error.value).toBeNull();
+        expect(apiRequest).toHaveBeenCalledOnce();
+    });
+
+    it('uses the configured inclusive range in the date inputs and request validation', async () => {
+        const translate = vi.fn((key: string) => key);
+        const analytics = useTelegramAnalytics(translate, () => 2);
+        analytics.form.chatUsername = 'example';
+        analytics.form.dateFrom = '2026-03-28';
+        analytics.form.dateTo = '2026-03-30';
+
+        expect(analytics.dateLimits.value.fromMin).toBe('2026-03-29');
+        expect(analytics.dateLimits.value.toMax).toBe('2026-03-29');
+        await analytics.loadAnalytics();
+        expect(apiRequest).not.toHaveBeenCalled();
+        expect(translate).toHaveBeenCalledWith('telegram.customRangeTooLong', {
+            days: 2,
+        });
+
+        apiRequest.mockResolvedValue({
+            ok: true,
+            data: { previousReport: null },
+        });
+        analytics.form.dateTo = '2026-03-29';
+        await analytics.loadAnalytics();
+        expect(apiRequest).toHaveBeenCalledOnce();
+    });
+
+    it('rejects nonexistent calendar dates and keeps years below 100 literal', async () => {
+        const analytics = useTelegramAnalytics(
+            (key) => key,
+            () => 2
+        );
+        analytics.form.chatUsername = 'example';
+        analytics.form.dateFrom = '2026-02-31';
+        analytics.form.dateTo = '2026-03-04';
+        await analytics.loadAnalytics();
+        expect(analytics.error.value).toBe('telegram.customRangeInvalid');
+        expect(apiRequest).not.toHaveBeenCalled();
+
+        analytics.form.dateFrom = '0099-12-31';
+        analytics.form.dateTo = '0100-01-01';
+        expect(analytics.dateLimits.value.toMax).toBe('0100-01-01');
+        expect(analytics.dateLimits.value.fromMin).toBe('0099-12-31');
+        apiRequest.mockResolvedValue({
+            ok: true,
+            data: { previousReport: null },
+        });
+        await analytics.loadAnalytics();
         expect(apiRequest).toHaveBeenCalledOnce();
     });
 });

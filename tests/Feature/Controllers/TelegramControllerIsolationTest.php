@@ -14,8 +14,10 @@ use App\Modules\Telegram\DTO\Result\SearchMessagesResultDTO;
 use App\Modules\Telegram\DTO\Result\TelegramParserRunStatusDTO;
 use App\Modules\Telegram\Parser\Contracts\TelegramParserApplicationServiceInterface;
 use App\Modules\Telegram\Search\Contracts\TelegramSearchApplicationServiceInterface;
+use App\Modules\Telegram\Support\TelegramConfig;
 use Carbon\Carbon;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Inertia\Testing\AssertableInertia;
 use Mockery;
 use Tests\Feature\Controllers\Concerns\CreatesPaidUser;
 use Tests\Feature\Controllers\Concerns\MocksTelegramServices;
@@ -26,6 +28,19 @@ class TelegramControllerIsolationTest extends TestCase
     use CreatesPaidUser;
     use MocksTelegramServices;
     use RefreshDatabase;
+
+    public function test_telegram_page_exposes_the_configured_custom_date_limits(): void
+    {
+        config()->set('osint.telegram.parser.custom_range_max_days', 4);
+        config()->set('osint.telegram.analytics.custom_range_max_days', 2);
+        app()->forgetInstance(TelegramConfig::class);
+
+        $this->actingAs($this->paidUser())->get(route('telegram'))
+            ->assertOk()
+            ->assertInertia(fn (AssertableInertia $page) => $page->component('Telegram')
+                ->where('customRangeMaxDays.parser', 4)
+                ->where('customRangeMaxDays.analytics', 2));
+    }
 
     public function test_telegram_search_messages_controller_returns_dto_payload(): void
     {
@@ -243,30 +258,5 @@ class TelegramControllerIsolationTest extends TestCase
             ->actingAs($user)
             ->getJson(route('telegram.parser.status', ['runId' => 'missing-run']))
             ->assertNotFound();
-    }
-
-    public function test_telegram_parser_history_controller_returns_service_payload(): void
-    {
-        $user = $this->paidUser();
-
-        $this->mock(TelegramParserApplicationServiceInterface::class, function ($mock) use ($user): void {
-            $mock->shouldReceive('history')
-                ->once()
-                ->with($user->id)
-                ->andReturn([[
-                    'runId' => 'tg-run-1',
-                    'status' => 'completed',
-                    'chatUsername' => 'durov',
-                    'downloadable' => true,
-                ]]);
-        });
-
-        $this
-            ->actingAs($user)
-            ->getJson(route('telegram.parser.history'))
-            ->assertOk()
-            ->assertJsonPath('ok', true)
-            ->assertJsonPath('items.0.runId', 'tg-run-1')
-            ->assertJsonPath('items.0.chatUsername', 'durov');
     }
 }
