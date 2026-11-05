@@ -13,6 +13,7 @@ import HashtagProfileCard from '@/components/ui/HashtagProfileCard.vue';
 import IntelResultPanel from '@/components/ui/IntelResultPanel.vue';
 import SectionCard from '@/components/ui/SectionCard.vue';
 import { useI18n } from '@/composables/useI18n';
+import { useLocaleFormatters } from '@/composables/useLocaleFormatters';
 import BlueskyActorProfileCard from '../components/BlueskyActorProfileCard.vue';
 import BlueskyCompactPostCard from '../components/BlueskyCompactPostCard.vue';
 import { useBlueskyAnalytics } from '../composables/useBlueskyAnalytics';
@@ -43,10 +44,7 @@ onMounted(() => {
     initializeFromRepeatQuery();
 });
 
-const fmt = (value: number) =>
-    new Intl.NumberFormat(locale.value).format(value ?? 0);
-const formatDate = (value: string) =>
-    value ? new Date(value).toLocaleString(locale.value) : '-';
+const { formatNumber: fmt, formatDate } = useLocaleFormatters(locale);
 
 const primaryMetrics = computed(() =>
     result.value

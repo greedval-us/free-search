@@ -5,14 +5,10 @@ import type {
     ReportHistory as BaseReportHistory,
     ReportsList as BaseReportsList,
 } from '@/features/scheduled-reports/types';
+import type { SitePlatformType } from '../lib/seo-audit-options';
+export type { SitePlatformType } from '../lib/seo-audit-options';
 export type { ReportInterval } from '@/features/scheduled-reports/types';
 export type SiteReportType = 'analytics' | 'seo-audit';
-export type SitePlatformType =
-    | 'auto'
-    | 'generic'
-    | 'media-platform'
-    | 'content-site'
-    | 'storefront';
 export type ReportScheduleForm = ScheduleFields & {
     targets: string;
     reportType: SiteReportType;

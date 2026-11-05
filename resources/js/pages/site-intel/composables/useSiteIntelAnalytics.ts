@@ -1,5 +1,7 @@
 import { computed, reactive, ref } from 'vue';
 import { apiRequest, resolveClientErrorMessage } from '@/lib/api';
+import { getDocumentLocale } from '@/lib/locale';
+import { analytics, report } from '@/routes/site-intel';
 import type { SiteIntelAnalyticsResult } from '../types';
 
 type TranslateFn = (key: string) => string;
@@ -31,7 +33,7 @@ export const useSiteIntelAnalytics = (t: TranslateFn) => {
 
         try {
             const apiResult = await apiRequest<SiteIntelAnalyticsResult>(
-                '/site-intel/analytics',
+                analytics.url(),
                 {
                     method: 'GET',
                     query: {
@@ -59,39 +61,20 @@ export const useSiteIntelAnalytics = (t: TranslateFn) => {
         }
     };
 
-    const reportUrl = (download = false) => {
-        const locale =
-            typeof document !== 'undefined' &&
-            document.documentElement.lang.toLowerCase().startsWith('ru')
-                ? 'ru'
-                : 'en';
-        const target = result.value?.target.url || form.target.trim();
-        const query = new URLSearchParams({
-            target,
-            locale,
+    const showReport = (download: boolean) => {
+        if (!canUseReportActions.value || typeof window === 'undefined') {
+            return;
+        }
+
+        const url = report.url({
+            query: {
+                target: result.value?.target.url || form.target.trim(),
+                locale: getDocumentLocale(),
+                download: download ? '1' : undefined,
+            },
         });
 
-        if (download) {
-            query.set('download', '1');
-        }
-
-        return `/site-intel/report?${query.toString()}`;
-    };
-
-    const openReport = () => {
-        if (!canUseReportActions.value || typeof window === 'undefined') {
-            return;
-        }
-
-        window.open(reportUrl(), '_blank', 'noopener,noreferrer');
-    };
-
-    const downloadReport = () => {
-        if (!canUseReportActions.value || typeof window === 'undefined') {
-            return;
-        }
-
-        window.open(reportUrl(true), '_blank', 'noopener,noreferrer');
+        window.open(url, '_blank', 'noopener,noreferrer');
     };
 
     return {
@@ -102,7 +85,7 @@ export const useSiteIntelAnalytics = (t: TranslateFn) => {
         canAnalyze,
         canUseReportActions,
         analyze,
-        openReport,
-        downloadReport,
+        openReport: () => showReport(false),
+        downloadReport: () => showReport(true),
     };
 };

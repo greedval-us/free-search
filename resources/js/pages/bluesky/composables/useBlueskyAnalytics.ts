@@ -6,6 +6,7 @@ import {
     readRepeatQueryParam,
 } from '@/composables/useRepeatQuery';
 import { apiRequest, resolveApiErrorMessage } from '@/lib/api';
+import { report, summary } from '@/routes/bluesky/analytics';
 import type {
     BlueskyActor,
     BlueskyAnalyticsPayload,
@@ -110,7 +111,7 @@ export const useBlueskyAnalytics = (
         error.value = null;
 
         const response = await apiRequest<BlueskyAnalyticsPayload>(
-            '/bluesky/analytics/summary',
+            summary.url(),
             {
                 query: {
                     mode: form.value.mode,
@@ -139,37 +140,27 @@ export const useBlueskyAnalytics = (
         result.value = response.data;
     };
 
-    const reportUrl = computed(() => {
-        const query = new URLSearchParams({
-            mode: form.value.mode,
-            target: form.value.target.trim(),
-            limit: String(form.value.limit),
-            pages: String(form.value.pages),
-            resolve: form.value.resolve ? '1' : '0',
-            locale: locale.value,
+    const reportUrl = (download: boolean) =>
+        report.url({
+            query: {
+                mode: form.value.mode,
+                target: form.value.target.trim(),
+                limit: form.value.limit,
+                pages: form.value.pages,
+                resolve: form.value.resolve,
+                locale: locale.value,
+                dateFrom: form.value.dateFrom || undefined,
+                dateTo: form.value.dateTo || undefined,
+                download: download ? 1 : undefined,
+            },
         });
 
-        if (form.value.dateFrom) {
-            query.set('dateFrom', form.value.dateFrom);
-        }
-
-        if (form.value.dateTo) {
-            query.set('dateTo', form.value.dateTo);
-        }
-
-        return `/bluesky/analytics/report?${query.toString()}`;
-    });
-
     const openReport = () => {
-        window.open(reportUrl.value, '_blank', 'noopener,noreferrer');
+        window.open(reportUrl(false), '_blank', 'noopener,noreferrer');
     };
 
     const downloadReport = () => {
-        window.open(
-            `${reportUrl.value}&download=1`,
-            '_blank',
-            'noopener,noreferrer'
-        );
+        window.open(reportUrl(true), '_blank', 'noopener,noreferrer');
     };
 
     const initializeFromRepeatQuery = () => {

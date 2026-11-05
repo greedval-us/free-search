@@ -1,6 +1,7 @@
 import { usePage } from '@inertiajs/vue3';
 import { computed, ref } from 'vue';
 import { useI18n } from '@/composables/useI18n';
+import { useLocaleFormatters } from '@/composables/useLocaleFormatters';
 import type { TelegramPageProps } from '../types';
 import { useTelegramAnalytics } from './useTelegramAnalytics';
 
@@ -100,13 +101,7 @@ export const useTelegramAnalyticsTab = () => {
         return `${sign}${delta.toFixed(1)}%`;
     };
 
-    const formatDate = (unix: number) => {
-        if (!unix) {
-            return '-';
-        }
-
-        return new Date(unix * 1000).toLocaleString(locale.value);
-    };
+    const { formatUnixDate: formatDate } = useLocaleFormatters(locale);
 
     const timeline = computed(() => payload.value?.summary.timeline ?? []);
 

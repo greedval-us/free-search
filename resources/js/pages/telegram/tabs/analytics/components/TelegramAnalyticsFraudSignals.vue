@@ -2,6 +2,7 @@
 import { computed } from 'vue';
 import HelpTooltip from '@/components/ui/HelpTooltip.vue';
 import { useI18n } from '@/composables/useI18n';
+import { useLocaleFormatters } from '@/composables/useLocaleFormatters';
 import type { TelegramAnalyticsSummary } from '../../../types';
 
 type FraudSignals = TelegramAnalyticsSummary['summary']['fraudSignals'];
@@ -20,13 +21,7 @@ const formatNumber = (value: number | null | undefined) => {
     );
 };
 
-const formatDate = (unix: number) => {
-    if (!unix) {
-        return '-';
-    }
-
-    return new Date(unix * 1000).toLocaleString(locale.value);
-};
+const { formatUnixDate: formatDate } = useLocaleFormatters(locale);
 
 const riskLevelLabel = computed(() =>
     t(`telegram.analytics.fraud.level.${props.signals.riskLevel}`)

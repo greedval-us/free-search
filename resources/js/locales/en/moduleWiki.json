@@ -1,0 +1,357 @@
+{
+    "ui": {
+        "title": "Modules Wiki",
+        "subtitle": "A short user-facing guide to what each module does, when it helps, and what you need to enter to get started.",
+        "purpose": "What the module does",
+        "scenarios": "Best for",
+        "params": "What to enter",
+        "outputs": "What you get back",
+        "streams": "What you can review inside",
+        "open": "Open module",
+        "planned": "In development",
+        "why": "When this helps",
+        "example": "For example",
+        "details": "More details"
+    },
+    "modules": {
+        "telegram": {
+            "title": "Telegram",
+            "purpose": "Operational collection and analytics for Telegram channels.",
+            "scenarios": [
+                "Information field monitoring",
+                "Channel or author activity review"
+            ],
+            "params": [
+                {
+                    "label": "Channel or chat",
+                    "name": "chatUsername",
+                    "description": "Channel link, username, or short chat name.",
+                    "why": "Tells the module where to collect data from.",
+                    "example": "durov"
+                },
+                {
+                    "label": "Key topic",
+                    "name": "keyword",
+                    "description": "Word or phrase to look for in messages.",
+                    "why": "Helps reduce noise and keep the results focused.",
+                    "example": "sanctions"
+                },
+                {
+                    "label": "Time period",
+                    "name": "dateFrom/dateTo",
+                    "description": "Time window for search or analytics.",
+                    "why": "Keeps the dataset limited to the relevant period.",
+                    "example": "2026-05-01 .. 2026-05-07"
+                }
+            ],
+            "outputs": [
+                "Search results",
+                "Analytics metrics",
+                "Exportable reports"
+            ],
+            "streams": [
+                {
+                    "name": "Search",
+                    "items": [
+                        "Messages: text/date/author/views/forwards/replies",
+                        "Media data",
+                        "Reactions and gifts",
+                        "Paginated comments"
+                    ]
+                },
+                {
+                    "name": "Analytics",
+                    "items": [
+                        "Period KPIs",
+                        "Channel/group profile",
+                        "Risk flags with explanations",
+                        "Charts, top posts, and active voices",
+                        "Open/download report"
+                    ]
+                },
+                {
+                    "name": "Data collection",
+                    "items": [
+                        "Run and status states",
+                        "Progress and processing counters",
+                        "Collection by date range or key topic",
+                        "Excel and JSON exports"
+                    ]
+                }
+            ]
+        },
+        "youtube": {
+            "title": "YouTube",
+            "purpose": "Search, analytics, and comment collection for YouTube videos and channels.",
+            "scenarios": [
+                "Video agenda monitoring",
+                "Channel or video analysis"
+            ],
+            "params": [
+                {
+                    "label": "What to search for",
+                    "name": "q",
+                    "description": "Topic, phrase, or title used to find videos, channels, or playlists.",
+                    "why": "This is the main starting point for the search.",
+                    "example": "osint tutorial"
+                },
+                {
+                    "label": "Channel",
+                    "name": "channelId",
+                    "description": "Channel ID, @handle, or channel name.",
+                    "why": "Useful when search or analytics should stay within one channel.",
+                    "example": "UC_x5XG1OV2P6uZZ5FSM9Ttw"
+                },
+                {
+                    "label": "Video",
+                    "name": "videoId",
+                    "description": "Video ID or full video URL.",
+                    "why": "Needed for focused video analytics and comment collection.",
+                    "example": "dQw4w9WgXcQ"
+                },
+                {
+                    "label": "Time period",
+                    "name": "publishedAfter/publishedBefore or periodDays",
+                    "description": "Publication period or analytics window for the data you want to review.",
+                    "why": "Keeps the result set focused on the right time range.",
+                    "example": "2026-05-01 .. 2026-05-07"
+                }
+            ],
+            "outputs": [
+                "Videos/channels/playlists from search",
+                "Video/channel analytics summary",
+                "Comments and replies",
+                "HTML report and Excel/JSON exports"
+            ],
+            "streams": [
+                {
+                    "name": "Search",
+                    "items": [
+                        "Search results: title, description, channel, publication date, and preview",
+                        "Video metrics: views, likes, comments, and engagement level",
+                        "Filters: region, language, safe search, duration, quality, and captions",
+                        "Paged loading for large result sets"
+                    ]
+                },
+                {
+                    "name": "Analytics",
+                    "items": [
+                        "Modes: video and channel",
+                        "Aggregated metrics: views, likes, comments, averages, and median values",
+                        "Distributions by time/duration/quality/captions",
+                        "Leaders by views/likes/comments/engagement",
+                        "Downloadable report"
+                    ]
+                },
+                {
+                    "name": "Data collection",
+                    "items": [
+                        "Comments and replies for the selected video",
+                        "Sorting by relevance or date and comment search",
+                        "Background run/status/stop/progress",
+                        "Excel and JSON exports"
+                    ]
+                }
+            ]
+        },
+        "bluesky": {
+            "title": "Bluesky",
+            "purpose": "Search across Bluesky posts and profiles with analytics for authors and topics.",
+            "scenarios": [
+                "Topic discussion discovery",
+                "Profile and activity review"
+            ],
+            "params": [
+                {
+                    "label": "What to search for",
+                    "name": "q/text",
+                    "description": "Topic, phrase, or keywords used to search across posts.",
+                    "why": "This is the main starting point for discovery.",
+                    "example": "osint"
+                },
+                {
+                    "label": "Author or profile",
+                    "name": "author/actor",
+                    "description": "Profile handle, account name, or profile URL.",
+                    "why": "Useful when reviewing one specific source.",
+                    "example": "@analyst.bsky.social"
+                },
+                {
+                    "label": "Language or topic filter",
+                    "name": "lang/tag",
+                    "description": "Extra filters that help narrow the result set.",
+                    "why": "Makes it easier to reduce noise quickly.",
+                    "example": "ru"
+                }
+            ],
+            "outputs": [
+                "Posts, profiles, and linked entities",
+                "Engagement and relationship signals",
+                "Analytics summary for the selected target"
+            ],
+            "streams": [
+                {
+                    "name": "Search",
+                    "items": [
+                        "Posts by topic, tag, domain, and mentions",
+                        "Author profiles with basic metrics",
+                        "Expandable likes, reposts, and threads"
+                    ]
+                },
+                {
+                    "name": "Analytics",
+                    "items": [
+                        "Account or hashtag profile",
+                        "Top posts and notable signals",
+                        "Key metrics for the selected target"
+                    ]
+                }
+            ]
+        },
+        "mastodon": {
+            "title": "Mastodon",
+            "purpose": "Search across Mastodon accounts, posts, and hashtags with contextual review and analytics.",
+            "scenarios": [
+                "Account or instance review",
+                "Hashtag or topic monitoring"
+            ],
+            "params": [
+                {
+                    "label": "What to search for",
+                    "name": "q",
+                    "description": "Topic, account, hashtag, or text query used for search.",
+                    "why": "This defines the starting point for the result set.",
+                    "example": "disinformation"
+                },
+                {
+                    "label": "Account",
+                    "name": "account",
+                    "description": "Account handle in a format such as @name@instance.",
+                    "why": "Needed for focused analysis of one author.",
+                    "example": "@analyst@mastodon.social"
+                },
+                {
+                    "label": "Instance",
+                    "name": "instance",
+                    "description": "Server filter for the dataset.",
+                    "why": "Helps narrow the search to the most relevant source.",
+                    "example": "mastodon.social"
+                }
+            ],
+            "outputs": [
+                "Accounts, posts, and hashtags from search",
+                "Thread context and replies",
+                "Account or hashtag analytics"
+            ],
+            "streams": [
+                {
+                    "name": "Search",
+                    "items": [
+                        "Posts, accounts, and hashtags",
+                        "Context loading for posts and linked discussions",
+                        "Access to account posts and followers"
+                    ]
+                },
+                {
+                    "name": "Analytics",
+                    "items": [
+                        "Account or hashtag profile",
+                        "Top posts and basic metrics",
+                        "Cleaner empty states and user-facing hints"
+                    ]
+                }
+            ]
+        },
+        "site-intel": {
+            "title": "Site Intel",
+            "purpose": "Technical intelligence for website and domain.",
+            "scenarios": [
+                "Availability and security checks",
+                "SEO audit",
+                "Domain analytics"
+            ],
+            "params": [
+                {
+                    "label": "Website or domain",
+                    "name": "target/domain",
+                    "description": "Website, page URL, or domain to inspect.",
+                    "why": "This is the target of the technical analysis.",
+                    "example": "example.com"
+                }
+            ],
+            "outputs": [
+                "DNS, SSL, and website security checks",
+                "Domain and DNS summary",
+                "SEO findings and recommendations"
+            ],
+            "streams": [
+                {
+                    "name": "Modes",
+                    "items": [
+                        "Site health",
+                        "Domain lite",
+                        "Analytics",
+                        "SEO audit"
+                    ]
+                }
+            ]
+        },
+        "news-media-intel": {
+            "title": "News & Media Intel",
+            "purpose": "Public news and media mention monitoring.",
+            "scenarios": ["Reputation monitoring", "Event tracking"],
+            "params": [
+                {
+                    "label": "Monitoring target",
+                    "name": "query",
+                    "description": "Topic, person, brand, organization, or event.",
+                    "why": "Defines what the news monitoring should focus on.",
+                    "example": "sanctions"
+                }
+            ],
+            "outputs": ["Mentions feed", "Sentiment snapshot", "Timeline"],
+            "streams": [
+                {
+                    "name": "Monitoring",
+                    "items": [
+                        "Mentions feed",
+                        "Topic summary",
+                        "Sentiment snapshot",
+                        "Timeline"
+                    ]
+                }
+            ]
+        },
+        "shifr": {
+            "title": "Shifr",
+            "purpose": "Technical toolkit for artifact transformations.",
+            "scenarios": [
+                "Hash/decode",
+                "IOC extraction",
+                "JWT and classic ciphers"
+            ],
+            "params": [
+                {
+                    "label": "Mode and input data",
+                    "name": "tab/input",
+                    "description": "Choose the operation and provide the source data.",
+                    "why": "This determines which tool runs and how it behaves.",
+                    "example": "hash + text"
+                }
+            ],
+            "outputs": ["Structured operation result"],
+            "streams": [
+                {
+                    "name": "Modes",
+                    "items": [
+                        "Hashing and HMAC",
+                        "Transform and decode",
+                        "IOC extraction",
+                        "Classic ciphers",
+                        "JWT checks"
+                    ]
+                }
+            ]
+        }
+    }
+}

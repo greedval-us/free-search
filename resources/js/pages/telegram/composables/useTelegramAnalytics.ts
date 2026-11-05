@@ -1,6 +1,8 @@
 import { computed, reactive, ref } from 'vue';
 import type { Translate } from '@/composables/useI18n';
 import { apiRequest, resolveClientErrorMessage } from '@/lib/api';
+import { getDocumentLocale } from '@/lib/locale';
+import { report, summary } from '@/routes/telegram/analytics';
 import { customRangeError, shiftDate } from '../date-range';
 import type { TelegramAnalyticsSummary } from '../types';
 
@@ -75,77 +77,30 @@ export const useTelegramAnalytics = (
         };
     });
 
-    const buildQuery = () => {
-        const locale =
-            typeof document !== 'undefined' &&
-            document.documentElement.lang.toLowerCase().startsWith('ru')
-                ? 'ru'
-                : 'en';
-        const query = new URLSearchParams({
-            chatUsername: normalizedChatUsername(),
-            scorePriority: form.scorePriority,
-            locale,
-        });
+    const buildQuery = (snapshot?: TelegramAnalyticsSummary | null) => {
+        let { dateFrom, dateTo } = form;
+        const snapshotFrom = extractYmdFromIso(snapshot?.range.dateFrom);
+        const snapshotTo = extractYmdFromIso(snapshot?.range.dateTo);
 
-        if (normalizedKeyword()) {
-            query.set('keyword', normalizedKeyword());
+        if (snapshotFrom && snapshotTo) {
+            dateFrom = snapshotFrom;
+            dateTo = snapshotTo;
         }
 
-        if (form.dateFrom || form.dateTo) {
-            query.set('dateFrom', form.dateFrom);
-            query.set('dateTo', form.dateTo);
-        } else {
-            query.set('periodDays', String(form.periodDays));
-        }
+        const keyword = snapshot
+            ? snapshot.range.keyword?.trim()
+            : normalizedKeyword();
 
-        return query;
-    };
-
-    const summaryUrl = () => {
-        const query = buildQuery();
-
-        return `/telegram/analytics/summary?${query.toString()}`;
-    };
-    const reportUrl = (download = false) => {
-        const locale =
-            typeof document !== 'undefined' &&
-            document.documentElement.lang.toLowerCase().startsWith('ru')
-                ? 'ru'
-                : 'en';
-        const snapshot = payload.value;
-        const query = new URLSearchParams({
+        return {
             chatUsername:
                 snapshot?.range.chatUsername ?? normalizedChatUsername(),
             scorePriority: snapshot?.score.priority ?? form.scorePriority,
-            locale,
-        });
-
-        const keyword = snapshot
-            ? (snapshot.range.keyword?.trim() ?? '')
-            : normalizedKeyword();
-
-        if (keyword) {
-            query.set('keyword', keyword);
-        }
-
-        const snapshotDateFrom = extractYmdFromIso(snapshot?.range.dateFrom);
-        const snapshotDateTo = extractYmdFromIso(snapshot?.range.dateTo);
-
-        if (snapshotDateFrom && snapshotDateTo) {
-            query.set('dateFrom', snapshotDateFrom);
-            query.set('dateTo', snapshotDateTo);
-        } else if (form.dateFrom || form.dateTo) {
-            query.set('dateFrom', form.dateFrom);
-            query.set('dateTo', form.dateTo);
-        } else {
-            query.set('periodDays', String(form.periodDays));
-        }
-
-        if (download) {
-            query.set('download', '1');
-        }
-
-        return `/telegram/analytics/report?${query.toString()}`;
+            locale: getDocumentLocale(),
+            keyword: keyword || undefined,
+            ...(dateFrom || dateTo
+                ? { dateFrom, dateTo }
+                : { periodDays: form.periodDays }),
+        };
     };
 
     const applyPreset = (days: AnalyticsPeriod) => {
@@ -187,7 +142,7 @@ export const useTelegramAnalytics = (
 
         try {
             const apiResult = await apiRequest<TelegramAnalyticsSummary>(
-                summaryUrl(),
+                summary.url({ query: buildQuery() }),
                 {
                     method: 'GET',
                 }
@@ -216,20 +171,18 @@ export const useTelegramAnalytics = (
         }
     };
 
-    const openReport = () => {
+    const showReport = (download: boolean) => {
         if (typeof window === 'undefined') {
             return;
         }
 
-        window.open(reportUrl(), '_blank', 'noopener,noreferrer');
-    };
-
-    const downloadReport = () => {
-        if (typeof window === 'undefined') {
-            return;
-        }
-
-        window.open(reportUrl(true), '_blank', 'noopener,noreferrer');
+        const url = report.url({
+            query: {
+                ...buildQuery(payload.value),
+                download: download ? 1 : undefined,
+            },
+        });
+        window.open(url, '_blank', 'noopener,noreferrer');
     };
 
     const trendMax = computed(() => {
@@ -273,7 +226,7 @@ export const useTelegramAnalytics = (
         applyPreset,
         setPriority,
         loadAnalytics,
-        openReport,
-        downloadReport,
+        openReport: () => showReport(false),
+        downloadReport: () => showReport(true),
     };
 };

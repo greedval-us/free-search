@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { useTelegramAnalytics } from './useTelegramAnalytics';
 
 const { apiRequest } = vi.hoisted(() => ({ apiRequest: vi.fn() }));
@@ -10,6 +10,7 @@ vi.mock('@/lib/api', () => ({
 
 describe('useTelegramAnalytics', () => {
     beforeEach(() => apiRequest.mockReset());
+    afterEach(() => vi.unstubAllGlobals());
 
     it('uses the server comparison without a second collection request', async () => {
         const previous = { range: { chatUsername: 'example' } };
@@ -32,6 +33,45 @@ describe('useTelegramAnalytics', () => {
         expect(apiRequest.mock.calls[0][0]).not.toContain('snapshotRole');
         expect(analytics.previousPayload.value).toEqual(previous);
         expect(analytics.loading.value).toBe(false);
+    });
+
+    it('exports the displayed report after the user edits the search form', async () => {
+        const open = vi.fn();
+        vi.stubGlobal('window', { open });
+        vi.stubGlobal('document', { documentElement: { lang: 'ru-RU' } });
+        apiRequest.mockResolvedValue({
+            ok: true,
+            data: {
+                range: {
+                    chatUsername: 'public_channel',
+                    keyword: 'A & B',
+                    dateFrom: '2026-06-01T00:00:00Z',
+                    dateTo: '2026-06-07T23:59:59Z',
+                },
+                score: { priority: 'reach' },
+            },
+        });
+        const analytics = useTelegramAnalytics(
+            (key) => key,
+            () => 7
+        );
+        analytics.form.chatUsername = '@public_channel';
+        await analytics.loadAnalytics();
+        analytics.form.chatUsername = '@another_channel';
+        analytics.form.keyword = 'different';
+        analytics.downloadReport();
+
+        const url = new URL(open.mock.calls[0][0], 'https://example.org');
+        expect(url.pathname).toBe('/telegram/analytics/report');
+        expect(Object.fromEntries(url.searchParams)).toEqual({
+            chatUsername: 'public_channel',
+            keyword: 'A & B',
+            dateFrom: '2026-06-01',
+            dateTo: '2026-06-07',
+            locale: 'ru',
+            scorePriority: 'reach',
+            download: '1',
+        });
     });
 
     it('keeps the current result if a comparison is unavailable', async () => {

@@ -1,5 +1,6 @@
 import { computed, reactive, ref } from 'vue';
 import { apiRequest, resolveClientErrorMessage } from '@/lib/api';
+import { domainLite } from '@/routes/site-intel';
 import type { DomainLiteResult } from '../types';
 
 type TranslateFn = (key: string) => string;
@@ -28,7 +29,7 @@ export const useDomainLite = (t: TranslateFn) => {
 
         try {
             const apiResult = await apiRequest<DomainLiteResult>(
-                '/site-intel/domain-lite',
+                domainLite.url(),
                 {
                     method: 'GET',
                     query: {

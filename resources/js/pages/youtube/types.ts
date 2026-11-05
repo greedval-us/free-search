@@ -133,22 +133,19 @@ export type YouTubeAnalyticsPayload = {
     topVideos: YouTubeVideo[];
 };
 
-export type YouTubeCommentItem = {
+export type YouTubeComment = {
     id: string;
-    threadId: string;
     author: string;
-    authorChannelUrl: string;
     text: string;
     likeCount: number;
     publishedAt: string;
+};
+
+export type YouTubeCommentItem = YouTubeComment & {
+    threadId: string;
+    authorChannelUrl: string;
     replyCount: number;
-    replies: Array<{
-        id: string;
-        author: string;
-        text: string;
-        likeCount: number;
-        publishedAt: string;
-    }>;
+    replies: YouTubeComment[];
 };
 
 export type YouTubeCommentsPayload = {
