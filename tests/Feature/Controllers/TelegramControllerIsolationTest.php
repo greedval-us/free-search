@@ -108,7 +108,7 @@ class TelegramControllerIsolationTest extends TestCase
             ]);
     }
 
-    public function test_telegram_search_messages_controller_passes_numeric_author_id_as_local_filter(): void
+    public function test_telegram_search_messages_controller_passes_public_author_username(): void
     {
         $user = User::factory()->create();
 
@@ -118,7 +118,7 @@ class TelegramControllerIsolationTest extends TestCase
                 ->once()
                 ->with(Mockery::on(
                     fn (SearchMessagesQueryDTO $query): bool => $query->chatUsername === 'channel'
-                        && ($query->filter['authorId'] ?? null) === 777
+                        && ($query->filter['authorUsername'] ?? null) === 'writer'
                         && ! array_key_exists('from_id', $query->filter)
                 ))
                 ->andReturn(new SearchMessagesResultDTO(
@@ -138,7 +138,7 @@ class TelegramControllerIsolationTest extends TestCase
             ->actingAs($user)
             ->getJson(route('telegram.search.messages', [
                 'chatUsername' => '@channel',
-                'fromUsername' => '777',
+                'fromUsername' => '@Writer',
             ]))
             ->assertOk()
             ->assertJsonPath('ok', true);

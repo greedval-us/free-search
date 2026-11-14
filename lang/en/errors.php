@@ -6,6 +6,7 @@ return [
         'unavailable' => 'News search is temporarily unavailable. Please try again later.',
     ],
     'validation' => [
+        'telegram_public_author_username' => 'Enter a public Telegram username for the author, such as @username.',
         'date_from_before_or_equal_date_to' => 'Date "from" must be less than or equal to date "to".',
         'custom_period_max_days' => 'Custom period cannot be longer than :days days.',
         'custom_period_requires_both_dates' => 'Please provide both dates for a custom period.',
@@ -44,8 +45,9 @@ return [
         'service_unavailable' => 'The service is temporarily unavailable. Please try again later.',
         'telegram' => [
             'not_configured' => 'Telegram integration is temporarily unavailable.',
+            'session_unauthorized' => 'The Telegram session needs to be reconnected by a site administrator.',
             'load_messages_failed' => 'Failed to load messages for the current query.',
-            'author_peer_resolve_failed' => 'Failed to resolve Telegram peer for the specified author ID.',
+            'author_peer_resolve_failed' => 'Telegram could not resolve that public author username.',
             'parser_messages_failed' => 'Failed to load messages for parser.',
             'media_temp_file_failed' => 'Failed to prepare a temporary media file.',
         ],

@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\Exceptions\Public\IntegrationMisconfiguredException;
 use App\Modules\Telegram\Actions\Request\CommentsAction;
 use App\Modules\Telegram\Actions\Request\InfoAction;
 use App\Modules\Telegram\Actions\Request\MessagesAction;
@@ -25,6 +26,16 @@ class TelegramServicePublicAccessTest extends TestCase
         $this->assertNull($gateway->getParticipants(['chatUsername' => '-100123456789']));
         $this->assertFalse($gateway->getComments('-100123456789', 1)['ok']);
         $this->assertNull($gateway->getMessageMedia('-100123456789', 1));
+    }
+
+    public function test_missing_session_is_reported_as_an_integration_error(): void
+    {
+        config()->set('madelineproto.session_path', 'app/private/missing-telegram-test-session');
+        $gateway = app(TelegramService::class);
+
+        $this->expectException(IntegrationMisconfiguredException::class);
+
+        $gateway->getMessages(['peer' => 'publicgroup']);
     }
 
     public function test_saved_and_private_author_peers_are_not_forwarded_to_a_shared_session(): void
@@ -116,6 +127,31 @@ class TelegramServicePublicAccessTest extends TestCase
 
         $this->assertNotNull($page);
         $this->assertSame([], $page->messages);
+    }
+
+    public function test_comments_forward_the_requested_page_size(): void
+    {
+        $this->mock(CommentsAction::class)->shouldReceive('execute')->once()
+            ->with('@publicgroup', [42], 0, 50, 1, 100)
+            ->andReturn([['comments' => [], 'total' => 100]]);
+
+        $page = app(TelegramService::class)->getComments('@publicgroup', 42, 50, 100);
+
+        $this->assertTrue($page['ok']);
+        $this->assertSame(100, $page['total']);
+    }
+
+    public function test_history_range_excludes_messages_older_than_the_start(): void
+    {
+        $this->mock(MessagesAction::class)->shouldReceive('execute')->once()->andReturn([
+            '_' => 'messages.channelMessages',
+            'count' => 3000,
+            'messages' => [['id' => 205, 'date' => 110], ['id' => 204, 'date' => 100], ['id' => 203, 'date' => 99]],
+        ]);
+
+        $page = app(TelegramService::class)->getMessages(['peer' => '@channel', 'min_date' => 99]);
+
+        $this->assertSame([205, 204], array_column($page->messages, 'id'));
     }
 
     public static function failedComments(): array

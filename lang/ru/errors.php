@@ -6,6 +6,7 @@ return [
         'unavailable' => 'Поиск новостей временно недоступен. Попробуйте позже.',
     ],
     'validation' => [
+        'telegram_public_author_username' => 'Укажите публичное имя автора в Telegram, например @username.',
         'date_from_before_or_equal_date_to' => 'Дата "от" должна быть меньше или равна дате "до".',
         'custom_period_max_days' => 'Пользовательский период не может быть длиннее :days дней.',
         'custom_period_requires_both_dates' => 'Укажите обе даты для пользовательского периода.',
@@ -44,8 +45,9 @@ return [
         'service_unavailable' => 'Сервис временно недоступен. Попробуйте ещё раз позже.',
         'telegram' => [
             'not_configured' => 'Интеграция с Telegram временно недоступна.',
+            'session_unauthorized' => 'Администратору сайта нужно заново подключить сессию Telegram.',
             'load_messages_failed' => 'Не удалось загрузить сообщения для текущего запроса.',
-            'author_peer_resolve_failed' => 'Не удалось определить Telegram peer для указанного ID автора.',
+            'author_peer_resolve_failed' => 'Telegram не смог найти автора по указанному публичному имени.',
             'parser_messages_failed' => 'Не удалось загрузить сообщения для парсера.',
             'media_temp_file_failed' => 'Не удалось подготовить временный файл для медиа.',
         ],

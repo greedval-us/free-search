@@ -8,10 +8,12 @@ use Illuminate\Contracts\Validation\ValidationRule;
 
 final class PublicTelegramUsername implements ValidationRule
 {
+    public function __construct(private readonly string $messageKey = 'validation.regex') {}
+
     public function validate(string $attribute, mixed $value, Closure $fail): void
     {
         if (PublicTelegramSource::username($value) === null) {
-            $fail('validation.regex')->translate();
+            $fail($this->messageKey)->translate();
         }
     }
 }

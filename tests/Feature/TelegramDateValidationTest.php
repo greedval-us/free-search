@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\Http\Requests\Telegram\SearchMessagesRequest;
 use App\Http\Requests\Telegram\TelegramAnalyticsRequest;
 use App\Http\Requests\Telegram\TelegramParserStartRequest;
 use App\Modules\Telegram\Support\TelegramConfig;
@@ -20,6 +21,14 @@ class TelegramDateValidationTest extends TestCase
         app()->forgetInstance(TelegramConfig::class);
         Route::post('/_test/telegram-parser-dates', fn (TelegramParserStartRequest $request) => response()->json($request->range()));
         Route::post('/_test/telegram-analytics-dates', fn (TelegramAnalyticsRequest $request) => response()->json($request->validated()));
+        Route::post('/_test/telegram-search-dates', fn (SearchMessagesRequest $request) => response()->json($request->telegramFilter()));
+    }
+
+    public function test_search_includes_both_ends_of_a_day_when_clocks_change(): void
+    {
+        $this->postJson('/_test/telegram-search-dates', [
+            'chatUsername' => 'example', 'dateFrom' => '2026-03-29', 'dateTo' => '2026-03-29',
+        ])->assertOk()->assertJsonPath('min_date', 1774738799)->assertJsonPath('max_date', 1774821600);
     }
 
     public static function ranges(): array

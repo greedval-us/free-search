@@ -27,7 +27,7 @@ export const useTelegramSearch = (t: TranslateFn) => {
     const loadingMore = ref(false);
     const error = ref<string | null>(null);
     const items = ref<SearchItem[]>([]);
-    const total = ref(0);
+    const total = ref<number | null>(0);
     const nextOffsetId = ref<number | null>(null);
     const hasMore = ref(false);
     const showAdvanced = ref(false);
@@ -36,6 +36,7 @@ export const useTelegramSearch = (t: TranslateFn) => {
     const messagesContainerRef = ref<HTMLElement | null>(null);
     const senderPopoverOpenByKey = ref<Record<string, boolean>>({});
     const mediaOpenByPost = ref<Record<number, boolean>>({});
+    let submittedFilters: typeof form | null = null;
 
     const clampLimit = () => {
         const value = Number(form.limit);
@@ -52,11 +53,15 @@ export const useTelegramSearch = (t: TranslateFn) => {
         );
     };
 
-    const normalizedChatUsername = () =>
-        form.chatUsername.trim().replace(/^@+/, '');
+    const getMediaUrl = (postId: number) => {
+        if (submittedFilters === null) {
+            return;
+        }
 
-    const getMediaUrl = (postId: number) =>
-        TelegramSearchController.media([normalizedChatUsername(), postId]).url;
+        const chatUsername = submittedFilters.chatUsername.replace(/^@+/, '');
+
+        return TelegramSearchController.media([chatUsername, postId]).url;
+    };
 
     const isMediaOpen = (postId: number) =>
         Boolean(mediaOpenByPost.value[postId]);
@@ -66,9 +71,26 @@ export const useTelegramSearch = (t: TranslateFn) => {
     };
 
     const searchMessages = async (append = false) => {
-        const canSearch = form.chatUsername.trim().length > 0;
+        if (loading.value || loadingMore.value) {
+            return;
+        }
 
-        if (!canSearch) {
+        if (append && (!hasMore.value || nextOffsetId.value === null)) {
+            return;
+        }
+
+        const filters = append
+            ? submittedFilters
+            : {
+                  chatUsername: form.chatUsername.trim(),
+                  q: form.q.trim(),
+                  fromUsername: form.fromUsername.trim(),
+                  dateFrom: form.dateFrom,
+                  dateTo: form.dateTo,
+                  limit: Math.min(LIMIT_MAX, Math.max(LIMIT_MIN, form.limit)),
+              };
+
+        if (!filters?.chatUsername) {
             error.value = t('telegram.errors.channelRequired');
 
             return;
@@ -79,6 +101,7 @@ export const useTelegramSearch = (t: TranslateFn) => {
         if (append) {
             loadingMore.value = true;
         } else {
+            submittedFilters = filters;
             loading.value = true;
             items.value = [];
             commentsByPost.value = {};
@@ -93,15 +116,7 @@ export const useTelegramSearch = (t: TranslateFn) => {
             const apiResult = await apiRequest<SearchResponse>(
                 TelegramSearchController.messages({
                     query: {
-                        chatUsername: form.chatUsername.trim(),
-                        q: form.q.trim(),
-                        fromUsername: form.fromUsername.trim(),
-                        dateFrom: form.dateFrom,
-                        dateTo: form.dateTo,
-                        limit: Math.min(
-                            LIMIT_MAX,
-                            Math.max(LIMIT_MIN, form.limit)
-                        ),
+                        ...filters,
                         offsetId: append ? (nextOffsetId.value ?? 0) : 0,
                     },
                 }).url,
@@ -110,7 +125,9 @@ export const useTelegramSearch = (t: TranslateFn) => {
 
             if (!apiResult.ok) {
                 error.value =
-                    apiResult.message ?? t('telegram.errors.searchFailed');
+                    apiResult.errors?.fromUsername?.[0] ??
+                    apiResult.message ??
+                    t('telegram.errors.searchFailed');
 
                 return;
             }
@@ -131,7 +148,7 @@ export const useTelegramSearch = (t: TranslateFn) => {
                 items.value = incoming;
             }
 
-            total.value = payload.pagination.total ?? items.value.length;
+            total.value = payload.pagination.total ?? null;
             nextOffsetId.value = payload.pagination.nextOffsetId;
             hasMore.value = payload.pagination.hasMore;
         } catch (exception) {
@@ -217,6 +234,12 @@ export const useTelegramSearch = (t: TranslateFn) => {
     };
 
     const loadComments = async (postId: number, append = false) => {
+        const chatUsername = submittedFilters?.chatUsername;
+
+        if (!chatUsername) {
+            return;
+        }
+
         const state = getCommentState(postId);
 
         if (append && !state.hasMore) {
@@ -231,7 +254,7 @@ export const useTelegramSearch = (t: TranslateFn) => {
                 const apiResult = await apiRequest<CommentsResponse>(
                     TelegramSearchController.comments({
                         query: {
-                            chatUsername: form.chatUsername.trim(),
+                            chatUsername,
                             postId,
                             offsetId: append ? (state.nextOffsetId ?? 0) : 0,
                             limit: 20,

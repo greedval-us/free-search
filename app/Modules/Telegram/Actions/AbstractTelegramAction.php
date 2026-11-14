@@ -22,7 +22,7 @@ abstract class AbstractTelegramAction
         /** @var MadelineProtoManager $manager */
         $manager = MadelineProto::getFacadeRoot();
 
-        return $manager->client();
+        return $manager->authorizedClient();
     }
 
     protected function publicSource(API $client, string $identifier): ?array

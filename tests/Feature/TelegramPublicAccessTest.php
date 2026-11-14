@@ -54,9 +54,11 @@ class TelegramPublicAccessTest extends TestCase
             ->assertUnprocessable()->assertJsonValidationErrors('groups.0');
     }
 
-    public function test_author_usernames_are_local_filters_without_session_peer_resolution(): void
+    public function test_author_filter_accepts_a_public_username_but_not_a_bare_id(): void
     {
         $this->postJson('/_test/tg/messages', ['chatUsername' => '@publicgroup', 'fromUsername' => '@author'])
             ->assertOk()->assertJsonPath('authorUsername', 'author')->assertJsonMissingPath('from_id');
+        $this->postJson('/_test/tg/messages', ['chatUsername' => '@publicgroup', 'fromUsername' => '123456789'])
+            ->assertUnprocessable()->assertJsonValidationErrors('fromUsername');
     }
 }

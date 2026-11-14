@@ -5,6 +5,7 @@ namespace App\Modules\Telegram\Core\Contracts;
 use App\Modules\Telegram\DTO\Response\Info\ChannelInfoDTO;
 use App\Modules\Telegram\DTO\Response\Messages\ChannelMessagesDTO;
 use App\Modules\Telegram\DTO\Response\Participants\ChannelParticipantsDTO;
+use Closure;
 
 interface TelegramGatewayInterface
 {
@@ -35,12 +36,7 @@ interface TelegramGatewayInterface
     ): array;
 
     /**
-     * @return array<string, mixed>|null
+     * @return array{downloadToFile: Closure(string): string, download: array<string, mixed>}|null
      */
     public function getMessageMedia(string $channel, int $messageId): ?array;
-
-    /**
-     * @param  array<string, mixed>  $media
-     */
-    public function downloadMediaToFile(array $media, string $path): string;
 }

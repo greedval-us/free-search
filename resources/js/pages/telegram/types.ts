@@ -81,7 +81,7 @@ export type SearchResponse = {
         offsetId: number;
         nextOffsetId: number | null;
         hasMore: boolean;
-        total: number;
+        total: number | null;
     };
 };
 

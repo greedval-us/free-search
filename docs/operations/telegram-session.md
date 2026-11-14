@@ -9,7 +9,6 @@ Telegram integration использует MadelineProto user sessions. API ID/ha
 ```bash
 php artisan app:create-telegram-session default
 php artisan app:create-telegram-session worker-a
-php artisan app:create-telegram-session --list
 ```
 
 Команда интерактивно проходит MadelineProto authorization. По умолчанию files находятся под private storage path из `MADELINEPROTO_SESSION_PATH`:

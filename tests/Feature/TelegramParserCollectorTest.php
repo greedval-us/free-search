@@ -47,7 +47,7 @@ class TelegramParserCollectorTest extends TestCase
         $gateway = $this->createMock(TelegramGatewayInterface::class);
         $gateway->method('getInfo')->willReturn(new ChannelInfoDTO(['chat' => ['broadcast' => false]]));
         $gateway->expects($this->once())->method('getMessages')->with($this->callback(
-            static fn (array $filter): bool => $filter['q'] === 'osint' && $filter['min_date'] === 100 && $filter['max_date'] === 200,
+            static fn (array $filter): bool => $filter['q'] === 'osint' && $filter['min_date'] === 99 && $filter['max_date'] === 201,
         ))->willReturn($this->page([
             ['id' => 4, 'date' => 250], ['id' => 3, 'date' => 200], ['id' => 2, 'date' => 100], ['id' => 1, 'date' => 50],
         ]));

@@ -4,6 +4,7 @@ namespace App\Modules\Telegram\Search\Actions;
 
 use App\Modules\Telegram\Core\Contracts\TelegramGatewayInterface;
 use App\Modules\Telegram\DTO\Request\SearchMediaQueryDTO;
+use Closure;
 
 class LoadTelegramMessageMediaAction
 {
@@ -12,7 +13,7 @@ class LoadTelegramMessageMediaAction
     ) {}
 
     /**
-     * @return array<string, mixed>|null
+     * @return array{downloadToFile: Closure(string): string, download: array<string, mixed>}|null
      */
     public function handle(SearchMediaQueryDTO $query): ?array
     {

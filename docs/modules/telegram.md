@@ -20,6 +20,10 @@ Frontend: `resources/js/pages/Telegram.vue`, `pages/telegram/tabs/*`, composable
 
 Все routes находятся в authenticated+verified group. Page, Analytics и Parser защищены Feature Access; Search routes throttled, но не тарифицируются текущим access map.
 
+В публичном канале или супергруппе текст и публичный `@username` автора передаются в [`messages.search`](https://core.telegram.org/method/messages.search). Для фильтра автора Telegram требует [`InputPeer`](https://core.telegram.org/api/peers#access-hash), поэтому для сохранённых запросов с числовым ID нужно указать публичный `@username`. Просмотр без этих фильтров использует [`messages.getHistory`](https://core.telegram.org/method/messages.getHistory). Для истории с ограничением по датам `pagination.total` равен `null`, поскольку Telegram возвращает число сообщений во всей истории.
+
+Для комментариев к посту канала сервис проверяет публичность связанной группы, получает исходное сообщение ветки через [`messages.getDiscussionMessage`](https://core.telegram.org/method/messages.getDiscussionMessage) и загружает ответы через [`messages.getReplies`](https://core.telegram.org/method/messages.getReplies).
+
 ## Configuration
 
 Обязательны `TELEGRAM_API_ID`, `TELEGRAM_API_HASH` и хотя бы одна valid session. `MADELINEPROTO_SESSION_PATH`, `MADELINEPROTO_LOG_PATH` и `OSINT_TELEGRAM_*` управляют storage/limits/analytics. Session pool автоматически round-robin распределяет requests по `session*.madeline`. См. [Telegram sessions](../operations/telegram-session.md).
