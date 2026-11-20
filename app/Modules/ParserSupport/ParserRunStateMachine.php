@@ -2,7 +2,6 @@
 
 namespace App\Modules\ParserSupport;
 
-use App\Jobs\ProcessParserRun;
 use App\Modules\ParserSupport\Enums\ParserRunStatus;
 
 class ParserRunStateMachine
@@ -16,7 +15,7 @@ class ParserRunStateMachine
         array $state,
         callable $advance,
         int $nowTimestamp,
-        int $advanceDelaySeconds = 2,
+        int $advanceDelaySeconds = ParserRunConfig::DEFAULT_STEP_DELAY_SECONDS,
         bool $retryExceptions = false,
         ?callable $snapshotBuilder = null,
         string $failureMessage = 'Parser request failed.',
@@ -69,7 +68,7 @@ class ParserRunStateMachine
             $cursor = is_array($state['cursor'] ?? null) ? $state['cursor'] : [];
             $cursor['nextAdvanceAt'] = $nowTimestamp + max(0, $advanceDelaySeconds);
             if ($before !== $state) {
-                $cursor['stepRetryUntil'] = $nowTimestamp + ProcessParserRun::RETRY_WINDOW_SECONDS;
+                $cursor['stepRetryUntil'] = $nowTimestamp + ParserRunConfig::STEP_RETRY_WINDOW_SECONDS;
                 $cursor['checkpointVersion'] = (int) ($before['cursor']['checkpointVersion'] ?? 0) + 1;
             }
             $state['cursor'] = $cursor;

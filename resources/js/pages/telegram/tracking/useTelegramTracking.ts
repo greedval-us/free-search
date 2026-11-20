@@ -2,6 +2,7 @@ import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue';
 import { useI18n } from '@/composables/useI18n';
 import { ApiError, apiRequestOrThrow } from '@/lib/api';
 import type { RequestOptions } from '@/lib/api';
+import * as trackingRoutes from '@/routes/telegram/tracking';
 import type {
     TrackingAction,
     TrackingForm,
@@ -10,7 +11,6 @@ import type {
     TrackingTask,
 } from './types';
 
-const ENDPOINT = '/telegram/tracking';
 const REFRESH_MS = 60_000;
 
 export const useTelegramTracking = () => {
@@ -34,8 +34,8 @@ export const useTelegramTracking = () => {
     const controller = new AbortController();
     let timer: ReturnType<typeof setInterval> | undefined;
 
-    const request = <T>(path = '', options: RequestOptions = {}) =>
-        apiRequestOrThrow<T>(ENDPOINT + path, {
+    const request = <T>(url: string, options: RequestOptions = {}) =>
+        apiRequestOrThrow<T>(url, {
             ...options,
             query: { ...options.query, locale: locale.value },
             headers: {
@@ -83,7 +83,7 @@ export const useTelegramTracking = () => {
         const result = await request<{
             items: TrackingMessage[];
             has_more: boolean;
-        }>(`/${task.id}/messages`, { query: { page: nextPage } });
+        }>(trackingRoutes.messages.url(task.id), { query: { page: nextPage } });
         selected.value = task;
         messages.value = result.items;
         messagePage.value = nextPage;
@@ -91,7 +91,7 @@ export const useTelegramTracking = () => {
     };
 
     const load = async (nextPage = page.value) => {
-        list.value = await request<TrackingList>('', {
+        list.value = await request<TrackingList>(trackingRoutes.index.url(), {
             query: { page: nextPage },
         });
         page.value = nextPage;
@@ -132,7 +132,7 @@ export const useTelegramTracking = () => {
         perform(async () => {
             const input = form.value.groups;
             const result = await request<{ groups: { title: string }[] }>(
-                '/validate',
+                trackingRoutes.validate.url(),
                 { method: 'POST', body: { groups: groups() } }
             );
 
@@ -144,10 +144,13 @@ export const useTelegramTracking = () => {
         });
     const create = () =>
         perform(async () => {
-            const created = await request<{ id: number }>('', {
-                method: 'POST',
-                body: { ...form.value, groups: groups() },
-            });
+            const created = await request<{ id: number }>(
+                trackingRoutes.store.url(),
+                {
+                    method: 'POST',
+                    body: { ...form.value, groups: groups() },
+                }
+            );
             form.value.name = '';
             form.value.groups = '';
             form.value.query = '';
@@ -164,7 +167,7 @@ export const useTelegramTracking = () => {
         });
     const change = (task: TrackingTask, action: TrackingAction) =>
         perform(async () => {
-            await request(`/${task.id}`, {
+            await request(trackingRoutes.change.url(task.id), {
                 method: 'PATCH',
                 body: { action, notify_bot: !task.notify_bot },
             });

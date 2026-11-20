@@ -1,6 +1,14 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import type * as Vue from 'vue';
+import ParserRoutes from '@/actions/App/Http/Controllers/Telegram/TelegramParserController';
 import { useParserRun } from '@/composables/useParserRun';
+import { useBlueskyParser } from '@/pages/bluesky/composables/useBlueskyParser';
+import { useTelegramParser } from '@/pages/telegram/composables/useTelegramParser';
+import type {
+    ParserHistoryItem,
+    ParserRunPayload,
+    ParserStage,
+} from '@/types/parser';
 
 const { apiRequest, onBeforeUnmount } = vi.hoisted(() => ({
     apiRequest: vi.fn(),
@@ -23,29 +31,14 @@ vi.mock('vue', async (importOriginal) => {
     };
 });
 
-type TestStage = 'idle' | 'working' | 'completed' | 'failed' | 'stopped';
-
-type TestStatusPayload = {
-    runId: string;
-    status: 'running' | 'completed' | 'failed' | 'stopped';
-    stage: TestStage;
-    progress: number;
-    error: string | null;
-    downloadUrl: string | null;
-    downloadJsonUrl: string | null;
+type TestStatusPayload = ParserRunPayload<ParserStage<'working'>> & {
     processedItems: number;
-};
-
-type TestHistoryItem = {
-    runId: string;
-    status: 'running' | 'completed' | 'failed' | 'stopped' | 'unknown';
-    downloadUrl: string | null;
-    downloadJsonUrl: string | null;
 };
 
 const statusResponse = (overrides: Partial<TestStatusPayload> = {}) => ({
     ok: true,
     data: {
+        ok: true,
         runId: 'active-run',
         status: 'running',
         stage: 'working',
@@ -76,16 +69,10 @@ const deferred = <T>() => {
 };
 
 const createParser = () =>
-    useParserRun<TestStage, TestStatusPayload, TestHistoryItem>({
-        endpointBase: '/test/parser',
-        idleStage: 'idle',
+    useParserRun<TestStatusPayload, ParserHistoryItem>({
+        routes: ParserRoutes,
         initialStage: 'working',
-        stoppedStage: 'stopped',
-        failedStage: 'failed',
         requestErrorMessage: () => 'Request failed',
-        historyErrorMessage: () => 'History failed',
-        applyModulePayload: () => {},
-        resetModuleState: () => {},
     });
 
 const unmount = () => {
@@ -145,26 +132,7 @@ describe('useParserRun', () => {
                 },
             });
 
-        const processedItems = { value: 0 };
-        const parser = useParserRun<
-            TestStage,
-            TestStatusPayload,
-            TestHistoryItem
-        >({
-            endpointBase: '/test/parser',
-            idleStage: 'idle',
-            initialStage: 'working',
-            stoppedStage: 'stopped',
-            failedStage: 'failed',
-            requestErrorMessage: () => 'Request failed',
-            historyErrorMessage: () => 'History failed',
-            applyModulePayload: (payload) => {
-                processedItems.value = payload.processedItems;
-            },
-            resetModuleState: () => {
-                processedItems.value = 0;
-            },
-        });
+        const parser = createParser();
 
         await vi.waitFor(() => {
             expect(parser.runId.value).toBe('active-run');
@@ -173,10 +141,10 @@ describe('useParserRun', () => {
 
         expect(parser.loading.value).toBe(true);
         expect(parser.stage.value).toBe('working');
-        expect(processedItems.value).toBe(12);
+        expect(parser.payload.value?.processedItems).toBe(12);
         expect(apiRequest).toHaveBeenNthCalledWith(
             2,
-            '/test/parser/status/active-run',
+            '/telegram/parser/status/active-run',
             expect.objectContaining({
                 method: 'GET',
                 signal: expect.any(AbortSignal),
@@ -305,6 +273,66 @@ describe('useParserRun', () => {
         expect(vi.getTimerCount()).toBe(0);
     });
 
+    it('resets module counts when a new run replaces a completed run', async () => {
+        const completed = {
+            ...statusResponse({ status: 'completed', stage: 'completed' }).data,
+            processedPosts: 12,
+            processedReactions: 5,
+        };
+        apiRequest
+            .mockResolvedValueOnce(historyResponse(false))
+            .mockResolvedValueOnce({ ok: true, data: completed })
+            .mockResolvedValueOnce(historyResponse(false))
+            .mockResolvedValueOnce({ ok: false });
+        const parser = useBlueskyParser((key) => key);
+        parser.form.actor = ' example ';
+        await vi.advanceTimersByTimeAsync(0);
+
+        await parser.start();
+        expect(apiRequest).toHaveBeenNthCalledWith(
+            2,
+            '/bluesky/parser/start',
+            expect.objectContaining({
+                method: 'POST',
+                body: { actor: 'example' },
+            })
+        );
+        expect(parser.processedPosts.value).toBe(12);
+        expect(parser.processedReactions.value).toBe(5);
+
+        await parser.start();
+        expect(parser.stage.value).toBe('failed');
+        expect(parser.processedPosts.value).toBe(0);
+        expect(parser.processedReactions.value).toBe(0);
+    });
+
+    it('honors the Telegram custom range limit including both dates', async () => {
+        apiRequest.mockResolvedValueOnce(historyResponse(false));
+        const translate = vi.fn((key: string) => key);
+        const parser = useTelegramParser(translate, () => 1);
+        Object.assign(parser.form, {
+            chatUsername: 'example',
+            period: 'custom',
+            dateFrom: '2026-03-28',
+            dateTo: '2026-03-29',
+        });
+        await vi.advanceTimersByTimeAsync(0);
+
+        await parser.start();
+        expect(apiRequest).toHaveBeenCalledTimes(1);
+        expect(translate).toHaveBeenCalledWith('telegram.customRangeTooLong', {
+            days: 1,
+        });
+
+        apiRequest.mockResolvedValueOnce({ ok: false });
+        parser.form.dateTo = parser.form.dateFrom;
+        await parser.start();
+        expect(apiRequest).toHaveBeenLastCalledWith(
+            '/telegram/parser/start',
+            expect.objectContaining({ method: 'POST' })
+        );
+    });
+
     it('does not apply status from a different run', async () => {
         apiRequest
             .mockResolvedValueOnce(historyResponse())
@@ -362,6 +390,7 @@ describe('useParserRun', () => {
         parser.download();
         parser.downloadHistoryRun(parser.historyItems.value[0]);
         parser.downloadHistoryRunJson({
+            ...parser.historyItems.value[0],
             runId: 'tampered',
             status: 'completed',
             downloadUrl: null,
@@ -374,6 +403,7 @@ describe('useParserRun', () => {
             'https://free-search.test/parser/report?format=json&locale=ru'
         );
         parser.downloadHistoryRun({
+            ...parser.historyItems.value[0],
             runId: 'completed-run',
             status: 'completed',
             downloadUrl: '/parser/report?run=completed-run',
@@ -410,10 +440,10 @@ describe('useParserRun', () => {
         await vi.advanceTimersByTimeAsync(0);
 
         expect(apiRequest.mock.calls[1][0]).toBe(
-            '/test/parser/status/..%2Fother%3Fkey%3Dvalue'
+            '/telegram/parser/status/..%2Fother%3Fkey%3Dvalue'
         );
         expect(apiRequest.mock.calls[2][0]).toBe(
-            '/test/parser/stop/..%2Fother%3Fkey%3Dvalue'
+            '/telegram/parser/stop/..%2Fother%3Fkey%3Dvalue'
         );
     });
 });

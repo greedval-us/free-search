@@ -21,7 +21,8 @@ class SearchMessagesDTO
         public int $limit = 20,
         public int $max_id = 0,
         public int $min_id = 0,
-        public array $hash = []
+        public array $hash = [],
+        public ?string $authorUsername = null,
     ) {}
 
     public static function fromArray(array $params): self
@@ -52,7 +53,7 @@ class SearchMessagesDTO
 
         return new self(
             peer: $peer,
-            q: $params['q'] ?? '',
+            q: trim((string) ($params['q'] ?? '')),
             from_id: $params['from_id'] ?? null,
             saved_peer_id: $params['saved_peer_id'] ?? null,
             saved_reaction: $params['saved_reaction'] ?? [],
@@ -66,6 +67,7 @@ class SearchMessagesDTO
             max_id: $maxId,
             min_id: $minId,
             hash: $params['hash'] ?? [],
+            authorUsername: $params['authorUsername'] ?? null,
         );
     }
 
@@ -87,6 +89,16 @@ class SearchMessagesDTO
             'max_id' => $this->max_id,
             'min_id' => $this->min_id,
             'hash' => $this->hash,
+            'authorUsername' => $this->authorUsername,
         ];
+    }
+
+    public static function usesHistory(array $filter): bool
+    {
+        return trim((string) ($filter['q'] ?? '')) === ''
+            && ! isset($filter['authorUsername'])
+            && ! isset($filter['top_msg_id'])
+            && empty($filter['saved_reaction'])
+            && ($filter['filter']['_'] ?? 'inputMessagesFilterEmpty') === 'inputMessagesFilterEmpty';
     }
 }

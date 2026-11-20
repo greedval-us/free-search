@@ -161,13 +161,13 @@ final class PublicTelegramSource
         }
     }
 
-    private static function hasUsername(array $chat, string $username): bool
+    public static function hasUsername(array $peer, string $username): bool
     {
-        if (self::username($chat['username'] ?? null) === $username) {
+        if (self::username($peer['username'] ?? null) === $username) {
             return true;
         }
 
-        foreach ($chat['usernames'] ?? [] as $alias) {
+        foreach ($peer['usernames'] ?? [] as $alias) {
             if (is_array($alias) && ($alias['active'] ?? false)
                 && self::username($alias['username'] ?? null) === $username) {
                 return true;

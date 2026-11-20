@@ -3,8 +3,8 @@
 namespace App\Http\Responses;
 
 use App\Http\Responses\Contracts\TelegramMediaResponderInterface;
-use App\Modules\Telegram\Core\Contracts\TelegramGatewayInterface;
 use App\Support\Http\DocumentResponseHeaders;
+use Closure;
 use finfo;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Str;
@@ -26,14 +26,10 @@ final class TelegramMediaResponder implements TelegramMediaResponderInterface
 
     private const MAX_DOWNLOAD_NAME_LENGTH = 180;
 
-    public function __construct(
-        private readonly TelegramGatewayInterface $telegramGateway,
-    ) {}
-
     public function respond(array $mediaPayload): BinaryFileResponse
     {
-        $media = is_array($mediaPayload['media'] ?? null) ? $mediaPayload['media'] : null;
-        abort_if($media === null, 404);
+        $downloadToFile = $mediaPayload['downloadToFile'] ?? null;
+        abort_unless($downloadToFile instanceof Closure, 404);
 
         $download = is_array($mediaPayload['download'] ?? null) ? $mediaPayload['download'] : [];
         $name = $this->normalizeDownloadName($download['name'] ?? null);
@@ -45,7 +41,7 @@ final class TelegramMediaResponder implements TelegramMediaResponderInterface
 
         $downloadPath = $this->createTemporaryFile($extension);
         try {
-            $this->telegramGateway->downloadMediaToFile($media, $downloadPath);
+            $downloadToFile($downloadPath);
         } catch (Throwable $exception) {
             File::delete($downloadPath);
 

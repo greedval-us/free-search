@@ -1,4 +1,4 @@
-import type { ParserRunStatus } from '@/composables/useParserRun';
+import type { ParserRunStatus } from '@/types/parser';
 
 export type ParserDisplayStatus = ParserRunStatus | 'idle' | 'unknown';
 

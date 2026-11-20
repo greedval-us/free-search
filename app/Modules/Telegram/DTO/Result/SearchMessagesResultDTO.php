@@ -8,7 +8,7 @@ class SearchMessagesResultDTO implements ArrayPayloadable
 {
     /**
      * @param  array<int, mixed>  $items
-     * @param  array{limit: int, offsetId: int, nextOffsetId: int|null, hasMore: bool, total: int}  $pagination
+     * @param  array{limit: int, offsetId: int, nextOffsetId: int|null, hasMore: bool, total: int|null}  $pagination
      */
     public function __construct(
         public readonly bool $ok,

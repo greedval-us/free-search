@@ -1,5 +1,8 @@
 import { computed, reactive, ref } from 'vue';
 import { apiRequest, resolveClientErrorMessage } from '@/lib/api';
+import { getDocumentLocale } from '@/lib/locale';
+import { seoAudit, seoReport } from '@/routes/site-intel';
+import { DEFAULT_SEO_AUDIT_OPTIONS } from '../lib/seo-audit-options';
 import type { SiteIntelSeoAuditResult } from '../types';
 
 type TranslateFn = (key: string) => string;
@@ -7,8 +10,7 @@ type TranslateFn = (key: string) => string;
 export const useSeoAudit = (t: TranslateFn) => {
     const form = reactive({
         target: '',
-        crawlLimit: 8,
-        platformType: 'auto',
+        ...DEFAULT_SEO_AUDIT_OPTIONS,
     });
 
     const loading = ref(false);
@@ -33,7 +35,7 @@ export const useSeoAudit = (t: TranslateFn) => {
 
         try {
             const apiResult = await apiRequest<SiteIntelSeoAuditResult>(
-                '/site-intel/seo-audit',
+                seoAudit.url(),
                 {
                     method: 'GET',
                     query: {
@@ -63,6 +65,24 @@ export const useSeoAudit = (t: TranslateFn) => {
         }
     };
 
+    const showReport = (download: boolean) => {
+        if (typeof window === 'undefined') {
+            return;
+        }
+
+        const url = seoReport.url({
+            query: {
+                target: result.value?.target.finalUrl || form.target.trim(),
+                locale: getDocumentLocale(),
+                crawl_limit: String(form.crawlLimit),
+                platform_type: form.platformType,
+                download: download ? '1' : undefined,
+            },
+        });
+
+        window.open(url, '_blank', 'noopener,noreferrer');
+    };
+
     return {
         form,
         loading,
@@ -71,58 +91,7 @@ export const useSeoAudit = (t: TranslateFn) => {
         canAnalyze,
         canUseReportActions,
         analyze,
-        openReport: () => openReport(form, result.value),
-        downloadReport: () => downloadReport(form, result.value),
+        openReport: () => showReport(false),
+        downloadReport: () => showReport(true),
     };
-};
-
-const reportUrl = (
-    form: { target: string; crawlLimit: number; platformType: string },
-    result: SiteIntelSeoAuditResult | null,
-    download = false
-) => {
-    const locale =
-        typeof document !== 'undefined' &&
-        document.documentElement.lang.toLowerCase().startsWith('ru')
-            ? 'ru'
-            : 'en';
-    const target = result?.target.finalUrl || form.target.trim();
-    const query = new URLSearchParams({
-        target,
-        locale,
-        crawl_limit: String(form.crawlLimit),
-        platform_type: form.platformType,
-    });
-
-    if (download) {
-        query.set('download', '1');
-    }
-
-    return `/site-intel/seo-report?${query.toString()}`;
-};
-
-const openReport = (
-    form: { target: string; crawlLimit: number; platformType: string },
-    result: SiteIntelSeoAuditResult | null
-) => {
-    if (typeof window === 'undefined') {
-        return;
-    }
-
-    window.open(
-        reportUrl(form, result, false),
-        '_blank',
-        'noopener,noreferrer'
-    );
-};
-
-const downloadReport = (
-    form: { target: string; crawlLimit: number; platformType: string },
-    result: SiteIntelSeoAuditResult | null
-) => {
-    if (typeof window === 'undefined') {
-        return;
-    }
-
-    window.open(reportUrl(form, result, true), '_blank', 'noopener,noreferrer');
 };

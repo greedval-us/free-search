@@ -2,6 +2,7 @@
 
 namespace App\Modules\Telegram;
 
+use App\Exceptions\PublicException;
 use App\Facades\MadelineProto;
 use App\Modules\Telegram\Access\PublicTelegramSource;
 use App\Modules\Telegram\Actions\Request\CommentsAction;
@@ -21,8 +22,6 @@ use Illuminate\Support\Facades\Log;
 class TelegramService implements TelegramGatewayInterface
 {
     private const MIN_COMMENTS_LIMIT = 1;
-
-    private const COMMENTS_REQUEST_DELAY_MS = 650;
 
     private const COMMENTS_MAX_PAGES = 1;
 
@@ -59,19 +58,31 @@ class TelegramService implements TelegramGatewayInterface
     public function getMessages(array $filter): ?ChannelMessagesDTO
     {
         if (PublicTelegramSource::username($filter['peer'] ?? $filter['chatUsername'] ?? $filter['chat'] ?? null) === null
-            || filled($filter['from_id'] ?? null) || filled($filter['saved_peer_id'] ?? null)) {
+            || filled($filter['from_id'] ?? null) || filled($filter['saved_peer_id'] ?? null)
+            || isset($filter['authorId'])) {
             return null;
         }
 
         try {
-            $dto = SearchMessagesDTO::fromArray(params: $filter);
-            $data = $this->messagesAction->execute(filter: $dto->toArray());
+            $parameters = SearchMessagesDTO::fromArray(params: $filter)->toArray();
+            $data = $this->messagesAction->execute(filter: $parameters);
 
             if (! $this->isValidMessagesResponse($data)) {
                 return null;
             }
 
+            if (SearchMessagesDTO::usesHistory($parameters) && ($parameters['min_date'] > 0 || $parameters['max_date'] > 0)) {
+                // getHistory supports an upper date cursor, but has no lower date filter.
+                $data['messages'] = array_values(array_filter($data['messages'], static function (array $message) use ($parameters): bool {
+                    $date = (int) ($message['date'] ?? 0);
+
+                    return $date > $parameters['min_date'] && ($parameters['max_date'] === 0 || $date < $parameters['max_date']);
+                }));
+            }
+
             return new ChannelMessagesDTO($data);
+        } catch (PublicException $e) {
+            throw $e;
         } catch (\Throwable $e) {
             Log::warning('[TelegramService::getMessages] Failed to load messages', [
                 'filter' => $this->sanitizeFilterForLogs($filter),
@@ -99,11 +110,11 @@ class TelegramService implements TelegramGatewayInterface
                 return $this->failedCommentsPage();
             }
 
-            $safeLimit = max(self::MIN_COMMENTS_LIMIT, min($limit, self::DEFAULT_COMMENTS_LIMIT));
+            $safeLimit = max(self::MIN_COMMENTS_LIMIT, min($limit, 100));
             $result = $this->commentsAction->execute(
                 channelId: $channel,
                 postIds: [$postId],
-                delayMs: self::COMMENTS_REQUEST_DELAY_MS,
+                delayMs: 0,
                 commentsPerRequest: $safeLimit,
                 maxPages: self::COMMENTS_MAX_PAGES,
                 offsetId: max(self::INITIAL_COMMENTS_OFFSET_ID, $offsetId),
@@ -121,6 +132,8 @@ class TelegramService implements TelegramGatewayInterface
                 'hasMore' => (bool) ($result[0]['has_more'] ?? false),
                 'total' => (int) ($result[0]['total'] ?? 0),
             ];
+        } catch (PublicException $e) {
+            throw $e;
         } catch (\Throwable $e) {
             Log::warning('[TelegramService::getComments] Failed to load comments', [
                 'channel' => $channel,
@@ -146,10 +159,7 @@ class TelegramService implements TelegramGatewayInterface
             if ($source === null) {
                 return null;
             }
-            $response = $client->channels->getMessages([
-                'channel' => $source['channel'],
-                'id' => [$messageId],
-            ]);
+            $response = $client->channels->getMessages(channel: $source['channel'], id: [$messageId]);
 
             $messages = is_array($response['messages'] ?? null) ? $response['messages'] : [];
             $message = $messages[0] ?? null;
@@ -171,9 +181,11 @@ class TelegramService implements TelegramGatewayInterface
             }
 
             return [
-                'media' => $media,
-                'download' => $downloadInfo,
+                'downloadToFile' => static fn (string $path): string => $client->downloadToFile($media, $path),
+                'download' => Arr::only($downloadInfo, ['name', 'ext']),
             ];
+        } catch (PublicException $e) {
+            throw $e;
         } catch (\Throwable $e) {
             Log::warning('[TelegramService::getMessageMedia] Failed to load media', [
                 'channel' => $channel,
@@ -185,17 +197,12 @@ class TelegramService implements TelegramGatewayInterface
         }
     }
 
-    public function downloadMediaToFile(array $media, string $path): string
-    {
-        return $this->madeline()->downloadToFile($media, $path);
-    }
-
     private function madeline(): API
     {
         /** @var MadelineProtoManager $manager */
         $manager = MadelineProto::getFacadeRoot();
 
-        return $manager->client();
+        return $manager->authorizedClient();
     }
 
     private function isValidInfoResponse(?array $data): bool

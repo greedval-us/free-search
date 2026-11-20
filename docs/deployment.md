@@ -1,6 +1,6 @@
 # Production deployment
 
-В репозитории нет Docker/Kubernetes, web-server или process-manager templates. Выбор nginx/Apache, systemd/Supervisor, containers и secret store остаётся задачей инфраструктуры.
+Настройте web-сервер с корнем `public/`, менеджер процессов для очередей и SSR и хранилище секретов. Пример Docker Compose в `docker/searxng` запускает поисковый сервис для модуля новостей.
 
 ## Release sequence
 
@@ -95,9 +95,13 @@ fastcgi_busy_buffers_size 32k;
 
 Подробное разделение implemented/recommended: [Security](security.md).
 
+Перед публичным запуском или обновлением задайте в `.env` адрес для обращений по вопросам конфиденциальности в `PRIVACY_CONTACT_EMAIL`, затем обновите кэш командой `php artisan config:cache`. Этот адрес появится на странице политики конфиденциальности.
+
 ## Verification checklist
 
-При обновлении с версии без quota receipts сначала приостановите dispatch scheduler, дождитесь завершения HTTP-запросов и остановите queue workers. После выкладки кода выполните `php artisan migrate --force`: аддитивные миграции `2026_10_10_022106_create_feature_usage_receipts_table.php` и `2026_10_10_023842_add_source_request_count_to_parser_runs_table.php` добавляют receipts и устойчивый счётчик обращений parser run. Затем пересоберите config cache и перезапустите workers/scheduler. Существующие queued report IDs и checkpoint versions сохраняются; старый PHP-код не должен выполняться одновременно с новым refund contract. Подробности backfill и ограничений исторических данных: [quota upgrade](refactoring-quota.md).
+При обновлении с версии без quota receipts сначала приостановите dispatch scheduler, дождитесь завершения HTTP-запросов и остановите queue workers. После выкладки кода выполните `php artisan migrate --force`: аддитивные миграции `2026_10_10_022106_create_feature_usage_receipts_table.php` и `2026_10_10_023842_add_source_request_count_to_parser_runs_table.php` добавляют receipts и устойчивый счётчик обращений parser run. Затем пересоберите config cache и перезапустите workers/scheduler. Существующие queued report IDs и checkpoint versions сохраняются; старый PHP-код не должен выполняться одновременно с новым refund contract.
+
+Миграция связывает оплаченные отчёты в состояниях `pending` и `processing` со счётчиком исходного дня по `quota_charged_at`. Она пропускает аккаунты сотрудников и отсутствующие или нулевые счётчики. Сохраните часовой пояс приложения и соответствие ключей квот на время перехода. Если роли или настройки квот менялись, проверьте такие записи отдельно. Откат миграции удаляет историю квитанций и связи с отчётами. [Проверка обновления на MySQL](testing.md#mysql)
 
 Проверьте регистрацию `app:recover-parser-runs` в ежеминутном scheduler и выполните `php artisan app:recover-parser-runs --dry-run` перед включением фонового восстановления. Web, workers, recovery и cleanup должны видеть одни и те же private files и общий cache lock backend; независимые локальные диски не поддерживаются. Новые технические пределы перечислены в [.env.example](../.env.example) и [configuration](configuration.md).
 

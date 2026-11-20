@@ -33,7 +33,7 @@ JSON содержит `reportSchedule.scheduledFor`, фактический `che
 
 ## Настройка очереди
 
-SearXNG уже развёрнут на VPS; локальная установка для этой функции не нужна. Laravel и worker должны иметь доступ к адресу `OSINT_NEWS_MEDIA_SEARXNG_BASE_URL`. Для всех сценариев аналитики включите JSON, категории `news` и `general`, а также нужные движки на существующем SearXNG.
+Laravel и worker должны иметь доступ к вашему экземпляру SearXNG по адресу `OSINT_NEWS_MEDIA_SEARXNG_BASE_URL`. Для всех сценариев аналитики включите JSON, категории `news` и `general`, а также нужные движки на существующем SearXNG.
 
 Примените миграции и соберите клиент/SSR:
 

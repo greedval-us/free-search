@@ -1,4 +1,5 @@
 import { computed, ref } from 'vue';
+import { useLocaleFormatters } from '@/composables/useLocaleFormatters';
 import {
     getRepeatQueryParams,
     isRepeatAutorunEnabled,
@@ -6,6 +7,7 @@ import {
     readRepeatQueryParam,
 } from '@/composables/useRepeatQuery';
 import { apiRequest, resolveApiErrorMessage } from '@/lib/api';
+import { report, summary } from '@/routes/youtube/analytics';
 import type { YouTubeAnalyticsPayload, YouTubeVideo } from '../types';
 
 type TranslateFn = (key: string) => string;
@@ -139,7 +141,7 @@ export const useYouTubeAnalytics = (
         error.value = null;
 
         const response = await apiRequest<YouTubeAnalyticsPayload>(
-            '/youtube/analytics/summary',
+            summary.url(),
             {
                 query: {
                     mode: form.value.mode,
@@ -177,44 +179,41 @@ export const useYouTubeAnalytics = (
         result.value = response.data;
     };
 
-    const reportUrl = computed(() => {
-        const query = new URLSearchParams({
+    const reportUrl = (download = false) => {
+        const query: Record<string, string> = {
             mode: form.value.mode,
             locale: locale.value,
-        });
+        };
 
         if (form.value.mode === 'video') {
-            query.set('videoId', form.value.videoId.trim());
+            query.videoId = form.value.videoId.trim();
         } else {
-            query.set('channelId', form.value.channelId.trim());
-            query.set('periodDays', String(form.value.periodDays));
+            query.channelId = form.value.channelId.trim();
+            query.periodDays = String(form.value.periodDays);
 
             if (form.value.dateFrom && form.value.dateTo) {
-                query.set('dateFrom', form.value.dateFrom);
-                query.set('dateTo', form.value.dateTo);
+                query.dateFrom = form.value.dateFrom;
+                query.dateTo = form.value.dateTo;
             }
         }
 
-        return `/youtube/analytics/report?${query.toString()}`;
-    });
+        if (download) {
+            query.download = '1';
+        }
+
+        return report.url({ query });
+    };
 
     const openReport = () => {
-        window.open(reportUrl.value, '_blank', 'noopener,noreferrer');
+        window.open(reportUrl(), '_blank', 'noopener,noreferrer');
     };
 
     const downloadReport = () => {
-        window.open(
-            `${reportUrl.value}&download=1`,
-            '_blank',
-            'noopener,noreferrer'
-        );
+        window.open(reportUrl(true), '_blank', 'noopener,noreferrer');
     };
 
-    const fmt = (value: number) =>
-        new Intl.NumberFormat(locale.value).format(value ?? 0);
+    const { formatNumber: fmt, formatDate } = useLocaleFormatters(locale);
     const pct = (value: number) => `${Number(value ?? 0).toFixed(2)}%`;
-    const formatDate = (value: string) =>
-        value ? new Date(value).toLocaleString(locale.value) : '-';
     const compactText = (value: string, max = 220) =>
         value.length > max ? `${value.slice(0, max).trim()}...` : value;
 

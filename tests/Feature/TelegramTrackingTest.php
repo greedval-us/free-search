@@ -525,31 +525,6 @@ class TelegramTrackingTest extends TestCase
         $this->assertNotNull($source->fresh()->checked_at);
     }
 
-    public function test_search_migration_preserves_legacy_progress_and_collected_messages(): void
-    {
-        $task = app(TrackingService::class)->create($this->user, $this->input(['groups' => ['publicgroup', 'anothergroup']]));
-        [$source, $idle] = $task->sources()->orderBy('id')->get()->all();
-        $this->travel(6)->hours();
-        $this->gateway->pages = [[$this->message(10)]];
-        $this->collect($source);
-        $source->refresh();
-        $progress = $source->only(['cursor_id', 'offset_id', 'high_id', 'pending_matches', 'window_end', 'checked_at']);
-
-        // Recreate the pre-upgrade schema in the isolated test database.
-        $migration = require database_path('migrations/2026_09_10_130000_add_search_windows_to_telegram_tracking_sources.php');
-        $migration->down();
-        $migration->up();
-
-        $source->refresh();
-        $this->assertEquals($progress, $source->only(array_keys($progress)));
-        $this->assertTrue($source->window_start->equalTo($source->collect_from));
-        $this->assertSame(TelegramTrackingSource::HISTORY, $source->collection_method);
-        $this->assertNull($idle->fresh()->window_start);
-        $this->assertNull($idle->fresh()->collection_method);
-        $this->assertDatabaseCount('telegram_tracking_messages', 1);
-        $this->assertDatabaseCount('telegram_tracking_sources', 2);
-    }
-
     private function input(array $overrides = []): array
     {
         return [...['name' => 'Test tracking', 'mode' => 'keyword', 'query' => 'test', 'groups' => ['publicgroup'], 'notify_bot' => false], ...$overrides];

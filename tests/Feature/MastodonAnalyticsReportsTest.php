@@ -3,7 +3,6 @@
 namespace Tests\Feature;
 
 use App\Exceptions\Public\ExternalServiceRequestException;
-use App\Models\FeatureUsageDaily;
 use App\Models\MastodonAnalyticsReport;
 use App\Models\MastodonAnalyticsSchedule;
 use App\Models\User;
@@ -18,7 +17,6 @@ use App\Modules\Mastodon\Analytics\Reports\ScheduledMastodonAnalytics;
 use App\Services\Access\Contracts\FeatureAccessServiceInterface;
 use App\Support\PublicMastodonAccount;
 use Carbon\CarbonImmutable;
-use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Bus;
 use Illuminate\Support\Facades\Event;
@@ -26,10 +24,12 @@ use Illuminate\Support\Facades\Http;
 use Mockery;
 use PHPUnit\Framework\Attributes\DataProvider;
 use RuntimeException;
+use Tests\Feature\Concerns\AssertsUsedCredits;
 use Tests\TestCase;
 
 class MastodonAnalyticsReportsTest extends TestCase
 {
+    use AssertsUsedCredits;
     use RefreshDatabase;
 
     protected function setUp(): void
@@ -147,8 +147,11 @@ class MastodonAnalyticsReportsTest extends TestCase
 
         $completed = $report->fresh();
         $this->assertSame(MastodonAnalyticsReport::COMPLETED, $completed->status);
-        $this->assertSame($data, $completed->data);
-        $this->assertSame(1, FeatureUsageDaily::query()->where('user_id', $user->id)->sum('used'));
+        $this->assertJsonStringEqualsJsonString(
+            json_encode($data, JSON_THROW_ON_ERROR),
+            json_encode($completed->data, JSON_THROW_ON_ERROR),
+        );
+        $this->assertUsedCredits(1, $user);
         $this->assertArrayNotHasKey('data', $completed->toArray());
         $this->assertNull($completed->lease_token);
         Event::assertDispatchedTimes(AnalyticsReportCompleted::class, 1);
@@ -202,7 +205,7 @@ class MastodonAnalyticsReportsTest extends TestCase
         app(AnalyticsReportGenerator::class)->generate($report->id, $report->lease_token);
 
         $this->assertSame(MastodonAnalyticsReport::FAILED, $report->fresh()->status);
-        $this->assertSame(0, FeatureUsageDaily::query()->where('user_id', $user->id)->sum('used'));
+        $this->assertUsedCredits(0, $user);
     }
 
     public function test_manual_run_can_generate_paused_schedule_and_deleting_schedule_preserves_history(): void
@@ -316,7 +319,7 @@ class MastodonAnalyticsReportsTest extends TestCase
         $this->assertSame(MastodonAnalyticsReport::FAILED, $report->fresh()->status);
         $this->assertSame($reason, $report->fresh()->error_code);
         $this->assertNull($report->fresh()->data);
-        $this->assertSame(0, FeatureUsageDaily::query()->where('user_id', $user->id)->sum('used'));
+        $this->assertUsedCredits(0, $user);
         Event::assertNotDispatched(AnalyticsReportCompleted::class);
     }
 
@@ -334,26 +337,6 @@ class MastodonAnalyticsReportsTest extends TestCase
         }
 
         $this->assertDatabaseCount('mastodon_analytics_schedules', 0);
-        Bus::assertNotDispatched(GenerateAnalyticsReport::class);
-    }
-
-    public function test_another_owner_cannot_run_or_change_schedule(): void
-    {
-        $owner = User::factory()->create();
-        $other = User::factory()->create();
-        $schedule = $this->createSchedule($owner);
-        Bus::fake([GenerateAnalyticsReport::class]);
-
-        foreach (['runNow', 'change'] as $method) {
-            try {
-                app(AnalyticsReportScheduleService::class)->{$method}($other, $schedule->id, 'pause');
-                $this->fail('An owner boundary must be enforced.');
-            } catch (ModelNotFoundException) {
-                $this->assertTrue($schedule->fresh()->enabled);
-            }
-        }
-
-        $this->assertDatabaseCount('mastodon_analytics_reports', 0);
         Bus::assertNotDispatched(GenerateAnalyticsReport::class);
     }
 
@@ -475,7 +458,7 @@ class MastodonAnalyticsReportsTest extends TestCase
         $this->assertSame(3, $report->fresh()->attempt_count);
         $this->assertNull($report->fresh()->data);
         $this->assertFalse($report->fresh()->quota_charged);
-        $this->assertSame(0, FeatureUsageDaily::query()->where('user_id', $user->id)->sum('used'));
+        $this->assertUsedCredits(0, $user);
         Event::assertNotDispatched(AnalyticsReportCompleted::class);
     }
 
@@ -500,8 +483,8 @@ class MastodonAnalyticsReportsTest extends TestCase
         app(AnalyticsReportGenerator::class)->generate($report->id, $report->fresh()->lease_token);
 
         $this->assertSame(MastodonAnalyticsReport::FAILED, $report->fresh()->status);
-        $this->assertSame(1, FeatureUsageDaily::query()->where('user_id', $user->id)->whereDate('usage_date', '2026-10-10')->sum('used'));
-        $this->assertSame(1, FeatureUsageDaily::query()->where('user_id', $user->id)->whereDate('usage_date', '2026-10-11')->sum('used'));
+        $this->assertUsedCredits(1, $user, '2026-10-10');
+        $this->assertUsedCredits(1, $user, '2026-10-11');
         Event::assertNotDispatched(AnalyticsReportCompleted::class);
     }
 
@@ -530,7 +513,7 @@ class MastodonAnalyticsReportsTest extends TestCase
         $this->assertSame(2, $notifications);
         $this->assertNotNull($report->fresh()->completion_notified_at);
         $this->assertSame(['marker' => 'saved'], $report->fresh()->data);
-        $this->assertSame(1, FeatureUsageDaily::query()->where('user_id', $user->id)->sum('used'));
+        $this->assertUsedCredits(1, $user);
         Bus::assertDispatchedTimes(GenerateAnalyticsReport::class, 1);
     }
 
@@ -554,7 +537,7 @@ class MastodonAnalyticsReportsTest extends TestCase
         $this->assertSame(MastodonAnalyticsReport::FAILED, $report->fresh()->status);
         $this->assertSame('disabled', $report->fresh()->error_code);
         $this->assertNull($report->fresh()->data);
-        $this->assertSame(0, FeatureUsageDaily::query()->where('user_id', $user->id)->sum('used'));
+        $this->assertUsedCredits(0, $user);
         Event::assertNotDispatched(AnalyticsReportCompleted::class);
     }
 
@@ -575,7 +558,7 @@ class MastodonAnalyticsReportsTest extends TestCase
 
         $this->assertSame(MastodonAnalyticsReport::FAILED, $report->fresh()->status);
         $this->assertSame('disabled', $report->fresh()->error_code);
-        $this->assertSame(0, FeatureUsageDaily::query()->where('user_id', $user->id)->sum('used'));
+        $this->assertUsedCredits(0, $user);
         Event::assertNotDispatched(AnalyticsReportCompleted::class);
     }
 

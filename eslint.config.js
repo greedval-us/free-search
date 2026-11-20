@@ -77,6 +77,7 @@ export default defineConfigWithVueTs(
     },
     {
         ignores: [
+            '.cache/',
             'vendor',
             'node_modules',
             'public',

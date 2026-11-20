@@ -4,6 +4,7 @@ import { computed, onMounted } from 'vue';
 import IntelAdvancedFilters from '@/components/ui/IntelAdvancedFilters.vue';
 import SearchTabLayout from '@/components/ui/search/SearchTabLayout.vue';
 import { useI18n } from '@/composables/useI18n';
+import { useLocaleFormatters } from '@/composables/useLocaleFormatters';
 import {
     getRepeatQueryParams,
     isRepeatAutorunEnabled,
@@ -42,13 +43,7 @@ const {
 const canSearch = computed(() => form.chatUsername.trim().length > 0);
 const loadedCount = computed(() => items.value.length);
 
-const formatDate = (unix: number) => {
-    if (!unix) {
-        return '-';
-    }
-
-    return new Date(unix * 1000).toLocaleString(locale.value);
-};
+const { formatUnixDate: formatDate } = useLocaleFormatters(locale);
 
 const mediaLabel = (type: string) => {
     const map: Record<string, string> = {
@@ -128,7 +123,7 @@ onMounted(() => {
         :collapsed="searchPanelCollapsed"
         :show-advanced="showAdvanced"
         :loading="loading"
-        :can-search="canSearch"
+        :can-search="canSearch && !loadingMore"
         :advanced-show-aria="t('telegram.search.advancedAriaShow')"
         :advanced-hide-aria="t('telegram.search.advancedAriaHide')"
         :submit-label="t('telegram.search.find')"
@@ -168,7 +163,7 @@ onMounted(() => {
 
                 <label class="intel-field">
                     <span class="intel-label">{{
-                        t('telegram.search.authorId')
+                        t('telegram.search.authorUsername')
                     }}</span>
                     <input
                         v-model="form.fromUsername"
@@ -228,8 +223,8 @@ onMounted(() => {
                     {{ t('telegram.messages.title') }}
                 </h2>
                 <p class="text-xs text-muted-foreground">
-                    {{ t('telegram.messages.shown') }}: {{ loadedCount }} /
-                    {{ total }}
+                    {{ t('telegram.messages.shown') }}: {{ loadedCount }}
+                    <template v-if="total !== null"> / {{ total }}</template>
                 </p>
             </div>
 

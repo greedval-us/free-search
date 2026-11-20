@@ -19,6 +19,7 @@ import {
     telegram,
     youtube,
 } from '@/routes';
+import { modules as wikiModules } from '@/routes/wiki';
 import type { NavItem } from '@/types';
 
 type Translate = (key: string) => string;
@@ -104,7 +105,7 @@ export const buildHeaderNavItems = (t: Translate): NavItem[] =>
 export const buildFooterNavItems = (t: Translate): NavItem[] => [
     {
         title: t('navigation.modulesWiki'),
-        href: '/wiki/modules',
+        href: wikiModules(),
         icon: BookOpenText,
     },
 ];

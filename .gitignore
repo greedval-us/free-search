@@ -6,12 +6,20 @@ node_modules/
 # Environment and local credentials
 .env
 .env.*
-!.env.example
-!.env.*.example
+!/.env.example
+!/docker/searxng/.env.example
 /Homestead.yaml
 /Homestead.json
 /.vagrant/
-/storage/*.key
+*.key
+*.p12
+*.pfx
+id_rsa
+id_ed25519
+# MadelineProto can use a custom session path.
+*.madeline
+*.madeline.*
+session-pool.state
 
 # Local server, editors and AI assistants
 /.osp/
@@ -23,6 +31,7 @@ node_modules/
 /.vscode/
 /.fleet/
 /.phpactor.json
+/docs/internal/
 
 # Laravel / Vite runtime and generated assets
 /public/build/

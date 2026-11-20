@@ -97,8 +97,7 @@ final class SiteIntelReportIntegrationTest extends TelegramBotTestCase
         app(BotRouter::class)->dispatch('send', $context, $jsonButton->parameters);
         $delivery = BotDelivery::query()->sole();
         $this->assertFalse($delivery->automatic);
-        $this->mock(BotTransport::class)->shouldReceive('document')->once()->with($link->telegraph_chat_id,
-            \Mockery::on(fn (BotDocument $document): bool => json_decode(file_get_contents($document->path), true, flags: JSON_THROW_ON_ERROR) === $report->data));
+        $this->expectJsonDocument($link->telegraph_chat_id, $report->data);
 
         app()->call([new DeliverBotMessage($delivery->id, $link->telegram_id), 'handle']);
 

@@ -5,12 +5,17 @@ use App\Http\Controllers\Telegram\TelegramAnalyticsReportsController;
 use App\Http\Controllers\Telegram\TelegramParserController;
 use App\Http\Controllers\Telegram\TelegramSearchController;
 use App\Http\Controllers\Telegram\TelegramTrackingController;
+use App\Modules\Telegram\Support\TelegramConfig;
 use App\Support\Http\RouteThrottle;
 use Illuminate\Support\Facades\Route;
+use Inertia\Inertia;
 
-Route::inertia('telegram', 'Telegram')
-    ->middleware('feature.access')
-    ->name('telegram');
+Route::get('telegram', static fn (TelegramConfig $config) => Inertia::render('Telegram', [
+    'customRangeMaxDays' => [
+        'parser' => $config->parserCustomRangeMaxDays(),
+        'analytics' => $config->analyticsCustomRangeMaxDays(),
+    ],
+]))->middleware('feature.access')->name('telegram');
 
 Route::prefix('telegram')->name('telegram.')->group(function (): void {
     Route::prefix('tracking')->name('tracking.')->group(function (): void {

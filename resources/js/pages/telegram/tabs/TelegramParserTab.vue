@@ -1,12 +1,15 @@
 <script setup lang="ts">
+import { usePage } from '@inertiajs/vue3';
 import { computed } from 'vue';
 import ParserTabLayout from '@/components/ui/parser/ParserTabLayout.vue';
 import { useI18n } from '@/composables/useI18n';
 import { useStageLabel } from '@/composables/useStageLabel';
 import { useTelegramParser } from '../composables/useTelegramParser';
+import type { TelegramPageProps } from '../types';
 import TelegramParserHistoryPanel from './components/TelegramParserHistoryPanel.vue';
 
 const { t } = useI18n();
+const page = usePage<TelegramPageProps>();
 
 const {
     form,
@@ -31,7 +34,7 @@ const {
     downloadJson,
     downloadHistoryRun,
     downloadHistoryRunJson,
-} = useTelegramParser(t);
+} = useTelegramParser(t, () => page.props.customRangeMaxDays.parser);
 
 const stageLabel = useStageLabel(stage, (value) =>
     t(`telegram.parser.progress.stage.${value}`)

@@ -28,7 +28,7 @@ jobs:
         with:
           php-version: '8.3'
           coverage: none
-          extensions: mbstring, xml, curl, zip, gd, intl, pdo_sqlite, pdo_mysql
+          extensions: mbstring, xml, curl, zip, gd, intl, pdo_mysql
           tools: composer:v2
 
       - name: Setup Node
@@ -66,6 +66,30 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 20
 
+    services:
+      mysql:
+        image: mysql:8.4
+        env:
+          MYSQL_DATABASE: free_search_test
+          MYSQL_USER: free_search_test
+          MYSQL_PASSWORD: synthetic-suite-only
+          MYSQL_ROOT_PASSWORD: synthetic-root-test-only
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd="mysqladmin ping --silent"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=10
+
+    env:
+      TEST_DB_PASSWORD: synthetic-suite-only
+      QUOTA_CONCURRENCY_DB_HOST: 127.0.0.1
+      QUOTA_CONCURRENCY_DB_PORT: 3306
+      QUOTA_CONCURRENCY_DB_DATABASE: free_search_quota_concurrency_test
+      QUOTA_CONCURRENCY_DB_USERNAME: quota_concurrency_test
+      QUOTA_CONCURRENCY_DB_PASSWORD: synthetic-concurrency-only
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -75,7 +99,7 @@ jobs:
         with:
           php-version: '8.3'
           coverage: none
-          extensions: mbstring, xml, curl, zip, gd, intl, pdo_sqlite, pdo_mysql
+          extensions: mbstring, xml, curl, zip, gd, intl, pdo_mysql
           tools: composer:v2
 
       - name: Setup Node
@@ -93,15 +117,21 @@ jobs:
       - name: Prepare environment
         run: |
           cp .env.example .env
-          mkdir -p database
-          touch database/database.sqlite
           php artisan key:generate
 
       - name: Build assets
         run: npm run build
 
-      - name: Run test suite
-        run: php artisan test
+      - name: Prepare dedicated database for concurrency tests
+        run: |
+          docker exec -i "${{ job.services.mysql.id }}" sh -c 'MYSQL_PWD="$MYSQL_ROOT_PASSWORD" exec mysql -uroot' <<'SQL'
+          CREATE DATABASE free_search_quota_concurrency_test;
+          CREATE USER 'quota_concurrency_test'@'%' IDENTIFIED BY 'synthetic-concurrency-only';
+          GRANT ALL ON `free\_search\_quota\_concurrency\_test`.* TO 'quota_concurrency_test'@'%';
+          SQL
+
+      - name: Run test suite on MySQL
+        run: php artisan test --exclude-group=migration-upgrade
 
   build:
     name: build
@@ -117,7 +147,7 @@ jobs:
         with:
           php-version: '8.3'
           coverage: none
-          extensions: mbstring, xml, curl, zip, gd, intl, pdo_sqlite, pdo_mysql
+          extensions: mbstring, xml, curl, zip, gd, intl, pdo_mysql
           tools: composer:v2
 
       - name: Setup Node
@@ -177,7 +207,7 @@ jobs:
         with:
           php-version: '8.3'
           coverage: none
-          extensions: mbstring, xml, curl, zip, gd, intl, pdo_sqlite, pdo_mysql
+          extensions: mbstring, xml, curl, zip, gd, intl, pdo_mysql
           tools: composer:v2
 
       - name: Install PHP dependencies

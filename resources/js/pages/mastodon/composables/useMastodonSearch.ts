@@ -1,5 +1,13 @@
 import { computed, ref } from 'vue';
+import { useLocaleFormatters } from '@/composables/useLocaleFormatters';
 import { apiRequest, resolveApiErrorMessage } from '@/lib/api';
+import {
+    followers,
+    statuses as accountStatuses,
+} from '@/routes/mastodon/accounts';
+import { index as search } from '@/routes/mastodon/search';
+import { context as statusContext } from '@/routes/mastodon/statuses';
+import { statuses as tagStatuses } from '@/routes/mastodon/tags';
 import type {
     MastodonAccount,
     MastodonAccountDetailsState,
@@ -139,8 +147,7 @@ export const useMastodonSearch = (
             : DEFAULT_LIMIT;
     };
 
-    const formatDate = (value: string) =>
-        value ? new Date(value).toLocaleString(locale.value) : '-';
+    const { formatDate } = useLocaleFormatters(locale);
 
     const ensureContextState = (statusId: string) => {
         if (!contextByStatusId.value[statusId]) {
@@ -175,34 +182,29 @@ export const useMastodonSearch = (
             error.value = null;
         }
 
-        const response = await apiRequest<MastodonSearchPayload>(
-            '/mastodon/search',
-            {
-                query: {
-                    q: form.value.q,
-                    type: form.value.type,
-                    limit: form.value.limit,
-                    resolve: form.value.resolve ? 'true' : undefined,
-                    language: form.value.language || undefined,
-                    author: showsStatusFilters.value
-                        ? form.value.author || undefined
-                        : undefined,
-                    dateFrom: showsStatusFilters.value
-                        ? form.value.dateFrom || undefined
-                        : undefined,
-                    dateTo: showsStatusFilters.value
-                        ? form.value.dateTo || undefined
-                        : undefined,
-                    hasMedia: normalizeBooleanFilter(form.value.hasMedia),
-                    hasLinks: normalizeBooleanFilter(form.value.hasLinks),
-                    hasReplies: normalizeBooleanFilter(form.value.hasReplies),
-                    instanceDomain: form.value.instanceDomain || undefined,
-                    offset: append
-                        ? (result.value?.pagination.nextOffset ?? 0)
-                        : 0,
-                },
-            }
-        );
+        const response = await apiRequest<MastodonSearchPayload>(search.url(), {
+            query: {
+                q: form.value.q,
+                type: form.value.type,
+                limit: form.value.limit,
+                resolve: form.value.resolve ? 'true' : undefined,
+                language: form.value.language || undefined,
+                author: showsStatusFilters.value
+                    ? form.value.author || undefined
+                    : undefined,
+                dateFrom: showsStatusFilters.value
+                    ? form.value.dateFrom || undefined
+                    : undefined,
+                dateTo: showsStatusFilters.value
+                    ? form.value.dateTo || undefined
+                    : undefined,
+                hasMedia: normalizeBooleanFilter(form.value.hasMedia),
+                hasLinks: normalizeBooleanFilter(form.value.hasLinks),
+                hasReplies: normalizeBooleanFilter(form.value.hasReplies),
+                instanceDomain: form.value.instanceDomain || undefined,
+                offset: append ? (result.value?.pagination.nextOffset ?? 0) : 0,
+            },
+        });
 
         loading.value = false;
         loadingMore.value = false;
@@ -241,7 +243,7 @@ export const useMastodonSearch = (
         state.error = null;
 
         const response = await apiRequest<MastodonStatusContextPayload>(
-            `/mastodon/statuses/${statusId}/context`
+            statusContext.url(statusId)
         );
 
         state.loading = false;
@@ -294,7 +296,7 @@ export const useMastodonSearch = (
         }
 
         const response = await apiRequest<MastodonAccountStatusesPayload>(
-            `/mastodon/accounts/${accountId}/statuses`,
+            accountStatuses.url(accountId),
             {
                 query: {
                     limit: form.value.limit,
@@ -342,7 +344,7 @@ export const useMastodonSearch = (
         }
 
         const response = await apiRequest<MastodonAccountFollowersPayload>(
-            `/mastodon/accounts/${accountId}/followers`,
+            followers.url(accountId),
             {
                 query: {
                     limit: form.value.limit,
@@ -425,7 +427,7 @@ export const useMastodonSearch = (
         }
 
         const response = await apiRequest<MastodonTagTimelinePayload>(
-            `/mastodon/tags/${encodeURIComponent(hashtagName)}/statuses`,
+            tagStatuses.url(encodeURIComponent(hashtagName)),
             {
                 query: {
                     limit: form.value.limit,

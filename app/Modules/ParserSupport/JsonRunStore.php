@@ -2,7 +2,6 @@
 
 namespace App\Modules\ParserSupport;
 
-use App\Jobs\ProcessParserRun;
 use App\Models\ParserRun;
 use App\Modules\ParserSupport\Enums\ParserRunStatus;
 use Illuminate\Filesystem\FilesystemAdapter;
@@ -193,7 +192,7 @@ abstract class JsonRunStore
             'context' => $context,
             'cursor' => [
                 'nextAdvanceAt' => self::INITIAL_ADVANCE_TIMESTAMP,
-                'stepRetryUntil' => now()->timestamp + ProcessParserRun::RETRY_WINDOW_SECONDS,
+                'stepRetryUntil' => now()->timestamp + ParserRunConfig::STEP_RETRY_WINDOW_SECONDS,
                 'checkpointVersion' => 0,
                 ...$cursor,
             ],

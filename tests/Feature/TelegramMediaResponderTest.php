@@ -3,10 +3,8 @@
 namespace Tests\Feature;
 
 use App\Http\Responses\TelegramMediaResponder;
-use App\Modules\Telegram\Core\Contracts\TelegramGatewayInterface;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Testing\TestResponse;
-use Mockery;
 use PHPUnit\Framework\Attributes\DataProvider;
 use RuntimeException;
 use Tests\TestCase;
@@ -27,19 +25,16 @@ class TelegramMediaResponderTest extends TestCase
     public function test_it_normalizes_untrusted_download_metadata(): void
     {
         $downloadPath = null;
-        $gateway = Mockery::mock(TelegramGatewayInterface::class);
-        $gateway->shouldReceive('downloadMediaToFile')
-            ->once()
-            ->andReturnUsing(function (array $media, string $path) use (&$downloadPath): string {
-                $downloadPath = $path;
-                file_put_contents($path, 'media');
+        $downloadToFile = function (string $path) use (&$downloadPath): string {
+            $downloadPath = $path;
+            file_put_contents($path, 'media');
 
-                return $path;
-            });
+            return $path;
+        };
 
         try {
-            $response = (new TelegramMediaResponder($gateway))->respond([
-                'media' => ['_' => 'messageMediaDocument'],
+            $response = (new TelegramMediaResponder)->respond([
+                'downloadToFile' => $downloadToFile,
                 'download' => [
                     'name' => "unsafe/\r\nname",
                     'ext' => '../../php',
@@ -123,15 +118,14 @@ class TelegramMediaResponderTest extends TestCase
 
     private function mediaResponse(string $content, string $name, string $mime): TestResponse
     {
-        $gateway = $this->mock(TelegramGatewayInterface::class);
-        $gateway->shouldReceive('downloadMediaToFile')->once()->andReturnUsing(function (array $media, string $path) use ($content): string {
+        $downloadToFile = function (string $path) use ($content): string {
             $this->downloadPaths[] = $path;
             file_put_contents($path, $content);
 
             return $path;
-        });
+        };
         Route::middleware('web')->get('/_document-media-test', fn () => app(TelegramMediaResponder::class)->respond([
-            'media' => ['_' => 'messageMediaDocument'],
+            'downloadToFile' => $downloadToFile,
             'download' => ['name' => $name, 'mime' => $mime],
         ]));
 
@@ -141,18 +135,15 @@ class TelegramMediaResponderTest extends TestCase
     public function test_it_removes_temporary_file_when_download_fails(): void
     {
         $downloadPath = null;
-        $gateway = Mockery::mock(TelegramGatewayInterface::class);
-        $gateway->shouldReceive('downloadMediaToFile')
-            ->once()
-            ->andReturnUsing(function (array $media, string $path) use (&$downloadPath): never {
-                $downloadPath = $path;
+        $downloadToFile = function (string $path) use (&$downloadPath): never {
+            $downloadPath = $path;
 
-                throw new RuntimeException('Telegram download failed.');
-            });
+            throw new RuntimeException('Telegram download failed.');
+        };
 
         try {
-            (new TelegramMediaResponder($gateway))->respond([
-                'media' => ['_' => 'messageMediaDocument'],
+            app(TelegramMediaResponder::class)->respond([
+                'downloadToFile' => $downloadToFile,
                 'download' => ['ext' => '.jpg'],
             ]);
 

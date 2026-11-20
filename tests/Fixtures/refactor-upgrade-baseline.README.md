@@ -1,6 +1,6 @@
 # Upgrade baseline fixture
 
-`refactor-upgrade-baseline.json` records baseline commit `415d288ed13f7b8dee9b96dc98c798e3cee16116`:
+The `baseline` field in [the fixture](refactor-upgrade-baseline.json) identifies the Git commit used to generate the following data.
 
 - 33 original migration paths and SHA-256 hashes, with LF line endings.
 - Serialized legacy jobs for five scheduled report modules and `ProcessParserRun`, whose payload has no `queuedAt` property.

@@ -2,7 +2,6 @@
 
 namespace Tests\Feature;
 
-use App\Models\FeatureUsageDaily;
 use App\Models\User;
 use App\Modules\SiteIntel\Application\Contracts\SeoAuditServiceInterface;
 use App\Modules\SiteIntel\DTO\Result\SeoAuditResultDTO;
@@ -10,10 +9,12 @@ use App\Support\Reports\ReportSnapshotStore;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use PHPUnit\Framework\Attributes\DataProvider;
 use Symfony\Component\HttpKernel\Exception\GoneHttpException;
+use Tests\Feature\Concerns\AssertsUsedCredits;
 use Tests\TestCase;
 
 class ReportSnapshotTest extends TestCase
 {
+    use AssertsUsedCredits;
     use RefreshDatabase;
 
     public function test_snapshot_flag_does_not_allow_two_seo_requests_with_one_daily_credit(): void
@@ -23,7 +24,7 @@ class ReportSnapshotTest extends TestCase
         $user = User::factory()->create();
         $this->actingAs($user)->getJson(route('site-intel.seo-audit', ['target' => 'example.com', 'snapshotRole' => 'previous']))->assertOk();
         $this->getJson(route('site-intel.seo-audit', ['target' => 'example.org', 'snapshotRole' => 'previous']))->assertTooManyRequests();
-        $this->assertSame(1, FeatureUsageDaily::query()->where('user_id', $user->id)->sum('used'));
+        $this->assertUsedCredits(1, $user);
     }
 
     public function test_saved_seo_report_can_be_downloaded_after_quota_is_exhausted_without_new_analysis(): void
@@ -36,7 +37,7 @@ class ReportSnapshotTest extends TestCase
             $this->get(route('site-intel.seo-report', ['target' => 'example.com', 'locale' => $locale, 'download' => 1]))
                 ->assertOk()->assertHeader('Content-Type', 'text/html; charset=UTF-8');
         }
-        $this->assertSame(1, FeatureUsageDaily::query()->where('user_id', $user->id)->sum('used'));
+        $this->assertUsedCredits(1, $user);
         $this->getJson(route('site-intel.seo-report', ['target' => 'example.org']))->assertStatus(410);
     }
 

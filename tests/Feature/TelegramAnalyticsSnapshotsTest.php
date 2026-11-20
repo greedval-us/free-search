@@ -2,15 +2,16 @@
 
 namespace Tests\Feature;
 
-use App\Models\FeatureUsageDaily;
 use App\Models\User;
 use App\Modules\Telegram\Analytics\TelegramAnalyticsService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Mockery;
+use Tests\Feature\Concerns\AssertsUsedCredits;
 use Tests\TestCase;
 
 class TelegramAnalyticsSnapshotsTest extends TestCase
 {
+    use AssertsUsedCredits;
     use RefreshDatabase;
 
     public function test_comparison_is_built_server_side_with_one_credit_and_report_is_read_only(): void
@@ -31,7 +32,7 @@ class TelegramAnalyticsSnapshotsTest extends TestCase
         $this->actingAs($user)->getJson(route('telegram.analytics.summary', $parameters))
             ->assertOk()->assertJsonPath('data.previousReport.marker', 'previous');
         $this->get(route('telegram.analytics.report', $parameters))->assertOk();
-        $this->assertSame(1, FeatureUsageDaily::query()->where('user_id', $user->id)->sum('used'));
+        $this->assertUsedCredits(1, $user);
         $this->getJson(route('telegram.analytics.summary', [...$parameters, 'snapshotRole' => 'previous']))->assertTooManyRequests();
         $this->actingAs(User::factory()->create())->getJson(route('telegram.analytics.report', $parameters))->assertStatus(410);
     }

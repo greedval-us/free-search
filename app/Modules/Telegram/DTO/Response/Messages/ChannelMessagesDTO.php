@@ -34,7 +34,7 @@ class ChannelMessagesDTO
         $this->_ = $data['_'] ?? '';
         $this->inexact = $data['inexact'] ?? false;
         $this->pts = $data['pts'] ?? 0;
-        $this->count = $data['count'] ?? 0;
+        $this->count = $data['count'] ?? count($data['messages'] ?? []);
         $this->next_offset = $data['next_offset'] ?? null;
         $this->unread_count = $data['unread_count'] ?? null;
 

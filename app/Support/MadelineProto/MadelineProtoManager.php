@@ -2,6 +2,7 @@
 
 namespace App\Support\MadelineProto;
 
+use App\Exceptions\Public\IntegrationMisconfiguredException;
 use danog\MadelineProto\API;
 
 final class MadelineProtoManager
@@ -28,6 +29,16 @@ final class MadelineProtoManager
         }
 
         return $this->clients[$resolvedSessionName];
+    }
+
+    public function authorizedClient(): API
+    {
+        $client = $this->client();
+        if ($client->getAuthorization() !== API::LOGGED_IN) {
+            throw new IntegrationMisconfiguredException('errors.api.telegram.session_unauthorized', 'telegram_session_unauthorized');
+        }
+
+        return $client;
     }
 
     /**

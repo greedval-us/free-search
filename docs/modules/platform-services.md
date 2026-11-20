@@ -8,7 +8,7 @@ Saved queries и pins имеют собственные authenticated endpoints 
 
 ## Wiki
 
-`GET /wiki/modules` рендерит Inertia page `wiki/Modules.vue`. Это пользовательские module descriptions, а не runtime-generated API docs. При изменении capability синхронизируйте page и `docs/modules/*`.
+`GET /wiki/modules` открывает справку по модулям. Страница `wiki/Modules.vue` берёт ссылки из общего каталога навигации. При изменении возможностей модуля обновите обе версии `resources/js/locales/{en,ru}/moduleWiki.json` и соответствующий документ в `docs/modules/`.
 
 ## Export
 

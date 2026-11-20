@@ -1,8 +1,8 @@
+import { getDocumentLocale, isLocale, LOCALE_STORAGE_KEY } from '@/lib/locale';
+import type { Locale } from '@/lib/locale';
 import { resolveSameOriginUrl } from '@/lib/sameOriginUrl';
 
-const LOCALE_STORAGE_KEY = 'locale';
-
-export const resolveDownloadLocale = (): 'en' | 'ru' => {
+export const resolveDownloadLocale = (): Locale => {
     if (typeof window !== 'undefined') {
         let storedLocale: string | null = null;
 
@@ -12,18 +12,12 @@ export const resolveDownloadLocale = (): 'en' | 'ru' => {
             // Browsers may disable storage; the document still carries the locale.
         }
 
-        if (storedLocale === 'ru' || storedLocale === 'en') {
+        if (isLocale(storedLocale)) {
             return storedLocale;
         }
     }
 
-    if (typeof document !== 'undefined') {
-        return document.documentElement.lang.toLowerCase().startsWith('ru')
-            ? 'ru'
-            : 'en';
-    }
-
-    return 'en';
+    return getDocumentLocale();
 };
 
 export const withDownloadLocale = (url: string): string | null => {

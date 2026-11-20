@@ -2,21 +2,53 @@
 
 namespace App\Modules\ParserSupport;
 
-use App\Jobs\ProcessParserRun;
-
 final readonly class ParserRunConfig
 {
-    private const DEFAULT_QUEUE = 'default';
+    public const JOB_TIMEOUT_SECONDS = 120;
 
-    private const DEFAULT_STEP_DELAY_SECONDS = 2;
+    public const LOCK_GRACE_SECONDS = 30;
 
-    private const DEFAULT_RETENTION_DAYS = 7;
+    public const EXECUTION_LOCK_SECONDS = self::JOB_TIMEOUT_SECONDS + self::LOCK_GRACE_SECONDS;
 
-    private const DEFAULT_HISTORY_LIMIT = 20;
+    public const STEP_RETRY_WINDOW_SECONDS = 3600;
 
-    private const DEFAULT_CLEANUP_BATCH_SIZE = 500;
+    public const MIN_CHECKPOINT_BYTES = 4096;
 
-    private const DEFAULT_CLEANUP_SCHEDULE = '03:30';
+    public const MAX_RECOVERY_PASS_SECONDS = 3600;
+
+    private const RECOVERY_MUTEX_MARGIN_MINUTES = 2;
+
+    private const RECOVERY_STEP_GRACE_SECONDS = 30;
+
+    public const DEFAULT_QUEUE = 'default';
+
+    public const DEFAULT_STEP_DELAY_SECONDS = 2;
+
+    public const DEFAULT_RETENTION_DAYS = 7;
+
+    public const DEFAULT_HISTORY_LIMIT = 20;
+
+    public const DEFAULT_CLEANUP_BATCH_SIZE = 500;
+
+    public const DEFAULT_CLEANUP_SCHEDULE = '03:30';
+
+    public const DEFAULT_RECOVERY_BATCH_SIZE = 100;
+
+    public const DEFAULT_MAX_STEP_ATTEMPTS = 10_000;
+
+    public const DEFAULT_MAX_RECORDS = 100_000;
+
+    public const DEFAULT_MAX_DURATION_SECONDS = 86_400;
+
+    public const DEFAULT_MAX_CHECKPOINT_BYTES = 33_554_432;
+
+    public const DEFAULT_MAX_EXPORT_BYTES = 67_108_864;
+
+    public const DEFAULT_MAX_EXPORT_CELLS = 1_000_000;
+
+    public const DEFAULT_MAX_SOURCE_REQUESTS = 100_000;
+
+    public const DEFAULT_RECOVERY_MAX_PASS_SECONDS = 30;
 
     /**
      * @param  array<string, mixed>  $config
@@ -31,16 +63,16 @@ final readonly class ParserRunConfig
             historyLimit: max(1, (int) ($config['history_limit'] ?? self::DEFAULT_HISTORY_LIMIT)),
             cleanupBatchSize: max(1, (int) ($config['cleanup_batch_size'] ?? self::DEFAULT_CLEANUP_BATCH_SIZE)),
             cleanupSchedule: self::schedule($config['cleanup_schedule'] ?? null),
-            recoveryBatchSize: max(1, (int) data_get($config, 'recovery.batch_size', 100)),
-            recoveryStaleAfterSeconds: max(ProcessParserRun::EXECUTION_LOCK_SECONDS, (int) data_get($config, 'recovery.stale_after_seconds', 150)),
-            maxStepAttempts: max(1, (int) data_get($config, 'limits.max_step_attempts', 10000)),
-            maxRecords: max(1, (int) data_get($config, 'limits.max_records', 100000)),
-            maxDurationSeconds: max(1, (int) data_get($config, 'limits.max_duration_seconds', 86400)),
-            maxCheckpointBytes: max(4096, (int) data_get($config, 'limits.max_checkpoint_bytes', 33554432)),
-            maxExportBytes: max(1, (int) data_get($config, 'limits.max_export_bytes', 67108864)),
-            maxExportCells: max(1, (int) data_get($config, 'limits.max_export_cells', 1000000)),
-            maxSourceRequests: max(1, (int) data_get($config, 'limits.max_source_requests', 100000)),
-            recoveryMaxPassSeconds: max(1, min(3600, (int) data_get($config, 'recovery.max_pass_seconds', 30))),
+            recoveryBatchSize: max(1, (int) data_get($config, 'recovery.batch_size', self::DEFAULT_RECOVERY_BATCH_SIZE)),
+            recoveryStaleAfterSeconds: (int) data_get($config, 'recovery.stale_after_seconds', self::EXECUTION_LOCK_SECONDS),
+            maxStepAttempts: max(1, (int) data_get($config, 'limits.max_step_attempts', self::DEFAULT_MAX_STEP_ATTEMPTS)),
+            maxRecords: max(1, (int) data_get($config, 'limits.max_records', self::DEFAULT_MAX_RECORDS)),
+            maxDurationSeconds: max(1, (int) data_get($config, 'limits.max_duration_seconds', self::DEFAULT_MAX_DURATION_SECONDS)),
+            maxCheckpointBytes: max(self::MIN_CHECKPOINT_BYTES, (int) data_get($config, 'limits.max_checkpoint_bytes', self::DEFAULT_MAX_CHECKPOINT_BYTES)),
+            maxExportBytes: max(1, (int) data_get($config, 'limits.max_export_bytes', self::DEFAULT_MAX_EXPORT_BYTES)),
+            maxExportCells: max(1, (int) data_get($config, 'limits.max_export_cells', self::DEFAULT_MAX_EXPORT_CELLS)),
+            maxSourceRequests: max(1, (int) data_get($config, 'limits.max_source_requests', self::DEFAULT_MAX_SOURCE_REQUESTS)),
+            recoveryMaxPassSeconds: (int) data_get($config, 'recovery.max_pass_seconds', self::DEFAULT_RECOVERY_MAX_PASS_SECONDS),
         );
     }
 
@@ -52,16 +84,16 @@ final readonly class ParserRunConfig
         private int $historyLimit = self::DEFAULT_HISTORY_LIMIT,
         private int $cleanupBatchSize = self::DEFAULT_CLEANUP_BATCH_SIZE,
         private string $cleanupSchedule = self::DEFAULT_CLEANUP_SCHEDULE,
-        private int $recoveryBatchSize = 100,
-        private int $recoveryStaleAfterSeconds = 150,
-        private int $maxStepAttempts = 10000,
-        private int $maxRecords = 100000,
-        private int $maxDurationSeconds = 86400,
-        private int $maxCheckpointBytes = 33554432,
-        private int $maxExportBytes = 67108864,
-        private int $maxExportCells = 1000000,
-        private int $maxSourceRequests = 100000,
-        private int $recoveryMaxPassSeconds = 30,
+        private int $recoveryBatchSize = self::DEFAULT_RECOVERY_BATCH_SIZE,
+        private int $recoveryStaleAfterSeconds = self::EXECUTION_LOCK_SECONDS,
+        private int $maxStepAttempts = self::DEFAULT_MAX_STEP_ATTEMPTS,
+        private int $maxRecords = self::DEFAULT_MAX_RECORDS,
+        private int $maxDurationSeconds = self::DEFAULT_MAX_DURATION_SECONDS,
+        private int $maxCheckpointBytes = self::DEFAULT_MAX_CHECKPOINT_BYTES,
+        private int $maxExportBytes = self::DEFAULT_MAX_EXPORT_BYTES,
+        private int $maxExportCells = self::DEFAULT_MAX_EXPORT_CELLS,
+        private int $maxSourceRequests = self::DEFAULT_MAX_SOURCE_REQUESTS,
+        private int $recoveryMaxPassSeconds = self::DEFAULT_RECOVERY_MAX_PASS_SECONDS,
     ) {}
 
     public function queueEnabled(): bool
@@ -106,19 +138,19 @@ final readonly class ParserRunConfig
 
     public function recoveryStaleAfterSeconds(): int
     {
-        return max(ProcessParserRun::EXECUTION_LOCK_SECONDS, $this->recoveryStaleAfterSeconds, $this->stepDelaySeconds + 30);
+        return max(self::EXECUTION_LOCK_SECONDS, $this->recoveryStaleAfterSeconds, $this->stepDelaySeconds + self::RECOVERY_STEP_GRACE_SECONDS);
     }
 
     public function recoveryMaxPassSeconds(): int
     {
-        return max(1, min(3600, $this->recoveryMaxPassSeconds));
+        return max(1, min(self::MAX_RECOVERY_PASS_SECONDS, $this->recoveryMaxPassSeconds));
     }
 
     public function recoveryMutexMinutes(): int
     {
         // Admission time plus grace based on the execution lease and a two-minute margin.
         // The lease is not an I/O timeout for an already-admitted candidate.
-        return (int) ceil(($this->recoveryMaxPassSeconds() + ProcessParserRun::EXECUTION_LOCK_SECONDS + 60) / 60) + 1;
+        return (int) ceil(($this->recoveryMaxPassSeconds() + self::EXECUTION_LOCK_SECONDS) / 60) + self::RECOVERY_MUTEX_MARGIN_MINUTES;
     }
 
     public function maxStepAttempts(): int

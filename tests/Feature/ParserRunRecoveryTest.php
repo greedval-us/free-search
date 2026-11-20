@@ -157,7 +157,7 @@ class ParserRunRecoveryTest extends TestCase
         $run = $store->create($user->id, []);
         $this->travel(151)->seconds();
         $dispatcher = $this->createMock(ParserRunJobDispatcherInterface::class);
-        $dispatcher->expects($this->once())->method('dispatch')->willThrowException(new RuntimeException('Queue unavailable'));
+        $dispatcher->expects($this->once())->method('redispatchCheckpoint')->willThrowException(new RuntimeException('Queue unavailable'));
         app()->instance(ParserRunJobDispatcherInterface::class, $dispatcher);
 
         $this->assertSame(1, Artisan::call('app:recover-parser-runs'));
@@ -177,10 +177,10 @@ class ParserRunRecoveryTest extends TestCase
         $this->travel(151)->seconds();
         $realDispatcher = app(ParserRunJobDispatcherInterface::class);
         $dispatcher = $this->createMock(ParserRunJobDispatcherInterface::class);
-        $dispatcher->expects($this->once())->method('dispatch')->willReturnCallback(
-            function (string $module, int $userId, string $runId) use ($realDispatcher): void {
+        $dispatcher->expects($this->once())->method('redispatchCheckpoint')->willReturnCallback(
+            function (string $module, int $userId, string $runId, array $checkpoint) use ($realDispatcher): void {
                 $this->assertSame(0, Artisan::call('app:recover-parser-runs'));
-                $realDispatcher->dispatch($module, $userId, $runId);
+                $realDispatcher->redispatchCheckpoint($module, $userId, $runId, $checkpoint);
             },
         );
         app()->instance(ParserRunJobDispatcherInterface::class, $dispatcher);
@@ -262,11 +262,11 @@ class ParserRunRecoveryTest extends TestCase
         $this->travel(151)->seconds();
         $realDispatcher = app(ParserRunJobDispatcherInterface::class);
         $dispatcher = $this->createMock(ParserRunJobDispatcherInterface::class);
-        $dispatcher->expects($this->once())->method('dispatch')->willReturnCallback(
-            static function (string $module, int $userId, string $runId) use ($realDispatcher, $store, $newUser): void {
+        $dispatcher->expects($this->once())->method('redispatchCheckpoint')->willReturnCallback(
+            static function (string $module, int $userId, string $runId, array $checkpoint) use ($realDispatcher, $store, $newUser): void {
                 $newRun = $store->create($newUser->id, []);
                 ParserRun::query()->where('run_id', $newRun['runId'])->update(['last_activity_at' => now()->subHour()]);
-                $realDispatcher->dispatch($module, $userId, $runId);
+                $realDispatcher->redispatchCheckpoint($module, $userId, $runId, $checkpoint);
             },
         );
         app()->instance(ParserRunJobDispatcherInterface::class, $dispatcher);

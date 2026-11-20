@@ -38,26 +38,26 @@ class CommentsAction extends AbstractTelegramAction
                 if ($source === null) {
                     throw new RuntimeException('Telegram source is unavailable.');
                 }
-                $discussion = PublicTelegramSource::resolveDiscussion(
+                $thread = $this->resolveThread(
                     $source,
-                    fn (array $peer): array => $this->executeWithRetry(fn () => $client->getFullInfo(DialogId::fromSupergroupOrChannelId((int) $peer['channel_id'])), ['channel' => $channelId]),
-                    function (int $id) use ($client): array {
-                        app(ParserRunSourceRequestBudget::class)->charge();
+                    $postId,
+                    fn (): ?array => PublicTelegramSource::resolveDiscussion(
+                        $source,
+                        fn (array $peer): array => $this->executeWithRetry(
+                            fn () => $client->getFullInfo(DialogId::fromSupergroupOrChannelId((int) $peer['channel_id'])),
+                            ['channel' => $channelId],
+                        ),
+                        function (int $id) use ($client): array {
+                            app(ParserRunSourceRequestBudget::class)->charge();
 
-                        return $client->getInfo($id);
-                    },
-                    fn (string $username): array => PublicTelegramSource::refreshedInfo($client, $username),
-                );
-                if ($discussion === null) {
-                    throw new RuntimeException('Telegram discussion is unavailable.');
-                }
-
-                $post = $this->executeWithRetry(
-                    callback: fn () => $client->channels->getMessages([
-                        'channel' => $source['channel'],
-                        'id' => [$postId],
-                    ]),
-                    context: ['channel' => $channelId, 'post_id' => $postId]
+                            return $client->getInfo($id);
+                        },
+                        fn (string $username): array => PublicTelegramSource::refreshedInfo($client, $username),
+                    ),
+                    fn (array $peer, int $id): array => $this->executeWithRetry(
+                        fn () => $client->messages->getDiscussionMessage(peer: $peer, msg_id: $id),
+                        ['channel' => $channelId, 'post_id' => $id],
+                    ),
                 );
 
                 if ($delayMs > 0) {
@@ -65,9 +65,9 @@ class CommentsAction extends AbstractTelegramAction
                 }
 
                 $commentsPage = $this->loadComments(
-                    request: fn (array $parameters): array => $client->messages->getReplies($parameters),
-                    peer: $source['peer'],
-                    postId: $postId,
+                    request: fn (array $parameters): array => $client->messages->getReplies(...$parameters),
+                    peer: $thread['peer'],
+                    postId: $thread['id'],
                     limit: $commentsPerRequest,
                     maxPages: $maxPages,
                     offsetId: $offsetId,
@@ -76,7 +76,6 @@ class CommentsAction extends AbstractTelegramAction
 
                 $results[] = [
                     'post_id' => $postId,
-                    'post' => $post,
                     'comments' => $commentsPage['messages'],
                     'next_offset_id' => $commentsPage['next_offset_id'],
                     'has_more' => $commentsPage['has_more'],
@@ -97,6 +96,38 @@ class CommentsAction extends AbstractTelegramAction
         }
 
         return $results;
+    }
+
+    /** @return array{peer: array, id: int} */
+    protected function resolveThread(array $source, int $postId, Closure $resolveDiscussion, Closure $getDiscussionMessage): array
+    {
+        if (! ($source['chat']['broadcast'] ?? false)) {
+            return ['peer' => $source['peer'], 'id' => $postId];
+        }
+
+        $discussion = $resolveDiscussion();
+        if ($discussion === null) {
+            throw new RuntimeException('Telegram discussion is unavailable.');
+        }
+
+        $response = $getDiscussionMessage($source['peer'], $postId);
+        $messages = $response['messages'] ?? null;
+        if (($response['_'] ?? '') !== 'messages.discussionMessage' || ! is_array($messages) || ! array_is_list($messages)) {
+            throw new RuntimeException('Telegram returned an invalid discussion.');
+        }
+
+        // The discussion history is returned in reverse order, with the forwarded post last.
+        $root = end($messages);
+        $rootId = (int) ($root['id'] ?? 0);
+        $forwardedFrom = $root['fwd_from']['from_id'] ?? $root['from_id'] ?? null;
+        if (($root['_'] ?? '') !== 'message' || $rootId <= 0
+            || ! PublicTelegramSource::matchesPeer($root['peer_id'] ?? null, $discussion['id'])
+            || ! PublicTelegramSource::matchesPeer($forwardedFrom, $source['id'])
+            || (int) ($root['fwd_from']['channel_post'] ?? 0) !== $postId) {
+            throw new RuntimeException('Telegram returned an invalid discussion root.');
+        }
+
+        return ['peer' => $discussion['peer'], 'id' => $rootId];
     }
 
     protected function loadComments(
@@ -124,7 +155,7 @@ class CommentsAction extends AbstractTelegramAction
                     'limit' => $limit,
                     'max_id' => 0,
                     'min_id' => 0,
-                    'hash' => 0,
+                    'hash' => [],
                 ]),
                 context: ['post_id' => $postId, 'page' => $page]
             );
@@ -135,7 +166,8 @@ class CommentsAction extends AbstractTelegramAction
             }
             $batch = $response['messages'];
             foreach ($batch as $message) {
-                if (! is_array($message) || (int) ($message['id'] ?? 0) <= 0) {
+                if (! is_array($message) || (int) ($message['id'] ?? 0) <= 0
+                    || ! PublicTelegramSource::matchesPeer($message['peer_id'] ?? null, (int) $peer['channel_id'])) {
                     throw new RuntimeException('Telegram returned an invalid comment.');
                 }
             }

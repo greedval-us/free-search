@@ -57,3 +57,5 @@ export const useI18n = () => {
         setLocale,
     };
 };
+
+export type Translate = ReturnType<typeof useI18n>['t'];

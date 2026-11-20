@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 import { useI18n } from '@/composables/useI18n';
+import { download } from '@/routes/telegram/tracking';
 import type { TrackingAction, TrackingTask } from './types';
 
 defineProps<{ task: TrackingTask; busy: boolean }>();
@@ -9,6 +10,7 @@ defineEmits<{
 }>();
 const { t, locale } = useI18n();
 const confirmStop = ref(false);
+const exportFormats = ['xlsx', 'json'] as const;
 const date = (value: string) => new Date(value).toLocaleString(locale.value);
 </script>
 
@@ -111,14 +113,16 @@ const date = (value: string) => new Date(value).toLocaleString(locale.value);
                 t('telegramTracking.export')
             }}</span>
             <a
+                v-for="format in exportFormats"
+                :key="format"
                 class="intel-button-secondary"
-                :href="`/telegram/tracking/${task.id}/export/xlsx?locale=${locale}`"
-                >XLSX</a
-            >
-            <a
-                class="intel-button-secondary"
-                :href="`/telegram/tracking/${task.id}/export/json?locale=${locale}`"
-                >JSON</a
+                :href="
+                    download.url(
+                        { tracking: task.id, format },
+                        { query: { locale } }
+                    )
+                "
+                >{{ format.toUpperCase() }}</a
             >
         </div>
         <div

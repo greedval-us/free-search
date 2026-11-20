@@ -103,10 +103,10 @@ class TelegramParserCollector implements ParserRunCollectorInterface
 
         $range = is_array($context['range'] ?? null) ? $context['range'] : [];
         if (! empty($range['minTimestamp'])) {
-            $filter['min_date'] = (int) $range['minTimestamp'];
+            $filter['min_date'] = max(0, (int) $range['minTimestamp'] - 1);
         }
         if (! empty($range['maxTimestamp'])) {
-            $filter['max_date'] = (int) $range['maxTimestamp'];
+            $filter['max_date'] = (int) $range['maxTimestamp'] + 1;
         }
 
         $dto = $this->telegramService->getMessages($filter);

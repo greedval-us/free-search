@@ -1,5 +1,6 @@
 import { computed, reactive, ref } from 'vue';
 import { apiRequest, resolveClientErrorMessage } from '@/lib/api';
+import { siteHealth } from '@/routes/site-intel';
 import type { SiteHealthResult } from '../types';
 
 type TranslateFn = (key: string) => string;
@@ -28,7 +29,7 @@ export const useSiteHealth = (t: TranslateFn) => {
 
         try {
             const apiResult = await apiRequest<SiteHealthResult>(
-                '/site-intel/site-health',
+                siteHealth.url(),
                 {
                     method: 'GET',
                     query: {

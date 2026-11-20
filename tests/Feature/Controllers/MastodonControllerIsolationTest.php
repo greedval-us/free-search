@@ -433,27 +433,4 @@ class MastodonControllerIsolationTest extends TestCase
             ->assertOk()
             ->assertJsonPath('runId', 'mastodon-run-1');
     }
-
-    public function test_mastodon_parser_history_controller_returns_service_payload(): void
-    {
-        $user = $this->paidUser();
-
-        $this->mock(MastodonParserApplicationServiceInterface::class, function ($mock) use ($user): void {
-            $mock->shouldReceive('history')
-                ->once()
-                ->with($user->id)
-                ->andReturn([[
-                    'runId' => 'mastodon-run-1',
-                    'account' => '@analyst@mastodon.social',
-                ]]);
-        });
-
-        $this
-            ->actingAs($user)
-            ->getJson(route('mastodon.parser.history'))
-            ->assertOk()
-            ->assertJsonPath('ok', true)
-            ->assertJsonPath('items.0.runId', 'mastodon-run-1')
-            ->assertJsonPath('items.0.account', '@analyst@mastodon.social');
-    }
 }

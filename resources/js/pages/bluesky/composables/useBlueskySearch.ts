@@ -1,6 +1,10 @@
 import type { Ref } from 'vue';
 import { computed, ref } from 'vue';
+import { useLocaleFormatters } from '@/composables/useLocaleFormatters';
 import { apiRequest, resolveApiErrorMessage } from '@/lib/api';
+import { feed, followers, follows } from '@/routes/bluesky/actors';
+import { likes, reposts, thread } from '@/routes/bluesky/posts';
+import { index as search } from '@/routes/bluesky/search';
 import type {
     BlueskyActor,
     BlueskyActorDetailsState,
@@ -184,26 +188,23 @@ export const useBlueskySearch = (t: TranslateFn, locale: { value: string }) => {
             form.value.cursor = '';
         }
 
-        const response = await apiRequest<BlueskySearchPayload>(
-            '/bluesky/search',
-            {
-                query: {
-                    q: form.value.q,
-                    type: form.value.type,
-                    limit: form.value.limit,
-                    cursor: append ? nextCursor() || undefined : undefined,
-                    sort: form.value.sort,
-                    language: form.value.language || undefined,
-                    author: form.value.author || undefined,
-                    mentions: form.value.mentions || undefined,
-                    domain: form.value.domain || undefined,
-                    url: form.value.url || undefined,
-                    tag: form.value.tag || undefined,
-                    since: form.value.since || undefined,
-                    until: form.value.until || undefined,
-                },
-            }
-        );
+        const response = await apiRequest<BlueskySearchPayload>(search.url(), {
+            query: {
+                q: form.value.q,
+                type: form.value.type,
+                limit: form.value.limit,
+                cursor: append ? nextCursor() || undefined : undefined,
+                sort: form.value.sort,
+                language: form.value.language || undefined,
+                author: form.value.author || undefined,
+                mentions: form.value.mentions || undefined,
+                domain: form.value.domain || undefined,
+                url: form.value.url || undefined,
+                tag: form.value.tag || undefined,
+                since: form.value.since || undefined,
+                until: form.value.until || undefined,
+            },
+        });
 
         loading.value = false;
         loadingMore.value = false;
@@ -230,8 +231,7 @@ export const useBlueskySearch = (t: TranslateFn, locale: { value: string }) => {
         result.value = response.data;
     };
 
-    const formatDate = (value: string) =>
-        value ? new Date(value).toLocaleString(locale.value) : '-';
+    const { formatDate } = useLocaleFormatters(locale);
 
     const ensureInteractionState = (kind: PostEngagementKind, postId: string) =>
         ensureStateInMap(
@@ -276,9 +276,7 @@ export const useBlueskySearch = (t: TranslateFn, locale: { value: string }) => {
         }
 
         const response = await apiRequest<BlueskyInteractionPayload>(
-            kind === PostEngagementKind.Likes
-                ? '/bluesky/posts/likes'
-                : '/bluesky/posts/reposts',
+            kind === PostEngagementKind.Likes ? likes.url() : reposts.url(),
             {
                 query: {
                     uri: post.uri,
@@ -328,16 +326,13 @@ export const useBlueskySearch = (t: TranslateFn, locale: { value: string }) => {
         state.loading = true;
         state.error = null;
 
-        const response = await apiRequest<BlueskyThreadPayload>(
-            '/bluesky/posts/thread',
-            {
-                query: {
-                    uri: post.uri,
-                    depth: 6,
-                    parentHeight: 6,
-                },
-            }
-        );
+        const response = await apiRequest<BlueskyThreadPayload>(thread.url(), {
+            query: {
+                uri: post.uri,
+                depth: 6,
+                parentHeight: 6,
+            },
+        });
 
         state.loading = false;
 
@@ -390,10 +385,7 @@ export const useBlueskySearch = (t: TranslateFn, locale: { value: string }) => {
         TItem,
         TPayload extends PagedPayload<TItem>,
     >(options: {
-        endpoint:
-            | '/bluesky/actors/feed'
-            | '/bluesky/actors/followers'
-            | '/bluesky/actors/follows';
+        endpoint: () => string;
         isOpen: (state: BlueskyActorDetailsState) => boolean;
         setOpen: (state: BlueskyActorDetailsState, value: boolean) => void;
         isLoading: (state: BlueskyActorDetailsState) => boolean;
@@ -433,7 +425,7 @@ export const useBlueskySearch = (t: TranslateFn, locale: { value: string }) => {
                 options.setError(state, null);
             }
 
-            const response = await apiRequest<TPayload>(options.endpoint, {
+            const response = await apiRequest<TPayload>(options.endpoint(), {
                 query: {
                     actor: actor.did || actor.handle,
                     limit: form.value.limit,
@@ -490,7 +482,7 @@ export const useBlueskySearch = (t: TranslateFn, locale: { value: string }) => {
         BlueskyPost,
         BlueskyPostListPayload
     >({
-        endpoint: '/bluesky/actors/feed',
+        endpoint: feed.url,
         isOpen: (state) => state.postsOpen,
         setOpen: (state, value) => {
             state.postsOpen = value;
@@ -523,7 +515,7 @@ export const useBlueskySearch = (t: TranslateFn, locale: { value: string }) => {
         BlueskyActor,
         BlueskyActorListPayload
     >({
-        endpoint: '/bluesky/actors/followers',
+        endpoint: followers.url,
         isOpen: (state) => state.followersOpen,
         setOpen: (state, value) => {
             state.followersOpen = value;
@@ -556,7 +548,7 @@ export const useBlueskySearch = (t: TranslateFn, locale: { value: string }) => {
         BlueskyActor,
         BlueskyActorListPayload
     >({
-        endpoint: '/bluesky/actors/follows',
+        endpoint: follows.url,
         isOpen: (state) => state.followsOpen,
         setOpen: (state, value) => {
             state.followsOpen = value;

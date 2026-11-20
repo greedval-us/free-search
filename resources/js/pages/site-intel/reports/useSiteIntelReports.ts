@@ -7,6 +7,11 @@ import {
     validScheduleTiming,
 } from '@/features/scheduled-reports/constants';
 import { useScheduledReports } from '@/features/scheduled-reports/useScheduledReports';
+import {
+    DEFAULT_SEO_AUDIT_OPTIONS,
+    SCHEDULED_CRAWL_LIMIT,
+    SEO_AUDIT_PLATFORMS,
+} from '../lib/seo-audit-options';
 import { normalizeReportTarget } from './target-input';
 import type { ReportSchedule, ReportScheduleForm, ReportsList } from './types';
 
@@ -16,8 +21,7 @@ export const useSiteIntelReports = () => {
         ...initialScheduleFields(),
         targets: '',
         reportType: 'analytics',
-        crawlLimit: 8,
-        platformType: 'auto',
+        ...DEFAULT_SEO_AUDIT_OPTIONS,
     });
     const reports = useScheduledReports<ReportsList, ReportSchedule>({
         namespace: 'siteIntelReports',
@@ -74,15 +78,11 @@ export const useSiteIntelReports = () => {
             ) &&
             (form.value.reportType !== 'seo-audit' ||
                 (Number.isInteger(form.value.crawlLimit) &&
-                    form.value.crawlLimit >= 3 &&
-                    form.value.crawlLimit <= 20 &&
-                    [
-                        'auto',
-                        'generic',
-                        'media-platform',
-                        'content-site',
-                        'storefront',
-                    ].includes(form.value.platformType)))
+                    form.value.crawlLimit >= SCHEDULED_CRAWL_LIMIT.min &&
+                    form.value.crawlLimit <= SCHEDULED_CRAWL_LIMIT.max &&
+                    SEO_AUDIT_PLATFORMS.some(
+                        ({ value }) => value === form.value.platformType
+                    )))
     );
 
     const create = () =>
@@ -93,14 +93,9 @@ export const useSiteIntelReports = () => {
                 name: form.value.name.trim(),
                 timezone: form.value.timezone.trim(),
                 targets: targets.value,
-                crawlLimit:
-                    form.value.reportType === 'seo-audit'
-                        ? form.value.crawlLimit
-                        : 8,
-                platformType:
-                    form.value.reportType === 'seo-audit'
-                        ? form.value.platformType
-                        : 'auto',
+                ...(form.value.reportType === 'seo-audit'
+                    ? {}
+                    : DEFAULT_SEO_AUDIT_OPTIONS),
             },
             () => {
                 form.value.name = '';

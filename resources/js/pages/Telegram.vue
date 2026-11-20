@@ -1,6 +1,9 @@
 <script setup lang="ts">
 import ModulePage from '@/components/ui/ModulePage.vue';
 import { TELEGRAM_TABS } from './telegram/tabs';
+import type { TelegramPageProps } from './telegram/types';
+
+defineProps<TelegramPageProps>();
 
 defineOptions({
     layout: {

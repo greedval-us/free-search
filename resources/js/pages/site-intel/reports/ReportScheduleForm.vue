@@ -7,6 +7,10 @@ import {
 } from '@/features/scheduled-reports/constants';
 import ReportTimezoneField from '@/features/scheduled-reports/ReportTimezoneField.vue';
 import { settings } from '@/routes/telegram-bot';
+import {
+    SCHEDULED_CRAWL_LIMIT,
+    SEO_AUDIT_PLATFORMS,
+} from '../lib/seo-audit-options';
 import type { ReportScheduleForm, SiteReportType } from './types';
 
 defineProps<{
@@ -78,8 +82,8 @@ const { t } = useI18n();
                     id="site-intel-report-crawl-limit"
                     v-model.number="form.crawlLimit"
                     type="number"
-                    min="3"
-                    max="20"
+                    :min="SCHEDULED_CRAWL_LIMIT.min"
+                    :max="SCHEDULED_CRAWL_LIMIT.max"
                     step="1"
                     class="intel-input"
                     required
@@ -96,20 +100,12 @@ const { t } = useI18n();
                     v-model="form.platformType"
                     class="intel-select"
                 >
-                    <option value="auto">
-                        {{ t('siteIntel.seoAudit.platformAuto') }}
-                    </option>
                     <option
-                        v-for="platform in [
-                            'generic',
-                            'media-platform',
-                            'content-site',
-                            'storefront',
-                        ]"
-                        :key="platform"
-                        :value="platform"
+                        v-for="platform in SEO_AUDIT_PLATFORMS"
+                        :key="platform.value"
+                        :value="platform.value"
                     >
-                        {{ t(`siteIntel.seoAudit.profile.${platform}`) }}
+                        {{ t(platform.label) }}
                     </option>
                 </select>
             </div>

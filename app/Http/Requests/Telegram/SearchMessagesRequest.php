@@ -3,6 +3,7 @@
 namespace App\Http\Requests\Telegram;
 
 use App\Http\Requests\Telegram\Concerns\ResolvesTelegramConfig;
+use App\Modules\Telegram\Access\PublicTelegramSource;
 use App\Modules\Telegram\DTO\Request\SearchMessagesQueryDTO;
 use App\Rules\PublicTelegramUsername;
 use Illuminate\Foundation\Http\FormRequest;
@@ -23,7 +24,7 @@ class SearchMessagesRequest extends FormRequest
         return [
             'chatUsername' => ['bail', 'required', 'string', new PublicTelegramUsername],
             'q' => ['nullable', 'string', 'max:255'],
-            'fromUsername' => ['nullable', 'string', 'regex:/^(?:[1-9][0-9]{0,18}|@?[a-z][a-z0-9_]{3,31})$/iD'],
+            'fromUsername' => ['bail', 'nullable', 'string', new PublicTelegramUsername('errors.validation.telegram_public_author_username')],
             'dateFrom' => ['nullable', 'date_format:Y-m-d'],
             'dateTo' => ['nullable', 'date_format:Y-m-d'],
             'limit' => ['nullable', 'integer', 'min:1', 'max:'.$this->messagesLimitMax()],
@@ -69,27 +70,17 @@ class SearchMessagesRequest extends FormRequest
             'offset_id' => $this->offsetId(),
         ];
 
-        $fromUsername = trim((string) ($validated['fromUsername'] ?? ''));
-        if ($fromUsername !== '') {
-            $normalizedAuthor = ltrim($fromUsername, '@');
-
-            if (ctype_digit($normalizedAuthor)) {
-                $authorId = (int) $normalizedAuthor;
-
-                if ($authorId > 0) {
-                    $filter['authorId'] = $authorId;
-                }
-            } elseif ($normalizedAuthor !== '') {
-                $filter['authorUsername'] = $normalizedAuthor;
-            }
+        $author = PublicTelegramSource::username($validated['fromUsername'] ?? null);
+        if ($author !== null) {
+            $filter['authorUsername'] = $author;
         }
 
         if (! empty($validated['dateFrom'])) {
-            $filter['min_date'] = Carbon::createFromFormat('Y-m-d', $validated['dateFrom'], $this->telegramConfig()->timezone())->startOfDay()->timestamp;
+            $filter['min_date'] = Carbon::createFromFormat('Y-m-d', $validated['dateFrom'], $this->telegramConfig()->timezone())->startOfDay()->timestamp - 1;
         }
 
         if (! empty($validated['dateTo'])) {
-            $filter['max_date'] = Carbon::createFromFormat('Y-m-d', $validated['dateTo'], $this->telegramConfig()->timezone())->endOfDay()->timestamp;
+            $filter['max_date'] = Carbon::createFromFormat('Y-m-d', $validated['dateTo'], $this->telegramConfig()->timezone())->startOfDay()->addDay()->timestamp;
         }
 
         return $filter;

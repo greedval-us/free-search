@@ -1,8 +1,8 @@
 import { computed, reactive, ref } from 'vue';
+import ParserRoutes from '@/actions/App/Http/Controllers/Bluesky/BlueskyParserController';
 import { useParserRun } from '@/composables/useParserRun';
 import type {
     BlueskyParserHistoryItem as ParserHistoryItem,
-    BlueskyParserStage as ParserStage,
     BlueskyParserStatusResponse as ParserStatusResponse,
 } from '../types';
 
@@ -13,41 +13,10 @@ export const useBlueskyParser = (t: TranslateFn) => {
         actor: '',
     });
     const settingsCollapsed = ref(false);
-    const processedPosts = ref(0);
-    const processedAuthoredReplies = ref(0);
-    const processedReceivedReplies = ref(0);
-    const processedFollowers = ref(0);
-    const processedFollows = ref(0);
-    const processedReactions = ref(0);
-
-    const parser = useParserRun<
-        ParserStage,
-        ParserStatusResponse,
-        ParserHistoryItem
-    >({
-        endpointBase: '/bluesky/parser',
-        idleStage: 'idle',
+    const parser = useParserRun<ParserStatusResponse, ParserHistoryItem>({
+        routes: ParserRoutes,
         initialStage: 'profile',
-        stoppedStage: 'stopped',
-        failedStage: 'failed',
         requestErrorMessage: () => t('bluesky.parser.errors.failed'),
-        historyErrorMessage: () => t('bluesky.parser.history.errors.load'),
-        applyModulePayload: (payload) => {
-            processedPosts.value = payload.processedPosts;
-            processedAuthoredReplies.value = payload.processedAuthoredReplies;
-            processedReceivedReplies.value = payload.processedReceivedReplies;
-            processedFollowers.value = payload.processedFollowers;
-            processedFollows.value = payload.processedFollows;
-            processedReactions.value = payload.processedReactions;
-        },
-        resetModuleState: () => {
-            processedPosts.value = 0;
-            processedAuthoredReplies.value = 0;
-            processedReceivedReplies.value = 0;
-            processedFollowers.value = 0;
-            processedFollows.value = 0;
-            processedReactions.value = 0;
-        },
     });
 
     const canStart = computed(
@@ -73,12 +42,24 @@ export const useBlueskyParser = (t: TranslateFn) => {
         error: parser.error,
         progress: parser.progress,
         stage: parser.stage,
-        processedPosts,
-        processedAuthoredReplies,
-        processedReceivedReplies,
-        processedFollowers,
-        processedFollows,
-        processedReactions,
+        processedPosts: computed(
+            () => parser.payload.value?.processedPosts ?? 0
+        ),
+        processedAuthoredReplies: computed(
+            () => parser.payload.value?.processedAuthoredReplies ?? 0
+        ),
+        processedReceivedReplies: computed(
+            () => parser.payload.value?.processedReceivedReplies ?? 0
+        ),
+        processedFollowers: computed(
+            () => parser.payload.value?.processedFollowers ?? 0
+        ),
+        processedFollows: computed(
+            () => parser.payload.value?.processedFollows ?? 0
+        ),
+        processedReactions: computed(
+            () => parser.payload.value?.processedReactions ?? 0
+        ),
         downloadUrl: parser.downloadUrl,
         downloadJsonUrl: parser.downloadJsonUrl,
         historyItems: parser.historyItems,

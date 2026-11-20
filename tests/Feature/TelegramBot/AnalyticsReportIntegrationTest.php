@@ -110,7 +110,7 @@ final class AnalyticsReportIntegrationTest extends TelegramBotTestCase
         $this->assertSame(BotDelivery::SENT, $delivery->fresh()->status);
         $this->assertNotNull($delivery->fresh()->sent_at);
         $this->assertSame(TelegramAnalyticsReport::COMPLETED, $report->fresh()->status);
-        $this->assertSame($snapshot, $report->fresh()->data);
+        $this->assertJsonStringEqualsJsonString(json_encode($snapshot, JSON_THROW_ON_ERROR), json_encode($report->fresh()->data, JSON_THROW_ON_ERROR));
         $this->assertDatabaseCount('telegram_bot_deliveries', 1);
         $this->assertSame(0, $queue->size('test-bot-report-recovery'));
         $this->assertSame([], Storage::disk('local')->allFiles(config('telegram_bot.temporary_directory')));
@@ -150,8 +150,7 @@ final class AnalyticsReportIntegrationTest extends TelegramBotTestCase
         app(BotRouter::class)->dispatch('send', $context, $jsonButton->parameters);
         $delivery = BotDelivery::query()->sole();
         $this->assertFalse($delivery->automatic);
-        $this->mock(BotTransport::class)->shouldReceive('document')->once()->with($link->telegraph_chat_id,
-            \Mockery::on(fn (BotDocument $document): bool => json_decode(file_get_contents($document->path), true, flags: JSON_THROW_ON_ERROR) === $report->data));
+        $this->expectJsonDocument($link->telegraph_chat_id, $report->data);
 
         app()->call([new DeliverBotMessage($delivery->id, $link->telegram_id), 'handle']);
 

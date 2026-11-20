@@ -7,6 +7,7 @@ use App\Modules\Telegram\DTO\Request\SearchMediaQueryDTO;
 use App\Modules\Telegram\DTO\Request\SearchMessagesQueryDTO;
 use App\Modules\Telegram\DTO\Result\SearchCommentsResultDTO;
 use App\Modules\Telegram\DTO\Result\SearchMessagesResultDTO;
+use Closure;
 
 interface TelegramSearchApplicationServiceInterface
 {
@@ -15,7 +16,7 @@ interface TelegramSearchApplicationServiceInterface
     public function comments(SearchCommentsQueryDTO $query): SearchCommentsResultDTO;
 
     /**
-     * @return array<string, mixed>|null
+     * @return array{downloadToFile: Closure(string): string, download: array<string, mixed>}|null
      */
     public function media(SearchMediaQueryDTO $query): ?array;
 }

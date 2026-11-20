@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import HelpTooltip from '@/components/ui/HelpTooltip.vue';
 import { useI18n } from '@/composables/useI18n';
+import { useLocaleFormatters } from '@/composables/useLocaleFormatters';
 
 type TopPost = {
     id: number;
@@ -29,13 +30,7 @@ const formatNumber = (value: number | null | undefined) => {
     );
 };
 
-const formatDate = (unix: number) => {
-    if (!unix) {
-        return '-';
-    }
-
-    return new Date(unix * 1000).toLocaleString(locale.value);
-};
+const { formatUnixDate: formatDate } = useLocaleFormatters(locale);
 </script>
 
 <template>

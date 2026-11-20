@@ -1,19 +1,17 @@
 import { usePage } from '@inertiajs/vue3';
 import { computed, ref } from 'vue';
 import type { ComputedRef } from 'vue';
+import { isLocale, LOCALE_STORAGE_KEY } from '@/lib/locale';
+import type { Locale } from '@/lib/locale';
 
-export type Locale = 'en' | 'ru';
+export type { Locale } from '@/lib/locale';
 
 type LocaleState = {
     locale: ComputedRef<Locale>;
     setLocale: (next: Locale) => void;
 };
 
-const LOCALE_STORAGE_KEY = 'locale';
 const LOCALE_COOKIE_MAX_AGE_SECONDS = 60 * 60 * 24 * 365;
-
-const isLocale = (value: unknown): value is Locale =>
-    value === 'en' || value === 'ru';
 
 const browserLocale = ref<Locale | null>(null);
 

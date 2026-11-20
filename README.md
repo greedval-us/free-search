@@ -1,9 +1,5 @@
 # Free Search
 
-[![CI](https://github.com/greedval-us/free-search/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/greedval-us/free-search/actions/workflows/ci.yml)
-[![Repository hygiene](https://github.com/greedval-us/free-search/actions/workflows/repository-hygiene.yml/badge.svg?branch=main)](https://github.com/greedval-us/free-search/actions/workflows/repository-hygiene.yml)
-[![Сайт: uraboros.online](https://img.shields.io/badge/сайт-uraboros.online-2563eb)](https://uraboros.online)
-
 Free Search — модульная OSINT-платформа на Laravel, Inertia.js и Vue для поиска, сбора, нормализации и анализа данных из открытых источников.
 
 **Работающий проект:** [uraboros.online](https://uraboros.online) — открыть сайт.
@@ -85,14 +81,15 @@ docs/                 Техническая документация
 
 ```bash
 composer install
-npm install
+npm ci
 cp .env.example .env
 php artisan key:generate
+php -r "file_exists('database/database.sqlite') || touch('database/database.sqlite');"
 php artisan migrate
 composer run dev
 ```
 
-`composer run dev` запускает Laravel server, `queue:listen --tries=1` и Vite. До миграции при SQLite убедитесь, что существует `database/database.sqlite`; скрипт `composer run setup` создаёт окружение и запускает миграции, но не создаёт SQLite-файл явно.
+`composer run dev` запускает сервер Laravel, обработчик очереди и Vite. В примере используется SQLite.
 
 Полная инструкция: [Getting started](docs/getting-started.md).
 
@@ -112,6 +109,8 @@ composer run dev
 
 ## Разработка и проверка
 
+Для PHPUnit подготовьте выделенную базу MySQL 8.4 `free_search_test` и задайте `TEST_DB_PASSWORD`. При запуске тесты пересоздают таблицы в этой базе. [Настройка тестов](docs/testing.md)
+
 ```bash
 composer run test          # Pint check + PHPUnit
 npm run test:unit          # Vitest
@@ -119,7 +118,7 @@ npm run quality:check      # Prettier, ESLint, vue-tsc, i18n
 npm run build              # production frontend build
 ```
 
-GitHub Actions выполняет frontend quality, Vitest, Pint, PHPUnit, production build и проверку обновления миграций на MySQL. Отдельная проверка чистоты репозитория запрещает отслеживание файлов из `.gitignore`. Бейджи вверху показывают фактическое состояние проверок ветки `main`. См. [Development](docs/development.md) и [Testing](docs/testing.md).
+GitHub Actions запускает Vitest, Pint, PHPUnit, сборку интерфейса и проверку обновления миграций на MySQL. Отдельный workflow проверяет, какие файлы отслеживает Git. [Конфигурация CI](.github/workflows/ci.yml) · [Проверка репозитория](.github/workflows/repository-hygiene.yml) · [Запуск тестов](docs/testing.md)
 
 ## Queue, Scheduler и эксплуатация
 
@@ -152,4 +151,4 @@ Scheduler ежедневно отправляет уведомления об о
 
 ## License
 
-`composer.json` указывает MIT. Перед публичным релизом необходимо подтвердить лицензионную политику проекта, права на assets и допустимость использования данных внешних источников.
+В [метаданных Composer](composer.json) указана лицензия MIT. Права на сторонние зависимости, ресурсы и данные определяют их правообладатели.

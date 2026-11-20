@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Mastodon;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Mastodon\MastodonAnalyticsReportScheduleRequest;
+use App\Http\Responses\ScheduledAnalyticsReportHistory;
 use App\Integrations\TelegramBot\ReportDeliveryStatus;
 use App\Models\MastodonAnalyticsReport;
 use App\Models\MastodonAnalyticsSchedule;
@@ -22,17 +23,12 @@ final class MastodonAnalyticsReportsController extends Controller
     {
         $userId = $request->user()->id;
         $schedules = MastodonAnalyticsSchedule::query()->forUser($userId)->latest('id')->get();
-        $reports = MastodonAnalyticsReport::query()->forUser($userId)->with('schedule')
-            ->select(['id', 'schedule_id', 'user_id', 'account_input', 'scheduled_for', 'date_from', 'date_to', 'status', 'error_code', 'completed_at'])
-            ->latest('id')->paginate(max(1, (int) config('mastodon_analytics_reports.list_page_size', 20)));
+        $reports = MastodonAnalyticsReport::query()->historyForUser($userId)
+            ->paginate(max(1, (int) config('mastodon_analytics_reports.list_page_size', 20)));
 
         return $this->jsonData([
             'schedules' => $schedules->map($this->schedulePayload(...)),
-            'reports' => [
-                'data' => collect($reports->items())->map($this->reportPayload(...)),
-                'currentPage' => $reports->currentPage(), 'lastPage' => $reports->lastPage(),
-                'total' => $reports->total(), 'perPage' => $reports->perPage(),
-            ],
+            'reports' => ScheduledAnalyticsReportHistory::page($reports, 'mastodon_analytics_reports'),
             ...$this->deliveryStatus->forUser($userId),
             'timezone' => (string) config('mastodon_analytics_reports.timezone', 'Europe/Moscow'),
             'maxAccounts' => max(1, (int) config('mastodon_analytics_reports.max_accounts', 3)),
@@ -115,22 +111,6 @@ final class MastodonAnalyticsReportsController extends Controller
             'interval' => $schedule->interval, 'sendTime' => $schedule->send_time, 'timezone' => $schedule->timezone,
             'sendToBot' => $schedule->send_to_bot, 'enabled' => $schedule->enabled,
             'nextRunAt' => $schedule->next_run_at?->toIso8601String(), 'createdAt' => $schedule->created_at?->toIso8601String(),
-        ];
-    }
-
-    private function reportPayload(MastodonAnalyticsReport $report): array
-    {
-        $timezone = $report->schedule?->timezone ?? (string) config('mastodon_analytics_reports.timezone', 'Europe/Moscow');
-
-        return [
-            'id' => $report->id, 'scheduleId' => $report->schedule_id, 'scheduleName' => $report->schedule?->name,
-            'accountInput' => $report->account_input, 'scheduledFor' => $report->scheduled_for?->toIso8601String(),
-            'dateFrom' => $report->date_from?->setTimezone($timezone)->toIso8601String(), 'dateTo' => $report->date_to?->setTimezone($timezone)->toIso8601String(),
-            'status' => $report->status, 'errorCode' => $report->error_code,
-            'errorMessage' => $report->error_code === null ? null : __('mastodon_analytics_reports.errors.'.(in_array($report->error_code, [
-                'account_unavailable', 'access_denied', 'disabled', 'generation_failed', 'attempts_exhausted', 'collection_limit', 'pagination_stalled',
-            ], true) ? $report->error_code : 'generation_failed')),
-            'completedAt' => $report->completed_at?->toIso8601String(),
         ];
     }
 }

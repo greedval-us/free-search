@@ -85,10 +85,10 @@ class ParserRunRecoverySchedulingTest extends TestCase
         $busy = Cache::lock("parser-run:advance:telegram:{$user->id}:{$runs[0]['runId']}", 150);
         $this->assertTrue($busy->get());
         $realDispatcher = app(ParserRunJobDispatcherInterface::class);
-        $dispatcher = $this->createMock(ParserRunJobDispatcherInterface::class);
-        $dispatcher->method('dispatch')->willReturnCallback(
-            static function (string $module, int $userId, string $runId) use ($realDispatcher): void {
-                $realDispatcher->dispatch($module, $userId, $runId);
+        $dispatcher = $this->createStub(ParserRunJobDispatcherInterface::class);
+        $dispatcher->method('redispatchCheckpoint')->willReturnCallback(
+            static function (string $module, int $userId, string $runId, array $checkpoint) use ($realDispatcher): void {
+                $realDispatcher->redispatchCheckpoint($module, $userId, $runId, $checkpoint);
                 usleep(1100000); // Complete one already-admitted candidate past the one-second pass budget.
             },
         );
@@ -122,14 +122,14 @@ class ParserRunRecoverySchedulingTest extends TestCase
         $second = $store->create($user->id, []);
         $this->travel(151)->seconds();
         $realDispatcher = app(ParserRunJobDispatcherInterface::class);
-        $dispatcher = $this->createMock(ParserRunJobDispatcherInterface::class);
-        $dispatcher->method('dispatch')->willReturnCallback(
-            static function (string $module, int $userId, string $runId) use ($realDispatcher, $first): void {
+        $dispatcher = $this->createStub(ParserRunJobDispatcherInterface::class);
+        $dispatcher->method('redispatchCheckpoint')->willReturnCallback(
+            static function (string $module, int $userId, string $runId, array $checkpoint) use ($realDispatcher, $first): void {
                 if ($runId === $first['runId']) {
                     usleep(1100000);
                     throw new RuntimeException('Queue unavailable for this candidate');
                 }
-                $realDispatcher->dispatch($module, $userId, $runId);
+                $realDispatcher->redispatchCheckpoint($module, $userId, $runId, $checkpoint);
             },
         );
         app()->instance(ParserRunJobDispatcherInterface::class, $dispatcher);

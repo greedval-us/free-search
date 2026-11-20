@@ -1,14 +1,10 @@
 # Free Search
 
-[![CI](https://github.com/greedval-us/free-search/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/greedval-us/free-search/actions/workflows/ci.yml)
-[![Repository hygiene](https://github.com/greedval-us/free-search/actions/workflows/repository-hygiene.yml/badge.svg?branch=main)](https://github.com/greedval-us/free-search/actions/workflows/repository-hygiene.yml)
-[![Website: uraboros.online](https://img.shields.io/badge/website-uraboros.online-2563eb)](https://uraboros.online)
+Free Search is a modular OSINT platform built with Laravel, Inertia.js, and Vue for searching, collecting, normalizing, and analysing open-source data.
 
 **Live deployment:** [uraboros.online](https://uraboros.online) — open the website.
 
 Telegram, YouTube, Bluesky and Mastodon support scheduled analytics reports every 1, 3 or 7 days, or monthly, with saved HTML/JSON history and delivery through the Telegram bot.
-
-Free Search is a modular OSINT platform built with Laravel, Inertia.js, and Vue for searching, collecting, normalizing, and analysing open-source data.
 
 > **Project Status: Beta.** The project is under active development. Internal APIs and interfaces may change, modules have different maturity levels, and integrations depend on third-party availability and policies. Production deployment requires an independent configuration, security, and source-limit review.
 
@@ -55,14 +51,15 @@ CI uses PHP 8.3, Composer 2, and Node.js 22.
 
 ```bash
 composer install
-npm install
+npm ci
 cp .env.example .env
 php artisan key:generate
+php -r "file_exists('database/database.sqlite') || touch('database/database.sqlite');"
 php artisan migrate
 composer run dev
 ```
 
-For SQLite, ensure `database/database.sqlite` exists before migration. `composer run dev` starts the Laravel server, `queue:listen --tries=1`, and Vite.
+This example uses SQLite. `composer run dev` starts the Laravel server, a queue listener, and Vite.
 
 ## Configuration
 
@@ -78,6 +75,8 @@ The complete reference is maintained in Russian: [Configuration](docs/configurat
 
 ## Development and operations
 
+Database tests run on MySQL 8.4. Create a dedicated `free_search_test` database and matching user, then export `TEST_DB_PASSWORD` before running PHPUnit. The test suite rebuilds this database. [Test configuration](docs/testing.md)
+
 ```bash
 composer run test
 npm run test:unit
@@ -89,6 +88,8 @@ php artisan schedule:run
 
 Read [Development](docs/development.md), [Testing](docs/testing.md), [Deployment](docs/deployment.md), and [Security](docs/security.md). Do not commit `.env`, API credentials, MadelineProto sessions, or Parser Run data.
 
+GitHub Actions checks the build, tests, and migration upgrade on MySQL. [CI workflow](.github/workflows/ci.yml) · [Repository hygiene workflow](.github/workflows/repository-hygiene.yml)
+
 ## License
 
-`composer.json` declares MIT. Confirm project licensing, asset rights, and external-data policies before a public release.
+The [Composer metadata](composer.json) declares MIT. Third-party dependencies, assets, and source data are subject to their respective terms.

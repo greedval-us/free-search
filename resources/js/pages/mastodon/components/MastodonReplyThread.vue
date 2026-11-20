@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { useI18n } from '@/composables/useI18n';
+import { useLocaleFormatters } from '@/composables/useLocaleFormatters';
 import type { MastodonStatusThreadNode } from '../types';
 
 defineOptions({
@@ -13,8 +14,7 @@ const props = defineProps<{
 
 const { locale } = useI18n();
 
-const formatDate = (value: string) =>
-    value ? new Date(value).toLocaleString(locale.value) : '-';
+const { formatDate } = useLocaleFormatters(locale);
 </script>
 
 <template>

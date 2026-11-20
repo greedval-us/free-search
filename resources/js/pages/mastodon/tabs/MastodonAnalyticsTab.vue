@@ -13,6 +13,7 @@ import HashtagProfileCard from '@/components/ui/HashtagProfileCard.vue';
 import IntelResultPanel from '@/components/ui/IntelResultPanel.vue';
 import SectionCard from '@/components/ui/SectionCard.vue';
 import { useI18n } from '@/composables/useI18n';
+import { useLocaleFormatters } from '@/composables/useLocaleFormatters';
 import {
     getRepeatQueryParams,
     isRepeatAutorunEnabled,
@@ -20,6 +21,7 @@ import {
     readRepeatQueryParam,
 } from '@/composables/useRepeatQuery';
 import { apiRequest, resolveApiErrorMessage } from '@/lib/api';
+import { report, summary } from '@/routes/mastodon/analytics';
 import MastodonAccountCard from '../components/MastodonAccountCard.vue';
 import MastodonStatusCard from '../components/MastodonStatusCard.vue';
 import type {
@@ -63,10 +65,7 @@ const hashtagProfile = computed(() =>
         : null
 );
 
-const fmt = (value: number) =>
-    new Intl.NumberFormat(locale.value).format(value ?? 0);
-const formatDate = (value: string) =>
-    value ? new Date(value).toLocaleString(locale.value) : '-';
+const { formatNumber: fmt, formatDate } = useLocaleFormatters(locale);
 
 const clampNumber = (
     value: number,
@@ -101,21 +100,18 @@ const runAnalytics = async () => {
     loading.value = true;
     error.value = null;
 
-    const response = await apiRequest<MastodonAnalyticsPayload>(
-        '/mastodon/analytics/summary',
-        {
-            query: {
-                mode: form.value.mode,
-                target: form.value.target,
-                limit: form.value.limit,
-                pages: form.value.pages,
-                dateFrom: form.value.dateFrom || undefined,
-                dateTo: form.value.dateTo || undefined,
-                resolve: form.value.resolve ? 'true' : 'false',
-                locale: locale.value,
-            },
-        }
-    );
+    const response = await apiRequest<MastodonAnalyticsPayload>(summary.url(), {
+        query: {
+            mode: form.value.mode,
+            target: form.value.target,
+            limit: form.value.limit,
+            pages: form.value.pages,
+            dateFrom: form.value.dateFrom || undefined,
+            dateTo: form.value.dateTo || undefined,
+            resolve: form.value.resolve ? 'true' : 'false',
+            locale: locale.value,
+        },
+    });
 
     loading.value = false;
 
@@ -131,37 +127,27 @@ const runAnalytics = async () => {
     result.value = response.data;
 };
 
-const reportUrl = computed(() => {
-    const query = new URLSearchParams({
-        mode: form.value.mode,
-        target: form.value.target.trim(),
-        limit: String(form.value.limit),
-        pages: String(form.value.pages),
-        resolve: form.value.resolve ? '1' : '0',
-        locale: locale.value,
+const reportUrl = (download: boolean) =>
+    report.url({
+        query: {
+            mode: form.value.mode,
+            target: form.value.target.trim(),
+            limit: form.value.limit,
+            pages: form.value.pages,
+            resolve: form.value.resolve,
+            locale: locale.value,
+            dateFrom: form.value.dateFrom || undefined,
+            dateTo: form.value.dateTo || undefined,
+            download: download ? 1 : undefined,
+        },
     });
 
-    if (form.value.dateFrom) {
-        query.set('dateFrom', form.value.dateFrom);
-    }
-
-    if (form.value.dateTo) {
-        query.set('dateTo', form.value.dateTo);
-    }
-
-    return `/mastodon/analytics/report?${query.toString()}`;
-});
-
 const openReport = () => {
-    window.open(reportUrl.value, '_blank', 'noopener,noreferrer');
+    window.open(reportUrl(false), '_blank', 'noopener,noreferrer');
 };
 
 const downloadReport = () => {
-    window.open(
-        `${reportUrl.value}&download=1`,
-        '_blank',
-        'noopener,noreferrer'
-    );
+    window.open(reportUrl(true), '_blank', 'noopener,noreferrer');
 };
 
 onMounted(() => {
