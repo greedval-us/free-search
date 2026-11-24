@@ -86,7 +86,7 @@ Compose публикует только `127.0.0.1:8088:8080`. Использу�
 $config = Invoke-RestMethod 'http://127.0.0.1:8088/config'
 $config.engines | Select-Object name, categories, enabled, paging, time_range_support
 $response = Invoke-RestMethod 'http://127.0.0.1:8088/search' -Method Post -Body @{
-    q = 'OpenAI'
+    q = 'рынок электромобилей'
     categories = 'general'
     format = 'json'
     language = 'ru'

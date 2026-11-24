@@ -17,6 +17,7 @@
 - [Обзор](architecture/overview.md)
 - [Backend](architecture/backend.md)
 - [Frontend](architecture/frontend.md)
+- [Intel UI Guide](architecture/intel-ui-guide.md)
 - [Границы модулей](architecture/modules.md)
 - [Parser Runs](architecture/parser-runs.md)
 - [Отчёты по расписанию](architecture/scheduled-reports.md)

@@ -4,6 +4,8 @@ Free Search — модульная OSINT-платформа на Laravel, Inerti
 
 **Работающий проект:** [uraboros.online](https://uraboros.online) — открыть сайт.
 
+[Пример: проверка сайта и SEO](https://uraboros.online/features/site-intel) — публичный обзор модуля Site Intel.
+
 > **Project Status: Beta.** Проект активно развивается. Внутренние API и интерфейсы могут меняться, зрелость модулей различается, а внешние интеграции зависят от доступности и правил сторонних сервисов. Production-развёртывание требует отдельной проверки конфигурации, безопасности и лимитов источников.
 
 [English version](README.en.md) · [Документация](docs/README.md) · [Быстрый старт](docs/getting-started.md)
