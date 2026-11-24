@@ -4,6 +4,8 @@ Free Search is a modular OSINT platform built with Laravel, Inertia.js, and Vue 
 
 **Live deployment:** [uraboros.online](https://uraboros.online) — open the website.
 
+[Example: Website and SEO checks](https://uraboros.online/features/site-intel) — a public overview of the Site Intel module.
+
 Telegram, YouTube, Bluesky and Mastodon support scheduled analytics reports every 1, 3 or 7 days, or monthly, with saved HTML/JSON history and delivery through the Telegram bot.
 
 > **Project Status: Beta.** The project is under active development. Internal APIs and interfaces may change, modules have different maturity levels, and integrations depend on third-party availability and policies. Production deployment requires an independent configuration, security, and source-limit review.
